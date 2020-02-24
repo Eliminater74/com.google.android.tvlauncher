@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="app_channel_count">
+        <item quantity="one">%d канал</item>
+        <item quantity="few">%d каналы</item>
+        <item quantity="many">%d каналаў</item>
+        <item quantity="other">%d канала</item>
+    </plurals>
+    <plurals name="notification_panel_icon_accessibility_description">
+        <item quantity="one">Ёсць %d сістэмнае апавяшчэнне</item>
+        <item quantity="few">Ёсць %d сістэмныя апавяшчэнні</item>
+        <item quantity="many">Ёсць %d сістэмных апавяшчэнняў</item>
+        <item quantity="other">Ёсць %d сістэмнага апавяшчэння</item>
+    </plurals>
+    <plurals name="program_interactions_fans">
+        <item quantity="one">%1$,d аматар</item>
+        <item quantity="few">%1$,d аматары</item>
+        <item quantity="many">%1$,d аматараў</item>
+        <item quantity="other">%1$,d аматара</item>
+    </plurals>
+    <plurals name="program_interactions_followers">
+        <item quantity="one">%1$,d падпісчык</item>
+        <item quantity="few">%1$,d падпісчыкі</item>
+        <item quantity="many">%1$,d падпісчыкаў</item>
+        <item quantity="other">%1$,d падпісчыка</item>
+    </plurals>
+    <plurals name="program_interactions_likes">
+        <item quantity="one">%1$,d адзнака &quot;падабаецца&quot;</item>
+        <item quantity="few">%1$,d адзнакі &quot;падабаецца&quot;</item>
+        <item quantity="many">%1$,d адзнак &quot;падабаецца&quot;</item>
+        <item quantity="other">%1$,d адзнакі &quot;падабаецца&quot;</item>
+    </plurals>
+    <plurals name="program_interactions_listens">
+        <item quantity="one">%1$,d праслухоўванне</item>
+        <item quantity="few">%1$,d праслухоўванні</item>
+        <item quantity="many">%1$,d праслухоўванняў</item>
+        <item quantity="other">%1$,d праслухоўвання</item>
+    </plurals>
+    <plurals name="program_interactions_thumbs">
+        <item quantity="one">%1$,d адзнака &quot;вялікі палец уверх&quot;</item>
+        <item quantity="few">%1$,d адзнакі &quot;вялікі палец уверх&quot;</item>
+        <item quantity="many">%1$,d адзнак &quot;вялікі палец уверх&quot;</item>
+        <item quantity="other">%1$,d адзнакі &quot;вялікі палец уверх&quot;</item>
+    </plurals>
+    <plurals name="program_interactions_viewers">
+        <item quantity="one">%1$,d глядач</item>
+        <item quantity="few">%1$,d гледачы</item>
+        <item quantity="many">%1$,d гледачоў</item>
+        <item quantity="other">%1$,d гледача</item>
+    </plurals>
+    <plurals name="program_interactions_views">
+        <item quantity="one">%1$,d прагляд</item>
+        <item quantity="few">%1$,d прагляды</item>
+        <item quantity="many">%1$,d праглядаў</item>
+        <item quantity="other">%1$,d прагляду</item>
+    </plurals>
+    <plurals name="program_number_of_chapters">
+        <item quantity="one">%1$,d серыя</item>
+        <item quantity="few">%1$,d серыі</item>
+        <item quantity="many">%1$,d серый</item>
+        <item quantity="other">%1$,d серыі</item>
+    </plurals>
+    <plurals name="program_number_of_episodes">
+        <item quantity="one">%1$,d серыя</item>
+        <item quantity="few">%1$,d серыі</item>
+        <item quantity="many">%1$,d серый</item>
+        <item quantity="other">%1$,d серыі</item>
+    </plurals>
+    <plurals name="program_number_of_seasons">
+        <item quantity="one">%1$,d сезон</item>
+        <item quantity="few">%1$,d сезоны</item>
+        <item quantity="many">%1$,d сезонаў</item>
+        <item quantity="other">%1$,d сезона</item>
+    </plurals>
+    <plurals name="program_number_of_tracks">
+        <item quantity="one">%1$,d трэк</item>
+        <item quantity="few">%1$,d трэкі</item>
+        <item quantity="many">%1$,d трэкаў</item>
+        <item quantity="other">%1$,d трэка</item>
+    </plurals>
+    <plurals name="program_thumbs_down_accessibility_description">
+        <item quantity="one">%1$d адзнака &quot;вялікі палец уніз&quot;</item>
+        <item quantity="few">%1$d адзнакі &quot;вялікі палец уніз&quot;</item>
+        <item quantity="many">%1$d адзнак &quot;вялікі палец уніз&quot;</item>
+        <item quantity="other">%1$d адзнакі &quot;вялікі палец уніз&quot;</item>
+    </plurals>
+    <plurals name="program_thumbs_up_accessibility_description">
+        <item quantity="one">%1$d адзнака &quot;вялікі палец уверх&quot;</item>
+        <item quantity="few">%1$d адзнакі &quot;вялікі палец уверх&quot;</item>
+        <item quantity="many">%1$d адзнак &quot;вялікі палец уверх&quot;</item>
+        <item quantity="other">%1$d адзнакі &quot;вялікі палец уверх&quot;</item>
+    </plurals>
+</resources>

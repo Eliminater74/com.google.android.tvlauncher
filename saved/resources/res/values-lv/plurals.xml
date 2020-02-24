@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="app_channel_count">
+        <item quantity="zero">%d kanālu</item>
+        <item quantity="one">%d kanāls</item>
+        <item quantity="other">%d kanāli</item>
+    </plurals>
+    <plurals name="notification_panel_icon_accessibility_description">
+        <item quantity="zero">%d sistēmas paziņojumi</item>
+        <item quantity="one">%d sistēmas paziņojums</item>
+        <item quantity="other">%d sistēmas paziņojumi</item>
+    </plurals>
+    <plurals name="program_interactions_fans">
+        <item quantity="zero">%1$,d cienītāju</item>
+        <item quantity="one">%1$,d cienītājs</item>
+        <item quantity="other">%1$,d cienītāji</item>
+    </plurals>
+    <plurals name="program_interactions_followers">
+        <item quantity="zero">%1$,d sekotāju</item>
+        <item quantity="one">%1$,d sekotājs</item>
+        <item quantity="other">%1$,d sekotāji</item>
+    </plurals>
+    <plurals name="program_interactions_likes">
+        <item quantity="zero">%1$,d atzīmju “Patīk”</item>
+        <item quantity="one">%1$,d atzīme “Patīk”</item>
+        <item quantity="other">%1$,d atzīmes “Patīk”</item>
+    </plurals>
+    <plurals name="program_interactions_listens">
+        <item quantity="zero">%1$,d klausīšanās reižu</item>
+        <item quantity="one">%1$,d klausīšanās reize</item>
+        <item quantity="other">%1$,d klausīšanās reizes</item>
+    </plurals>
+    <plurals name="program_interactions_thumbs">
+        <item quantity="zero">%1$,d atzīmju “Patīk”</item>
+        <item quantity="one">%1$,d atzīme “Patīk”</item>
+        <item quantity="other">%1$,d atzīmes “Patīk”</item>
+    </plurals>
+    <plurals name="program_interactions_viewers">
+        <item quantity="zero">%1$,d skatītāju</item>
+        <item quantity="one">%1$,d skatītājs</item>
+        <item quantity="other">%1$,d skatītāji</item>
+    </plurals>
+    <plurals name="program_interactions_views">
+        <item quantity="zero">%1$,d skatījumu</item>
+        <item quantity="one">%1$,d skatījums</item>
+        <item quantity="other">%1$,d skatījumi</item>
+    </plurals>
+    <plurals name="program_number_of_chapters">
+        <item quantity="zero">%1$,d nodaļu</item>
+        <item quantity="one">%1$,d nodaļa</item>
+        <item quantity="other">%1$,d nodaļas</item>
+    </plurals>
+    <plurals name="program_number_of_episodes">
+        <item quantity="zero">%1$,d sēriju</item>
+        <item quantity="one">%1$,d sērija</item>
+        <item quantity="other">%1$,d sērijas</item>
+    </plurals>
+    <plurals name="program_number_of_seasons">
+        <item quantity="zero">%1$,d sezonu</item>
+        <item quantity="one">%1$,d sezona</item>
+        <item quantity="other">%1$,d sezonas</item>
+    </plurals>
+    <plurals name="program_number_of_tracks">
+        <item quantity="zero">%1$,d ierakstu</item>
+        <item quantity="one">%1$,d ieraksts</item>
+        <item quantity="other">%1$,d ieraksti</item>
+    </plurals>
+    <plurals name="program_thumbs_down_accessibility_description">
+        <item quantity="zero">%1$d atzīmju “Nepatīk”</item>
+        <item quantity="one">%1$d atzīme “Nepatīk”</item>
+        <item quantity="other">%1$d atzīmes “Nepatīk”</item>
+    </plurals>
+    <plurals name="program_thumbs_up_accessibility_description">
+        <item quantity="zero">%1$d atzīmju “Patīk”</item>
+        <item quantity="one">%1$d atzīme “Patīk”</item>
+        <item quantity="other">%1$d atzīmes “Patīk”</item>
+    </plurals>
+</resources>

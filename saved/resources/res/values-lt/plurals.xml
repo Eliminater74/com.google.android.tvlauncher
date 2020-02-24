@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="app_channel_count">
+        <item quantity="one">%d kanalas</item>
+        <item quantity="few">%d kanalai</item>
+        <item quantity="many">%d kanalo</item>
+        <item quantity="other">%d kanalų</item>
+    </plurals>
+    <plurals name="notification_panel_icon_accessibility_description">
+        <item quantity="one">Yra %d sistemos pranešimas</item>
+        <item quantity="few">Yra %d sistemos pranešimai</item>
+        <item quantity="many">Yra %d sistemos pranešimo</item>
+        <item quantity="other">Yra %d sistemos pranešimų</item>
+    </plurals>
+    <plurals name="program_interactions_fans">
+        <item quantity="one">%1$,d gerbėjas</item>
+        <item quantity="few">%1$,d gerbėjai</item>
+        <item quantity="many">%1$,d gerbėjo</item>
+        <item quantity="other">%1$,d gerbėjų</item>
+    </plurals>
+    <plurals name="program_interactions_followers">
+        <item quantity="one">%1$,d stebėtojas</item>
+        <item quantity="few">%1$,d stebėtojai</item>
+        <item quantity="many">%1$,d stebėtojo</item>
+        <item quantity="other">%1$,d stebėtojų</item>
+    </plurals>
+    <plurals name="program_interactions_likes">
+        <item quantity="one">%1$,d mygtuko „Patinka“ paspaudimas</item>
+        <item quantity="few">%1$,d mygtuko „Patinka“ paspaudimai</item>
+        <item quantity="many">%1$,d mygtuko „Patinka“ paspaudimo</item>
+        <item quantity="other">%1$,d mygtuko „Patinka“ paspaudimų</item>
+    </plurals>
+    <plurals name="program_interactions_listens">
+        <item quantity="one">Perklausyta %1$,d kartą</item>
+        <item quantity="few">Perklausyta %1$,d kartus</item>
+        <item quantity="many">Perklausyta %1$,d karto</item>
+        <item quantity="other">Perklausyta %1$,d kartų</item>
+    </plurals>
+    <plurals name="program_interactions_thumbs">
+        <item quantity="one">%1$,d teigiamas įvertinimas</item>
+        <item quantity="few">%1$,d teigiami įvertinimai</item>
+        <item quantity="many">%1$,d teigiamo įvertinimo</item>
+        <item quantity="other">%1$,d teigiamų įvertinimų</item>
+    </plurals>
+    <plurals name="program_interactions_viewers">
+        <item quantity="one">%1$,d žiūrintysis</item>
+        <item quantity="few">%1$,d žiūrintieji</item>
+        <item quantity="many">%1$,d žiūrinčiojo</item>
+        <item quantity="other">%1$,d žiūrinčiųjų</item>
+    </plurals>
+    <plurals name="program_interactions_views">
+        <item quantity="one">%1$,d peržiūra</item>
+        <item quantity="few">%1$,d peržiūros</item>
+        <item quantity="many">%1$,d peržiūros</item>
+        <item quantity="other">%1$,d peržiūrų</item>
+    </plurals>
+    <plurals name="program_number_of_chapters">
+        <item quantity="one">%1$,d serija</item>
+        <item quantity="few">%1$,d serijos</item>
+        <item quantity="many">%1$,d serijos</item>
+        <item quantity="other">%1$,d serijų</item>
+    </plurals>
+    <plurals name="program_number_of_episodes">
+        <item quantity="one">%1$,d serija</item>
+        <item quantity="few">%1$,d serijos</item>
+        <item quantity="many">%1$,d serijos</item>
+        <item quantity="other">%1$,d serijų</item>
+    </plurals>
+    <plurals name="program_number_of_seasons">
+        <item quantity="one">%1$,d sezonas</item>
+        <item quantity="few">%1$,d sezonai</item>
+        <item quantity="many">%1$,d sezono</item>
+        <item quantity="other">%1$,d sezonų</item>
+    </plurals>
+    <plurals name="program_number_of_tracks">
+        <item quantity="one">%1$,d takelis</item>
+        <item quantity="few">%1$,d takeliai</item>
+        <item quantity="many">%1$,d takelio</item>
+        <item quantity="other">%1$,d takelių</item>
+    </plurals>
+    <plurals name="program_thumbs_down_accessibility_description">
+        <item quantity="one">%1$d neigiamas įvertinimas</item>
+        <item quantity="few">%1$d neigiami įvertinimai</item>
+        <item quantity="many">%1$d neigiamo įvertinimo</item>
+        <item quantity="other">%1$d neigiamų įvertinimų</item>
+    </plurals>
+    <plurals name="program_thumbs_up_accessibility_description">
+        <item quantity="one">%1$d teigiamas įvertinimas</item>
+        <item quantity="few">%1$d teigiami įvertinimai</item>
+        <item quantity="many">%1$d teigiamo įvertinimo</item>
+        <item quantity="other">%1$d teigiamų įvertinimų</item>
+    </plurals>
+</resources>

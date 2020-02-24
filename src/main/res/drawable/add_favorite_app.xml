@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape>
+            <size android:height="@dimen/home_app_banner_image_height" android:width="@dimen/home_app_banner_width"/>
+            <solid android:color="@color/app_banner_background_color"/>
+        </shape>
+    </item>
+    <item android:gravity="center" android:height="@dimen/home_app_banner_image_height" android:width="@dimen/home_app_banner_image_height" android:drawable="@drawable/ic_add_favorite_app_24dp"/>
+</layer-list>

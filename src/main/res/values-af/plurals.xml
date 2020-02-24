@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="app_channel_count">
+        <item quantity="one">%d kanaal</item>
+        <item quantity="other">%d kanale</item>
+    </plurals>
+    <plurals name="notification_panel_icon_accessibility_description">
+        <item quantity="one">Daar is %d stelselkennisgewing</item>
+        <item quantity="other">Daar is %d stelselkennisgewings</item>
+    </plurals>
+    <plurals name="program_interactions_fans">
+        <item quantity="one">%1$,d aanhanger</item>
+        <item quantity="other">%1$,d aanhangers</item>
+    </plurals>
+    <plurals name="program_interactions_followers">
+        <item quantity="one">%1$,d volger</item>
+        <item quantity="other">%1$,d volgers</item>
+    </plurals>
+    <plurals name="program_interactions_likes">
+        <item quantity="one">%1$,d laaik</item>
+        <item quantity="other">%1$,d laaiks</item>
+    </plurals>
+    <plurals name="program_interactions_listens">
+        <item quantity="one">%1$,d luister</item>
+        <item quantity="other">%1$,d luisters</item>
+    </plurals>
+    <plurals name="program_interactions_thumbs">
+        <item quantity="one">%1$,d laaik baie</item>
+        <item quantity="other">%1$,d laaik baie</item>
+    </plurals>
+    <plurals name="program_interactions_viewers">
+        <item quantity="one">%1$,d kyker</item>
+        <item quantity="other">%1$,d kykers</item>
+    </plurals>
+    <plurals name="program_interactions_views">
+        <item quantity="one">%1$,d kyk</item>
+        <item quantity="other">%1$,d kyke</item>
+    </plurals>
+    <plurals name="program_number_of_chapters">
+        <item quantity="one">%1$,d hoofstuk</item>
+        <item quantity="other">%1$,d hoofstukke</item>
+    </plurals>
+    <plurals name="program_number_of_episodes">
+        <item quantity="one">%1$,d episode</item>
+        <item quantity="other">%1$,d episodes</item>
+    </plurals>
+    <plurals name="program_number_of_seasons">
+        <item quantity="one">%1$,d seisoen</item>
+        <item quantity="other">%1$,d seisoene</item>
+    </plurals>
+    <plurals name="program_number_of_tracks">
+        <item quantity="one">%1$,d snit</item>
+        <item quantity="other">%1$,d snitte</item>
+    </plurals>
+    <plurals name="program_thumbs_down_accessibility_description">
+        <item quantity="one">%1$d laaik niks</item>
+        <item quantity="other">%1$d laaik niks</item>
+    </plurals>
+    <plurals name="program_thumbs_up_accessibility_description">
+        <item quantity="one">%1$d laaik baie</item>
+        <item quantity="other">%1$d laaik baie</item>
+    </plurals>
+</resources>

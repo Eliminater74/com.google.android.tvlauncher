@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.tvlauncher.view.HomeTopRowView xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical" android:id="@+id/top_row" android:layout_width="match_parent" android:layout_height="wrap_content" android:importantForAccessibility="no">
+    <LinearLayout android:orientation="horizontal" android:id="@+id/items_container" android:clipChildren="false" android:clipToPadding="false" android:layout_width="match_parent" android:layout_height="@dimen/top_row_items_container_height" android:layout_marginTop="@dimen/top_row_items_container_margin_top" android:layout_marginBottom="@dimen/top_row_items_container_margin_bottom" android:paddingStart="@dimen/overscan_horizontal" android:paddingEnd="@dimen/overscan_horizontal">
+        <include android:layout_gravity="center_vertical" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="@dimen/search_orb_margin_start" layout="@layout/home_search_view"/>
+        <include layout="@layout/notification_panel_button"/>
+        <include android:id="@+id/profiles" layout="@layout/home_top_row_button"/>
+        <include android:id="@+id/inputs" layout="@layout/home_top_row_button"/>
+        <include android:id="@+id/partner_widget" android:visibility="gone" layout="@layout/home_top_row_button"/>
+        <include android:id="@+id/settings" layout="@layout/home_top_row_button"/>
+        <com.google.android.tvlauncher.clock.ClockView android:textSize="@dimen/clock_text_size" android:textColor="@color/reference_white_60" android:layout_gravity="center_vertical" android:id="@+id/clock" android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/google_sans"/>
+    </LinearLayout>
+    <com.google.android.tvlauncher.notifications.NotificationsTrayView android:gravity="center" android:id="@+id/notifications_tray" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/notification_tray_margin_top" android:layout_marginBottom="@dimen/notification_tray_margin_bottom">
+        <androidx.leanback.widget.HorizontalGridView android:id="@+id/notifications_row" android:layout_width="match_parent" android:layout_height="@dimen/notification_tray_height"/>
+    </com.google.android.tvlauncher.notifications.NotificationsTrayView>
+</com.google.android.tvlauncher.view.HomeTopRowView>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="app_channel_count">
+        <item quantity="one">%d kanava</item>
+        <item quantity="other">%d kanavaa</item>
+    </plurals>
+    <plurals name="notification_panel_icon_accessibility_description">
+        <item quantity="one">%d järjestelmäilmoitus</item>
+        <item quantity="other">%d järjestelmäilmoitusta</item>
+    </plurals>
+    <plurals name="program_interactions_fans">
+        <item quantity="one">%1$,d fani</item>
+        <item quantity="other">%1$,d fania</item>
+    </plurals>
+    <plurals name="program_interactions_followers">
+        <item quantity="one">%1$,d seuraaja</item>
+        <item quantity="other">%1$,d seuraajaa</item>
+    </plurals>
+    <plurals name="program_interactions_likes">
+        <item quantity="one">%1$,d tykkäys</item>
+        <item quantity="other">%1$,d tykkäystä</item>
+    </plurals>
+    <plurals name="program_interactions_listens">
+        <item quantity="one">%1$,d kuuntelukerta</item>
+        <item quantity="other">%1$,d kuuntelukertaa</item>
+    </plurals>
+    <plurals name="program_interactions_thumbs">
+        <item quantity="one">%1$,d tykkäys</item>
+        <item quantity="other">%1$,d tykkäystä</item>
+    </plurals>
+    <plurals name="program_interactions_viewers">
+        <item quantity="one">%1$,d katsoja</item>
+        <item quantity="other">%1$,d katsojaa</item>
+    </plurals>
+    <plurals name="program_interactions_views">
+        <item quantity="one">%1$,d katselukerta</item>
+        <item quantity="other">%1$,d katselukertaa</item>
+    </plurals>
+    <plurals name="program_number_of_chapters">
+        <item quantity="one">%1$,d luku</item>
+        <item quantity="other">%1$,d lukua</item>
+    </plurals>
+    <plurals name="program_number_of_episodes">
+        <item quantity="one">%1$,d jakso</item>
+        <item quantity="other">%1$,d jaksoa</item>
+    </plurals>
+    <plurals name="program_number_of_seasons">
+        <item quantity="one">%1$,d tuotantokausi</item>
+        <item quantity="other">%1$,d tuotantokautta</item>
+    </plurals>
+    <plurals name="program_number_of_tracks">
+        <item quantity="one">%1$,d raita</item>
+        <item quantity="other">%1$,d raitaa</item>
+    </plurals>
+    <plurals name="program_thumbs_down_accessibility_description">
+        <item quantity="one">%1$d en tykkää ‑ääni</item>
+        <item quantity="other">%1$d en tykkää ‑ääntä</item>
+    </plurals>
+    <plurals name="program_thumbs_up_accessibility_description">
+        <item quantity="one">%1$d tykkäys</item>
+        <item quantity="other">%1$d tykkäystä</item>
+    </plurals>
+</resources>

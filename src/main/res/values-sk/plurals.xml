@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="app_channel_count">
+        <item quantity="one">%d kanál</item>
+        <item quantity="few">%d kanály</item>
+        <item quantity="many">%d kanála</item>
+        <item quantity="other">%d kanálov</item>
+    </plurals>
+    <plurals name="notification_panel_icon_accessibility_description">
+        <item quantity="one">Máte %d systémové upozornenie</item>
+        <item quantity="few">Máte %d systémové upozornenia</item>
+        <item quantity="many">Máte %d systémových upozornení</item>
+        <item quantity="other">Máte %d systémových upozornení</item>
+    </plurals>
+    <plurals name="program_interactions_fans">
+        <item quantity="one">%1$,d fanúšik</item>
+        <item quantity="few">%1$,d fanúšikovia</item>
+        <item quantity="many">%1$,d fanúšika</item>
+        <item quantity="other">%1$,d fanúšikov</item>
+    </plurals>
+    <plurals name="program_interactions_followers">
+        <item quantity="one">%1$,d sledovateľ</item>
+        <item quantity="few">%1$,d sledovatelia</item>
+        <item quantity="many">%1$,d sledovateľa</item>
+        <item quantity="other">%1$,d sledovateľov</item>
+    </plurals>
+    <plurals name="program_interactions_likes">
+        <item quantity="one">%1$,d označenie Páči sa mi</item>
+        <item quantity="few">%1$,d označenia Páči sa mi</item>
+        <item quantity="many">%1$,d označenia Páči sa mi</item>
+        <item quantity="other">%1$,d označení Páči sa mi</item>
+    </plurals>
+    <plurals name="program_interactions_listens">
+        <item quantity="one">%1$,d vypočutie</item>
+        <item quantity="few">%1$,d vypočutia</item>
+        <item quantity="many">%1$,d vypočutia</item>
+        <item quantity="other">%1$,d vypočutí</item>
+    </plurals>
+    <plurals name="program_interactions_thumbs">
+        <item quantity="one">%1$,d označenie Páči sa mi</item>
+        <item quantity="few">%1$,d označenia Páči sa mi</item>
+        <item quantity="many">%1$,d označenia Páči sa mi</item>
+        <item quantity="other">%1$,d označení Páči sa mi</item>
+    </plurals>
+    <plurals name="program_interactions_viewers">
+        <item quantity="one">%1$,d divák</item>
+        <item quantity="few">%1$,d diváci</item>
+        <item quantity="many">%1$,d diváka</item>
+        <item quantity="other">%1$,d divákov</item>
+    </plurals>
+    <plurals name="program_interactions_views">
+        <item quantity="one">%1$,d zhliadnutie</item>
+        <item quantity="few">%1$,d zhliadnutia</item>
+        <item quantity="many">%1$,d zhliadnutia</item>
+        <item quantity="other">%1$,d zhliadnutí</item>
+    </plurals>
+    <plurals name="program_number_of_chapters">
+        <item quantity="one">%1$,d kapitola</item>
+        <item quantity="few">%1$,d kapitoly</item>
+        <item quantity="many">%1$,d Chapters</item>
+        <item quantity="other">%1$,d kapitol</item>
+    </plurals>
+    <plurals name="program_number_of_episodes">
+        <item quantity="one">%1$,d epizóda</item>
+        <item quantity="few">%1$,d epizódy</item>
+        <item quantity="many">%1$,d epizódy</item>
+        <item quantity="other">%1$,d epizód</item>
+    </plurals>
+    <plurals name="program_number_of_seasons">
+        <item quantity="one">%1$,d séria</item>
+        <item quantity="few">%1$,d série</item>
+        <item quantity="many">%1$,d série</item>
+        <item quantity="other">%1$,d sérií</item>
+    </plurals>
+    <plurals name="program_number_of_tracks">
+        <item quantity="one">%1$,d skladba</item>
+        <item quantity="few">%1$,d skladby</item>
+        <item quantity="many">%1$,d skladby</item>
+        <item quantity="other">%1$,d skladieb</item>
+    </plurals>
+    <plurals name="program_thumbs_down_accessibility_description">
+        <item quantity="one">%1$d označenie Nepáči sa mi</item>
+        <item quantity="few">%1$d označenia Nepáči sa mi</item>
+        <item quantity="many">%1$d označenia Nepáči sa mi</item>
+        <item quantity="other">%1$d označení Nepáči sa mi</item>
+    </plurals>
+    <plurals name="program_thumbs_up_accessibility_description">
+        <item quantity="one">%1$d označenie Páči sa mi</item>
+        <item quantity="few">%1$d označenia Páči sa mi</item>
+        <item quantity="many">%1$d označenia Páči sa mi</item>
+        <item quantity="other">%1$d označení Páči sa mi</item>
+    </plurals>
+</resources>

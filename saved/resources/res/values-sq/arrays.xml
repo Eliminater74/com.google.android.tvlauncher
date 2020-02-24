@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="genre_labels">
+        <item>Familje/fëmijë</item>
+        <item>Sporte</item>
+        <item>Blerje</item>
+        <item>Filma</item>
+        <item>Komedi</item>
+        <item>Udhëtim</item>
+        <item>Dramë</item>
+        <item>Edukim</item>
+        <item>Kafshët/fauna</item>
+        <item>Lajme</item>
+        <item>Lojëra</item>
+        <item>Arte</item>
+        <item>Argëtim</item>
+        <item>Stili i jetës</item>
+        <item>Muzikë</item>
+        <item>Premierë</item>
+        <item>Teknologji/shkencë</item>
+    </array>
+    <array name="program_canonical_genre_labels_formats">
+        <item>%1$s</item>
+        <item>%1$s, %2$s</item>
+        <item>%1$s, %2$s, %3$s</item>
+        <item>%1$s, %2$s, %3$s, %4$s</item>
+        <item>%1$s, %2$s, %3$s, %4$s, %5$s</item>
+    </array>
+    <array name="search_orb_text_to_show">
+        <item>Provo të kërkosh për &quot;Roland Trebickën&quot;</item>
+        <item>Provo të kërkosh për &quot;Ema Andrean&quot;</item>
+        <item>Provo të kërkosh për &quot;Elia Zaharian&quot;</item>
+        <item>Provo të kërkosh për &quot;Jonida Vokshin&quot;</item>
+        <item>Provo të kërkosh për &quot;komedi romantike&quot;</item>
+        <item>Provo të kërkosh për &quot;filma fantastiko-shkencorë&quot;</item>
+        <item>Provo të kërkosh për &quot;filma me superheronj&quot;</item>
+        <item>Provo të kërkosh për &quot;filma aksion&quot;</item>
+        <item>Provo të kërkosh për &quot;Star Trek&quot;</item>
+        <item>Provo të kërkosh për &quot;Sherlock&quot;</item>
+        <item>Provo të kërkosh për &quot;The Voice of Albania&quot;</item>
+        <item>Provo të kërkosh për &quot;Star Trek&quot;</item>
+        <item>Provo të kërkosh për &quot;Castle&quot;</item>
+        <item>Provo të kërkosh për &quot;fotografi të Beyonce&quot;</item>
+        <item>Provo të kërkosh për &quot;fotografi të Londrës&quot;</item>
+        <item>Provo të kërkosh për &quot;fotografi të Godzillës&quot;</item>
+        <item>Provo të pyesësh, &quot;sa është rezultati i Partizanit?&quot;</item>
+        <item>Provo të pyesësh, &quot;sa është rezultati i Tiranës?&quot;</item>
+        <item>Provo të pyesësh, &quot;sa është rezultati i Luftëtarit?&quot;</item>
+        <item>Provo të pyesësh, &quot;sa është rezultati i Skënderbeut?&quot;</item>
+        <item>Provo të pyesësh, &quot;si është moti në Tiranë?&quot;</item>
+        <item>Provo të pyesësh, &quot;si është moti në Gjirokastër?&quot;</item>
+        <item>Provo të pyesësh, &quot;si është moti në Shkodër?&quot;</item>
+        <item>Provo të pyesësh, &quot;si është moti në Korçë?&quot;</item>
+        <item>Provo të pyesësh, &quot;Sa i gjatë është Timo Flloko?&quot;</item>
+        <item>Provo të pyesësh, &quot;Sa i nxehtë është dielli?&quot;</item>
+        <item>Provo të pyesësh, &quot;Kur ka lindur Kadri Roshi?&quot;</item>
+        <item>Provo, &quot;hap YouTube&quot;</item>
+        <item>Provo, &quot;hap Filmat&quot;</item>
+    </array>
+</resources>

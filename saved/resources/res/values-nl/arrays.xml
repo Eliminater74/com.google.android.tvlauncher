@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="genre_labels">
+        <item>Familie/kinderen</item>
+        <item>Sport</item>
+        <item>Winkelen</item>
+        <item>Films</item>
+        <item>Comedy</item>
+        <item>Reizen</item>
+        <item>Drama</item>
+        <item>Onderwijs</item>
+        <item>Dieren/natuur</item>
+        <item>Nieuws</item>
+        <item>Games</item>
+        <item>Kunst</item>
+        <item>Entertainment</item>
+        <item>Lifestyle</item>
+        <item>Muziek</item>
+        <item>Premier</item>
+        <item>Techniek/wetenschap</item>
+    </array>
+    <array name="program_canonical_genre_labels_formats">
+        <item>%1$s</item>
+        <item>%1$s, %2$s</item>
+        <item>%1$s, %2$s, %3$s</item>
+        <item>%1$s, %2$s, %3$s, %4$s</item>
+        <item>%1$s, %2$s, %3$s, %4$s, %5$s</item>
+    </array>
+    <array name="search_orb_text_to_show">
+        <item>Zoek eens naar &apos;Will Smith&apos;</item>
+        <item>Zoek eens naar &apos;Michael Fassbender&apos;</item>
+        <item>Zoek eens naar &apos;Jennifer Lawrence&apos;</item>
+        <item>Zoek eens naar &apos;Olivia Wilde&apos;</item>
+        <item>Zoek eens naar &apos;romantische komedies&apos;</item>
+        <item>Zoek eens naar &apos;sciencefictionfilms&apos;</item>
+        <item>Zoek eens naar &apos;superheldenfilms&apos;</item>
+        <item>Zoek eens naar &apos;actiefilms&apos;</item>
+        <item>Zoek eens naar &apos;Star Trek&apos;</item>
+        <item>Zoek eens naar &apos;Sherlock&apos;</item>
+        <item>Zoek eens naar &apos;American Idol&apos;</item>
+        <item>Zoek eens naar &apos;Star Trek&apos;</item>
+        <item>Zoek eens naar &apos;Castle&apos;</item>
+        <item>Zoek eens naar &apos;foto&apos;s van Beyonce&apos;</item>
+        <item>Zoek eens naar &apos;foto&apos;s van Londen&apos;</item>
+        <item>Zoek eens naar &apos;foto&apos;s van Godzilla&apos;</item>
+        <item>Vraag eens &apos;Wat is de uitslag van Ajax?&apos;</item>
+        <item>Vraag eens &apos;Wat is de uitslag van Bloemendaal?&apos;</item>
+        <item>Vraag eens &apos;Wat is de uitslag van de Tour de France?&apos;</item>
+        <item>Vraag eens &apos;Wie heeft Wimbledon gewonnen?&apos;</item>
+        <item>Vraag eens &apos;Wat is het weer in Den Haag?&apos;</item>
+        <item>Vraag eens &apos;Wat is het weer in Groningen?&apos;</item>
+        <item>Vraag eens &apos;Wat is het weer in Parijs?&apos;</item>
+        <item>Vraag eens &apos;Wat is het weer in New York?&apos;</item>
+        <item>Vraag eens &apos;Hoe lang is Brad Pitt?&apos;</item>
+        <item>Vraag eens &apos;Hoe heet is de zon?&apos;</item>
+        <item>Vraag eens &apos;Wanneer is John Wayne geboren?&apos;</item>
+        <item>Probeer &apos;YouTube openen&apos;</item>
+        <item>Probeer &apos;Play Films openen&apos;</item>
+    </array>
+</resources>

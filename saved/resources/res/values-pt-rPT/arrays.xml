@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="genre_labels">
+        <item>Família/infantil</item>
+        <item>Desporto</item>
+        <item>Compras</item>
+        <item>Filmes</item>
+        <item>Comédia</item>
+        <item>Viagens</item>
+        <item>Drama</item>
+        <item>Educação</item>
+        <item>Animais/vida selvagem</item>
+        <item>Notícias</item>
+        <item>Jogos</item>
+        <item>Arte</item>
+        <item>Entretenimento</item>
+        <item>Estilo de vida</item>
+        <item>Música</item>
+        <item>Estreia</item>
+        <item>Tecnologia/ciência</item>
+    </array>
+    <array name="program_canonical_genre_labels_formats">
+        <item>%1$s</item>
+        <item>%1$s, %2$s</item>
+        <item>%1$s, %2$s, %3$s</item>
+        <item>%1$s, %2$s, %3$s, %4$s</item>
+        <item>%1$s, %2$s, %3$s, %4$s, %5$s</item>
+    </array>
+    <array name="search_orb_text_to_show">
+        <item>Experimente pesquisar &quot;Will Smith&quot;</item>
+        <item>Experimente pesquisar &quot;Michael Fassbender&quot;</item>
+        <item>Experimente pesquisar &quot;Jennifer Lawrence&quot;</item>
+        <item>Experimente pesquisar &quot;Olivia Wilde&quot;</item>
+        <item>Experimente pesquisar &quot;comédias românticas&quot;</item>
+        <item>Experimente pesquisar &quot;filmes de ficção científica&quot;</item>
+        <item>Experimente pesquisar &quot;filmes de super-heróis&quot;</item>
+        <item>Experimente pesquisar &quot;filmes de ação&quot;</item>
+        <item>Experimente pesquisar &quot;Star Trek&quot;</item>
+        <item>Experimente pesquisar &quot;Sherlock&quot;</item>
+        <item>Experimente pesquisar &quot;The Voice Portugal&quot;</item>
+        <item>Experimente pesquisar &quot;Star Trek&quot;</item>
+        <item>Experimente pesquisar &quot;Castle&quot;</item>
+        <item>Experimente pesquisar &quot;imagens da Beyoncé&quot;</item>
+        <item>Experimente pesquisar &quot;imagens de Londres&quot;</item>
+        <item>Experimente pesquisar &quot;imagens do Godzilla&quot;</item>
+        <item>Experimente perguntar &quot;qual o resultado do Sporting?&quot;</item>
+        <item>Experimente perguntar &quot;qual o resultado do Benfica?&quot;</item>
+        <item>Experimente perguntar &quot;qual o resultado do Porto?&quot;</item>
+        <item>Experimente perguntar &quot;qual o resultado do Sporting de Braga?&quot;</item>
+        <item>Experimente perguntar &quot;como está o tempo em Nova Iorque?&quot;</item>
+        <item>Experimente perguntar &quot;como está o tempo em São Francisco?&quot;</item>
+        <item>Experimente perguntar &quot;como está o tempo em Paris?&quot;</item>
+        <item>Experimente perguntar &quot;como está o tempo em Cozumel?&quot;</item>
+        <item>Experimente perguntar &quot;Qual é a altura do Brad Pitt?&quot;</item>
+        <item>Experimente perguntar &quot;Qual é a temperatura do Sol?&quot;</item>
+        <item>Experimente perguntar &quot;Qual é a data de nascimento do John Wayne?&quot;</item>
+        <item>Experimente &quot;abrir o YouTube&quot;</item>
+        <item>Experimente &quot;abrir o Play Filmes&quot;</item>
+    </array>
+</resources>

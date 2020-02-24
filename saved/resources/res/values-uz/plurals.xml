@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="app_channel_count">
+        <item quantity="one">%d ta kanal</item>
+        <item quantity="other">%d ta kanal</item>
+    </plurals>
+    <plurals name="notification_panel_icon_accessibility_description">
+        <item quantity="one">%d ta tizim bildirishnomasi bor</item>
+        <item quantity="other">%d ta tizim bildirishnomasi bor</item>
+    </plurals>
+    <plurals name="program_interactions_fans">
+        <item quantity="one">%1$,d ta muxlis</item>
+        <item quantity="other">%1$,d ta muxlis</item>
+    </plurals>
+    <plurals name="program_interactions_followers">
+        <item quantity="one">%1$,d ta obunachi</item>
+        <item quantity="other">%1$,d ta obunachi</item>
+    </plurals>
+    <plurals name="program_interactions_likes">
+        <item quantity="one">%1$,d ta layk</item>
+        <item quantity="other">%1$,d ta layk</item>
+    </plurals>
+    <plurals name="program_interactions_listens">
+        <item quantity="one">%1$,d marta tinglangan</item>
+        <item quantity="other">%1$,d marta tinglangan</item>
+    </plurals>
+    <plurals name="program_interactions_thumbs">
+        <item quantity="one">%1$,d ta ijobiy baho</item>
+        <item quantity="other">%1$,d ta ijobiy baho</item>
+    </plurals>
+    <plurals name="program_interactions_viewers">
+        <item quantity="one">%1$,d tomoshabin</item>
+        <item quantity="other">%1$,d tomoshabin</item>
+    </plurals>
+    <plurals name="program_interactions_views">
+        <item quantity="one">%1$,d marta</item>
+        <item quantity="other">%1$,d marta</item>
+    </plurals>
+    <plurals name="program_number_of_chapters">
+        <item quantity="one">%1$,d qism</item>
+        <item quantity="other">%1$,d ta qism</item>
+    </plurals>
+    <plurals name="program_number_of_episodes">
+        <item quantity="one">%1$,d ta qism</item>
+        <item quantity="other">%1$,d ta qism</item>
+    </plurals>
+    <plurals name="program_number_of_seasons">
+        <item quantity="one">%1$,d ta fasl</item>
+        <item quantity="other">%1$,d ta fasl</item>
+    </plurals>
+    <plurals name="program_number_of_tracks">
+        <item quantity="one">%1$,d ta trek</item>
+        <item quantity="other">%1$,d ta trek</item>
+    </plurals>
+    <plurals name="program_thumbs_down_accessibility_description">
+        <item quantity="one">%1$d ta salbiy baho</item>
+        <item quantity="other">%1$d ta salbiy baho</item>
+    </plurals>
+    <plurals name="program_thumbs_up_accessibility_description">
+        <item quantity="one">%1$d ta ijobiy baho</item>
+        <item quantity="other">%1$d ta ijobiy baho</item>
+    </plurals>
+</resources>

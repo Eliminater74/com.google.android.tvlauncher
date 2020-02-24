@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="app_channel_count">
+        <item quantity="one">%d канал</item>
+        <item quantity="few">%d канали</item>
+        <item quantity="many">%d каналів</item>
+        <item quantity="other">%d каналу</item>
+    </plurals>
+    <plurals name="notification_panel_icon_accessibility_description">
+        <item quantity="one">%d сповіщення системи</item>
+        <item quantity="few">%d сповіщення системи</item>
+        <item quantity="many">%d сповіщень системи</item>
+        <item quantity="other">%d сповіщення системи</item>
+    </plurals>
+    <plurals name="program_interactions_fans">
+        <item quantity="one">%1$,d шанувальник</item>
+        <item quantity="few">%1$,d шанувальники</item>
+        <item quantity="many">%1$,d шанувальників</item>
+        <item quantity="other">%1$,d шанувальника</item>
+    </plurals>
+    <plurals name="program_interactions_followers">
+        <item quantity="one">%1$,d підписка</item>
+        <item quantity="few">%1$,d підписки</item>
+        <item quantity="many">%1$,d підписок</item>
+        <item quantity="other">%1$,d підписки</item>
+    </plurals>
+    <plurals name="program_interactions_likes">
+        <item quantity="one">%1$,d оцінка &quot;подобається&quot;</item>
+        <item quantity="few">%1$,d оцінки &quot;подобається&quot;</item>
+        <item quantity="many">%1$,d оцінок &quot;подобається&quot;</item>
+        <item quantity="other">%1$,d оцінки &quot;подобається&quot;</item>
+    </plurals>
+    <plurals name="program_interactions_listens">
+        <item quantity="one">%1$,d сеанс прослуховування</item>
+        <item quantity="few">%1$,d сеанси прослуховування</item>
+        <item quantity="many">%1$,d сеансів прослуховування</item>
+        <item quantity="other">%1$,d сеансу прослуховування</item>
+    </plurals>
+    <plurals name="program_interactions_thumbs">
+        <item quantity="one">%1$,d оцінка &quot;подобається&quot;</item>
+        <item quantity="few">%1$,d оцінки &quot;подобається&quot;</item>
+        <item quantity="many">%1$,d оцінок &quot;подобається&quot;</item>
+        <item quantity="other">%1$,d оцінки &quot;подобається&quot;</item>
+    </plurals>
+    <plurals name="program_interactions_viewers">
+        <item quantity="one">%1$,d глядач</item>
+        <item quantity="few">%1$,d глядачі</item>
+        <item quantity="many">%1$,d глядачів</item>
+        <item quantity="other">%1$,d глядача</item>
+    </plurals>
+    <plurals name="program_interactions_views">
+        <item quantity="one">%1$,d перегляд</item>
+        <item quantity="few">%1$,d перегляди</item>
+        <item quantity="many">%1$,d переглядів</item>
+        <item quantity="other">%1$,d перегляду</item>
+    </plurals>
+    <plurals name="program_number_of_chapters">
+        <item quantity="one">%1$,d розділ</item>
+        <item quantity="few">%1$,d розділи</item>
+        <item quantity="many">%1$,d розділів</item>
+        <item quantity="other">%1$,d розділу</item>
+    </plurals>
+    <plurals name="program_number_of_episodes">
+        <item quantity="one">%1$,d серія</item>
+        <item quantity="few">%1$,d серії</item>
+        <item quantity="many">%1$,d серій</item>
+        <item quantity="other">%1$,d серії</item>
+    </plurals>
+    <plurals name="program_number_of_seasons">
+        <item quantity="one">%1$,d сезон</item>
+        <item quantity="few">%1$,d сезони</item>
+        <item quantity="many">%1$,d сезонів</item>
+        <item quantity="other">%1$,d сезону</item>
+    </plurals>
+    <plurals name="program_number_of_tracks">
+        <item quantity="one">%1$,d композиція</item>
+        <item quantity="few">%1$,d композиції</item>
+        <item quantity="many">%1$,d композицій</item>
+        <item quantity="other">%1$,d композиції</item>
+    </plurals>
+    <plurals name="program_thumbs_down_accessibility_description">
+        <item quantity="one">%1$d оцінка &quot;не подобається&quot;</item>
+        <item quantity="few">%1$d оцінки &quot;не подобається&quot;</item>
+        <item quantity="many">%1$d оцінок &quot;не подобається&quot;</item>
+        <item quantity="other">%1$d оцінки &quot;не подобається&quot;</item>
+    </plurals>
+    <plurals name="program_thumbs_up_accessibility_description">
+        <item quantity="one">%1$d оцінка &quot;подобається&quot;</item>
+        <item quantity="few">%1$d оцінки &quot;подобається&quot;</item>
+        <item quantity="many">%1$d оцінок &quot;подобається&quot;</item>
+        <item quantity="other">%1$d оцінки &quot;подобається&quot;</item>
+    </plurals>
+</resources>

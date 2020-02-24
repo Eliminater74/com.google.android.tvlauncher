@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android" android:background="?android:attr/selectableItemBackground" android:focusable="true" android:clickable="true" android:layout_width="match_parent" android:layout_height="@dimen/input_preference_height">
+    <ImageView android:layout_gravity="left|center_vertical|center_horizontal|center|start" android:id="@android:id/icon" android:layout_width="@dimen/input_icon_view_size" android:layout_height="@dimen/input_icon_view_size" android:importantForAccessibility="no" android:layout_marginStart="@dimen/input_icon_margin_start"/>
+    <LinearLayout android:layout_gravity="left|center_vertical|center_horizontal|center|start" android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="@dimen/input_label_margin_start">
+        <TextView android:textSize="@dimen/input_label_font_size" android:textColor="@color/input_label_default_text_color" android:ellipsize="end" android:id="@android:id/title" android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_medium"/>
+        <TextView android:textSize="@dimen/input_parent_label_font_size" android:textColor="@color/input_parent_label_default_text_color" android:ellipsize="end" android:id="@android:id/summary" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="@dimen/input_parent_label_margin_top"/>
+    </LinearLayout>
+</FrameLayout>

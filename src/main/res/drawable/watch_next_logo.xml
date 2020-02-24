@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape>
+            <solid android:color="@color/watch_next_logo_background"/>
+            <size android:height="@dimen/watch_next_logo_size" android:width="@dimen/watch_next_logo_size"/>
+        </shape>
+    </item>
+    <item android:gravity="center" android:drawable="@drawable/ic_watch_next"/>
+</layer-list>

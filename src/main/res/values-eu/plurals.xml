@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="app_channel_count">
+        <item quantity="one">%d kanal</item>
+        <item quantity="other">%d kanal</item>
+    </plurals>
+    <plurals name="notification_panel_icon_accessibility_description">
+        <item quantity="one">Sistemaren %d jakinarazpen dago</item>
+        <item quantity="other">Sistemaren %d jakinarazpen daude</item>
+    </plurals>
+    <plurals name="program_interactions_fans">
+        <item quantity="one">%1$,d zale</item>
+        <item quantity="other">%1$,d zale</item>
+    </plurals>
+    <plurals name="program_interactions_followers">
+        <item quantity="one">%1$,d jarraitzaile</item>
+        <item quantity="other">%1$,d jarraitzaile</item>
+    </plurals>
+    <plurals name="program_interactions_likes">
+        <item quantity="one">Gustatu izanaren %1$,d adierazpen</item>
+        <item quantity="other">Gustatu izanaren %1$,d adierazpen</item>
+    </plurals>
+    <plurals name="program_interactions_listens">
+        <item quantity="one">%1$,d entzunaldi</item>
+        <item quantity="other">%1$,d entzunaldi</item>
+    </plurals>
+    <plurals name="program_interactions_thumbs">
+        <item quantity="one">%1$,d erpuru gora</item>
+        <item quantity="other">%1$,d erpuru gora</item>
+    </plurals>
+    <plurals name="program_interactions_viewers">
+        <item quantity="one">%1$,d ikusle</item>
+        <item quantity="other">%1$,d ikusle</item>
+    </plurals>
+    <plurals name="program_interactions_views">
+        <item quantity="one">%1$,d ikustaldi</item>
+        <item quantity="other">%1$,d ikustaldi</item>
+    </plurals>
+    <plurals name="program_number_of_chapters">
+        <item quantity="one">%1$,d atal</item>
+        <item quantity="other">%1$,d atal</item>
+    </plurals>
+    <plurals name="program_number_of_episodes">
+        <item quantity="one">%1$,d atal</item>
+        <item quantity="other">%1$,d atal</item>
+    </plurals>
+    <plurals name="program_number_of_seasons">
+        <item quantity="one">%1$,d denboraldi</item>
+        <item quantity="other">%1$,d denboraldi</item>
+    </plurals>
+    <plurals name="program_number_of_tracks">
+        <item quantity="one">%1$,d pista</item>
+        <item quantity="other">%1$,d pista</item>
+    </plurals>
+    <plurals name="program_thumbs_down_accessibility_description">
+        <item quantity="one">%1$d erpuru behera</item>
+        <item quantity="other">%1$d erpuru behera</item>
+    </plurals>
+    <plurals name="program_thumbs_up_accessibility_description">
+        <item quantity="one">%1$d erpuru gora</item>
+        <item quantity="other">%1$d erpuru gora</item>
+    </plurals>
+</resources>

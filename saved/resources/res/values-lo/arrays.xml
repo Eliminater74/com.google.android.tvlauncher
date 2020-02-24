@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="genre_labels">
+        <item>ຄອບຄົວ/ເດັກນ້ອຍ</item>
+        <item>ກິລາ</item>
+        <item>ຊັອບປິງ</item>
+        <item>ຮູບເງົາ</item>
+        <item>ຄອມເມດີ</item>
+        <item>ການເດີນທາງ</item>
+        <item>ດຣາມ່າ</item>
+        <item>ການສຶກສາ</item>
+        <item>ສັດ</item>
+        <item>ຂ່າວ</item>
+        <item>ເກມ</item>
+        <item>ສິລະປະ</item>
+        <item>ບັນເທີງ</item>
+        <item>ການດຳລົງຊີວິດ</item>
+        <item>ດົນຕີ</item>
+        <item>ການສະແດງ</item>
+        <item>ເທັກໂນໂລຢີ/ວິທະຍາສາດ</item>
+    </array>
+    <array name="program_canonical_genre_labels_formats">
+        <item>%1$s</item>
+        <item>%1$s, %2$s</item>
+        <item>%1$s, %2$s, %3$s</item>
+        <item>%1$s, %2$s, %3$s, %4$s</item>
+        <item>%1$s, %2$s, %3$s, %4$s, %5$s</item>
+    </array>
+    <array name="search_orb_text_to_show">
+        <item>ລອງຊອກຫາຄຳວ່າ &quot;Will Smith&quot;</item>
+        <item>ລອງຊອກຫາຄຳວ່າ &quot;Michael Fassbender&quot;</item>
+        <item>ລອງຊອກຫາຄຳວ່າ &quot;Jennifer Lawrence&quot;</item>
+        <item>ລອງຊອກຫາຄຳວ່າ &quot;Olivia Wilde&quot;</item>
+        <item>ລອງຊອກຫາຄຳວ່າ &quot;romantic comedies&quot;</item>
+        <item>ລອງຊອກຫາຄຳວ່າ &quot;sci-fi movies&quot;</item>
+        <item>ລອງຊອກຫາຄຳວ່າ &quot;superhero movies&quot;</item>
+        <item>ລອງຊອກຫາຄຳວ່າ &quot;action movies&quot;</item>
+        <item>ລອງຊອກຫາຄຳວ່າ &quot;Star Trek&quot;</item>
+        <item>ລອງ​ຊອກ​ຫາ​ຄຳ​ວ່າ &quot;Sherlock&quot;</item>
+        <item>ລອງ​ຊອກ​ຫາ​ຄຳ​ວ່າ &quot;American Idol&quot;</item>
+        <item>ລອງ​ຊອກ​ຫາ​ຄຳ​ວ່າ &quot;Star Trek&quot;</item>
+        <item>ລອງ​ຊອກ​ຫາ​ຄຳ​ວ່າ &quot;Castle&quot;</item>
+        <item>ລອງຊອກຫາຄຳວ່າ &quot;pictures of Beyonce&quot;</item>
+        <item>ລອງຊອກຫາຄຳວ່າ &quot;pictures of London&quot;</item>
+        <item>ລອງຊອກຫາຄຳວ່າ &quot;pictures of Godzilla&quot;</item>
+        <item>ລອງຖາມວ່າ, &quot;what&apos;s the Giants score?&quot;</item>
+        <item>ລອງຖາມວ່າ, &quot;what&apos;s the Knicks score?&quot;</item>
+        <item>ລອງຖາມວ່າ, &quot;what&apos;s the Red Wings score?&quot;</item>
+        <item>ລອງຖາມວ່າ, &quot;what&apos;s the Seahawks score?&quot;</item>
+        <item>ລອງຖາມວ່າ, &quot;what&apos;s the weather in New York?&quot;</item>
+        <item>ລອງຖາມວ່າ, &quot;what&apos;s the weather in San Francisco?&quot;</item>
+        <item>ລອງຖາມວ່າ, &quot;what&apos;s the weather in Paris?&quot;</item>
+        <item>ລອງຖາມວ່າ, &quot;what&apos;s the weather in Cozumel?&quot;</item>
+        <item>ລອງຖາມວ່າ, &quot;How tall is Brad Pitt?&quot;</item>
+        <item>ລອງຖາມວ່າ, &quot;How hot is the sun?&quot;</item>
+        <item>ລອງຖາມວ່າ, &quot;When was John Wayne born?&quot;</item>
+        <item>ລອງໃຊ້, &quot;open YouTube&quot;</item>
+        <item>ລອງໃຊ້, &quot;open Play Movies&quot;</item>
+    </array>
+</resources>

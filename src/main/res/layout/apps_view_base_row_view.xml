@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.tvlauncher.appsview.LaunchItemsRowView xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="horizontal" android:clipChildren="false" android:clipToPadding="false" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="@dimen/app_row_view_margin_bottom" android:paddingStart="@dimen/app_view_padding_start" android:paddingEnd="@dimen/overscan_horizontal"/>

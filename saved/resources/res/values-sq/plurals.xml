@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="app_channel_count">
+        <item quantity="one">%d kanal</item>
+        <item quantity="other">%d kanale</item>
+    </plurals>
+    <plurals name="notification_panel_icon_accessibility_description">
+        <item quantity="one">Ka %d njoftim të sistemit</item>
+        <item quantity="other">Ka %d njoftime të sistemit</item>
+    </plurals>
+    <plurals name="program_interactions_fans">
+        <item quantity="one">%1$,d fans</item>
+        <item quantity="other">%1$,d fansa</item>
+    </plurals>
+    <plurals name="program_interactions_followers">
+        <item quantity="one">%1$,d ndjekës</item>
+        <item quantity="other">%1$,d ndjekës</item>
+    </plurals>
+    <plurals name="program_interactions_likes">
+        <item quantity="one">%1$,d pëlqim</item>
+        <item quantity="other">%1$,d pëlqime</item>
+    </plurals>
+    <plurals name="program_interactions_listens">
+        <item quantity="one">%1$,d dëgjim</item>
+        <item quantity="other">%1$,d dëgjime</item>
+    </plurals>
+    <plurals name="program_interactions_thumbs">
+        <item quantity="one">%1$,d pëlqim miratues</item>
+        <item quantity="other">%1$,d pëlqime miratuese</item>
+    </plurals>
+    <plurals name="program_interactions_viewers">
+        <item quantity="one">%1$,d shikues</item>
+        <item quantity="other">%1$,d shikues</item>
+    </plurals>
+    <plurals name="program_interactions_views">
+        <item quantity="one">%1$,d shikim</item>
+        <item quantity="other">%1$,d shikime</item>
+    </plurals>
+    <plurals name="program_number_of_chapters">
+        <item quantity="one">%1$,d kapitull</item>
+        <item quantity="other">%1$,d kapituj</item>
+    </plurals>
+    <plurals name="program_number_of_episodes">
+        <item quantity="one">%1$,d episod</item>
+        <item quantity="other">%1$,d episode</item>
+    </plurals>
+    <plurals name="program_number_of_seasons">
+        <item quantity="one">%1$,d sezon</item>
+        <item quantity="other">%1$,d sezone</item>
+    </plurals>
+    <plurals name="program_number_of_tracks">
+        <item quantity="one">%1$,d pjesë muzikore</item>
+        <item quantity="other">%1$,d pjesë muzikore</item>
+    </plurals>
+    <plurals name="program_thumbs_down_accessibility_description">
+        <item quantity="one">%1$d mospëlqim</item>
+        <item quantity="other">%1$d mospëlqime</item>
+    </plurals>
+    <plurals name="program_thumbs_up_accessibility_description">
+        <item quantity="one">%1$d pëlqim miratues</item>
+        <item quantity="other">%1$d pëlqime miratuese</item>
+    </plurals>
+</resources>

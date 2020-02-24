@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="genre_labels">
+        <item>ครอบครัว/เด็ก</item>
+        <item>กีฬา</item>
+        <item>ช็อปปิ้ง</item>
+        <item>ภาพยนตร์</item>
+        <item>ตลกเบาสมอง</item>
+        <item>การเดินทาง</item>
+        <item>ดราม่า</item>
+        <item>การศึกษา</item>
+        <item>สัตว์/สัตว์ป่า</item>
+        <item>ข่าวสาร</item>
+        <item>เกม</item>
+        <item>ศิลปะ</item>
+        <item>บันเทิง</item>
+        <item>ไลฟ์สไตล์</item>
+        <item>เพลง</item>
+        <item>ปฐมทัศน์</item>
+        <item>วิทยาศาสตร์/เทคฯ</item>
+    </array>
+    <array name="program_canonical_genre_labels_formats">
+        <item>%1$s</item>
+        <item>%1$s, %2$s</item>
+        <item>%1$s, %2$s, %3$s</item>
+        <item>%1$s, %2$s, %3$s, %4$s</item>
+        <item>%1$s, %2$s, %3$s, %4$s, %5$s</item>
+    </array>
+    <array name="search_orb_text_to_show">
+        <item>ลองค้นหาคำว่า &quot;วิลล์ สมิธ&quot;</item>
+        <item>ลองค้นหาคำว่า &quot;ไมเคิล ฟาสเบนเดอร์&quot;</item>
+        <item>ลองค้นหาคำว่า &quot;เจนนิเฟอร์ ลอว์เรนซ์&quot;</item>
+        <item>ลองค้นหาคำว่า &quot;โอลิเวีย ไวลด์&quot;</item>
+        <item>ลองค้นหาคำว่า &quot;ตลกโรแมนติก&quot;</item>
+        <item>ลองค้นหาคำว่า &quot;ภาพยนตร์ไซไฟ&quot;</item>
+        <item>ลองค้นหาคำว่า &quot;ภาพยนตร์ซูเปอร์ฮีโร่&quot;</item>
+        <item>ลองค้นหาคำว่า &quot;ภาพยนตร์แอ็กชัน&quot;</item>
+        <item>ลองค้นหาคำว่า &quot;สตาร์ เทรค&quot;</item>
+        <item>ลองค้นหาคำว่า &quot;เชอร์ล็อก&quot;</item>
+        <item>ลองค้นหาคำว่า &quot;ไทยแลนด์ก็อตทาเลนต์&quot;</item>
+        <item>ลองค้นหาคำว่า &quot;สตาร์ เทรค&quot;</item>
+        <item>ลองค้นหาคำว่า &quot;ปราสาท&quot;</item>
+        <item>ลองค้นหาคำว่า &quot;ภาพของบียอนเซ่&quot;</item>
+        <item>ลองค้นหาคำว่า &quot;ภาพของลอนดอน&quot;</item>
+        <item>ลองค้นหาคำว่า &quot;ภาพของก็อตซิลลา&quot;</item>
+        <item>ลองถามว่า &quot;แต้มของบางกอกกล๊าสเป็นเท่าไหร่&quot;</item>
+        <item>ลองถามว่า &quot;แต้มของบุรีรัมย์ ยูไนเต็ดเป็นเท่าไหร่&quot;</item>
+        <item>ลองถามว่า &quot;แต้มของแบงค็อก ยูไนเต็ดเป็นเท่าไหร่&quot;</item>
+        <item>ลองถามว่า &quot;แต้มของสงขลา ยูไนเต็ดเป็นเท่าไหร่&quot;</item>
+        <item>ลองถามว่า &quot;อากาศที่นิวยอร์กเป็นอย่างไร&quot;</item>
+        <item>ลองถามว่า &quot;อากาศที่ซานฟรานซิสโกเป็นอย่างไร&quot;</item>
+        <item>ลองถามว่า &quot;อากาศที่ปารีสเป็นอย่างไร&quot;</item>
+        <item>ลองถามว่า &quot;อากาศที่โคซูเมลเป็นอย่างไร&quot;</item>
+        <item>ลองถามว่า &quot;แบรด พิตต์สูงเท่าไหร่&quot;</item>
+        <item>ลองถามว่า &quot;ดวงอาทิตย์ร้อนแค่ไหน&quot;</item>
+        <item>ลองถามว่า &quot;จอห์น เวนน์เกิดวันใด&quot;</item>
+        <item>ลอง &quot;เปิด YouTube&quot;</item>
+        <item>ลอง &quot;เปิด Play Movies&quot;</item>
+    </array>
+</resources>

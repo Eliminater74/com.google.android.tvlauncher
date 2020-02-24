@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="genre_labels">
+        <item>العائلات/الأطفال</item>
+        <item>رياضة</item>
+        <item>تسوّق</item>
+        <item>أفلام</item>
+        <item>كوميديا</item>
+        <item>سفر</item>
+        <item>دراما</item>
+        <item>تعليم</item>
+        <item>حيوانات/حياة برية</item>
+        <item>أخبار</item>
+        <item>ألعاب</item>
+        <item>فنون</item>
+        <item>ترفيه</item>
+        <item>نمط حياة</item>
+        <item>موسيقي</item>
+        <item>العرض الأول</item>
+        <item>تكنولوجيا/علوم</item>
+    </array>
+    <array name="program_canonical_genre_labels_formats">
+        <item>%1$s</item>
+        <item>%1$s، %2$s</item>
+        <item>%1$s، %2$s، %3$s</item>
+        <item>%1$s، %2$s، %3$s، %4$s</item>
+        <item>%1$s، %2$s، %3$s، %4$s، %5$s</item>
+    </array>
+    <array name="search_orb_text_to_show">
+        <item>جرِّب البحث عن &quot;أحمد السقا&quot;</item>
+        <item>جرِّب البحث عن &quot;أحمد الشقيري&quot;</item>
+        <item>جرِّب البحث عن &quot;ماهر زين&quot;</item>
+        <item>جرِّب البحث عن &quot;كندة علوش&quot;</item>
+        <item>جرِّب البحث عن &quot;الكوميديا الرومانسية&quot;</item>
+        <item>جرِّب البحث عن &quot;أفلام الخيال العلمي&quot;</item>
+        <item>جرِّب البحث عن &quot;أفلام الأبطال الخارقين&quot;</item>
+        <item>جرِّب البحث عن &quot;أفلام الحركة&quot;</item>
+        <item>جرِّب البحث عن &quot;الرسالة&quot;</item>
+        <item>جرِّب البحث عن &quot;وادي الذئاب&quot;</item>
+        <item>جرِّب البحث عن &quot;أراب آيدول&quot;</item>
+        <item>جرِّب البحث عن &quot;الرسالة&quot;</item>
+        <item>جرِّب البحث عن &quot;الأب الروحي&quot;</item>
+        <item>جرِّب البحث عن &quot;صور أبو تريكة&quot;</item>
+        <item>جرِّب البحث عن &quot;صور دبي&quot;</item>
+        <item>جرِّب البحث عن &quot;صور غودزيلا&quot;</item>
+        <item>جرِّب طرح السؤال &quot;ما نتيجة مباراة الأهلي؟&quot;</item>
+        <item>جرِّب طرح السؤال &quot;ما نتيجة مباراة الزمالك؟&quot;</item>
+        <item>جرِّب طرح السؤال &quot;ما نتيجة مباراة المنتخب المصري؟&quot;</item>
+        <item>جرِّب طرح السؤال &quot;ما نتيجة مباراة الهلال السعودي؟&quot;</item>
+        <item>جرِّب طرح السؤال &quot;ما حالة الطقس في دبي؟&quot;</item>
+        <item>جرِّب طرح السؤال &quot;ما حالة الطقس في القاهرة؟&quot;</item>
+        <item>جرِّب طرح السؤال &quot;ما حالة الطقس في مكة؟&quot;</item>
+        <item>جرِّب طرح السؤال &quot;ما حالة الطقس في لبنان؟&quot;</item>
+        <item>جرِّب طرح السؤال &quot;كم يبلغ طول كريم عبد العزيز؟&quot;</item>
+        <item>جرِّب طرح السؤال &quot;كم تبلغ حرارة الشمس؟&quot;</item>
+        <item>جرِّب طرح السؤال &quot;متى ولد أحمد زويل؟&quot;</item>
+        <item>جرِّب &quot;فتح YouTube&quot;</item>
+        <item>جرِّب &quot;فتح أفلام Play&quot;</item>
+    </array>
+</resources>

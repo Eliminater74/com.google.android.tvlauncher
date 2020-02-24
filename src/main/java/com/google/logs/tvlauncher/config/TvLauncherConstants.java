@@ -1,0 +1,56 @@
+package com.google.logs.tvlauncher.config;
+
+import com.google.android.libraries.social.analytics.visualelement.VisualElement;
+import com.google.android.libraries.social.analytics.visualelement.VisualElementTag;
+
+public final class TvLauncherConstants {
+    public static final VisualElementTag ADD_APP_TO_FAVORITES_BUTTON = new VisualElementTag(41931);
+    public static final VisualElementTag ADD_TO_FAVORITES_MENU_ITEM = new VisualElementTag(41932);
+    public static final VisualElementTag ADD_TO_WATCH_NEXT_MENU_ITEM = new VisualElementTag(41933);
+    public static final VisualElementTag APPS_CONTAINER = new VisualElementTag(41934);
+    public static final VisualElementTag APPS_PAGE = new VisualElementTag(41935);
+    public static final VisualElementTag APPS_VIEW_LAUNCH_BUTTON = new VisualElementTag(41936);
+    public static final VisualElementTag CHANNEL_BROWSABLE_TOGGLE = new VisualElementTag(41972);
+    public static final VisualElementTag CHANNEL_ROW = new VisualElementTag(41973);
+    public static final VisualElementTag CHANNEL_TITLE_BUTTON = new VisualElementTag(41937);
+    public static final VisualElementTag CUSTOMIZE_APP_CHANNELS_CONTAINER = new VisualElementTag(41974);
+    public static final VisualElementTag CUSTOMIZE_CHANNELS_BUTTON = new VisualElementTag(41938);
+    public static final VisualElementTag CUSTOMIZE_CHANNELS_CONTAINER = new VisualElementTag(41975);
+    public static final VisualElementTag DISMISS_NOTIFICATION_BUTTON = new VisualElementTag(41939);
+    public static final VisualElementTag FAVORITE_APPS_CONTAINER = new VisualElementTag(41940);
+    public static final VisualElementTag GAMES_CONTAINER = new VisualElementTag(41941);
+    public static final VisualElementTag GET_MORE_APPS_BUTTON = new VisualElementTag(41942);
+    public static final VisualElementTag GET_MORE_GAMES_BUTTON = new VisualElementTag(41943);
+    public static final VisualElementTag HOME_PAGE = new VisualElementTag(41944, true, VisualElement.class);
+    public static final VisualElementTag HOME_SCREEN_SETTINGS_PAGE = new VisualElementTag(41976, true, VisualElement.class);
+    public static final VisualElementTag INFO_MENU_ITEM = new VisualElementTag(41945);
+    public static final VisualElementTag INPUT = new VisualElementTag(42150);
+    public static final VisualElementTag INPUTS_LAUNCH_BUTTON = new VisualElementTag(42151);
+    public static final VisualElementTag INPUTS_PAGE = new VisualElementTag(42152, true, VisualElement.class);
+    public static final VisualElementTag KEYBOARD_SEARCH_BUTTON = new VisualElementTag(41946);
+    public static final VisualElementTag LAUNCH_ITEM = new VisualElementTag(41947);
+    public static final VisualElementTag MOVE_CHANNEL_BUTTON = new VisualElementTag(41948);
+    public static final VisualElementTag MOVE_MENU_ITEM = new VisualElementTag(41949);
+    public static final VisualElementTag NOTIFICATION = new VisualElementTag(41950);
+    public static final VisualElementTag NOTIFICATIONS_INDICATOR_BUTTON = new VisualElementTag(41953);
+    public static final VisualElementTag NOTIFICATIONS_PAGE = new VisualElementTag(41954, true, VisualElement.class);
+    public static final VisualElementTag NOTIFICATION_BANNER_CONTAINER = new VisualElementTag(41951);
+    public static final VisualElementTag NOTIFICATION_DETAILS_BUTTON = new VisualElementTag(41952);
+    public static final VisualElementTag OPEN_APP_CARD = new VisualElementTag(41955);
+    public static final VisualElementTag OPEN_MENU_ITEM = new VisualElementTag(41956);
+    public static final VisualElementTag POPUP_MENU = new VisualElementTag(41957);
+    public static final VisualElementTag PROGRAM_ITEM = new VisualElementTag(41977);
+    public static final VisualElementTag REMOVE_CHANNEL_BUTTON = new VisualElementTag(41958);
+    public static final VisualElementTag REMOVE_FROM_FAVORITES_MENU_ITEM = new VisualElementTag(41959);
+    public static final VisualElementTag REMOVE_FROM_WATCH_NEXT_MENU_ITEM = new VisualElementTag(41960);
+    public static final VisualElementTag REMOVE_MENU_ITEM = new VisualElementTag(41961);
+    public static final VisualElementTag SELECT_APP_PAGE = new VisualElementTag(41962, true, VisualElement.class);
+    public static final VisualElementTag SETTINGS_LAUNCH_BUTTON = new VisualElementTag(41963);
+    public static final VisualElementTag UNINSTALL_MENU_ITEM = new VisualElementTag(41964);
+    public static final VisualElementTag VOICE_SEARCH_BUTTON = new VisualElementTag(41965);
+    public static final VisualElementTag WATCH_NEXT_BUTTON = new VisualElementTag(41967);
+    public static final VisualElementTag WATCH_NEXT_CHANNEL_CUSTOMIZATION_PAGE = new VisualElementTag(41968, true, VisualElement.class);
+    public static final VisualElementTag WATCH_NEXT_CONTAINER = new VisualElementTag(41969);
+    public static final VisualElementTag WATCH_NEXT_PROMISE_CARD = new VisualElementTag(41970);
+    public static final VisualElementTag WATCH_NEXT_TOGGLE = new VisualElementTag(41971);
+}

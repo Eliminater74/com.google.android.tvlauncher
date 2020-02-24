@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="app_channel_count">
+        <item quantity="one">%d channels</item>
+        <item quantity="other">%d ալիք</item>
+    </plurals>
+    <plurals name="notification_panel_icon_accessibility_description">
+        <item quantity="one">There are %d system notifications</item>
+        <item quantity="other">Համակարգի %d ծանուցում կա</item>
+    </plurals>
+    <plurals name="program_thumbs_down_accessibility_description">
+        <item quantity="one">%1$d «Վատն է» գնահատական</item>
+        <item quantity="other">%1$d «Վատն է» գնահատական</item>
+    </plurals>
+    <plurals name="program_thumbs_up_accessibility_description">
+        <item quantity="one">%1$d «Լավն է» գնահատական</item>
+        <item quantity="other">%1$d «Լավն է» գնահատական</item>
+    </plurals>
+</resources>

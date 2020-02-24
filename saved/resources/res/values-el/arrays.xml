@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="genre_labels">
+        <item>Οικογένεια/παιδικά</item>
+        <item>Αθλητικά</item>
+        <item>Αγορές</item>
+        <item>Ταινίες</item>
+        <item>Κωμωδία</item>
+        <item>Ταξίδια</item>
+        <item>Δράμα</item>
+        <item>Εκπαίδευση</item>
+        <item>Ζώα/άγρια φύση</item>
+        <item>Ειδήσεις</item>
+        <item>Παιχνίδια</item>
+        <item>Τέχνες</item>
+        <item>Ψυχαγωγία</item>
+        <item>Τρόπος ζωής</item>
+        <item>Μουσική</item>
+        <item>Πρεμιέρες</item>
+        <item>Τεχνολογία/επιστήμη</item>
+    </array>
+    <array name="program_canonical_genre_labels_formats">
+        <item>%1$s</item>
+        <item>%1$s, %2$s</item>
+        <item>%1$s, %2$s, %3$s</item>
+        <item>%1$s, %2$s, %3$s, %4$s</item>
+        <item>%1$s, %2$s, %3$s, %4$s, %5$s</item>
+    </array>
+    <array name="search_orb_text_to_show">
+        <item>Δοκιμάστε να κάνετε αναζήτηση για &quot;Will Smith&quot;</item>
+        <item>Δοκιμάστε να κάνετε αναζήτηση για &quot;Michael Fassbender&quot;</item>
+        <item>Δοκιμάστε να κάνετε αναζήτηση για &quot;Jennifer Lawrence&quot;</item>
+        <item>Δοκιμάστε να κάνετε αναζήτηση για &quot;Olivia Wilde&quot;</item>
+        <item>Δοκιμάστε να κάνετε αναζήτηση για &quot;ρομαντικές κωμωδίες&quot;</item>
+        <item>Δοκιμάστε να κάνετε αναζήτηση για &quot;ταινίες επιστημονικής φαντασίας&quot;</item>
+        <item>Δοκιμάστε να κάνετε αναζήτηση για &quot;ταινίες με υπερήρωες&quot;</item>
+        <item>Δοκιμάστε να κάνετε αναζήτηση για &quot;ταινίες δράσης&quot;</item>
+        <item>Δοκιμάστε να κάνετε αναζήτηση για &quot;Star Trek&quot;</item>
+        <item>Δοκιμάστε να κάνετε αναζήτηση για &quot;Sherlock&quot;</item>
+        <item>Δοκιμάστε να κάνετε αναζήτηση για &quot;American Idol&quot;</item>
+        <item>Δοκιμάστε να κάνετε αναζήτηση για &quot;Star Trek&quot;</item>
+        <item>Δοκιμάστε να κάνετε αναζήτηση για &quot;Castle&quot;</item>
+        <item>Δοκιμάστε να κάνετε αναζήτηση για &quot;εικόνες της Beyonce&quot;</item>
+        <item>Δοκιμάστε να κάνετε αναζήτηση για &quot;εικόνες από το Λονδίνο&quot;</item>
+        <item>Δοκιμάστε να κάνετε αναζήτηση για &quot;εικόνες του Godzilla&quot;</item>
+        <item>Δοκιμάστε να ρωτήσετε &quot;Ποιο είναι το αποτέλεσμα του αγώνα των Giants;&quot;</item>
+        <item>Δοκιμάστε να ρωτήσετε &quot;Ποιο είναι το αποτέλεσμα του αγώνα των Knicks;&quot;</item>
+        <item>Δοκιμάστε να ρωτήσετε &quot;Ποιο είναι το αποτέλεσμα του αγώνα των Red Wings;&quot;</item>
+        <item>Δοκιμάστε να ρωτήσετε &quot;Ποιο είναι το αποτέλεσμα του αγώνα των Seahawks;&quot;</item>
+        <item>Δοκιμάστε να ρωτήσετε &quot;Πώς είναι ο καιρός στη Νέα Υόρκη;&quot;</item>
+        <item>Δοκιμάστε να ρωτήσετε &quot;Πώς είναι ο καιρός στο Σαν Φρανσίσκο;&quot;</item>
+        <item>Δοκιμάστε να ρωτήσετε &quot;Πώς είναι ο καιρός στο Παρίσι;&quot;</item>
+        <item>Δοκιμάστε να ρωτήσετε &quot;Πώς είναι ο καιρός στο Κοζουμέλ;&quot;</item>
+        <item>Δοκιμάστε να ρωτήσετε &quot;Τι ύψος έχει ο Brad Pitt;&quot;</item>
+        <item>Δοκιμάστε να ρωτήσετε &quot;Ποια είναι η θερμοκρασία του ήλιου;&quot;</item>
+        <item>Δοκιμάστε να ρωτήσετε &quot;Πότε γεννήθηκε ο John Wayne;&quot;</item>
+        <item>Δοκιμάστε την εντολή &quot;άνοιγμα του YouTube&quot;</item>
+        <item>Δοκιμάστε την εντολή &quot;άνοιγμα των Ταινιών Play&quot;</item>
+    </array>
+</resources>

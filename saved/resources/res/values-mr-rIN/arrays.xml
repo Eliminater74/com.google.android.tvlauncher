@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="genre_labels">
+        <item>कुटुंब/मुले</item>
+        <item>क्रिडा</item>
+        <item>खरेदी</item>
+        <item>चित्रपट</item>
+        <item>विनोदी</item>
+        <item>प्रवास</item>
+        <item>नाटक</item>
+        <item>शिक्षण</item>
+        <item>प्राणी/वन्यजीवन</item>
+        <item>बातम्या</item>
+        <item>गेमिंग</item>
+        <item>कला</item>
+        <item>मनोरंजन</item>
+        <item>जीवनशैली</item>
+        <item>संगीत</item>
+        <item>प्रमुख</item>
+        <item>तंत्रज्ञान/विज्ञान</item>
+    </array>
+    <array name="program_canonical_genre_labels_formats">
+        <item>%1$s</item>
+        <item>%1$s, %2$s</item>
+        <item>%1$s, %2$s, %3$s</item>
+        <item>%1$s, %2$s, %3$s, %4$s</item>
+        <item>%1$s, %2$s, %3$s, %4$s, %5$s</item>
+    </array>
+    <array name="search_orb_text_to_show">
+        <item>&quot;विल स्मिथ&quot; शोधून पहा</item>
+        <item>&quot;मायकल फासबेंडर&quot; शोधून पहा</item>
+        <item>&quot;जेनिफर लॉरेन्स&quot; शोधून पहा</item>
+        <item>&quot;ऑलिव्‍हिया वाइल्‍डे&quot; शोधून पहा</item>
+        <item>&quot;रोमँटिक कॉमेडीज&quot; शोधून पहा</item>
+        <item>&quot;sci-fi चित्रपट&quot; शोधून पहा</item>
+        <item>&quot;सुपरहीरो चित्रपट&quot; शोधून पहा</item>
+        <item>&quot;अॅक्‍शन चित्रपट&quot; शोधून पहा</item>
+        <item>&quot;स्‍टार ट्रेक&quot; शोधून पहा</item>
+        <item>&quot;शेरलॉक&quot; शोधून पहा</item>
+        <item>&quot;अमेरिकन आयडल&quot; शोधून पहा</item>
+        <item>&quot;स्‍टार ट्रेक&quot; शोधून पहा</item>
+        <item>&quot;कॅसल&quot; शोधून पहा</item>
+        <item>&quot;बियॉन्‍से ची चित्रे&apos;&apos; शोधून पहा</item>
+        <item>&quot;लंडन ची चित्रे&quot; शोधून पहा</item>
+        <item>&quot;गॉडझिला ची चित्रे&quot; शोधून पहा</item>
+        <item>&quot;जायंटचा स्कोअर काय आहे?&quot; विचारून पहा</item>
+        <item>&quot;निक्‍स चा स्कोअर काय आहे?&quot; विचारून पहा</item>
+        <item>&quot;रेड विंग्‍ज चा स्कोअर काय आहे?&quot; विचारून पहा</item>
+        <item>&quot;सीहॉक्स चा स्कोअर काय आहे?&quot; विचारून पहा</item>
+        <item>&quot;न्यू यॉर्क मधील हवामान कसे आहे?&quot; विचारून पहा</item>
+        <item>&quot;सॅन फ्रान्सिस्को मधील हवामान कसे आहे?&quot; विचारून पहा</item>
+        <item>&quot;पॅरिस मधील हवामान कसे आहे?&quot; विचारून पहा</item>
+        <item>&quot;कोझूमेल मधील हवामान कसे आहे?&quot; विचारून पहा</item>
+        <item>&quot;ब्रॅड पीट किती उंच आहे?&quot; विचारून पहा</item>
+        <item>&quot;सूर्य किती गरम आहे?&quot; विचारून पहा</item>
+        <item>&quot;जॉन वेन चा जन्म केव्हा झाला होता?&quot; विचारून पहा</item>
+        <item>&quot;YouTube उघडा&quot; विचारून पहा</item>
+        <item>&quot;चित्रपट प्‍ले करा उघडा&quot; विचारून पहा</item>
+    </array>
+</resources>

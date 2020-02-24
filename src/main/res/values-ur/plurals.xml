@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="notification_panel_icon_accessibility_description">
+        <item quantity="one">‏‎%d سسٹم اطلاع ہے</item>
+        <item quantity="other">‎%d سسٹم اطلاعات ہے</item>
+    </plurals>
+    <plurals name="program_interactions_fans">
+        <item quantity="one">‎%1$,d پرستار</item>
+        <item quantity="other">‎%1$,d پرستار</item>
+    </plurals>
+    <plurals name="program_interactions_followers">
+        <item quantity="one">‎%1$,d پیروکار</item>
+        <item quantity="other">‎%1$,d پیروکاران</item>
+    </plurals>
+    <plurals name="program_interactions_likes">
+        <item quantity="one">‎%1$,d پسندیدگی</item>
+        <item quantity="other">‎%1$,d پسندیدگیاں</item>
+    </plurals>
+    <plurals name="program_interactions_listens">
+        <item quantity="one">‎%1$,d سماعت</item>
+        <item quantity="other">‎%1$,d سماعتیں</item>
+    </plurals>
+    <plurals name="program_interactions_thumbs">
+        <item quantity="one">‏‎%1$,d‎‏ اظہار پسندیدگی</item>
+        <item quantity="other">‎%1$,d اظہار پسندیدگیاں</item>
+    </plurals>
+    <plurals name="program_interactions_viewers">
+        <item quantity="one">‎%1$,d ناظر</item>
+        <item quantity="other">‎%1$,d ناظرین</item>
+    </plurals>
+    <plurals name="program_number_of_chapters">
+        <item quantity="one">%1$,d باب</item>
+        <item quantity="other">%1$,d ابواب</item>
+    </plurals>
+    <plurals name="program_number_of_episodes">
+        <item quantity="one">‎%1$,d ایپی سوڈ</item>
+        <item quantity="other">‎%1$,d ایپی سوڈز</item>
+    </plurals>
+    <plurals name="program_number_of_seasons">
+        <item quantity="one">‎%1$,d سیزن</item>
+        <item quantity="other">‎%1$,d سیزنز</item>
+    </plurals>
+    <plurals name="program_number_of_tracks">
+        <item quantity="one">‎%1$,d ٹریک</item>
+        <item quantity="other">‎%1$,d ٹریکس</item>
+    </plurals>
+    <plurals name="program_thumbs_down_accessibility_description">
+        <item quantity="one">%1$d اظہار ناپسندیدگی</item>
+        <item quantity="other">%1$d اظہار ناپسندیدگیاں</item>
+    </plurals>
+    <plurals name="program_thumbs_up_accessibility_description">
+        <item quantity="one">%1$d اظہار پسندیدگی</item>
+        <item quantity="other">%1$d اظہار پسندیدگیاں</item>
+    </plurals>
+</resources>

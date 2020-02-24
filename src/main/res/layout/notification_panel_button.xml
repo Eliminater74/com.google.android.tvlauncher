@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.tvlauncher.notifications.NotificationsPanelButtonView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_gravity="center" android:orientation="vertical" android:id="@+id/notification_panel_button" android:clipChildren="false" android:clipToPadding="false" android:layout_width="@dimen/top_row_item_size" android:layout_height="@dimen/top_row_item_size" android:layout_marginStart="@dimen/top_row_item_spacing" android:layout_marginEnd="@dimen/top_row_item_spacing">
+    <FrameLayout android:layout_width="@dimen/top_row_item_size" android:layout_height="@dimen/top_row_item_size" android:layout_marginBottom="@dimen/top_row_button_margin_bottom">
+        <View android:layout_gravity="center" android:id="@+id/button_background" android:layout_width="@dimen/top_row_item_size" android:layout_height="@dimen/top_row_item_size"/>
+        <ImageView android:layout_gravity="center" android:id="@+id/notification_panel_background_circle" android:layout_width="@dimen/top_row_notification_panel_icon_size" android:layout_height="@dimen/top_row_notification_panel_icon_size"/>
+        <TextView android:textColor="@color/white_60" android:gravity="center" android:layout_gravity="center" android:id="@+id/notification_panel_count" android:layout_width="@dimen/top_row_notification_panel_icon_size" android:layout_height="@dimen/top_row_notification_panel_icon_size" android:fontFamily="@font/google_sans_medium"/>
+    </FrameLayout>
+    <include layout="@layout/home_top_row_button_title"/>
+</com.google.android.tvlauncher.notifications.NotificationsPanelButtonView>

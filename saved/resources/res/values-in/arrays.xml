@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="genre_labels">
+        <item>Keluarga/Anak-anak</item>
+        <item>Olahraga</item>
+        <item>Belanja</item>
+        <item>Film</item>
+        <item>Komedi</item>
+        <item>Perjalanan</item>
+        <item>Drama</item>
+        <item>Pendidikan</item>
+        <item>Satwa/Alam Liar</item>
+        <item>Berita</item>
+        <item>Game</item>
+        <item>Seni</item>
+        <item>Hiburan</item>
+        <item>Gaya Hidup</item>
+        <item>Musik</item>
+        <item>Tayang Perdana</item>
+        <item>Teknologi/Sains</item>
+    </array>
+    <array name="program_canonical_genre_labels_formats">
+        <item>%1$s</item>
+        <item>%1$s, %2$s</item>
+        <item>%1$s, %2$s, %3$s</item>
+        <item>%1$s, %2$s, %3$s, %4$s</item>
+        <item>%1$s, %2$s, %3$s, %4$s, %5$s</item>
+    </array>
+    <array name="search_orb_text_to_show">
+        <item>Coba telusuri &quot;Will Smith&quot;</item>
+        <item>Coba telusuri &quot;Michael Fassbender&quot;</item>
+        <item>Coba telusuri &quot;Jennifer Lawrence&quot;</item>
+        <item>Coba telusuri &quot;Olivia Wilde&quot;</item>
+        <item>Coba telusuri &quot;komedi romantis&quot;</item>
+        <item>Coba telusuri &quot;film sci-fi&quot;</item>
+        <item>Coba telusuri &quot;film superhero&quot;</item>
+        <item>Coba telusuri &quot;film action&quot;</item>
+        <item>Coba telusuri &quot;Star Trek&quot;</item>
+        <item>Coba telusuri &quot;Sherlock&quot;</item>
+        <item>Coba telusuri &quot;American Idol&quot;</item>
+        <item>Coba telusuri &quot;Star Trek&quot;</item>
+        <item>Coba telusuri &quot;Castle&quot;</item>
+        <item>Coba telusuri &quot;gambar Beyonce&quot;</item>
+        <item>Coba telusuri &quot;gambar kota London&quot;</item>
+        <item>Coba telusuri &quot;gambar Godzilla&quot;</item>
+        <item>Coba tanyakan, &quot;berapa skor Persija?&quot;</item>
+        <item>Coba tanyakan, &quot;berapa skor Persib?&quot;</item>
+        <item>Coba tanyakan, &quot;berapa skor Arema Malang?&quot;</item>
+        <item>Coba tanyakan, &quot;berapa skor AC Milan?&quot;</item>
+        <item>Coba tanyakan, &quot;bagaimana cuaca di Jakarta?&quot;</item>
+        <item>Coba tanyakan, &quot;bagaimana cuaca di Bandung?&quot;</item>
+        <item>Coba tanyakan, &quot;bagaimana cuaca di Surabaya?&quot;</item>
+        <item>Coba tanyakan, &quot;bagaimana cuaca di Singapura?&quot;</item>
+        <item>Coba tanyakan, &quot;Berapa tinggi Brad Pitt?&quot;</item>
+        <item>Coba tanyakan, &quot;Berapa suhu matahari?&quot;</item>
+        <item>Coba tanyakan, &quot;Kapan John Wayne lahir?&quot;</item>
+        <item>Coba, &quot;buka YouTube&quot;</item>
+        <item>Coba, &quot;buka Play Film&quot;</item>
+    </array>
+</resources>

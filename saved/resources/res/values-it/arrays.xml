@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="genre_labels">
+        <item>Famiglia/bambini</item>
+        <item>Sport</item>
+        <item>Acquisti</item>
+        <item>Film</item>
+        <item>Commedie</item>
+        <item>Viaggi</item>
+        <item>Drammatici</item>
+        <item>Formazione</item>
+        <item>Animali/fauna selvatica</item>
+        <item>Notizie</item>
+        <item>Giochi</item>
+        <item>Arte</item>
+        <item>Intrattenimento</item>
+        <item>Mode e tendenze</item>
+        <item>Musica</item>
+        <item>Il meglio</item>
+        <item>Scienza/tecnologia</item>
+    </array>
+    <array name="program_canonical_genre_labels_formats">
+        <item>%1$s</item>
+        <item>%1$s, %2$s</item>
+        <item>%1$s, %2$s, %3$s</item>
+        <item>%1$s, %2$s, %3$s, %4$s</item>
+        <item>%1$s, %2$s, %3$s, %4$s, %5$s</item>
+    </array>
+    <array name="search_orb_text_to_show">
+        <item>Prova a cercare &quot;Will Smith&quot;</item>
+        <item>Prova a cercare &quot;Michael Fassbender&quot;</item>
+        <item>Prova a cercare &quot;Laura Chiatti&quot;</item>
+        <item>Prova a cercare &quot;Anna Valle&quot;</item>
+        <item>Prova a cercare &quot;commedie romantiche&quot;</item>
+        <item>Prova a cercare &quot;film di fantascienza&quot;</item>
+        <item>Prova a cercare &quot;film di supereroi&quot;</item>
+        <item>Prova a cercare &quot;film d&apos;azione&quot;</item>
+        <item>Prova a cercare &quot;Star Trek&quot;</item>
+        <item>Prova a cercare &quot;Sherlock&quot;</item>
+        <item>Prova a cercare &quot;X Factor&quot;</item>
+        <item>Prova a cercare &quot;Star Trek&quot;</item>
+        <item>Prova a cercare &quot;Castle&quot;</item>
+        <item>Prova a cercare &quot;immagini di Beyoncé&quot;</item>
+        <item>Prova a cercare &quot;immagini di Londra&quot;</item>
+        <item>Prova a cercare &quot;immagini di Godzilla&quot;</item>
+        <item>Prova a chiedere &quot;quanti gol ha fatto il Milan?&quot;</item>
+        <item>Prova a chiedere &quot;quanti gol ha fatto l&apos;Inter?&quot;</item>
+        <item>Prova a chiedere &quot;quanti gol ha fatto la Juve?&quot;</item>
+        <item>Prova a chiedere &quot;quanti gol ha fatto il Napoli?&quot;</item>
+        <item>Prova a chiedere &quot;com&apos;è il tempo a Roma?&quot;</item>
+        <item>Prova a chiedere &quot;com&apos;è il tempo a Milano?&quot;</item>
+        <item>Prova a chiedere &quot;com&apos;è il tempo a Torino?&quot;</item>
+        <item>Prova a chiedere &quot;com&apos;è il tempo a Capri?&quot;</item>
+        <item>Prova a chiedere &quot;Quanto è alto Brad Pitt?&quot;</item>
+        <item>Prova a chiedere &quot;Qual è la temperatura del sole?&quot;</item>
+        <item>Prova a chiedere &quot;Qual è la data di nascita di John Wayne?&quot;</item>
+        <item>Prova &quot;apri YouTube&quot;</item>
+        <item>Prova &quot;apri Play Film&quot;</item>
+    </array>
+</resources>

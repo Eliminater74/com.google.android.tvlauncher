@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="app_channel_count">
+        <item quantity="one">%d kanał</item>
+        <item quantity="few">%d kanały</item>
+        <item quantity="many">%d kanałów</item>
+        <item quantity="other">%d kanału</item>
+    </plurals>
+    <plurals name="notification_panel_icon_accessibility_description">
+        <item quantity="one">Liczba powiadomień systemowych: %d</item>
+        <item quantity="few">Są %d powiadomienia systemowe</item>
+        <item quantity="many">Jest %d powiadomień systemowych</item>
+        <item quantity="other">Jest %d powiadomienia systemowego</item>
+    </plurals>
+    <plurals name="program_interactions_fans">
+        <item quantity="one">%1$,d fan</item>
+        <item quantity="few">%1$,d fanów</item>
+        <item quantity="many">%1$,d fanów</item>
+        <item quantity="other">%1$,d fana</item>
+    </plurals>
+    <plurals name="program_interactions_followers">
+        <item quantity="one">%1$,d obserwator</item>
+        <item quantity="few">%1$,d obserwatorów</item>
+        <item quantity="many">%1$,d obserwatorów</item>
+        <item quantity="other">%1$,d obserwatora</item>
+    </plurals>
+    <plurals name="program_interactions_likes">
+        <item quantity="one">%1$,d polubienie</item>
+        <item quantity="few">%1$,d polubienia</item>
+        <item quantity="many">%1$,d polubień</item>
+        <item quantity="other">%1$,d polubienia</item>
+    </plurals>
+    <plurals name="program_interactions_listens">
+        <item quantity="one">%1$,d odsłuchany utwór</item>
+        <item quantity="few">%1$,d odsłuchane utwory</item>
+        <item quantity="many">%1$,d odsłuchanych utworów</item>
+        <item quantity="other">%1$,d odsłuchanego utworu</item>
+    </plurals>
+    <plurals name="program_interactions_thumbs">
+        <item quantity="one">%1$,d polubienie</item>
+        <item quantity="few">%1$,d polubienia</item>
+        <item quantity="many">%1$,d polubień</item>
+        <item quantity="other">%1$,d polubienia</item>
+    </plurals>
+    <plurals name="program_interactions_viewers">
+        <item quantity="one">%1$,d widz</item>
+        <item quantity="few">%1$,d widzów</item>
+        <item quantity="many">%1$,d widzów</item>
+        <item quantity="other">%1$,d widza</item>
+    </plurals>
+    <plurals name="program_interactions_views">
+        <item quantity="one">%1$,d wyświetlenie</item>
+        <item quantity="few">%1$,d wyświetlenia</item>
+        <item quantity="many">%1$,d wyświetleń</item>
+        <item quantity="other">%1$,d wyświetlenia</item>
+    </plurals>
+    <plurals name="program_number_of_chapters">
+        <item quantity="one">%1$,d rozdział</item>
+        <item quantity="few">%1$,d rozdziały</item>
+        <item quantity="many">%1$,d rozdziałów</item>
+        <item quantity="other">%1$,d rozdziału</item>
+    </plurals>
+    <plurals name="program_number_of_episodes">
+        <item quantity="one">%1$,d odcinek</item>
+        <item quantity="few">%1$,d odcinki</item>
+        <item quantity="many">%1$,d odcinków</item>
+        <item quantity="other">%1$,d odcinka</item>
+    </plurals>
+    <plurals name="program_number_of_seasons">
+        <item quantity="one">%1$,d sezon</item>
+        <item quantity="few">%1$,d sezony</item>
+        <item quantity="many">%1$,d sezonów</item>
+        <item quantity="other">%1$,d sezonu</item>
+    </plurals>
+    <plurals name="program_number_of_tracks">
+        <item quantity="one">%1$,d ścieżka</item>
+        <item quantity="few">%1$,d ścieżki</item>
+        <item quantity="many">%1$,d ścieżek</item>
+        <item quantity="other">%1$,d ścieżki</item>
+    </plurals>
+    <plurals name="program_thumbs_down_accessibility_description">
+        <item quantity="one">%1$d kciuk w dół</item>
+        <item quantity="few">%1$d kciuki w dół</item>
+        <item quantity="many">%1$d kciuków w dół</item>
+        <item quantity="other">%1$d kciuka w dół</item>
+    </plurals>
+    <plurals name="program_thumbs_up_accessibility_description">
+        <item quantity="one">%1$d kciuk w górę</item>
+        <item quantity="few">%1$d kciuki w górę</item>
+        <item quantity="many">%1$d kciuków w górę</item>
+        <item quantity="other">%1$d kciuka w górę</item>
+    </plurals>
+</resources>

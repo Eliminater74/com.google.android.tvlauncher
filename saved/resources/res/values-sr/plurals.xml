@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="app_channel_count">
+        <item quantity="one">%d канал</item>
+        <item quantity="few">%d канала</item>
+        <item quantity="other">%d канала</item>
+    </plurals>
+    <plurals name="notification_panel_icon_accessibility_description">
+        <item quantity="one">Имате %d системско обавештење</item>
+        <item quantity="few">Имате %d системска обавештења</item>
+        <item quantity="other">Имате %d системских обавештења</item>
+    </plurals>
+    <plurals name="program_interactions_fans">
+        <item quantity="one">%1$,d љубитељ</item>
+        <item quantity="few">%1$,d љубитеља</item>
+        <item quantity="other">%1$,d љубитеља</item>
+    </plurals>
+    <plurals name="program_interactions_followers">
+        <item quantity="one">%1$,d пратилац</item>
+        <item quantity="few">%1$,d пратиоца</item>
+        <item quantity="other">%1$,d пратилаца</item>
+    </plurals>
+    <plurals name="program_interactions_likes">
+        <item quantity="one">%1$,d свиђање</item>
+        <item quantity="few">%1$,d свиђања</item>
+        <item quantity="other">%1$,d свиђања</item>
+    </plurals>
+    <plurals name="program_interactions_listens">
+        <item quantity="one">%1$,d слушање</item>
+        <item quantity="few">%1$,d слушања</item>
+        <item quantity="other">%1$,d слушања</item>
+    </plurals>
+    <plurals name="program_interactions_thumbs">
+        <item quantity="one">%1$,d позитиван глас</item>
+        <item quantity="few">%1$,d позитивна гласа</item>
+        <item quantity="other">%1$,d позитивних гласова</item>
+    </plurals>
+    <plurals name="program_interactions_viewers">
+        <item quantity="one">%1$,d гледалац</item>
+        <item quantity="few">%1$,d гледаоца</item>
+        <item quantity="other">%1$,d гледалаца</item>
+    </plurals>
+    <plurals name="program_interactions_views">
+        <item quantity="one">%1$,d преглед</item>
+        <item quantity="few">%1$,d прегледа</item>
+        <item quantity="other">%1$,d прегледа</item>
+    </plurals>
+    <plurals name="program_number_of_chapters">
+        <item quantity="one">%1$,d поглавље</item>
+        <item quantity="few">%1$,d поглавља</item>
+        <item quantity="other">%1$,d поглавља</item>
+    </plurals>
+    <plurals name="program_number_of_episodes">
+        <item quantity="one">%1$,d епизода</item>
+        <item quantity="few">%1$,d епизоде</item>
+        <item quantity="other">%1$,d епизода</item>
+    </plurals>
+    <plurals name="program_number_of_seasons">
+        <item quantity="one">%1$,d серијал</item>
+        <item quantity="few">%1$,d серијала</item>
+        <item quantity="other">%1$,d серијала</item>
+    </plurals>
+    <plurals name="program_number_of_tracks">
+        <item quantity="one">%1$,d песма</item>
+        <item quantity="few">%1$,d песме</item>
+        <item quantity="other">%1$,d песама</item>
+    </plurals>
+    <plurals name="program_thumbs_down_accessibility_description">
+        <item quantity="one">%1$d негативан глас</item>
+        <item quantity="few">%1$d негативна гласа</item>
+        <item quantity="other">%1$d негативних гласова</item>
+    </plurals>
+    <plurals name="program_thumbs_up_accessibility_description">
+        <item quantity="one">%1$d позитиван глас</item>
+        <item quantity="few">%1$d позитивна гласа</item>
+        <item quantity="other">%1$d позитивних гласова</item>
+    </plurals>
+</resources>

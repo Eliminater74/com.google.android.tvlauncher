@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="genre_labels">
+        <item>Familia/Umeak</item>
+        <item>Kirolak</item>
+        <item>Erosketak</item>
+        <item>Filmak</item>
+        <item>Komedia</item>
+        <item>Bidaiak</item>
+        <item>Dramak</item>
+        <item>Hezkuntza</item>
+        <item>Animaliak/Basabizitza</item>
+        <item>Albisteak</item>
+        <item>Jokoak</item>
+        <item>Artea</item>
+        <item>Aisia</item>
+        <item>Bizimodua</item>
+        <item>Musika</item>
+        <item>Estreinaldiak</item>
+        <item>Zientzia/Teknologia</item>
+    </array>
+    <array name="program_canonical_genre_labels_formats">
+        <item>%1$s</item>
+        <item>%1$s, %2$s</item>
+        <item>%1$s, %2$s, %3$s</item>
+        <item>%1$s, %2$s, %3$s, %4$s</item>
+        <item>%1$s, %2$s, %3$s, %4$s, %5$s</item>
+    </array>
+    <array name="search_orb_text_to_show">
+        <item>Bilatu &quot;Unax Ugalde&quot;</item>
+        <item>Bilatu &quot;Bittor Aiape&quot;</item>
+        <item>Bilatu &quot;Eñaut Elorrieta&quot;</item>
+        <item>Bilatu &quot;Kontxu Odriozola&quot;</item>
+        <item>Bilatu &quot;komedia erromantikoak&quot;</item>
+        <item>Bilatu &quot;zientzia-fikziozko filmak&quot;</item>
+        <item>Bilatu &quot;superheroien filmak&quot;</item>
+        <item>Bilatu &quot;ekintzazko filmak&quot;</item>
+        <item>Bilatu &quot;Aupa Etxebeste!&quot;</item>
+        <item>Bilatu &quot;Doraemon&quot;</item>
+        <item>Bilatu &quot;Hitzetik hortzera&quot;</item>
+        <item>Bilatu &quot;Aupa Etxebeste!&quot;</item>
+        <item>Bilatu &quot;Goenkale&quot;</item>
+        <item>Bilatu &quot;Kortatu argazkiak&quot;</item>
+        <item>Bilatu &quot;Bilbo argazkiak&quot;</item>
+        <item>Bilatu &quot;Olentzero argazkiak&quot;</item>
+        <item>Galdetu: &quot;zenbat tanto egin ditu Olaizolak?&quot;</item>
+        <item>Galdetu: &quot;zenbat puntu lortu ditu Osasunak?&quot;</item>
+        <item>Galdetu: &quot;zenbat puntu lortu ditu Baskoniak?&quot;</item>
+        <item>Galdetu: &quot;zenbat puntu lortu ditu Athleticek?&quot;</item>
+        <item>Galdetu: &quot;zer eguraldi dago Getarian?&quot;</item>
+        <item>Galdetu: &quot;zer eguraldi dago Getxon?&quot;</item>
+        <item>Galdetu: &quot;zer eguraldi dago Atarrabian?&quot;</item>
+        <item>Galdetu: &quot;zer eguraldi dago Goizuetan?&quot;</item>
+        <item>Galdetu: &quot;zenbat neurtzen du Abraham Olanok?&quot;</item>
+        <item>Galdetu: &quot;zein da eguzkiaren tenperatura?&quot;</item>
+        <item>Galdetu: &quot;noiz jaio zen Jon Mirande?&quot;</item>
+        <item>Idatzi: &quot;ireki YouTube&quot;</item>
+        <item>Idatzi: &quot;ireki Play Filmak&quot;</item>
+    </array>
+</resources>

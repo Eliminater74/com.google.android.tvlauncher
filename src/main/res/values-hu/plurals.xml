@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="app_channel_count">
+        <item quantity="one">%d csatorna</item>
+        <item quantity="other">%d csatorna</item>
+    </plurals>
+    <plurals name="notification_panel_icon_accessibility_description">
+        <item quantity="one">%d rendszerértesítés érkezett</item>
+        <item quantity="other">%d rendszerértesítés érkezett</item>
+    </plurals>
+    <plurals name="program_interactions_fans">
+        <item quantity="one">%1$,d-rajongó</item>
+        <item quantity="other">%1$,d-rajongó</item>
+    </plurals>
+    <plurals name="program_interactions_followers">
+        <item quantity="one">%1$,d-követő</item>
+        <item quantity="other">%1$,d-követő</item>
+    </plurals>
+    <plurals name="program_interactions_likes">
+        <item quantity="one">%1$,d-kedvelés</item>
+        <item quantity="other">%1$,d-kedvelés</item>
+    </plurals>
+    <plurals name="program_interactions_listens">
+        <item quantity="one">%1$,d-meghallgatás</item>
+        <item quantity="other">%1$,d-meghallgatás</item>
+    </plurals>
+    <plurals name="program_interactions_thumbs">
+        <item quantity="one">%1$,d „Tetszik” értékelés</item>
+        <item quantity="other">%1$,d „Tetszik” értékelés</item>
+    </plurals>
+    <plurals name="program_interactions_viewers">
+        <item quantity="one">%1$,d-megtekintő</item>
+        <item quantity="other">%1$,d-megtekintő</item>
+    </plurals>
+    <plurals name="program_interactions_views">
+        <item quantity="one">%1$,d-megtekintés</item>
+        <item quantity="other">%1$,d-megtekintés</item>
+    </plurals>
+    <plurals name="program_number_of_chapters">
+        <item quantity="one">%1$,d fejezet</item>
+        <item quantity="other">%1$,d fejezet</item>
+    </plurals>
+    <plurals name="program_number_of_episodes">
+        <item quantity="one">%1$,d-epizód</item>
+        <item quantity="other">%1$,d-epizód</item>
+    </plurals>
+    <plurals name="program_number_of_seasons">
+        <item quantity="one">%1$,d-évad</item>
+        <item quantity="other">%1$,d-évad</item>
+    </plurals>
+    <plurals name="program_number_of_tracks">
+        <item quantity="one">%1$,d-dal</item>
+        <item quantity="other">%1$,d-dal</item>
+    </plurals>
+    <plurals name="program_thumbs_down_accessibility_description">
+        <item quantity="one">%1$d „nem tetszik” értékelés</item>
+        <item quantity="other">%1$d „nem tetszik” értékelés</item>
+    </plurals>
+    <plurals name="program_thumbs_up_accessibility_description">
+        <item quantity="one">%1$d „tetszik” értékelés</item>
+        <item quantity="other">%1$d „tetszik” értékelés</item>
+    </plurals>
+</resources>

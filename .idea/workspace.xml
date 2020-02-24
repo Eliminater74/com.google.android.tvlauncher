@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="17b09500-1ff1-4ce1-bf4d-57debe7ed901" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <projects_view>
+          <tree_state>
+            <expand />
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="ProjectId" id="1YGHctNnAVGXXhwx2s464q1GlPY" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="android.sdk.path" value="$PROJECT_DIR$/../../Android-Studio/SDK" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="project.structure.last.edited" value="Dependencies" />
+    <property name="project.structure.proportion" value="0.17" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="settings.editor.selected.configurable" value="settings.github" />
+  </component>
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration>$USER_HOME$/.subversion</configuration>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="17b09500-1ff1-4ce1-bf4d-57debe7ed901" name="Default Changelist" comment="" />
+      <created>1582562093832</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1582562093832</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="481" y="273" key="#PSD" timestamp="1582562337470">
+      <screen x="0" y="36" width="1920" height="1008" />
+    </state>
+    <state x="481" y="273" key="#PSD/0.36.1920.1008@0.36.1920.1008" timestamp="1582562337470" />
+    <state x="670" y="388" key="psd.add.jar.dependency.panel.dimension" timestamp="1582562331649">
+      <screen x="0" y="36" width="1920" height="1008" />
+    </state>
+    <state x="670" y="388" key="psd.add.jar.dependency.panel.dimension/0.36.1920.1008@0.36.1920.1008" timestamp="1582562331649" />
+    <state x="530" y="277" key="psd.add.library.dependency.panel.dimension" timestamp="1582562317642">
+      <screen x="0" y="36" width="1920" height="1008" />
+    </state>
+    <state x="530" y="277" key="psd.add.library.dependency.panel.dimension/0.36.1920.1008@0.36.1920.1008" timestamp="1582562317642" />
+  </component>
+</project>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="genre_labels">
+        <item>Familie/Kinder</item>
+        <item>Sport</item>
+        <item>Shopping</item>
+        <item>Filme</item>
+        <item>Komödien</item>
+        <item>Reisen</item>
+        <item>Drama</item>
+        <item>Bildung</item>
+        <item>Tiere/Wildtiere</item>
+        <item>Nachrichten</item>
+        <item>Spiele</item>
+        <item>Kunst</item>
+        <item>Unterhaltung</item>
+        <item>Lifestyle</item>
+        <item>Musik</item>
+        <item>Premiere</item>
+        <item>Technik/Wissenschaft</item>
+    </array>
+    <array name="program_canonical_genre_labels_formats">
+        <item>%1$s</item>
+        <item>%1$s und %2$s</item>
+        <item>%1$s, %2$s und %3$s</item>
+        <item>%1$s, %2$s, %3$s und %4$s</item>
+        <item>%1$s, %2$s, %3$s, %4$s und %5$s</item>
+    </array>
+    <array name="search_orb_text_to_show">
+        <item>Such zum Beispiel nach &quot;Will Smith&quot;</item>
+        <item>Such zum Beispiel nach &quot;Michael Fassbender&quot;</item>
+        <item>Such zum Beispiel nach &quot;Jennifer Lawrence&quot;</item>
+        <item>Such zum Beispiel nach &quot;Olivia Wilde&quot;</item>
+        <item>Such zum Beispiel nach &quot;Liebeskomödien&quot;</item>
+        <item>Such zum Beispiel nach &quot;Science-Fiction-Filme&quot;</item>
+        <item>Such zum Beispiel nach &quot;Filme mit Superhelden&quot;</item>
+        <item>Such zum Beispiel nach &quot;Actionfilme&quot;</item>
+        <item>Such zum Beispiel nach &quot;Star Trek&quot;</item>
+        <item>Such zum Beispiel nach: &quot;Sherlock&quot;</item>
+        <item>Such zum Beispiel nach &quot;American Idol&quot;</item>
+        <item>Such zum Beispiel nach &quot;Star Trek&quot;</item>
+        <item>Such zum Beispiel nach &quot;Castle&quot;</item>
+        <item>Such zum Beispiel nach &quot;Bilder von Beyoncé&quot;</item>
+        <item>Such zum Beispiel nach &quot;Bilder von London&quot;</item>
+        <item>Such zum Beispiel nach &quot;Bilder von Godzilla&quot;</item>
+        <item>Frag zum Beispiel &quot;Wie ist der Punktestand des FC Bayern München?&quot;</item>
+        <item>Frag zum Beispiel &quot;Wie ist der Punktestand des Hamburger SV?&quot;</item>
+        <item>Frag zum Beispiel &quot;Wie ist der Punktestand von Borussia Dortmund?&quot;</item>
+        <item>Frag zum Beispiel &quot;Wie ist der Punktestand von Werder Bremen?&quot;</item>
+        <item>Frag zum Beispiel &quot;Wie ist das Wetter in New York?&quot;</item>
+        <item>Frag zum Beispiel &quot;Wie ist das Wetter in San Francisco?&quot;</item>
+        <item>Frag zum Beispiel &quot;Wie ist das Wetter in Paris?&quot;</item>
+        <item>Frag zum Beispiel &quot;Wie ist das Wetter in London?&quot;</item>
+        <item>Frag zum Beispiel &quot;Wie groß ist Brad Pitt?&quot;</item>
+        <item>Frag zum Beispiel &quot;Wie heiß ist die Sonne?&quot;</item>
+        <item>Frag zum Beispiel &quot;Wann wurde Stephen King geboren?&quot;</item>
+        <item>Sag einfach &quot;YouTube öffnen&quot;</item>
+        <item>Sag einfach &quot;Play Filme öffnen&quot;</item>
+    </array>
+</resources>

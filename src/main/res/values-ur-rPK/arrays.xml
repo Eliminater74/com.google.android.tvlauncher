@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="genre_labels">
+        <item>خاندان/بچے</item>
+        <item>اسپورٹس</item>
+        <item>خریداری</item>
+        <item>موویز</item>
+        <item>کامیڈی</item>
+        <item>سفر</item>
+        <item>ڈرامہ</item>
+        <item>تعلیم</item>
+        <item>جانور/وائلڈ لائف</item>
+        <item>خبریں</item>
+        <item>گیمنگ</item>
+        <item>آرٹس</item>
+        <item>تفریح</item>
+        <item>طرز زندگی</item>
+        <item>موسیقی</item>
+        <item>پریمیئر</item>
+        <item>ٹیک/سائنس</item>
+    </array>
+    <array name="program_canonical_genre_labels_formats">
+        <item>%1$s</item>
+        <item>%1$s, %2$s</item>
+        <item>%1$s, %2$s, %3$s</item>
+        <item>%1$s, %2$s, %3$s, %4$s</item>
+        <item>%1$s, %2$s, %3$s, %4$s, %5$s</item>
+    </array>
+    <array name="search_orb_text_to_show">
+        <item>&quot;فواد خان&quot; تلاش کرنے کی کوشش کریں</item>
+        <item>&apos;عامر خان&apos; تلاش کرنے کی کوشش کریں</item>
+        <item>&apos;نور جہاں&apos; تلاش کرنے کی کوشش کریں</item>
+        <item>&apos;کترینہ کیف&apos; تلاش کرنے کی کوشش کریں</item>
+        <item>&apos;رومانوی مزاحیہ&apos; تلاش کرنے کی کوشش کریں</item>
+        <item>&apos;سائنس فکشن موویز&apos; تلاش کرنے کی کوشش کریں</item>
+        <item>&apos;سپر ہیرو موویز&apos; تلاش کرنے کی کوشش کریں</item>
+        <item>&apos;ایکشن موویز&apos; تلاش کرنے کی کوشش کریں</item>
+        <item>&apos;وار&apos; تلاش کرنے کی کوشش کریں</item>
+        <item>&apos;خبرناک&apos; تلاش کرنے کی کوشش کریں</item>
+        <item>&apos;پاکستان آئڈل&apos; تلاش کرنے کی کوشش کریں</item>
+        <item>&apos;وار&apos; تلاش کرنے کی کوشش کریں</item>
+        <item>&apos;خدا کیلئے&apos; تلاش کرنے کی کوشش کریں</item>
+        <item>&apos;ریما کی تصاویر&apos; تلاش کرنے کی کوشش کریں</item>
+        <item>&apos;لاہور کی تصاویر&apos; تلاش کرنے کی کوشش کریں</item>
+        <item>&apos;گوڈزیلا کی تصاویر&apos; تلاش کرنے کی کوشش کریں</item>
+        <item>&apos;پاکستان کا اسکور کیا ہے؟&apos; پوچھنے کی کوشش کریں</item>
+        <item>&apos;انڈیا کا اسکور کیا ہے؟&apos; پوچھنے کی کوشش کریں</item>
+        <item>&apos;آسٹریلیا کا اسکور کیا ہے؟&apos; پوچھنے کی کوشش کریں</item>
+        <item>&apos;نیوزی لینڈ کا اسکور کیا ہے؟&apos; پوچھنے کی کوشش کریں</item>
+        <item>&apos;لاہور میں موسم کیسا ہے؟&apos; پوچھنے کی کوشش کریں</item>
+        <item>&apos;کراچی میں موسم کیسا ہے؟&apos; پوچھنے کی کوشش کریں</item>
+        <item>&apos;دبئی میں موسم کیسا ہے؟&apos; پوچھنے کی کوشش کریں</item>
+        <item>&apos;لندن میں موسم کیسا ہے؟&apos; پوچھنے کی کوشش کریں</item>
+        <item>&apos;شاہ رخ خان کا قد کتنا لمبا ہے؟&apos; پوچھنے کی کوشش کریں</item>
+        <item>&apos;سورج کتنا گرم ہے؟&apos; پوچھنے کی کوشش کریں</item>
+        <item>&apos;شاہد آفریدی کب پیدا ہوا؟&apos; پوچھنے کی کوشش کریں</item>
+        <item>&apos;YouTube کھولیں&apos; آزمائیں</item>
+        <item>&apos;Play موویز کھولیں&apos; آزمائیں</item>
+    </array>
+</resources>

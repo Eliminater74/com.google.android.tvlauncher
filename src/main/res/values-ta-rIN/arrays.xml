@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="genre_labels">
+        <item>குடும்பம்/குழந்தைகள்</item>
+        <item>விளையாட்டு</item>
+        <item>ஷாப்பிங்</item>
+        <item>திரைப்படங்கள்</item>
+        <item>நகைச்சுவை</item>
+        <item>பயணம்</item>
+        <item>நாடகம்</item>
+        <item>கல்வி</item>
+        <item>விலங்கு/வனவிலங்கு</item>
+        <item>செய்திகள்</item>
+        <item>கேமிங்</item>
+        <item>கலைகள்</item>
+        <item>பொழுதுபோக்கு</item>
+        <item>வாழ்க்கைமுறை</item>
+        <item>இசை</item>
+        <item>ப்ரீமியர்</item>
+        <item>தொழில்நுட்பம்/அறிவியல்</item>
+    </array>
+    <array name="program_canonical_genre_labels_formats">
+        <item>%1$s</item>
+        <item>%1$s, %2$s</item>
+        <item>%1$s, %2$s, %3$s</item>
+        <item>%1$s, %2$s, %3$s, %4$s</item>
+        <item>%1$s, %2$s, %3$s, %4$s, %5$s</item>
+    </array>
+    <array name="search_orb_text_to_show">
+        <item>&quot;ரஜினிகாந்த்&quot; எனத் தேடவும்</item>
+        <item>&quot;கமல் ஹாசன்&quot; எனத் தேடவும்</item>
+        <item>&quot;ஐஸ்வர்யா ராய்&quot; எனத் தேடவும்</item>
+        <item>&quot;பிரியங்கா சோப்ரா&quot; எனத் தேடவும்</item>
+        <item>&quot;காதல் நகைச்சுவைத் திரைப்படங்கள்&quot; எனத் தேடவும்</item>
+        <item>&quot;அறிவியல் புனைவுத் திரைப்படங்கள்&quot; எனத் தேடவும்</item>
+        <item>&quot;சூப்பர் ஹீரோ திரைப்படங்கள்&quot; எனத் தேடவும்</item>
+        <item>&quot;அதிரடித் திரைப்படங்கள்&quot; எனத் தேடவும்</item>
+        <item>&quot;மான் கராத்தே&quot; எனத் தேடவும்</item>
+        <item>&quot;இருமலர்கள்&quot; எனத் தேடவும்</item>
+        <item>&quot;நீயா நானா&quot; எனத் தேடவும்</item>
+        <item>&quot;மான் கராத்தே&quot; எனத் தேடவும்</item>
+        <item>&quot;ஜோடி நம்பர் 1&quot; எனத் தேடவும்</item>
+        <item>&quot;ஹன்சிகாவின் புகைப்படங்கள்&quot; எனத் தேடவும்</item>
+        <item>&quot;காஷ்மீரின் புகைப்படங்கள்&quot; எனத் தேடவும்</item>
+        <item>&quot;யானையின் புகைப்படங்கள்&quot; எனத் தேடவும்</item>
+        <item>&quot;மும்பை இந்தியன்ஸின் ஸ்கோர் என்ன?&quot; எனக் கேட்கவும்</item>
+        <item>&quot;டெல்லி டேர்டெவில்ஸின் ஸ்கோர் என்ன?&quot; எனக் கேட்கவும்</item>
+        <item>&quot;குஜராத் லயன்ஸின் ஸ்கோர் என்ன?&quot; எனக் கேட்கவும்</item>
+        <item>&quot;சன் ரைசர்ஸ் ஹைதராபாத்தின் ஸ்கோர் என்ன?&quot; எனக் கேட்கவும்</item>
+        <item>&quot;சென்னையின் வானிலை நிலவரம் என்ன?&quot; எனக் கேட்கவும்</item>
+        <item>&quot;மதுரையின் வானிலை நிலவரம் என்ன?&quot; எனக் கேட்கவும்</item>
+        <item>&quot;டெல்லியின் வானிலை நிலவரம் என்ன?&quot; எனக் கேட்கவும்</item>
+        <item>&quot;அந்தமானின் வானிலை நிலவரம் என்ன?&quot; எனக் கேட்கவும்</item>
+        <item>&quot;அஜீத்தின் உயரம் என்ன?&quot; எனக் கேட்கவும்</item>
+        <item>&quot;சூரியனின் வெப்பநிலை என்ன?&quot; எனக் கேட்கவும்</item>
+        <item>&quot;நடிகர் விஜய் எப்போது பிறந்தார்?&quot; எனக் கேட்கவும்</item>
+        <item>&quot;YouTubeஐத் திற&quot; எனக் கூறவும்</item>
+        <item>&quot;Play திரைப்படத்தைத் திற&quot; எனக் கூறவும்</item>
+    </array>
+</resources>

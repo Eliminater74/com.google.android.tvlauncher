@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="app_channel_count">
+        <item quantity="one">%d κανάλι</item>
+        <item quantity="other">%d κανάλια</item>
+    </plurals>
+    <plurals name="notification_panel_icon_accessibility_description">
+        <item quantity="one">Υπάρχει %d ειδοποίηση συστήματος</item>
+        <item quantity="other">Υπάρχουν %d ειδοποιήσεις συστήματος</item>
+    </plurals>
+    <plurals name="program_interactions_fans">
+        <item quantity="one">%1$,d θαυμαστής</item>
+        <item quantity="other">%1$,d θαυμαστές</item>
+    </plurals>
+    <plurals name="program_interactions_followers">
+        <item quantity="one">%1$,d ακόλουθος</item>
+        <item quantity="other">%1$,d ακόλουθοι</item>
+    </plurals>
+    <plurals name="program_interactions_likes">
+        <item quantity="one">%1$,d επισήμανση &quot;μου αρέσει&quot;</item>
+        <item quantity="other">%1$,d επισημάνσεις &quot;μου αρέσει&quot;</item>
+    </plurals>
+    <plurals name="program_interactions_listens">
+        <item quantity="one">%1$,d ακρόαση</item>
+        <item quantity="other">%1$,d ακροάσεις</item>
+    </plurals>
+    <plurals name="program_interactions_thumbs">
+        <item quantity="one">%1$,d επιδοκιμασία</item>
+        <item quantity="other">%1$,d επιδοκιμασίες</item>
+    </plurals>
+    <plurals name="program_interactions_viewers">
+        <item quantity="one">%1$,d θεατής</item>
+        <item quantity="other">%1$,d θεατές</item>
+    </plurals>
+    <plurals name="program_interactions_views">
+        <item quantity="one">%1$,d προβολή</item>
+        <item quantity="other">%1$,d προβολές</item>
+    </plurals>
+    <plurals name="program_number_of_chapters">
+        <item quantity="one">%1$,d κεφάλαιο</item>
+        <item quantity="other">%1$,d κεφάλαια</item>
+    </plurals>
+    <plurals name="program_number_of_episodes">
+        <item quantity="one">%1$,d επεισόδιο</item>
+        <item quantity="other">%1$,d επεισόδια</item>
+    </plurals>
+    <plurals name="program_number_of_seasons">
+        <item quantity="one">%1$,d σεζόν</item>
+        <item quantity="other">%1$,d σεζόν</item>
+    </plurals>
+    <plurals name="program_number_of_tracks">
+        <item quantity="one">%1$,d κομμάτι</item>
+        <item quantity="other">%1$,d κομμάτια</item>
+    </plurals>
+    <plurals name="program_thumbs_down_accessibility_description">
+        <item quantity="one">%1$d αποδοκιμασία</item>
+        <item quantity="other">%1$d αποδοκιμασίες</item>
+    </plurals>
+    <plurals name="program_thumbs_up_accessibility_description">
+        <item quantity="one">%1$d επιδοκιμασία</item>
+        <item quantity="other">%1$d επιδοκιμασίες</item>
+    </plurals>
+</resources>

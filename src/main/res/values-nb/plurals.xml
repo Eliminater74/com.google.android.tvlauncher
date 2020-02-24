@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="app_channel_count">
+        <item quantity="one">%d kanal</item>
+        <item quantity="other">%d kanaler</item>
+    </plurals>
+    <plurals name="notification_panel_icon_accessibility_description">
+        <item quantity="one">Du har %d systemvarsel</item>
+        <item quantity="other">Du har %d systemvarsler</item>
+    </plurals>
+    <plurals name="program_interactions_fans">
+        <item quantity="one">%1$,d fan</item>
+        <item quantity="other">%1$,d fans</item>
+    </plurals>
+    <plurals name="program_interactions_followers">
+        <item quantity="one">%1$,d følger</item>
+        <item quantity="other">%1$,d følgere</item>
+    </plurals>
+    <plurals name="program_interactions_likes">
+        <item quantity="one">%1$,d liker</item>
+        <item quantity="other">%1$,d liker</item>
+    </plurals>
+    <plurals name="program_interactions_listens">
+        <item quantity="one">%1$,d lytting</item>
+        <item quantity="other">%1$,d lyttinger</item>
+    </plurals>
+    <plurals name="program_interactions_thumbs">
+        <item quantity="one">%1$,d tommel opp</item>
+        <item quantity="other">%1$,d tomler opp</item>
+    </plurals>
+    <plurals name="program_interactions_viewers">
+        <item quantity="one">%1$,d seer</item>
+        <item quantity="other">%1$,d seere</item>
+    </plurals>
+    <plurals name="program_interactions_views">
+        <item quantity="one">%1$,d avspilling</item>
+        <item quantity="other">%1$,d avspillinger</item>
+    </plurals>
+    <plurals name="program_number_of_chapters">
+        <item quantity="one">%1$,d kapittel</item>
+        <item quantity="other">%1$,d kapitler</item>
+    </plurals>
+    <plurals name="program_number_of_episodes">
+        <item quantity="one">%1$,d episode</item>
+        <item quantity="other">%1$,d episoder</item>
+    </plurals>
+    <plurals name="program_number_of_seasons">
+        <item quantity="one">%1$,d sesong</item>
+        <item quantity="other">%1$,d sesonger</item>
+    </plurals>
+    <plurals name="program_number_of_tracks">
+        <item quantity="one">%1$,d spor</item>
+        <item quantity="other">%1$,d spor</item>
+    </plurals>
+    <plurals name="program_thumbs_down_accessibility_description">
+        <item quantity="one">%1$d tommel ned</item>
+        <item quantity="other">%1$d tomler ned</item>
+    </plurals>
+    <plurals name="program_thumbs_up_accessibility_description">
+        <item quantity="one">%1$d tommel opp</item>
+        <item quantity="other">%1$d tomler opp</item>
+    </plurals>
+</resources>

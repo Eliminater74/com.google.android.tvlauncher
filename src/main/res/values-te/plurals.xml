@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="app_channel_count">
+        <item quantity="one">%d ఛానెల్</item>
+        <item quantity="other">%d ఛానెల్‌లు</item>
+    </plurals>
+    <plurals name="notification_panel_icon_accessibility_description">
+        <item quantity="one">%d సిస్టమ్ నోటిఫికేషన్ ఉంది</item>
+        <item quantity="other">%d సిస్టమ్ నోటిఫికేషన్‌లు ఉన్నాయి</item>
+    </plurals>
+    <plurals name="program_interactions_fans">
+        <item quantity="one">%1$,d అభిమాని</item>
+        <item quantity="other">%1$,d మంది అభిమానులు</item>
+    </plurals>
+    <plurals name="program_interactions_followers">
+        <item quantity="one">%1$,d అనుచరుడు</item>
+        <item quantity="other">%1$,d మంది అనుచరులు</item>
+    </plurals>
+    <plurals name="program_interactions_likes">
+        <item quantity="one">%1$,d ఇష్టం</item>
+        <item quantity="other">%1$,d ఇష్టాలు</item>
+    </plurals>
+    <plurals name="program_interactions_listens">
+        <item quantity="one">%1$,d వ్యక్తి విన్నారు</item>
+        <item quantity="other">%1$,d మంది విన్నారు</item>
+    </plurals>
+    <plurals name="program_interactions_thumbs">
+        <item quantity="one">%1$,d వ్యక్తి మెచ్చుకున్నారు</item>
+        <item quantity="other">%1$,d మంది మెచ్చుకున్నారు</item>
+    </plurals>
+    <plurals name="program_interactions_viewers">
+        <item quantity="one">%1$,d వీక్షకుడు</item>
+        <item quantity="other">%1$,d మంది వీక్షకులు</item>
+    </plurals>
+    <plurals name="program_interactions_views">
+        <item quantity="one">%1$,d వీక్షణ</item>
+        <item quantity="other">%1$,d వీక్షణలు</item>
+    </plurals>
+    <plurals name="program_number_of_chapters">
+        <item quantity="one">%1$,d విభాగం</item>
+        <item quantity="other">%1$,d విభాగాలు</item>
+    </plurals>
+    <plurals name="program_number_of_episodes">
+        <item quantity="one">%1$,d ఎపిసోడ్</item>
+        <item quantity="other">%1$,d ఎపిసోడ్‌లు</item>
+    </plurals>
+    <plurals name="program_number_of_seasons">
+        <item quantity="one">%1$,d సీజన్</item>
+        <item quantity="other">%1$,d సీజన్‌లు</item>
+    </plurals>
+    <plurals name="program_number_of_tracks">
+        <item quantity="one">%1$,d ట్రాక్</item>
+        <item quantity="other">%1$,d ట్రాక్‌లు</item>
+    </plurals>
+    <plurals name="program_thumbs_down_accessibility_description">
+        <item quantity="one">%1$d అయిష్టం</item>
+        <item quantity="other">%1$d అయిష్టాలు</item>
+    </plurals>
+    <plurals name="program_thumbs_up_accessibility_description">
+        <item quantity="one">%1$d ఇష్టం</item>
+        <item quantity="other">%1$d ఇష్టాలు</item>
+    </plurals>
+</resources>

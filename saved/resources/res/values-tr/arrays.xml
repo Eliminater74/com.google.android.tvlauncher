@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="genre_labels">
+        <item>Aile/Çocuk</item>
+        <item>Spor</item>
+        <item>Alışveriş</item>
+        <item>Filmler</item>
+        <item>Komedi</item>
+        <item>Seyahat</item>
+        <item>Dram</item>
+        <item>Eğitim</item>
+        <item>Hayvanlar/Vahşi Yaşam</item>
+        <item>Haberler</item>
+        <item>Oyun</item>
+        <item>Sanat</item>
+        <item>Eğlence</item>
+        <item>Yaşam Tarzı</item>
+        <item>Müzik</item>
+        <item>İlk Gösterim</item>
+        <item>Teknoloji/Bilim</item>
+    </array>
+    <array name="program_canonical_genre_labels_formats">
+        <item>%1$s</item>
+        <item>%1$s, %2$s</item>
+        <item>%1$s, %2$s, %3$s</item>
+        <item>%1$s, %2$s, %3$s, %4$s</item>
+        <item>%1$s, %2$s, %3$s, %4$s, %5$s</item>
+    </array>
+    <array name="search_orb_text_to_show">
+        <item>&quot;Will Smith&quot; için arama yapmayı deneyin</item>
+        <item>&quot;Michael Fassbender&quot; için arama yapmayı deneyin</item>
+        <item>&quot;Jennifer Lawrence&quot; için arama yapmayı deneyin</item>
+        <item>&quot;Olivia Wilde&quot; için arama yapmayı deneyin</item>
+        <item>&quot;Romantik komedi&quot; araması yapmayı deneyin</item>
+        <item>&quot;Bilim kurgu filmleri&quot; araması yapmayı deneyin</item>
+        <item>&quot;Süper kahraman filmleri&quot; için arama yapmayı deneyin</item>
+        <item>&quot;Aksiyon filmleri&quot; araması yapmayı deneyin</item>
+        <item>&quot;Star Trek&quot; için arama yapmayı deneyin</item>
+        <item>&quot;Sherlock&quot; için arama yapmayı deneyin</item>
+        <item>&quot;American Idol&quot; için arama yapmayı deneyin</item>
+        <item>&quot;Star Trek&quot; için arama yapmayı deneyin</item>
+        <item>&quot;Castle&quot; için arama yapmayı deneyin</item>
+        <item>&quot;Beyonce resimleri&quot; için arama yapmayı deneyin</item>
+        <item>&quot;Londra resimleri&quot; için arama yapmayı deneyin</item>
+        <item>&quot;Godzilla resimleri&quot; için arama yapmayı deneyin</item>
+        <item>&quot;Giants maçının skoru ne?&quot; sorusunu sormayı deneyin</item>
+        <item>&quot;Knicks maçının skoru ne?&quot; sorusunu sormayı deneyin</item>
+        <item>&quot;Red Wings maçının skoru ne?&quot; sorusunu sormayı deneyin</item>
+        <item>&quot;Seahawks maçının skoru ne?&quot; sorusunu sormayı deneyin</item>
+        <item>&quot;New York&apos;ta hava nasıl?&quot; sorusunu sormayı deneyin</item>
+        <item>&quot;San Francisco&apos;da hava nasıl?&quot; sorusunu sormayı deneyin</item>
+        <item>&quot;Paris&apos;te hava nasıl?&quot; sorusunu sormayı deneyin</item>
+        <item>&quot;Cozumel&apos;de hava nasıl?&quot; sorusunu sormayı deneyin</item>
+        <item>&quot;Brad Pitt&apos;in boyu ne kadar?&quot; sorusunu sormayı deneyin</item>
+        <item>&quot;Güneş ne kadar sıcak?&quot; sorusunu sormayı deneyin</item>
+        <item>&quot;John Wayne ne zaman doğdu?&quot; sorusunu sormayı deneyin</item>
+        <item>&quot;YouTube&apos;u aç&quot; komutunu vermeyi deneyin</item>
+        <item>&quot;Play Filmler&apos;i aç&quot; komutunu vermeyi deneyin</item>
+    </array>
+</resources>

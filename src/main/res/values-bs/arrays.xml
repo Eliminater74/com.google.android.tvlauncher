@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="genre_labels">
+        <item>Porodični/dječiji</item>
+        <item>Sportski</item>
+        <item>Kupovina</item>
+        <item>Filmovi</item>
+        <item>Komedija</item>
+        <item>Putovanja</item>
+        <item>Drama</item>
+        <item>Obrazovanje</item>
+        <item>Životinje/svijet divljine</item>
+        <item>Novosti</item>
+        <item>Video igre</item>
+        <item>Umjetnost</item>
+        <item>Zabava</item>
+        <item>Životni stil</item>
+        <item>Muzika</item>
+        <item>Premijera</item>
+        <item>Tehnika/nauka</item>
+    </array>
+    <array name="program_canonical_genre_labels_formats">
+        <item>%1$s</item>
+        <item>%1$s, %2$s</item>
+        <item>%1$s, %2$s, %3$s</item>
+        <item>%1$s, %2$s, %3$s, %4$s</item>
+        <item>%1$s, %2$s, %3$s, %4$s, %5$s</item>
+    </array>
+    <array name="search_orb_text_to_show">
+        <item>Potražite &quot;Will Smith&quot;</item>
+        <item>Potražite &quot;Michael Fassbender&quot;</item>
+        <item>Potražite &quot;Jennifer Lawrence&quot;</item>
+        <item>Potražite &quot;Olivia Wilde&quot;</item>
+        <item>Potražite &quot;romantične komedije&quot;</item>
+        <item>Potražite &quot;sci-fi filmovi&quot;</item>
+        <item>Potražite &quot;filmovi s superjunacima&quot;</item>
+        <item>Potražite &quot;akcioni filmovi&quot;</item>
+        <item>Potražite &quot;Zvjezdane staze&quot;</item>
+        <item>Potražite &quot;Sherlock&quot;</item>
+        <item>Potražite &quot;Američki idol&quot;</item>
+        <item>Potražite &quot;Zvjezdane staze&quot;</item>
+        <item>Potražite &quot;Castle&quot;</item>
+        <item>Potražite &quot;slike Beyonce&quot;</item>
+        <item>Potražite &quot;slike Londona&quot;</item>
+        <item>Potražite &quot;slike Godzille&quot;</item>
+        <item>Pitajte &quot;kako igra Željezničar?&quot;</item>
+        <item>Pitajte &quot;kako igra Zrinjski?&quot;</item>
+        <item>Pitajte &quot;kako igra Borac?&quot;</item>
+        <item>Pitajte &quot;kako igra Igokea?&quot;</item>
+        <item>Pitajte &quot;Kakvo je vrijeme u Sarajevu?&quot;</item>
+        <item>Pitajte &quot;Kakvo je vrijeme u Banjoj Luci?&quot;</item>
+        <item>Pitajte &quot;Kakvo je vrijeme u Parizu?&quot;</item>
+        <item>Pitajte &quot;Kakvo je vrijeme u Dubrovniku?&quot;</item>
+        <item>Pitajte &quot;Koliko je visok Brad Pitt?&quot;</item>
+        <item>Pitajte &quot;Kolika je temperatura Sunca?&quot;</item>
+        <item>Pitajte &quot;Kada je rođen John Wayne?&quot;</item>
+        <item>Pokušajte, &quot;otvori YouTube&quot;</item>
+        <item>Pokušajte, &quot;otvori Play filmove&quot;</item>
+    </array>
+</resources>

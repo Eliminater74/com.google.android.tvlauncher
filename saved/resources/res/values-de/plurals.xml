@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="app_channel_count">
+        <item quantity="one">%d Kanal</item>
+        <item quantity="other">%d Kanäle</item>
+    </plurals>
+    <plurals name="notification_panel_icon_accessibility_description">
+        <item quantity="one">Es liegt %d Systembenachrichtigung vor</item>
+        <item quantity="other">Es liegen %d Systembenachrichtigungen vor</item>
+    </plurals>
+    <plurals name="program_interactions_fans">
+        <item quantity="one">%1$,d Fan</item>
+        <item quantity="other">%1$,d Fans</item>
+    </plurals>
+    <plurals name="program_interactions_followers">
+        <item quantity="one">%1$,d Follower</item>
+        <item quantity="other">%1$,d Follower</item>
+    </plurals>
+    <plurals name="program_interactions_likes">
+        <item quantity="one">%1$,d &quot;Gefällt mir&quot;-Bewertung</item>
+        <item quantity="other">%1$,d &quot;Gefällt mir&quot;-Bewertungen</item>
+    </plurals>
+    <plurals name="program_interactions_listens">
+        <item quantity="one">%1$,d Wiedergabe</item>
+        <item quantity="other">%1$,d Wiedergaben</item>
+    </plurals>
+    <plurals name="program_interactions_thumbs">
+        <item quantity="one">%1$,d &quot;Mag ich&quot;-Bewertung</item>
+        <item quantity="other">%1$,d &quot;Mag ich&quot;-Bewertungen</item>
+    </plurals>
+    <plurals name="program_interactions_viewers">
+        <item quantity="one">%1$,d Zuschauer</item>
+        <item quantity="other">%1$,d Zuschauer</item>
+    </plurals>
+    <plurals name="program_interactions_views">
+        <item quantity="one">%1$,d Aufruf</item>
+        <item quantity="other">%1$,d Aufrufe</item>
+    </plurals>
+    <plurals name="program_number_of_chapters">
+        <item quantity="one">%1$,d Folge</item>
+        <item quantity="other">%1$,d Folgen</item>
+    </plurals>
+    <plurals name="program_number_of_episodes">
+        <item quantity="one">%1$,d Folge</item>
+        <item quantity="other">%1$,d Folgen</item>
+    </plurals>
+    <plurals name="program_number_of_seasons">
+        <item quantity="one">%1$,d Staffel</item>
+        <item quantity="other">%1$,d Staffeln</item>
+    </plurals>
+    <plurals name="program_number_of_tracks">
+        <item quantity="one">%1$,d Titel</item>
+        <item quantity="other">%1$,d Titel</item>
+    </plurals>
+    <plurals name="program_thumbs_down_accessibility_description">
+        <item quantity="one">%1$d &quot;Mag ich nicht&quot;-Bewertung</item>
+        <item quantity="other">%1$d &quot;Mag ich nicht&quot;-Bewertungen</item>
+    </plurals>
+    <plurals name="program_thumbs_up_accessibility_description">
+        <item quantity="one">%1$d &quot;Mag ich&quot;-Bewertung</item>
+        <item quantity="other">%1$d &quot;Mag ich&quot;-Bewertungen</item>
+    </plurals>
+</resources>

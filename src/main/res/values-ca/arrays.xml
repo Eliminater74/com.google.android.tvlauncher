@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="genre_labels">
+        <item>Familiar i infantil</item>
+        <item>Esports</item>
+        <item>Compres</item>
+        <item>Pel·lícules</item>
+        <item>Comèdia</item>
+        <item>Viatges</item>
+        <item>Drama</item>
+        <item>Educació</item>
+        <item>Animals i fauna</item>
+        <item>Notícies</item>
+        <item>Videojocs</item>
+        <item>Art</item>
+        <item>Entreteniment</item>
+        <item>Estil de vida</item>
+        <item>Música</item>
+        <item>Estrenes</item>
+        <item>Ciència i tecnologia</item>
+    </array>
+    <array name="program_canonical_genre_labels_formats">
+        <item>%1$s</item>
+        <item>%1$s i %2$s</item>
+        <item>%1$s, %2$s i %3$s</item>
+        <item>%1$s, %2$s, %3$s i %4$s</item>
+        <item>%1$s, %2$s, %3$s, %4$s i %5$s</item>
+    </array>
+    <array name="search_orb_text_to_show">
+        <item>Prova de cercar &quot;Will Smith&quot;</item>
+        <item>Prova de cercar &quot;Michael Fassbender&quot;</item>
+        <item>Prova de cercar &quot;Jennifer Lawrence&quot;</item>
+        <item>Prova de cercar &quot;Olivia Wilde&quot;</item>
+        <item>Prova de cercar &quot;comèdies romàntiques&quot;</item>
+        <item>Prova de cercar &quot;pel·lícules de ciència-ficció&quot;</item>
+        <item>Prova de cercar &quot;pel·lícules de superherois&quot;</item>
+        <item>Prova de cercar &quot;pel·lícules d&apos;acció&quot;</item>
+        <item>Prova de cercar &quot;Star Trek&quot;</item>
+        <item>Prova de cercar &quot;Sherlock&quot;</item>
+        <item>Prova de cercar &quot;American Idol&quot;</item>
+        <item>Prova de cercar &quot;Star Trek&quot;</item>
+        <item>Prova de cercar &quot;Castle&quot;</item>
+        <item>Prova de cercar &quot;fotos de Beyoncé&quot;</item>
+        <item>Prova de cercar &quot;fotos de Londres&quot;</item>
+        <item>Prova de cercar &quot;imatges de Godzilla&quot;</item>
+        <item>Prova de preguntar &quot;Com ha quedat l&apos;Atlètic de Madrid?&quot;</item>
+        <item>Prova de preguntar &quot;Com ha quedat el Barça de bàsquet?&quot;</item>
+        <item>Prova de preguntar &quot;Com ha quedat el Reus Deportiu?&quot;</item>
+        <item>Prova de preguntar &quot;Com ha quedat l&apos;USAP?&quot;</item>
+        <item>Prova de preguntar &quot;Quin temps fa a Manresa?&quot;</item>
+        <item>Prova de preguntar &quot;Quin temps fa a València?&quot;</item>
+        <item>Prova de preguntar &quot;Quin temps fa a París?&quot;</item>
+        <item>Prova de preguntar &quot;Quin temps fa a Salou?&quot;</item>
+        <item>Prova de preguntar &quot;Quina alçada fa Brad Pitt?&quot;</item>
+        <item>Prova de preguntar &quot;A quants graus està el sol?&quot;</item>
+        <item>Prova de preguntar &quot;Quan va néixer John Wayne?&quot;</item>
+        <item>Prova &quot;Obre YouTube&quot;</item>
+        <item>Prova &quot;Obre Play Pel·lícules&quot;</item>
+    </array>
+</resources>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="genre_labels">
+        <item>Сям&apos;я і дзеці</item>
+        <item>Спорт</item>
+        <item>Шопінг</item>
+        <item>Фільмы</item>
+        <item>Камедыі</item>
+        <item>Падарожжы</item>
+        <item>Драма</item>
+        <item>Адукацыя</item>
+        <item>Жывёлы і дзікая прырода</item>
+        <item>Навіны</item>
+        <item>Гульні</item>
+        <item>Мастацтва</item>
+        <item>Забавы</item>
+        <item>Стыль жыцця</item>
+        <item>Музыка</item>
+        <item>Прэм&apos;еры</item>
+        <item>Навука і тэхналогіі</item>
+    </array>
+    <array name="program_canonical_genre_labels_formats">
+        <item>%1$s</item>
+        <item>%1$s, %2$s</item>
+        <item>%1$s, %2$s, %3$s</item>
+        <item>%1$s, %2$s, %3$s, %4$s</item>
+        <item>%1$s, %2$s, %3$s, %4$s, %5$s</item>
+    </array>
+    <array name="search_orb_text_to_show">
+        <item>Паспрабуйце пашукаць &quot;Уіл Сміт&quot;</item>
+        <item>Паспрабуйце пашукаць &quot;Майкл Фасбэндэр&quot;</item>
+        <item>Паспрабуйце пашукаць &quot;Джэніфер Лоўрэнс&quot;</item>
+        <item>Паспрабуйце пашукаць &quot;Алівія Уайлд&quot;</item>
+        <item>Паспрабуйце пашукаць &quot;рамантычныя камедыі&quot;</item>
+        <item>Паспрабуйце пашукаць &quot;навукова-фантастычныя фільмы&quot;</item>
+        <item>Паспрабуйце пашукаць &quot;супергеройскія фільмы&quot;</item>
+        <item>Паспрабуйце пашукаць &quot;баевікі&quot;</item>
+        <item>Паспрабуйце пашукаць &quot;Зорны шлях&quot;</item>
+        <item>Паспрабуйце пашукаць &quot;Шэрлак&quot;</item>
+        <item>Паспрабуйце пашукаць &quot;American Idol&quot;</item>
+        <item>Паспрабуйце пашукаць &quot;Зорны шлях&quot;</item>
+        <item>Паспрабуйце пашукаць &quot;Касл&quot;</item>
+        <item>Паспрабуйце пашукаць &quot;фатаграфіі Беёнсэ&quot;</item>
+        <item>Паспрабуйце пашукаць &quot;фатаграфіі Лондана&quot;</item>
+        <item>Паспрабуйце пашукаць &quot;фатаграфіі Гадзілы&quot;</item>
+        <item>Паспрабуйце спытаць: &quot;які лік у Джайэнтс?&quot;</item>
+        <item>Паспрабуйце спытаць: &quot;які лік у Нікс?&quot;</item>
+        <item>Паспрабуйце спытаць: &quot;які лік у Рэд Уінгз?&quot;</item>
+        <item>Паспрабуйце спытаць: &quot;які лік у Сіхокс?&quot;</item>
+        <item>Паспрабуйце спытаць: &quot;якое надвор&apos;е ў Нью-Ёрку?&quot;</item>
+        <item>Паспрабуйце спытаць: &quot;якое надвор&apos;е ў Сан-Францыска?&quot;</item>
+        <item>Паспрабуйце спытаць: &quot;якое надвор&apos;е ў Парыжы?&quot;</item>
+        <item>Паспрабуйце спытаць: &quot;якое надвор&apos;е на востраве Касумель?&quot;</item>
+        <item>Паспрабуйце спытаць: &quot;Які рост у Брэда Піта?&quot;</item>
+        <item>Паспрабуйце спытаць: &quot;Наколькі гарачае сонца?&quot;</item>
+        <item>Паспрабуйце спытаць: &quot;Калі нарадзіўся Джон Уэйн?&quot;</item>
+        <item>Паспрабуйце &quot;адкрыць YouTube&quot;</item>
+        <item>Паспрабуйце &quot;адкрыць Фільмы Play&quot;</item>
+    </array>
+</resources>
