@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="app_channel_count">
+        <item quantity="one">%d iziteshi</item>
+        <item quantity="other">%d iziteshi</item>
+    </plurals>
+    <plurals name="notification_panel_icon_accessibility_description">
+        <item quantity="one">Kukhona izaziso ezingu-%d zesistimu</item>
+        <item quantity="other">Kukhona izaziso ezingu-%d zesistimu</item>
+    </plurals>
+    <plurals name="program_interactions_fans">
+        <item quantity="one">%1$,d Abalandeli</item>
+        <item quantity="other">%1$,d Abalandeli</item>
+    </plurals>
+    <plurals name="program_interactions_followers">
+        <item quantity="one">%1$,d Abalandeli</item>
+        <item quantity="other">%1$,d Abalandeli</item>
+    </plurals>
+    <plurals name="program_interactions_likes">
+        <item quantity="one">%1$,d Ukuthanda</item>
+        <item quantity="other">%1$,d Ukuthanda</item>
+    </plurals>
+    <plurals name="program_interactions_listens">
+        <item quantity="one">%1$,d Ukulalela</item>
+        <item quantity="other">%1$,d Ukulalela</item>
+    </plurals>
+    <plurals name="program_interactions_thumbs">
+        <item quantity="one">%1$,d Okushaphu</item>
+        <item quantity="other">%1$,d Okushaphu</item>
+    </plurals>
+    <plurals name="program_interactions_viewers">
+        <item quantity="one">%1$,d Ababuki</item>
+        <item quantity="other">%1$,d Ababuki</item>
+    </plurals>
+    <plurals name="program_interactions_views">
+        <item quantity="one">%1$,d Ukubuka</item>
+        <item quantity="other">%1$,d Ukubuka</item>
+    </plurals>
+    <plurals name="program_number_of_chapters">
+        <item quantity="one">%1$,d Izahluko</item>
+        <item quantity="other">%1$,d Izahluko</item>
+    </plurals>
+    <plurals name="program_number_of_episodes">
+        <item quantity="one">%1$,d Iziqephu</item>
+        <item quantity="other">%1$,d Iziqephu</item>
+    </plurals>
+    <plurals name="program_number_of_seasons">
+        <item quantity="one">%1$,d Amasizini</item>
+        <item quantity="other">%1$,d Amasizini</item>
+    </plurals>
+    <plurals name="program_number_of_tracks">
+        <item quantity="one">%1$,d Amathrekhi</item>
+        <item quantity="other">%1$,d Amathrekhi</item>
+    </plurals>
+    <plurals name="program_thumbs_down_accessibility_description">
+        <item quantity="one">%1$d izithupha ezibhekiswe phansi</item>
+        <item quantity="other">%1$d izithupha ezibhekiswe phansi</item>
+    </plurals>
+    <plurals name="program_thumbs_up_accessibility_description">
+        <item quantity="one">%1$d okushaphu</item>
+        <item quantity="other">%1$d okushaphu</item>
+    </plurals>
+</resources>

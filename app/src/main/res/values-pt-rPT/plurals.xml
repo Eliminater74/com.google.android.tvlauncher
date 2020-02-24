@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="app_channel_count">
+        <item quantity="one">%d canal</item>
+        <item quantity="other">%d canais</item>
+    </plurals>
+    <plurals name="notification_panel_icon_accessibility_description">
+        <item quantity="one">Há %d notificação de sistema</item>
+        <item quantity="other">Há %d notificações de sistema</item>
+    </plurals>
+    <plurals name="program_interactions_fans">
+        <item quantity="one">%1$,d fã</item>
+        <item quantity="other">%1$,d fãs</item>
+    </plurals>
+    <plurals name="program_interactions_followers">
+        <item quantity="one">%1$,d seguidor</item>
+        <item quantity="other">%1$,d seguidores</item>
+    </plurals>
+    <plurals name="program_interactions_likes">
+        <item quantity="one">%1$,d gosto</item>
+        <item quantity="other">%1$,d gostos</item>
+    </plurals>
+    <plurals name="program_interactions_listens">
+        <item quantity="one">%1$,d reprodução</item>
+        <item quantity="other">%1$,d reproduções</item>
+    </plurals>
+    <plurals name="program_interactions_thumbs">
+        <item quantity="one">%1$,d gosto</item>
+        <item quantity="other">%1$,d gostos</item>
+    </plurals>
+    <plurals name="program_interactions_viewers">
+        <item quantity="one">%1$,d espetador</item>
+        <item quantity="other">%1$,d espetadores</item>
+    </plurals>
+    <plurals name="program_interactions_views">
+        <item quantity="one">%1$,d visualização</item>
+        <item quantity="other">%1$,d visualizações</item>
+    </plurals>
+    <plurals name="program_number_of_chapters">
+        <item quantity="one">%1$,d capítulo</item>
+        <item quantity="other">%1$,d capítulos</item>
+    </plurals>
+    <plurals name="program_number_of_episodes">
+        <item quantity="one">%1$,d episódio</item>
+        <item quantity="other">%1$,d episódios</item>
+    </plurals>
+    <plurals name="program_number_of_seasons">
+        <item quantity="one">%1$,d temporada</item>
+        <item quantity="other">%1$,d temporadas</item>
+    </plurals>
+    <plurals name="program_number_of_tracks">
+        <item quantity="one">%1$,d faixa</item>
+        <item quantity="other">%1$,d faixas</item>
+    </plurals>
+    <plurals name="program_thumbs_down_accessibility_description">
+        <item quantity="one">%1$d não gosto</item>
+        <item quantity="other">%1$d não gosto</item>
+    </plurals>
+    <plurals name="program_thumbs_up_accessibility_description">
+        <item quantity="one">%1$d gosto</item>
+        <item quantity="other">%1$d gosto</item>
+    </plurals>
+</resources>

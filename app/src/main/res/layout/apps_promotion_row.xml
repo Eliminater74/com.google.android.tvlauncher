@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.leanback.widget.HorizontalGridView xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/apps_promotion_list" android:background="@color/reference_white_10" android:clipToPadding="false" android:layout_width="wrap_content" android:layout_height="@dimen/app_row_view_promotion_row_height" android:paddingStart="@dimen/app_view_padding_start" android:paddingEnd="@dimen/overscan_horizontal"/>

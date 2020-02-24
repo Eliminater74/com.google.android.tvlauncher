@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="app_channel_count">
+        <item quantity="one">%d channel</item>
+        <item quantity="other">%d channels</item>
+    </plurals>
+    <plurals name="notification_panel_icon_accessibility_description">
+        <item quantity="one">There is %d system notification</item>
+        <item quantity="other">There are %d system notifications</item>
+    </plurals>
+    <plurals name="program_interactions_fans">
+        <item quantity="one">%1$,d Fan</item>
+        <item quantity="other">%1$,d Fans</item>
+    </plurals>
+    <plurals name="program_interactions_followers">
+        <item quantity="one">%1$,d Follower</item>
+        <item quantity="other">%1$,d Followers</item>
+    </plurals>
+    <plurals name="program_interactions_likes">
+        <item quantity="one">%1$,d Like</item>
+        <item quantity="other">%1$,d Likes</item>
+    </plurals>
+    <plurals name="program_interactions_listens">
+        <item quantity="one">%1$,d Listen</item>
+        <item quantity="other">%1$,d Listens</item>
+    </plurals>
+    <plurals name="program_interactions_thumbs">
+        <item quantity="one">%1$,d Thumb up</item>
+        <item quantity="other">%1$,d Thumbs up</item>
+    </plurals>
+    <plurals name="program_interactions_viewers">
+        <item quantity="one">%1$,d Viewer</item>
+        <item quantity="other">%1$,d Viewers</item>
+    </plurals>
+    <plurals name="program_interactions_views">
+        <item quantity="one">%1$,d View</item>
+        <item quantity="other">%1$,d Views</item>
+    </plurals>
+    <plurals name="program_number_of_chapters">
+        <item quantity="one">%1$,d Chapter</item>
+        <item quantity="other">%1$,d Chapters</item>
+    </plurals>
+    <plurals name="program_number_of_episodes">
+        <item quantity="one">%1$,d Episode</item>
+        <item quantity="other">%1$,d Episodes</item>
+    </plurals>
+    <plurals name="program_number_of_seasons">
+        <item quantity="one">%1$,d Season</item>
+        <item quantity="other">%1$,d Seasons</item>
+    </plurals>
+    <plurals name="program_number_of_tracks">
+        <item quantity="one">%1$,d Track</item>
+        <item quantity="other">%1$,d Tracks</item>
+    </plurals>
+    <plurals name="program_thumbs_down_accessibility_description">
+        <item quantity="one">%1$d thumb down</item>
+        <item quantity="other">%1$d thumbs down</item>
+    </plurals>
+    <plurals name="program_thumbs_up_accessibility_description">
+        <item quantity="one">%1$d thumb up</item>
+        <item quantity="other">%1$d thumbs up</item>
+    </plurals>
+</resources>

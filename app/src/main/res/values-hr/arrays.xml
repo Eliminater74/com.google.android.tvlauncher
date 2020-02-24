@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="genre_labels">
+        <item>Obitelj/djeca</item>
+        <item>Sport</item>
+        <item>Kupnja</item>
+        <item>Filmovi</item>
+        <item>Komedija</item>
+        <item>Putovanja</item>
+        <item>Drama</item>
+        <item>Obrazovanje</item>
+        <item>Životinjski svijet</item>
+        <item>Vijesti</item>
+        <item>Igre</item>
+        <item>Umjetnost</item>
+        <item>Zabava</item>
+        <item>Životni stil</item>
+        <item>Glazba</item>
+        <item>Premijere</item>
+        <item>Tehnologija/znanost</item>
+    </array>
+    <array name="program_canonical_genre_labels_formats">
+        <item>%1$s</item>
+        <item>%1$s, %2$s</item>
+        <item>%1$s, %2$s, %3$s</item>
+        <item>%1$s, %2$s, %3$s, %4$s</item>
+        <item>%1$s, %2$s, %3$s, %4$s, %5$s</item>
+    </array>
+    <array name="search_orb_text_to_show">
+        <item>Pokušajte s upitom za pretraživanje &quot;Will Smith&quot;</item>
+        <item>Pokušajte s upitom za pretraživanje &quot;Michael Fassbender&quot;</item>
+        <item>Pokušajte s upitom za pretraživanje &quot;Jennifer Lawrence&quot;</item>
+        <item>Pokušajte s upitom za pretraživanje &quot;Olivia Wilde&quot;</item>
+        <item>Pokušajte s upitom za pretraživanje &quot;romantične komedije&quot;</item>
+        <item>Pokušajte s upitom za pretraživanje &quot;SF filmovi&quot;</item>
+        <item>Pokušajte s upitom za pretraživanje &quot;filmovi o superjunacima&quot;</item>
+        <item>Pokušajte s upitom za pretraživanje &quot;akcijski filmovi&quot;</item>
+        <item>Pokušajte s upitom za pretraživanje &quot;Zvjezdane staze&quot;</item>
+        <item>Pokušajte s upitom za pretraživanje &quot;Sherlock&quot;</item>
+        <item>Pokušajte s upitom za pretraživanje &quot;Američki idol&quot;</item>
+        <item>Pokušajte s upitom za pretraživanje &quot;Zvjezdane staze&quot;</item>
+        <item>Pokušajte s upitom za pretraživanje &quot;Castle&quot;</item>
+        <item>Pokušajte s upitom za pretraživanje &quot;slike Beyonce&quot;</item>
+        <item>Pokušajte s upitom za pretraživanje &quot;slike Londona&quot;</item>
+        <item>Pokušajte s upitom za pretraživanje &quot;slike Godzille&quot;</item>
+        <item>Pokušajte s pitanjem &quot;Koji su rezultat postigli Giantsi?&quot;</item>
+        <item>Pokušajte s pitanjem &quot;Koji su rezultat postigli Knicksi?&quot;</item>
+        <item>Pokušajte s pitanjem &quot;Koji su rezultat postigli Red Wingsi?&quot;</item>
+        <item>Pokušajte s pitanjem &quot;Koji su rezultat postigli Seahawksi?&quot;</item>
+        <item>Pokušajte s pitanjem &quot;Kakvo je vrijeme u New Yorku?&quot;</item>
+        <item>Pokušajte s pitanjem &quot;Kakvo je vrijeme u San Franciscu?&quot;</item>
+        <item>Pokušajte s pitanjem &quot;Kakvo je vrijeme u Parizu?&quot;</item>
+        <item>Pokušajte s pitanjem &quot;Kakvo je vrijeme na Cozumelu?&quot;</item>
+        <item>Pokušajte s pitanjem &quot;Koliko je visok Brad Pitt?&quot;</item>
+        <item>Pokušajte s pitanjem &quot;Koliko je Sunce vruće?&quot;</item>
+        <item>Pokušajte s pitanjem &quot;Kada je rođen John Wayne?&quot;</item>
+        <item>Pokušajte s naredbom &quot;otvori YouTube&quot;</item>
+        <item>Pokušajte s naredbom &quot;otvori Play filmove&quot;</item>
+    </array>
+</resources>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="genre_labels">
+        <item>គ្រួសារ/កុមារ</item>
+        <item>កីឡា</item>
+        <item>ការទិញ​ទំនិញ</item>
+        <item>ភាពយន្ត</item>
+        <item>កំប្លែង</item>
+        <item>ការធ្វើ​ដំណើរ</item>
+        <item>ល្ខោន</item>
+        <item>ការអប់រំ</item>
+        <item>សត្វ​/សត្វព្រៃ</item>
+        <item>ព័ត៌មាន</item>
+        <item>ហ្គេម</item>
+        <item>សិល្បៈ</item>
+        <item>កម្សាន្ត</item>
+        <item>ជីវិតរស់នៅ</item>
+        <item>តន្ត្រី</item>
+        <item>ដំបូង</item>
+        <item>បច្ចេកវិទ្យា/វិទ្យាសាស្ត្រ</item>
+    </array>
+    <array name="program_canonical_genre_labels_formats">
+        <item>%1$s</item>
+        <item>%1$s, %2$s</item>
+        <item>%1$s, %2$s, %3$s</item>
+        <item>%1$s, %2$s, %3$s, %4$s</item>
+        <item>%1$s, %2$s, %3$s, %4$s, %5$s</item>
+    </array>
+    <array name="search_orb_text_to_show">
+        <item>សាកល្បង​​ស្វែងរក &quot;Will Smith&quot;</item>
+        <item>សាកល្បង​​ស្វែងរក &quot;Michael Fassbender&quot;</item>
+        <item>សាកល្បង​ស្វែងរក &quot;Jennifer Lawrence&quot;</item>
+        <item>សាកល្បង​ស្វែងរក &quot;Olivia Wilde&quot;</item>
+        <item>សាកល្បង​ស្វែងរក &quot;romantic comedies&quot;</item>
+        <item>សាកល្បង​ស្វែងរក &quot;sci-fi movies&quot;</item>
+        <item>សាកល្បង​ស្វែងរក &quot;superhero movies&quot;</item>
+        <item>សាកល្បងស្វែងរក &quot;action movies&quot;</item>
+        <item>សាកល្បង​ស្វែងរក &quot;Star Trek&quot;</item>
+        <item>សាកល្បង​ស្វែងរក &quot;Sherlock&quot;</item>
+        <item>សាកល្បង​​ស្វែងរក &quot;American Idol&quot;</item>
+        <item>សាកល្បង​ស្វែងរក &quot;Star Trek&quot;</item>
+        <item>សាកល្បង​​ស្វែងរក &quot;Castle&quot;</item>
+        <item>សាកល្បង​​ស្វែងរក &quot;pictures of Beyonce&quot;</item>
+        <item>សាកល្បង​​ស្វែងរក &quot;pictures of London&quot;</item>
+        <item>សាកល្បង​​ស្វែងរក &quot;pictures of Godzilla&quot;</item>
+        <item>សាកល្បង​​សួរថា &quot;what&apos;s the Giants score?&quot;</item>
+        <item>សាកល្បង​​សួរថា &quot;what&apos;s the Knicks score?&quot;</item>
+        <item>សាកល្បង​​សួរថា &quot;what&apos;s the Red Wings score?&quot;</item>
+        <item>សាកល្បង​​សួរថា &quot;what&apos;s the Seahawks score?&quot;</item>
+        <item>សាកល្បង​​សួរថា &quot;what&apos;s the weather in New York?&quot;</item>
+        <item>សាកល្បង​សួរថា &quot;what&apos;s the weather in San Francisco?&quot;</item>
+        <item>សាកល្បង​សួរថា &quot;what&apos;s the weather in Paris?&quot;</item>
+        <item>សាកល្បង​សួរថា &quot;what&apos;s the weather in Cozumel?&quot;</item>
+        <item>សាកល្បង​សួរថា &quot;How tall is Brad Pitt?&quot;</item>
+        <item>សាកល្បង​សួរថា &quot;How hot is the sun?&quot;</item>
+        <item>សាកល្បង​សួរថា &quot;When was John Wayne born?&quot;</item>
+        <item>សាកល្បង &quot;open YouTube&quot;</item>
+        <item>សាកល្បង &quot;open Play Movies&quot;</item>
+    </array>
+</resources>

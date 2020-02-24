@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="genre_labels">
+        <item>Famille/Enfants</item>
+        <item>Sport</item>
+        <item>Achats</item>
+        <item>Films</item>
+        <item>Comédie</item>
+        <item>Voyages</item>
+        <item>Drame</item>
+        <item>Enseignement</item>
+        <item>Animaux/Faune sauvage</item>
+        <item>Actualités</item>
+        <item>Jeux</item>
+        <item>Art et photographie</item>
+        <item>Divertissement</item>
+        <item>Tendances</item>
+        <item>Musique</item>
+        <item>Contenu premium</item>
+        <item>Technologie/Science</item>
+    </array>
+    <array name="program_canonical_genre_labels_formats">
+        <item>%1$s</item>
+        <item>%1$s, %2$s</item>
+        <item>%1$s, %2$s, %3$s</item>
+        <item>%1$s, %2$s, %3$s, %4$s</item>
+        <item>%1$s, %2$s, %3$s, %4$s, %5$s</item>
+    </array>
+    <array name="search_orb_text_to_show">
+        <item>Essayez la requête de recherche &quot;Will Smith&quot;</item>
+        <item>Essayez la requête de recherche &quot;Michael Fassbender&quot;</item>
+        <item>Essayez la requête de recherche &quot;Jennifer Lawrence&quot;</item>
+        <item>Essayez la requête de recherche &quot;Olivia Wilde&quot;</item>
+        <item>Essayez la requête de recherche &quot;Comédies romantiques&quot;</item>
+        <item>Essayez la requête de recherche &quot;Films de science-fiction&quot;</item>
+        <item>Essayez la requête de recherche &quot;Films de super-héros&quot;</item>
+        <item>Essayez la requête de recherche &quot;Films d&apos;action&quot;</item>
+        <item>Essayez la requête de recherche &quot;Star Trek&quot;</item>
+        <item>Essayez la requête de recherche &quot;Sherlock&quot;</item>
+        <item>Essayez la requête de recherche &quot;Nouvelle Star&quot;</item>
+        <item>Essayez la requête de recherche &quot;Star Trek&quot;</item>
+        <item>Essayez la requête de recherche &quot;Castle&quot;</item>
+        <item>Essayez la requête de recherche &quot;Photos de Beyoncé&quot;</item>
+        <item>Essayez la requête de recherche &quot;Photos de Londres&quot;</item>
+        <item>Essayez la requête de recherche &quot;Photos de Godzilla&quot;</item>
+        <item>Essayez de demander &quot;Quel est le score du PSG ?&quot;</item>
+        <item>Essayez de demander &quot;Quel est le score de l&apos;OM ?&quot;</item>
+        <item>Essayez de demander &quot;Quel est le score du FC Barcelone ?&quot;</item>
+        <item>Essayez de demander &quot;Quel est le score du Real Madrid ?&quot;</item>
+        <item>Essayez de demander &quot;Quel temps fait-il à New York ?&quot;</item>
+        <item>Essayez de demander &quot;Quel temps fait-il à San Francisco ?&quot;</item>
+        <item>Essayez de demander &quot;Quel temps fait-il à Paris ?&quot;</item>
+        <item>Essayez de demander &quot;Quel temps fait-il à Marseille ?&quot;</item>
+        <item>Essayez de demander &quot;Combien mesure Brad Pitt ?&quot;</item>
+        <item>Essayez de demander &quot;Quelle est la température du soleil ?&quot;</item>
+        <item>Essayez de demander &quot;Quelle est la date de naissance de John Wayne ?&quot;</item>
+        <item>Essayez la commande &quot;Ouvrir YouTube&quot;</item>
+        <item>Essayez la commande &quot;Ouvrir Play Films&quot;</item>
+    </array>
+</resources>

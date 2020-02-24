@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape>
+            <solid android:color="@color/apps_row_logo_background"/>
+            <size android:height="@dimen/home_app_channel_logo_size" android:width="@dimen/home_app_channel_logo_size"/>
+        </shape>
+    </item>
+    <item android:gravity="center" android:drawable="@drawable/ic_action_apps_view"/>
+</layer-list>

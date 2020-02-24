@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="app_channel_count">
+        <item quantity="one">%d kênh</item>
+        <item quantity="other">%d kênh</item>
+    </plurals>
+    <plurals name="notification_panel_icon_accessibility_description">
+        <item quantity="one">Có %d thông báo hệ thống</item>
+        <item quantity="other">Có %d thông báo hệ thống</item>
+    </plurals>
+    <plurals name="program_interactions_fans">
+        <item quantity="one">%1$,d Người hâm mộ</item>
+        <item quantity="other">%1$,d Người hâm mộ</item>
+    </plurals>
+    <plurals name="program_interactions_followers">
+        <item quantity="one">%1$,d Người theo dõi</item>
+        <item quantity="other">%1$,d Người theo dõi</item>
+    </plurals>
+    <plurals name="program_interactions_likes">
+        <item quantity="one">%1$,d lượt Thích</item>
+        <item quantity="other">%1$,d lượt Thích</item>
+    </plurals>
+    <plurals name="program_interactions_listens">
+        <item quantity="one">%1$,d lượt Nghe</item>
+        <item quantity="other">%1$,d lượt Nghe</item>
+    </plurals>
+    <plurals name="program_interactions_thumbs">
+        <item quantity="one">%1$,d lượt Đánh dấu thích</item>
+        <item quantity="other">%1$,d lượt Đánh dấu thích</item>
+    </plurals>
+    <plurals name="program_interactions_viewers">
+        <item quantity="one">%1$,d Người xem</item>
+        <item quantity="other">%1$,d Người xem</item>
+    </plurals>
+    <plurals name="program_interactions_views">
+        <item quantity="one">%1$,d Lượt xem</item>
+        <item quantity="other">%1$,d Lượt xem</item>
+    </plurals>
+    <plurals name="program_number_of_chapters">
+        <item quantity="one">%1$,d tập</item>
+        <item quantity="other">%1$,d tập</item>
+    </plurals>
+    <plurals name="program_number_of_episodes">
+        <item quantity="one">%1$,d Tập</item>
+        <item quantity="other">%1$,d Tập</item>
+    </plurals>
+    <plurals name="program_number_of_seasons">
+        <item quantity="one">%1$,d Phần</item>
+        <item quantity="other">%1$,d Phần</item>
+    </plurals>
+    <plurals name="program_number_of_tracks">
+        <item quantity="one">%1$,d Bản nhạc</item>
+        <item quantity="other">%1$,d Bản nhạc</item>
+    </plurals>
+    <plurals name="program_thumbs_down_accessibility_description">
+        <item quantity="one">%1$d không thích</item>
+        <item quantity="other">%1$d không thích</item>
+    </plurals>
+    <plurals name="program_thumbs_up_accessibility_description">
+        <item quantity="one">%1$d thích</item>
+        <item quantity="other">%1$d thích</item>
+    </plurals>
+</resources>

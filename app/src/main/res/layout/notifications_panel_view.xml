@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_gravity="end" android:orientation="vertical" android:id="@+id/notifications_panel_view" android:background="?android:attr/windowBackground" android:layout_width="@dimen/lb_settings_pane_width" android:layout_height="match_parent" android:transitionGroup="false">
+    <FrameLayout android:background="?attr/defaultBrandColor" android:layout_width="match_parent" android:layout_height="wrap_content" android:transitionGroup="false" android:elevation="@dimen/lb_preference_decor_title_container_elevation">
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/system_notifications" style="?android:attr/titleTextStyle"/>
+    </FrameLayout>
+    <TextView android:textColor="@color/secondary_text_color" android:layout_gravity="center" android:id="@+id/no_notifications_message" android:paddingTop="@dimen/notification_panel_title_padding" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/no_notifications_message" android:textAlignment="center" android:paddingStart="@dimen/lb_preference_item_padding_start" android:paddingEnd="@dimen/lb_preference_item_padding_end"/>
+    <com.google.android.tvlauncher.notifications.NotificationsPanelView android:id="@+id/notifications_list" android:clipToPadding="false" android:descendantFocusability="afterDescendants" android:layout_width="match_parent" android:layout_height="match_parent">
+        <requestFocus/>
+    </com.google.android.tvlauncher.notifications.NotificationsPanelView>
+</LinearLayout>

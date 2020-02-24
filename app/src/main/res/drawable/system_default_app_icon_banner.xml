@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <size android:height="@dimen/app_banner_image_max_height" android:width="@dimen/app_banner_image_max_width"/>
+            <solid android:color="@color/app_banner_background_color_gray_scale"/>
+        </shape>
+    </item>
+    <item android:gravity="center" android:height="@dimen/app_banner_installing_icon_max_size" android:width="@dimen/app_banner_installing_icon_max_size" android:drawable="@android:drawable/sym_def_app_icon"/>
+</layer-list>

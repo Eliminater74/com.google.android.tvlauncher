@@ -1,0 +1,10 @@
+package com.google.apps.tiktok.inject;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import javax.inject.Scope;
+
+@Scope
+@Retention(RetentionPolicy.CLASS)
+public @interface ActivityScoped {
+}

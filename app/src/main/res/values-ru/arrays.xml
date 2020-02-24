@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="genre_labels">
+        <item>Для всей семьи</item>
+        <item>Спорт</item>
+        <item>Покупки</item>
+        <item>Фильмы</item>
+        <item>Юмор</item>
+        <item>Путешествия</item>
+        <item>Драма</item>
+        <item>Образование</item>
+        <item>Природа и животные</item>
+        <item>Новости</item>
+        <item>Игры</item>
+        <item>Искусство</item>
+        <item>Развлечения</item>
+        <item>Стиль жизни</item>
+        <item>Музыка</item>
+        <item>Новинки</item>
+        <item>Наука и техника</item>
+    </array>
+    <array name="program_canonical_genre_labels_formats">
+        <item>%1$s</item>
+        <item>%1$s, %2$s</item>
+        <item>%1$s, %2$s, %3$s</item>
+        <item>%1$s, %2$s, %3$s, %4$s</item>
+        <item>%1$s, %2$s, %3$s, %4$s, %5$s</item>
+    </array>
+    <array name="search_orb_text_to_show">
+        <item>Попробуйте выполнить поиск по запросу &quot;Константин Хабенский&quot;</item>
+        <item>Попробуйте выполнить поиск по запросу &quot;Сергей Безруков&quot;</item>
+        <item>Попробуйте выполнить поиск по запросу &quot;Екатерина Гусева&quot;</item>
+        <item>Попробуйте выполнить поиск по запросу &quot;Татьяна Лазарева&quot;</item>
+        <item>Попробуйте выполнить поиск по запросу &quot;романтические комедии&quot;</item>
+        <item>Попробуйте выполнить поиск по запросу &quot;научная фантастика&quot;</item>
+        <item>Попробуйте выполнить поиск по запросу &quot;фильмы про супергероев&quot;</item>
+        <item>Попробуйте выполнить поиск по запросу &quot;боевики&quot;</item>
+        <item>Попробуйте выполнить поиск по запросу &quot;Звездный путь&quot;</item>
+        <item>Попробуйте выполнить поиск по запросу &quot;Шерлок&quot;</item>
+        <item>Попробуйте выполнить поиск по запросу &quot;Голос&quot;</item>
+        <item>Попробуйте выполнить поиск по запросу &quot;Звездный путь&quot;</item>
+        <item>Попробуйте выполнить поиск по запросу &quot;Универ&quot;</item>
+        <item>Попробуйте выполнить поиск по запросу &quot;фото Земфиры&quot;</item>
+        <item>Попробуйте выполнить поиск по запросу &quot;фото Лондона&quot;</item>
+        <item>Попробуйте выполнить поиск по запросу &quot;фото снежного человека&quot;</item>
+        <item>Спросите &quot;С каким счетом сыграл Спартак?&quot;</item>
+        <item>Спросите &quot;С каким счетом сыграл Зенит?&quot;</item>
+        <item>Спросите &quot;С каким счетом сыграл Локомотив?&quot;</item>
+        <item>Спросите &quot;С каким счетом сыграл Амкар?&quot;</item>
+        <item>Спросите &quot;Какая погода в Москве?&quot;</item>
+        <item>Спросите &quot;Какая погода в Калининграде?&quot;</item>
+        <item>Спросите &quot;Какая погода в Париже?&quot;</item>
+        <item>Спросите &quot;Какая погода на Курильских островах?&quot;</item>
+        <item>Спросите &quot;Какой рост у Михаила Боярского?&quot;</item>
+        <item>Спросите &quot;Какая температура на поверхности Солнца?&quot;</item>
+        <item>Спросите &quot;Когда родился Олег Табаков?&quot;</item>
+        <item>Скажите &quot;Открыть YouTube&quot;</item>
+        <item>Скажите &quot;Открыть Play Фильмы&quot;</item>
+    </array>
+</resources>

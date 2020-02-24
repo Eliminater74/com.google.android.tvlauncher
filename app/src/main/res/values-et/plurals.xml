@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="app_channel_count">
+        <item quantity="one">%d kanal</item>
+        <item quantity="other">%d kanalit</item>
+    </plurals>
+    <plurals name="notification_panel_icon_accessibility_description">
+        <item quantity="one">Teil on %d süsteemi märguanne</item>
+        <item quantity="other">Teil on %d süsteemi märguannet</item>
+    </plurals>
+    <plurals name="program_interactions_fans">
+        <item quantity="one">%1$,d fänn</item>
+        <item quantity="other">%1$,d fänni</item>
+    </plurals>
+    <plurals name="program_interactions_followers">
+        <item quantity="one">%1$,d jälgija</item>
+        <item quantity="other">%1$,d jälgijat</item>
+    </plurals>
+    <plurals name="program_interactions_likes">
+        <item quantity="one">%1$,d meeldimine</item>
+        <item quantity="other">%1$,d meeldimist</item>
+    </plurals>
+    <plurals name="program_interactions_listens">
+        <item quantity="one">%1$,d kuulamine</item>
+        <item quantity="other">%1$,d kuulamist</item>
+    </plurals>
+    <plurals name="program_interactions_thumbs">
+        <item quantity="one">%1$,d meeldimine</item>
+        <item quantity="other">%1$,d meeldimist</item>
+    </plurals>
+    <plurals name="program_interactions_viewers">
+        <item quantity="one">%1$,d vaataja</item>
+        <item quantity="other">%1$,d vaatajat</item>
+    </plurals>
+    <plurals name="program_interactions_views">
+        <item quantity="one">%1$,d vaatamine</item>
+        <item quantity="other">%1$,d vaatamist</item>
+    </plurals>
+    <plurals name="program_number_of_chapters">
+        <item quantity="one">%1$,d jagu</item>
+        <item quantity="other">%1$,d jagu</item>
+    </plurals>
+    <plurals name="program_number_of_episodes">
+        <item quantity="one">%1$,d jagu</item>
+        <item quantity="other">%1$,d jagu</item>
+    </plurals>
+    <plurals name="program_number_of_seasons">
+        <item quantity="one">%1$,d hooaeg</item>
+        <item quantity="other">%1$,d hooaega</item>
+    </plurals>
+    <plurals name="program_number_of_tracks">
+        <item quantity="one">%1$,d lugu</item>
+        <item quantity="other">%1$,d lugu</item>
+    </plurals>
+    <plurals name="program_thumbs_down_accessibility_description">
+        <item quantity="one">%1$d hinnang Ei meeldi</item>
+        <item quantity="other">%1$d hinnangut Ei meeldi</item>
+    </plurals>
+    <plurals name="program_thumbs_up_accessibility_description">
+        <item quantity="one">%1$d hinnang Meeldib</item>
+        <item quantity="other">%1$d hinnangut Meeldib</item>
+    </plurals>
+</resources>

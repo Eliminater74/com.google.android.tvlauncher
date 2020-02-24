@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="1010900090" android:versionName="1.9.4-249520747-f" android:compileSdkVersion="28" android:compileSdkVersionCodename="10" package="com.google.android.tvlauncher" platformBuildVersionCode="28" platformBuildVersionName="10">
+    <uses-permission android:name="android.permission.MEDIA_CONTENT_CONTROL"/>
+    <uses-permission android:name="com.android.providers.tv.permission.ACCESS_ALL_EPG_DATA"/>
+    <uses-permission android:name="com.android.providers.tv.permission.WRITE_EPG_DATA"/>
+    <uses-permission android:name="com.android.providers.tv.permission.READ_EPG_DATA"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.NOTIFY_TV_INPUTS"/>
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
+    <uses-permission android:name="android.permission.BIND_APPWIDGET"/>
+    <uses-permission android:name="android.permission.CHANGE_HDMI_CEC_ACTIVE_SOURCE"/>
+    <uses-permission android:name="android.permission.READ_CONTENT_RATING_SYSTEMS"/>
+    <uses-permission android:name="android.permission.GET_PACKAGE_SIZE"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.SET_WALLPAPER_HINTS"/>
+    <uses-permission android:name="android.permission.SET_WALLPAPER"/>
+    <uses-permission android:name="com.google.android.assistant.READ_HOTWORD_STATE"/>
+    <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-feature android:name="android.software.leanback" android:required="true"/>
+    <uses-feature android:name="android.hardware.touchscreen" android:required="false"/>
+    <application android:theme="@style/AppTheme" android:label="@string/app_name" android:icon="@mipmap/ic_launcher" android:name="com.google.android.tvlauncher.application.TvLauncherApplication" android:allowBackup="false" android:supportsRtl="true" android:banner="@drawable/ic_tv_banner" android:usesCleartextTraffic="true">
+        <meta-data android:name="com.google.android.tvlauncher.LauncherGlideModule" android:value="GlideModule"/>
+        <activity android:name="com.google.android.tvlauncher.MainActivity" android:taskAffinity=".TvLauncher" android:excludeFromRecents="true" android:launchMode="singleTask" android:screenOrientation="landscape">
+            <intent-filter android:priority="2">
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.HOME"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.MONKEY"/>
+            </intent-filter>
+        </activity>
+        <receiver android:name="com.google.android.tvlauncher.appsview.data.MarketUpdateReceiver" android:permission="com.google.android.tv.permission.ROUTE_MARKET_UPDATE">
+            <intent-filter>
+                <action android:name="com.android.launcher.action.ACTION_PACKAGE_ENQUEUED"/>
+                <action android:name="com.android.launcher.action.ACTION_PACKAGE_DOWNLOADING"/>
+                <action android:name="com.android.launcher.action.ACTION_PACKAGE_INSTALLING"/>
+                <action android:name="com.android.launcher.action.ACTION_PACKAGE_DEQUEUED"/>
+                <data android:scheme="package"/>
+            </intent-filter>
+        </receiver>
+        <activity android:theme="@style/Theme.Settings.SidePanel" android:name="com.google.android.tvlauncher.notifications.NotificationsSidePanelActivity" android:excludeFromRecents="true" android:noHistory="true">
+            <intent-filter>
+                <action android:name="com.android.tvlauncher.NOTIFICATIONS"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+        <activity android:theme="@style/Theme.Settings.SidePanel" android:label="@string/add_channels_announcement" android:name="com.google.android.tvlauncher.settings.AppChannelPermissionActivity"/>
+        <activity android:theme="@style/Theme.Settings.SidePanel" android:name="com.google.android.tvlauncher.settings.FavoriteLaunchItemsActivity"/>
+        <activity android:theme="@style/Theme.Leanback" android:name="com.google.android.tvlauncher.settings.OpenSourceActivity" android:exported="true" android:screenOrientation="landscape">
+            <intent-filter>
+                <action android:name="com.android.tv.action.VIEW_LICENSES"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+        <activity android:theme="@style/Theme.Settings.SidePanel" android:name="com.google.android.tvlauncher.settings.HomeScreenSettingsActivity" android:excludeFromRecents="true" android:configChanges="keyboard|keyboardHidden|navigation">
+            <intent-filter>
+                <action android:name="com.google.android.leanbacklauncher.SETTINGS"/>
+                <action android:name="com.google.android.tvlauncher.SETTINGS"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+        <activity android:theme="@style/Theme.Settings.SidePanel" android:name="com.google.android.tvlauncher.inputs.InputsPanelActivity" android:taskAffinity="" android:excludeFromRecents="true" android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="com.android.tv.action.VIEW_INPUTS"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+        <activity android:theme="@style/Theme.Settings.SidePanel" android:label="@string/apps_view_title" android:name="com.google.android.tvlauncher.appsview.AppsViewActivity" android:taskAffinity="" android:excludeFromRecents="true" android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.ALL_APPS"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+        <activity android:theme="@style/ConfirmationDialog" android:label="@string/add_app_link_label" android:name="com.google.android.tvlauncher.appsview.AddAppLinkActivity" android:excludeFromRecents="true">
+            <intent-filter android:priority="999">
+                <action android:name="com.android.tv.applink.action.ADD_APP_LINK"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+        <activity android:theme="@style/ConfirmationDialog" android:label="@string/remove_app_link_label" android:name="com.google.android.tvlauncher.appsview.RemoveAppLinkActivity" android:excludeFromRecents="true">
+            <intent-filter android:priority="999">
+                <action android:name="com.android.tv.applink.action.REMOVE_APP_LINK"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+        <service android:name="com.google.android.tvlauncher.appsview.data.StopOutOfBoxOrderingJobService" android:permission="android.permission.BIND_JOB_SERVICE" android:exported="true"/>
+        <service android:name="com.google.android.tvlauncher.instantvideo.media.impl.RemoteYoutubePlayerService" android:exported="false" android:process=":youtube"/>
+        <service android:name="com.google.android.tvlauncher.util.NotifyRefreshOemConfigurationDataJobService" android:permission="android.permission.BIND_JOB_SERVICE" android:exported="true"/>
+        <receiver android:name="com.google.android.libraries.social.silentfeedback.nobinder.SilentFeedbackReceiver" android:exported="false" android:process=":crash_report"/>
+        <activity android:theme="@style/Theme.Translucent.NoTitleBar" android:name="com.google.android.gms.common.api.GoogleApiActivity" android:exported="false"/>
+        <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version"/>
+    </application>
+</manifest>

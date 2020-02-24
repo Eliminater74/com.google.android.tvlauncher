@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/dialog_view" android:background="@color/dialog_background" android:paddingTop="@dimen/dialog_padding_top" android:paddingBottom="@dimen/dialog_padding_bottom" android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingStart="@dimen/dialog_padding_start" android:paddingEnd="@dimen/dialog_padding_end">
+    <ImageView android:id="@+id/app_icon" android:layout_width="@dimen/dialog_app_icon_width" android:layout_height="@dimen/dialog_app_icon_height" android:layout_marginTop="@dimen/dialog_app_icon_margin_top"/>
+    <TextView android:textAppearance="@style/ConfirmationDialog.TitleText" android:ellipsize="end" android:id="@+id/dialog_message" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginTop="@dimen/dialog_content_margin_top" android:maxLines="4" android:layout_weight="1" android:importantForAccessibility="yes" android:layout_marginStart="@dimen/dialog_content_margin_start" android:layout_marginEnd="@dimen/dialog_content_margin_end"/>
+    <LinearLayout android:orientation="vertical" android:layout_width="@dimen/dialog_actions_width" android:layout_height="wrap_content">
+        <Button android:id="@+id/allow_button" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/ConfirmationDialog.ActionItem"/>
+        <Button android:id="@+id/deny_button" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/cancel" style="@style/ConfirmationDialog.ActionItem"/>
+    </LinearLayout>
+</LinearLayout>
