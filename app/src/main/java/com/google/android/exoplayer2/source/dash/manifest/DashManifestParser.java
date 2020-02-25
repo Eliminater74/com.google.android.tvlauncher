@@ -5,7 +5,9 @@ import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Pair;
 import android.util.Xml;
+
 import androidx.tvprovider.media.p005tv.TvContractCompat;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.ParserException;
@@ -13,7 +15,6 @@ import com.google.android.exoplayer2.drm.DrmInitData;
 import com.google.android.exoplayer2.extractor.mp4.PsshAtomUtil;
 import com.google.android.exoplayer2.metadata.emsg.EventMessage;
 import com.google.android.exoplayer2.metadata.icy.IcyHeaders;
-import com.google.android.exoplayer2.source.dash.manifest.SegmentBase;
 import com.google.android.exoplayer2.upstream.ParsingLoadable;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Log;
@@ -21,6 +22,13 @@ import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.UriUtil;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.util.XmlPullParserUtil;
+
+import org.xml.sax.helpers.DefaultHandler;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
+import org.xmlpull.v1.XmlSerializer;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,11 +37,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.xml.sax.helpers.DefaultHandler;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-import org.xmlpull.v1.XmlPullParserFactory;
-import org.xmlpull.v1.XmlSerializer;
 
 public class DashManifestParser extends DefaultHandler implements ParsingLoadable.Parser<DashManifest> {
     private static final Pattern CEA_608_ACCESSIBILITY_PATTERN = Pattern.compile("CC([1-4])=.*");
@@ -48,6 +51,255 @@ public class DashManifestParser extends DefaultHandler implements ParsingLoadabl
         } catch (XmlPullParserException e) {
             throw new RuntimeException("Couldn't create XmlPullParserFactory instance", e);
         }
+    }
+
+    public static void maybeSkipTag(XmlPullParser xpp) throws IOException, XmlPullParserException {
+        if (XmlPullParserUtil.isStartTag(xpp)) {
+            int depth = 1;
+            while (depth != 0) {
+                xpp.next();
+                if (XmlPullParserUtil.isStartTag(xpp)) {
+                    depth++;
+                } else if (XmlPullParserUtil.isEndTag(xpp)) {
+                    depth--;
+                }
+            }
+        }
+    }
+
+    private static void filterRedundantIncompleteSchemeDatas(ArrayList<DrmInitData.SchemeData> schemeDatas) {
+        for (int i = schemeDatas.size() - 1; i >= 0; i--) {
+            DrmInitData.SchemeData schemeData = schemeDatas.get(i);
+            if (!schemeData.hasData()) {
+                int j = 0;
+                while (true) {
+                    if (j >= schemeDatas.size()) {
+                        break;
+                    } else if (schemeDatas.get(j).canReplace(schemeData)) {
+                        schemeDatas.remove(i);
+                        break;
+                    } else {
+                        j++;
+                    }
+                }
+            }
+        }
+    }
+
+    private static String getSampleMimeType(String containerMimeType, String codecs) {
+        if (MimeTypes.isAudio(containerMimeType)) {
+            return MimeTypes.getAudioMediaMimeType(codecs);
+        }
+        if (MimeTypes.isVideo(containerMimeType)) {
+            return MimeTypes.getVideoMediaMimeType(codecs);
+        }
+        if (mimeTypeIsRawText(containerMimeType)) {
+            return containerMimeType;
+        }
+        if (!MimeTypes.APPLICATION_MP4.equals(containerMimeType)) {
+            if (MimeTypes.APPLICATION_RAWCC.equals(containerMimeType) && codecs != null) {
+                if (codecs.contains("cea708")) {
+                    return MimeTypes.APPLICATION_CEA708;
+                }
+                if (codecs.contains("eia608") || codecs.contains("cea608")) {
+                    return MimeTypes.APPLICATION_CEA608;
+                }
+            }
+            return null;
+        } else if (codecs != null) {
+            if (codecs.startsWith("stpp")) {
+                return MimeTypes.APPLICATION_TTML;
+            }
+            if (codecs.startsWith("wvtt")) {
+                return MimeTypes.APPLICATION_MP4VTT;
+            }
+        }
+        return null;
+    }
+
+    private static boolean mimeTypeIsRawText(String mimeType) {
+        return MimeTypes.isText(mimeType) || MimeTypes.APPLICATION_TTML.equals(mimeType) || MimeTypes.APPLICATION_MP4VTT.equals(mimeType) || MimeTypes.APPLICATION_CEA708.equals(mimeType) || MimeTypes.APPLICATION_CEA608.equals(mimeType);
+    }
+
+    private static String checkLanguageConsistency(String firstLanguage, String secondLanguage) {
+        if (firstLanguage == null) {
+            return secondLanguage;
+        }
+        if (secondLanguage == null) {
+            return firstLanguage;
+        }
+        Assertions.checkState(firstLanguage.equals(secondLanguage));
+        return firstLanguage;
+    }
+
+    private static int checkContentTypeConsistency(int firstType, int secondType) {
+        if (firstType == -1) {
+            return secondType;
+        }
+        if (secondType == -1) {
+            return firstType;
+        }
+        Assertions.checkState(firstType == secondType);
+        return firstType;
+    }
+
+    protected static Descriptor parseDescriptor(XmlPullParser xpp, String tag) throws XmlPullParserException, IOException {
+        String schemeIdUri = parseString(xpp, "schemeIdUri", "");
+        String value = parseString(xpp, "value", null);
+        String id = parseString(xpp, TtmlNode.ATTR_ID, null);
+        do {
+            xpp.next();
+        } while (!XmlPullParserUtil.isEndTag(xpp, tag));
+        return new Descriptor(schemeIdUri, value, id);
+    }
+
+    protected static int parseCea608AccessibilityChannel(List<Descriptor> accessibilityDescriptors) {
+        for (int i = 0; i < accessibilityDescriptors.size(); i++) {
+            Descriptor descriptor = accessibilityDescriptors.get(i);
+            if ("urn:scte:dash:cc:cea-608:2015".equals(descriptor.schemeIdUri) && descriptor.value != null) {
+                Matcher accessibilityValueMatcher = CEA_608_ACCESSIBILITY_PATTERN.matcher(descriptor.value);
+                if (accessibilityValueMatcher.matches()) {
+                    return Integer.parseInt(accessibilityValueMatcher.group(1));
+                }
+                String valueOf = String.valueOf(descriptor.value);
+                Log.m30w(TAG, valueOf.length() != 0 ? "Unable to parse CEA-608 channel number from: ".concat(valueOf) : new String("Unable to parse CEA-608 channel number from: "));
+            }
+        }
+        return -1;
+    }
+
+    protected static int parseCea708AccessibilityChannel(List<Descriptor> accessibilityDescriptors) {
+        for (int i = 0; i < accessibilityDescriptors.size(); i++) {
+            Descriptor descriptor = accessibilityDescriptors.get(i);
+            if ("urn:scte:dash:cc:cea-708:2015".equals(descriptor.schemeIdUri) && descriptor.value != null) {
+                Matcher accessibilityValueMatcher = CEA_708_ACCESSIBILITY_PATTERN.matcher(descriptor.value);
+                if (accessibilityValueMatcher.matches()) {
+                    return Integer.parseInt(accessibilityValueMatcher.group(1));
+                }
+                String valueOf = String.valueOf(descriptor.value);
+                Log.m30w(TAG, valueOf.length() != 0 ? "Unable to parse CEA-708 service block number from: ".concat(valueOf) : new String("Unable to parse CEA-708 service block number from: "));
+            }
+        }
+        return -1;
+    }
+
+    protected static String parseEac3SupplementalProperties(List<Descriptor> supplementalProperties) {
+        for (int i = 0; i < supplementalProperties.size(); i++) {
+            Descriptor descriptor = supplementalProperties.get(i);
+            if ("tag:dolby.com,2014:dash:DolbyDigitalPlusExtensionType:2014".equals(descriptor.schemeIdUri) && "ec+3".equals(descriptor.value)) {
+                return MimeTypes.AUDIO_E_AC3_JOC;
+            }
+        }
+        return MimeTypes.AUDIO_E_AC3;
+    }
+
+    protected static float parseFrameRate(XmlPullParser xpp, float defaultValue) {
+        float frameRate = defaultValue;
+        String frameRateAttribute = xpp.getAttributeValue(null, "frameRate");
+        if (frameRateAttribute == null) {
+            return frameRate;
+        }
+        Matcher frameRateMatcher = FRAME_RATE_PATTERN.matcher(frameRateAttribute);
+        if (!frameRateMatcher.matches()) {
+            return frameRate;
+        }
+        int numerator = Integer.parseInt(frameRateMatcher.group(1));
+        String denominatorString = frameRateMatcher.group(2);
+        if (!TextUtils.isEmpty(denominatorString)) {
+            return ((float) numerator) / ((float) Integer.parseInt(denominatorString));
+        }
+        return (float) numerator;
+    }
+
+    protected static long parseDuration(XmlPullParser xpp, String name, long defaultValue) {
+        String value = xpp.getAttributeValue(null, name);
+        if (value == null) {
+            return defaultValue;
+        }
+        return Util.parseXsDuration(value);
+    }
+
+    protected static long parseDateTime(XmlPullParser xpp, String name, long defaultValue) throws ParserException {
+        String value = xpp.getAttributeValue(null, name);
+        if (value == null) {
+            return defaultValue;
+        }
+        return Util.parseXsDateTime(value);
+    }
+
+    protected static String parseBaseUrl(XmlPullParser xpp, String parentBaseUrl) throws XmlPullParserException, IOException {
+        xpp.next();
+        return UriUtil.resolve(parentBaseUrl, xpp.getText());
+    }
+
+    protected static int parseInt(XmlPullParser xpp, String name, int defaultValue) {
+        String value = xpp.getAttributeValue(null, name);
+        return value == null ? defaultValue : Integer.parseInt(value);
+    }
+
+    protected static long parseLong(XmlPullParser xpp, String name, long defaultValue) {
+        String value = xpp.getAttributeValue(null, name);
+        return value == null ? defaultValue : Long.parseLong(value);
+    }
+
+    protected static String parseString(XmlPullParser xpp, String name, String defaultValue) {
+        String value = xpp.getAttributeValue(null, name);
+        return value == null ? defaultValue : value;
+    }
+
+    /* JADX INFO: Can't fix incorrect switch cases order, some code will duplicate */
+    protected static int parseDolbyChannelConfiguration(XmlPullParser xpp) {
+        char c;
+        String value = Util.toLowerInvariant(xpp.getAttributeValue(null, "value"));
+        if (value == null) {
+            return -1;
+        }
+        switch (value.hashCode()) {
+            case 1596796:
+                if (value.equals("4000")) {
+                    c = 0;
+                    break;
+                }
+                c = 65535;
+                break;
+            case 2937391:
+                if (value.equals("a000")) {
+                    c = 1;
+                    break;
+                }
+                c = 65535;
+                break;
+            case 3094035:
+                if (value.equals("f801")) {
+                    c = 2;
+                    break;
+                }
+                c = 65535;
+                break;
+            case 3133436:
+                if (value.equals("fa01")) {
+                    c = 3;
+                    break;
+                }
+                c = 65535;
+                break;
+            default:
+                c = 65535;
+                break;
+        }
+        if (c == 0) {
+            return 1;
+        }
+        if (c == 1) {
+            return 2;
+        }
+        if (c == 2) {
+            return 6;
+        }
+        if (c != 3) {
+            return -1;
+        }
+        return 8;
     }
 
     public DashManifest parse(Uri uri, InputStream inputStream) throws IOException {
@@ -1790,255 +2042,6 @@ public class DashManifestParser extends DefaultHandler implements ParsingLoadabl
             return 0;
         }
         return 1;
-    }
-
-    public static void maybeSkipTag(XmlPullParser xpp) throws IOException, XmlPullParserException {
-        if (XmlPullParserUtil.isStartTag(xpp)) {
-            int depth = 1;
-            while (depth != 0) {
-                xpp.next();
-                if (XmlPullParserUtil.isStartTag(xpp)) {
-                    depth++;
-                } else if (XmlPullParserUtil.isEndTag(xpp)) {
-                    depth--;
-                }
-            }
-        }
-    }
-
-    private static void filterRedundantIncompleteSchemeDatas(ArrayList<DrmInitData.SchemeData> schemeDatas) {
-        for (int i = schemeDatas.size() - 1; i >= 0; i--) {
-            DrmInitData.SchemeData schemeData = schemeDatas.get(i);
-            if (!schemeData.hasData()) {
-                int j = 0;
-                while (true) {
-                    if (j >= schemeDatas.size()) {
-                        break;
-                    } else if (schemeDatas.get(j).canReplace(schemeData)) {
-                        schemeDatas.remove(i);
-                        break;
-                    } else {
-                        j++;
-                    }
-                }
-            }
-        }
-    }
-
-    private static String getSampleMimeType(String containerMimeType, String codecs) {
-        if (MimeTypes.isAudio(containerMimeType)) {
-            return MimeTypes.getAudioMediaMimeType(codecs);
-        }
-        if (MimeTypes.isVideo(containerMimeType)) {
-            return MimeTypes.getVideoMediaMimeType(codecs);
-        }
-        if (mimeTypeIsRawText(containerMimeType)) {
-            return containerMimeType;
-        }
-        if (!MimeTypes.APPLICATION_MP4.equals(containerMimeType)) {
-            if (MimeTypes.APPLICATION_RAWCC.equals(containerMimeType) && codecs != null) {
-                if (codecs.contains("cea708")) {
-                    return MimeTypes.APPLICATION_CEA708;
-                }
-                if (codecs.contains("eia608") || codecs.contains("cea608")) {
-                    return MimeTypes.APPLICATION_CEA608;
-                }
-            }
-            return null;
-        } else if (codecs != null) {
-            if (codecs.startsWith("stpp")) {
-                return MimeTypes.APPLICATION_TTML;
-            }
-            if (codecs.startsWith("wvtt")) {
-                return MimeTypes.APPLICATION_MP4VTT;
-            }
-        }
-        return null;
-    }
-
-    private static boolean mimeTypeIsRawText(String mimeType) {
-        return MimeTypes.isText(mimeType) || MimeTypes.APPLICATION_TTML.equals(mimeType) || MimeTypes.APPLICATION_MP4VTT.equals(mimeType) || MimeTypes.APPLICATION_CEA708.equals(mimeType) || MimeTypes.APPLICATION_CEA608.equals(mimeType);
-    }
-
-    private static String checkLanguageConsistency(String firstLanguage, String secondLanguage) {
-        if (firstLanguage == null) {
-            return secondLanguage;
-        }
-        if (secondLanguage == null) {
-            return firstLanguage;
-        }
-        Assertions.checkState(firstLanguage.equals(secondLanguage));
-        return firstLanguage;
-    }
-
-    private static int checkContentTypeConsistency(int firstType, int secondType) {
-        if (firstType == -1) {
-            return secondType;
-        }
-        if (secondType == -1) {
-            return firstType;
-        }
-        Assertions.checkState(firstType == secondType);
-        return firstType;
-    }
-
-    protected static Descriptor parseDescriptor(XmlPullParser xpp, String tag) throws XmlPullParserException, IOException {
-        String schemeIdUri = parseString(xpp, "schemeIdUri", "");
-        String value = parseString(xpp, "value", null);
-        String id = parseString(xpp, TtmlNode.ATTR_ID, null);
-        do {
-            xpp.next();
-        } while (!XmlPullParserUtil.isEndTag(xpp, tag));
-        return new Descriptor(schemeIdUri, value, id);
-    }
-
-    protected static int parseCea608AccessibilityChannel(List<Descriptor> accessibilityDescriptors) {
-        for (int i = 0; i < accessibilityDescriptors.size(); i++) {
-            Descriptor descriptor = accessibilityDescriptors.get(i);
-            if ("urn:scte:dash:cc:cea-608:2015".equals(descriptor.schemeIdUri) && descriptor.value != null) {
-                Matcher accessibilityValueMatcher = CEA_608_ACCESSIBILITY_PATTERN.matcher(descriptor.value);
-                if (accessibilityValueMatcher.matches()) {
-                    return Integer.parseInt(accessibilityValueMatcher.group(1));
-                }
-                String valueOf = String.valueOf(descriptor.value);
-                Log.m30w(TAG, valueOf.length() != 0 ? "Unable to parse CEA-608 channel number from: ".concat(valueOf) : new String("Unable to parse CEA-608 channel number from: "));
-            }
-        }
-        return -1;
-    }
-
-    protected static int parseCea708AccessibilityChannel(List<Descriptor> accessibilityDescriptors) {
-        for (int i = 0; i < accessibilityDescriptors.size(); i++) {
-            Descriptor descriptor = accessibilityDescriptors.get(i);
-            if ("urn:scte:dash:cc:cea-708:2015".equals(descriptor.schemeIdUri) && descriptor.value != null) {
-                Matcher accessibilityValueMatcher = CEA_708_ACCESSIBILITY_PATTERN.matcher(descriptor.value);
-                if (accessibilityValueMatcher.matches()) {
-                    return Integer.parseInt(accessibilityValueMatcher.group(1));
-                }
-                String valueOf = String.valueOf(descriptor.value);
-                Log.m30w(TAG, valueOf.length() != 0 ? "Unable to parse CEA-708 service block number from: ".concat(valueOf) : new String("Unable to parse CEA-708 service block number from: "));
-            }
-        }
-        return -1;
-    }
-
-    protected static String parseEac3SupplementalProperties(List<Descriptor> supplementalProperties) {
-        for (int i = 0; i < supplementalProperties.size(); i++) {
-            Descriptor descriptor = supplementalProperties.get(i);
-            if ("tag:dolby.com,2014:dash:DolbyDigitalPlusExtensionType:2014".equals(descriptor.schemeIdUri) && "ec+3".equals(descriptor.value)) {
-                return MimeTypes.AUDIO_E_AC3_JOC;
-            }
-        }
-        return MimeTypes.AUDIO_E_AC3;
-    }
-
-    protected static float parseFrameRate(XmlPullParser xpp, float defaultValue) {
-        float frameRate = defaultValue;
-        String frameRateAttribute = xpp.getAttributeValue(null, "frameRate");
-        if (frameRateAttribute == null) {
-            return frameRate;
-        }
-        Matcher frameRateMatcher = FRAME_RATE_PATTERN.matcher(frameRateAttribute);
-        if (!frameRateMatcher.matches()) {
-            return frameRate;
-        }
-        int numerator = Integer.parseInt(frameRateMatcher.group(1));
-        String denominatorString = frameRateMatcher.group(2);
-        if (!TextUtils.isEmpty(denominatorString)) {
-            return ((float) numerator) / ((float) Integer.parseInt(denominatorString));
-        }
-        return (float) numerator;
-    }
-
-    protected static long parseDuration(XmlPullParser xpp, String name, long defaultValue) {
-        String value = xpp.getAttributeValue(null, name);
-        if (value == null) {
-            return defaultValue;
-        }
-        return Util.parseXsDuration(value);
-    }
-
-    protected static long parseDateTime(XmlPullParser xpp, String name, long defaultValue) throws ParserException {
-        String value = xpp.getAttributeValue(null, name);
-        if (value == null) {
-            return defaultValue;
-        }
-        return Util.parseXsDateTime(value);
-    }
-
-    protected static String parseBaseUrl(XmlPullParser xpp, String parentBaseUrl) throws XmlPullParserException, IOException {
-        xpp.next();
-        return UriUtil.resolve(parentBaseUrl, xpp.getText());
-    }
-
-    protected static int parseInt(XmlPullParser xpp, String name, int defaultValue) {
-        String value = xpp.getAttributeValue(null, name);
-        return value == null ? defaultValue : Integer.parseInt(value);
-    }
-
-    protected static long parseLong(XmlPullParser xpp, String name, long defaultValue) {
-        String value = xpp.getAttributeValue(null, name);
-        return value == null ? defaultValue : Long.parseLong(value);
-    }
-
-    protected static String parseString(XmlPullParser xpp, String name, String defaultValue) {
-        String value = xpp.getAttributeValue(null, name);
-        return value == null ? defaultValue : value;
-    }
-
-    /* JADX INFO: Can't fix incorrect switch cases order, some code will duplicate */
-    protected static int parseDolbyChannelConfiguration(XmlPullParser xpp) {
-        char c;
-        String value = Util.toLowerInvariant(xpp.getAttributeValue(null, "value"));
-        if (value == null) {
-            return -1;
-        }
-        switch (value.hashCode()) {
-            case 1596796:
-                if (value.equals("4000")) {
-                    c = 0;
-                    break;
-                }
-                c = 65535;
-                break;
-            case 2937391:
-                if (value.equals("a000")) {
-                    c = 1;
-                    break;
-                }
-                c = 65535;
-                break;
-            case 3094035:
-                if (value.equals("f801")) {
-                    c = 2;
-                    break;
-                }
-                c = 65535;
-                break;
-            case 3133436:
-                if (value.equals("fa01")) {
-                    c = 3;
-                    break;
-                }
-                c = 65535;
-                break;
-            default:
-                c = 65535;
-                break;
-        }
-        if (c == 0) {
-            return 1;
-        }
-        if (c == 1) {
-            return 2;
-        }
-        if (c == 2) {
-            return 6;
-        }
-        if (c != 3) {
-            return -1;
-        }
-        return 8;
     }
 
     protected static final class RepresentationInfo {

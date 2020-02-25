@@ -2,18 +2,20 @@ package com.google.android.gms.common.api.internal;
 
 import android.os.Looper;
 import android.support.annotation.NonNull;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.Api;
 import com.google.android.gms.common.internal.BaseGmsClient;
 import com.google.android.gms.common.internal.zzau;
+
 import java.lang.ref.WeakReference;
 
 /* compiled from: GoogleApiClientConnecting */
 final class zzar implements BaseGmsClient.ConnectionProgressReportCallbacks {
-    private final WeakReference<zzap> zza;
-    private final Api<?> zzb;
     /* access modifiers changed from: private */
     public final boolean zzc;
+    private final WeakReference<zzap> zza;
+    private final Api<?> zzb;
 
     public zzar(zzap zzap, Api<?> api, boolean z) {
         this.zza = new WeakReference<>(zzap);

@@ -24,12 +24,15 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.util.Xml;
 import android.view.InflateException;
+
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
 public class AnimatorInflaterCompat {
@@ -42,6 +45,9 @@ public class AnimatorInflaterCompat {
     private static final int VALUE_TYPE_INT = 1;
     private static final int VALUE_TYPE_PATH = 2;
     private static final int VALUE_TYPE_UNDEFINED = 4;
+
+    private AnimatorInflaterCompat() {
+    }
 
     public static Animator loadAnimator(Context context, @AnimatorRes int id) throws Resources.NotFoundException {
         if (Build.VERSION.SDK_INT >= 24) {
@@ -76,30 +82,6 @@ public class AnimatorInflaterCompat {
                 parser.close();
             }
             throw th;
-        }
-    }
-
-    private static class PathDataEvaluator implements TypeEvaluator<PathParser.PathDataNode[]> {
-        private PathParser.PathDataNode[] mNodeArray;
-
-        PathDataEvaluator() {
-        }
-
-        PathDataEvaluator(PathParser.PathDataNode[] nodeArray) {
-            this.mNodeArray = nodeArray;
-        }
-
-        public PathParser.PathDataNode[] evaluate(float fraction, PathParser.PathDataNode[] startPathData, PathParser.PathDataNode[] endPathData) {
-            if (PathParser.canMorph(startPathData, endPathData)) {
-                if (!PathParser.canMorph(this.mNodeArray, startPathData)) {
-                    this.mNodeArray = PathParser.deepCopyNodes(startPathData);
-                }
-                for (int i = 0; i < startPathData.length; i++) {
-                    this.mNodeArray[i].interpolatePathDataNode(startPathData[i], endPathData[i], fraction);
-                }
-                return this.mNodeArray;
-            }
-            throw new IllegalArgumentException("Can't interpolate between two incompatible pathData");
         }
     }
 
@@ -705,6 +687,27 @@ public class AnimatorInflaterCompat {
         return type >= 28 && type <= 31;
     }
 
-    private AnimatorInflaterCompat() {
+    private static class PathDataEvaluator implements TypeEvaluator<PathParser.PathDataNode[]> {
+        private PathParser.PathDataNode[] mNodeArray;
+
+        PathDataEvaluator() {
+        }
+
+        PathDataEvaluator(PathParser.PathDataNode[] nodeArray) {
+            this.mNodeArray = nodeArray;
+        }
+
+        public PathParser.PathDataNode[] evaluate(float fraction, PathParser.PathDataNode[] startPathData, PathParser.PathDataNode[] endPathData) {
+            if (PathParser.canMorph(startPathData, endPathData)) {
+                if (!PathParser.canMorph(this.mNodeArray, startPathData)) {
+                    this.mNodeArray = PathParser.deepCopyNodes(startPathData);
+                }
+                for (int i = 0; i < startPathData.length; i++) {
+                    this.mNodeArray[i].interpolatePathDataNode(startPathData[i], endPathData[i], fraction);
+                }
+                return this.mNodeArray;
+            }
+            throw new IllegalArgumentException("Can't interpolate between two incompatible pathData");
+        }
     }
 }

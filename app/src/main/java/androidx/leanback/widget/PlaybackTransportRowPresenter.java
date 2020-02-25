@@ -11,20 +11,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.leanback.C0364R;
-import androidx.leanback.widget.ControlBarPresenter;
-import androidx.leanback.widget.PlaybackControlsPresenter;
-import androidx.leanback.widget.PlaybackControlsRow;
-import androidx.leanback.widget.PlaybackRowPresenter;
-import androidx.leanback.widget.PlaybackSeekDataProvider;
-import androidx.leanback.widget.PlaybackSeekUi;
-import androidx.leanback.widget.PlaybackTransportRowView;
-import androidx.leanback.widget.Presenter;
-import androidx.leanback.widget.RowPresenter;
-import androidx.leanback.widget.SeekBar;
+
 import java.util.Arrays;
 
 public class PlaybackTransportRowPresenter extends PlaybackRowPresenter {
+    private final ControlBarPresenter.OnControlSelectedListener mOnControlSelectedListener = new ControlBarPresenter.OnControlSelectedListener() {
+        public void onControlSelected(Presenter.ViewHolder itemViewHolder, Object item, ControlBarPresenter.BoundData data) {
+            ViewHolder vh = ((BoundData) data).mRowViewHolder;
+            if (vh.mSelectedViewHolder != itemViewHolder || vh.mSelectedItem != item) {
+                vh.mSelectedViewHolder = itemViewHolder;
+                vh.mSelectedItem = item;
+                vh.dispatchItemSelection();
+            }
+        }
+    };
     float mDefaultSeekIncrement = 0.01f;
     Presenter mDescriptionPresenter;
     OnActionClickedListener mOnActionClickedListener;
@@ -39,22 +41,246 @@ public class PlaybackTransportRowPresenter extends PlaybackRowPresenter {
             }
         }
     };
-    private final ControlBarPresenter.OnControlSelectedListener mOnControlSelectedListener = new ControlBarPresenter.OnControlSelectedListener() {
-        public void onControlSelected(Presenter.ViewHolder itemViewHolder, Object item, ControlBarPresenter.BoundData data) {
-            ViewHolder vh = ((BoundData) data).mRowViewHolder;
-            if (vh.mSelectedViewHolder != itemViewHolder || vh.mSelectedItem != item) {
-                vh.mSelectedViewHolder = itemViewHolder;
-                vh.mSelectedItem = item;
-                vh.dispatchItemSelection();
-            }
-        }
-    };
     ControlBarPresenter mPlaybackControlsPresenter;
     int mProgressColor = 0;
     boolean mProgressColorSet;
     ControlBarPresenter mSecondaryControlsPresenter;
     int mSecondaryProgressColor = 0;
     boolean mSecondaryProgressColorSet;
+
+    public PlaybackTransportRowPresenter() {
+        setHeaderPresenter(null);
+        setSelectEffectEnabled(false);
+        this.mPlaybackControlsPresenter = new ControlBarPresenter(C0364R.layout.lb_control_bar);
+        this.mPlaybackControlsPresenter.setDefaultFocusToMiddle(false);
+        this.mSecondaryControlsPresenter = new ControlBarPresenter(C0364R.layout.lb_control_bar);
+        this.mSecondaryControlsPresenter.setDefaultFocusToMiddle(false);
+        this.mPlaybackControlsPresenter.setOnControlSelectedListener(this.mOnControlSelectedListener);
+        this.mSecondaryControlsPresenter.setOnControlSelectedListener(this.mOnControlSelectedListener);
+        this.mPlaybackControlsPresenter.setOnControlClickedListener(this.mOnControlClickedListener);
+        this.mSecondaryControlsPresenter.setOnControlClickedListener(this.mOnControlClickedListener);
+    }
+
+    static void formatTime(long ms, StringBuilder sb) {
+        sb.setLength(0);
+        if (ms < 0) {
+            sb.append("--");
+            return;
+        }
+        long seconds = ms / 1000;
+        long minutes = seconds / 60;
+        long hours = minutes / 60;
+        long seconds2 = seconds - (minutes * 60);
+        long minutes2 = minutes - (60 * hours);
+        if (hours > 0) {
+            sb.append(hours);
+            sb.append(':');
+            if (minutes2 < 10) {
+                sb.append('0');
+            }
+        }
+        sb.append(minutes2);
+        sb.append(':');
+        if (seconds2 < 10) {
+            sb.append('0');
+        }
+        sb.append(seconds2);
+    }
+
+    private static int getDefaultProgressColor(Context context) {
+        TypedValue outValue = new TypedValue();
+        if (context.getTheme().resolveAttribute(C0364R.attr.playbackProgressPrimaryColor, outValue, true)) {
+            return context.getResources().getColor(outValue.resourceId);
+        }
+        return context.getResources().getColor(C0364R.color.lb_playback_progress_color_no_theme);
+    }
+
+    private static int getDefaultSecondaryProgressColor(Context context) {
+        TypedValue outValue = new TypedValue();
+        if (context.getTheme().resolveAttribute(C0364R.attr.playbackProgressSecondaryColor, outValue, true)) {
+            return context.getResources().getColor(outValue.resourceId);
+        }
+        return context.getResources().getColor(C0364R.color.lb_playback_progress_secondary_color_no_theme);
+    }
+
+    public void setDescriptionPresenter(Presenter descriptionPresenter) {
+        this.mDescriptionPresenter = descriptionPresenter;
+    }
+
+    public OnActionClickedListener getOnActionClickedListener() {
+        return this.mOnActionClickedListener;
+    }
+
+    public void setOnActionClickedListener(OnActionClickedListener listener) {
+        this.mOnActionClickedListener = listener;
+    }
+
+    @ColorInt
+    public int getProgressColor() {
+        return this.mProgressColor;
+    }
+
+    public void setProgressColor(@ColorInt int color) {
+        this.mProgressColor = color;
+        this.mProgressColorSet = true;
+    }
+
+    @ColorInt
+    public int getSecondaryProgressColor() {
+        return this.mSecondaryProgressColor;
+    }
+
+    public void setSecondaryProgressColor(@ColorInt int color) {
+        this.mSecondaryProgressColor = color;
+        this.mSecondaryProgressColorSet = true;
+    }
+
+    public void onReappear(RowPresenter.ViewHolder rowViewHolder) {
+        ViewHolder vh = (ViewHolder) rowViewHolder;
+        if (vh.view.hasFocus()) {
+            vh.mProgressBar.requestFocus();
+        }
+    }
+
+    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+     method: ClspMth{android.view.LayoutInflater.inflate(int, android.view.ViewGroup, boolean):android.view.View}
+     arg types: [int, android.view.ViewGroup, int]
+     candidates:
+      ClspMth{android.view.LayoutInflater.inflate(org.xmlpull.v1.XmlPullParser, android.view.ViewGroup, boolean):android.view.View}
+      ClspMth{android.view.LayoutInflater.inflate(int, android.view.ViewGroup, boolean):android.view.View} */
+    /* access modifiers changed from: protected */
+    public RowPresenter.ViewHolder createRowViewHolder(ViewGroup parent) {
+        ViewHolder vh = new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(C0364R.layout.lb_playback_transport_controls_row, parent, false), this.mDescriptionPresenter);
+        initRow(vh);
+        return vh;
+    }
+
+    private void initRow(final ViewHolder vh) {
+        int i;
+        int i2;
+        vh.mControlsVh = (ControlBarPresenter.ViewHolder) this.mPlaybackControlsPresenter.onCreateViewHolder(vh.mControlsDock);
+        SeekBar seekBar = vh.mProgressBar;
+        if (this.mProgressColorSet) {
+            i = this.mProgressColor;
+        } else {
+            i = getDefaultProgressColor(vh.mControlsDock.getContext());
+        }
+        seekBar.setProgressColor(i);
+        SeekBar seekBar2 = vh.mProgressBar;
+        if (this.mSecondaryProgressColorSet) {
+            i2 = this.mSecondaryProgressColor;
+        } else {
+            i2 = getDefaultSecondaryProgressColor(vh.mControlsDock.getContext());
+        }
+        seekBar2.setSecondaryProgressColor(i2);
+        vh.mControlsDock.addView(vh.mControlsVh.view);
+        vh.mSecondaryControlsVh = (ControlBarPresenter.ViewHolder) this.mSecondaryControlsPresenter.onCreateViewHolder(vh.mSecondaryControlsDock);
+        vh.mSecondaryControlsDock.addView(vh.mSecondaryControlsVh.view);
+        ((PlaybackTransportRowView) vh.view.findViewById(C0364R.C0366id.transport_row)).setOnUnhandledKeyListener(new PlaybackTransportRowView.OnUnhandledKeyListener() {
+            public boolean onUnhandledKey(KeyEvent event) {
+                if (vh.getOnKeyListener() == null || !vh.getOnKeyListener().onKey(vh.view, event.getKeyCode(), event)) {
+                    return false;
+                }
+                return true;
+            }
+        });
+    }
+
+    /* access modifiers changed from: protected */
+    public void onBindRowViewHolder(RowPresenter.ViewHolder holder, Object item) {
+        super.onBindRowViewHolder(holder, item);
+        ViewHolder vh = (ViewHolder) holder;
+        PlaybackControlsRow row = (PlaybackControlsRow) vh.getRow();
+        if (row.getItem() == null) {
+            vh.mDescriptionDock.setVisibility(8);
+        } else {
+            vh.mDescriptionDock.setVisibility(0);
+            if (vh.mDescriptionViewHolder != null) {
+                this.mDescriptionPresenter.onBindViewHolder(vh.mDescriptionViewHolder, row.getItem());
+            }
+        }
+        if (row.getImageDrawable() == null) {
+            vh.mImageView.setVisibility(8);
+        } else {
+            vh.mImageView.setVisibility(0);
+        }
+        vh.mImageView.setImageDrawable(row.getImageDrawable());
+        vh.mControlsBoundData.adapter = row.getPrimaryActionsAdapter();
+        vh.mControlsBoundData.presenter = vh.getPresenter(true);
+        vh.mControlsBoundData.mRowViewHolder = vh;
+        this.mPlaybackControlsPresenter.onBindViewHolder(vh.mControlsVh, vh.mControlsBoundData);
+        vh.mSecondaryBoundData.adapter = row.getSecondaryActionsAdapter();
+        vh.mSecondaryBoundData.presenter = vh.getPresenter(false);
+        vh.mSecondaryBoundData.mRowViewHolder = vh;
+        this.mSecondaryControlsPresenter.onBindViewHolder(vh.mSecondaryControlsVh, vh.mSecondaryBoundData);
+        vh.setTotalTime(row.getDuration());
+        vh.setCurrentPosition(row.getCurrentPosition());
+        vh.setBufferedPosition(row.getBufferedPosition());
+        row.setOnPlaybackProgressChangedListener(vh.mListener);
+    }
+
+    /* access modifiers changed from: protected */
+    public void onUnbindRowViewHolder(RowPresenter.ViewHolder holder) {
+        ViewHolder vh = (ViewHolder) holder;
+        PlaybackControlsRow row = (PlaybackControlsRow) vh.getRow();
+        if (vh.mDescriptionViewHolder != null) {
+            this.mDescriptionPresenter.onUnbindViewHolder(vh.mDescriptionViewHolder);
+        }
+        this.mPlaybackControlsPresenter.onUnbindViewHolder(vh.mControlsVh);
+        this.mSecondaryControlsPresenter.onUnbindViewHolder(vh.mSecondaryControlsVh);
+        row.setOnPlaybackProgressChangedListener(null);
+        super.onUnbindRowViewHolder(holder);
+    }
+
+    /* access modifiers changed from: protected */
+    public void onProgressBarClicked(ViewHolder vh) {
+        if (vh != null) {
+            if (vh.mPlayPauseAction == null) {
+                vh.mPlayPauseAction = new PlaybackControlsRow.PlayPauseAction(vh.view.getContext());
+            }
+            if (vh.getOnItemViewClickedListener() != null) {
+                vh.getOnItemViewClickedListener().onItemClicked(vh, vh.mPlayPauseAction, vh, vh.getRow());
+            }
+            OnActionClickedListener onActionClickedListener = this.mOnActionClickedListener;
+            if (onActionClickedListener != null) {
+                onActionClickedListener.onActionClicked(vh.mPlayPauseAction);
+            }
+        }
+    }
+
+    public float getDefaultSeekIncrement() {
+        return this.mDefaultSeekIncrement;
+    }
+
+    public void setDefaultSeekIncrement(float ratio) {
+        this.mDefaultSeekIncrement = ratio;
+    }
+
+    /* access modifiers changed from: protected */
+    public void onRowViewSelected(RowPresenter.ViewHolder vh, boolean selected) {
+        super.onRowViewSelected(vh, selected);
+        if (selected) {
+            ((ViewHolder) vh).dispatchItemSelection();
+        }
+    }
+
+    /* access modifiers changed from: protected */
+    public void onRowViewAttachedToWindow(RowPresenter.ViewHolder vh) {
+        super.onRowViewAttachedToWindow(vh);
+        Presenter presenter = this.mDescriptionPresenter;
+        if (presenter != null) {
+            presenter.onViewAttachedToWindow(((ViewHolder) vh).mDescriptionViewHolder);
+        }
+    }
+
+    /* access modifiers changed from: protected */
+    public void onRowViewDetachedFromWindow(RowPresenter.ViewHolder vh) {
+        super.onRowViewDetachedFromWindow(vh);
+        Presenter presenter = this.mDescriptionPresenter;
+        if (presenter != null) {
+            presenter.onViewDetachedFromWindow(((ViewHolder) vh).mDescriptionViewHolder);
+        }
+    }
 
     static class BoundData extends PlaybackControlsPresenter.BoundData {
         ViewHolder mRowViewHolder;
@@ -64,15 +290,40 @@ public class PlaybackTransportRowPresenter extends PlaybackRowPresenter {
     }
 
     public class ViewHolder extends PlaybackRowPresenter.ViewHolder implements PlaybackSeekUi {
-        BoundData mControlsBoundData = new BoundData();
         final ViewGroup mControlsDock;
-        ControlBarPresenter.ViewHolder mControlsVh;
         final TextView mCurrentTime;
-        long mCurrentTimeInMs = Long.MIN_VALUE;
         final ViewGroup mDescriptionDock;
         final Presenter.ViewHolder mDescriptionViewHolder;
         final ImageView mImageView;
+        final SeekBar mProgressBar;
+        final ViewGroup mSecondaryControlsDock;
+        final StringBuilder mTempBuilder = new StringBuilder();
+        final ThumbsBar mThumbsBar;
+        final TextView mTotalTime;
+        BoundData mControlsBoundData = new BoundData();
+        ControlBarPresenter.ViewHolder mControlsVh;
+        long mCurrentTimeInMs = Long.MIN_VALUE;
         boolean mInSeek;
+        PlaybackControlsRow.PlayPauseAction mPlayPauseAction;
+        long[] mPositions;
+        int mPositionsLength;
+        BoundData mSecondaryBoundData = new BoundData();
+        ControlBarPresenter.ViewHolder mSecondaryControlsVh;
+        long mSecondaryProgressInMs;
+        PlaybackSeekUi.Client mSeekClient;
+        PlaybackSeekDataProvider mSeekDataProvider;
+        Object mSelectedItem;
+        Presenter.ViewHolder mSelectedViewHolder;
+        int mThumbHeroIndex = -1;
+        PlaybackSeekDataProvider.ResultCallback mThumbResult = new PlaybackSeekDataProvider.ResultCallback() {
+            public void onThumbnailLoaded(Bitmap bitmap, int index) {
+                int childIndex = index - (ViewHolder.this.mThumbHeroIndex - (ViewHolder.this.mThumbsBar.getChildCount() / 2));
+                if (childIndex >= 0 && childIndex < ViewHolder.this.mThumbsBar.getChildCount()) {
+                    ViewHolder.this.mThumbsBar.setThumbBitmap(childIndex, bitmap);
+                }
+            }
+        };
+        long mTotalTimeInMs = Long.MIN_VALUE;
         final PlaybackControlsRow.OnPlaybackProgressCallback mListener = new PlaybackControlsRow.OnPlaybackProgressCallback() {
             public void onCurrentPositionChanged(PlaybackControlsRow row, long ms) {
                 ViewHolder.this.setCurrentPosition(ms);
@@ -86,31 +337,102 @@ public class PlaybackTransportRowPresenter extends PlaybackRowPresenter {
                 ViewHolder.this.setBufferedPosition(ms);
             }
         };
-        PlaybackControlsRow.PlayPauseAction mPlayPauseAction;
-        long[] mPositions;
-        int mPositionsLength;
-        final SeekBar mProgressBar;
-        BoundData mSecondaryBoundData = new BoundData();
-        final ViewGroup mSecondaryControlsDock;
-        ControlBarPresenter.ViewHolder mSecondaryControlsVh;
-        long mSecondaryProgressInMs;
-        PlaybackSeekUi.Client mSeekClient;
-        PlaybackSeekDataProvider mSeekDataProvider;
-        Object mSelectedItem;
-        Presenter.ViewHolder mSelectedViewHolder;
-        final StringBuilder mTempBuilder = new StringBuilder();
-        int mThumbHeroIndex = -1;
-        PlaybackSeekDataProvider.ResultCallback mThumbResult = new PlaybackSeekDataProvider.ResultCallback() {
-            public void onThumbnailLoaded(Bitmap bitmap, int index) {
-                int childIndex = index - (ViewHolder.this.mThumbHeroIndex - (ViewHolder.this.mThumbsBar.getChildCount() / 2));
-                if (childIndex >= 0 && childIndex < ViewHolder.this.mThumbsBar.getChildCount()) {
-                    ViewHolder.this.mThumbsBar.setThumbBitmap(childIndex, bitmap);
+
+        public ViewHolder(View rootView, Presenter descriptionPresenter) {
+            super(rootView);
+            Presenter.ViewHolder viewHolder;
+            this.mImageView = (ImageView) rootView.findViewById(C0364R.C0366id.image);
+            this.mDescriptionDock = (ViewGroup) rootView.findViewById(C0364R.C0366id.description_dock);
+            this.mCurrentTime = (TextView) rootView.findViewById(C0364R.C0366id.current_time);
+            this.mTotalTime = (TextView) rootView.findViewById(C0364R.C0366id.total_time);
+            this.mProgressBar = (SeekBar) rootView.findViewById(C0364R.C0366id.playback_progress);
+            this.mProgressBar.setOnClickListener(new View.OnClickListener(PlaybackTransportRowPresenter.this) {
+                public void onClick(View view) {
+                    PlaybackTransportRowPresenter.this.onProgressBarClicked(ViewHolder.this);
                 }
+            });
+            this.mProgressBar.setOnKeyListener(new View.OnKeyListener(PlaybackTransportRowPresenter.this) {
+                public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
+                    boolean z = false;
+                    if (keyCode != 4) {
+                        if (keyCode != 66) {
+                            if (keyCode != 69) {
+                                if (keyCode != 81) {
+                                    if (keyCode != 111) {
+                                        if (keyCode != 89) {
+                                            if (keyCode != 90) {
+                                                switch (keyCode) {
+                                                    case 19:
+                                                    case 20:
+                                                        return ViewHolder.this.mInSeek;
+                                                    case 21:
+                                                        break;
+                                                    case 22:
+                                                        break;
+                                                    case 23:
+                                                        break;
+                                                    default:
+                                                        return false;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                if (keyEvent.getAction() == 0) {
+                                    ViewHolder.this.onForward();
+                                }
+                                return true;
+                            }
+                            if (keyEvent.getAction() == 0) {
+                                ViewHolder.this.onBackward();
+                            }
+                            return true;
+                        }
+                        if (!ViewHolder.this.mInSeek) {
+                            return false;
+                        }
+                        if (keyEvent.getAction() == 1) {
+                            ViewHolder.this.stopSeek(false);
+                        }
+                        return true;
+                    }
+                    if (!ViewHolder.this.mInSeek) {
+                        return false;
+                    }
+                    if (keyEvent.getAction() == 1) {
+                        ViewHolder viewHolder = ViewHolder.this;
+                        if (Build.VERSION.SDK_INT < 21 || !ViewHolder.this.mProgressBar.isAccessibilityFocused()) {
+                            z = true;
+                        }
+                        viewHolder.stopSeek(z);
+                    }
+                    return true;
+                }
+            });
+            this.mProgressBar.setAccessibilitySeekListener(new SeekBar.AccessibilitySeekListener(PlaybackTransportRowPresenter.this) {
+                public boolean onAccessibilitySeekForward() {
+                    return ViewHolder.this.onForward();
+                }
+
+                public boolean onAccessibilitySeekBackward() {
+                    return ViewHolder.this.onBackward();
+                }
+            });
+            this.mProgressBar.setMax(Integer.MAX_VALUE);
+            this.mControlsDock = (ViewGroup) rootView.findViewById(C0364R.C0366id.controls_dock);
+            this.mSecondaryControlsDock = (ViewGroup) rootView.findViewById(C0364R.C0366id.secondary_controls_dock);
+            if (descriptionPresenter == null) {
+                viewHolder = null;
+            } else {
+                viewHolder = descriptionPresenter.onCreateViewHolder(this.mDescriptionDock);
             }
-        };
-        final ThumbsBar mThumbsBar;
-        final TextView mTotalTime;
-        long mTotalTimeInMs = Long.MIN_VALUE;
+            this.mDescriptionViewHolder = viewHolder;
+            Presenter.ViewHolder viewHolder2 = this.mDescriptionViewHolder;
+            if (viewHolder2 != null) {
+                this.mDescriptionDock.addView(viewHolder2.view);
+            }
+            this.mThumbsBar = (ThumbsBar) rootView.findViewById(C0364R.C0366id.thumbs_row);
+        }
 
         /* JADX INFO: Multiple debug info for r3v4 int: [D('insertIndex' int), D('thumbHeroIndex' int)] */
         /* JADX INFO: Multiple debug info for r3v10 'insertIndex'  int: [D('thumbHeroIndex' int), D('insertIndex' int)] */
@@ -260,102 +582,6 @@ public class PlaybackTransportRowPresenter extends PlaybackRowPresenter {
             }
             updateProgressInSeek(false);
             return true;
-        }
-
-        public ViewHolder(View rootView, Presenter descriptionPresenter) {
-            super(rootView);
-            Presenter.ViewHolder viewHolder;
-            this.mImageView = (ImageView) rootView.findViewById(C0364R.C0366id.image);
-            this.mDescriptionDock = (ViewGroup) rootView.findViewById(C0364R.C0366id.description_dock);
-            this.mCurrentTime = (TextView) rootView.findViewById(C0364R.C0366id.current_time);
-            this.mTotalTime = (TextView) rootView.findViewById(C0364R.C0366id.total_time);
-            this.mProgressBar = (SeekBar) rootView.findViewById(C0364R.C0366id.playback_progress);
-            this.mProgressBar.setOnClickListener(new View.OnClickListener(PlaybackTransportRowPresenter.this) {
-                public void onClick(View view) {
-                    PlaybackTransportRowPresenter.this.onProgressBarClicked(ViewHolder.this);
-                }
-            });
-            this.mProgressBar.setOnKeyListener(new View.OnKeyListener(PlaybackTransportRowPresenter.this) {
-                public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
-                    boolean z = false;
-                    if (keyCode != 4) {
-                        if (keyCode != 66) {
-                            if (keyCode != 69) {
-                                if (keyCode != 81) {
-                                    if (keyCode != 111) {
-                                        if (keyCode != 89) {
-                                            if (keyCode != 90) {
-                                                switch (keyCode) {
-                                                    case 19:
-                                                    case 20:
-                                                        return ViewHolder.this.mInSeek;
-                                                    case 21:
-                                                        break;
-                                                    case 22:
-                                                        break;
-                                                    case 23:
-                                                        break;
-                                                    default:
-                                                        return false;
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                if (keyEvent.getAction() == 0) {
-                                    ViewHolder.this.onForward();
-                                }
-                                return true;
-                            }
-                            if (keyEvent.getAction() == 0) {
-                                ViewHolder.this.onBackward();
-                            }
-                            return true;
-                        }
-                        if (!ViewHolder.this.mInSeek) {
-                            return false;
-                        }
-                        if (keyEvent.getAction() == 1) {
-                            ViewHolder.this.stopSeek(false);
-                        }
-                        return true;
-                    }
-                    if (!ViewHolder.this.mInSeek) {
-                        return false;
-                    }
-                    if (keyEvent.getAction() == 1) {
-                        ViewHolder viewHolder = ViewHolder.this;
-                        if (Build.VERSION.SDK_INT < 21 || !ViewHolder.this.mProgressBar.isAccessibilityFocused()) {
-                            z = true;
-                        }
-                        viewHolder.stopSeek(z);
-                    }
-                    return true;
-                }
-            });
-            this.mProgressBar.setAccessibilitySeekListener(new SeekBar.AccessibilitySeekListener(PlaybackTransportRowPresenter.this) {
-                public boolean onAccessibilitySeekForward() {
-                    return ViewHolder.this.onForward();
-                }
-
-                public boolean onAccessibilitySeekBackward() {
-                    return ViewHolder.this.onBackward();
-                }
-            });
-            this.mProgressBar.setMax(Integer.MAX_VALUE);
-            this.mControlsDock = (ViewGroup) rootView.findViewById(C0364R.C0366id.controls_dock);
-            this.mSecondaryControlsDock = (ViewGroup) rootView.findViewById(C0364R.C0366id.secondary_controls_dock);
-            if (descriptionPresenter == null) {
-                viewHolder = null;
-            } else {
-                viewHolder = descriptionPresenter.onCreateViewHolder(this.mDescriptionDock);
-            }
-            this.mDescriptionViewHolder = viewHolder;
-            Presenter.ViewHolder viewHolder2 = this.mDescriptionViewHolder;
-            if (viewHolder2 != null) {
-                this.mDescriptionDock.addView(viewHolder2.view);
-            }
-            this.mThumbsBar = (ThumbsBar) rootView.findViewById(C0364R.C0366id.thumbs_row);
         }
 
         public final Presenter.ViewHolder getDescriptionViewHolder() {
@@ -513,240 +739,6 @@ public class PlaybackTransportRowPresenter extends PlaybackRowPresenter {
             Double.isNaN(d);
             Double.isNaN(d2);
             this.mProgressBar.setSecondaryProgress((int) (2.147483647E9d * (d / d2)));
-        }
-    }
-
-    static void formatTime(long ms, StringBuilder sb) {
-        sb.setLength(0);
-        if (ms < 0) {
-            sb.append("--");
-            return;
-        }
-        long seconds = ms / 1000;
-        long minutes = seconds / 60;
-        long hours = minutes / 60;
-        long seconds2 = seconds - (minutes * 60);
-        long minutes2 = minutes - (60 * hours);
-        if (hours > 0) {
-            sb.append(hours);
-            sb.append(':');
-            if (minutes2 < 10) {
-                sb.append('0');
-            }
-        }
-        sb.append(minutes2);
-        sb.append(':');
-        if (seconds2 < 10) {
-            sb.append('0');
-        }
-        sb.append(seconds2);
-    }
-
-    public PlaybackTransportRowPresenter() {
-        setHeaderPresenter(null);
-        setSelectEffectEnabled(false);
-        this.mPlaybackControlsPresenter = new ControlBarPresenter(C0364R.layout.lb_control_bar);
-        this.mPlaybackControlsPresenter.setDefaultFocusToMiddle(false);
-        this.mSecondaryControlsPresenter = new ControlBarPresenter(C0364R.layout.lb_control_bar);
-        this.mSecondaryControlsPresenter.setDefaultFocusToMiddle(false);
-        this.mPlaybackControlsPresenter.setOnControlSelectedListener(this.mOnControlSelectedListener);
-        this.mSecondaryControlsPresenter.setOnControlSelectedListener(this.mOnControlSelectedListener);
-        this.mPlaybackControlsPresenter.setOnControlClickedListener(this.mOnControlClickedListener);
-        this.mSecondaryControlsPresenter.setOnControlClickedListener(this.mOnControlClickedListener);
-    }
-
-    public void setDescriptionPresenter(Presenter descriptionPresenter) {
-        this.mDescriptionPresenter = descriptionPresenter;
-    }
-
-    public void setOnActionClickedListener(OnActionClickedListener listener) {
-        this.mOnActionClickedListener = listener;
-    }
-
-    public OnActionClickedListener getOnActionClickedListener() {
-        return this.mOnActionClickedListener;
-    }
-
-    public void setProgressColor(@ColorInt int color) {
-        this.mProgressColor = color;
-        this.mProgressColorSet = true;
-    }
-
-    @ColorInt
-    public int getProgressColor() {
-        return this.mProgressColor;
-    }
-
-    public void setSecondaryProgressColor(@ColorInt int color) {
-        this.mSecondaryProgressColor = color;
-        this.mSecondaryProgressColorSet = true;
-    }
-
-    @ColorInt
-    public int getSecondaryProgressColor() {
-        return this.mSecondaryProgressColor;
-    }
-
-    public void onReappear(RowPresenter.ViewHolder rowViewHolder) {
-        ViewHolder vh = (ViewHolder) rowViewHolder;
-        if (vh.view.hasFocus()) {
-            vh.mProgressBar.requestFocus();
-        }
-    }
-
-    private static int getDefaultProgressColor(Context context) {
-        TypedValue outValue = new TypedValue();
-        if (context.getTheme().resolveAttribute(C0364R.attr.playbackProgressPrimaryColor, outValue, true)) {
-            return context.getResources().getColor(outValue.resourceId);
-        }
-        return context.getResources().getColor(C0364R.color.lb_playback_progress_color_no_theme);
-    }
-
-    private static int getDefaultSecondaryProgressColor(Context context) {
-        TypedValue outValue = new TypedValue();
-        if (context.getTheme().resolveAttribute(C0364R.attr.playbackProgressSecondaryColor, outValue, true)) {
-            return context.getResources().getColor(outValue.resourceId);
-        }
-        return context.getResources().getColor(C0364R.color.lb_playback_progress_secondary_color_no_theme);
-    }
-
-    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-     method: ClspMth{android.view.LayoutInflater.inflate(int, android.view.ViewGroup, boolean):android.view.View}
-     arg types: [int, android.view.ViewGroup, int]
-     candidates:
-      ClspMth{android.view.LayoutInflater.inflate(org.xmlpull.v1.XmlPullParser, android.view.ViewGroup, boolean):android.view.View}
-      ClspMth{android.view.LayoutInflater.inflate(int, android.view.ViewGroup, boolean):android.view.View} */
-    /* access modifiers changed from: protected */
-    public RowPresenter.ViewHolder createRowViewHolder(ViewGroup parent) {
-        ViewHolder vh = new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(C0364R.layout.lb_playback_transport_controls_row, parent, false), this.mDescriptionPresenter);
-        initRow(vh);
-        return vh;
-    }
-
-    private void initRow(final ViewHolder vh) {
-        int i;
-        int i2;
-        vh.mControlsVh = (ControlBarPresenter.ViewHolder) this.mPlaybackControlsPresenter.onCreateViewHolder(vh.mControlsDock);
-        SeekBar seekBar = vh.mProgressBar;
-        if (this.mProgressColorSet) {
-            i = this.mProgressColor;
-        } else {
-            i = getDefaultProgressColor(vh.mControlsDock.getContext());
-        }
-        seekBar.setProgressColor(i);
-        SeekBar seekBar2 = vh.mProgressBar;
-        if (this.mSecondaryProgressColorSet) {
-            i2 = this.mSecondaryProgressColor;
-        } else {
-            i2 = getDefaultSecondaryProgressColor(vh.mControlsDock.getContext());
-        }
-        seekBar2.setSecondaryProgressColor(i2);
-        vh.mControlsDock.addView(vh.mControlsVh.view);
-        vh.mSecondaryControlsVh = (ControlBarPresenter.ViewHolder) this.mSecondaryControlsPresenter.onCreateViewHolder(vh.mSecondaryControlsDock);
-        vh.mSecondaryControlsDock.addView(vh.mSecondaryControlsVh.view);
-        ((PlaybackTransportRowView) vh.view.findViewById(C0364R.C0366id.transport_row)).setOnUnhandledKeyListener(new PlaybackTransportRowView.OnUnhandledKeyListener() {
-            public boolean onUnhandledKey(KeyEvent event) {
-                if (vh.getOnKeyListener() == null || !vh.getOnKeyListener().onKey(vh.view, event.getKeyCode(), event)) {
-                    return false;
-                }
-                return true;
-            }
-        });
-    }
-
-    /* access modifiers changed from: protected */
-    public void onBindRowViewHolder(RowPresenter.ViewHolder holder, Object item) {
-        super.onBindRowViewHolder(holder, item);
-        ViewHolder vh = (ViewHolder) holder;
-        PlaybackControlsRow row = (PlaybackControlsRow) vh.getRow();
-        if (row.getItem() == null) {
-            vh.mDescriptionDock.setVisibility(8);
-        } else {
-            vh.mDescriptionDock.setVisibility(0);
-            if (vh.mDescriptionViewHolder != null) {
-                this.mDescriptionPresenter.onBindViewHolder(vh.mDescriptionViewHolder, row.getItem());
-            }
-        }
-        if (row.getImageDrawable() == null) {
-            vh.mImageView.setVisibility(8);
-        } else {
-            vh.mImageView.setVisibility(0);
-        }
-        vh.mImageView.setImageDrawable(row.getImageDrawable());
-        vh.mControlsBoundData.adapter = row.getPrimaryActionsAdapter();
-        vh.mControlsBoundData.presenter = vh.getPresenter(true);
-        vh.mControlsBoundData.mRowViewHolder = vh;
-        this.mPlaybackControlsPresenter.onBindViewHolder(vh.mControlsVh, vh.mControlsBoundData);
-        vh.mSecondaryBoundData.adapter = row.getSecondaryActionsAdapter();
-        vh.mSecondaryBoundData.presenter = vh.getPresenter(false);
-        vh.mSecondaryBoundData.mRowViewHolder = vh;
-        this.mSecondaryControlsPresenter.onBindViewHolder(vh.mSecondaryControlsVh, vh.mSecondaryBoundData);
-        vh.setTotalTime(row.getDuration());
-        vh.setCurrentPosition(row.getCurrentPosition());
-        vh.setBufferedPosition(row.getBufferedPosition());
-        row.setOnPlaybackProgressChangedListener(vh.mListener);
-    }
-
-    /* access modifiers changed from: protected */
-    public void onUnbindRowViewHolder(RowPresenter.ViewHolder holder) {
-        ViewHolder vh = (ViewHolder) holder;
-        PlaybackControlsRow row = (PlaybackControlsRow) vh.getRow();
-        if (vh.mDescriptionViewHolder != null) {
-            this.mDescriptionPresenter.onUnbindViewHolder(vh.mDescriptionViewHolder);
-        }
-        this.mPlaybackControlsPresenter.onUnbindViewHolder(vh.mControlsVh);
-        this.mSecondaryControlsPresenter.onUnbindViewHolder(vh.mSecondaryControlsVh);
-        row.setOnPlaybackProgressChangedListener(null);
-        super.onUnbindRowViewHolder(holder);
-    }
-
-    /* access modifiers changed from: protected */
-    public void onProgressBarClicked(ViewHolder vh) {
-        if (vh != null) {
-            if (vh.mPlayPauseAction == null) {
-                vh.mPlayPauseAction = new PlaybackControlsRow.PlayPauseAction(vh.view.getContext());
-            }
-            if (vh.getOnItemViewClickedListener() != null) {
-                vh.getOnItemViewClickedListener().onItemClicked(vh, vh.mPlayPauseAction, vh, vh.getRow());
-            }
-            OnActionClickedListener onActionClickedListener = this.mOnActionClickedListener;
-            if (onActionClickedListener != null) {
-                onActionClickedListener.onActionClicked(vh.mPlayPauseAction);
-            }
-        }
-    }
-
-    public void setDefaultSeekIncrement(float ratio) {
-        this.mDefaultSeekIncrement = ratio;
-    }
-
-    public float getDefaultSeekIncrement() {
-        return this.mDefaultSeekIncrement;
-    }
-
-    /* access modifiers changed from: protected */
-    public void onRowViewSelected(RowPresenter.ViewHolder vh, boolean selected) {
-        super.onRowViewSelected(vh, selected);
-        if (selected) {
-            ((ViewHolder) vh).dispatchItemSelection();
-        }
-    }
-
-    /* access modifiers changed from: protected */
-    public void onRowViewAttachedToWindow(RowPresenter.ViewHolder vh) {
-        super.onRowViewAttachedToWindow(vh);
-        Presenter presenter = this.mDescriptionPresenter;
-        if (presenter != null) {
-            presenter.onViewAttachedToWindow(((ViewHolder) vh).mDescriptionViewHolder);
-        }
-    }
-
-    /* access modifiers changed from: protected */
-    public void onRowViewDetachedFromWindow(RowPresenter.ViewHolder vh) {
-        super.onRowViewDetachedFromWindow(vh);
-        Presenter presenter = this.mDescriptionPresenter;
-        if (presenter != null) {
-            presenter.onViewDetachedFromWindow(((ViewHolder) vh).mDescriptionViewHolder);
         }
     }
 }

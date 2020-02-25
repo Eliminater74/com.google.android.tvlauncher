@@ -1,13 +1,14 @@
 package com.google.android.gms.tasks;
 
 import android.support.annotation.NonNull;
+
 import java.util.concurrent.Executor;
 
 /* compiled from: OnCanceledCompletionListener */
 final class zzg<TResult> implements zzq<TResult> {
-    private final Executor zza;
     /* access modifiers changed from: private */
     public final Object zzb = new Object();
+    private final Executor zza;
     /* access modifiers changed from: private */
     public OnCanceledListener zzc;
 

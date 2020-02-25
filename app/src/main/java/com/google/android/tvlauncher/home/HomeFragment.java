@@ -15,7 +15,9 @@ import android.support.annotation.VisibleForTesting;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.leanback.widget.VerticalGridView;
+
 import com.bumptech.glide.Glide;
 import com.google.android.tvlauncher.C1188R;
 import com.google.android.tvlauncher.MainBackHomeController;
@@ -43,6 +45,7 @@ import com.google.android.tvlauncher.util.ExtendableTimer;
 import com.google.android.tvlauncher.util.OemConfiguration;
 import com.google.android.tvlauncher.util.Util;
 import com.google.android.tvlauncher.widget.PartnerWidgetInfo;
+
 import java.lang.ref.WeakReference;
 
 public class HomeFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, LaunchItemsManager.SearchPackageChangeListener, OemConfiguration.OemConfigurationPackageChangeListener {
@@ -63,9 +66,10 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
     private static final String TAG = "HomeFragment";
     private static final int USER_IDLE_MSG = 1;
     private static final int USER_INTERACTION_MSG = 2;
-    private boolean delayNotifTrayUpdate = true;
     private final FragmentEventLogger eventLogger = new FragmentEventLogger(this);
-    private ExoPlayerPreloaderManager exoPlayerPreloaderManager;
+    private final Handler inputHandler = new Handler();
+    private final ExtendableTimer loadNotifsTimeout = ExtendableTimer.obtain();
+    private final InteractionHandler userInteractionHandler = new InteractionHandler();
     /* access modifiers changed from: private */
     public HomeController homeController;
     private final LoaderManager.LoaderCallbacks<Boolean> hotwordEnabledLoaderCallbacks = new LoaderManager.LoaderCallbacks<Boolean>() {
@@ -85,12 +89,6 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
             HomeFragment.this.homeController.onHotwordEnabledUpdated(null);
         }
     };
-    private int idlePeriod;
-    private final Handler inputHandler = new Handler();
-    private InstantVideoPreloadManager instantVideoPreloadManager;
-    /* access modifiers changed from: private */
-    public boolean isIdle;
-    private final ExtendableTimer loadNotifsTimeout = ExtendableTimer.obtain();
     private final LoaderManager.LoaderCallbacks<Integer> micStatusLoaderCallbacks = new LoaderManager.LoaderCallbacks<Integer>() {
         public /* bridge */ /* synthetic */ void onLoadFinished(Loader loader, Object obj) {
             onLoadFinished((Loader<Integer>) loader, (Integer) obj);
@@ -159,8 +157,13 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
             HomeFragment.this.homeController.onSearchSuggestionsUpdate(null);
         }
     };
+    /* access modifiers changed from: private */
+    public boolean isIdle;
+    private boolean delayNotifTrayUpdate = true;
+    private ExoPlayerPreloaderManager exoPlayerPreloaderManager;
+    private int idlePeriod;
+    private InstantVideoPreloadManager instantVideoPreloadManager;
     private TvPlayerPreloaderManager tvPlayerPreloaderManager;
-    private final InteractionHandler userInteractionHandler = new InteractionHandler();
     private long userInteractionLoggedTimestamp;
 
     public /* bridge */ /* synthetic */ void onLoadFinished(Loader loader, Object obj) {

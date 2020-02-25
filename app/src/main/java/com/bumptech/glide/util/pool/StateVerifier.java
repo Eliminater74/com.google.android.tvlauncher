@@ -5,18 +5,18 @@ import android.support.annotation.NonNull;
 public abstract class StateVerifier {
     private static final boolean DEBUG = false;
 
-    /* access modifiers changed from: package-private */
-    public abstract void setRecycled(boolean z);
-
-    public abstract void throwIfRecycled();
+    private StateVerifier() {
+    }
 
     @NonNull
     public static StateVerifier newInstance() {
         return new DefaultStateVerifier();
     }
 
-    private StateVerifier() {
-    }
+    /* access modifiers changed from: package-private */
+    public abstract void setRecycled(boolean z);
+
+    public abstract void throwIfRecycled();
 
     private static class DefaultStateVerifier extends StateVerifier {
         private volatile boolean isReleased;

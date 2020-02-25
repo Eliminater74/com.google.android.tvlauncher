@@ -6,7 +6,7 @@ import com.google.common.annotations.GwtCompatible;
 public enum BoundType {
     OPEN(false),
     CLOSED(true);
-    
+
     final boolean inclusive;
 
     private BoundType(boolean inclusive2) {

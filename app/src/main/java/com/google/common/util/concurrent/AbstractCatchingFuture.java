@@ -3,11 +3,11 @@ package com.google.common.util.concurrent;
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
-import com.google.common.util.concurrent.FluentFuture;
 import com.google.errorprone.annotations.ForOverride;
-import java.lang.Throwable;
-import java.util.concurrent.Executor;
+
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
+import java.util.concurrent.Executor;
 
 @GwtCompatible
 abstract class AbstractCatchingFuture<V, X extends Throwable, F, T> extends FluentFuture.TrustedFuture<V> implements Runnable {
@@ -18,14 +18,11 @@ abstract class AbstractCatchingFuture<V, X extends Throwable, F, T> extends Flue
     @NullableDecl
     ListenableFuture<? extends V> inputFuture;
 
-    /* access modifiers changed from: package-private */
-    @ForOverride
-    @NullableDecl
-    public abstract T doFallback(F f, X x) throws Exception;
-
-    /* access modifiers changed from: package-private */
-    @ForOverride
-    public abstract void setResult(@NullableDecl T t);
+    AbstractCatchingFuture(ListenableFuture<? extends V> inputFuture2, Class<X> exceptionType2, F fallback2) {
+        this.inputFuture = (ListenableFuture) Preconditions.checkNotNull(inputFuture2);
+        this.exceptionType = (Class) Preconditions.checkNotNull(exceptionType2);
+        this.fallback = Preconditions.checkNotNull(fallback2);
+    }
 
     static <V, X extends Throwable> ListenableFuture<V> create(ListenableFuture<? extends V> input, Class<X> exceptionType2, Function<? super X, ? extends V> fallback2, Executor executor) {
         CatchingFuture<V, X> future = new CatchingFuture<>(input, exceptionType2, fallback2);
@@ -39,11 +36,14 @@ abstract class AbstractCatchingFuture<V, X extends Throwable, F, T> extends Flue
         return future;
     }
 
-    AbstractCatchingFuture(ListenableFuture<? extends V> inputFuture2, Class<X> exceptionType2, F fallback2) {
-        this.inputFuture = (ListenableFuture) Preconditions.checkNotNull(inputFuture2);
-        this.exceptionType = (Class) Preconditions.checkNotNull(exceptionType2);
-        this.fallback = Preconditions.checkNotNull(fallback2);
-    }
+    /* access modifiers changed from: package-private */
+    @ForOverride
+    @NullableDecl
+    public abstract T doFallback(F f, X x) throws Exception;
+
+    /* access modifiers changed from: package-private */
+    @ForOverride
+    public abstract void setResult(@NullableDecl T t);
 
     /* JADX DEBUG: Multi-variable search result rejected for TypeSearchVarInfo{r7v4, resolved type: java.lang.Object} */
     /* JADX DEBUG: Multi-variable search result rejected for TypeSearchVarInfo{r5v4, resolved type: java.lang.Throwable} */

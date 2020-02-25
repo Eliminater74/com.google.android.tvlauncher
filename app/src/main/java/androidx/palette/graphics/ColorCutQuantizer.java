@@ -4,7 +4,7 @@ import android.graphics.Color;
 import android.support.annotation.Nullable;
 import android.support.p001v4.graphics.ColorUtils;
 import android.util.TimingLogger;
-import androidx.palette.graphics.Palette;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -30,9 +30,9 @@ final class ColorCutQuantizer {
     final Palette.Filter[] mFilters;
     final int[] mHistogram;
     final List<Palette.Swatch> mQuantizedColors;
-    private final float[] mTempHsl = new float[3];
     @Nullable
     final TimingLogger mTimingLogger = null;
+    private final float[] mTempHsl = new float[3];
 
     /* JADX INFO: Multiple debug info for r2v3 int[]: [D('color' int), D('colors' int[])] */
     ColorCutQuantizer(int[] pixels, int maxColors, @Nullable Palette.Filter[] filters) {
@@ -78,6 +78,59 @@ final class ColorCutQuantizer {
         this.mQuantizedColors = quantizePixels(maxColors);
     }
 
+    static void modifySignificantOctet(int[] a, int dimension, int lower, int upper) {
+        if (dimension == -3) {
+            return;
+        }
+        if (dimension == -2) {
+            for (int i = lower; i <= upper; i++) {
+                int color = a[i];
+                a[i] = (quantizedGreen(color) << 10) | (quantizedRed(color) << 5) | quantizedBlue(color);
+            }
+        } else if (dimension == -1) {
+            for (int i2 = lower; i2 <= upper; i2++) {
+                int color2 = a[i2];
+                a[i2] = (quantizedBlue(color2) << 10) | (quantizedGreen(color2) << 5) | quantizedRed(color2);
+            }
+        }
+    }
+
+    private static int quantizeFromRgb888(int color) {
+        int r = modifyWordWidth(Color.red(color), 8, 5);
+        int g = modifyWordWidth(Color.green(color), 8, 5);
+        return (r << 10) | (g << 5) | modifyWordWidth(Color.blue(color), 8, 5);
+    }
+
+    static int approximateToRgb888(int r, int g, int b) {
+        return Color.rgb(modifyWordWidth(r, 5, 8), modifyWordWidth(g, 5, 8), modifyWordWidth(b, 5, 8));
+    }
+
+    private static int approximateToRgb888(int color) {
+        return approximateToRgb888(quantizedRed(color), quantizedGreen(color), quantizedBlue(color));
+    }
+
+    static int quantizedRed(int color) {
+        return (color >> 10) & 31;
+    }
+
+    static int quantizedGreen(int color) {
+        return (color >> 5) & 31;
+    }
+
+    static int quantizedBlue(int color) {
+        return color & 31;
+    }
+
+    private static int modifyWordWidth(int value, int currentWidth, int targetWidth) {
+        int newValue;
+        if (targetWidth > currentWidth) {
+            newValue = value << (targetWidth - currentWidth);
+        } else {
+            newValue = value >> (currentWidth - targetWidth);
+        }
+        return newValue & ((1 << targetWidth) - 1);
+    }
+
     /* access modifiers changed from: package-private */
     public List<Palette.Swatch> getQuantizedColors() {
         return this.mQuantizedColors;
@@ -107,6 +160,30 @@ final class ColorCutQuantizer {
             }
         }
         return colors;
+    }
+
+    private boolean shouldIgnoreColor(int color565) {
+        int rgb = approximateToRgb888(color565);
+        ColorUtils.colorToHSL(rgb, this.mTempHsl);
+        return shouldIgnoreColor(rgb, this.mTempHsl);
+    }
+
+    private boolean shouldIgnoreColor(Palette.Swatch color) {
+        return shouldIgnoreColor(color.getRgb(), color.getHsl());
+    }
+
+    private boolean shouldIgnoreColor(int rgb, float[] hsl) {
+        Palette.Filter[] filterArr = this.mFilters;
+        if (filterArr == null || filterArr.length <= 0) {
+            return false;
+        }
+        int count = filterArr.length;
+        for (int i = 0; i < count; i++) {
+            if (!this.mFilters[i].isAllowed(rgb, hsl)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private class Vbox {
@@ -254,82 +331,5 @@ final class ColorCutQuantizer {
             }
             return new Palette.Swatch(ColorCutQuantizer.approximateToRgb888(Math.round(((float) redSum) / ((float) totalPopulation)), Math.round(((float) greenSum) / ((float) totalPopulation)), Math.round(((float) blueSum) / ((float) totalPopulation))), totalPopulation);
         }
-    }
-
-    static void modifySignificantOctet(int[] a, int dimension, int lower, int upper) {
-        if (dimension == -3) {
-            return;
-        }
-        if (dimension == -2) {
-            for (int i = lower; i <= upper; i++) {
-                int color = a[i];
-                a[i] = (quantizedGreen(color) << 10) | (quantizedRed(color) << 5) | quantizedBlue(color);
-            }
-        } else if (dimension == -1) {
-            for (int i2 = lower; i2 <= upper; i2++) {
-                int color2 = a[i2];
-                a[i2] = (quantizedBlue(color2) << 10) | (quantizedGreen(color2) << 5) | quantizedRed(color2);
-            }
-        }
-    }
-
-    private boolean shouldIgnoreColor(int color565) {
-        int rgb = approximateToRgb888(color565);
-        ColorUtils.colorToHSL(rgb, this.mTempHsl);
-        return shouldIgnoreColor(rgb, this.mTempHsl);
-    }
-
-    private boolean shouldIgnoreColor(Palette.Swatch color) {
-        return shouldIgnoreColor(color.getRgb(), color.getHsl());
-    }
-
-    private boolean shouldIgnoreColor(int rgb, float[] hsl) {
-        Palette.Filter[] filterArr = this.mFilters;
-        if (filterArr == null || filterArr.length <= 0) {
-            return false;
-        }
-        int count = filterArr.length;
-        for (int i = 0; i < count; i++) {
-            if (!this.mFilters[i].isAllowed(rgb, hsl)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static int quantizeFromRgb888(int color) {
-        int r = modifyWordWidth(Color.red(color), 8, 5);
-        int g = modifyWordWidth(Color.green(color), 8, 5);
-        return (r << 10) | (g << 5) | modifyWordWidth(Color.blue(color), 8, 5);
-    }
-
-    static int approximateToRgb888(int r, int g, int b) {
-        return Color.rgb(modifyWordWidth(r, 5, 8), modifyWordWidth(g, 5, 8), modifyWordWidth(b, 5, 8));
-    }
-
-    private static int approximateToRgb888(int color) {
-        return approximateToRgb888(quantizedRed(color), quantizedGreen(color), quantizedBlue(color));
-    }
-
-    static int quantizedRed(int color) {
-        return (color >> 10) & 31;
-    }
-
-    static int quantizedGreen(int color) {
-        return (color >> 5) & 31;
-    }
-
-    static int quantizedBlue(int color) {
-        return color & 31;
-    }
-
-    private static int modifyWordWidth(int value, int currentWidth, int targetWidth) {
-        int newValue;
-        if (targetWidth > currentWidth) {
-            newValue = value << (targetWidth - currentWidth);
-        } else {
-            newValue = value >> (currentWidth - targetWidth);
-        }
-        return newValue & ((1 << targetWidth) - 1);
     }
 }

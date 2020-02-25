@@ -1,8 +1,9 @@
 package com.google.android.libraries.clock.impl;
 
 import android.content.Context;
+
 import com.google.android.libraries.clock.ListenableClock;
-import com.google.android.libraries.clock.impl.ListenerManager;
+
 import javax.annotation.Nullable;
 
 public class SystemListenableClock extends SystemClockImpl implements ListenableClock {

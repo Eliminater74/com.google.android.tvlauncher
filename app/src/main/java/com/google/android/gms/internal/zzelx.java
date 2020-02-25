@@ -1,6 +1,7 @@
 package com.google.android.gms.internal;
 
 import android.os.RemoteException;
+
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.Status;

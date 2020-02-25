@@ -2,7 +2,6 @@ package com.google.protobuf;
 
 import com.google.analytics.config.protoverifier.proto.RulesProto;
 import com.google.apps.jspb.Jspb;
-import com.google.protobuf.GeneratedMessageLite;
 import com.google.protobuf.nano.NanoDescriptor;
 import com.google.protos.china.policy.ChinaAnnotations;
 import com.google.protos.datapol.SemanticAnnotations;
@@ -22,14 +21,6 @@ final class C1886x94510305 extends ExtensionRegistryLite {
 
     private C1886x94510305() {
         super(true);
-    }
-
-    /* renamed from: com.google.protobuf.java_com_google_android_apps_tv_tvhome__tvhome_fullrelease_6037b148GeneratedExtensionRegistryLite$Loader */
-    public static class Loader extends GeneratedExtensionRegistryLoader {
-        /* access modifiers changed from: protected */
-        public final ExtensionRegistryLite getInstance() {
-            return new C1886x94510305();
-        }
     }
 
     public ExtensionRegistryLite getUnmodifiable() {
@@ -251,6 +242,14 @@ final class C1886x94510305 extends ExtensionRegistryLite {
                 return NanoDescriptor.methodAsLite;
             default:
                 return null;
+        }
+    }
+
+    /* renamed from: com.google.protobuf.java_com_google_android_apps_tv_tvhome__tvhome_fullrelease_6037b148GeneratedExtensionRegistryLite$Loader */
+    public static class Loader extends GeneratedExtensionRegistryLoader {
+        /* access modifiers changed from: protected */
+        public final ExtensionRegistryLite getInstance() {
+            return new C1886x94510305();
         }
     }
 }

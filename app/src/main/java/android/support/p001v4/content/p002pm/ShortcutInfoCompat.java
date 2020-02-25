@@ -15,6 +15,7 @@ import android.support.annotation.VisibleForTesting;
 import android.support.p001v4.app.Person;
 import android.support.p001v4.graphics.drawable.IconCompat;
 import android.text.TextUtils;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -38,6 +39,33 @@ public class ShortcutInfoCompat {
     Person[] mPersons;
 
     ShortcutInfoCompat() {
+    }
+
+    @VisibleForTesting
+    @RequiresApi(25)
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    @Nullable
+    static Person[] getPersonsFromExtra(@NonNull PersistableBundle bundle) {
+        if (bundle == null || !bundle.containsKey(EXTRA_PERSON_COUNT)) {
+            return null;
+        }
+        int personsLength = bundle.getInt(EXTRA_PERSON_COUNT);
+        Person[] persons = new Person[personsLength];
+        for (int i = 0; i < personsLength; i++) {
+            persons[i] = Person.fromPersistableBundle(bundle.getPersistableBundle(EXTRA_PERSON_ + (i + 1)));
+        }
+        return persons;
+    }
+
+    @VisibleForTesting
+    @RequiresApi(25)
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    @Nullable
+    static boolean getLongLivedFromExtra(@NonNull PersistableBundle bundle) {
+        if (bundle == null || !bundle.containsKey(EXTRA_LONG_LIVED)) {
+            return false;
+        }
+        return bundle.getBoolean(EXTRA_LONG_LIVED);
     }
 
     @RequiresApi(25)
@@ -149,33 +177,6 @@ public class ShortcutInfoCompat {
     @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
     public IconCompat getIcon() {
         return this.mIcon;
-    }
-
-    @VisibleForTesting
-    @RequiresApi(25)
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    @Nullable
-    static Person[] getPersonsFromExtra(@NonNull PersistableBundle bundle) {
-        if (bundle == null || !bundle.containsKey(EXTRA_PERSON_COUNT)) {
-            return null;
-        }
-        int personsLength = bundle.getInt(EXTRA_PERSON_COUNT);
-        Person[] persons = new Person[personsLength];
-        for (int i = 0; i < personsLength; i++) {
-            persons[i] = Person.fromPersistableBundle(bundle.getPersistableBundle(EXTRA_PERSON_ + (i + 1)));
-        }
-        return persons;
-    }
-
-    @VisibleForTesting
-    @RequiresApi(25)
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    @Nullable
-    static boolean getLongLivedFromExtra(@NonNull PersistableBundle bundle) {
-        if (bundle == null || !bundle.containsKey(EXTRA_LONG_LIVED)) {
-            return false;
-        }
-        return bundle.getBoolean(EXTRA_LONG_LIVED);
     }
 
     /* renamed from: android.support.v4.content.pm.ShortcutInfoCompat$Builder */

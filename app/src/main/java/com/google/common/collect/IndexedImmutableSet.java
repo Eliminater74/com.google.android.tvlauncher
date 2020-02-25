@@ -5,11 +5,11 @@ import com.google.common.annotations.GwtIncompatible;
 
 @GwtCompatible(emulated = true)
 abstract class IndexedImmutableSet<E> extends ImmutableSet<E> {
-    /* access modifiers changed from: package-private */
-    public abstract E get(int i);
-
     IndexedImmutableSet() {
     }
+
+    /* access modifiers changed from: package-private */
+    public abstract E get(int i);
 
     public UnmodifiableIterator<E> iterator() {
         return asList().iterator();

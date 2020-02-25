@@ -4,9 +4,11 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.p004v7.widget.RecyclerView;
 import android.view.KeyEvent;
+
 import androidx.leanback.widget.BaseGridView;
 import androidx.leanback.widget.HorizontalGridView;
 import androidx.leanback.widget.VerticalGridView;
+
 import com.google.android.tvlauncher.util.Util;
 
 class RecyclerViewFastScrollingManager {
@@ -14,24 +16,27 @@ class RecyclerViewFastScrollingManager {
     private static final int DEFAULT_EXIT_FAST_SCROLLING_DELAY_MS = 450;
     private static final int DPAD_EVENTS_COUNT_FOR_FAST_SCROLLING = 1;
     private static final String TAG = "RVFastScrollingHelper";
-    private boolean mAnimatorEnabled;
-    private boolean mAnimatorInitialized;
-    /* access modifiers changed from: private */
-    public int mExitFastScrollingDelayMs = 450;
     /* access modifiers changed from: private */
     public final Runnable mExitFastScrollingRunnable = new RecyclerViewFastScrollingManager$$Lambda$0(this);
+    /* access modifiers changed from: private */
+    public int mExitFastScrollingDelayMs = 450;
     /* access modifiers changed from: private */
     public boolean mFastScrollingEnabled;
     /* access modifiers changed from: private */
     public Handler mHandler = new Handler();
-    private RecyclerView.ItemAnimator mItemAnimator;
     /* access modifiers changed from: private */
     public int mKeyCodeNext;
     /* access modifiers changed from: private */
     public int mKeyCodePrevious;
     /* access modifiers changed from: private */
     public BaseGridView mList;
+    private boolean mAnimatorEnabled;
+    private boolean mAnimatorInitialized;
+    private RecyclerView.ItemAnimator mItemAnimator;
     private OnFastScrollingChangedListener mListener;
+    private boolean mScrollAllowedDuringFastScrolling = true;
+    private boolean mScrollEnabled;
+    private boolean mScrollInitialized;
     private final BaseGridView.OnUnhandledKeyListener mOnUnhandledKeyListener = new BaseGridView.OnUnhandledKeyListener() {
         public boolean onUnhandledKey(KeyEvent event) {
             if (event.getKeyCode() != RecyclerViewFastScrollingManager.this.mKeyCodePrevious && event.getKeyCode() != RecyclerViewFastScrollingManager.this.mKeyCodeNext) {
@@ -50,18 +55,6 @@ class RecyclerViewFastScrollingManager {
             }
         }
     };
-    private boolean mScrollAllowedDuringFastScrolling = true;
-    private boolean mScrollEnabled;
-    private boolean mScrollInitialized;
-
-    public interface OnFastScrollingChangedListener {
-        void onFastScrollingChanged(boolean z);
-    }
-
-    /* access modifiers changed from: package-private */
-    public final /* synthetic */ void lambda$new$0$RecyclerViewFastScrollingManager() {
-        setFastScrollingEnabled(false);
-    }
 
     RecyclerViewFastScrollingManager(@NonNull BaseGridView list, @NonNull RecyclerView.ItemAnimator itemAnimator) {
         this.mItemAnimator = itemAnimator;
@@ -76,6 +69,11 @@ class RecyclerViewFastScrollingManager {
             throw new IllegalArgumentException("Provided list must be a HorizontalGridView or a VerticalGridView");
         }
         this.mList.setOnUnhandledKeyListener(this.mOnUnhandledKeyListener);
+    }
+
+    /* access modifiers changed from: package-private */
+    public final /* synthetic */ void lambda$new$0$RecyclerViewFastScrollingManager() {
+        setFastScrollingEnabled(false);
     }
 
     /* access modifiers changed from: package-private */
@@ -143,5 +141,9 @@ class RecyclerViewFastScrollingManager {
             this.mScrollInitialized = true;
             this.mList.setScrollEnabled(this.mScrollEnabled);
         }
+    }
+
+    public interface OnFastScrollingChangedListener {
+        void onFastScrollingChanged(boolean z);
     }
 }

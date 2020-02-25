@@ -1,6 +1,7 @@
 package com.google.android.libraries.performance.primes;
 
 import android.os.SystemClock;
+
 import com.google.android.libraries.performance.primes.battery.BatteryCapture;
 
 final /* synthetic */ class BatteryMetricService$$Lambda$1 implements BatteryCapture.TimeCapture {

@@ -1,6 +1,7 @@
 package com.google.android.exoplayer2.offline;
 
 import com.google.android.exoplayer2.util.Assertions;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -18,21 +19,32 @@ public final class Download {
     public static final int STOP_REASON_NONE = 0;
     public final long contentLength;
     public final int failureReason;
-    final DownloadProgress progress;
     public final DownloadRequest request;
     public final long startTimeMs;
     public final int state;
     public final int stopReason;
     public final long updateTimeMs;
+    final DownloadProgress progress;
 
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface FailureReason {
+    public Download(DownloadRequest request2, int state2, long startTimeMs2, long updateTimeMs2, long contentLength2, int stopReason2, int failureReason2) {
+        this(request2, state2, startTimeMs2, updateTimeMs2, contentLength2, stopReason2, failureReason2, new DownloadProgress());
     }
 
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface State {
+    public Download(DownloadRequest request2, int state2, long startTimeMs2, long updateTimeMs2, long contentLength2, int stopReason2, int failureReason2, DownloadProgress progress2) {
+        Assertions.checkNotNull(progress2);
+        boolean z = true;
+        Assertions.checkState((failureReason2 == 0) == (state2 != 4));
+        if (stopReason2 != 0) {
+            Assertions.checkState((state2 == 2 || state2 == 0) ? false : z);
+        }
+        this.request = request2;
+        this.state = state2;
+        this.startTimeMs = startTimeMs2;
+        this.updateTimeMs = updateTimeMs2;
+        this.contentLength = contentLength2;
+        this.stopReason = stopReason2;
+        this.failureReason = failureReason2;
+        this.progress = progress2;
     }
 
     public static String getStateString(int state2) {
@@ -60,27 +72,6 @@ public final class Download {
         throw new IllegalStateException();
     }
 
-    public Download(DownloadRequest request2, int state2, long startTimeMs2, long updateTimeMs2, long contentLength2, int stopReason2, int failureReason2) {
-        this(request2, state2, startTimeMs2, updateTimeMs2, contentLength2, stopReason2, failureReason2, new DownloadProgress());
-    }
-
-    public Download(DownloadRequest request2, int state2, long startTimeMs2, long updateTimeMs2, long contentLength2, int stopReason2, int failureReason2, DownloadProgress progress2) {
-        Assertions.checkNotNull(progress2);
-        boolean z = true;
-        Assertions.checkState((failureReason2 == 0) == (state2 != 4));
-        if (stopReason2 != 0) {
-            Assertions.checkState((state2 == 2 || state2 == 0) ? false : z);
-        }
-        this.request = request2;
-        this.state = state2;
-        this.startTimeMs = startTimeMs2;
-        this.updateTimeMs = updateTimeMs2;
-        this.contentLength = contentLength2;
-        this.stopReason = stopReason2;
-        this.failureReason = failureReason2;
-        this.progress = progress2;
-    }
-
     public boolean isTerminalState() {
         int i = this.state;
         return i == 3 || i == 4;
@@ -92,5 +83,15 @@ public final class Download {
 
     public float getPercentDownloaded() {
         return this.progress.percentDownloaded;
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface FailureReason {
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface State {
     }
 }

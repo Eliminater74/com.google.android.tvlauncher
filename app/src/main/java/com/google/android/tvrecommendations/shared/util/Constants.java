@@ -45,7 +45,6 @@ public class Constants {
     public static final String NOTIFICATION_CONTENT_PROVIDER_COMPONENT_NAME = "NotificationContentProvider";
     public static final String PLAY_STORE_PACKAGE_NAME = "com.android.vending";
     public static final String SEARCH_APP_PACKAGE_NAME = "com.google.android.katniss";
-    public static int SPONSORED_CHANNEL_FLAG = 332210;
     public static final String SPONSORED_CHANNEL_LEGACY_PACKAGE_NAME = "sponsored.legacy";
     public static final int SUBTYPE_BRANDED_SPONSORED = 1;
     public static final int SUBTYPE_UNBRANDED_SPONSORED = 2;
@@ -56,4 +55,5 @@ public class Constants {
     public static final int TYPE_DOUBLE_CLICK_AD = 1002;
     public static final int TYPE_GAME = 12;
     public static final String VIEW_LICENSES_INTENT_ACTION = "com.android.tv.action.VIEW_LICENSES";
+    public static int SPONSORED_CHANNEL_FLAG = 332210;
 }

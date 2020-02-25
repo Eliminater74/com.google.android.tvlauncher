@@ -2,26 +2,14 @@ package com.google.android.exoplayer2.source.hls.playlist;
 
 import android.net.Uri;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.source.MediaSourceEventListener;
 import com.google.android.exoplayer2.source.hls.HlsDataSourceFactory;
 import com.google.android.exoplayer2.upstream.LoadErrorHandlingPolicy;
+
 import java.io.IOException;
 
 public interface HlsPlaylistTracker {
-
-    public interface Factory {
-        HlsPlaylistTracker createTracker(HlsDataSourceFactory hlsDataSourceFactory, LoadErrorHandlingPolicy loadErrorHandlingPolicy, HlsPlaylistParserFactory hlsPlaylistParserFactory);
-    }
-
-    public interface PlaylistEventListener {
-        void onPlaylistChanged();
-
-        boolean onPlaylistError(Uri uri, long j);
-    }
-
-    public interface PrimaryPlaylistListener {
-        void onPrimaryPlaylistRefreshed(HlsMediaPlaylist hlsMediaPlaylist);
-    }
 
     void addListener(PlaylistEventListener playlistEventListener);
 
@@ -48,6 +36,20 @@ public interface HlsPlaylistTracker {
     void start(Uri uri, MediaSourceEventListener.EventDispatcher eventDispatcher, PrimaryPlaylistListener primaryPlaylistListener);
 
     void stop();
+
+    public interface Factory {
+        HlsPlaylistTracker createTracker(HlsDataSourceFactory hlsDataSourceFactory, LoadErrorHandlingPolicy loadErrorHandlingPolicy, HlsPlaylistParserFactory hlsPlaylistParserFactory);
+    }
+
+    public interface PlaylistEventListener {
+        void onPlaylistChanged();
+
+        boolean onPlaylistError(Uri uri, long j);
+    }
+
+    public interface PrimaryPlaylistListener {
+        void onPrimaryPlaylistRefreshed(HlsMediaPlaylist hlsMediaPlaylist);
+    }
 
     public static final class PlaylistStuckException extends IOException {
         public final Uri url;

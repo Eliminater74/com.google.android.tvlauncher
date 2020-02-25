@@ -17,6 +17,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.google.android.tvlauncher.appsview.BannerView;
 import com.google.android.tvlauncher.home.ChannelItemsAdapter;
 import com.google.android.tvlauncher.home.ProgramBindPayloads;
@@ -25,6 +26,7 @@ import com.google.android.tvrecommendations.shared.util.AnimUtil;
 import com.google.android.tvrecommendations.shared.util.ColorUtils;
 import com.google.android.tvrecommendations.shared.view.BoundsItemAnimator;
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -37,9 +39,14 @@ public class ChannelItemsAnimator extends BoundsItemAnimator {
     private static final float EPS = 0.001f;
     private static final Interpolator FAST_WATCH_NEXT_INFO_CARD_DISAPPEARANCE_INTERPOLATOR = new DecelerateInterpolator(3.0f);
     private static final String TAG = "ChannelItemsAnimator";
+    private final Interpolator mMainInterpolator;
     /* access modifiers changed from: private */
     public Set<Animator> mCanceledAnimations = new HashSet();
-    private final Interpolator mMainInterpolator;
+
+    public ChannelItemsAnimator() {
+        setChangeDuration(175);
+        this.mMainInterpolator = new DecelerateInterpolator();
+    }
 
     public /* bridge */ /* synthetic */ boolean animateAdd(RecyclerView.ViewHolder viewHolder) {
         return super.animateAdd(viewHolder);
@@ -59,11 +66,6 @@ public class ChannelItemsAnimator extends BoundsItemAnimator {
 
     public /* bridge */ /* synthetic */ void runPendingAnimations() {
         super.runPendingAnimations();
-    }
-
-    public ChannelItemsAnimator() {
-        setChangeDuration(175);
-        this.mMainInterpolator = new DecelerateInterpolator();
     }
 
     @NonNull

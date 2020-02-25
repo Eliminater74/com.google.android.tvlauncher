@@ -6,13 +6,15 @@ import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.CheckReturnValue;
 import com.google.errorprone.annotations.Immutable;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.Serializable;
 import java.util.AbstractList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.RandomAccess;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible
 @Immutable
@@ -22,9 +24,19 @@ public final class ImmutableIntArray implements Serializable {
     public static final ImmutableIntArray EMPTY = new ImmutableIntArray(new int[0]);
     /* access modifiers changed from: private */
     public final int[] array;
-    private final int end;
     /* access modifiers changed from: private */
     public final transient int start;
+    private final int end;
+
+    private ImmutableIntArray(int[] array2) {
+        this(array2, 0, array2.length);
+    }
+
+    private ImmutableIntArray(int[] array2, int start2, int end2) {
+        this.array = array2;
+        this.start = start2;
+        this.end = end2;
+    }
 
     /* renamed from: of */
     public static ImmutableIntArray m215of() {
@@ -94,100 +106,6 @@ public final class ImmutableIntArray implements Serializable {
         return new Builder(10);
     }
 
-    @CanIgnoreReturnValue
-    public static final class Builder {
-        private int[] array;
-        private int count = 0;
-
-        Builder(int initialCapacity) {
-            this.array = new int[initialCapacity];
-        }
-
-        public Builder add(int value) {
-            ensureRoomFor(1);
-            int[] iArr = this.array;
-            int i = this.count;
-            iArr[i] = value;
-            this.count = i + 1;
-            return this;
-        }
-
-        public Builder addAll(int[] values) {
-            ensureRoomFor(values.length);
-            System.arraycopy(values, 0, this.array, this.count, values.length);
-            this.count += values.length;
-            return this;
-        }
-
-        public Builder addAll(Iterable<Integer> values) {
-            if (values instanceof Collection) {
-                return addAll((Collection<Integer>) ((Collection) values));
-            }
-            for (Integer value : values) {
-                add(value.intValue());
-            }
-            return this;
-        }
-
-        public Builder addAll(Collection<Integer> values) {
-            ensureRoomFor(values.size());
-            for (Integer value : values) {
-                int[] iArr = this.array;
-                int i = this.count;
-                this.count = i + 1;
-                iArr[i] = value.intValue();
-            }
-            return this;
-        }
-
-        public Builder addAll(ImmutableIntArray values) {
-            ensureRoomFor(values.length());
-            System.arraycopy(values.array, values.start, this.array, this.count, values.length());
-            this.count += values.length();
-            return this;
-        }
-
-        private void ensureRoomFor(int numberToAdd) {
-            int newCount = this.count + numberToAdd;
-            int[] iArr = this.array;
-            if (newCount > iArr.length) {
-                int[] newArray = new int[expandedCapacity(iArr.length, newCount)];
-                System.arraycopy(this.array, 0, newArray, 0, this.count);
-                this.array = newArray;
-            }
-        }
-
-        private static int expandedCapacity(int oldCapacity, int minCapacity) {
-            if (minCapacity >= 0) {
-                int newCapacity = (oldCapacity >> 1) + oldCapacity + 1;
-                if (newCapacity < minCapacity) {
-                    newCapacity = Integer.highestOneBit(minCapacity - 1) << 1;
-                }
-                if (newCapacity < 0) {
-                    return Integer.MAX_VALUE;
-                }
-                return newCapacity;
-            }
-            throw new AssertionError("cannot store more than MAX_VALUE elements");
-        }
-
-        @CheckReturnValue
-        public ImmutableIntArray build() {
-            int i = this.count;
-            return i == 0 ? ImmutableIntArray.EMPTY : new ImmutableIntArray(this.array, 0, i);
-        }
-    }
-
-    private ImmutableIntArray(int[] array2) {
-        this(array2, 0, array2.length);
-    }
-
-    private ImmutableIntArray(int[] array2, int start2, int end2) {
-        this.array = array2;
-        this.start = start2;
-        this.end = end2;
-    }
-
     public int length() {
         return this.end - this.start;
     }
@@ -244,6 +162,155 @@ public final class ImmutableIntArray implements Serializable {
 
     public List<Integer> asList() {
         return new AsList();
+    }
+
+    public boolean equals(@NullableDecl Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (!(object instanceof ImmutableIntArray)) {
+            return false;
+        }
+        ImmutableIntArray that = (ImmutableIntArray) object;
+        if (length() != that.length()) {
+            return false;
+        }
+        for (int i = 0; i < length(); i++) {
+            if (get(i) != that.get(i)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public int hashCode() {
+        int hash = 1;
+        for (int i = this.start; i < this.end; i++) {
+            hash = (hash * 31) + Ints.hashCode(this.array[i]);
+        }
+        return hash;
+    }
+
+    public String toString() {
+        if (isEmpty()) {
+            return "[]";
+        }
+        StringBuilder builder = new StringBuilder(length() * 5);
+        builder.append('[');
+        builder.append(this.array[this.start]);
+        int i = this.start;
+        while (true) {
+            i++;
+            if (i < this.end) {
+                builder.append(", ");
+                builder.append(this.array[i]);
+            } else {
+                builder.append(']');
+                return builder.toString();
+            }
+        }
+    }
+
+    public ImmutableIntArray trimmed() {
+        return isPartialView() ? new ImmutableIntArray(toArray()) : this;
+    }
+
+    private boolean isPartialView() {
+        return this.start > 0 || this.end < this.array.length;
+    }
+
+    /* access modifiers changed from: package-private */
+    public Object writeReplace() {
+        return trimmed();
+    }
+
+    /* access modifiers changed from: package-private */
+    public Object readResolve() {
+        return isEmpty() ? EMPTY : this;
+    }
+
+    @CanIgnoreReturnValue
+    public static final class Builder {
+        private int[] array;
+        private int count = 0;
+
+        Builder(int initialCapacity) {
+            this.array = new int[initialCapacity];
+        }
+
+        private static int expandedCapacity(int oldCapacity, int minCapacity) {
+            if (minCapacity >= 0) {
+                int newCapacity = (oldCapacity >> 1) + oldCapacity + 1;
+                if (newCapacity < minCapacity) {
+                    newCapacity = Integer.highestOneBit(minCapacity - 1) << 1;
+                }
+                if (newCapacity < 0) {
+                    return Integer.MAX_VALUE;
+                }
+                return newCapacity;
+            }
+            throw new AssertionError("cannot store more than MAX_VALUE elements");
+        }
+
+        public Builder add(int value) {
+            ensureRoomFor(1);
+            int[] iArr = this.array;
+            int i = this.count;
+            iArr[i] = value;
+            this.count = i + 1;
+            return this;
+        }
+
+        public Builder addAll(int[] values) {
+            ensureRoomFor(values.length);
+            System.arraycopy(values, 0, this.array, this.count, values.length);
+            this.count += values.length;
+            return this;
+        }
+
+        public Builder addAll(Iterable<Integer> values) {
+            if (values instanceof Collection) {
+                return addAll((Collection<Integer>) ((Collection) values));
+            }
+            for (Integer value : values) {
+                add(value.intValue());
+            }
+            return this;
+        }
+
+        public Builder addAll(Collection<Integer> values) {
+            ensureRoomFor(values.size());
+            for (Integer value : values) {
+                int[] iArr = this.array;
+                int i = this.count;
+                this.count = i + 1;
+                iArr[i] = value.intValue();
+            }
+            return this;
+        }
+
+        public Builder addAll(ImmutableIntArray values) {
+            ensureRoomFor(values.length());
+            System.arraycopy(values.array, values.start, this.array, this.count, values.length());
+            this.count += values.length();
+            return this;
+        }
+
+        private void ensureRoomFor(int numberToAdd) {
+            int newCount = this.count + numberToAdd;
+            int[] iArr = this.array;
+            if (newCount > iArr.length) {
+                int[] newArray = new int[expandedCapacity(iArr.length, newCount)];
+                System.arraycopy(this.array, 0, newArray, 0, this.count);
+                this.array = newArray;
+            }
+        }
+
+        @CheckReturnValue
+        public ImmutableIntArray build() {
+            int i = this.count;
+            return i == 0 ? ImmutableIntArray.EMPTY : new ImmutableIntArray(this.array, 0, i);
+        }
     }
 
     static class AsList extends AbstractList<Integer> implements RandomAccess, Serializable {
@@ -314,70 +381,5 @@ public final class ImmutableIntArray implements Serializable {
         public String toString() {
             return this.parent.toString();
         }
-    }
-
-    public boolean equals(@NullableDecl Object object) {
-        if (object == this) {
-            return true;
-        }
-        if (!(object instanceof ImmutableIntArray)) {
-            return false;
-        }
-        ImmutableIntArray that = (ImmutableIntArray) object;
-        if (length() != that.length()) {
-            return false;
-        }
-        for (int i = 0; i < length(); i++) {
-            if (get(i) != that.get(i)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public int hashCode() {
-        int hash = 1;
-        for (int i = this.start; i < this.end; i++) {
-            hash = (hash * 31) + Ints.hashCode(this.array[i]);
-        }
-        return hash;
-    }
-
-    public String toString() {
-        if (isEmpty()) {
-            return "[]";
-        }
-        StringBuilder builder = new StringBuilder(length() * 5);
-        builder.append('[');
-        builder.append(this.array[this.start]);
-        int i = this.start;
-        while (true) {
-            i++;
-            if (i < this.end) {
-                builder.append(", ");
-                builder.append(this.array[i]);
-            } else {
-                builder.append(']');
-                return builder.toString();
-            }
-        }
-    }
-
-    public ImmutableIntArray trimmed() {
-        return isPartialView() ? new ImmutableIntArray(toArray()) : this;
-    }
-
-    private boolean isPartialView() {
-        return this.start > 0 || this.end < this.array.length;
-    }
-
-    /* access modifiers changed from: package-private */
-    public Object writeReplace() {
-        return trimmed();
-    }
-
-    /* access modifiers changed from: package-private */
-    public Object readResolve() {
-        return isEmpty() ? EMPTY : this;
     }
 }

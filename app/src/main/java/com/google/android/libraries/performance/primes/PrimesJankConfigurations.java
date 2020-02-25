@@ -2,7 +2,9 @@ package com.google.android.libraries.performance.primes;
 
 import android.os.Build;
 import android.support.annotation.Nullable;
+
 import com.google.android.libraries.stitch.util.Preconditions;
+
 import logs.proto.wireless.performance.mobile.ExtensionMetric;
 
 public class PrimesJankConfigurations {
@@ -27,25 +29,6 @@ public class PrimesJankConfigurations {
         this.metricExtensionProvider = metricExtensionProvider2;
     }
 
-    public Builder toBuilder() {
-        Builder builder = newBuilder();
-        boolean unused = builder.enabled = this.enabled;
-        boolean unused2 = builder.monitorActivities = this.monitorActivities;
-        boolean unused3 = builder.useAnimator = this.useAnimator;
-        int unused4 = builder.sampleRatePerSecond = this.sampleRatePerSecond;
-        JankMetricExtensionProvider unused5 = builder.metricExtensionProvider = this.metricExtensionProvider;
-        return builder;
-    }
-
-    @Deprecated
-    public static Builder builder() {
-        return newBuilder();
-    }
-
-    public static Builder newBuilder() {
-        return new Builder();
-    }
-
     @Deprecated
     public PrimesJankConfigurations(boolean enabled2) {
         this(enabled2, false, Builder.DEFAULT_JANK_USE_ANIMATOR, 10, DEFAULT_METRIC_EXTENSION_PROVIDER);
@@ -64,6 +47,25 @@ public class PrimesJankConfigurations {
     @Deprecated
     public PrimesJankConfigurations(boolean enabled2, int sampleRatePerSecond2, boolean useAnimator2) {
         this(enabled2, false, useAnimator2, sampleRatePerSecond2, DEFAULT_METRIC_EXTENSION_PROVIDER);
+    }
+
+    @Deprecated
+    public static Builder builder() {
+        return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+        return new Builder();
+    }
+
+    public Builder toBuilder() {
+        Builder builder = newBuilder();
+        boolean unused = builder.enabled = this.enabled;
+        boolean unused2 = builder.monitorActivities = this.monitorActivities;
+        boolean unused3 = builder.useAnimator = this.useAnimator;
+        int unused4 = builder.sampleRatePerSecond = this.sampleRatePerSecond;
+        JankMetricExtensionProvider unused5 = builder.metricExtensionProvider = this.metricExtensionProvider;
+        return builder;
     }
 
     public boolean isEnabled() {
@@ -88,10 +90,10 @@ public class PrimesJankConfigurations {
     }
 
     public static class Builder {
-        private static final boolean DEFAULT_JANK_MONITOR_ACTIVITIES = false;
-        private static final int DEFAULT_JANK_SAMPLING_RATE_PER_SECOND = 10;
         /* access modifiers changed from: private */
         public static final boolean DEFAULT_JANK_USE_ANIMATOR = (Build.VERSION.SDK_INT < 26);
+        private static final boolean DEFAULT_JANK_MONITOR_ACTIVITIES = false;
+        private static final int DEFAULT_JANK_SAMPLING_RATE_PER_SECOND = 10;
         private static final boolean DISABLED_BY_DEFAULT = false;
         /* access modifiers changed from: private */
         public boolean enabled = false;

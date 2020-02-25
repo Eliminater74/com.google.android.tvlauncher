@@ -14,6 +14,7 @@ import android.util.Log;
 public abstract class MediaControllerGlue extends PlaybackControlGlue {
     static final boolean DEBUG = false;
     static final String TAG = "MediaControllerGlue";
+    MediaControllerCompat mMediaController;
     private final MediaControllerCompat.Callback mCallback = new MediaControllerCompat.Callback() {
         public void onMetadataChanged(MediaMetadataCompat metadata) {
             MediaControllerGlue.this.onMetadataChanged();
@@ -30,7 +31,6 @@ public abstract class MediaControllerGlue extends PlaybackControlGlue {
         public void onSessionEvent(String event, Bundle extras) {
         }
     };
-    MediaControllerCompat mMediaController;
 
     public MediaControllerGlue(Context context, int[] fastForwardSpeeds, int[] rewindSpeeds) {
         super(context, fastForwardSpeeds, rewindSpeeds);

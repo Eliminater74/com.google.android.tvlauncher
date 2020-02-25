@@ -15,6 +15,7 @@ import com.google.protobuf.ProtoMessage;
 import com.google.protobuf.ProtoPresenceBits;
 import com.google.protobuf.ProtoPresenceCheckedField;
 import com.google.protobuf.ProtoSyntax;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -22,6 +23,12 @@ import java.util.Collections;
 import java.util.List;
 
 public final class ExtensionPhotos {
+
+    private ExtensionPhotos() {
+    }
+
+    public static void registerAllExtensions(ExtensionRegistryLite registry) {
+    }
 
     public interface AssistantStatsOrBuilder extends MessageLiteOrBuilder {
         int getNumPhotosLoaded();
@@ -145,12 +152,6 @@ public final class ExtensionPhotos {
         boolean hasVideoDurationSeconds();
     }
 
-    private ExtensionPhotos() {
-    }
-
-    public static void registerAllExtensions(ExtensionRegistryLite registry) {
-    }
-
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
     public static final class PhotosExtension extends GeneratedMessageLite<PhotosExtension, Builder> implements PhotosExtensionOrBuilder {
         public static final int ASSISTANT_STATS_FIELD_NUMBER = 1;
@@ -159,9 +160,14 @@ public final class ExtensionPhotos {
         /* access modifiers changed from: private */
         public static final PhotosExtension DEFAULT_INSTANCE = new PhotosExtension();
         public static final int FINGERPRINT_STATS_FIELD_NUMBER = 6;
-        private static volatile Parser<PhotosExtension> PARSER = null;
         public static final int SHARING_STATS_FIELD_NUMBER = 2;
         public static final int VIDEO_PLAYER_STATS_FIELD_NUMBER = 5;
+        private static volatile Parser<PhotosExtension> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(PhotosExtension.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.MESSAGE)
         @ProtoPresenceCheckedField(mask = 1, presenceBitsId = 0)
         private AssistantStats assistantStats_;
@@ -184,6 +190,70 @@ public final class ExtensionPhotos {
         private VideoPlayerStats videoPlayerStats_;
 
         private PhotosExtension() {
+        }
+
+        public static PhotosExtension parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (PhotosExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static PhotosExtension parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (PhotosExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static PhotosExtension parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (PhotosExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static PhotosExtension parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (PhotosExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static PhotosExtension parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (PhotosExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static PhotosExtension parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (PhotosExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static PhotosExtension parseFrom(InputStream input) throws IOException {
+            return (PhotosExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static PhotosExtension parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (PhotosExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static PhotosExtension parseDelimitedFrom(InputStream input) throws IOException {
+            return (PhotosExtension) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static PhotosExtension parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (PhotosExtension) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static PhotosExtension parseFrom(CodedInputStream input) throws IOException {
+            return (PhotosExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static PhotosExtension parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (PhotosExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(PhotosExtension prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static PhotosExtension getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<PhotosExtension> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasAssistantStats() {
@@ -462,60 +532,36 @@ public final class ExtensionPhotos {
             this.bitField0_ &= -33;
         }
 
-        public static PhotosExtension parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (PhotosExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static PhotosExtension parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (PhotosExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static PhotosExtension parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (PhotosExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static PhotosExtension parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (PhotosExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static PhotosExtension parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (PhotosExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static PhotosExtension parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (PhotosExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static PhotosExtension parseFrom(InputStream input) throws IOException {
-            return (PhotosExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static PhotosExtension parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (PhotosExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static PhotosExtension parseDelimitedFrom(InputStream input) throws IOException {
-            return (PhotosExtension) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static PhotosExtension parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (PhotosExtension) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static PhotosExtension parseFrom(CodedInputStream input) throws IOException {
-            return (PhotosExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static PhotosExtension parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (PhotosExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(PhotosExtension prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new PhotosExtension();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0006\u0000\u0001\u0001\u0006\u0006\u0000\u0000\u0000\u0001\t\u0000\u0002\t\u0001\u0003\t\u0002\u0004\t\u0003\u0005\t\u0004\u0006\t\u0005", new Object[]{"bitField0_", "assistantStats_", "sharingStats_", "backgroundTaskStats_", "cameraAssistantStats_", "videoPlayerStats_", "fingerprintStats_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<PhotosExtension> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (PhotosExtension.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<PhotosExtension, Builder> implements PhotosExtensionOrBuilder {
@@ -715,50 +761,6 @@ public final class ExtensionPhotos {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new PhotosExtension();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0006\u0000\u0001\u0001\u0006\u0006\u0000\u0000\u0000\u0001\t\u0000\u0002\t\u0001\u0003\t\u0002\u0004\t\u0003\u0005\t\u0004\u0006\t\u0005", new Object[]{"bitField0_", "assistantStats_", "sharingStats_", "backgroundTaskStats_", "cameraAssistantStats_", "videoPlayerStats_", "fingerprintStats_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<PhotosExtension> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (PhotosExtension.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(PhotosExtension.class, DEFAULT_INSTANCE);
-        }
-
-        public static PhotosExtension getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<PhotosExtension> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -768,6 +770,11 @@ public final class ExtensionPhotos {
         public static final int NUM_PHOTOS_LOADED_FIELD_NUMBER = 2;
         public static final int NUM_PHOTOS_REQUESTED_FIELD_NUMBER = 3;
         private static volatile Parser<AssistantStats> PARSER;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(AssistantStats.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 2, isRequired = false, type = FieldType.INT32)
@@ -778,46 +785,6 @@ public final class ExtensionPhotos {
         private int numPhotosRequested_;
 
         private AssistantStats() {
-        }
-
-        public boolean hasNumPhotosLoaded() {
-            return (this.bitField0_ & 1) != 0;
-        }
-
-        public int getNumPhotosLoaded() {
-            return this.numPhotosLoaded_;
-        }
-
-        /* access modifiers changed from: private */
-        public void setNumPhotosLoaded(int value) {
-            this.bitField0_ |= 1;
-            this.numPhotosLoaded_ = value;
-        }
-
-        /* access modifiers changed from: private */
-        public void clearNumPhotosLoaded() {
-            this.bitField0_ &= -2;
-            this.numPhotosLoaded_ = 0;
-        }
-
-        public boolean hasNumPhotosRequested() {
-            return (this.bitField0_ & 2) != 0;
-        }
-
-        public int getNumPhotosRequested() {
-            return this.numPhotosRequested_;
-        }
-
-        /* access modifiers changed from: private */
-        public void setNumPhotosRequested(int value) {
-            this.bitField0_ |= 2;
-            this.numPhotosRequested_ = value;
-        }
-
-        /* access modifiers changed from: private */
-        public void clearNumPhotosRequested() {
-            this.bitField0_ &= -3;
-            this.numPhotosRequested_ = 0;
         }
 
         public static AssistantStats parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
@@ -876,6 +843,86 @@ public final class ExtensionPhotos {
             return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
         }
 
+        public static AssistantStats getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<AssistantStats> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
+        }
+
+        public boolean hasNumPhotosLoaded() {
+            return (this.bitField0_ & 1) != 0;
+        }
+
+        public int getNumPhotosLoaded() {
+            return this.numPhotosLoaded_;
+        }
+
+        /* access modifiers changed from: private */
+        public void setNumPhotosLoaded(int value) {
+            this.bitField0_ |= 1;
+            this.numPhotosLoaded_ = value;
+        }
+
+        /* access modifiers changed from: private */
+        public void clearNumPhotosLoaded() {
+            this.bitField0_ &= -2;
+            this.numPhotosLoaded_ = 0;
+        }
+
+        public boolean hasNumPhotosRequested() {
+            return (this.bitField0_ & 2) != 0;
+        }
+
+        public int getNumPhotosRequested() {
+            return this.numPhotosRequested_;
+        }
+
+        /* access modifiers changed from: private */
+        public void setNumPhotosRequested(int value) {
+            this.bitField0_ |= 2;
+            this.numPhotosRequested_ = value;
+        }
+
+        /* access modifiers changed from: private */
+        public void clearNumPhotosRequested() {
+            this.bitField0_ &= -3;
+            this.numPhotosRequested_ = 0;
+        }
+
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new AssistantStats();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0002\u0003\u0002\u0000\u0000\u0000\u0002\u0004\u0000\u0003\u0004\u0001", new Object[]{"bitField0_", "numPhotosLoaded_", "numPhotosRequested_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<AssistantStats> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (AssistantStats.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
+        }
+
         public static final class Builder extends GeneratedMessageLite.Builder<AssistantStats, Builder> implements AssistantStatsOrBuilder {
             private Builder() {
                 super(AssistantStats.DEFAULT_INSTANCE);
@@ -921,50 +968,6 @@ public final class ExtensionPhotos {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new AssistantStats();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0002\u0003\u0002\u0000\u0000\u0000\u0002\u0004\u0000\u0003\u0004\u0001", new Object[]{"bitField0_", "numPhotosLoaded_", "numPhotosRequested_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<AssistantStats> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (AssistantStats.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(AssistantStats.class, DEFAULT_INSTANCE);
-        }
-
-        public static AssistantStats getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<AssistantStats> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -974,8 +977,13 @@ public final class ExtensionPhotos {
         public static final int NUM_COLLECTIONS_FIELD_NUMBER = 4;
         public static final int NUM_ITEMS_COLLECTION_FIELD_NUMBER = 1;
         public static final int NUM_SHARING_APPS_FIELD_NUMBER = 3;
-        private static volatile Parser<SharingStats> PARSER = null;
         public static final int SHARED_IMAGE_TRANSFORMS_FIELD_NUMBER = 2;
+        private static volatile Parser<SharingStats> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(SharingStats.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 4, isRequired = false, type = FieldType.INT32)
@@ -991,6 +999,70 @@ public final class ExtensionPhotos {
         private Internal.ProtobufList<SharedImageTransform> sharedImageTransforms_ = emptyProtobufList();
 
         private SharingStats() {
+        }
+
+        public static SharingStats parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (SharingStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static SharingStats parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (SharingStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static SharingStats parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (SharingStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static SharingStats parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (SharingStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static SharingStats parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (SharingStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static SharingStats parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (SharingStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static SharingStats parseFrom(InputStream input) throws IOException {
+            return (SharingStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static SharingStats parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (SharingStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static SharingStats parseDelimitedFrom(InputStream input) throws IOException {
+            return (SharingStats) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static SharingStats parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (SharingStats) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static SharingStats parseFrom(CodedInputStream input) throws IOException {
+            return (SharingStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static SharingStats parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (SharingStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(SharingStats prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static SharingStats getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<SharingStats> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasNumItemsCollection() {
@@ -1150,60 +1222,36 @@ public final class ExtensionPhotos {
             this.numCollections_ = 0;
         }
 
-        public static SharingStats parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (SharingStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static SharingStats parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (SharingStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static SharingStats parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (SharingStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static SharingStats parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (SharingStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static SharingStats parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (SharingStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static SharingStats parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (SharingStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static SharingStats parseFrom(InputStream input) throws IOException {
-            return (SharingStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static SharingStats parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (SharingStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static SharingStats parseDelimitedFrom(InputStream input) throws IOException {
-            return (SharingStats) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static SharingStats parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (SharingStats) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static SharingStats parseFrom(CodedInputStream input) throws IOException {
-            return (SharingStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static SharingStats parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (SharingStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(SharingStats prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new SharingStats();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0004\u0000\u0001\u0001\u0004\u0004\u0000\u0001\u0000\u0001\u0004\u0000\u0002\u001b\u0003\u0004\u0001\u0004\u0004\u0002", new Object[]{"bitField0_", "numItemsCollection_", "sharedImageTransforms_", SharedImageTransform.class, "numSharingApps_", "numCollections_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<SharingStats> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (SharingStats.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<SharingStats, Builder> implements SharingStatsOrBuilder {
@@ -1337,50 +1385,6 @@ public final class ExtensionPhotos {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new SharingStats();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0004\u0000\u0001\u0001\u0004\u0004\u0000\u0001\u0000\u0001\u0004\u0000\u0002\u001b\u0003\u0004\u0001\u0004\u0004\u0002", new Object[]{"bitField0_", "numItemsCollection_", "sharedImageTransforms_", SharedImageTransform.class, "numSharingApps_", "numCollections_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<SharingStats> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (SharingStats.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(SharingStats.class, DEFAULT_INSTANCE);
-        }
-
-        public static SharingStats getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<SharingStats> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -1390,6 +1394,11 @@ public final class ExtensionPhotos {
         public static final int IS_BACKGROUND_SERVICE_RUNNING_ALREADY_FIELD_NUMBER = 2;
         public static final int IS_PHOTOS_IN_FOREGROUND_FIELD_NUMBER = 1;
         private static volatile Parser<BackgroundTaskStats> PARSER;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(BackgroundTaskStats.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 2, isRequired = false, type = FieldType.BOOL)
@@ -1400,46 +1409,6 @@ public final class ExtensionPhotos {
         private boolean isPhotosInForeground_;
 
         private BackgroundTaskStats() {
-        }
-
-        public boolean hasIsPhotosInForeground() {
-            return (this.bitField0_ & 1) != 0;
-        }
-
-        public boolean getIsPhotosInForeground() {
-            return this.isPhotosInForeground_;
-        }
-
-        /* access modifiers changed from: private */
-        public void setIsPhotosInForeground(boolean value) {
-            this.bitField0_ |= 1;
-            this.isPhotosInForeground_ = value;
-        }
-
-        /* access modifiers changed from: private */
-        public void clearIsPhotosInForeground() {
-            this.bitField0_ &= -2;
-            this.isPhotosInForeground_ = false;
-        }
-
-        public boolean hasIsBackgroundServiceRunningAlready() {
-            return (this.bitField0_ & 2) != 0;
-        }
-
-        public boolean getIsBackgroundServiceRunningAlready() {
-            return this.isBackgroundServiceRunningAlready_;
-        }
-
-        /* access modifiers changed from: private */
-        public void setIsBackgroundServiceRunningAlready(boolean value) {
-            this.bitField0_ |= 2;
-            this.isBackgroundServiceRunningAlready_ = value;
-        }
-
-        /* access modifiers changed from: private */
-        public void clearIsBackgroundServiceRunningAlready() {
-            this.bitField0_ &= -3;
-            this.isBackgroundServiceRunningAlready_ = false;
         }
 
         public static BackgroundTaskStats parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
@@ -1498,6 +1467,86 @@ public final class ExtensionPhotos {
             return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
         }
 
+        public static BackgroundTaskStats getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<BackgroundTaskStats> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
+        }
+
+        public boolean hasIsPhotosInForeground() {
+            return (this.bitField0_ & 1) != 0;
+        }
+
+        public boolean getIsPhotosInForeground() {
+            return this.isPhotosInForeground_;
+        }
+
+        /* access modifiers changed from: private */
+        public void setIsPhotosInForeground(boolean value) {
+            this.bitField0_ |= 1;
+            this.isPhotosInForeground_ = value;
+        }
+
+        /* access modifiers changed from: private */
+        public void clearIsPhotosInForeground() {
+            this.bitField0_ &= -2;
+            this.isPhotosInForeground_ = false;
+        }
+
+        public boolean hasIsBackgroundServiceRunningAlready() {
+            return (this.bitField0_ & 2) != 0;
+        }
+
+        public boolean getIsBackgroundServiceRunningAlready() {
+            return this.isBackgroundServiceRunningAlready_;
+        }
+
+        /* access modifiers changed from: private */
+        public void setIsBackgroundServiceRunningAlready(boolean value) {
+            this.bitField0_ |= 2;
+            this.isBackgroundServiceRunningAlready_ = value;
+        }
+
+        /* access modifiers changed from: private */
+        public void clearIsBackgroundServiceRunningAlready() {
+            this.bitField0_ &= -3;
+            this.isBackgroundServiceRunningAlready_ = false;
+        }
+
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new BackgroundTaskStats();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0000\u0000\u0001\u0007\u0000\u0002\u0007\u0001", new Object[]{"bitField0_", "isPhotosInForeground_", "isBackgroundServiceRunningAlready_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<BackgroundTaskStats> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (BackgroundTaskStats.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
+        }
+
         public static final class Builder extends GeneratedMessageLite.Builder<BackgroundTaskStats, Builder> implements BackgroundTaskStatsOrBuilder {
             private Builder() {
                 super(BackgroundTaskStats.DEFAULT_INSTANCE);
@@ -1543,59 +1592,20 @@ public final class ExtensionPhotos {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new BackgroundTaskStats();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0000\u0000\u0001\u0007\u0000\u0002\u0007\u0001", new Object[]{"bitField0_", "isPhotosInForeground_", "isBackgroundServiceRunningAlready_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<BackgroundTaskStats> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (BackgroundTaskStats.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(BackgroundTaskStats.class, DEFAULT_INSTANCE);
-        }
-
-        public static BackgroundTaskStats getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<BackgroundTaskStats> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
     public static final class SharedImageTransform extends GeneratedMessageLite<SharedImageTransform, Builder> implements SharedImageTransformOrBuilder {
         /* access modifiers changed from: private */
         public static final SharedImageTransform DEFAULT_INSTANCE = new SharedImageTransform();
-        private static volatile Parser<SharedImageTransform> PARSER = null;
         public static final int RESIZED_BY_TYPE_FIELD_NUMBER = 2;
         public static final int SHARED_IMAGE_METADATAS_FIELD_NUMBER = 1;
+        private static volatile Parser<SharedImageTransform> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(SharedImageTransform.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 2, isRequired = false, type = FieldType.ENUM)
@@ -1607,55 +1617,68 @@ public final class ExtensionPhotos {
         private SharedImageTransform() {
         }
 
-        public enum ResizedByType implements Internal.EnumLite {
-            FIFE(0),
-            LOCAL(1);
-            
-            public static final int FIFE_VALUE = 0;
-            public static final int LOCAL_VALUE = 1;
-            private static final Internal.EnumLiteMap<ResizedByType> internalValueMap = new Internal.EnumLiteMap<ResizedByType>() {
-                public ResizedByType findValueByNumber(int number) {
-                    return ResizedByType.forNumber(number);
-                }
-            };
-            private final int value;
+        public static SharedImageTransform parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (SharedImageTransform) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
 
-            public final int getNumber() {
-                return this.value;
-            }
+        public static SharedImageTransform parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (SharedImageTransform) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-            public static ResizedByType forNumber(int value2) {
-                if (value2 == 0) {
-                    return FIFE;
-                }
-                if (value2 != 1) {
-                    return null;
-                }
-                return LOCAL;
-            }
+        public static SharedImageTransform parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (SharedImageTransform) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
 
-            public static Internal.EnumLiteMap<ResizedByType> internalGetValueMap() {
-                return internalValueMap;
-            }
+        public static SharedImageTransform parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (SharedImageTransform) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-            public static Internal.EnumVerifier internalGetVerifier() {
-                return ResizedByTypeVerifier.INSTANCE;
-            }
+        public static SharedImageTransform parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (SharedImageTransform) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
 
-            private static final class ResizedByTypeVerifier implements Internal.EnumVerifier {
-                static final Internal.EnumVerifier INSTANCE = new ResizedByTypeVerifier();
+        public static SharedImageTransform parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (SharedImageTransform) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-                private ResizedByTypeVerifier() {
-                }
+        public static SharedImageTransform parseFrom(InputStream input) throws IOException {
+            return (SharedImageTransform) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
 
-                public boolean isInRange(int number) {
-                    return ResizedByType.forNumber(number) != null;
-                }
-            }
+        public static SharedImageTransform parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (SharedImageTransform) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
 
-            private ResizedByType(int value2) {
-                this.value = value2;
-            }
+        public static SharedImageTransform parseDelimitedFrom(InputStream input) throws IOException {
+            return (SharedImageTransform) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static SharedImageTransform parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (SharedImageTransform) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static SharedImageTransform parseFrom(CodedInputStream input) throws IOException {
+            return (SharedImageTransform) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static SharedImageTransform parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (SharedImageTransform) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(SharedImageTransform prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static SharedImageTransform getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<SharedImageTransform> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public List<SharedImageMetadata> getSharedImageMetadatasList() {
@@ -1780,60 +1803,87 @@ public final class ExtensionPhotos {
             this.resizedByType_ = 0;
         }
 
-        public static SharedImageTransform parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (SharedImageTransform) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new SharedImageTransform();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0001\u0000\u0001\u001b\u0002\f\u0000", new Object[]{"bitField0_", "sharedImageMetadatas_", SharedImageMetadata.class, "resizedByType_", ResizedByType.internalGetVerifier()});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<SharedImageTransform> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (SharedImageTransform.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
-        public static SharedImageTransform parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (SharedImageTransform) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
+        public enum ResizedByType implements Internal.EnumLite {
+            FIFE(0),
+            LOCAL(1);
 
-        public static SharedImageTransform parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (SharedImageTransform) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
+            public static final int FIFE_VALUE = 0;
+            public static final int LOCAL_VALUE = 1;
+            private static final Internal.EnumLiteMap<ResizedByType> internalValueMap = new Internal.EnumLiteMap<ResizedByType>() {
+                public ResizedByType findValueByNumber(int number) {
+                    return ResizedByType.forNumber(number);
+                }
+            };
+            private final int value;
 
-        public static SharedImageTransform parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (SharedImageTransform) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
+            private ResizedByType(int value2) {
+                this.value = value2;
+            }
 
-        public static SharedImageTransform parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (SharedImageTransform) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
+            public static ResizedByType forNumber(int value2) {
+                if (value2 == 0) {
+                    return FIFE;
+                }
+                if (value2 != 1) {
+                    return null;
+                }
+                return LOCAL;
+            }
 
-        public static SharedImageTransform parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (SharedImageTransform) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
+            public static Internal.EnumLiteMap<ResizedByType> internalGetValueMap() {
+                return internalValueMap;
+            }
 
-        public static SharedImageTransform parseFrom(InputStream input) throws IOException {
-            return (SharedImageTransform) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
+            public static Internal.EnumVerifier internalGetVerifier() {
+                return ResizedByTypeVerifier.INSTANCE;
+            }
 
-        public static SharedImageTransform parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (SharedImageTransform) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
+            public final int getNumber() {
+                return this.value;
+            }
 
-        public static SharedImageTransform parseDelimitedFrom(InputStream input) throws IOException {
-            return (SharedImageTransform) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
+            private static final class ResizedByTypeVerifier implements Internal.EnumVerifier {
+                static final Internal.EnumVerifier INSTANCE = new ResizedByTypeVerifier();
 
-        public static SharedImageTransform parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (SharedImageTransform) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
+                private ResizedByTypeVerifier() {
+                }
 
-        public static SharedImageTransform parseFrom(CodedInputStream input) throws IOException {
-            return (SharedImageTransform) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static SharedImageTransform parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (SharedImageTransform) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(SharedImageTransform prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+                public boolean isInRange(int number) {
+                    return ResizedByType.forNumber(number) != null;
+                }
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<SharedImageTransform, Builder> implements SharedImageTransformOrBuilder {
@@ -1927,50 +1977,6 @@ public final class ExtensionPhotos {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new SharedImageTransform();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0001\u0000\u0001\u001b\u0002\f\u0000", new Object[]{"bitField0_", "sharedImageMetadatas_", SharedImageMetadata.class, "resizedByType_", ResizedByType.internalGetVerifier()});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<SharedImageTransform> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (SharedImageTransform.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(SharedImageTransform.class, DEFAULT_INSTANCE);
-        }
-
-        public static SharedImageTransform getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<SharedImageTransform> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -1978,9 +1984,14 @@ public final class ExtensionPhotos {
         /* access modifiers changed from: private */
         public static final SharedImageMetadata DEFAULT_INSTANCE = new SharedImageMetadata();
         public static final int HEIGHT_FIELD_NUMBER = 1;
-        private static volatile Parser<SharedImageMetadata> PARSER = null;
         public static final int SIZE_IN_BYTES_FIELD_NUMBER = 3;
         public static final int WIDTH_FIELD_NUMBER = 2;
+        private static volatile Parser<SharedImageMetadata> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(SharedImageMetadata.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.INT32)
@@ -1994,6 +2005,70 @@ public final class ExtensionPhotos {
         private int width_;
 
         private SharedImageMetadata() {
+        }
+
+        public static SharedImageMetadata parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (SharedImageMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static SharedImageMetadata parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (SharedImageMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static SharedImageMetadata parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (SharedImageMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static SharedImageMetadata parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (SharedImageMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static SharedImageMetadata parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (SharedImageMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static SharedImageMetadata parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (SharedImageMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static SharedImageMetadata parseFrom(InputStream input) throws IOException {
+            return (SharedImageMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static SharedImageMetadata parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (SharedImageMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static SharedImageMetadata parseDelimitedFrom(InputStream input) throws IOException {
+            return (SharedImageMetadata) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static SharedImageMetadata parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (SharedImageMetadata) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static SharedImageMetadata parseFrom(CodedInputStream input) throws IOException {
+            return (SharedImageMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static SharedImageMetadata parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (SharedImageMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(SharedImageMetadata prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static SharedImageMetadata getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<SharedImageMetadata> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasHeight() {
@@ -2056,60 +2131,36 @@ public final class ExtensionPhotos {
             this.sizeInBytes_ = 0;
         }
 
-        public static SharedImageMetadata parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (SharedImageMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static SharedImageMetadata parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (SharedImageMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static SharedImageMetadata parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (SharedImageMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static SharedImageMetadata parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (SharedImageMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static SharedImageMetadata parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (SharedImageMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static SharedImageMetadata parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (SharedImageMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static SharedImageMetadata parseFrom(InputStream input) throws IOException {
-            return (SharedImageMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static SharedImageMetadata parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (SharedImageMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static SharedImageMetadata parseDelimitedFrom(InputStream input) throws IOException {
-            return (SharedImageMetadata) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static SharedImageMetadata parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (SharedImageMetadata) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static SharedImageMetadata parseFrom(CodedInputStream input) throws IOException {
-            return (SharedImageMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static SharedImageMetadata parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (SharedImageMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(SharedImageMetadata prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new SharedImageMetadata();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0003\u0000\u0001\u0001\u0003\u0003\u0000\u0000\u0000\u0001\u0004\u0000\u0002\u0004\u0001\u0003\u0002\u0002", new Object[]{"bitField0_", "height_", "width_", "sizeInBytes_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<SharedImageMetadata> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (SharedImageMetadata.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<SharedImageMetadata, Builder> implements SharedImageMetadataOrBuilder {
@@ -2177,50 +2228,6 @@ public final class ExtensionPhotos {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new SharedImageMetadata();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0003\u0000\u0001\u0001\u0003\u0003\u0000\u0000\u0000\u0001\u0004\u0000\u0002\u0004\u0001\u0003\u0002\u0002", new Object[]{"bitField0_", "height_", "width_", "sizeInBytes_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<SharedImageMetadata> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (SharedImageMetadata.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(SharedImageMetadata.class, DEFAULT_INSTANCE);
-        }
-
-        public static SharedImageMetadata getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<SharedImageMetadata> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -2229,6 +2236,11 @@ public final class ExtensionPhotos {
         public static final CameraAssistantStats DEFAULT_INSTANCE = new CameraAssistantStats();
         public static final int IS_ACTION_UNFINISHED_FIELD_NUMBER = 1;
         private static volatile Parser<CameraAssistantStats> PARSER;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(CameraAssistantStats.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.BOOL)
@@ -2236,26 +2248,6 @@ public final class ExtensionPhotos {
         private boolean isActionUnfinished_;
 
         private CameraAssistantStats() {
-        }
-
-        public boolean hasIsActionUnfinished() {
-            return (this.bitField0_ & 1) != 0;
-        }
-
-        public boolean getIsActionUnfinished() {
-            return this.isActionUnfinished_;
-        }
-
-        /* access modifiers changed from: private */
-        public void setIsActionUnfinished(boolean value) {
-            this.bitField0_ |= 1;
-            this.isActionUnfinished_ = value;
-        }
-
-        /* access modifiers changed from: private */
-        public void clearIsActionUnfinished() {
-            this.bitField0_ &= -2;
-            this.isActionUnfinished_ = false;
         }
 
         public static CameraAssistantStats parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
@@ -2314,30 +2306,32 @@ public final class ExtensionPhotos {
             return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
         }
 
-        public static final class Builder extends GeneratedMessageLite.Builder<CameraAssistantStats, Builder> implements CameraAssistantStatsOrBuilder {
-            private Builder() {
-                super(CameraAssistantStats.DEFAULT_INSTANCE);
-            }
+        public static CameraAssistantStats getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
 
-            public boolean hasIsActionUnfinished() {
-                return ((CameraAssistantStats) this.instance).hasIsActionUnfinished();
-            }
+        public static Parser<CameraAssistantStats> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
+        }
 
-            public boolean getIsActionUnfinished() {
-                return ((CameraAssistantStats) this.instance).getIsActionUnfinished();
-            }
+        public boolean hasIsActionUnfinished() {
+            return (this.bitField0_ & 1) != 0;
+        }
 
-            public Builder setIsActionUnfinished(boolean value) {
-                copyOnWrite();
-                ((CameraAssistantStats) this.instance).setIsActionUnfinished(value);
-                return this;
-            }
+        public boolean getIsActionUnfinished() {
+            return this.isActionUnfinished_;
+        }
 
-            public Builder clearIsActionUnfinished() {
-                copyOnWrite();
-                ((CameraAssistantStats) this.instance).clearIsActionUnfinished();
-                return this;
-            }
+        /* access modifiers changed from: private */
+        public void setIsActionUnfinished(boolean value) {
+            this.bitField0_ |= 1;
+            this.isActionUnfinished_ = value;
+        }
+
+        /* access modifiers changed from: private */
+        public void clearIsActionUnfinished() {
+            this.bitField0_ &= -2;
+            this.isActionUnfinished_ = false;
         }
 
         /* access modifiers changed from: protected */
@@ -2372,16 +2366,30 @@ public final class ExtensionPhotos {
             }
         }
 
-        static {
-            GeneratedMessageLite.registerDefaultInstance(CameraAssistantStats.class, DEFAULT_INSTANCE);
-        }
+        public static final class Builder extends GeneratedMessageLite.Builder<CameraAssistantStats, Builder> implements CameraAssistantStatsOrBuilder {
+            private Builder() {
+                super(CameraAssistantStats.DEFAULT_INSTANCE);
+            }
 
-        public static CameraAssistantStats getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
+            public boolean hasIsActionUnfinished() {
+                return ((CameraAssistantStats) this.instance).hasIsActionUnfinished();
+            }
 
-        public static Parser<CameraAssistantStats> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
+            public boolean getIsActionUnfinished() {
+                return ((CameraAssistantStats) this.instance).getIsActionUnfinished();
+            }
+
+            public Builder setIsActionUnfinished(boolean value) {
+                copyOnWrite();
+                ((CameraAssistantStats) this.instance).setIsActionUnfinished(value);
+                return this;
+            }
+
+            public Builder clearIsActionUnfinished() {
+                copyOnWrite();
+                ((CameraAssistantStats) this.instance).clearIsActionUnfinished();
+                return this;
+            }
         }
     }
 
@@ -2390,10 +2398,15 @@ public final class ExtensionPhotos {
         /* access modifiers changed from: private */
         public static final VideoPlayerStats DEFAULT_INSTANCE = new VideoPlayerStats();
         public static final int MEDIA_TYPE_FIELD_NUMBER = 4;
-        private static volatile Parser<VideoPlayerStats> PARSER = null;
         public static final int PLAYER_FIELD_NUMBER = 1;
         public static final int RETRY_COUNT_FIELD_NUMBER = 2;
         public static final int VIDEO_DURATION_SECONDS_FIELD_NUMBER = 3;
+        private static volatile Parser<VideoPlayerStats> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(VideoPlayerStats.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 4, isRequired = false, type = FieldType.ENUM)
@@ -2412,116 +2425,68 @@ public final class ExtensionPhotos {
         private VideoPlayerStats() {
         }
 
-        public enum Player implements Internal.EnumLite {
-            UNKNOWN_PLAYER(0),
-            FRAMEWORK_MEDIA_PLAYER(1),
-            EXO_PLAYER_V2(2);
-            
-            public static final int EXO_PLAYER_V2_VALUE = 2;
-            public static final int FRAMEWORK_MEDIA_PLAYER_VALUE = 1;
-            public static final int UNKNOWN_PLAYER_VALUE = 0;
-            private static final Internal.EnumLiteMap<Player> internalValueMap = new Internal.EnumLiteMap<Player>() {
-                public Player findValueByNumber(int number) {
-                    return Player.forNumber(number);
-                }
-            };
-            private final int value;
-
-            public final int getNumber() {
-                return this.value;
-            }
-
-            public static Player forNumber(int value2) {
-                if (value2 == 0) {
-                    return UNKNOWN_PLAYER;
-                }
-                if (value2 == 1) {
-                    return FRAMEWORK_MEDIA_PLAYER;
-                }
-                if (value2 != 2) {
-                    return null;
-                }
-                return EXO_PLAYER_V2;
-            }
-
-            public static Internal.EnumLiteMap<Player> internalGetValueMap() {
-                return internalValueMap;
-            }
-
-            public static Internal.EnumVerifier internalGetVerifier() {
-                return PlayerVerifier.INSTANCE;
-            }
-
-            private static final class PlayerVerifier implements Internal.EnumVerifier {
-                static final Internal.EnumVerifier INSTANCE = new PlayerVerifier();
-
-                private PlayerVerifier() {
-                }
-
-                public boolean isInRange(int number) {
-                    return Player.forNumber(number) != null;
-                }
-            }
-
-            private Player(int value2) {
-                this.value = value2;
-            }
+        public static VideoPlayerStats parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (VideoPlayerStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
         }
 
-        public enum MediaType implements Internal.EnumLite {
-            UNKNOWN_MEDIA_TYPE(0),
-            VIDEO(1),
-            MICRO_VIDEO(2);
-            
-            public static final int MICRO_VIDEO_VALUE = 2;
-            public static final int UNKNOWN_MEDIA_TYPE_VALUE = 0;
-            public static final int VIDEO_VALUE = 1;
-            private static final Internal.EnumLiteMap<MediaType> internalValueMap = new Internal.EnumLiteMap<MediaType>() {
-                public MediaType findValueByNumber(int number) {
-                    return MediaType.forNumber(number);
-                }
-            };
-            private final int value;
+        public static VideoPlayerStats parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (VideoPlayerStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-            public final int getNumber() {
-                return this.value;
-            }
+        public static VideoPlayerStats parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (VideoPlayerStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
 
-            public static MediaType forNumber(int value2) {
-                if (value2 == 0) {
-                    return UNKNOWN_MEDIA_TYPE;
-                }
-                if (value2 == 1) {
-                    return VIDEO;
-                }
-                if (value2 != 2) {
-                    return null;
-                }
-                return MICRO_VIDEO;
-            }
+        public static VideoPlayerStats parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (VideoPlayerStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-            public static Internal.EnumLiteMap<MediaType> internalGetValueMap() {
-                return internalValueMap;
-            }
+        public static VideoPlayerStats parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (VideoPlayerStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
 
-            public static Internal.EnumVerifier internalGetVerifier() {
-                return MediaTypeVerifier.INSTANCE;
-            }
+        public static VideoPlayerStats parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (VideoPlayerStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-            private static final class MediaTypeVerifier implements Internal.EnumVerifier {
-                static final Internal.EnumVerifier INSTANCE = new MediaTypeVerifier();
+        public static VideoPlayerStats parseFrom(InputStream input) throws IOException {
+            return (VideoPlayerStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
 
-                private MediaTypeVerifier() {
-                }
+        public static VideoPlayerStats parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (VideoPlayerStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
 
-                public boolean isInRange(int number) {
-                    return MediaType.forNumber(number) != null;
-                }
-            }
+        public static VideoPlayerStats parseDelimitedFrom(InputStream input) throws IOException {
+            return (VideoPlayerStats) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
 
-            private MediaType(int value2) {
-                this.value = value2;
-            }
+        public static VideoPlayerStats parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (VideoPlayerStats) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static VideoPlayerStats parseFrom(CodedInputStream input) throws IOException {
+            return (VideoPlayerStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static VideoPlayerStats parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (VideoPlayerStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(VideoPlayerStats prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static VideoPlayerStats getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<VideoPlayerStats> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasPlayer() {
@@ -2614,60 +2579,148 @@ public final class ExtensionPhotos {
             this.mediaType_ = 0;
         }
 
-        public static VideoPlayerStats parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (VideoPlayerStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new VideoPlayerStats();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0004\u0000\u0001\u0001\u0004\u0004\u0000\u0000\u0000\u0001\f\u0000\u0002\u0004\u0001\u0003\u0002\u0002\u0004\f\u0003", new Object[]{"bitField0_", "player_", Player.internalGetVerifier(), "retryCount_", "videoDurationSeconds_", "mediaType_", MediaType.internalGetVerifier()});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<VideoPlayerStats> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (VideoPlayerStats.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
-        public static VideoPlayerStats parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (VideoPlayerStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        public enum Player implements Internal.EnumLite {
+            UNKNOWN_PLAYER(0),
+            FRAMEWORK_MEDIA_PLAYER(1),
+            EXO_PLAYER_V2(2);
+
+            public static final int EXO_PLAYER_V2_VALUE = 2;
+            public static final int FRAMEWORK_MEDIA_PLAYER_VALUE = 1;
+            public static final int UNKNOWN_PLAYER_VALUE = 0;
+            private static final Internal.EnumLiteMap<Player> internalValueMap = new Internal.EnumLiteMap<Player>() {
+                public Player findValueByNumber(int number) {
+                    return Player.forNumber(number);
+                }
+            };
+            private final int value;
+
+            private Player(int value2) {
+                this.value = value2;
+            }
+
+            public static Player forNumber(int value2) {
+                if (value2 == 0) {
+                    return UNKNOWN_PLAYER;
+                }
+                if (value2 == 1) {
+                    return FRAMEWORK_MEDIA_PLAYER;
+                }
+                if (value2 != 2) {
+                    return null;
+                }
+                return EXO_PLAYER_V2;
+            }
+
+            public static Internal.EnumLiteMap<Player> internalGetValueMap() {
+                return internalValueMap;
+            }
+
+            public static Internal.EnumVerifier internalGetVerifier() {
+                return PlayerVerifier.INSTANCE;
+            }
+
+            public final int getNumber() {
+                return this.value;
+            }
+
+            private static final class PlayerVerifier implements Internal.EnumVerifier {
+                static final Internal.EnumVerifier INSTANCE = new PlayerVerifier();
+
+                private PlayerVerifier() {
+                }
+
+                public boolean isInRange(int number) {
+                    return Player.forNumber(number) != null;
+                }
+            }
         }
 
-        public static VideoPlayerStats parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (VideoPlayerStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
+        public enum MediaType implements Internal.EnumLite {
+            UNKNOWN_MEDIA_TYPE(0),
+            VIDEO(1),
+            MICRO_VIDEO(2);
 
-        public static VideoPlayerStats parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (VideoPlayerStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
+            public static final int MICRO_VIDEO_VALUE = 2;
+            public static final int UNKNOWN_MEDIA_TYPE_VALUE = 0;
+            public static final int VIDEO_VALUE = 1;
+            private static final Internal.EnumLiteMap<MediaType> internalValueMap = new Internal.EnumLiteMap<MediaType>() {
+                public MediaType findValueByNumber(int number) {
+                    return MediaType.forNumber(number);
+                }
+            };
+            private final int value;
 
-        public static VideoPlayerStats parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (VideoPlayerStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
+            private MediaType(int value2) {
+                this.value = value2;
+            }
 
-        public static VideoPlayerStats parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (VideoPlayerStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
+            public static MediaType forNumber(int value2) {
+                if (value2 == 0) {
+                    return UNKNOWN_MEDIA_TYPE;
+                }
+                if (value2 == 1) {
+                    return VIDEO;
+                }
+                if (value2 != 2) {
+                    return null;
+                }
+                return MICRO_VIDEO;
+            }
 
-        public static VideoPlayerStats parseFrom(InputStream input) throws IOException {
-            return (VideoPlayerStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
+            public static Internal.EnumLiteMap<MediaType> internalGetValueMap() {
+                return internalValueMap;
+            }
 
-        public static VideoPlayerStats parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (VideoPlayerStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
+            public static Internal.EnumVerifier internalGetVerifier() {
+                return MediaTypeVerifier.INSTANCE;
+            }
 
-        public static VideoPlayerStats parseDelimitedFrom(InputStream input) throws IOException {
-            return (VideoPlayerStats) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
+            public final int getNumber() {
+                return this.value;
+            }
 
-        public static VideoPlayerStats parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (VideoPlayerStats) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
+            private static final class MediaTypeVerifier implements Internal.EnumVerifier {
+                static final Internal.EnumVerifier INSTANCE = new MediaTypeVerifier();
 
-        public static VideoPlayerStats parseFrom(CodedInputStream input) throws IOException {
-            return (VideoPlayerStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
+                private MediaTypeVerifier() {
+                }
 
-        public static VideoPlayerStats parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (VideoPlayerStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(VideoPlayerStats prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+                public boolean isInRange(int number) {
+                    return MediaType.forNumber(number) != null;
+                }
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<VideoPlayerStats, Builder> implements VideoPlayerStatsOrBuilder {
@@ -2755,50 +2808,6 @@ public final class ExtensionPhotos {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new VideoPlayerStats();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0004\u0000\u0001\u0001\u0004\u0004\u0000\u0000\u0000\u0001\f\u0000\u0002\u0004\u0001\u0003\u0002\u0002\u0004\f\u0003", new Object[]{"bitField0_", "player_", Player.internalGetVerifier(), "retryCount_", "videoDurationSeconds_", "mediaType_", MediaType.internalGetVerifier()});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<VideoPlayerStats> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (VideoPlayerStats.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(VideoPlayerStats.class, DEFAULT_INSTANCE);
-        }
-
-        public static VideoPlayerStats getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<VideoPlayerStats> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -2807,6 +2816,11 @@ public final class ExtensionPhotos {
         public static final FingerprintStats DEFAULT_INSTANCE = new FingerprintStats();
         public static final int FILE_SIZE_KB_FIELD_NUMBER = 1;
         private static volatile Parser<FingerprintStats> PARSER;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(FingerprintStats.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.INT64)
@@ -2814,26 +2828,6 @@ public final class ExtensionPhotos {
         private long fileSizeKb_;
 
         private FingerprintStats() {
-        }
-
-        public boolean hasFileSizeKb() {
-            return (this.bitField0_ & 1) != 0;
-        }
-
-        public long getFileSizeKb() {
-            return this.fileSizeKb_;
-        }
-
-        /* access modifiers changed from: private */
-        public void setFileSizeKb(long value) {
-            this.bitField0_ |= 1;
-            this.fileSizeKb_ = value;
-        }
-
-        /* access modifiers changed from: private */
-        public void clearFileSizeKb() {
-            this.bitField0_ &= -2;
-            this.fileSizeKb_ = 0;
         }
 
         public static FingerprintStats parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
@@ -2892,30 +2886,32 @@ public final class ExtensionPhotos {
             return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
         }
 
-        public static final class Builder extends GeneratedMessageLite.Builder<FingerprintStats, Builder> implements FingerprintStatsOrBuilder {
-            private Builder() {
-                super(FingerprintStats.DEFAULT_INSTANCE);
-            }
+        public static FingerprintStats getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
 
-            public boolean hasFileSizeKb() {
-                return ((FingerprintStats) this.instance).hasFileSizeKb();
-            }
+        public static Parser<FingerprintStats> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
+        }
 
-            public long getFileSizeKb() {
-                return ((FingerprintStats) this.instance).getFileSizeKb();
-            }
+        public boolean hasFileSizeKb() {
+            return (this.bitField0_ & 1) != 0;
+        }
 
-            public Builder setFileSizeKb(long value) {
-                copyOnWrite();
-                ((FingerprintStats) this.instance).setFileSizeKb(value);
-                return this;
-            }
+        public long getFileSizeKb() {
+            return this.fileSizeKb_;
+        }
 
-            public Builder clearFileSizeKb() {
-                copyOnWrite();
-                ((FingerprintStats) this.instance).clearFileSizeKb();
-                return this;
-            }
+        /* access modifiers changed from: private */
+        public void setFileSizeKb(long value) {
+            this.bitField0_ |= 1;
+            this.fileSizeKb_ = value;
+        }
+
+        /* access modifiers changed from: private */
+        public void clearFileSizeKb() {
+            this.bitField0_ &= -2;
+            this.fileSizeKb_ = 0;
         }
 
         /* access modifiers changed from: protected */
@@ -2950,16 +2946,30 @@ public final class ExtensionPhotos {
             }
         }
 
-        static {
-            GeneratedMessageLite.registerDefaultInstance(FingerprintStats.class, DEFAULT_INSTANCE);
-        }
+        public static final class Builder extends GeneratedMessageLite.Builder<FingerprintStats, Builder> implements FingerprintStatsOrBuilder {
+            private Builder() {
+                super(FingerprintStats.DEFAULT_INSTANCE);
+            }
 
-        public static FingerprintStats getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
+            public boolean hasFileSizeKb() {
+                return ((FingerprintStats) this.instance).hasFileSizeKb();
+            }
 
-        public static Parser<FingerprintStats> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
+            public long getFileSizeKb() {
+                return ((FingerprintStats) this.instance).getFileSizeKb();
+            }
+
+            public Builder setFileSizeKb(long value) {
+                copyOnWrite();
+                ((FingerprintStats) this.instance).setFileSizeKb(value);
+                return this;
+            }
+
+            public Builder clearFileSizeKb() {
+                copyOnWrite();
+                ((FingerprintStats) this.instance).clearFileSizeKb();
+                return this;
+            }
         }
     }
 }

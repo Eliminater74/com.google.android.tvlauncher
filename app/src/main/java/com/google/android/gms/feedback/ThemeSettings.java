@@ -7,6 +7,7 @@ import android.os.Parcelable;
 import android.support.annotation.VisibleForTesting;
 import android.util.AttributeSet;
 import android.util.Log;
+
 import com.google.android.gms.common.internal.Hide;
 import com.google.android.gms.common.util.zzp;
 import com.google.android.gms.internal.zzbkv;
@@ -27,24 +28,6 @@ public class ThemeSettings extends zzbkv {
 
     public ThemeSettings() {
         this(0, 0);
-    }
-
-    public ThemeSettings setTheme(int i) {
-        this.zza = i;
-        return this;
-    }
-
-    public ThemeSettings setPrimaryColor(int i) {
-        this.zzb = i;
-        return this;
-    }
-
-    @Hide
-    public void writeToParcel(Parcel parcel, int i) {
-        int zza2 = zzbky.zza(parcel);
-        zzbky.zza(parcel, 2, this.zza);
-        zzbky.zza(parcel, 3, this.zzb);
-        zzbky.zza(parcel, zza2);
     }
 
     public static int getThemeColor(Context context, String str) {
@@ -74,5 +57,23 @@ public class ThemeSettings extends zzbkv {
             return getThemeColor(context, "android:colorPrimary");
         }
         return getThemeColor(context, "colorPrimary");
+    }
+
+    public ThemeSettings setTheme(int i) {
+        this.zza = i;
+        return this;
+    }
+
+    public ThemeSettings setPrimaryColor(int i) {
+        this.zzb = i;
+        return this;
+    }
+
+    @Hide
+    public void writeToParcel(Parcel parcel, int i) {
+        int zza2 = zzbky.zza(parcel);
+        zzbky.zza(parcel, 2, this.zza);
+        zzbky.zza(parcel, 3, this.zzb);
+        zzbky.zza(parcel, zza2);
     }
 }

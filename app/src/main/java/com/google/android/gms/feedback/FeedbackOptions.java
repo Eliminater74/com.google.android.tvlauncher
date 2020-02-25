@@ -10,11 +10,13 @@ import android.support.annotation.VisibleForTesting;
 import android.support.p001v4.util.ArrayMap;
 import android.text.TextUtils;
 import android.util.Pair;
+
 import com.google.android.gms.common.data.BitmapTeleporter;
 import com.google.android.gms.common.internal.Hide;
 import com.google.android.gms.common.internal.zzau;
 import com.google.android.gms.internal.zzbkv;
 import com.google.android.gms.internal.zzbky;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +38,34 @@ public class FeedbackOptions extends zzbkv {
     private boolean zzl;
     private Bitmap zzm;
     private BaseFeedbackProductSpecificData zzn;
+
+    FeedbackOptions(String str, Bundle bundle, String str2, ApplicationErrorReport applicationErrorReport, String str3, BitmapTeleporter bitmapTeleporter, String str4, List<FileTeleporter> list, boolean z, ThemeSettings themeSettings, LogOptions logOptions, boolean z2, Bitmap bitmap) {
+        this.zzn = null;
+        this.zza = str;
+        this.zzb = bundle;
+        this.zzc = str2;
+        this.zzd = applicationErrorReport;
+        this.zze = str3;
+        this.zzf = bitmapTeleporter;
+        this.zzg = str4;
+        this.zzh = list;
+        this.zzi = z;
+        this.zzj = themeSettings;
+        this.zzk = logOptions;
+        this.zzl = z2;
+        this.zzm = bitmap;
+    }
+
+    private FeedbackOptions(ApplicationErrorReport applicationErrorReport) {
+        this(null, null, null, applicationErrorReport, null, null, null, null, true, null, null, false, null);
+    }
+
+    @Hide
+    public static FeedbackOptions zza(List<FileTeleporter> list) {
+        FeedbackOptions feedbackOptions = new FeedbackOptions(null);
+        feedbackOptions.zzh = list;
+        return feedbackOptions;
+    }
 
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
      method: com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, java.lang.String, boolean):void
@@ -137,6 +167,199 @@ public class FeedbackOptions extends zzbkv {
         zzbky.zza(parcel, 14, this.zzl);
         zzbky.zza(parcel, 15, (Parcelable) this.zzm, i, false);
         zzbky.zza(parcel, zza2);
+    }
+
+    /* access modifiers changed from: private */
+    public final FeedbackOptions zza(Bitmap bitmap) {
+        this.zzm = bitmap;
+        return this;
+    }
+
+    /* access modifiers changed from: private */
+    public final FeedbackOptions zza(BitmapTeleporter bitmapTeleporter) {
+        this.zzf = bitmapTeleporter;
+        return this;
+    }
+
+    /* access modifiers changed from: private */
+    public final FeedbackOptions zza(String str) {
+        this.zza = str;
+        return this;
+    }
+
+    /* access modifiers changed from: private */
+    public final FeedbackOptions zza(Bundle bundle) {
+        this.zzb = bundle;
+        return this;
+    }
+
+    /* access modifiers changed from: private */
+    public final FeedbackOptions zzb(String str) {
+        this.zzc = str;
+        return this;
+    }
+
+    /* access modifiers changed from: private */
+    public final FeedbackOptions zza(ApplicationErrorReport.CrashInfo crashInfo) {
+        this.zzd.crashInfo = crashInfo;
+        return this;
+    }
+
+    /* access modifiers changed from: private */
+    public final FeedbackOptions zzc(String str) {
+        this.zze = str;
+        return this;
+    }
+
+    /* access modifiers changed from: private */
+    public final FeedbackOptions zzd(String str) {
+        this.zzg = str;
+        return this;
+    }
+
+    /* access modifiers changed from: private */
+    public final FeedbackOptions zzb(List<FileTeleporter> list) {
+        this.zzh = list;
+        return this;
+    }
+
+    /* access modifiers changed from: private */
+    public final FeedbackOptions zza(boolean z) {
+        this.zzi = z;
+        return this;
+    }
+
+    /* access modifiers changed from: private */
+    public final FeedbackOptions zza(ThemeSettings themeSettings) {
+        this.zzj = themeSettings;
+        return this;
+    }
+
+    /* access modifiers changed from: private */
+    public final FeedbackOptions zza(LogOptions logOptions) {
+        this.zzk = logOptions;
+        return this;
+    }
+
+    /* access modifiers changed from: private */
+    public final FeedbackOptions zza(BaseFeedbackProductSpecificData baseFeedbackProductSpecificData) {
+        this.zzn = baseFeedbackProductSpecificData;
+        return this;
+    }
+
+    /* access modifiers changed from: private */
+    public final FeedbackOptions zzb(boolean z) {
+        this.zzl = z;
+        return this;
+    }
+
+    @Hide
+    @VisibleForTesting
+    @Deprecated
+    public final String zza() {
+        return this.zza;
+    }
+
+    @Hide
+    @VisibleForTesting
+    @Deprecated
+    public final Bundle zzb() {
+        return this.zzb;
+    }
+
+    @Hide
+    @VisibleForTesting
+    @Deprecated
+    public final ThemeSettings zzc() {
+        return this.zzj;
+    }
+
+    @Hide
+    @VisibleForTesting
+    @Deprecated
+    public final String zzd() {
+        return this.zzc;
+    }
+
+    @Hide
+    @VisibleForTesting
+    @Deprecated
+    public final ApplicationErrorReport.CrashInfo zze() {
+        ApplicationErrorReport applicationErrorReport = this.zzd;
+        if (applicationErrorReport == null) {
+            return null;
+        }
+        return applicationErrorReport.crashInfo;
+    }
+
+    @Hide
+    @VisibleForTesting
+    @Deprecated
+    public final String zzf() {
+        return this.zze;
+    }
+
+    @Hide
+    @VisibleForTesting
+    @Deprecated
+    public final Bitmap zzg() {
+        return this.zzm;
+    }
+
+    @Hide
+    @VisibleForTesting
+    @Deprecated
+    public final BitmapTeleporter zzh() {
+        return this.zzf;
+    }
+
+    @Hide
+    @VisibleForTesting
+    @Deprecated
+    public final String zzi() {
+        return this.zzg;
+    }
+
+    @VisibleForTesting
+    @Hide
+    @Deprecated
+    public final List<FileTeleporter> zzj() {
+        return this.zzh;
+    }
+
+    @Hide
+    @VisibleForTesting
+    @Deprecated
+    public final boolean zzk() {
+        return this.zzi;
+    }
+
+    @Hide
+    @VisibleForTesting
+    @Deprecated
+    public final LogOptions zzl() {
+        return this.zzk;
+    }
+
+    @Hide
+    @VisibleForTesting
+    @Deprecated
+    public final boolean zzm() {
+        return this.zzl;
+    }
+
+    @Nullable
+    @Hide
+    @Deprecated
+    public final BaseFeedbackProductSpecificData zzn() {
+        return this.zzn;
+    }
+
+    @Nullable
+    @Hide
+    @Deprecated
+    public final BaseFeedbackProductSpecificData zzo() {
+        return this.zzn;
     }
 
     @VisibleForTesting
@@ -368,226 +591,5 @@ public class FeedbackOptions extends zzbkv {
             }
             return super.build().zza(this.zza.crashInfo).zzd(this.zzb);
         }
-    }
-
-    FeedbackOptions(String str, Bundle bundle, String str2, ApplicationErrorReport applicationErrorReport, String str3, BitmapTeleporter bitmapTeleporter, String str4, List<FileTeleporter> list, boolean z, ThemeSettings themeSettings, LogOptions logOptions, boolean z2, Bitmap bitmap) {
-        this.zzn = null;
-        this.zza = str;
-        this.zzb = bundle;
-        this.zzc = str2;
-        this.zzd = applicationErrorReport;
-        this.zze = str3;
-        this.zzf = bitmapTeleporter;
-        this.zzg = str4;
-        this.zzh = list;
-        this.zzi = z;
-        this.zzj = themeSettings;
-        this.zzk = logOptions;
-        this.zzl = z2;
-        this.zzm = bitmap;
-    }
-
-    private FeedbackOptions(ApplicationErrorReport applicationErrorReport) {
-        this(null, null, null, applicationErrorReport, null, null, null, null, true, null, null, false, null);
-    }
-
-    /* access modifiers changed from: private */
-    public final FeedbackOptions zza(Bitmap bitmap) {
-        this.zzm = bitmap;
-        return this;
-    }
-
-    /* access modifiers changed from: private */
-    public final FeedbackOptions zza(BitmapTeleporter bitmapTeleporter) {
-        this.zzf = bitmapTeleporter;
-        return this;
-    }
-
-    /* access modifiers changed from: private */
-    public final FeedbackOptions zza(String str) {
-        this.zza = str;
-        return this;
-    }
-
-    /* access modifiers changed from: private */
-    public final FeedbackOptions zza(Bundle bundle) {
-        this.zzb = bundle;
-        return this;
-    }
-
-    /* access modifiers changed from: private */
-    public final FeedbackOptions zzb(String str) {
-        this.zzc = str;
-        return this;
-    }
-
-    /* access modifiers changed from: private */
-    public final FeedbackOptions zza(ApplicationErrorReport.CrashInfo crashInfo) {
-        this.zzd.crashInfo = crashInfo;
-        return this;
-    }
-
-    /* access modifiers changed from: private */
-    public final FeedbackOptions zzc(String str) {
-        this.zze = str;
-        return this;
-    }
-
-    /* access modifiers changed from: private */
-    public final FeedbackOptions zzd(String str) {
-        this.zzg = str;
-        return this;
-    }
-
-    /* access modifiers changed from: private */
-    public final FeedbackOptions zzb(List<FileTeleporter> list) {
-        this.zzh = list;
-        return this;
-    }
-
-    /* access modifiers changed from: private */
-    public final FeedbackOptions zza(boolean z) {
-        this.zzi = z;
-        return this;
-    }
-
-    /* access modifiers changed from: private */
-    public final FeedbackOptions zza(ThemeSettings themeSettings) {
-        this.zzj = themeSettings;
-        return this;
-    }
-
-    /* access modifiers changed from: private */
-    public final FeedbackOptions zza(LogOptions logOptions) {
-        this.zzk = logOptions;
-        return this;
-    }
-
-    /* access modifiers changed from: private */
-    public final FeedbackOptions zza(BaseFeedbackProductSpecificData baseFeedbackProductSpecificData) {
-        this.zzn = baseFeedbackProductSpecificData;
-        return this;
-    }
-
-    /* access modifiers changed from: private */
-    public final FeedbackOptions zzb(boolean z) {
-        this.zzl = z;
-        return this;
-    }
-
-    @Hide
-    @VisibleForTesting
-    @Deprecated
-    public final String zza() {
-        return this.zza;
-    }
-
-    @Hide
-    @VisibleForTesting
-    @Deprecated
-    public final Bundle zzb() {
-        return this.zzb;
-    }
-
-    @Hide
-    @VisibleForTesting
-    @Deprecated
-    public final ThemeSettings zzc() {
-        return this.zzj;
-    }
-
-    @Hide
-    @VisibleForTesting
-    @Deprecated
-    public final String zzd() {
-        return this.zzc;
-    }
-
-    @Hide
-    @VisibleForTesting
-    @Deprecated
-    public final ApplicationErrorReport.CrashInfo zze() {
-        ApplicationErrorReport applicationErrorReport = this.zzd;
-        if (applicationErrorReport == null) {
-            return null;
-        }
-        return applicationErrorReport.crashInfo;
-    }
-
-    @Hide
-    @VisibleForTesting
-    @Deprecated
-    public final String zzf() {
-        return this.zze;
-    }
-
-    @Hide
-    @VisibleForTesting
-    @Deprecated
-    public final Bitmap zzg() {
-        return this.zzm;
-    }
-
-    @Hide
-    @VisibleForTesting
-    @Deprecated
-    public final BitmapTeleporter zzh() {
-        return this.zzf;
-    }
-
-    @Hide
-    @VisibleForTesting
-    @Deprecated
-    public final String zzi() {
-        return this.zzg;
-    }
-
-    @VisibleForTesting
-    @Hide
-    @Deprecated
-    public final List<FileTeleporter> zzj() {
-        return this.zzh;
-    }
-
-    @Hide
-    @VisibleForTesting
-    @Deprecated
-    public final boolean zzk() {
-        return this.zzi;
-    }
-
-    @Hide
-    @VisibleForTesting
-    @Deprecated
-    public final LogOptions zzl() {
-        return this.zzk;
-    }
-
-    @Hide
-    @VisibleForTesting
-    @Deprecated
-    public final boolean zzm() {
-        return this.zzl;
-    }
-
-    @Nullable
-    @Hide
-    @Deprecated
-    public final BaseFeedbackProductSpecificData zzn() {
-        return this.zzn;
-    }
-
-    @Nullable
-    @Hide
-    @Deprecated
-    public final BaseFeedbackProductSpecificData zzo() {
-        return this.zzn;
-    }
-
-    @Hide
-    public static FeedbackOptions zza(List<FileTeleporter> list) {
-        FeedbackOptions feedbackOptions = new FeedbackOptions(null);
-        feedbackOptions.zzh = list;
-        return feedbackOptions;
     }
 }

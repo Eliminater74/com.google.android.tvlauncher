@@ -2,9 +2,11 @@ package com.google.common.collect;
 
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.base.Preconditions;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.Serializable;
 import java.util.Iterator;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible(serializable = true)
 final class ReverseOrdering<T> extends Ordering<T> implements Serializable {

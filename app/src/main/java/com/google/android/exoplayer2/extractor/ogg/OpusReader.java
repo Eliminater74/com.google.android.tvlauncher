@@ -2,11 +2,11 @@ package com.google.android.exoplayer2.extractor.ogg;
 
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.Format;
-import com.google.android.exoplayer2.extractor.ogg.StreamReader;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.Util;
 import com.google.common.primitives.UnsignedBytes;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;

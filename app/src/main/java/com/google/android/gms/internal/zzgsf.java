@@ -5,8 +5,8 @@ import java.util.Arrays;
 
 /* compiled from: InternalNano */
 public final class zzgsf {
-    protected static final Charset zza = Charset.forName("UTF-8");
     public static final Object zzb = new Object();
+    protected static final Charset zza = Charset.forName("UTF-8");
     private static final Charset zzc = Charset.forName("ISO-8859-1");
 
     public static boolean zza(int[] iArr, int[] iArr2) {

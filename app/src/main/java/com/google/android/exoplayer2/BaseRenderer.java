@@ -1,15 +1,18 @@
 package com.google.android.exoplayer2;
 
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.decoder.DecoderInputBuffer;
 import com.google.android.exoplayer2.drm.DrmInitData;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.source.SampleStream;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.MediaClock;
+
 import java.io.IOException;
 
 public abstract class BaseRenderer implements Renderer, RendererCapabilities {
+    private final int trackType;
     private RendererConfiguration configuration;
     private int index;
     private long readingPositionUs = Long.MIN_VALUE;
@@ -18,14 +21,23 @@ public abstract class BaseRenderer implements Renderer, RendererCapabilities {
     private Format[] streamFormats;
     private boolean streamIsFinal;
     private long streamOffsetUs;
-    private final int trackType;
-
-    public void setOperatingRate(float f) throws ExoPlaybackException {
-        Renderer$$CC.setOperatingRate$$dflt$$(this, f);
-    }
 
     public BaseRenderer(int trackType2) {
         this.trackType = trackType2;
+    }
+
+    protected static boolean supportsFormatDrm(@Nullable DrmSessionManager<?> drmSessionManager, @Nullable DrmInitData drmInitData) {
+        if (drmInitData == null) {
+            return true;
+        }
+        if (drmSessionManager == null) {
+            return false;
+        }
+        return drmSessionManager.canAcquireSession(drmInitData);
+    }
+
+    public void setOperatingRate(float f) throws ExoPlaybackException {
+        Renderer$$CC.setOperatingRate$$dflt$$(this, f);
     }
 
     public final int getTrackType() {
@@ -34,10 +46,6 @@ public abstract class BaseRenderer implements Renderer, RendererCapabilities {
 
     public final RendererCapabilities getCapabilities() {
         return this;
-    }
-
-    public final void setIndex(int index2) {
-        this.index = index2;
     }
 
     public MediaClock getMediaClock() {
@@ -180,6 +188,10 @@ public abstract class BaseRenderer implements Renderer, RendererCapabilities {
         return this.index;
     }
 
+    public final void setIndex(int index2) {
+        this.index = index2;
+    }
+
     /* access modifiers changed from: protected */
     public final int readSource(FormatHolder formatHolder, DecoderInputBuffer buffer, boolean formatRequired) {
         int result = this.stream.readData(formatHolder, buffer, formatRequired);
@@ -210,15 +222,5 @@ public abstract class BaseRenderer implements Renderer, RendererCapabilities {
     /* access modifiers changed from: protected */
     public final boolean isSourceReady() {
         return hasReadStreamToEnd() ? this.streamIsFinal : this.stream.isReady();
-    }
-
-    protected static boolean supportsFormatDrm(@Nullable DrmSessionManager<?> drmSessionManager, @Nullable DrmInitData drmInitData) {
-        if (drmInitData == null) {
-            return true;
-        }
-        if (drmSessionManager == null) {
-            return false;
-        }
-        return drmSessionManager.canAcquireSession(drmInitData);
     }
 }

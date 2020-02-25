@@ -3,24 +3,26 @@ package com.bumptech.glide.load.resource.bitmap;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.annotation.NonNull;
+
 import com.bumptech.glide.load.EncodeStrategy;
 import com.bumptech.glide.load.Options;
 import com.bumptech.glide.load.ResourceEncoder;
 import com.bumptech.glide.load.engine.Resource;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
+
 import java.io.File;
 
 public class BitmapDrawableEncoder implements ResourceEncoder<BitmapDrawable> {
     private final BitmapPool bitmapPool;
     private final ResourceEncoder<Bitmap> encoder;
 
-    public /* bridge */ /* synthetic */ boolean encode(@NonNull Object obj, @NonNull File file, @NonNull Options options) {
-        return encode((Resource<BitmapDrawable>) ((Resource) obj), file, options);
-    }
-
     public BitmapDrawableEncoder(BitmapPool bitmapPool2, ResourceEncoder<Bitmap> encoder2) {
         this.bitmapPool = bitmapPool2;
         this.encoder = encoder2;
+    }
+
+    public /* bridge */ /* synthetic */ boolean encode(@NonNull Object obj, @NonNull File file, @NonNull Options options) {
+        return encode((Resource<BitmapDrawable>) ((Resource) obj), file, options);
     }
 
     public boolean encode(@NonNull Resource<BitmapDrawable> data, @NonNull File file, @NonNull Options options) {

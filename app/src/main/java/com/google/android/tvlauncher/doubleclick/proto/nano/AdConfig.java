@@ -1,12 +1,12 @@
 package com.google.android.tvlauncher.doubleclick.proto.nano;
 
-import com.google.android.tvlauncher.doubleclick.proto.nano.VideoCreative;
 import com.google.protobuf.nano.CodedInputByteBufferNano;
 import com.google.protobuf.nano.CodedOutputByteBufferNano;
 import com.google.protobuf.nano.InternalNano;
 import com.google.protobuf.nano.InvalidProtocolBufferNanoException;
 import com.google.protobuf.nano.MessageNano;
 import com.google.protobuf.nano.WireFormatNano;
+
 import java.io.IOException;
 
 public interface AdConfig {
@@ -20,14 +20,8 @@ public interface AdConfig {
         private int typeCase_ = 0;
         private Object type_;
 
-        public int getTypeCase() {
-            return this.typeCase_;
-        }
-
-        public AdAsset clearType() {
-            this.typeCase_ = 0;
-            this.type_ = null;
-            return this;
+        public AdAsset() {
+            clear();
         }
 
         public static AdAsset[] emptyArray() {
@@ -39,6 +33,24 @@ public interface AdConfig {
                 }
             }
             return _emptyArray;
+        }
+
+        public static AdAsset parseFrom(byte[] data) throws InvalidProtocolBufferNanoException {
+            return (AdAsset) MessageNano.mergeFrom(new AdAsset(), data);
+        }
+
+        public static AdAsset parseFrom(CodedInputByteBufferNano input) throws IOException {
+            return new AdAsset().mergeFrom(input);
+        }
+
+        public int getTypeCase() {
+            return this.typeCase_;
+        }
+
+        public AdAsset clearType() {
+            this.typeCase_ = 0;
+            this.type_ = null;
+            return this;
         }
 
         public boolean hasDirectAdConfig() {
@@ -79,10 +91,6 @@ public interface AdConfig {
                 return this;
             }
             throw new NullPointerException();
-        }
-
-        public AdAsset() {
-            clear();
         }
 
         public AdAsset clear() {
@@ -156,20 +164,16 @@ public interface AdConfig {
                 }
             }
         }
-
-        public static AdAsset parseFrom(byte[] data) throws InvalidProtocolBufferNanoException {
-            return (AdAsset) MessageNano.mergeFrom(new AdAsset(), data);
-        }
-
-        public static AdAsset parseFrom(CodedInputByteBufferNano input) throws IOException {
-            return new AdAsset().mergeFrom(input);
-        }
     }
 
     public static final class DirectAdConfig extends MessageNano {
         private static volatile DirectAdConfig[] _emptyArray;
         public String dataUrl;
         public String packageName;
+
+        public DirectAdConfig() {
+            clear();
+        }
 
         public static DirectAdConfig[] emptyArray() {
             if (_emptyArray == null) {
@@ -182,8 +186,12 @@ public interface AdConfig {
             return _emptyArray;
         }
 
-        public DirectAdConfig() {
-            clear();
+        public static DirectAdConfig parseFrom(byte[] data) throws InvalidProtocolBufferNanoException {
+            return (DirectAdConfig) MessageNano.mergeFrom(new DirectAdConfig(), data);
+        }
+
+        public static DirectAdConfig parseFrom(CodedInputByteBufferNano input) throws IOException {
+            return new DirectAdConfig().mergeFrom(input);
         }
 
         public DirectAdConfig clear() {
@@ -230,14 +238,6 @@ public interface AdConfig {
                 }
             }
         }
-
-        public static DirectAdConfig parseFrom(byte[] data) throws InvalidProtocolBufferNanoException {
-            return (DirectAdConfig) MessageNano.mergeFrom(new DirectAdConfig(), data);
-        }
-
-        public static DirectAdConfig parseFrom(CodedInputByteBufferNano input) throws IOException {
-            return new DirectAdConfig().mergeFrom(input);
-        }
     }
 
     public static final class DoubleClickAdConfig extends MessageNano {
@@ -248,14 +248,8 @@ public interface AdConfig {
         private int formatCase_ = 0;
         private Object format_;
 
-        public int getFormatCase() {
-            return this.formatCase_;
-        }
-
-        public DoubleClickAdConfig clearFormat() {
-            this.formatCase_ = 0;
-            this.format_ = null;
-            return this;
+        public DoubleClickAdConfig() {
+            clear();
         }
 
         public static DoubleClickAdConfig[] emptyArray() {
@@ -267,6 +261,24 @@ public interface AdConfig {
                 }
             }
             return _emptyArray;
+        }
+
+        public static DoubleClickAdConfig parseFrom(byte[] data) throws InvalidProtocolBufferNanoException {
+            return (DoubleClickAdConfig) MessageNano.mergeFrom(new DoubleClickAdConfig(), data);
+        }
+
+        public static DoubleClickAdConfig parseFrom(CodedInputByteBufferNano input) throws IOException {
+            return new DoubleClickAdConfig().mergeFrom(input);
+        }
+
+        public int getFormatCase() {
+            return this.formatCase_;
+        }
+
+        public DoubleClickAdConfig clearFormat() {
+            this.formatCase_ = 0;
+            this.format_ = null;
+            return this;
         }
 
         public boolean hasCustomCreative() {
@@ -307,10 +319,6 @@ public interface AdConfig {
                 return this;
             }
             throw new NullPointerException();
-        }
-
-        public DoubleClickAdConfig() {
-            clear();
         }
 
         public DoubleClickAdConfig clear() {
@@ -373,14 +381,6 @@ public interface AdConfig {
                 }
             }
         }
-
-        public static DoubleClickAdConfig parseFrom(byte[] data) throws InvalidProtocolBufferNanoException {
-            return (DoubleClickAdConfig) MessageNano.mergeFrom(new DoubleClickAdConfig(), data);
-        }
-
-        public static DoubleClickAdConfig parseFrom(CodedInputByteBufferNano input) throws IOException {
-            return new DoubleClickAdConfig().mergeFrom(input);
-        }
     }
 
     public static final class CustomCreative extends MessageNano {
@@ -389,19 +389,13 @@ public interface AdConfig {
         private static volatile CustomCreative[] _emptyArray;
         public String clickTrackingUrl;
         public String displayBannerImpressionTrackingUrl;
-        private int formatInfoCase_ = 0;
-        private Object formatInfo_;
         public String imageUri;
         public String videoUri;
+        private int formatInfoCase_ = 0;
+        private Object formatInfo_;
 
-        public int getFormatInfoCase() {
-            return this.formatInfoCase_;
-        }
-
-        public CustomCreative clearFormatInfo() {
-            this.formatInfoCase_ = 0;
-            this.formatInfo_ = null;
-            return this;
+        public CustomCreative() {
+            clear();
         }
 
         public static CustomCreative[] emptyArray() {
@@ -413,6 +407,24 @@ public interface AdConfig {
                 }
             }
             return _emptyArray;
+        }
+
+        public static CustomCreative parseFrom(byte[] data) throws InvalidProtocolBufferNanoException {
+            return (CustomCreative) MessageNano.mergeFrom(new CustomCreative(), data);
+        }
+
+        public static CustomCreative parseFrom(CodedInputByteBufferNano input) throws IOException {
+            return new CustomCreative().mergeFrom(input);
+        }
+
+        public int getFormatInfoCase() {
+            return this.formatInfoCase_;
+        }
+
+        public CustomCreative clearFormatInfo() {
+            this.formatInfoCase_ = 0;
+            this.formatInfo_ = null;
+            return this;
         }
 
         public boolean hasAppInstallCreativeInfo() {
@@ -453,10 +465,6 @@ public interface AdConfig {
                 return this;
             }
             throw new NullPointerException();
-        }
-
-        public CustomCreative() {
-            clear();
         }
 
         public CustomCreative clear() {
@@ -546,14 +554,6 @@ public interface AdConfig {
                 }
             }
         }
-
-        public static CustomCreative parseFrom(byte[] data) throws InvalidProtocolBufferNanoException {
-            return (CustomCreative) MessageNano.mergeFrom(new CustomCreative(), data);
-        }
-
-        public static CustomCreative parseFrom(CodedInputByteBufferNano input) throws IOException {
-            return new CustomCreative().mergeFrom(input);
-        }
     }
 
     public static final class AppInstallCreativeInfo extends MessageNano {
@@ -561,6 +561,10 @@ public interface AdConfig {
         public String deeplinkUrl;
         public String marketUrl;
         public String packageName;
+
+        public AppInstallCreativeInfo() {
+            clear();
+        }
 
         public static AppInstallCreativeInfo[] emptyArray() {
             if (_emptyArray == null) {
@@ -573,8 +577,12 @@ public interface AdConfig {
             return _emptyArray;
         }
 
-        public AppInstallCreativeInfo() {
-            clear();
+        public static AppInstallCreativeInfo parseFrom(byte[] data) throws InvalidProtocolBufferNanoException {
+            return (AppInstallCreativeInfo) MessageNano.mergeFrom(new AppInstallCreativeInfo(), data);
+        }
+
+        public static AppInstallCreativeInfo parseFrom(CodedInputByteBufferNano input) throws IOException {
+            return new AppInstallCreativeInfo().mergeFrom(input);
         }
 
         public AppInstallCreativeInfo clear() {
@@ -630,18 +638,14 @@ public interface AdConfig {
                 }
             }
         }
-
-        public static AppInstallCreativeInfo parseFrom(byte[] data) throws InvalidProtocolBufferNanoException {
-            return (AppInstallCreativeInfo) MessageNano.mergeFrom(new AppInstallCreativeInfo(), data);
-        }
-
-        public static AppInstallCreativeInfo parseFrom(CodedInputByteBufferNano input) throws IOException {
-            return new AppInstallCreativeInfo().mergeFrom(input);
-        }
     }
 
     public static final class ContentCreativeInfo extends MessageNano {
         private static volatile ContentCreativeInfo[] _emptyArray;
+
+        public ContentCreativeInfo() {
+            clear();
+        }
 
         public static ContentCreativeInfo[] emptyArray() {
             if (_emptyArray == null) {
@@ -654,8 +658,12 @@ public interface AdConfig {
             return _emptyArray;
         }
 
-        public ContentCreativeInfo() {
-            clear();
+        public static ContentCreativeInfo parseFrom(byte[] data) throws InvalidProtocolBufferNanoException {
+            return (ContentCreativeInfo) MessageNano.mergeFrom(new ContentCreativeInfo(), data);
+        }
+
+        public static ContentCreativeInfo parseFrom(CodedInputByteBufferNano input) throws IOException {
+            return new ContentCreativeInfo().mergeFrom(input);
         }
 
         public ContentCreativeInfo clear() {
@@ -672,14 +680,6 @@ public interface AdConfig {
                 }
             } while (WireFormatNano.parseUnknownField(input, tag));
             return this;
-        }
-
-        public static ContentCreativeInfo parseFrom(byte[] data) throws InvalidProtocolBufferNanoException {
-            return (ContentCreativeInfo) MessageNano.mergeFrom(new ContentCreativeInfo(), data);
-        }
-
-        public static ContentCreativeInfo parseFrom(CodedInputByteBufferNano input) throws IOException {
-            return new ContentCreativeInfo().mergeFrom(input);
         }
     }
 }

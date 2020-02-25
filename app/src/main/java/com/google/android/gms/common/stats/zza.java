@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.util.Log;
-import com.google.android.gms.common.util.zzd;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -19,6 +19,9 @@ public final class zza {
     private final List<String> zzf = Collections.EMPTY_LIST;
     private final List<String> zzg = Collections.EMPTY_LIST;
 
+    private zza() {
+    }
+
     public static zza zza() {
         if (zzb == null) {
             synchronized (zza) {
@@ -28,9 +31,6 @@ public final class zza {
             }
         }
         return zzb;
-    }
-
-    private zza() {
     }
 
     public final boolean zza(Context context, String str, Intent intent, ServiceConnection serviceConnection, int i) {

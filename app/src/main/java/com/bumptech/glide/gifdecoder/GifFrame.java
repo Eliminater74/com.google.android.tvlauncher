@@ -1,6 +1,7 @@
 package com.bumptech.glide.gifdecoder;
 
 import android.support.annotation.ColorInt;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -30,10 +31,10 @@ class GifFrame {
     int transIndex;
     boolean transparency;
 
-    @Retention(RetentionPolicy.SOURCE)
-    private @interface GifDisposalMethod {
+    GifFrame() {
     }
 
-    GifFrame() {
+    @Retention(RetentionPolicy.SOURCE)
+    private @interface GifDisposalMethod {
     }
 }

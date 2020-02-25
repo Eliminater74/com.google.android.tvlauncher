@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 import android.util.Log;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.gifdecoder.GifDecoder;
 import com.bumptech.glide.gifdecoder.GifHeader;
@@ -17,6 +18,7 @@ import com.bumptech.glide.load.engine.bitmap_recycle.ArrayPool;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.util.Util;
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.List;
@@ -47,6 +49,29 @@ public class ByteBufferGifDecoder implements ResourceDecoder<ByteBuffer, GifDraw
         this.gifDecoderFactory = gifDecoderFactory2;
         this.provider = new GifBitmapProvider(bitmapPool, arrayPool);
         this.parserPool = parserPool2;
+    }
+
+    private static int getSampleSize(GifHeader gifHeader, int targetWidth, int targetHeight) {
+        int exactSampleSize = Math.min(gifHeader.getHeight() / targetHeight, gifHeader.getWidth() / targetWidth);
+        int sampleSize = Math.max(1, exactSampleSize == 0 ? 0 : Integer.highestOneBit(exactSampleSize));
+        if (Log.isLoggable(TAG, 2) && sampleSize > 1) {
+            int width = gifHeader.getWidth();
+            int height = gifHeader.getHeight();
+            StringBuilder sb = new StringBuilder((int) ClientAnalytics.LogRequest.LogSource.CONTEXT_MANAGER_VALUE);
+            sb.append("Downsampling GIF, sampleSize: ");
+            sb.append(sampleSize);
+            sb.append(", target dimens: [");
+            sb.append(targetWidth);
+            sb.append("x");
+            sb.append(targetHeight);
+            sb.append("], actual dimens: [");
+            sb.append(width);
+            sb.append("x");
+            sb.append(height);
+            sb.append("]");
+            Log.v(TAG, sb.toString());
+        }
+        return sampleSize;
     }
 
     public boolean handles(@NonNull ByteBuffer source, @NonNull Options options) throws IOException {
@@ -194,29 +219,6 @@ public class ByteBufferGifDecoder implements ResourceDecoder<ByteBuffer, GifDraw
             throw r0
         */
         throw new UnsupportedOperationException("Method not decompiled: com.bumptech.glide.load.resource.gif.ByteBufferGifDecoder.decode(java.nio.ByteBuffer, int, int, com.bumptech.glide.gifdecoder.GifHeaderParser, com.bumptech.glide.load.Options):com.bumptech.glide.load.resource.gif.GifDrawableResource");
-    }
-
-    private static int getSampleSize(GifHeader gifHeader, int targetWidth, int targetHeight) {
-        int exactSampleSize = Math.min(gifHeader.getHeight() / targetHeight, gifHeader.getWidth() / targetWidth);
-        int sampleSize = Math.max(1, exactSampleSize == 0 ? 0 : Integer.highestOneBit(exactSampleSize));
-        if (Log.isLoggable(TAG, 2) && sampleSize > 1) {
-            int width = gifHeader.getWidth();
-            int height = gifHeader.getHeight();
-            StringBuilder sb = new StringBuilder((int) ClientAnalytics.LogRequest.LogSource.CONTEXT_MANAGER_VALUE);
-            sb.append("Downsampling GIF, sampleSize: ");
-            sb.append(sampleSize);
-            sb.append(", target dimens: [");
-            sb.append(targetWidth);
-            sb.append("x");
-            sb.append(targetHeight);
-            sb.append("], actual dimens: [");
-            sb.append(width);
-            sb.append("x");
-            sb.append(height);
-            sb.append("]");
-            Log.v(TAG, sb.toString());
-        }
-        return sampleSize;
     }
 
     @VisibleForTesting

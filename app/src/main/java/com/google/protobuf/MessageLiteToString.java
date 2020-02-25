@@ -1,7 +1,7 @@
 package com.google.protobuf;
 
 import com.google.android.gms.people.PeopleConstants;
-import com.google.protobuf.GeneratedMessageLite;
+
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;

@@ -4,6 +4,9 @@ import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -16,7 +19,6 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible(emulated = true, serializable = true)
 public class TreeMultimap<K, V> extends AbstractSortedKeySortedSetMultimap<K, V> {
@@ -24,6 +26,29 @@ public class TreeMultimap<K, V> extends AbstractSortedKeySortedSetMultimap<K, V>
     private static final long serialVersionUID = 0;
     private transient Comparator<? super K> keyComparator;
     private transient Comparator<? super V> valueComparator;
+
+    TreeMultimap(Comparator<? super K> keyComparator2, Comparator<? super V> valueComparator2) {
+        super(new TreeMap(keyComparator2));
+        this.keyComparator = keyComparator2;
+        this.valueComparator = valueComparator2;
+    }
+
+    private TreeMultimap(Comparator<? super K> keyComparator2, Comparator<? super V> valueComparator2, Multimap<? extends K, ? extends V> multimap) {
+        this(keyComparator2, valueComparator2);
+        putAll(multimap);
+    }
+
+    public static <K extends Comparable, V extends Comparable> TreeMultimap<K, V> create() {
+        return new TreeMultimap<>(Ordering.natural(), Ordering.natural());
+    }
+
+    public static <K, V> TreeMultimap<K, V> create(Comparator<? super K> keyComparator2, Comparator<? super V> valueComparator2) {
+        return new TreeMultimap<>((Comparator) Preconditions.checkNotNull(keyComparator2), (Comparator) Preconditions.checkNotNull(valueComparator2));
+    }
+
+    public static <K extends Comparable, V extends Comparable> TreeMultimap<K, V> create(Multimap<? extends K, ? extends V> multimap) {
+        return new TreeMultimap<>(Ordering.natural(), Ordering.natural(), multimap);
+    }
 
     public /* bridge */ /* synthetic */ void clear() {
         super.clear();
@@ -117,29 +142,6 @@ public class TreeMultimap<K, V> extends AbstractSortedKeySortedSetMultimap<K, V>
 
     public /* bridge */ /* synthetic */ Collection values() {
         return super.values();
-    }
-
-    public static <K extends Comparable, V extends Comparable> TreeMultimap<K, V> create() {
-        return new TreeMultimap<>(Ordering.natural(), Ordering.natural());
-    }
-
-    public static <K, V> TreeMultimap<K, V> create(Comparator<? super K> keyComparator2, Comparator<? super V> valueComparator2) {
-        return new TreeMultimap<>((Comparator) Preconditions.checkNotNull(keyComparator2), (Comparator) Preconditions.checkNotNull(valueComparator2));
-    }
-
-    public static <K extends Comparable, V extends Comparable> TreeMultimap<K, V> create(Multimap<? extends K, ? extends V> multimap) {
-        return new TreeMultimap<>(Ordering.natural(), Ordering.natural(), multimap);
-    }
-
-    TreeMultimap(Comparator<? super K> keyComparator2, Comparator<? super V> valueComparator2) {
-        super(new TreeMap(keyComparator2));
-        this.keyComparator = keyComparator2;
-        this.valueComparator = valueComparator2;
-    }
-
-    private TreeMultimap(Comparator<? super K> keyComparator2, Comparator<? super V> valueComparator2, Multimap<? extends K, ? extends V> multimap) {
-        this(keyComparator2, valueComparator2);
-        putAll(multimap);
     }
 
     /* access modifiers changed from: package-private */

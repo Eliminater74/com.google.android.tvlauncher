@@ -7,6 +7,9 @@ import android.support.annotation.NonNull;
 
 /* renamed from: android.support.v4.app.AlarmManagerCompat */
 public final class AlarmManagerCompat {
+    private AlarmManagerCompat() {
+    }
+
     public static void setAlarmClock(@NonNull AlarmManager alarmManager, long triggerTime, @NonNull PendingIntent showIntent, @NonNull PendingIntent operation) {
         if (Build.VERSION.SDK_INT >= 21) {
             alarmManager.setAlarmClock(new AlarmManager.AlarmClockInfo(triggerTime, showIntent), operation);
@@ -37,8 +40,5 @@ public final class AlarmManagerCompat {
         } else {
             setExact(alarmManager, type, triggerAtMillis, operation);
         }
-    }
-
-    private AlarmManagerCompat() {
     }
 }

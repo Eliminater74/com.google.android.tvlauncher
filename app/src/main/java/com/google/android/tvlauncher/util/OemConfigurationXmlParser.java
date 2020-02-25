@@ -5,16 +5,15 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
-import com.google.android.tvlauncher.util.ChannelConfigurationInfo;
-import com.google.android.tvlauncher.util.OemConfiguration;
-import com.google.android.tvlauncher.util.OemOutOfBoxApp;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayDeque;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-import org.xmlpull.v1.XmlPullParserFactory;
 
 class OemConfigurationXmlParser {
     private static final String ALL_APPS_OOB_ORDER_TAG = "partner-all-apps-out-of-box-order";

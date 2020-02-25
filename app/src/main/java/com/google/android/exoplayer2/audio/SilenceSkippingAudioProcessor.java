@@ -1,7 +1,7 @@
 package com.google.android.exoplayer2.audio;
 
-import com.google.android.exoplayer2.audio.AudioProcessor;
 import com.google.android.exoplayer2.util.Util;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -24,11 +24,6 @@ public final class SilenceSkippingAudioProcessor extends BaseAudioProcessor {
     private int paddingSize;
     private long skippedFrames;
     private int state;
-
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    private @interface State {
-    }
 
     public void setEnabled(boolean enabled2) {
         this.enabled = enabled2;
@@ -210,5 +205,10 @@ public final class SilenceSkippingAudioProcessor extends BaseAudioProcessor {
             }
         }
         return buffer.position();
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    private @interface State {
     }
 }

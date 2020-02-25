@@ -5,6 +5,9 @@ import com.google.common.annotations.GwtCompatible;
 import com.google.common.base.Ascii;
 import com.google.common.base.Converter;
 import com.google.common.base.Preconditions;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.Serializable;
 import java.util.AbstractList;
 import java.util.Arrays;
@@ -13,7 +16,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.RandomAccess;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible
 public final class Ints {
@@ -163,32 +165,6 @@ public final class Ints {
         return (b1 << Ascii.CAN) | ((b2 & UnsignedBytes.MAX_VALUE) << Ascii.DLE) | ((b3 & UnsignedBytes.MAX_VALUE) << 8) | (b4 & UnsignedBytes.MAX_VALUE);
     }
 
-    private static final class IntConverter extends Converter<String, Integer> implements Serializable {
-        static final IntConverter INSTANCE = new IntConverter();
-        private static final long serialVersionUID = 1;
-
-        private IntConverter() {
-        }
-
-        /* access modifiers changed from: protected */
-        public Integer doForward(String value) {
-            return Integer.decode(value);
-        }
-
-        /* access modifiers changed from: protected */
-        public String doBackward(Integer value) {
-            return value.toString();
-        }
-
-        public String toString() {
-            return "Ints.stringConverter()";
-        }
-
-        private Object readResolve() {
-            return INSTANCE;
-        }
-    }
-
     @Beta
     public static Converter<String, Integer> stringConverter() {
         return IntConverter.INSTANCE;
@@ -220,25 +196,6 @@ public final class Ints {
 
     public static Comparator<int[]> lexicographicalComparator() {
         return LexicographicalComparator.INSTANCE;
-    }
-
-    private enum LexicographicalComparator implements Comparator<int[]> {
-        INSTANCE;
-
-        public int compare(int[] left, int[] right) {
-            int minLength = Math.min(left.length, right.length);
-            for (int i = 0; i < minLength; i++) {
-                int result = Ints.compare(left[i], right[i]);
-                if (result != 0) {
-                    return result;
-                }
-            }
-            return left.length - right.length;
-        }
-
-        public String toString() {
-            return "Ints.lexicographicalComparator()";
-        }
     }
 
     public static void sortDescending(int[] array) {
@@ -288,6 +245,67 @@ public final class Ints {
             return Collections.emptyList();
         }
         return new IntArrayAsList(backingArray);
+    }
+
+    @NullableDecl
+    @Beta
+    public static Integer tryParse(String string) {
+        return tryParse(string, 10);
+    }
+
+    @NullableDecl
+    @Beta
+    public static Integer tryParse(String string, int radix) {
+        Long result = Longs.tryParse(string, radix);
+        if (result == null || result.longValue() != ((long) result.intValue())) {
+            return null;
+        }
+        return Integer.valueOf(result.intValue());
+    }
+
+    private enum LexicographicalComparator implements Comparator<int[]> {
+        INSTANCE;
+
+        public int compare(int[] left, int[] right) {
+            int minLength = Math.min(left.length, right.length);
+            for (int i = 0; i < minLength; i++) {
+                int result = Ints.compare(left[i], right[i]);
+                if (result != 0) {
+                    return result;
+                }
+            }
+            return left.length - right.length;
+        }
+
+        public String toString() {
+            return "Ints.lexicographicalComparator()";
+        }
+    }
+
+    private static final class IntConverter extends Converter<String, Integer> implements Serializable {
+        static final IntConverter INSTANCE = new IntConverter();
+        private static final long serialVersionUID = 1;
+
+        private IntConverter() {
+        }
+
+        /* access modifiers changed from: protected */
+        public Integer doForward(String value) {
+            return Integer.decode(value);
+        }
+
+        /* access modifiers changed from: protected */
+        public String doBackward(Integer value) {
+            return value.toString();
+        }
+
+        public String toString() {
+            return "Ints.stringConverter()";
+        }
+
+        private Object readResolve() {
+            return INSTANCE;
+        }
     }
 
     @GwtCompatible
@@ -408,21 +426,5 @@ public final class Ints {
         public int[] toIntArray() {
             return Arrays.copyOfRange(this.array, this.start, this.end);
         }
-    }
-
-    @NullableDecl
-    @Beta
-    public static Integer tryParse(String string) {
-        return tryParse(string, 10);
-    }
-
-    @NullableDecl
-    @Beta
-    public static Integer tryParse(String string, int radix) {
-        Long result = Longs.tryParse(string, radix);
-        if (result == null || result.longValue() != ((long) result.intValue())) {
-            return null;
-        }
-        return Integer.valueOf(result.intValue());
     }
 }

@@ -4,13 +4,15 @@ import com.google.common.annotations.GwtCompatible;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible
 class FilteredKeyMultimap<K, V> extends AbstractMultimap<K, V> implements FilteredMultimap<K, V> {
@@ -74,6 +76,31 @@ class FilteredKeyMultimap<K, V> extends AbstractMultimap<K, V> implements Filter
             return new AddRejectingSet(obj);
         }
         return new AddRejectingList(obj);
+    }
+
+    /* access modifiers changed from: package-private */
+    public Iterator<Map.Entry<K, V>> entryIterator() {
+        throw new AssertionError("should never be called");
+    }
+
+    /* access modifiers changed from: package-private */
+    public Collection<Map.Entry<K, V>> createEntries() {
+        return new Entries();
+    }
+
+    /* access modifiers changed from: package-private */
+    public Collection<V> createValues() {
+        return new FilteredMultimapValues(this);
+    }
+
+    /* access modifiers changed from: package-private */
+    public Map<K, Collection<V>> createAsMap() {
+        return Maps.filterKeys(this.unfiltered.asMap(), this.keyPredicate);
+    }
+
+    /* access modifiers changed from: package-private */
+    public Multiset<K> createKeys() {
+        return Multisets.filter(this.unfiltered.keys(), this.keyPredicate);
     }
 
     static class AddRejectingSet<K, V> extends ForwardingSet<V> {
@@ -149,16 +176,6 @@ class FilteredKeyMultimap<K, V> extends AbstractMultimap<K, V> implements Filter
         }
     }
 
-    /* access modifiers changed from: package-private */
-    public Iterator<Map.Entry<K, V>> entryIterator() {
-        throw new AssertionError("should never be called");
-    }
-
-    /* access modifiers changed from: package-private */
-    public Collection<Map.Entry<K, V>> createEntries() {
-        return new Entries();
-    }
-
     class Entries extends ForwardingCollection<Map.Entry<K, V>> {
         Entries() {
         }
@@ -178,20 +195,5 @@ class FilteredKeyMultimap<K, V> extends AbstractMultimap<K, V> implements Filter
             }
             return FilteredKeyMultimap.this.unfiltered.remove(entry.getKey(), entry.getValue());
         }
-    }
-
-    /* access modifiers changed from: package-private */
-    public Collection<V> createValues() {
-        return new FilteredMultimapValues(this);
-    }
-
-    /* access modifiers changed from: package-private */
-    public Map<K, Collection<V>> createAsMap() {
-        return Maps.filterKeys(this.unfiltered.asMap(), this.keyPredicate);
-    }
-
-    /* access modifiers changed from: package-private */
-    public Multiset<K> createKeys() {
-        return Multisets.filter(this.unfiltered.keys(), this.keyPredicate);
     }
 }

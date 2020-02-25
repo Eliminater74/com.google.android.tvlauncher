@@ -13,22 +13,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /* renamed from: android.support.v7.widget.LinearLayoutCompat */
 public class LinearLayoutCompat extends ViewGroup {
-    private static final String ACCESSIBILITY_CLASS_NAME = "android.support.v7.widget.LinearLayoutCompat";
     public static final int HORIZONTAL = 0;
-    private static final int INDEX_BOTTOM = 2;
-    private static final int INDEX_CENTER_VERTICAL = 0;
-    private static final int INDEX_FILL = 3;
-    private static final int INDEX_TOP = 1;
     public static final int SHOW_DIVIDER_BEGINNING = 1;
     public static final int SHOW_DIVIDER_END = 4;
     public static final int SHOW_DIVIDER_MIDDLE = 2;
     public static final int SHOW_DIVIDER_NONE = 0;
     public static final int VERTICAL = 1;
+    private static final String ACCESSIBILITY_CLASS_NAME = "android.support.v7.widget.LinearLayoutCompat";
+    private static final int INDEX_BOTTOM = 2;
+    private static final int INDEX_CENTER_VERTICAL = 0;
+    private static final int INDEX_FILL = 3;
+    private static final int INDEX_TOP = 1;
     private static final int VERTICAL_GRAVITY_COUNT = 4;
     private boolean mBaselineAligned;
     private int mBaselineAlignedChildIndex;
@@ -45,18 +46,6 @@ public class LinearLayoutCompat extends ViewGroup {
     private int mTotalLength;
     private boolean mUseLargestChild;
     private float mWeightSum;
-
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    @Retention(RetentionPolicy.SOURCE)
-    /* renamed from: android.support.v7.widget.LinearLayoutCompat$DividerMode */
-    public @interface DividerMode {
-    }
-
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    @Retention(RetentionPolicy.SOURCE)
-    /* renamed from: android.support.v7.widget.LinearLayoutCompat$OrientationMode */
-    public @interface OrientationMode {
-    }
 
     public LinearLayoutCompat(Context context) {
         this(context, null);
@@ -94,19 +83,19 @@ public class LinearLayoutCompat extends ViewGroup {
         a.recycle();
     }
 
-    public void setShowDividers(int showDividers) {
-        if (showDividers != this.mShowDividers) {
-            requestLayout();
-        }
-        this.mShowDividers = showDividers;
-    }
-
     public boolean shouldDelayChildPressedState() {
         return false;
     }
 
     public int getShowDividers() {
         return this.mShowDividers;
+    }
+
+    public void setShowDividers(int showDividers) {
+        if (showDividers != this.mShowDividers) {
+            requestLayout();
+        }
+        this.mShowDividers = showDividers;
     }
 
     public Drawable getDividerDrawable() {
@@ -132,12 +121,12 @@ public class LinearLayoutCompat extends ViewGroup {
         }
     }
 
-    public void setDividerPadding(int padding) {
-        this.mDividerPadding = padding;
-    }
-
     public int getDividerPadding() {
         return this.mDividerPadding;
+    }
+
+    public void setDividerPadding(int padding) {
+        this.mDividerPadding = padding;
     }
 
     @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
@@ -2247,6 +2236,10 @@ public class LinearLayoutCompat extends ViewGroup {
         child.layout(left, top, left + width, top + height);
     }
 
+    public int getOrientation() {
+        return this.mOrientation;
+    }
+
     public void setOrientation(int orientation) {
         if (this.mOrientation != orientation) {
             this.mOrientation = orientation;
@@ -2254,8 +2247,8 @@ public class LinearLayoutCompat extends ViewGroup {
         }
     }
 
-    public int getOrientation() {
-        return this.mOrientation;
+    public int getGravity() {
+        return this.mGravity;
     }
 
     public void setGravity(int gravity) {
@@ -2269,10 +2262,6 @@ public class LinearLayoutCompat extends ViewGroup {
             this.mGravity = gravity;
             requestLayout();
         }
-    }
-
-    public int getGravity() {
-        return this.mGravity;
     }
 
     public void setHorizontalGravity(int horizontalGravity) {
@@ -2327,6 +2316,18 @@ public class LinearLayoutCompat extends ViewGroup {
     public void onInitializeAccessibilityNodeInfo(AccessibilityNodeInfo info) {
         super.onInitializeAccessibilityNodeInfo(info);
         info.setClassName(ACCESSIBILITY_CLASS_NAME);
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    @Retention(RetentionPolicy.SOURCE)
+    /* renamed from: android.support.v7.widget.LinearLayoutCompat$DividerMode */
+    public @interface DividerMode {
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    @Retention(RetentionPolicy.SOURCE)
+    /* renamed from: android.support.v7.widget.LinearLayoutCompat$OrientationMode */
+    public @interface OrientationMode {
     }
 
     /* renamed from: android.support.v7.widget.LinearLayoutCompat$LayoutParams */

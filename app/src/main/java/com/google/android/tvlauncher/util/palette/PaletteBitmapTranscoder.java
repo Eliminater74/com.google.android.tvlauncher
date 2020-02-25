@@ -3,7 +3,9 @@ package com.google.android.tvlauncher.util.palette;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
+
 import androidx.palette.graphics.Palette;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.Options;
 import com.bumptech.glide.load.engine.Resource;

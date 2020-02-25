@@ -18,19 +18,6 @@ public class InvalidProtocolBufferException extends IOException {
         super(description, e);
     }
 
-    public InvalidProtocolBufferException setUnfinishedMessage(MessageLite unfinishedMessage2) {
-        this.unfinishedMessage = unfinishedMessage2;
-        return this;
-    }
-
-    public MessageLite getUnfinishedMessage() {
-        return this.unfinishedMessage;
-    }
-
-    public IOException unwrapIOException() {
-        return getCause() instanceof IOException ? (IOException) getCause() : this;
-    }
-
     static InvalidProtocolBufferException truncatedMessage() {
         return new InvalidProtocolBufferException("While parsing a protocol message, the input ended unexpectedly in the middle of a field.  This could mean either that the input has been truncated or that an embedded message misreported its own length.");
     }
@@ -55,14 +42,6 @@ public class InvalidProtocolBufferException extends IOException {
         return new InvalidWireTypeException("Protocol message tag had invalid wire type.");
     }
 
-    public static class InvalidWireTypeException extends InvalidProtocolBufferException {
-        private static final long serialVersionUID = 3283890091615336259L;
-
-        public InvalidWireTypeException(String description) {
-            super(description);
-        }
-    }
-
     static InvalidProtocolBufferException recursionLimitExceeded() {
         return new InvalidProtocolBufferException("Protocol message had too many levels of nesting.  May be malicious.  Use CodedInputStream.setRecursionLimit() to increase the depth limit.");
     }
@@ -77,5 +56,26 @@ public class InvalidProtocolBufferException extends IOException {
 
     static InvalidProtocolBufferException invalidUtf8() {
         return new InvalidProtocolBufferException("Protocol message had invalid UTF-8.");
+    }
+
+    public MessageLite getUnfinishedMessage() {
+        return this.unfinishedMessage;
+    }
+
+    public InvalidProtocolBufferException setUnfinishedMessage(MessageLite unfinishedMessage2) {
+        this.unfinishedMessage = unfinishedMessage2;
+        return this;
+    }
+
+    public IOException unwrapIOException() {
+        return getCause() instanceof IOException ? (IOException) getCause() : this;
+    }
+
+    public static class InvalidWireTypeException extends InvalidProtocolBufferException {
+        private static final long serialVersionUID = 3283890091615336259L;
+
+        public InvalidWireTypeException(String description) {
+            super(description);
+        }
     }
 }

@@ -1,12 +1,12 @@
 package com.google.android.exoplayer2.source;
 
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.Timeline;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.ShuffleOrder;
 import com.google.android.exoplayer2.upstream.Allocator;
 import com.google.android.exoplayer2.upstream.TransferListener;
 import com.google.android.exoplayer2.util.Assertions;
+
 import java.util.HashMap;
 import java.util.Map;
 

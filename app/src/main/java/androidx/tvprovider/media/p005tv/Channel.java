@@ -6,12 +6,14 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.RestrictTo;
-import androidx.tvprovider.media.p005tv.TvContractCompat;
+
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 
 /* renamed from: androidx.tvprovider.media.tv.Channel */
 public final class Channel {
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    public static final String[] PROJECTION = getProjection();
     private static final long INVALID_CHANNEL_ID = -1;
     private static final int INVALID_INT_VALUE = -1;
     private static final int IS_BROWSABLE = 1;
@@ -19,12 +21,191 @@ public final class Channel {
     private static final int IS_SEARCHABLE = 1;
     private static final int IS_SYSTEM_APPROVED = 1;
     private static final int IS_TRANSIENT = 1;
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    public static final String[] PROJECTION = getProjection();
     ContentValues mValues;
 
     Channel(Builder builder) {
         this.mValues = builder.mValues;
+    }
+
+    public static Channel fromCursor(Cursor cursor) {
+        Builder builder = new Builder();
+        int columnIndex = cursor.getColumnIndex("_id");
+        int index = columnIndex;
+        if (columnIndex >= 0 && !cursor.isNull(index)) {
+            builder.setId(cursor.getLong(index));
+        }
+        int columnIndex2 = cursor.getColumnIndex(TvContractCompat.Channels.COLUMN_DESCRIPTION);
+        int index2 = columnIndex2;
+        if (columnIndex2 >= 0 && !cursor.isNull(index2)) {
+            builder.setDescription(cursor.getString(index2));
+        }
+        int columnIndex3 = cursor.getColumnIndex(TvContractCompat.Channels.COLUMN_DISPLAY_NAME);
+        int index3 = columnIndex3;
+        if (columnIndex3 >= 0 && !cursor.isNull(index3)) {
+            builder.setDisplayName(cursor.getString(index3));
+        }
+        int columnIndex4 = cursor.getColumnIndex(TvContractCompat.Channels.COLUMN_DISPLAY_NUMBER);
+        int index4 = columnIndex4;
+        if (columnIndex4 >= 0 && !cursor.isNull(index4)) {
+            builder.setDisplayNumber(cursor.getString(index4));
+        }
+        int columnIndex5 = cursor.getColumnIndex("input_id");
+        int index5 = columnIndex5;
+        if (columnIndex5 >= 0 && !cursor.isNull(index5)) {
+            builder.setInputId(cursor.getString(index5));
+        }
+        int columnIndex6 = cursor.getColumnIndex("internal_provider_data");
+        int index6 = columnIndex6;
+        if (columnIndex6 >= 0 && !cursor.isNull(index6)) {
+            builder.setInternalProviderData(cursor.getBlob(index6));
+        }
+        int columnIndex7 = cursor.getColumnIndex(TvContractCompat.Channels.COLUMN_NETWORK_AFFILIATION);
+        int index7 = columnIndex7;
+        if (columnIndex7 >= 0 && !cursor.isNull(index7)) {
+            builder.setNetworkAffiliation(cursor.getString(index7));
+        }
+        int columnIndex8 = cursor.getColumnIndex(TvContractCompat.Channels.COLUMN_ORIGINAL_NETWORK_ID);
+        int index8 = columnIndex8;
+        if (columnIndex8 >= 0 && !cursor.isNull(index8)) {
+            builder.setOriginalNetworkId(cursor.getInt(index8));
+        }
+        int columnIndex9 = cursor.getColumnIndex("package_name");
+        int index9 = columnIndex9;
+        if (columnIndex9 >= 0 && !cursor.isNull(index9)) {
+            builder.setPackageName(cursor.getString(index9));
+        }
+        int columnIndex10 = cursor.getColumnIndex("searchable");
+        int index10 = columnIndex10;
+        boolean z = false;
+        if (columnIndex10 >= 0 && !cursor.isNull(index10)) {
+            builder.setSearchable(cursor.getInt(index10) == 1);
+        }
+        int columnIndex11 = cursor.getColumnIndex(TvContractCompat.Channels.COLUMN_SERVICE_ID);
+        int index11 = columnIndex11;
+        if (columnIndex11 >= 0 && !cursor.isNull(index11)) {
+            builder.setServiceId(cursor.getInt(index11));
+        }
+        int columnIndex12 = cursor.getColumnIndex(TvContractCompat.Channels.COLUMN_SERVICE_TYPE);
+        int index12 = columnIndex12;
+        if (columnIndex12 >= 0 && !cursor.isNull(index12)) {
+            builder.setServiceType(cursor.getString(index12));
+        }
+        int columnIndex13 = cursor.getColumnIndex(TvContractCompat.Channels.COLUMN_TRANSPORT_STREAM_ID);
+        int index13 = columnIndex13;
+        if (columnIndex13 >= 0 && !cursor.isNull(index13)) {
+            builder.setTransportStreamId(cursor.getInt(index13));
+        }
+        int columnIndex14 = cursor.getColumnIndex("type");
+        int index14 = columnIndex14;
+        if (columnIndex14 >= 0 && !cursor.isNull(index14)) {
+            builder.setType(cursor.getString(index14));
+        }
+        int columnIndex15 = cursor.getColumnIndex(TvContractCompat.Channels.COLUMN_VIDEO_FORMAT);
+        int index15 = columnIndex15;
+        if (columnIndex15 >= 0 && !cursor.isNull(index15)) {
+            builder.setVideoFormat(cursor.getString(index15));
+        }
+        int columnIndex16 = cursor.getColumnIndex("browsable");
+        int index16 = columnIndex16;
+        if (columnIndex16 >= 0 && !cursor.isNull(index16)) {
+            builder.setBrowsable(cursor.getInt(index16) == 1);
+        }
+        int columnIndex17 = cursor.getColumnIndex("locked");
+        int index17 = columnIndex17;
+        if (columnIndex17 >= 0 && !cursor.isNull(index17)) {
+            builder.setLocked(cursor.getInt(index17) == 1);
+        }
+        if (Build.VERSION.SDK_INT >= 23) {
+            int columnIndex18 = cursor.getColumnIndex(TvContractCompat.Channels.COLUMN_APP_LINK_COLOR);
+            int index18 = columnIndex18;
+            if (columnIndex18 >= 0 && !cursor.isNull(index18)) {
+                builder.setAppLinkColor(cursor.getInt(index18));
+            }
+            int columnIndex19 = cursor.getColumnIndex(TvContractCompat.Channels.COLUMN_APP_LINK_ICON_URI);
+            int index19 = columnIndex19;
+            if (columnIndex19 >= 0 && !cursor.isNull(index19)) {
+                builder.setAppLinkIconUri(Uri.parse(cursor.getString(index19)));
+            }
+            int columnIndex20 = cursor.getColumnIndex(TvContractCompat.Channels.COLUMN_APP_LINK_INTENT_URI);
+            int index20 = columnIndex20;
+            if (columnIndex20 >= 0 && !cursor.isNull(index20)) {
+                builder.setAppLinkIntentUri(Uri.parse(cursor.getString(index20)));
+            }
+            int columnIndex21 = cursor.getColumnIndex(TvContractCompat.Channels.COLUMN_APP_LINK_POSTER_ART_URI);
+            int index21 = columnIndex21;
+            if (columnIndex21 >= 0 && !cursor.isNull(index21)) {
+                builder.setAppLinkPosterArtUri(Uri.parse(cursor.getString(index21)));
+            }
+            int columnIndex22 = cursor.getColumnIndex(TvContractCompat.Channels.COLUMN_APP_LINK_TEXT);
+            int index22 = columnIndex22;
+            if (columnIndex22 >= 0 && !cursor.isNull(index22)) {
+                builder.setAppLinkText(cursor.getString(index22));
+            }
+            int columnIndex23 = cursor.getColumnIndex("internal_provider_flag1");
+            int index23 = columnIndex23;
+            if (columnIndex23 >= 0 && !cursor.isNull(index23)) {
+                builder.setInternalProviderFlag1(cursor.getLong(index23));
+            }
+            int columnIndex24 = cursor.getColumnIndex("internal_provider_flag2");
+            int index24 = columnIndex24;
+            if (columnIndex24 >= 0 && !cursor.isNull(index24)) {
+                builder.setInternalProviderFlag2(cursor.getLong(index24));
+            }
+            int columnIndex25 = cursor.getColumnIndex("internal_provider_flag3");
+            int index25 = columnIndex25;
+            if (columnIndex25 >= 0 && !cursor.isNull(index25)) {
+                builder.setInternalProviderFlag3(cursor.getLong(index25));
+            }
+            int columnIndex26 = cursor.getColumnIndex("internal_provider_flag4");
+            int index26 = columnIndex26;
+            if (columnIndex26 >= 0 && !cursor.isNull(index26)) {
+                builder.setInternalProviderFlag4(cursor.getLong(index26));
+            }
+        }
+        if (Build.VERSION.SDK_INT >= 26) {
+            int columnIndex27 = cursor.getColumnIndex("internal_provider_id");
+            int index27 = columnIndex27;
+            if (columnIndex27 >= 0 && !cursor.isNull(index27)) {
+                builder.setInternalProviderId(cursor.getString(index27));
+            }
+            int columnIndex28 = cursor.getColumnIndex("transient");
+            int index28 = columnIndex28;
+            if (columnIndex28 >= 0 && !cursor.isNull(index28)) {
+                builder.setTransient(cursor.getInt(index28) == 1);
+            }
+            int columnIndex29 = cursor.getColumnIndex(TvContractCompat.Channels.COLUMN_SYSTEM_APPROVED);
+            int index29 = columnIndex29;
+            if (columnIndex29 >= 0 && !cursor.isNull(index29)) {
+                if (cursor.getInt(index29) == 1) {
+                    z = true;
+                }
+                builder.setSystemApproved(z);
+            }
+            int columnIndex30 = cursor.getColumnIndex("configuration_display_order");
+            int index30 = columnIndex30;
+            if (columnIndex30 >= 0 && !cursor.isNull(index30)) {
+                builder.setConfigurationDisplayOrder(cursor.getInt(index30));
+            }
+            int columnIndex31 = cursor.getColumnIndex("system_channel_key");
+            int index31 = columnIndex31;
+            if (columnIndex31 >= 0 && !cursor.isNull(index31)) {
+                builder.setSystemChannelKey(cursor.getString(index31));
+            }
+        }
+        return builder.build();
+    }
+
+    private static String[] getProjection() {
+        String[] baseColumns = {"_id", TvContractCompat.Channels.COLUMN_DESCRIPTION, TvContractCompat.Channels.COLUMN_DISPLAY_NAME, TvContractCompat.Channels.COLUMN_DISPLAY_NUMBER, "input_id", "internal_provider_data", TvContractCompat.Channels.COLUMN_NETWORK_AFFILIATION, TvContractCompat.Channels.COLUMN_ORIGINAL_NETWORK_ID, "package_name", "searchable", TvContractCompat.Channels.COLUMN_SERVICE_ID, TvContractCompat.Channels.COLUMN_SERVICE_TYPE, TvContractCompat.Channels.COLUMN_TRANSPORT_STREAM_ID, "type", TvContractCompat.Channels.COLUMN_VIDEO_FORMAT, "browsable", "locked"};
+        String[] marshmallowColumns = {TvContractCompat.Channels.COLUMN_APP_LINK_COLOR, TvContractCompat.Channels.COLUMN_APP_LINK_ICON_URI, TvContractCompat.Channels.COLUMN_APP_LINK_INTENT_URI, TvContractCompat.Channels.COLUMN_APP_LINK_POSTER_ART_URI, TvContractCompat.Channels.COLUMN_APP_LINK_TEXT, "internal_provider_flag1", "internal_provider_flag2", "internal_provider_flag3", "internal_provider_flag4"};
+        String[] oReleaseColumns = {"internal_provider_id", "transient", TvContractCompat.Channels.COLUMN_SYSTEM_APPROVED, "configuration_display_order", "system_channel_key"};
+        if (Build.VERSION.SDK_INT >= 26) {
+            return (String[]) CollectionUtils.concatAll(baseColumns, marshmallowColumns, oReleaseColumns);
+        } else if (Build.VERSION.SDK_INT < 23) {
+            return baseColumns;
+        } else {
+            return (String[]) CollectionUtils.concatAll(baseColumns, marshmallowColumns);
+        }
     }
 
     public long getId() {
@@ -244,187 +425,6 @@ public final class Channel {
             values.remove(TvContractCompat.Channels.COLUMN_SYSTEM_APPROVED);
         }
         return values;
-    }
-
-    public static Channel fromCursor(Cursor cursor) {
-        Builder builder = new Builder();
-        int columnIndex = cursor.getColumnIndex("_id");
-        int index = columnIndex;
-        if (columnIndex >= 0 && !cursor.isNull(index)) {
-            builder.setId(cursor.getLong(index));
-        }
-        int columnIndex2 = cursor.getColumnIndex(TvContractCompat.Channels.COLUMN_DESCRIPTION);
-        int index2 = columnIndex2;
-        if (columnIndex2 >= 0 && !cursor.isNull(index2)) {
-            builder.setDescription(cursor.getString(index2));
-        }
-        int columnIndex3 = cursor.getColumnIndex(TvContractCompat.Channels.COLUMN_DISPLAY_NAME);
-        int index3 = columnIndex3;
-        if (columnIndex3 >= 0 && !cursor.isNull(index3)) {
-            builder.setDisplayName(cursor.getString(index3));
-        }
-        int columnIndex4 = cursor.getColumnIndex(TvContractCompat.Channels.COLUMN_DISPLAY_NUMBER);
-        int index4 = columnIndex4;
-        if (columnIndex4 >= 0 && !cursor.isNull(index4)) {
-            builder.setDisplayNumber(cursor.getString(index4));
-        }
-        int columnIndex5 = cursor.getColumnIndex("input_id");
-        int index5 = columnIndex5;
-        if (columnIndex5 >= 0 && !cursor.isNull(index5)) {
-            builder.setInputId(cursor.getString(index5));
-        }
-        int columnIndex6 = cursor.getColumnIndex("internal_provider_data");
-        int index6 = columnIndex6;
-        if (columnIndex6 >= 0 && !cursor.isNull(index6)) {
-            builder.setInternalProviderData(cursor.getBlob(index6));
-        }
-        int columnIndex7 = cursor.getColumnIndex(TvContractCompat.Channels.COLUMN_NETWORK_AFFILIATION);
-        int index7 = columnIndex7;
-        if (columnIndex7 >= 0 && !cursor.isNull(index7)) {
-            builder.setNetworkAffiliation(cursor.getString(index7));
-        }
-        int columnIndex8 = cursor.getColumnIndex(TvContractCompat.Channels.COLUMN_ORIGINAL_NETWORK_ID);
-        int index8 = columnIndex8;
-        if (columnIndex8 >= 0 && !cursor.isNull(index8)) {
-            builder.setOriginalNetworkId(cursor.getInt(index8));
-        }
-        int columnIndex9 = cursor.getColumnIndex("package_name");
-        int index9 = columnIndex9;
-        if (columnIndex9 >= 0 && !cursor.isNull(index9)) {
-            builder.setPackageName(cursor.getString(index9));
-        }
-        int columnIndex10 = cursor.getColumnIndex("searchable");
-        int index10 = columnIndex10;
-        boolean z = false;
-        if (columnIndex10 >= 0 && !cursor.isNull(index10)) {
-            builder.setSearchable(cursor.getInt(index10) == 1);
-        }
-        int columnIndex11 = cursor.getColumnIndex(TvContractCompat.Channels.COLUMN_SERVICE_ID);
-        int index11 = columnIndex11;
-        if (columnIndex11 >= 0 && !cursor.isNull(index11)) {
-            builder.setServiceId(cursor.getInt(index11));
-        }
-        int columnIndex12 = cursor.getColumnIndex(TvContractCompat.Channels.COLUMN_SERVICE_TYPE);
-        int index12 = columnIndex12;
-        if (columnIndex12 >= 0 && !cursor.isNull(index12)) {
-            builder.setServiceType(cursor.getString(index12));
-        }
-        int columnIndex13 = cursor.getColumnIndex(TvContractCompat.Channels.COLUMN_TRANSPORT_STREAM_ID);
-        int index13 = columnIndex13;
-        if (columnIndex13 >= 0 && !cursor.isNull(index13)) {
-            builder.setTransportStreamId(cursor.getInt(index13));
-        }
-        int columnIndex14 = cursor.getColumnIndex("type");
-        int index14 = columnIndex14;
-        if (columnIndex14 >= 0 && !cursor.isNull(index14)) {
-            builder.setType(cursor.getString(index14));
-        }
-        int columnIndex15 = cursor.getColumnIndex(TvContractCompat.Channels.COLUMN_VIDEO_FORMAT);
-        int index15 = columnIndex15;
-        if (columnIndex15 >= 0 && !cursor.isNull(index15)) {
-            builder.setVideoFormat(cursor.getString(index15));
-        }
-        int columnIndex16 = cursor.getColumnIndex("browsable");
-        int index16 = columnIndex16;
-        if (columnIndex16 >= 0 && !cursor.isNull(index16)) {
-            builder.setBrowsable(cursor.getInt(index16) == 1);
-        }
-        int columnIndex17 = cursor.getColumnIndex("locked");
-        int index17 = columnIndex17;
-        if (columnIndex17 >= 0 && !cursor.isNull(index17)) {
-            builder.setLocked(cursor.getInt(index17) == 1);
-        }
-        if (Build.VERSION.SDK_INT >= 23) {
-            int columnIndex18 = cursor.getColumnIndex(TvContractCompat.Channels.COLUMN_APP_LINK_COLOR);
-            int index18 = columnIndex18;
-            if (columnIndex18 >= 0 && !cursor.isNull(index18)) {
-                builder.setAppLinkColor(cursor.getInt(index18));
-            }
-            int columnIndex19 = cursor.getColumnIndex(TvContractCompat.Channels.COLUMN_APP_LINK_ICON_URI);
-            int index19 = columnIndex19;
-            if (columnIndex19 >= 0 && !cursor.isNull(index19)) {
-                builder.setAppLinkIconUri(Uri.parse(cursor.getString(index19)));
-            }
-            int columnIndex20 = cursor.getColumnIndex(TvContractCompat.Channels.COLUMN_APP_LINK_INTENT_URI);
-            int index20 = columnIndex20;
-            if (columnIndex20 >= 0 && !cursor.isNull(index20)) {
-                builder.setAppLinkIntentUri(Uri.parse(cursor.getString(index20)));
-            }
-            int columnIndex21 = cursor.getColumnIndex(TvContractCompat.Channels.COLUMN_APP_LINK_POSTER_ART_URI);
-            int index21 = columnIndex21;
-            if (columnIndex21 >= 0 && !cursor.isNull(index21)) {
-                builder.setAppLinkPosterArtUri(Uri.parse(cursor.getString(index21)));
-            }
-            int columnIndex22 = cursor.getColumnIndex(TvContractCompat.Channels.COLUMN_APP_LINK_TEXT);
-            int index22 = columnIndex22;
-            if (columnIndex22 >= 0 && !cursor.isNull(index22)) {
-                builder.setAppLinkText(cursor.getString(index22));
-            }
-            int columnIndex23 = cursor.getColumnIndex("internal_provider_flag1");
-            int index23 = columnIndex23;
-            if (columnIndex23 >= 0 && !cursor.isNull(index23)) {
-                builder.setInternalProviderFlag1(cursor.getLong(index23));
-            }
-            int columnIndex24 = cursor.getColumnIndex("internal_provider_flag2");
-            int index24 = columnIndex24;
-            if (columnIndex24 >= 0 && !cursor.isNull(index24)) {
-                builder.setInternalProviderFlag2(cursor.getLong(index24));
-            }
-            int columnIndex25 = cursor.getColumnIndex("internal_provider_flag3");
-            int index25 = columnIndex25;
-            if (columnIndex25 >= 0 && !cursor.isNull(index25)) {
-                builder.setInternalProviderFlag3(cursor.getLong(index25));
-            }
-            int columnIndex26 = cursor.getColumnIndex("internal_provider_flag4");
-            int index26 = columnIndex26;
-            if (columnIndex26 >= 0 && !cursor.isNull(index26)) {
-                builder.setInternalProviderFlag4(cursor.getLong(index26));
-            }
-        }
-        if (Build.VERSION.SDK_INT >= 26) {
-            int columnIndex27 = cursor.getColumnIndex("internal_provider_id");
-            int index27 = columnIndex27;
-            if (columnIndex27 >= 0 && !cursor.isNull(index27)) {
-                builder.setInternalProviderId(cursor.getString(index27));
-            }
-            int columnIndex28 = cursor.getColumnIndex("transient");
-            int index28 = columnIndex28;
-            if (columnIndex28 >= 0 && !cursor.isNull(index28)) {
-                builder.setTransient(cursor.getInt(index28) == 1);
-            }
-            int columnIndex29 = cursor.getColumnIndex(TvContractCompat.Channels.COLUMN_SYSTEM_APPROVED);
-            int index29 = columnIndex29;
-            if (columnIndex29 >= 0 && !cursor.isNull(index29)) {
-                if (cursor.getInt(index29) == 1) {
-                    z = true;
-                }
-                builder.setSystemApproved(z);
-            }
-            int columnIndex30 = cursor.getColumnIndex("configuration_display_order");
-            int index30 = columnIndex30;
-            if (columnIndex30 >= 0 && !cursor.isNull(index30)) {
-                builder.setConfigurationDisplayOrder(cursor.getInt(index30));
-            }
-            int columnIndex31 = cursor.getColumnIndex("system_channel_key");
-            int index31 = columnIndex31;
-            if (columnIndex31 >= 0 && !cursor.isNull(index31)) {
-                builder.setSystemChannelKey(cursor.getString(index31));
-            }
-        }
-        return builder.build();
-    }
-
-    private static String[] getProjection() {
-        String[] baseColumns = {"_id", TvContractCompat.Channels.COLUMN_DESCRIPTION, TvContractCompat.Channels.COLUMN_DISPLAY_NAME, TvContractCompat.Channels.COLUMN_DISPLAY_NUMBER, "input_id", "internal_provider_data", TvContractCompat.Channels.COLUMN_NETWORK_AFFILIATION, TvContractCompat.Channels.COLUMN_ORIGINAL_NETWORK_ID, "package_name", "searchable", TvContractCompat.Channels.COLUMN_SERVICE_ID, TvContractCompat.Channels.COLUMN_SERVICE_TYPE, TvContractCompat.Channels.COLUMN_TRANSPORT_STREAM_ID, "type", TvContractCompat.Channels.COLUMN_VIDEO_FORMAT, "browsable", "locked"};
-        String[] marshmallowColumns = {TvContractCompat.Channels.COLUMN_APP_LINK_COLOR, TvContractCompat.Channels.COLUMN_APP_LINK_ICON_URI, TvContractCompat.Channels.COLUMN_APP_LINK_INTENT_URI, TvContractCompat.Channels.COLUMN_APP_LINK_POSTER_ART_URI, TvContractCompat.Channels.COLUMN_APP_LINK_TEXT, "internal_provider_flag1", "internal_provider_flag2", "internal_provider_flag3", "internal_provider_flag4"};
-        String[] oReleaseColumns = {"internal_provider_id", "transient", TvContractCompat.Channels.COLUMN_SYSTEM_APPROVED, "configuration_display_order", "system_channel_key"};
-        if (Build.VERSION.SDK_INT >= 26) {
-            return (String[]) CollectionUtils.concatAll(baseColumns, marshmallowColumns, oReleaseColumns);
-        } else if (Build.VERSION.SDK_INT < 23) {
-            return baseColumns;
-        } else {
-            return (String[]) CollectionUtils.concatAll(baseColumns, marshmallowColumns);
-        }
     }
 
     /* renamed from: androidx.tvprovider.media.tv.Channel$Builder */

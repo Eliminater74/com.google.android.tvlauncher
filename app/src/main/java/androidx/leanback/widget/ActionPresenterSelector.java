@@ -6,13 +6,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+
 import androidx.leanback.C0364R;
-import androidx.leanback.widget.Presenter;
 
 class ActionPresenterSelector extends PresenterSelector {
     private final Presenter mOneLineActionPresenter = new OneLineActionPresenter();
-    private final Presenter[] mPresenters = {this.mOneLineActionPresenter, this.mTwoLineActionPresenter};
     private final Presenter mTwoLineActionPresenter = new TwoLineActionPresenter();
+    private final Presenter[] mPresenters = {this.mOneLineActionPresenter, this.mTwoLineActionPresenter};
 
     ActionPresenterSelector() {
     }

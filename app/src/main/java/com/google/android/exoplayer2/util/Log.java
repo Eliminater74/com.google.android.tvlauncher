@@ -2,6 +2,7 @@ package com.google.android.exoplayer2.util;
 
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -15,11 +16,6 @@ public final class Log {
     private static int logLevel = 0;
     private static boolean logStackTraces = true;
 
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    @interface LogLevel {
-    }
-
     private Log() {
     }
 
@@ -27,16 +23,8 @@ public final class Log {
         return logLevel;
     }
 
-    public boolean getLogStackTraces() {
-        return logStackTraces;
-    }
-
     public static void setLogLevel(int logLevel2) {
         logLevel = logLevel2;
-    }
-
-    public static void setLogStackTraces(boolean logStackTraces2) {
-        logStackTraces = logStackTraces2;
     }
 
     /* renamed from: d */
@@ -120,5 +108,18 @@ public final class Log {
         sb.append(" - ");
         sb.append(throwableMessage);
         return sb.toString();
+    }
+
+    public boolean getLogStackTraces() {
+        return logStackTraces;
+    }
+
+    public static void setLogStackTraces(boolean logStackTraces2) {
+        logStackTraces = logStackTraces2;
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    @interface LogLevel {
     }
 }

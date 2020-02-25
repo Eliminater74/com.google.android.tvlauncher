@@ -6,13 +6,12 @@ import com.google.android.libraries.gcoreclient.common.api.support.BaseGcoreApi.
 
 public interface BaseGcoreApi<O extends BaseGcoreApiOptions> extends GcoreApi<O> {
 
+    Api getApi();
+
     public interface BaseGcoreApiOptions extends GcoreApi.GcoreApiOptions {
 
         public interface BaseGcoreHasOptions extends BaseGcoreApiOptions, GcoreApi.GcoreApiOptions.GcoreHasOptions {
             Api.ApiOptions.HasOptions getApiOptions();
-        }
-
-        public static final class BaseGcoreNoOptions implements BaseGcoreApiOptions, GcoreApi.GcoreApiOptions.GcoreNoOptions {
         }
 
         public interface BaseGcoreNotRequiredOptions extends BaseGcoreApiOptions, GcoreApi.GcoreApiOptions.GcoreNotRequiredOptions {
@@ -22,7 +21,8 @@ public interface BaseGcoreApi<O extends BaseGcoreApiOptions> extends GcoreApi<O>
         public interface BaseGcoreOptional extends BaseGcoreApiOptions, GcoreApi.GcoreApiOptions.GcoreOptional {
             Api.ApiOptions.Optional getApiOptions();
         }
-    }
 
-    Api getApi();
+        public static final class BaseGcoreNoOptions implements BaseGcoreApiOptions, GcoreApi.GcoreApiOptions.GcoreNoOptions {
+        }
+    }
 }

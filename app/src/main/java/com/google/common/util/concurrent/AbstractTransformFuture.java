@@ -3,12 +3,13 @@ package com.google.common.util.concurrent;
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
-import com.google.common.util.concurrent.FluentFuture;
 import com.google.errorprone.annotations.ForOverride;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible
 abstract class AbstractTransformFuture<I, O, F, T> extends FluentFuture.TrustedFuture<O> implements Runnable {
@@ -17,14 +18,10 @@ abstract class AbstractTransformFuture<I, O, F, T> extends FluentFuture.TrustedF
     @NullableDecl
     ListenableFuture<? extends I> inputFuture;
 
-    /* access modifiers changed from: package-private */
-    @ForOverride
-    @NullableDecl
-    public abstract T doTransform(F f, @NullableDecl I i) throws Exception;
-
-    /* access modifiers changed from: package-private */
-    @ForOverride
-    public abstract void setResult(@NullableDecl T t);
+    AbstractTransformFuture(ListenableFuture<? extends I> inputFuture2, F function2) {
+        this.inputFuture = (ListenableFuture) Preconditions.checkNotNull(inputFuture2);
+        this.function = Preconditions.checkNotNull(function2);
+    }
 
     static <I, O> ListenableFuture<O> create(ListenableFuture listenableFuture, AsyncFunction asyncFunction, Executor executor) {
         Preconditions.checkNotNull(executor);
@@ -40,10 +37,14 @@ abstract class AbstractTransformFuture<I, O, F, T> extends FluentFuture.TrustedF
         return output;
     }
 
-    AbstractTransformFuture(ListenableFuture<? extends I> inputFuture2, F function2) {
-        this.inputFuture = (ListenableFuture) Preconditions.checkNotNull(inputFuture2);
-        this.function = Preconditions.checkNotNull(function2);
-    }
+    /* access modifiers changed from: package-private */
+    @ForOverride
+    @NullableDecl
+    public abstract T doTransform(F f, @NullableDecl I i) throws Exception;
+
+    /* access modifiers changed from: package-private */
+    @ForOverride
+    public abstract void setResult(@NullableDecl T t);
 
     public final void run() {
         ListenableFuture<? extends I> localInputFuture = this.inputFuture;

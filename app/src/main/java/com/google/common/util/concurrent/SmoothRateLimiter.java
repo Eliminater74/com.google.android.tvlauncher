@@ -2,15 +2,20 @@ package com.google.common.util.concurrent;
 
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.math.LongMath;
-import com.google.common.util.concurrent.RateLimiter;
+
 import java.util.concurrent.TimeUnit;
 
 @GwtIncompatible
 abstract class SmoothRateLimiter extends RateLimiter {
     double maxPermits;
-    private long nextFreeTicketMicros;
     double stableIntervalMicros;
     double storedPermits;
+    private long nextFreeTicketMicros;
+
+    private SmoothRateLimiter(RateLimiter.SleepingStopwatch stopwatch) {
+        super(stopwatch);
+        this.nextFreeTicketMicros = 0;
+    }
 
     /* access modifiers changed from: package-private */
     public abstract double coolDownIntervalMicros();
@@ -21,11 +26,58 @@ abstract class SmoothRateLimiter extends RateLimiter {
     /* access modifiers changed from: package-private */
     public abstract long storedPermitsToWaitTime(double d, double d2);
 
+    /* access modifiers changed from: package-private */
+    public final void doSetRate(double permitsPerSecond, long nowMicros) {
+        resync(nowMicros);
+        double micros = (double) TimeUnit.SECONDS.toMicros(1);
+        Double.isNaN(micros);
+        double stableIntervalMicros2 = micros / permitsPerSecond;
+        this.stableIntervalMicros = stableIntervalMicros2;
+        doSetRate(permitsPerSecond, stableIntervalMicros2);
+    }
+
+    /* access modifiers changed from: package-private */
+    public final double doGetRate() {
+        double micros = (double) TimeUnit.SECONDS.toMicros(1);
+        double d = this.stableIntervalMicros;
+        Double.isNaN(micros);
+        return micros / d;
+    }
+
+    /* access modifiers changed from: package-private */
+    public final long queryEarliestAvailable(long nowMicros) {
+        return this.nextFreeTicketMicros;
+    }
+
+    /* access modifiers changed from: package-private */
+    public final long reserveEarliestAvailable(int requiredPermits, long nowMicros) {
+        resync(nowMicros);
+        long returnValue = this.nextFreeTicketMicros;
+        double storedPermitsToSpend = Math.min((double) requiredPermits, this.storedPermits);
+        double d = (double) requiredPermits;
+        Double.isNaN(d);
+        this.nextFreeTicketMicros = LongMath.saturatedAdd(this.nextFreeTicketMicros, storedPermitsToWaitTime(this.storedPermits, storedPermitsToSpend) + ((long) (this.stableIntervalMicros * (d - storedPermitsToSpend))));
+        this.storedPermits -= storedPermitsToSpend;
+        return returnValue;
+    }
+
+    /* access modifiers changed from: package-private */
+    public void resync(long nowMicros) {
+        long j = this.nextFreeTicketMicros;
+        if (nowMicros > j) {
+            double d = (double) (nowMicros - j);
+            double coolDownIntervalMicros = coolDownIntervalMicros();
+            Double.isNaN(d);
+            this.storedPermits = Math.min(this.maxPermits, this.storedPermits + (d / coolDownIntervalMicros));
+            this.nextFreeTicketMicros = nowMicros;
+        }
+    }
+
     static final class SmoothWarmingUp extends SmoothRateLimiter {
+        private final long warmupPeriodMicros;
         private double coldFactor;
         private double slope;
         private double thresholdPermits;
-        private final long warmupPeriodMicros;
 
         SmoothWarmingUp(RateLimiter.SleepingStopwatch stopwatch, long warmupPeriod, TimeUnit timeUnit, double coldFactor2) {
             super(stopwatch);
@@ -116,58 +168,6 @@ abstract class SmoothRateLimiter extends RateLimiter {
         /* access modifiers changed from: package-private */
         public double coolDownIntervalMicros() {
             return this.stableIntervalMicros;
-        }
-    }
-
-    private SmoothRateLimiter(RateLimiter.SleepingStopwatch stopwatch) {
-        super(stopwatch);
-        this.nextFreeTicketMicros = 0;
-    }
-
-    /* access modifiers changed from: package-private */
-    public final void doSetRate(double permitsPerSecond, long nowMicros) {
-        resync(nowMicros);
-        double micros = (double) TimeUnit.SECONDS.toMicros(1);
-        Double.isNaN(micros);
-        double stableIntervalMicros2 = micros / permitsPerSecond;
-        this.stableIntervalMicros = stableIntervalMicros2;
-        doSetRate(permitsPerSecond, stableIntervalMicros2);
-    }
-
-    /* access modifiers changed from: package-private */
-    public final double doGetRate() {
-        double micros = (double) TimeUnit.SECONDS.toMicros(1);
-        double d = this.stableIntervalMicros;
-        Double.isNaN(micros);
-        return micros / d;
-    }
-
-    /* access modifiers changed from: package-private */
-    public final long queryEarliestAvailable(long nowMicros) {
-        return this.nextFreeTicketMicros;
-    }
-
-    /* access modifiers changed from: package-private */
-    public final long reserveEarliestAvailable(int requiredPermits, long nowMicros) {
-        resync(nowMicros);
-        long returnValue = this.nextFreeTicketMicros;
-        double storedPermitsToSpend = Math.min((double) requiredPermits, this.storedPermits);
-        double d = (double) requiredPermits;
-        Double.isNaN(d);
-        this.nextFreeTicketMicros = LongMath.saturatedAdd(this.nextFreeTicketMicros, storedPermitsToWaitTime(this.storedPermits, storedPermitsToSpend) + ((long) (this.stableIntervalMicros * (d - storedPermitsToSpend))));
-        this.storedPermits -= storedPermitsToSpend;
-        return returnValue;
-    }
-
-    /* access modifiers changed from: package-private */
-    public void resync(long nowMicros) {
-        long j = this.nextFreeTicketMicros;
-        if (nowMicros > j) {
-            double d = (double) (nowMicros - j);
-            double coolDownIntervalMicros = coolDownIntervalMicros();
-            Double.isNaN(d);
-            this.storedPermits = Math.min(this.maxPermits, this.storedPermits + (d / coolDownIntervalMicros));
-            this.nextFreeTicketMicros = nowMicros;
         }
     }
 }

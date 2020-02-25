@@ -2,6 +2,7 @@ package com.google.android.tvlauncher.util;
 
 import android.media.MediaPlayer;
 import android.util.Log;
+
 import java.io.IOException;
 
 public class LauncherAudioPlayer {
@@ -12,16 +13,6 @@ public class LauncherAudioPlayer {
     public String mDataSource;
     /* access modifiers changed from: private */
     public MediaPlayer mMediaPlayer;
-
-    public interface CallBacks {
-        void onCompleted();
-
-        void onError();
-
-        void onPrepared();
-
-        void onStarted();
-    }
 
     private void initializeAudio() {
         this.mMediaPlayer = new MediaPlayer();
@@ -107,5 +98,15 @@ public class LauncherAudioPlayer {
             this.mMediaPlayer.release();
             this.mMediaPlayer = null;
         }
+    }
+
+    public interface CallBacks {
+        void onCompleted();
+
+        void onError();
+
+        void onPrepared();
+
+        void onStarted();
     }
 }

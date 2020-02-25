@@ -1,7 +1,6 @@
 package com.google.android.exoplayer2.source.hls.playlist;
 
 import com.google.android.exoplayer2.source.hls.HlsDataSourceFactory;
-import com.google.android.exoplayer2.source.hls.playlist.HlsPlaylistTracker;
 import com.google.android.exoplayer2.upstream.LoadErrorHandlingPolicy;
 
 final /* synthetic */ class DefaultHlsPlaylistTracker$$Lambda$0 implements HlsPlaylistTracker.Factory {

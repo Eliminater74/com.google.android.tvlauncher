@@ -1,7 +1,5 @@
 package com.google.apps.tiktok.tracing;
 
-import com.google.apps.tiktok.tracing.CollectionError;
-import com.google.apps.tiktok.tracing.Span;
 import com.google.protobuf.AbstractMessageLite;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.CodedInputStream;
@@ -16,6 +14,7 @@ import com.google.protobuf.ProtoMessage;
 import com.google.protobuf.ProtoPresenceBits;
 import com.google.protobuf.ProtoPresenceCheckedField;
 import com.google.protobuf.ProtoSyntax;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -27,12 +26,17 @@ public final class TraceRecord extends GeneratedMessageLite<TraceRecord, Builder
     /* access modifiers changed from: private */
     public static final TraceRecord DEFAULT_INSTANCE = new TraceRecord();
     public static final int ERROR_FIELD_NUMBER = 10;
-    private static volatile Parser<TraceRecord> PARSER = null;
     public static final int SPANS_FIELD_NUMBER = 3;
     public static final int START_ELAPSED_TIME_MS_FIELD_NUMBER = 5;
     public static final int START_TIME_MS_FIELD_NUMBER = 4;
     public static final int UUID_LEAST_SIGNIFICANT_BITS_FIELD_NUMBER = 2;
     public static final int UUID_MOST_SIGNIFICANT_BITS_FIELD_NUMBER = 1;
+    private static volatile Parser<TraceRecord> PARSER = null;
+
+    static {
+        GeneratedMessageLite.registerDefaultInstance(TraceRecord.class, DEFAULT_INSTANCE);
+    }
+
     @ProtoPresenceBits(mo28548id = 0)
     private int bitField0_;
     @ProtoField(fieldNumber = 10, isRequired = false, type = FieldType.MESSAGE)
@@ -54,6 +58,70 @@ public final class TraceRecord extends GeneratedMessageLite<TraceRecord, Builder
     private long uuidMostSignificantBits_;
 
     private TraceRecord() {
+    }
+
+    public static TraceRecord parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+        return (TraceRecord) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+    }
+
+    public static TraceRecord parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+        return (TraceRecord) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+    }
+
+    public static TraceRecord parseFrom(ByteString data) throws InvalidProtocolBufferException {
+        return (TraceRecord) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+    }
+
+    public static TraceRecord parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+        return (TraceRecord) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+    }
+
+    public static TraceRecord parseFrom(byte[] data) throws InvalidProtocolBufferException {
+        return (TraceRecord) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+    }
+
+    public static TraceRecord parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+        return (TraceRecord) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+    }
+
+    public static TraceRecord parseFrom(InputStream input) throws IOException {
+        return (TraceRecord) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+    }
+
+    public static TraceRecord parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+        return (TraceRecord) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+    }
+
+    public static TraceRecord parseDelimitedFrom(InputStream input) throws IOException {
+        return (TraceRecord) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+    }
+
+    public static TraceRecord parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+        return (TraceRecord) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+    }
+
+    public static TraceRecord parseFrom(CodedInputStream input) throws IOException {
+        return (TraceRecord) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+    }
+
+    public static TraceRecord parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+        return (TraceRecord) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() {
+        return (Builder) DEFAULT_INSTANCE.createBuilder();
+    }
+
+    public static Builder newBuilder(TraceRecord prototype) {
+        return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+    }
+
+    public static TraceRecord getDefaultInstance() {
+        return DEFAULT_INSTANCE;
+    }
+
+    public static Parser<TraceRecord> parser() {
+        return DEFAULT_INSTANCE.getParserForType();
     }
 
     public boolean hasUuidMostSignificantBits() {
@@ -279,60 +347,36 @@ public final class TraceRecord extends GeneratedMessageLite<TraceRecord, Builder
         this.bitField0_ &= -17;
     }
 
-    public static TraceRecord parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-        return (TraceRecord) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-    }
-
-    public static TraceRecord parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-        return (TraceRecord) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-    }
-
-    public static TraceRecord parseFrom(ByteString data) throws InvalidProtocolBufferException {
-        return (TraceRecord) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-    }
-
-    public static TraceRecord parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-        return (TraceRecord) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-    }
-
-    public static TraceRecord parseFrom(byte[] data) throws InvalidProtocolBufferException {
-        return (TraceRecord) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-    }
-
-    public static TraceRecord parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-        return (TraceRecord) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-    }
-
-    public static TraceRecord parseFrom(InputStream input) throws IOException {
-        return (TraceRecord) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-    }
-
-    public static TraceRecord parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-        return (TraceRecord) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-    }
-
-    public static TraceRecord parseDelimitedFrom(InputStream input) throws IOException {
-        return (TraceRecord) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-    }
-
-    public static TraceRecord parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-        return (TraceRecord) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-    }
-
-    public static TraceRecord parseFrom(CodedInputStream input) throws IOException {
-        return (TraceRecord) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-    }
-
-    public static TraceRecord parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-        return (TraceRecord) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-    }
-
-    public static Builder newBuilder() {
-        return (Builder) DEFAULT_INSTANCE.createBuilder();
-    }
-
-    public static Builder newBuilder(TraceRecord prototype) {
-        return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+    /* access modifiers changed from: protected */
+    public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+        switch (method) {
+            case NEW_MUTABLE_INSTANCE:
+                return new TraceRecord();
+            case NEW_BUILDER:
+                return new Builder();
+            case BUILD_MESSAGE_INFO:
+                return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0006\u0000\u0001\u0001\n\u0006\u0000\u0001\u0000\u0001\u0005\u0000\u0002\u0005\u0001\u0003\u001b\u0004\u0002\u0002\u0005\u0002\u0003\n\t\u0004", new Object[]{"bitField0_", "uuidMostSignificantBits_", "uuidLeastSignificantBits_", "spans_", Span.class, "startTimeMs_", "startElapsedTimeMs_", "error_"});
+            case GET_DEFAULT_INSTANCE:
+                return DEFAULT_INSTANCE;
+            case GET_PARSER:
+                Parser<TraceRecord> parser = PARSER;
+                if (parser == null) {
+                    synchronized (TraceRecord.class) {
+                        parser = PARSER;
+                        if (parser == null) {
+                            parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                            PARSER = parser;
+                        }
+                    }
+                }
+                return parser;
+            case GET_MEMOIZED_IS_INITIALIZED:
+                return (byte) 1;
+            case SET_MEMOIZED_IS_INITIALIZED:
+                return null;
+            default:
+                throw new UnsupportedOperationException();
+        }
     }
 
     public static final class Builder extends GeneratedMessageLite.Builder<TraceRecord, Builder> implements TraceRecordOrBuilder {
@@ -517,49 +561,5 @@ public final class TraceRecord extends GeneratedMessageLite<TraceRecord, Builder
             ((TraceRecord) this.instance).clearError();
             return this;
         }
-    }
-
-    /* access modifiers changed from: protected */
-    public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-        switch (method) {
-            case NEW_MUTABLE_INSTANCE:
-                return new TraceRecord();
-            case NEW_BUILDER:
-                return new Builder();
-            case BUILD_MESSAGE_INFO:
-                return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0006\u0000\u0001\u0001\n\u0006\u0000\u0001\u0000\u0001\u0005\u0000\u0002\u0005\u0001\u0003\u001b\u0004\u0002\u0002\u0005\u0002\u0003\n\t\u0004", new Object[]{"bitField0_", "uuidMostSignificantBits_", "uuidLeastSignificantBits_", "spans_", Span.class, "startTimeMs_", "startElapsedTimeMs_", "error_"});
-            case GET_DEFAULT_INSTANCE:
-                return DEFAULT_INSTANCE;
-            case GET_PARSER:
-                Parser<TraceRecord> parser = PARSER;
-                if (parser == null) {
-                    synchronized (TraceRecord.class) {
-                        parser = PARSER;
-                        if (parser == null) {
-                            parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                            PARSER = parser;
-                        }
-                    }
-                }
-                return parser;
-            case GET_MEMOIZED_IS_INITIALIZED:
-                return (byte) 1;
-            case SET_MEMOIZED_IS_INITIALIZED:
-                return null;
-            default:
-                throw new UnsupportedOperationException();
-        }
-    }
-
-    static {
-        GeneratedMessageLite.registerDefaultInstance(TraceRecord.class, DEFAULT_INSTANCE);
-    }
-
-    public static TraceRecord getDefaultInstance() {
-        return DEFAULT_INSTANCE;
-    }
-
-    public static Parser<TraceRecord> parser() {
-        return DEFAULT_INSTANCE.getParserForType();
     }
 }

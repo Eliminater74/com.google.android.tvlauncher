@@ -7,6 +7,7 @@ import android.text.style.BackgroundColorSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
+
 import com.google.android.exoplayer2.text.Cue;
 import com.google.android.exoplayer2.text.Subtitle;
 import com.google.android.exoplayer2.text.SubtitleDecoderException;
@@ -17,6 +18,7 @@ import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.ParsableBitArray;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -103,13 +105,23 @@ public final class Cea708Decoder extends CeaDecoder {
     private static final String TAG = "Cea708Decoder";
     private final ParsableByteArray ccData = new ParsableByteArray();
     private final CueBuilder[] cueBuilders;
+    private final int selectedServiceNumber;
+    private final ParsableBitArray serviceBlockPacket = new ParsableBitArray();
     private List<Cue> cues;
     private CueBuilder currentCueBuilder;
     private DtvCcPacket currentDtvCcPacket;
     private int currentWindow;
     private List<Cue> lastCues;
-    private final int selectedServiceNumber;
-    private final ParsableBitArray serviceBlockPacket = new ParsableBitArray();
+
+    public Cea708Decoder(int accessibilityChannel, List<byte[]> list) {
+        this.selectedServiceNumber = accessibilityChannel == -1 ? 1 : accessibilityChannel;
+        this.cueBuilders = new CueBuilder[8];
+        for (int i = 0; i < 8; i++) {
+            this.cueBuilders[i] = new CueBuilder();
+        }
+        this.currentCueBuilder = this.cueBuilders[0];
+        resetCueBuilders();
+    }
 
     public /* bridge */ /* synthetic */ SubtitleInputBuffer dequeueInputBuffer() throws SubtitleDecoderException {
         return super.dequeueInputBuffer();
@@ -129,16 +141,6 @@ public final class Cea708Decoder extends CeaDecoder {
 
     public /* bridge */ /* synthetic */ void setPositionUs(long j) {
         super.setPositionUs(j);
-    }
-
-    public Cea708Decoder(int accessibilityChannel, List<byte[]> list) {
-        this.selectedServiceNumber = accessibilityChannel == -1 ? 1 : accessibilityChannel;
-        this.cueBuilders = new CueBuilder[8];
-        for (int i = 0; i < 8; i++) {
-            this.cueBuilders[i] = new CueBuilder();
-        }
-        this.currentCueBuilder = this.cueBuilders[0];
-        resetCueBuilders();
     }
 
     public String getName() {
@@ -677,10 +679,10 @@ public final class Cea708Decoder extends CeaDecoder {
     }
 
     private static final class DtvCcPacket {
-        int currentIndex = 0;
         public final byte[] packetData;
         public final int packetSize;
         public final int sequenceNumber;
+        int currentIndex = 0;
 
         public DtvCcPacket(int sequenceNumber2, int packetSize2) {
             this.sequenceNumber = sequenceNumber2;
@@ -690,11 +692,11 @@ public final class Cea708Decoder extends CeaDecoder {
     }
 
     private static final class CueBuilder {
-        private static final int BORDER_AND_EDGE_TYPE_NONE = 0;
-        private static final int BORDER_AND_EDGE_TYPE_UNIFORM = 3;
         public static final int COLOR_SOLID_BLACK = getArgbColorFromCeaColor(0, 0, 0, 0);
         public static final int COLOR_SOLID_WHITE = getArgbColorFromCeaColor(2, 2, 2, 0);
         public static final int COLOR_TRANSPARENT = getArgbColorFromCeaColor(0, 0, 0, 3);
+        private static final int BORDER_AND_EDGE_TYPE_NONE = 0;
+        private static final int BORDER_AND_EDGE_TYPE_UNIFORM = 3;
         private static final int DEFAULT_PRIORITY = 4;
         private static final int DIRECTION_BOTTOM_TO_TOP = 3;
         private static final int DIRECTION_LEFT_TO_RIGHT = 0;
@@ -723,10 +725,19 @@ public final class Cea708Decoder extends CeaDecoder {
         private static final int[] WINDOW_STYLE_PRINT_DIRECTION = {0, 0, 0, 0, 0, 0, 2};
         private static final int[] WINDOW_STYLE_SCROLL_DIRECTION = {3, 3, 3, 3, 3, 3, 1};
         private static final boolean[] WINDOW_STYLE_WORD_WRAP = {false, false, false, true, true, true, false};
+
+        static {
+            int i = COLOR_SOLID_BLACK;
+            int i2 = COLOR_TRANSPARENT;
+            WINDOW_STYLE_FILL = new int[]{i, i2, i, i, i2, i, i};
+            PEN_STYLE_BACKGROUND = new int[]{i, i, i, i, i, i2, i2};
+        }
+
+        private final SpannableStringBuilder captionStringBuilder = new SpannableStringBuilder();
+        private final List<SpannableString> rolledUpCaptions = new ArrayList();
         private int anchorId;
         private int backgroundColor;
         private int backgroundColorStartPosition;
-        private final SpannableStringBuilder captionStringBuilder = new SpannableStringBuilder();
         private boolean defined;
         private int foregroundColor;
         private int foregroundColorStartPosition;
@@ -736,7 +747,6 @@ public final class Cea708Decoder extends CeaDecoder {
         private int penStyleId;
         private int priority;
         private boolean relativePositioning;
-        private final List<SpannableString> rolledUpCaptions = new ArrayList();
         private int row;
         private int rowCount;
         private boolean rowLock;
@@ -746,15 +756,36 @@ public final class Cea708Decoder extends CeaDecoder {
         private int windowFillColor;
         private int windowStyleId;
 
-        static {
-            int i = COLOR_SOLID_BLACK;
-            int i2 = COLOR_TRANSPARENT;
-            WINDOW_STYLE_FILL = new int[]{i, i2, i, i, i2, i, i};
-            PEN_STYLE_BACKGROUND = new int[]{i, i, i, i, i, i2, i2};
-        }
-
         public CueBuilder() {
             reset();
+        }
+
+        public static int getArgbColorFromCeaColor(int red, int green, int blue) {
+            return getArgbColorFromCeaColor(red, green, blue, 0);
+        }
+
+        public static int getArgbColorFromCeaColor(int red, int green, int blue, int opacity) {
+            int alpha;
+            int i = 0;
+            Assertions.checkIndex(red, 0, 4);
+            Assertions.checkIndex(green, 0, 4);
+            Assertions.checkIndex(blue, 0, 4);
+            Assertions.checkIndex(opacity, 0, 4);
+            if (opacity == 0 || opacity == 1) {
+                alpha = 255;
+            } else if (opacity == 2) {
+                alpha = ClientAnalytics.LogRequest.LogSource.TAILORMADE_VALUE;
+            } else if (opacity != 3) {
+                alpha = 255;
+            } else {
+                alpha = 0;
+            }
+            int i2 = red > 1 ? 255 : 0;
+            int i3 = green > 1 ? 255 : 0;
+            if (blue > 1) {
+                i = 255;
+            }
+            return Color.argb(alpha, i2, i3, i);
         }
 
         public boolean isEmpty() {
@@ -1099,34 +1130,6 @@ public final class Cea708Decoder extends CeaDecoder {
                 return r19
             */
             throw new UnsupportedOperationException("Method not decompiled: com.google.android.exoplayer2.text.cea.Cea708Decoder.CueBuilder.build():com.google.android.exoplayer2.text.cea.Cea708Cue");
-        }
-
-        public static int getArgbColorFromCeaColor(int red, int green, int blue) {
-            return getArgbColorFromCeaColor(red, green, blue, 0);
-        }
-
-        public static int getArgbColorFromCeaColor(int red, int green, int blue, int opacity) {
-            int alpha;
-            int i = 0;
-            Assertions.checkIndex(red, 0, 4);
-            Assertions.checkIndex(green, 0, 4);
-            Assertions.checkIndex(blue, 0, 4);
-            Assertions.checkIndex(opacity, 0, 4);
-            if (opacity == 0 || opacity == 1) {
-                alpha = 255;
-            } else if (opacity == 2) {
-                alpha = ClientAnalytics.LogRequest.LogSource.TAILORMADE_VALUE;
-            } else if (opacity != 3) {
-                alpha = 255;
-            } else {
-                alpha = 0;
-            }
-            int i2 = red > 1 ? 255 : 0;
-            int i3 = green > 1 ? 255 : 0;
-            if (blue > 1) {
-                i = 255;
-            }
-            return Color.argb(alpha, i2, i3, i);
         }
     }
 }

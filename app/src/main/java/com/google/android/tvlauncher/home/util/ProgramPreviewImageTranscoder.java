@@ -9,7 +9,9 @@ import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import androidx.palette.graphics.Palette;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.Options;
 import com.bumptech.glide.load.engine.Resource;
@@ -20,8 +22,8 @@ public class ProgramPreviewImageTranscoder implements ResourceTranscoder<Bitmap,
     private static final float BLURRED_BITMAP_SCALE = 0.5f;
     private static final float BLUR_RADIUS = 8.0f;
     private final BitmapPool mBitmapPool;
-    private ScriptIntrinsicBlur mBlur;
     private final Context mContext;
+    private ScriptIntrinsicBlur mBlur;
     private RenderScript mRenderScript;
 
     public ProgramPreviewImageTranscoder(Context context) {

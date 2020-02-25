@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RawRes;
 import android.widget.ImageView;
+
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.BaseRequestOptions;
 import com.bumptech.glide.request.ErrorRequestCoordinator;
@@ -28,6 +29,7 @@ import com.bumptech.glide.signature.ApplicationVersionSignature;
 import com.bumptech.glide.util.Executors;
 import com.bumptech.glide.util.Preconditions;
 import com.bumptech.glide.util.Util;
+
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
@@ -37,10 +39,12 @@ import java.util.concurrent.Executor;
 public class RequestBuilder<TranscodeType> extends BaseRequestOptions<RequestBuilder<TranscodeType>> implements Cloneable, ModelTypes<RequestBuilder<TranscodeType>> {
     protected static final RequestOptions DOWNLOAD_ONLY_OPTIONS = ((RequestOptions) ((RequestOptions) ((RequestOptions) new RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA)).priority(Priority.LOW)).skipMemoryCache(true));
     private final Context context;
-    @Nullable
-    private RequestBuilder<TranscodeType> errorBuilder;
     private final Glide glide;
     private final GlideContext glideContext;
+    private final RequestManager requestManager;
+    private final Class<TranscodeType> transcodeClass;
+    @Nullable
+    private RequestBuilder<TranscodeType> errorBuilder;
     private boolean isDefaultTransitionOptionsSet;
     private boolean isModelSet;
     private boolean isThumbnailBuilt;
@@ -48,12 +52,10 @@ public class RequestBuilder<TranscodeType> extends BaseRequestOptions<RequestBui
     private Object model;
     @Nullable
     private List<RequestListener<TranscodeType>> requestListeners;
-    private final RequestManager requestManager;
     @Nullable
     private Float thumbSizeMultiplier;
     @Nullable
     private RequestBuilder<TranscodeType> thumbnailBuilder;
-    private final Class<TranscodeType> transcodeClass;
     @NonNull
     private TransitionOptions<?, ? super TranscodeType> transitionOptions;
 
@@ -372,63 +374,6 @@ public class RequestBuilder<TranscodeType> extends BaseRequestOptions<RequestBui
         return new RequestBuilder(File.class, this).apply((BaseRequestOptions<?>) DOWNLOAD_ONLY_OPTIONS);
     }
 
-    /* renamed from: com.bumptech.glide.RequestBuilder$1 */
-    static /* synthetic */ class C07801 {
-        static final /* synthetic */ int[] $SwitchMap$android$widget$ImageView$ScaleType = new int[ImageView.ScaleType.values().length];
-        static final /* synthetic */ int[] $SwitchMap$com$bumptech$glide$Priority = new int[Priority.values().length];
-
-        static {
-            try {
-                $SwitchMap$com$bumptech$glide$Priority[Priority.LOW.ordinal()] = 1;
-            } catch (NoSuchFieldError e) {
-            }
-            try {
-                $SwitchMap$com$bumptech$glide$Priority[Priority.NORMAL.ordinal()] = 2;
-            } catch (NoSuchFieldError e2) {
-            }
-            try {
-                $SwitchMap$com$bumptech$glide$Priority[Priority.HIGH.ordinal()] = 3;
-            } catch (NoSuchFieldError e3) {
-            }
-            try {
-                $SwitchMap$com$bumptech$glide$Priority[Priority.IMMEDIATE.ordinal()] = 4;
-            } catch (NoSuchFieldError e4) {
-            }
-            try {
-                $SwitchMap$android$widget$ImageView$ScaleType[ImageView.ScaleType.CENTER_CROP.ordinal()] = 1;
-            } catch (NoSuchFieldError e5) {
-            }
-            try {
-                $SwitchMap$android$widget$ImageView$ScaleType[ImageView.ScaleType.CENTER_INSIDE.ordinal()] = 2;
-            } catch (NoSuchFieldError e6) {
-            }
-            try {
-                $SwitchMap$android$widget$ImageView$ScaleType[ImageView.ScaleType.FIT_CENTER.ordinal()] = 3;
-            } catch (NoSuchFieldError e7) {
-            }
-            try {
-                $SwitchMap$android$widget$ImageView$ScaleType[ImageView.ScaleType.FIT_START.ordinal()] = 4;
-            } catch (NoSuchFieldError e8) {
-            }
-            try {
-                $SwitchMap$android$widget$ImageView$ScaleType[ImageView.ScaleType.FIT_END.ordinal()] = 5;
-            } catch (NoSuchFieldError e9) {
-            }
-            try {
-                $SwitchMap$android$widget$ImageView$ScaleType[ImageView.ScaleType.FIT_XY.ordinal()] = 6;
-            } catch (NoSuchFieldError e10) {
-            }
-            try {
-                $SwitchMap$android$widget$ImageView$ScaleType[ImageView.ScaleType.CENTER.ordinal()] = 7;
-            } catch (NoSuchFieldError e11) {
-            }
-            try {
-                $SwitchMap$android$widget$ImageView$ScaleType[ImageView.ScaleType.MATRIX.ordinal()] = 8;
-            } catch (NoSuchFieldError e12) {
-            }
-        }
-    }
-
     @NonNull
     private Priority getThumbnailPriority(@NonNull Priority current) {
         int i = C07801.$SwitchMap$com$bumptech$glide$Priority[current.ordinal()];
@@ -632,5 +577,62 @@ public class RequestBuilder<TranscodeType> extends BaseRequestOptions<RequestBui
         Context context2 = this.context;
         GlideContext glideContext2 = this.glideContext;
         return SingleRequest.obtain(context2, glideContext2, this.model, this.transcodeClass, requestOptions, overrideWidth, overrideHeight, priority, target, targetListener, this.requestListeners, requestCoordinator, glideContext2.getEngine(), transitionOptions2.getTransitionFactory(), callbackExecutor);
+    }
+
+    /* renamed from: com.bumptech.glide.RequestBuilder$1 */
+    static /* synthetic */ class C07801 {
+        static final /* synthetic */ int[] $SwitchMap$android$widget$ImageView$ScaleType = new int[ImageView.ScaleType.values().length];
+        static final /* synthetic */ int[] $SwitchMap$com$bumptech$glide$Priority = new int[Priority.values().length];
+
+        static {
+            try {
+                $SwitchMap$com$bumptech$glide$Priority[Priority.LOW.ordinal()] = 1;
+            } catch (NoSuchFieldError e) {
+            }
+            try {
+                $SwitchMap$com$bumptech$glide$Priority[Priority.NORMAL.ordinal()] = 2;
+            } catch (NoSuchFieldError e2) {
+            }
+            try {
+                $SwitchMap$com$bumptech$glide$Priority[Priority.HIGH.ordinal()] = 3;
+            } catch (NoSuchFieldError e3) {
+            }
+            try {
+                $SwitchMap$com$bumptech$glide$Priority[Priority.IMMEDIATE.ordinal()] = 4;
+            } catch (NoSuchFieldError e4) {
+            }
+            try {
+                $SwitchMap$android$widget$ImageView$ScaleType[ImageView.ScaleType.CENTER_CROP.ordinal()] = 1;
+            } catch (NoSuchFieldError e5) {
+            }
+            try {
+                $SwitchMap$android$widget$ImageView$ScaleType[ImageView.ScaleType.CENTER_INSIDE.ordinal()] = 2;
+            } catch (NoSuchFieldError e6) {
+            }
+            try {
+                $SwitchMap$android$widget$ImageView$ScaleType[ImageView.ScaleType.FIT_CENTER.ordinal()] = 3;
+            } catch (NoSuchFieldError e7) {
+            }
+            try {
+                $SwitchMap$android$widget$ImageView$ScaleType[ImageView.ScaleType.FIT_START.ordinal()] = 4;
+            } catch (NoSuchFieldError e8) {
+            }
+            try {
+                $SwitchMap$android$widget$ImageView$ScaleType[ImageView.ScaleType.FIT_END.ordinal()] = 5;
+            } catch (NoSuchFieldError e9) {
+            }
+            try {
+                $SwitchMap$android$widget$ImageView$ScaleType[ImageView.ScaleType.FIT_XY.ordinal()] = 6;
+            } catch (NoSuchFieldError e10) {
+            }
+            try {
+                $SwitchMap$android$widget$ImageView$ScaleType[ImageView.ScaleType.CENTER.ordinal()] = 7;
+            } catch (NoSuchFieldError e11) {
+            }
+            try {
+                $SwitchMap$android$widget$ImageView$ScaleType[ImageView.ScaleType.MATRIX.ordinal()] = 8;
+            } catch (NoSuchFieldError e12) {
+            }
+        }
     }
 }

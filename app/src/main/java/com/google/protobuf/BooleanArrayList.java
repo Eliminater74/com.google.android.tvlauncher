@@ -1,22 +1,18 @@
 package com.google.protobuf;
 
-import com.google.protobuf.Internal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.RandomAccess;
 
 final class BooleanArrayList extends AbstractProtobufList<Boolean> implements Internal.BooleanList, RandomAccess, PrimitiveNonBoxingCollection {
     private static final BooleanArrayList EMPTY_LIST = new BooleanArrayList(new boolean[0], 0);
-    private boolean[] array;
-    private int size;
 
     static {
         EMPTY_LIST.makeImmutable();
     }
 
-    public static BooleanArrayList emptyList() {
-        return EMPTY_LIST;
-    }
+    private boolean[] array;
+    private int size;
 
     BooleanArrayList() {
         this(new boolean[10], 0);
@@ -25,6 +21,10 @@ final class BooleanArrayList extends AbstractProtobufList<Boolean> implements In
     private BooleanArrayList(boolean[] other, int size2) {
         this.array = other;
         this.size = size2;
+    }
+
+    public static BooleanArrayList emptyList() {
+        return EMPTY_LIST;
     }
 
     /* access modifiers changed from: protected */

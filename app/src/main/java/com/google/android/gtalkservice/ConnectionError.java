@@ -36,34 +36,6 @@ public final class ConnectionError implements Parcelable {
         this.mError = source.readInt();
     }
 
-    public int getError() {
-        return this.mError;
-    }
-
-    public void setError(int error) {
-        this.mError = error;
-    }
-
-    public boolean isNoError() {
-        return this.mError == 0;
-    }
-
-    public boolean isNetworkError() {
-        return isNetworkError(this.mError);
-    }
-
-    public boolean isAuthenticationError() {
-        return this.mError == 4;
-    }
-
-    public boolean isAuthenticationExpired() {
-        return this.mError == 5;
-    }
-
-    public final String toString() {
-        return toString(this.mError);
-    }
-
     public static boolean isNetworkError(int error) {
         return error == 1 || error == 2 || error == 3 || error == 10;
     }
@@ -96,6 +68,34 @@ public final class ConnectionError implements Parcelable {
             case 10:
                 return "UNKNOWN";
         }
+    }
+
+    public int getError() {
+        return this.mError;
+    }
+
+    public void setError(int error) {
+        this.mError = error;
+    }
+
+    public boolean isNoError() {
+        return this.mError == 0;
+    }
+
+    public boolean isNetworkError() {
+        return isNetworkError(this.mError);
+    }
+
+    public boolean isAuthenticationError() {
+        return this.mError == 4;
+    }
+
+    public boolean isAuthenticationExpired() {
+        return this.mError == 5;
+    }
+
+    public final String toString() {
+        return toString(this.mError);
     }
 
     public void writeToParcel(Parcel dest, int flags) {

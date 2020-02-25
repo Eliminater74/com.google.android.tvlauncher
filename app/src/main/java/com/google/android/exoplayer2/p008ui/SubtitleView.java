@@ -9,10 +9,12 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.accessibility.CaptioningManager;
+
 import com.google.android.exoplayer2.text.CaptionStyleCompat;
 import com.google.android.exoplayer2.text.Cue;
 import com.google.android.exoplayer2.text.TextOutput;
 import com.google.android.exoplayer2.util.Util;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,11 +22,11 @@ import java.util.List;
 public final class SubtitleView extends View implements TextOutput {
     public static final float DEFAULT_BOTTOM_PADDING_FRACTION = 0.08f;
     public static final float DEFAULT_TEXT_SIZE_FRACTION = 0.0533f;
+    private final List<SubtitlePainter> painters;
     private boolean applyEmbeddedFontSizes;
     private boolean applyEmbeddedStyles;
     private float bottomPaddingFraction;
     private List<Cue> cues;
-    private final List<SubtitlePainter> painters;
     private CaptionStyleCompat style;
     private float textSize;
     private int textSizeType;

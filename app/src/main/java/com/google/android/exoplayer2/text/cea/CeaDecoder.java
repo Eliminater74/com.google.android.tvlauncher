@@ -1,12 +1,14 @@
 package com.google.android.exoplayer2.text.cea;
 
 import android.support.annotation.NonNull;
+
 import com.google.android.exoplayer2.text.Subtitle;
 import com.google.android.exoplayer2.text.SubtitleDecoder;
 import com.google.android.exoplayer2.text.SubtitleDecoderException;
 import com.google.android.exoplayer2.text.SubtitleInputBuffer;
 import com.google.android.exoplayer2.text.SubtitleOutputBuffer;
 import com.google.android.exoplayer2.util.Assertions;
+
 import java.util.ArrayDeque;
 import java.util.PriorityQueue;
 
@@ -15,21 +17,10 @@ abstract class CeaDecoder implements SubtitleDecoder {
     private static final int NUM_OUTPUT_BUFFERS = 2;
     private final ArrayDeque<CeaInputBuffer> availableInputBuffers = new ArrayDeque<>();
     private final ArrayDeque<SubtitleOutputBuffer> availableOutputBuffers;
+    private final PriorityQueue<CeaInputBuffer> queuedInputBuffers;
     private CeaInputBuffer dequeuedInputBuffer;
     private long playbackPositionUs;
     private long queuedInputBufferCount;
-    private final PriorityQueue<CeaInputBuffer> queuedInputBuffers;
-
-    /* access modifiers changed from: protected */
-    public abstract Subtitle createSubtitle();
-
-    /* access modifiers changed from: protected */
-    public abstract void decode(SubtitleInputBuffer subtitleInputBuffer);
-
-    public abstract String getName();
-
-    /* access modifiers changed from: protected */
-    public abstract boolean isNewSubtitleDataAvailable();
 
     public CeaDecoder() {
         for (int i = 0; i < 10; i++) {
@@ -41,6 +32,17 @@ abstract class CeaDecoder implements SubtitleDecoder {
         }
         this.queuedInputBuffers = new PriorityQueue<>();
     }
+
+    /* access modifiers changed from: protected */
+    public abstract Subtitle createSubtitle();
+
+    /* access modifiers changed from: protected */
+    public abstract void decode(SubtitleInputBuffer subtitleInputBuffer);
+
+    public abstract String getName();
+
+    /* access modifiers changed from: protected */
+    public abstract boolean isNewSubtitleDataAvailable();
 
     public void setPositionUs(long positionUs) {
         this.playbackPositionUs = positionUs;

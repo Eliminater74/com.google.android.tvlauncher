@@ -6,11 +6,42 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.p001v4.app.FragmentActivity;
 import android.view.View;
+
 import com.google.android.libraries.gcoreclient.common.GcoreConnectionResult;
-import com.google.android.libraries.gcoreclient.common.api.GcoreApi;
+
 import java.util.concurrent.TimeUnit;
 
 public interface GcoreGoogleApiClient {
+
+    GcoreConnectionResult blockingConnect();
+
+    GcoreConnectionResult blockingConnect(long j, TimeUnit timeUnit);
+
+    void connect();
+
+    void disconnect();
+
+    Context getContext();
+
+    boolean isConnected();
+
+    boolean isConnecting();
+
+    boolean isConnectionCallbacksRegistered(GcoreConnectionCallbacks gcoreConnectionCallbacks);
+
+    boolean isConnectionFailedListenerRegistered(GcoreOnConnectionFailedListener gcoreOnConnectionFailedListener);
+
+    void reconnect();
+
+    void registerConnectionCallbacks(GcoreConnectionCallbacks gcoreConnectionCallbacks);
+
+    void registerConnectionFailedListener(GcoreOnConnectionFailedListener gcoreOnConnectionFailedListener);
+
+    void stopAutoManage(FragmentActivity fragmentActivity);
+
+    void unregisterConnectionCallbacks(GcoreConnectionCallbacks gcoreConnectionCallbacks);
+
+    void unregisterConnectionFailedListener(GcoreOnConnectionFailedListener gcoreOnConnectionFailedListener);
 
     public interface Builder {
         Builder addApi(GcoreApi<? extends GcoreApi.GcoreApiOptions.GcoreNotRequiredOptions> gcoreApi);
@@ -58,34 +89,4 @@ public interface GcoreGoogleApiClient {
     public interface GcoreOnConnectionFailedListener {
         void onConnectionFailed(GcoreConnectionResult gcoreConnectionResult);
     }
-
-    GcoreConnectionResult blockingConnect();
-
-    GcoreConnectionResult blockingConnect(long j, TimeUnit timeUnit);
-
-    void connect();
-
-    void disconnect();
-
-    Context getContext();
-
-    boolean isConnected();
-
-    boolean isConnecting();
-
-    boolean isConnectionCallbacksRegistered(GcoreConnectionCallbacks gcoreConnectionCallbacks);
-
-    boolean isConnectionFailedListenerRegistered(GcoreOnConnectionFailedListener gcoreOnConnectionFailedListener);
-
-    void reconnect();
-
-    void registerConnectionCallbacks(GcoreConnectionCallbacks gcoreConnectionCallbacks);
-
-    void registerConnectionFailedListener(GcoreOnConnectionFailedListener gcoreOnConnectionFailedListener);
-
-    void stopAutoManage(FragmentActivity fragmentActivity);
-
-    void unregisterConnectionCallbacks(GcoreConnectionCallbacks gcoreConnectionCallbacks);
-
-    void unregisterConnectionFailedListener(GcoreOnConnectionFailedListener gcoreOnConnectionFailedListener);
 }

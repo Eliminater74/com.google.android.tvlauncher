@@ -1,18 +1,10 @@
 package android.support.p004v7.widget;
 
-import android.support.p004v7.widget.AdapterHelper;
 import java.util.List;
 
 /* renamed from: android.support.v7.widget.OpReorderer */
 class OpReorderer {
     final Callback mCallback;
-
-    /* renamed from: android.support.v7.widget.OpReorderer$Callback */
-    interface Callback {
-        AdapterHelper.UpdateOp obtainUpdateOp(int i, int i2, int i3, Object obj);
-
-        void recycleUpdateOp(AdapterHelper.UpdateOp updateOp);
-    }
 
     OpReorderer(Callback callback) {
         this.mCallback = callback;
@@ -188,5 +180,12 @@ class OpReorderer {
             }
         }
         return -1;
+    }
+
+    /* renamed from: android.support.v7.widget.OpReorderer$Callback */
+    interface Callback {
+        AdapterHelper.UpdateOp obtainUpdateOp(int i, int i2, int i3, Object obj);
+
+        void recycleUpdateOp(AdapterHelper.UpdateOp updateOp);
     }
 }

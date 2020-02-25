@@ -1,7 +1,9 @@
 package com.google.android.gms.common.api.internal;
 
 import android.support.annotation.WorkerThread;
+
 import com.google.android.gms.common.api.Api;
+
 import java.util.ArrayList;
 
 /* compiled from: GoogleApiClientConnecting */

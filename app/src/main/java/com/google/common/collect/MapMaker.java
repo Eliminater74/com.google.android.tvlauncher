@@ -6,17 +6,18 @@ import com.google.common.base.Ascii;
 import com.google.common.base.Equivalence;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.MapMakerInternalMap;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
+
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
 
 @GwtCompatible(emulated = true)
 public final class MapMaker {
+    static final int UNSET_INT = -1;
     private static final int DEFAULT_CONCURRENCY_LEVEL = 4;
     private static final int DEFAULT_INITIAL_CAPACITY = 16;
-    static final int UNSET_INT = -1;
     int concurrencyLevel = -1;
     int initialCapacity = -1;
     @MonotonicNonNullDecl
@@ -26,10 +27,6 @@ public final class MapMaker {
     boolean useCustomMap;
     @MonotonicNonNullDecl
     MapMakerInternalMap.Strength valueStrength;
-
-    enum Dummy {
-        VALUE
-    }
 
     /* access modifiers changed from: package-private */
     @GwtIncompatible
@@ -95,6 +92,11 @@ public final class MapMaker {
     }
 
     /* access modifiers changed from: package-private */
+    public MapMakerInternalMap.Strength getKeyStrength() {
+        return (MapMakerInternalMap.Strength) MoreObjects.firstNonNull(this.keyStrength, MapMakerInternalMap.Strength.STRONG);
+    }
+
+    /* access modifiers changed from: package-private */
     public MapMaker setKeyStrength(MapMakerInternalMap.Strength strength) {
         Preconditions.checkState(this.keyStrength == null, "Key strength was already set to %s", this.keyStrength);
         this.keyStrength = (MapMakerInternalMap.Strength) Preconditions.checkNotNull(strength);
@@ -104,15 +106,15 @@ public final class MapMaker {
         return this;
     }
 
-    /* access modifiers changed from: package-private */
-    public MapMakerInternalMap.Strength getKeyStrength() {
-        return (MapMakerInternalMap.Strength) MoreObjects.firstNonNull(this.keyStrength, MapMakerInternalMap.Strength.STRONG);
-    }
-
     @GwtIncompatible
     @CanIgnoreReturnValue
     public MapMaker weakValues() {
         return setValueStrength(MapMakerInternalMap.Strength.WEAK);
+    }
+
+    /* access modifiers changed from: package-private */
+    public MapMakerInternalMap.Strength getValueStrength() {
+        return (MapMakerInternalMap.Strength) MoreObjects.firstNonNull(this.valueStrength, MapMakerInternalMap.Strength.STRONG);
     }
 
     /* access modifiers changed from: package-private */
@@ -123,11 +125,6 @@ public final class MapMaker {
             this.useCustomMap = true;
         }
         return this;
-    }
-
-    /* access modifiers changed from: package-private */
-    public MapMakerInternalMap.Strength getValueStrength() {
-        return (MapMakerInternalMap.Strength) MoreObjects.firstNonNull(this.valueStrength, MapMakerInternalMap.Strength.STRONG);
     }
 
     public <K, V> ConcurrentMap<K, V> makeMap() {
@@ -159,5 +156,9 @@ public final class MapMaker {
             s.addValue("keyEquivalence");
         }
         return s.toString();
+    }
+
+    enum Dummy {
+        VALUE
     }
 }

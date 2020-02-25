@@ -1,9 +1,7 @@
 package com.google.protobuf;
 
-import com.google.protobuf.AbstractMessageLite;
 import com.google.protobuf.AbstractMessageLite.Builder;
-import com.google.protobuf.ByteString;
-import com.google.protobuf.MessageLite;
+
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,6 +16,33 @@ public abstract class AbstractMessageLite<MessageType extends AbstractMessageLit
 
     static void useExperimentalRuntime() {
         usingExperimentalRuntime = true;
+    }
+
+    protected static void checkByteStringIsUtf8(ByteString byteString) throws IllegalArgumentException {
+        if (!byteString.isValidUtf8()) {
+            throw new IllegalArgumentException("Byte string is not UTF-8.");
+        }
+    }
+
+    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+     method: com.google.protobuf.AbstractMessageLite.Builder.addAll(java.lang.Iterable, java.util.List):void
+     arg types: [java.lang.Iterable<T>, java.util.List]
+     candidates:
+      com.google.protobuf.AbstractMessageLite.Builder.addAll(java.lang.Iterable, java.util.Collection):void
+      com.google.protobuf.AbstractMessageLite.Builder.addAll(java.lang.Iterable, java.util.List):void */
+    @Deprecated
+    protected static <T> void addAll(Iterable<T> values, Collection<? super T> list) {
+        Builder.addAll((Iterable) values, (List) list);
+    }
+
+    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+     method: com.google.protobuf.AbstractMessageLite.Builder.addAll(java.lang.Iterable, java.util.List):void
+     arg types: [java.lang.Iterable<T>, java.util.List<? super T>]
+     candidates:
+      com.google.protobuf.AbstractMessageLite.Builder.addAll(java.lang.Iterable, java.util.Collection):void
+      com.google.protobuf.AbstractMessageLite.Builder.addAll(java.lang.Iterable, java.util.List):void */
+    protected static <T> void addAll(Iterable<T> values, List<? super T> list) {
+        Builder.addAll((Iterable) values, (List) list);
     }
 
     public ByteString toByteString() {
@@ -132,34 +157,73 @@ public abstract class AbstractMessageLite<MessageType extends AbstractMessageLit
         return sb.toString();
     }
 
-    protected static void checkByteStringIsUtf8(ByteString byteString) throws IllegalArgumentException {
-        if (!byteString.isValidUtf8()) {
-            throw new IllegalArgumentException("Byte string is not UTF-8.");
-        }
-    }
-
-    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-     method: com.google.protobuf.AbstractMessageLite.Builder.addAll(java.lang.Iterable, java.util.List):void
-     arg types: [java.lang.Iterable<T>, java.util.List]
-     candidates:
-      com.google.protobuf.AbstractMessageLite.Builder.addAll(java.lang.Iterable, java.util.Collection):void
-      com.google.protobuf.AbstractMessageLite.Builder.addAll(java.lang.Iterable, java.util.List):void */
-    @Deprecated
-    protected static <T> void addAll(Iterable<T> values, Collection<? super T> list) {
-        Builder.addAll((Iterable) values, (List) list);
-    }
-
-    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-     method: com.google.protobuf.AbstractMessageLite.Builder.addAll(java.lang.Iterable, java.util.List):void
-     arg types: [java.lang.Iterable<T>, java.util.List<? super T>]
-     candidates:
-      com.google.protobuf.AbstractMessageLite.Builder.addAll(java.lang.Iterable, java.util.Collection):void
-      com.google.protobuf.AbstractMessageLite.Builder.addAll(java.lang.Iterable, java.util.List):void */
-    protected static <T> void addAll(Iterable<T> values, List<? super T> list) {
-        Builder.addAll((Iterable) values, (List) list);
-    }
-
     public static abstract class Builder<MessageType extends AbstractMessageLite<MessageType, BuilderType>, BuilderType extends Builder<MessageType, BuilderType>> implements MessageLite.Builder {
+        private static <T> void addAllCheckingNulls(Iterable<T> values, List<? super T> list) {
+            if ((list instanceof ArrayList) && (values instanceof Collection)) {
+                ((ArrayList) list).ensureCapacity(list.size() + ((Collection) values).size());
+            }
+            int begin = list.size();
+            for (T value : values) {
+                if (value == null) {
+                    StringBuilder sb = new StringBuilder(37);
+                    sb.append("Element at index ");
+                    sb.append(list.size() - begin);
+                    sb.append(" is null.");
+                    String message = sb.toString();
+                    for (int i = list.size() - 1; i >= begin; i--) {
+                        list.remove(i);
+                    }
+                    throw new NullPointerException(message);
+                }
+                list.add(value);
+            }
+        }
+
+        protected static UninitializedMessageException newUninitializedMessageException(MessageLite message) {
+            return new UninitializedMessageException(message);
+        }
+
+        /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+         method: com.google.protobuf.AbstractMessageLite.Builder.addAll(java.lang.Iterable, java.util.List):void
+         arg types: [java.lang.Iterable<T>, java.util.List]
+         candidates:
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(java.lang.Iterable, java.util.Collection):void
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(java.lang.Iterable, java.util.List):void */
+        @Deprecated
+        protected static <T> void addAll(Iterable<T> values, Collection<? super T> list) {
+            addAll((Iterable) values, (List) list);
+        }
+
+        protected static <T> void addAll(Iterable<T> values, List<? super T> list) {
+            Internal.checkNotNull(values);
+            if (values instanceof LazyStringList) {
+                List<?> lazyValues = ((LazyStringList) values).getUnderlyingElements();
+                LazyStringList lazyList = (LazyStringList) list;
+                int begin = list.size();
+                for (Object value : lazyValues) {
+                    if (value == null) {
+                        StringBuilder sb = new StringBuilder(37);
+                        sb.append("Element at index ");
+                        sb.append(lazyList.size() - begin);
+                        sb.append(" is null.");
+                        String message = sb.toString();
+                        for (int i = lazyList.size() - 1; i >= begin; i--) {
+                            lazyList.remove(i);
+                        }
+                        throw new NullPointerException(message);
+                    } else if (value instanceof ByteString) {
+                        lazyList.add((ByteString) value);
+                    } else {
+                        lazyList.add((String) value);
+                    }
+                }
+            } else if (values instanceof PrimitiveNonBoxingCollection) {
+                list.addAll((Collection) values);
+            } else {
+                addAllCheckingNulls(values, list);
+            }
+        }
+
         public abstract BuilderType clone();
 
         /* access modifiers changed from: protected */
@@ -323,50 +387,6 @@ public abstract class AbstractMessageLite<MessageType extends AbstractMessageLit
             return this;
         }
 
-        static final class LimitedInputStream extends FilterInputStream {
-            private int limit;
-
-            LimitedInputStream(InputStream in, int limit2) {
-                super(in);
-                this.limit = limit2;
-            }
-
-            public int available() throws IOException {
-                return Math.min(super.available(), this.limit);
-            }
-
-            public int read() throws IOException {
-                if (this.limit <= 0) {
-                    return -1;
-                }
-                int result = super.read();
-                if (result >= 0) {
-                    this.limit--;
-                }
-                return result;
-            }
-
-            public int read(byte[] b, int off, int len) throws IOException {
-                int i = this.limit;
-                if (i <= 0) {
-                    return -1;
-                }
-                int result = super.read(b, off, Math.min(len, i));
-                if (result >= 0) {
-                    this.limit -= result;
-                }
-                return result;
-            }
-
-            public long skip(long n) throws IOException {
-                long result = super.skip(Math.min(n, (long) this.limit));
-                if (result >= 0) {
-                    this.limit = (int) (((long) this.limit) - result);
-                }
-                return result;
-            }
-        }
-
         /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
          method: com.google.protobuf.AbstractMessageLite.Builder.mergeFrom(java.io.InputStream, com.google.protobuf.ExtensionRegistryLite):BuilderType
          arg types: [java.io.InputStream, com.google.protobuf.ExtensionRegistryLite]
@@ -414,69 +434,47 @@ public abstract class AbstractMessageLite<MessageType extends AbstractMessageLit
             return sb.toString();
         }
 
-        private static <T> void addAllCheckingNulls(Iterable<T> values, List<? super T> list) {
-            if ((list instanceof ArrayList) && (values instanceof Collection)) {
-                ((ArrayList) list).ensureCapacity(list.size() + ((Collection) values).size());
+        static final class LimitedInputStream extends FilterInputStream {
+            private int limit;
+
+            LimitedInputStream(InputStream in, int limit2) {
+                super(in);
+                this.limit = limit2;
             }
-            int begin = list.size();
-            for (T value : values) {
-                if (value == null) {
-                    StringBuilder sb = new StringBuilder(37);
-                    sb.append("Element at index ");
-                    sb.append(list.size() - begin);
-                    sb.append(" is null.");
-                    String message = sb.toString();
-                    for (int i = list.size() - 1; i >= begin; i--) {
-                        list.remove(i);
-                    }
-                    throw new NullPointerException(message);
-                }
-                list.add(value);
+
+            public int available() throws IOException {
+                return Math.min(super.available(), this.limit);
             }
-        }
 
-        protected static UninitializedMessageException newUninitializedMessageException(MessageLite message) {
-            return new UninitializedMessageException(message);
-        }
-
-        /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-         method: com.google.protobuf.AbstractMessageLite.Builder.addAll(java.lang.Iterable, java.util.List):void
-         arg types: [java.lang.Iterable<T>, java.util.List]
-         candidates:
-          com.google.protobuf.AbstractMessageLite.Builder.addAll(java.lang.Iterable, java.util.Collection):void
-          com.google.protobuf.AbstractMessageLite.Builder.addAll(java.lang.Iterable, java.util.List):void */
-        @Deprecated
-        protected static <T> void addAll(Iterable<T> values, Collection<? super T> list) {
-            addAll((Iterable) values, (List) list);
-        }
-
-        protected static <T> void addAll(Iterable<T> values, List<? super T> list) {
-            Internal.checkNotNull(values);
-            if (values instanceof LazyStringList) {
-                List<?> lazyValues = ((LazyStringList) values).getUnderlyingElements();
-                LazyStringList lazyList = (LazyStringList) list;
-                int begin = list.size();
-                for (Object value : lazyValues) {
-                    if (value == null) {
-                        StringBuilder sb = new StringBuilder(37);
-                        sb.append("Element at index ");
-                        sb.append(lazyList.size() - begin);
-                        sb.append(" is null.");
-                        String message = sb.toString();
-                        for (int i = lazyList.size() - 1; i >= begin; i--) {
-                            lazyList.remove(i);
-                        }
-                        throw new NullPointerException(message);
-                    } else if (value instanceof ByteString) {
-                        lazyList.add((ByteString) value);
-                    } else {
-                        lazyList.add((String) value);
-                    }
+            public int read() throws IOException {
+                if (this.limit <= 0) {
+                    return -1;
                 }
-            } else if (values instanceof PrimitiveNonBoxingCollection) {
-                list.addAll((Collection) values);
-            } else {
-                addAllCheckingNulls(values, list);
+                int result = super.read();
+                if (result >= 0) {
+                    this.limit--;
+                }
+                return result;
+            }
+
+            public int read(byte[] b, int off, int len) throws IOException {
+                int i = this.limit;
+                if (i <= 0) {
+                    return -1;
+                }
+                int result = super.read(b, off, Math.min(len, i));
+                if (result >= 0) {
+                    this.limit -= result;
+                }
+                return result;
+            }
+
+            public long skip(long n) throws IOException {
+                long result = super.skip(Math.min(n, (long) this.limit));
+                if (result >= 0) {
+                    this.limit = (int) (((long) this.limit) - result);
+                }
+                return result;
             }
         }
     }

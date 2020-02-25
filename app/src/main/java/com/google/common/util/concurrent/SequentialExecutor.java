@@ -3,6 +3,7 @@ package com.google.common.util.concurrent;
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.concurrent.GuardedBy;
+
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.concurrent.Executor;
@@ -12,32 +13,25 @@ import java.util.logging.Logger;
 final class SequentialExecutor implements Executor {
     /* access modifiers changed from: private */
     public static final Logger log = Logger.getLogger(SequentialExecutor.class.getName());
-    private final Executor executor;
     /* access modifiers changed from: private */
     @GuardedBy("queue")
     public final Deque<Runnable> queue = new ArrayDeque();
+    private final Executor executor;
     private final QueueWorker worker = new QueueWorker();
-    @GuardedBy("queue")
-    private long workerRunCount = 0;
     /* access modifiers changed from: private */
     @GuardedBy("queue")
     public WorkerRunningState workerRunningState = WorkerRunningState.IDLE;
+    @GuardedBy("queue")
+    private long workerRunCount = 0;
 
-    enum WorkerRunningState {
-        IDLE,
-        QUEUING,
-        QUEUED,
-        RUNNING
+    SequentialExecutor(Executor executor2) {
+        this.executor = (Executor) Preconditions.checkNotNull(executor2);
     }
 
     static /* synthetic */ long access$308(SequentialExecutor x0) {
         long j = x0.workerRunCount;
         x0.workerRunCount = 1 + j;
         return j;
-    }
-
-    SequentialExecutor(Executor executor2) {
-        this.executor = (Executor) Preconditions.checkNotNull(executor2);
     }
 
     /* JADX WARNING: Code restructure failed: missing block: B:10:0x0024, code lost:
@@ -200,6 +194,13 @@ final class SequentialExecutor implements Executor {
             throw r1
         */
         throw new UnsupportedOperationException("Method not decompiled: com.google.common.util.concurrent.SequentialExecutor.execute(java.lang.Runnable):void");
+    }
+
+    enum WorkerRunningState {
+        IDLE,
+        QUEUING,
+        QUEUED,
+        RUNNING
     }
 
     private final class QueueWorker implements Runnable {

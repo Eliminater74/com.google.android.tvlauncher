@@ -4,28 +4,48 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.os.Build;
 import android.support.annotation.RestrictTo;
-import androidx.tvprovider.media.p005tv.BasePreviewProgram;
-import androidx.tvprovider.media.p005tv.TvContractCompat;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.Objects;
 
 /* renamed from: androidx.tvprovider.media.tv.WatchNextProgram */
 public final class WatchNextProgram extends BasePreviewProgram {
-    private static final int INVALID_INT_VALUE = -1;
-    private static final long INVALID_LONG_VALUE = -1;
     @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
     public static final String[] PROJECTION = getProjection();
     public static final int WATCH_NEXT_TYPE_UNKNOWN = -1;
-
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    @Retention(RetentionPolicy.SOURCE)
-    /* renamed from: androidx.tvprovider.media.tv.WatchNextProgram$WatchNextType */
-    public @interface WatchNextType {
-    }
+    private static final int INVALID_INT_VALUE = -1;
+    private static final long INVALID_LONG_VALUE = -1;
 
     WatchNextProgram(Builder builder) {
         super(builder);
+    }
+
+    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+     method: androidx.tvprovider.media.tv.BasePreviewProgram.setFieldsFromCursor(android.database.Cursor, androidx.tvprovider.media.tv.BasePreviewProgram$Builder):void
+     arg types: [android.database.Cursor, androidx.tvprovider.media.tv.WatchNextProgram$Builder]
+     candidates:
+      androidx.tvprovider.media.tv.BaseProgram.setFieldsFromCursor(android.database.Cursor, androidx.tvprovider.media.tv.BaseProgram$Builder):void
+      androidx.tvprovider.media.tv.BasePreviewProgram.setFieldsFromCursor(android.database.Cursor, androidx.tvprovider.media.tv.BasePreviewProgram$Builder):void */
+    public static WatchNextProgram fromCursor(Cursor cursor) {
+        Builder builder = new Builder();
+        BasePreviewProgram.setFieldsFromCursor(cursor, (BasePreviewProgram.Builder) builder);
+        int columnIndex = cursor.getColumnIndex(TvContractCompat.WatchNextPrograms.COLUMN_WATCH_NEXT_TYPE);
+        int index = columnIndex;
+        if (columnIndex >= 0 && !cursor.isNull(index)) {
+            builder.setWatchNextType(cursor.getInt(index));
+        }
+        int columnIndex2 = cursor.getColumnIndex(TvContractCompat.WatchNextPrograms.COLUMN_LAST_ENGAGEMENT_TIME_UTC_MILLIS);
+        int index2 = columnIndex2;
+        if (columnIndex2 >= 0 && !cursor.isNull(index2)) {
+            builder.setLastEngagementTimeUtcMillis(cursor.getLong(index2));
+        }
+        return builder.build();
+    }
+
+    private static String[] getProjection() {
+        String[] oColumns = {TvContractCompat.WatchNextPrograms.COLUMN_WATCH_NEXT_TYPE, TvContractCompat.WatchNextPrograms.COLUMN_LAST_ENGAGEMENT_TIME_UTC_MILLIS};
+        return (String[]) CollectionUtils.concatAll(BasePreviewProgram.PROJECTION, oColumns);
     }
 
     public int getWatchNextType() {
@@ -78,31 +98,10 @@ public final class WatchNextProgram extends BasePreviewProgram {
         return values;
     }
 
-    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-     method: androidx.tvprovider.media.tv.BasePreviewProgram.setFieldsFromCursor(android.database.Cursor, androidx.tvprovider.media.tv.BasePreviewProgram$Builder):void
-     arg types: [android.database.Cursor, androidx.tvprovider.media.tv.WatchNextProgram$Builder]
-     candidates:
-      androidx.tvprovider.media.tv.BaseProgram.setFieldsFromCursor(android.database.Cursor, androidx.tvprovider.media.tv.BaseProgram$Builder):void
-      androidx.tvprovider.media.tv.BasePreviewProgram.setFieldsFromCursor(android.database.Cursor, androidx.tvprovider.media.tv.BasePreviewProgram$Builder):void */
-    public static WatchNextProgram fromCursor(Cursor cursor) {
-        Builder builder = new Builder();
-        BasePreviewProgram.setFieldsFromCursor(cursor, (BasePreviewProgram.Builder) builder);
-        int columnIndex = cursor.getColumnIndex(TvContractCompat.WatchNextPrograms.COLUMN_WATCH_NEXT_TYPE);
-        int index = columnIndex;
-        if (columnIndex >= 0 && !cursor.isNull(index)) {
-            builder.setWatchNextType(cursor.getInt(index));
-        }
-        int columnIndex2 = cursor.getColumnIndex(TvContractCompat.WatchNextPrograms.COLUMN_LAST_ENGAGEMENT_TIME_UTC_MILLIS);
-        int index2 = columnIndex2;
-        if (columnIndex2 >= 0 && !cursor.isNull(index2)) {
-            builder.setLastEngagementTimeUtcMillis(cursor.getLong(index2));
-        }
-        return builder.build();
-    }
-
-    private static String[] getProjection() {
-        String[] oColumns = {TvContractCompat.WatchNextPrograms.COLUMN_WATCH_NEXT_TYPE, TvContractCompat.WatchNextPrograms.COLUMN_LAST_ENGAGEMENT_TIME_UTC_MILLIS};
-        return (String[]) CollectionUtils.concatAll(BasePreviewProgram.PROJECTION, oColumns);
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    @Retention(RetentionPolicy.SOURCE)
+    /* renamed from: androidx.tvprovider.media.tv.WatchNextProgram$WatchNextType */
+    public @interface WatchNextType {
     }
 
     /* renamed from: androidx.tvprovider.media.tv.WatchNextProgram$Builder */

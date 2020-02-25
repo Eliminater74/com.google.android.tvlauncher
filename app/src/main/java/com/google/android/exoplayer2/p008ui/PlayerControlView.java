@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.ControlDispatcher;
 import com.google.android.exoplayer2.DefaultControlDispatcher;
@@ -26,12 +27,12 @@ import com.google.android.exoplayer2.PlaybackPreparer;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.Player$EventListener$$CC;
 import com.google.android.exoplayer2.Timeline;
-import com.google.android.exoplayer2.p008ui.TimeBar;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.RepeatModeUtil;
 import com.google.android.exoplayer2.util.Util;
+
 import java.util.Arrays;
 import java.util.Formatter;
 import java.util.Locale;
@@ -43,81 +44,77 @@ public class PlayerControlView extends FrameLayout {
     public static final int DEFAULT_REWIND_MS = 5000;
     public static final int DEFAULT_SHOW_TIMEOUT_MS = 5000;
     public static final int DEFAULT_TIME_BAR_MIN_UPDATE_INTERVAL_MS = 200;
+    public static final int MAX_WINDOWS_FOR_MULTI_WINDOW_TIME_BAR = 100;
     private static final long MAX_POSITION_FOR_SEEK_TO_PREVIOUS = 3000;
     private static final int MAX_UPDATE_INTERVAL_MS = 1000;
-    public static final int MAX_WINDOWS_FOR_MULTI_WINDOW_TIME_BAR = 100;
-    private long[] adGroupTimesMs;
-    private final ComponentListener componentListener;
-    /* access modifiers changed from: private */
-    public ControlDispatcher controlDispatcher;
-    private long currentWindowOffset;
-    private final TextView durationView;
-    private long[] extraAdGroupTimesMs;
-    private boolean[] extraPlayedAdGroups;
+
+    static {
+        ExoPlayerLibraryInfo.registerModule("goog.exo.ui");
+    }
+
     /* access modifiers changed from: private */
     public final View fastForwardButton;
-    private int fastForwardMs;
     /* access modifiers changed from: private */
     public final StringBuilder formatBuilder;
     /* access modifiers changed from: private */
     public final Formatter formatter;
-    private final Runnable hideAction;
-    private long hideAtMs;
-    private boolean isAttachedToWindow;
-    private boolean multiWindowTimeBar;
     /* access modifiers changed from: private */
     public final View nextButton;
     /* access modifiers changed from: private */
     public final View pauseButton;
-    private final Timeline.Period period;
     /* access modifiers changed from: private */
     public final View playButton;
-    /* access modifiers changed from: private */
-    @Nullable
-    public PlaybackPreparer playbackPreparer;
-    private boolean[] playedAdGroups;
-    /* access modifiers changed from: private */
-    @Nullable
-    public Player player;
     /* access modifiers changed from: private */
     public final TextView positionView;
     /* access modifiers changed from: private */
     public final View previousButton;
+    /* access modifiers changed from: private */
+    public final ImageView repeatToggleButton;
+    /* access modifiers changed from: private */
+    public final View rewindButton;
+    /* access modifiers changed from: private */
+    public final View shuffleButton;
+    private final ComponentListener componentListener;
+    private final TextView durationView;
+    private final Runnable hideAction;
+    private final Timeline.Period period;
     private final String repeatAllButtonContentDescription;
     private final Drawable repeatAllButtonDrawable;
     private final String repeatOffButtonContentDescription;
     private final Drawable repeatOffButtonDrawable;
     private final String repeatOneButtonContentDescription;
     private final Drawable repeatOneButtonDrawable;
+    private final TimeBar timeBar;
+    private final Runnable updateProgressAction;
+    private final View vrButton;
+    private final Timeline.Window window;
     /* access modifiers changed from: private */
-    public final ImageView repeatToggleButton;
+    public ControlDispatcher controlDispatcher;
+    /* access modifiers changed from: private */
+    @Nullable
+    public PlaybackPreparer playbackPreparer;
+    /* access modifiers changed from: private */
+    @Nullable
+    public Player player;
     /* access modifiers changed from: private */
     public int repeatToggleModes;
     /* access modifiers changed from: private */
-    public final View rewindButton;
-    private int rewindMs;
-    /* access modifiers changed from: private */
     public boolean scrubbing;
+    private long[] adGroupTimesMs;
+    private long currentWindowOffset;
+    private long[] extraAdGroupTimesMs;
+    private boolean[] extraPlayedAdGroups;
+    private int fastForwardMs;
+    private long hideAtMs;
+    private boolean isAttachedToWindow;
+    private boolean multiWindowTimeBar;
+    private boolean[] playedAdGroups;
+    private int rewindMs;
     private boolean showMultiWindowTimeBar;
     private boolean showShuffleButton;
     private int showTimeoutMs;
-    /* access modifiers changed from: private */
-    public final View shuffleButton;
-    private final TimeBar timeBar;
     private int timeBarMinUpdateIntervalMs;
-    private final Runnable updateProgressAction;
     private VisibilityListener visibilityListener;
-    private final View vrButton;
-    private final Timeline.Window window;
-
-    /* renamed from: com.google.android.exoplayer2.ui.PlayerControlView$VisibilityListener */
-    public interface VisibilityListener {
-        void onVisibilityChange(int i);
-    }
-
-    static {
-        ExoPlayerLibraryInfo.registerModule("goog.exo.ui");
-    }
 
     public PlayerControlView(Context context) {
         this(context, null);
@@ -229,6 +226,24 @@ public class PlayerControlView extends FrameLayout {
 
     private static int getRepeatToggleModes(TypedArray a, int repeatToggleModes2) {
         return a.getInt(C0931R.styleable.PlayerControlView_repeat_toggle_modes, repeatToggleModes2);
+    }
+
+    @SuppressLint({"InlinedApi"})
+    private static boolean isHandledMediaKey(int keyCode) {
+        return keyCode == 90 || keyCode == 89 || keyCode == 85 || keyCode == 126 || keyCode == 127 || keyCode == 87 || keyCode == 88;
+    }
+
+    private static boolean canShowMultiWindowTimeBar(Timeline timeline, Timeline.Window window2) {
+        if (timeline.getWindowCount() > 100) {
+            return false;
+        }
+        int windowCount = timeline.getWindowCount();
+        for (int i = 0; i < windowCount; i++) {
+            if (timeline.getWindow(i, window2).durationUs == C0841C.TIME_UNSET) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Nullable
@@ -850,26 +865,16 @@ public class PlayerControlView extends FrameLayout {
         return true;
     }
 
-    @SuppressLint({"InlinedApi"})
-    private static boolean isHandledMediaKey(int keyCode) {
-        return keyCode == 90 || keyCode == 89 || keyCode == 85 || keyCode == 126 || keyCode == 127 || keyCode == 87 || keyCode == 88;
-    }
-
-    private static boolean canShowMultiWindowTimeBar(Timeline timeline, Timeline.Window window2) {
-        if (timeline.getWindowCount() > 100) {
-            return false;
-        }
-        int windowCount = timeline.getWindowCount();
-        for (int i = 0; i < windowCount; i++) {
-            if (timeline.getWindow(i, window2).durationUs == C0841C.TIME_UNSET) {
-                return false;
-            }
-        }
-        return true;
+    /* renamed from: com.google.android.exoplayer2.ui.PlayerControlView$VisibilityListener */
+    public interface VisibilityListener {
+        void onVisibilityChange(int i);
     }
 
     /* renamed from: com.google.android.exoplayer2.ui.PlayerControlView$ComponentListener */
     private final class ComponentListener implements Player.EventListener, TimeBar.OnScrubListener, View.OnClickListener {
+        private ComponentListener() {
+        }
+
         public void onLoadingChanged(boolean z) {
             Player$EventListener$$CC.onLoadingChanged$$dflt$$(this, z);
         }
@@ -888,9 +893,6 @@ public class PlayerControlView extends FrameLayout {
 
         public void onTracksChanged(TrackGroupArray trackGroupArray, TrackSelectionArray trackSelectionArray) {
             Player$EventListener$$CC.onTracksChanged$$dflt$$(this, trackGroupArray, trackSelectionArray);
-        }
-
-        private ComponentListener() {
         }
 
         public void onScrubStart(TimeBar timeBar, long position) {

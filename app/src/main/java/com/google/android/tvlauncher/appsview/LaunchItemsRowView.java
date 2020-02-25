@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+
 import androidx.leanback.widget.VerticalGridView;
 
 public class LaunchItemsRowView extends LinearLayout {

@@ -1,7 +1,5 @@
 package com.google.android.tvlauncher.home;
 
-import com.google.android.tvlauncher.home.RecyclerViewFastScrollingManager;
-
 final /* synthetic */ class HomeController$$Lambda$6 implements RecyclerViewFastScrollingManager.OnFastScrollingChangedListener {
     private final HomeController arg$1;
 

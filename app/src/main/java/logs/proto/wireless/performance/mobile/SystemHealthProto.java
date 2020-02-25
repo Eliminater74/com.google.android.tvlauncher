@@ -15,27 +15,22 @@ import com.google.protobuf.ProtoMessage;
 import com.google.protobuf.ProtoPresenceBits;
 import com.google.protobuf.ProtoPresenceCheckedField;
 import com.google.protobuf.ProtoSyntax;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.Collections;
 import java.util.List;
-import logs.proto.wireless.performance.mobile.AggregatedMetricProto;
-import logs.proto.wireless.performance.mobile.BatteryMetric;
-import logs.proto.wireless.performance.mobile.CpuMetric;
-import logs.proto.wireless.performance.mobile.CpuProfiling;
-import logs.proto.wireless.performance.mobile.ErrorMessageOuterClass;
-import logs.proto.wireless.performance.mobile.ExtensionMetric;
-import logs.proto.wireless.performance.mobile.MemoryMetric;
-import logs.proto.wireless.performance.mobile.NetworkMetric;
-import logs.proto.wireless.performance.mobile.PrimesHeapDumpProto;
-import logs.proto.wireless.performance.mobile.PrimesScenarioProto;
-import logs.proto.wireless.performance.mobile.PrimesTraceOuterClass;
-import logs.proto.wireless.performance.mobile.ProcessProto;
-import logs.proto.wireless.performance.mobile.TelemetryProto;
+
 import logs.proto.wireless.performance.mobile.internal.PrimesForPrimesEventProto;
 
 public final class SystemHealthProto {
+
+    private SystemHealthProto() {
+    }
+
+    public static void registerAllExtensions(ExtensionRegistryLite registry) {
+    }
 
     public interface AccountableComponentOrBuilder extends MessageLiteOrBuilder {
         String getCustomName();
@@ -507,12 +502,6 @@ public final class SystemHealthProto {
         boolean hasEndStatus();
     }
 
-    private SystemHealthProto() {
-    }
-
-    public static void registerAllExtensions(ExtensionRegistryLite registry) {
-    }
-
     @ProtoMessage(checkInitialized = {1}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
     public static final class SystemHealthMetric extends GeneratedMessageLite<SystemHealthMetric, Builder> implements SystemHealthMetricOrBuilder {
         public static final int ACCOUNTABLE_COMPONENT_FIELD_NUMBER = 21;
@@ -537,7 +526,6 @@ public final class SystemHealthProto {
         public static final int METRIC_EXTENSION_FIELD_NUMBER = 14;
         public static final int NETWORK_USAGE_METRIC_FIELD_NUMBER = 6;
         public static final int PACKAGE_METRIC_FIELD_NUMBER = 9;
-        private static volatile Parser<SystemHealthMetric> PARSER = null;
         public static final int PRIMES_FOR_PRIMES_FIELD_NUMBER = 24;
         public static final int PRIMES_HEAP_DUMP_FIELD_NUMBER = 22;
         public static final int PRIMES_SCENARIO_FIELD_NUMBER = 26;
@@ -547,6 +535,12 @@ public final class SystemHealthProto {
         public static final int STRICT_MODE_VIOLATION_FIELD_NUMBER = 28;
         public static final int TELEMETRY_METRICS_FIELD_NUMBER = 20;
         public static final int TIMER_METRIC_FIELD_NUMBER = 4;
+        private static volatile Parser<SystemHealthMetric> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(SystemHealthMetric.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoField(fieldNumber = 21, isRequired = false, type = FieldType.MESSAGE)
         @ProtoPresenceCheckedField(mask = 1048576, presenceBitsId = 0)
         private AccountableComponent accountableComponent_;
@@ -639,6 +633,70 @@ public final class SystemHealthProto {
         private SystemHealthMetric() {
         }
 
+        public static SystemHealthMetric parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (SystemHealthMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static SystemHealthMetric parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (SystemHealthMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static SystemHealthMetric parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (SystemHealthMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static SystemHealthMetric parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (SystemHealthMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static SystemHealthMetric parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (SystemHealthMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static SystemHealthMetric parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (SystemHealthMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static SystemHealthMetric parseFrom(InputStream input) throws IOException {
+            return (SystemHealthMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static SystemHealthMetric parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (SystemHealthMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static SystemHealthMetric parseDelimitedFrom(InputStream input) throws IOException {
+            return (SystemHealthMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static SystemHealthMetric parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (SystemHealthMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static SystemHealthMetric parseFrom(CodedInputStream input) throws IOException {
+            return (SystemHealthMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static SystemHealthMetric parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (SystemHealthMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(SystemHealthMetric prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static SystemHealthMetric getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<SystemHealthMetric> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
+        }
+
         public boolean hasMemoryUsageMetric() {
             return (this.bitField0_ & 1) != 0;
         }
@@ -713,10 +771,6 @@ public final class SystemHealthProto {
             return this.customEventName_;
         }
 
-        public ByteString getCustomEventNameBytes() {
-            return ByteString.copyFromUtf8(this.customEventName_);
-        }
-
         /* access modifiers changed from: private */
         public void setCustomEventName(String value) {
             if (value != null) {
@@ -727,10 +781,8 @@ public final class SystemHealthProto {
             throw new NullPointerException();
         }
 
-        /* access modifiers changed from: private */
-        public void clearCustomEventName() {
-            this.bitField0_ &= -5;
-            this.customEventName_ = getDefaultInstance().getCustomEventName();
+        public ByteString getCustomEventNameBytes() {
+            return ByteString.copyFromUtf8(this.customEventName_);
         }
 
         /* access modifiers changed from: private */
@@ -741,6 +793,12 @@ public final class SystemHealthProto {
                 return;
             }
             throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearCustomEventName() {
+            this.bitField0_ &= -5;
+            this.customEventName_ = getDefaultInstance().getCustomEventName();
         }
 
         public boolean hasTimerMetric() {
@@ -1351,10 +1409,6 @@ public final class SystemHealthProto {
             return this.constantEventName_;
         }
 
-        public ByteString getConstantEventNameBytes() {
-            return ByteString.copyFromUtf8(this.constantEventName_);
-        }
-
         /* access modifiers changed from: private */
         public void setConstantEventName(String value) {
             if (value != null) {
@@ -1365,10 +1419,8 @@ public final class SystemHealthProto {
             throw new NullPointerException();
         }
 
-        /* access modifiers changed from: private */
-        public void clearConstantEventName() {
-            this.bitField0_ &= -65537;
-            this.constantEventName_ = getDefaultInstance().getConstantEventName();
+        public ByteString getConstantEventNameBytes() {
+            return ByteString.copyFromUtf8(this.constantEventName_);
         }
 
         /* access modifiers changed from: private */
@@ -1379,6 +1431,12 @@ public final class SystemHealthProto {
                 return;
             }
             throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearConstantEventName() {
+            this.bitField0_ &= -65537;
+            this.constantEventName_ = getDefaultInstance().getConstantEventName();
         }
 
         @Deprecated
@@ -2044,60 +2102,41 @@ public final class SystemHealthProto {
             this.bitField0_ &= -67108865;
         }
 
-        public static SystemHealthMetric parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (SystemHealthMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static SystemHealthMetric parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (SystemHealthMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static SystemHealthMetric parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (SystemHealthMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static SystemHealthMetric parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (SystemHealthMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static SystemHealthMetric parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (SystemHealthMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static SystemHealthMetric parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (SystemHealthMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static SystemHealthMetric parseFrom(InputStream input) throws IOException {
-            return (SystemHealthMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static SystemHealthMetric parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (SystemHealthMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static SystemHealthMetric parseDelimitedFrom(InputStream input) throws IOException {
-            return (SystemHealthMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static SystemHealthMetric parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (SystemHealthMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static SystemHealthMetric parseFrom(CodedInputStream input) throws IOException {
-            return (SystemHealthMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static SystemHealthMetric parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (SystemHealthMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(SystemHealthMetric prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            int i = 1;
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new SystemHealthMetric();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u001d\u0000\u0001\u0001\u001d\u001d\u0000\u0002\u0001\u0001Љ\u0000\u0002\u0005\u0001\u0003\b\u0002\u0004\t\u0003\u0005\t\u0004\u0006\t\u0005\u0007\t\u0006\b\t\u0007\t\t\b\n\t\t\u000b\t\n\f\t\u000b\r\t\f\u000e\t\r\u000f\t\u000e\u0010\t\u000f\u0011\b\u0010\u0012\t\u0011\u0013\t\u0013\u0014\u001b\u0015\t\u0014\u0016\t\u0015\u0017\t\u0016\u0018\t\u0017\u0019\u001b\u001a\t\u0018\u001b\t\u0012\u001c\t\u0019\u001d\t\u001a", new Object[]{"bitField0_", "memoryUsageMetric_", "hashedCustomEventName_", "customEventName_", "timerMetric_", "applicationInfo_", "networkUsageMetric_", "crashMetric_", "primesStats_", "packageMetric_", "batteryUsageMetric_", "frameRateMetric_", "jankMetric_", "memoryLeakMetric_", "metricExtension_", "magicEyeMetric_", "primesTrace_", "constantEventName_", "cpuUsageMetric_", "primesSpans_", "telemetryMetrics_", TelemetryProto.TelemetryMetric.class, "accountableComponent_", "primesHeapDump_", "deviceInfo_", "primesForPrimes_", "aggregatedMetrics_", AggregatedMetricProto.AggregatedMetric.class, "primesScenario_", "cpuProfilingMetric_", "strictModeViolation_", "clientErrorLoggingMetrics_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<SystemHealthMetric> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (SystemHealthMetric.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return Byte.valueOf(this.memoizedIsInitialized);
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    if (arg0 == null) {
+                        i = 0;
+                    }
+                    this.memoizedIsInitialized = (byte) i;
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<SystemHealthMetric, Builder> implements SystemHealthMetricOrBuilder {
@@ -2165,25 +2204,25 @@ public final class SystemHealthProto {
                 return ((SystemHealthMetric) this.instance).getCustomEventName();
             }
 
-            public ByteString getCustomEventNameBytes() {
-                return ((SystemHealthMetric) this.instance).getCustomEventNameBytes();
-            }
-
             public Builder setCustomEventName(String value) {
                 copyOnWrite();
                 ((SystemHealthMetric) this.instance).setCustomEventName(value);
                 return this;
             }
 
-            public Builder clearCustomEventName() {
-                copyOnWrite();
-                ((SystemHealthMetric) this.instance).clearCustomEventName();
-                return this;
+            public ByteString getCustomEventNameBytes() {
+                return ((SystemHealthMetric) this.instance).getCustomEventNameBytes();
             }
 
             public Builder setCustomEventNameBytes(ByteString value) {
                 copyOnWrite();
                 ((SystemHealthMetric) this.instance).setCustomEventNameBytes(value);
+                return this;
+            }
+
+            public Builder clearCustomEventName() {
+                copyOnWrite();
+                ((SystemHealthMetric) this.instance).clearCustomEventName();
                 return this;
             }
 
@@ -2617,25 +2656,25 @@ public final class SystemHealthProto {
                 return ((SystemHealthMetric) this.instance).getConstantEventName();
             }
 
-            public ByteString getConstantEventNameBytes() {
-                return ((SystemHealthMetric) this.instance).getConstantEventNameBytes();
-            }
-
             public Builder setConstantEventName(String value) {
                 copyOnWrite();
                 ((SystemHealthMetric) this.instance).setConstantEventName(value);
                 return this;
             }
 
-            public Builder clearConstantEventName() {
-                copyOnWrite();
-                ((SystemHealthMetric) this.instance).clearConstantEventName();
-                return this;
+            public ByteString getConstantEventNameBytes() {
+                return ((SystemHealthMetric) this.instance).getConstantEventNameBytes();
             }
 
             public Builder setConstantEventNameBytes(ByteString value) {
                 copyOnWrite();
                 ((SystemHealthMetric) this.instance).setConstantEventNameBytes(value);
+                return this;
+            }
+
+            public Builder clearConstantEventName() {
+                copyOnWrite();
+                ((SystemHealthMetric) this.instance).clearConstantEventName();
                 return this;
             }
 
@@ -3115,55 +3154,6 @@ public final class SystemHealthProto {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            int i = 1;
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new SystemHealthMetric();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u001d\u0000\u0001\u0001\u001d\u001d\u0000\u0002\u0001\u0001Љ\u0000\u0002\u0005\u0001\u0003\b\u0002\u0004\t\u0003\u0005\t\u0004\u0006\t\u0005\u0007\t\u0006\b\t\u0007\t\t\b\n\t\t\u000b\t\n\f\t\u000b\r\t\f\u000e\t\r\u000f\t\u000e\u0010\t\u000f\u0011\b\u0010\u0012\t\u0011\u0013\t\u0013\u0014\u001b\u0015\t\u0014\u0016\t\u0015\u0017\t\u0016\u0018\t\u0017\u0019\u001b\u001a\t\u0018\u001b\t\u0012\u001c\t\u0019\u001d\t\u001a", new Object[]{"bitField0_", "memoryUsageMetric_", "hashedCustomEventName_", "customEventName_", "timerMetric_", "applicationInfo_", "networkUsageMetric_", "crashMetric_", "primesStats_", "packageMetric_", "batteryUsageMetric_", "frameRateMetric_", "jankMetric_", "memoryLeakMetric_", "metricExtension_", "magicEyeMetric_", "primesTrace_", "constantEventName_", "cpuUsageMetric_", "primesSpans_", "telemetryMetrics_", TelemetryProto.TelemetryMetric.class, "accountableComponent_", "primesHeapDump_", "deviceInfo_", "primesForPrimes_", "aggregatedMetrics_", AggregatedMetricProto.AggregatedMetric.class, "primesScenario_", "cpuProfilingMetric_", "strictModeViolation_", "clientErrorLoggingMetrics_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<SystemHealthMetric> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (SystemHealthMetric.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return Byte.valueOf(this.memoizedIsInitialized);
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    if (arg0 == null) {
-                        i = 0;
-                    }
-                    this.memoizedIsInitialized = (byte) i;
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(SystemHealthMetric.class, DEFAULT_INSTANCE);
-        }
-
-        public static SystemHealthMetric getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<SystemHealthMetric> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -3172,6 +3162,11 @@ public final class SystemHealthProto {
         /* access modifiers changed from: private */
         public static final AccountableComponent DEFAULT_INSTANCE = new AccountableComponent();
         private static volatile Parser<AccountableComponent> PARSER;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(AccountableComponent.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 1, isEnforceUtf8 = false, isRequired = false, type = FieldType.STRING)
@@ -3179,44 +3174,6 @@ public final class SystemHealthProto {
         private String customName_ = "";
 
         private AccountableComponent() {
-        }
-
-        public boolean hasCustomName() {
-            return (this.bitField0_ & 1) != 0;
-        }
-
-        public String getCustomName() {
-            return this.customName_;
-        }
-
-        public ByteString getCustomNameBytes() {
-            return ByteString.copyFromUtf8(this.customName_);
-        }
-
-        /* access modifiers changed from: private */
-        public void setCustomName(String value) {
-            if (value != null) {
-                this.bitField0_ |= 1;
-                this.customName_ = value;
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        /* access modifiers changed from: private */
-        public void clearCustomName() {
-            this.bitField0_ &= -2;
-            this.customName_ = getDefaultInstance().getCustomName();
-        }
-
-        /* access modifiers changed from: private */
-        public void setCustomNameBytes(ByteString value) {
-            if (value != null) {
-                this.bitField0_ |= 1;
-                this.customName_ = value.toStringUtf8();
-                return;
-            }
-            throw new NullPointerException();
         }
 
         public static AccountableComponent parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
@@ -3275,40 +3232,50 @@ public final class SystemHealthProto {
             return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
         }
 
-        public static final class Builder extends GeneratedMessageLite.Builder<AccountableComponent, Builder> implements AccountableComponentOrBuilder {
-            private Builder() {
-                super(AccountableComponent.DEFAULT_INSTANCE);
-            }
+        public static AccountableComponent getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
 
-            public boolean hasCustomName() {
-                return ((AccountableComponent) this.instance).hasCustomName();
-            }
+        public static Parser<AccountableComponent> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
+        }
 
-            public String getCustomName() {
-                return ((AccountableComponent) this.instance).getCustomName();
-            }
+        public boolean hasCustomName() {
+            return (this.bitField0_ & 1) != 0;
+        }
 
-            public ByteString getCustomNameBytes() {
-                return ((AccountableComponent) this.instance).getCustomNameBytes();
-            }
+        public String getCustomName() {
+            return this.customName_;
+        }
 
-            public Builder setCustomName(String value) {
-                copyOnWrite();
-                ((AccountableComponent) this.instance).setCustomName(value);
-                return this;
+        /* access modifiers changed from: private */
+        public void setCustomName(String value) {
+            if (value != null) {
+                this.bitField0_ |= 1;
+                this.customName_ = value;
+                return;
             }
+            throw new NullPointerException();
+        }
 
-            public Builder clearCustomName() {
-                copyOnWrite();
-                ((AccountableComponent) this.instance).clearCustomName();
-                return this;
-            }
+        public ByteString getCustomNameBytes() {
+            return ByteString.copyFromUtf8(this.customName_);
+        }
 
-            public Builder setCustomNameBytes(ByteString value) {
-                copyOnWrite();
-                ((AccountableComponent) this.instance).setCustomNameBytes(value);
-                return this;
+        /* access modifiers changed from: private */
+        public void setCustomNameBytes(ByteString value) {
+            if (value != null) {
+                this.bitField0_ |= 1;
+                this.customName_ = value.toStringUtf8();
+                return;
             }
+            throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearCustomName() {
+            this.bitField0_ &= -2;
+            this.customName_ = getDefaultInstance().getCustomName();
         }
 
         /* access modifiers changed from: protected */
@@ -3343,16 +3310,40 @@ public final class SystemHealthProto {
             }
         }
 
-        static {
-            GeneratedMessageLite.registerDefaultInstance(AccountableComponent.class, DEFAULT_INSTANCE);
-        }
+        public static final class Builder extends GeneratedMessageLite.Builder<AccountableComponent, Builder> implements AccountableComponentOrBuilder {
+            private Builder() {
+                super(AccountableComponent.DEFAULT_INSTANCE);
+            }
 
-        public static AccountableComponent getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
+            public boolean hasCustomName() {
+                return ((AccountableComponent) this.instance).hasCustomName();
+            }
 
-        public static Parser<AccountableComponent> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
+            public String getCustomName() {
+                return ((AccountableComponent) this.instance).getCustomName();
+            }
+
+            public Builder setCustomName(String value) {
+                copyOnWrite();
+                ((AccountableComponent) this.instance).setCustomName(value);
+                return this;
+            }
+
+            public ByteString getCustomNameBytes() {
+                return ((AccountableComponent) this.instance).getCustomNameBytes();
+            }
+
+            public Builder setCustomNameBytes(ByteString value) {
+                copyOnWrite();
+                ((AccountableComponent) this.instance).setCustomNameBytes(value);
+                return this;
+            }
+
+            public Builder clearCustomName() {
+                copyOnWrite();
+                ((AccountableComponent) this.instance).clearCustomName();
+                return this;
+            }
         }
     }
 
@@ -3363,6 +3354,11 @@ public final class SystemHealthProto {
         public static final int DURATION_MS_FIELD_NUMBER = 1;
         public static final int END_STATUS_FIELD_NUMBER = 2;
         private static volatile Parser<TimerMetric> PARSER;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(TimerMetric.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.INT64)
@@ -3373,51 +3369,6 @@ public final class SystemHealthProto {
         private int endStatus_;
 
         private TimerMetric() {
-        }
-
-        public boolean hasDurationMs() {
-            return (this.bitField0_ & 1) != 0;
-        }
-
-        public long getDurationMs() {
-            return this.durationMs_;
-        }
-
-        /* access modifiers changed from: private */
-        public void setDurationMs(long value) {
-            this.bitField0_ |= 1;
-            this.durationMs_ = value;
-        }
-
-        /* access modifiers changed from: private */
-        public void clearDurationMs() {
-            this.bitField0_ &= -2;
-            this.durationMs_ = 0;
-        }
-
-        public boolean hasEndStatus() {
-            return (this.bitField0_ & 2) != 0;
-        }
-
-        public PrimesTraceOuterClass.EndStatus getEndStatus() {
-            PrimesTraceOuterClass.EndStatus result = PrimesTraceOuterClass.EndStatus.forNumber(this.endStatus_);
-            return result == null ? PrimesTraceOuterClass.EndStatus.UNKNOWN_STATUS : result;
-        }
-
-        /* access modifiers changed from: private */
-        public void setEndStatus(PrimesTraceOuterClass.EndStatus value) {
-            if (value != null) {
-                this.bitField0_ |= 2;
-                this.endStatus_ = value.getNumber();
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        /* access modifiers changed from: private */
-        public void clearEndStatus() {
-            this.bitField0_ &= -3;
-            this.endStatus_ = 0;
         }
 
         public static TimerMetric parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
@@ -3476,6 +3427,91 @@ public final class SystemHealthProto {
             return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
         }
 
+        public static TimerMetric getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<TimerMetric> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
+        }
+
+        public boolean hasDurationMs() {
+            return (this.bitField0_ & 1) != 0;
+        }
+
+        public long getDurationMs() {
+            return this.durationMs_;
+        }
+
+        /* access modifiers changed from: private */
+        public void setDurationMs(long value) {
+            this.bitField0_ |= 1;
+            this.durationMs_ = value;
+        }
+
+        /* access modifiers changed from: private */
+        public void clearDurationMs() {
+            this.bitField0_ &= -2;
+            this.durationMs_ = 0;
+        }
+
+        public boolean hasEndStatus() {
+            return (this.bitField0_ & 2) != 0;
+        }
+
+        public PrimesTraceOuterClass.EndStatus getEndStatus() {
+            PrimesTraceOuterClass.EndStatus result = PrimesTraceOuterClass.EndStatus.forNumber(this.endStatus_);
+            return result == null ? PrimesTraceOuterClass.EndStatus.UNKNOWN_STATUS : result;
+        }
+
+        /* access modifiers changed from: private */
+        public void setEndStatus(PrimesTraceOuterClass.EndStatus value) {
+            if (value != null) {
+                this.bitField0_ |= 2;
+                this.endStatus_ = value.getNumber();
+                return;
+            }
+            throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearEndStatus() {
+            this.bitField0_ &= -3;
+            this.endStatus_ = 0;
+        }
+
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new TimerMetric();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0000\u0000\u0001\u0002\u0000\u0002\f\u0001", new Object[]{"bitField0_", "durationMs_", "endStatus_", PrimesTraceOuterClass.EndStatus.internalGetVerifier()});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<TimerMetric> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (TimerMetric.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
+        }
+
         public static final class Builder extends GeneratedMessageLite.Builder<TimerMetric, Builder> implements TimerMetricOrBuilder {
             private Builder() {
                 super(TimerMetric.DEFAULT_INSTANCE);
@@ -3521,50 +3557,6 @@ public final class SystemHealthProto {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new TimerMetric();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0000\u0000\u0001\u0002\u0000\u0002\f\u0001", new Object[]{"bitField0_", "durationMs_", "endStatus_", PrimesTraceOuterClass.EndStatus.internalGetVerifier()});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<TimerMetric> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (TimerMetric.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(TimerMetric.class, DEFAULT_INSTANCE);
-        }
-
-        public static TimerMetric getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<TimerMetric> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -3575,6 +3567,11 @@ public final class SystemHealthProto {
         public static final int DURATION_MS_FIELD_NUMBER = 3;
         public static final int MAX_FRAME_RENDER_TIME_MS_FIELD_NUMBER = 2;
         private static volatile Parser<FrameRateMetric> PARSER;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(FrameRateMetric.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.FLOAT)
         @ProtoPresenceCheckedField(mask = 1, presenceBitsId = 0)
         private float averageFramesPerSecond_;
@@ -3588,6 +3585,70 @@ public final class SystemHealthProto {
         private int maxFrameRenderTimeMs_;
 
         private FrameRateMetric() {
+        }
+
+        public static FrameRateMetric parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (FrameRateMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static FrameRateMetric parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (FrameRateMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static FrameRateMetric parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (FrameRateMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static FrameRateMetric parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (FrameRateMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static FrameRateMetric parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (FrameRateMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static FrameRateMetric parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (FrameRateMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static FrameRateMetric parseFrom(InputStream input) throws IOException {
+            return (FrameRateMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static FrameRateMetric parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (FrameRateMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static FrameRateMetric parseDelimitedFrom(InputStream input) throws IOException {
+            return (FrameRateMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static FrameRateMetric parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (FrameRateMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static FrameRateMetric parseFrom(CodedInputStream input) throws IOException {
+            return (FrameRateMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static FrameRateMetric parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (FrameRateMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(FrameRateMetric prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static FrameRateMetric getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<FrameRateMetric> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         @Deprecated
@@ -3656,60 +3717,36 @@ public final class SystemHealthProto {
             this.durationMs_ = 0;
         }
 
-        public static FrameRateMetric parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (FrameRateMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static FrameRateMetric parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (FrameRateMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static FrameRateMetric parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (FrameRateMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static FrameRateMetric parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (FrameRateMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static FrameRateMetric parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (FrameRateMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static FrameRateMetric parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (FrameRateMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static FrameRateMetric parseFrom(InputStream input) throws IOException {
-            return (FrameRateMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static FrameRateMetric parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (FrameRateMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static FrameRateMetric parseDelimitedFrom(InputStream input) throws IOException {
-            return (FrameRateMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static FrameRateMetric parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (FrameRateMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static FrameRateMetric parseFrom(CodedInputStream input) throws IOException {
-            return (FrameRateMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static FrameRateMetric parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (FrameRateMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(FrameRateMetric prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new FrameRateMetric();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0003\u0000\u0001\u0001\u0003\u0003\u0000\u0000\u0000\u0001\u0001\u0000\u0002\u0004\u0001\u0003\u0004\u0002", new Object[]{"bitField0_", "averageFramesPerSecond_", "maxFrameRenderTimeMs_", "durationMs_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<FrameRateMetric> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (FrameRateMetric.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<FrameRateMetric, Builder> implements FrameRateMetricOrBuilder {
@@ -3789,50 +3826,6 @@ public final class SystemHealthProto {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new FrameRateMetric();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0003\u0000\u0001\u0001\u0003\u0003\u0000\u0000\u0000\u0001\u0001\u0000\u0002\u0004\u0001\u0003\u0004\u0002", new Object[]{"bitField0_", "averageFramesPerSecond_", "maxFrameRenderTimeMs_", "durationMs_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<FrameRateMetric> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (FrameRateMetric.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(FrameRateMetric.class, DEFAULT_INSTANCE);
-        }
-
-        public static FrameRateMetric getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<FrameRateMetric> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -3842,9 +3835,14 @@ public final class SystemHealthProto {
         /* access modifiers changed from: private */
         public static final ApplicationInfo DEFAULT_INSTANCE = new ApplicationInfo();
         public static final int HARDWARE_VARIANT_FIELD_NUMBER = 3;
-        private static volatile Parser<ApplicationInfo> PARSER = null;
         public static final int PRIMES_VERSION_FIELD_NUMBER = 4;
         public static final int SHORT_PROCESS_NAME_FIELD_NUMBER = 5;
+        private static volatile Parser<ApplicationInfo> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(ApplicationInfo.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoField(fieldNumber = 1, isEnforceUtf8 = false, isRequired = false, type = FieldType.STRING)
         @ProtoPresenceCheckedField(mask = 1, presenceBitsId = 0)
         private String applicationPackage_ = "";
@@ -3864,226 +3862,6 @@ public final class SystemHealthProto {
         private String shortProcessName_ = "";
 
         private ApplicationInfo() {
-        }
-
-        public enum HardwareVariant implements Internal.EnumLite {
-            UNKNOWN_HARDWARE_VARIANT(0),
-            PHONE_OR_TABLET(1),
-            WATCH(2),
-            LEANBACK(3);
-            
-            public static final int LEANBACK_VALUE = 3;
-            public static final int PHONE_OR_TABLET_VALUE = 1;
-            public static final int UNKNOWN_HARDWARE_VARIANT_VALUE = 0;
-            public static final int WATCH_VALUE = 2;
-            private static final Internal.EnumLiteMap<HardwareVariant> internalValueMap = new Internal.EnumLiteMap<HardwareVariant>() {
-                public HardwareVariant findValueByNumber(int number) {
-                    return HardwareVariant.forNumber(number);
-                }
-            };
-            private final int value;
-
-            public final int getNumber() {
-                return this.value;
-            }
-
-            public static HardwareVariant forNumber(int value2) {
-                if (value2 == 0) {
-                    return UNKNOWN_HARDWARE_VARIANT;
-                }
-                if (value2 == 1) {
-                    return PHONE_OR_TABLET;
-                }
-                if (value2 == 2) {
-                    return WATCH;
-                }
-                if (value2 != 3) {
-                    return null;
-                }
-                return LEANBACK;
-            }
-
-            public static Internal.EnumLiteMap<HardwareVariant> internalGetValueMap() {
-                return internalValueMap;
-            }
-
-            public static Internal.EnumVerifier internalGetVerifier() {
-                return HardwareVariantVerifier.INSTANCE;
-            }
-
-            private static final class HardwareVariantVerifier implements Internal.EnumVerifier {
-                static final Internal.EnumVerifier INSTANCE = new HardwareVariantVerifier();
-
-                private HardwareVariantVerifier() {
-                }
-
-                public boolean isInRange(int number) {
-                    return HardwareVariant.forNumber(number) != null;
-                }
-            }
-
-            private HardwareVariant(int value2) {
-                this.value = value2;
-            }
-        }
-
-        public boolean hasApplicationPackage() {
-            return (this.bitField0_ & 1) != 0;
-        }
-
-        public String getApplicationPackage() {
-            return this.applicationPackage_;
-        }
-
-        public ByteString getApplicationPackageBytes() {
-            return ByteString.copyFromUtf8(this.applicationPackage_);
-        }
-
-        /* access modifiers changed from: private */
-        public void setApplicationPackage(String value) {
-            if (value != null) {
-                this.bitField0_ |= 1;
-                this.applicationPackage_ = value;
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        /* access modifiers changed from: private */
-        public void clearApplicationPackage() {
-            this.bitField0_ &= -2;
-            this.applicationPackage_ = getDefaultInstance().getApplicationPackage();
-        }
-
-        /* access modifiers changed from: private */
-        public void setApplicationPackageBytes(ByteString value) {
-            if (value != null) {
-                this.bitField0_ |= 1;
-                this.applicationPackage_ = value.toStringUtf8();
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        public boolean hasApplicationVersionName() {
-            return (this.bitField0_ & 2) != 0;
-        }
-
-        public String getApplicationVersionName() {
-            return this.applicationVersionName_;
-        }
-
-        public ByteString getApplicationVersionNameBytes() {
-            return ByteString.copyFromUtf8(this.applicationVersionName_);
-        }
-
-        /* access modifiers changed from: private */
-        public void setApplicationVersionName(String value) {
-            if (value != null) {
-                this.bitField0_ |= 2;
-                this.applicationVersionName_ = value;
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        /* access modifiers changed from: private */
-        public void clearApplicationVersionName() {
-            this.bitField0_ &= -3;
-            this.applicationVersionName_ = getDefaultInstance().getApplicationVersionName();
-        }
-
-        /* access modifiers changed from: private */
-        public void setApplicationVersionNameBytes(ByteString value) {
-            if (value != null) {
-                this.bitField0_ |= 2;
-                this.applicationVersionName_ = value.toStringUtf8();
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        public boolean hasHardwareVariant() {
-            return (this.bitField0_ & 4) != 0;
-        }
-
-        public HardwareVariant getHardwareVariant() {
-            HardwareVariant result = HardwareVariant.forNumber(this.hardwareVariant_);
-            return result == null ? HardwareVariant.UNKNOWN_HARDWARE_VARIANT : result;
-        }
-
-        /* access modifiers changed from: private */
-        public void setHardwareVariant(HardwareVariant value) {
-            if (value != null) {
-                this.bitField0_ |= 4;
-                this.hardwareVariant_ = value.getNumber();
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        /* access modifiers changed from: private */
-        public void clearHardwareVariant() {
-            this.bitField0_ &= -5;
-            this.hardwareVariant_ = 0;
-        }
-
-        public boolean hasPrimesVersion() {
-            return (this.bitField0_ & 8) != 0;
-        }
-
-        public long getPrimesVersion() {
-            return this.primesVersion_;
-        }
-
-        /* access modifiers changed from: private */
-        public void setPrimesVersion(long value) {
-            this.bitField0_ |= 8;
-            this.primesVersion_ = value;
-        }
-
-        /* access modifiers changed from: private */
-        public void clearPrimesVersion() {
-            this.bitField0_ &= -9;
-            this.primesVersion_ = 0;
-        }
-
-        public boolean hasShortProcessName() {
-            return (this.bitField0_ & 16) != 0;
-        }
-
-        public String getShortProcessName() {
-            return this.shortProcessName_;
-        }
-
-        public ByteString getShortProcessNameBytes() {
-            return ByteString.copyFromUtf8(this.shortProcessName_);
-        }
-
-        /* access modifiers changed from: private */
-        public void setShortProcessName(String value) {
-            if (value != null) {
-                this.bitField0_ |= 16;
-                this.shortProcessName_ = value;
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        /* access modifiers changed from: private */
-        public void clearShortProcessName() {
-            this.bitField0_ &= -17;
-            this.shortProcessName_ = getDefaultInstance().getShortProcessName();
-        }
-
-        /* access modifiers changed from: private */
-        public void setShortProcessNameBytes(ByteString value) {
-            if (value != null) {
-                this.bitField0_ |= 16;
-                this.shortProcessName_ = value.toStringUtf8();
-                return;
-            }
-            throw new NullPointerException();
         }
 
         public static ApplicationInfo parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
@@ -4142,6 +3920,266 @@ public final class SystemHealthProto {
             return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
         }
 
+        public static ApplicationInfo getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<ApplicationInfo> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
+        }
+
+        public boolean hasApplicationPackage() {
+            return (this.bitField0_ & 1) != 0;
+        }
+
+        public String getApplicationPackage() {
+            return this.applicationPackage_;
+        }
+
+        /* access modifiers changed from: private */
+        public void setApplicationPackage(String value) {
+            if (value != null) {
+                this.bitField0_ |= 1;
+                this.applicationPackage_ = value;
+                return;
+            }
+            throw new NullPointerException();
+        }
+
+        public ByteString getApplicationPackageBytes() {
+            return ByteString.copyFromUtf8(this.applicationPackage_);
+        }
+
+        /* access modifiers changed from: private */
+        public void setApplicationPackageBytes(ByteString value) {
+            if (value != null) {
+                this.bitField0_ |= 1;
+                this.applicationPackage_ = value.toStringUtf8();
+                return;
+            }
+            throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearApplicationPackage() {
+            this.bitField0_ &= -2;
+            this.applicationPackage_ = getDefaultInstance().getApplicationPackage();
+        }
+
+        public boolean hasApplicationVersionName() {
+            return (this.bitField0_ & 2) != 0;
+        }
+
+        public String getApplicationVersionName() {
+            return this.applicationVersionName_;
+        }
+
+        /* access modifiers changed from: private */
+        public void setApplicationVersionName(String value) {
+            if (value != null) {
+                this.bitField0_ |= 2;
+                this.applicationVersionName_ = value;
+                return;
+            }
+            throw new NullPointerException();
+        }
+
+        public ByteString getApplicationVersionNameBytes() {
+            return ByteString.copyFromUtf8(this.applicationVersionName_);
+        }
+
+        /* access modifiers changed from: private */
+        public void setApplicationVersionNameBytes(ByteString value) {
+            if (value != null) {
+                this.bitField0_ |= 2;
+                this.applicationVersionName_ = value.toStringUtf8();
+                return;
+            }
+            throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearApplicationVersionName() {
+            this.bitField0_ &= -3;
+            this.applicationVersionName_ = getDefaultInstance().getApplicationVersionName();
+        }
+
+        public boolean hasHardwareVariant() {
+            return (this.bitField0_ & 4) != 0;
+        }
+
+        public HardwareVariant getHardwareVariant() {
+            HardwareVariant result = HardwareVariant.forNumber(this.hardwareVariant_);
+            return result == null ? HardwareVariant.UNKNOWN_HARDWARE_VARIANT : result;
+        }
+
+        /* access modifiers changed from: private */
+        public void setHardwareVariant(HardwareVariant value) {
+            if (value != null) {
+                this.bitField0_ |= 4;
+                this.hardwareVariant_ = value.getNumber();
+                return;
+            }
+            throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearHardwareVariant() {
+            this.bitField0_ &= -5;
+            this.hardwareVariant_ = 0;
+        }
+
+        public boolean hasPrimesVersion() {
+            return (this.bitField0_ & 8) != 0;
+        }
+
+        public long getPrimesVersion() {
+            return this.primesVersion_;
+        }
+
+        /* access modifiers changed from: private */
+        public void setPrimesVersion(long value) {
+            this.bitField0_ |= 8;
+            this.primesVersion_ = value;
+        }
+
+        /* access modifiers changed from: private */
+        public void clearPrimesVersion() {
+            this.bitField0_ &= -9;
+            this.primesVersion_ = 0;
+        }
+
+        public boolean hasShortProcessName() {
+            return (this.bitField0_ & 16) != 0;
+        }
+
+        public String getShortProcessName() {
+            return this.shortProcessName_;
+        }
+
+        /* access modifiers changed from: private */
+        public void setShortProcessName(String value) {
+            if (value != null) {
+                this.bitField0_ |= 16;
+                this.shortProcessName_ = value;
+                return;
+            }
+            throw new NullPointerException();
+        }
+
+        public ByteString getShortProcessNameBytes() {
+            return ByteString.copyFromUtf8(this.shortProcessName_);
+        }
+
+        /* access modifiers changed from: private */
+        public void setShortProcessNameBytes(ByteString value) {
+            if (value != null) {
+                this.bitField0_ |= 16;
+                this.shortProcessName_ = value.toStringUtf8();
+                return;
+            }
+            throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearShortProcessName() {
+            this.bitField0_ &= -17;
+            this.shortProcessName_ = getDefaultInstance().getShortProcessName();
+        }
+
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new ApplicationInfo();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0005\u0000\u0001\u0001\u0005\u0005\u0000\u0000\u0000\u0001\b\u0000\u0002\b\u0001\u0003\f\u0002\u0004\u0002\u0003\u0005\b\u0004", new Object[]{"bitField0_", "applicationPackage_", "applicationVersionName_", "hardwareVariant_", HardwareVariant.internalGetVerifier(), "primesVersion_", "shortProcessName_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<ApplicationInfo> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (ApplicationInfo.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
+        }
+
+        public enum HardwareVariant implements Internal.EnumLite {
+            UNKNOWN_HARDWARE_VARIANT(0),
+            PHONE_OR_TABLET(1),
+            WATCH(2),
+            LEANBACK(3);
+
+            public static final int LEANBACK_VALUE = 3;
+            public static final int PHONE_OR_TABLET_VALUE = 1;
+            public static final int UNKNOWN_HARDWARE_VARIANT_VALUE = 0;
+            public static final int WATCH_VALUE = 2;
+            private static final Internal.EnumLiteMap<HardwareVariant> internalValueMap = new Internal.EnumLiteMap<HardwareVariant>() {
+                public HardwareVariant findValueByNumber(int number) {
+                    return HardwareVariant.forNumber(number);
+                }
+            };
+            private final int value;
+
+            private HardwareVariant(int value2) {
+                this.value = value2;
+            }
+
+            public static HardwareVariant forNumber(int value2) {
+                if (value2 == 0) {
+                    return UNKNOWN_HARDWARE_VARIANT;
+                }
+                if (value2 == 1) {
+                    return PHONE_OR_TABLET;
+                }
+                if (value2 == 2) {
+                    return WATCH;
+                }
+                if (value2 != 3) {
+                    return null;
+                }
+                return LEANBACK;
+            }
+
+            public static Internal.EnumLiteMap<HardwareVariant> internalGetValueMap() {
+                return internalValueMap;
+            }
+
+            public static Internal.EnumVerifier internalGetVerifier() {
+                return HardwareVariantVerifier.INSTANCE;
+            }
+
+            public final int getNumber() {
+                return this.value;
+            }
+
+            private static final class HardwareVariantVerifier implements Internal.EnumVerifier {
+                static final Internal.EnumVerifier INSTANCE = new HardwareVariantVerifier();
+
+                private HardwareVariantVerifier() {
+                }
+
+                public boolean isInRange(int number) {
+                    return HardwareVariant.forNumber(number) != null;
+                }
+            }
+        }
+
         public static final class Builder extends GeneratedMessageLite.Builder<ApplicationInfo, Builder> implements ApplicationInfoOrBuilder {
             private Builder() {
                 super(ApplicationInfo.DEFAULT_INSTANCE);
@@ -4155,25 +4193,25 @@ public final class SystemHealthProto {
                 return ((ApplicationInfo) this.instance).getApplicationPackage();
             }
 
-            public ByteString getApplicationPackageBytes() {
-                return ((ApplicationInfo) this.instance).getApplicationPackageBytes();
-            }
-
             public Builder setApplicationPackage(String value) {
                 copyOnWrite();
                 ((ApplicationInfo) this.instance).setApplicationPackage(value);
                 return this;
             }
 
-            public Builder clearApplicationPackage() {
-                copyOnWrite();
-                ((ApplicationInfo) this.instance).clearApplicationPackage();
-                return this;
+            public ByteString getApplicationPackageBytes() {
+                return ((ApplicationInfo) this.instance).getApplicationPackageBytes();
             }
 
             public Builder setApplicationPackageBytes(ByteString value) {
                 copyOnWrite();
                 ((ApplicationInfo) this.instance).setApplicationPackageBytes(value);
+                return this;
+            }
+
+            public Builder clearApplicationPackage() {
+                copyOnWrite();
+                ((ApplicationInfo) this.instance).clearApplicationPackage();
                 return this;
             }
 
@@ -4185,25 +4223,25 @@ public final class SystemHealthProto {
                 return ((ApplicationInfo) this.instance).getApplicationVersionName();
             }
 
-            public ByteString getApplicationVersionNameBytes() {
-                return ((ApplicationInfo) this.instance).getApplicationVersionNameBytes();
-            }
-
             public Builder setApplicationVersionName(String value) {
                 copyOnWrite();
                 ((ApplicationInfo) this.instance).setApplicationVersionName(value);
                 return this;
             }
 
-            public Builder clearApplicationVersionName() {
-                copyOnWrite();
-                ((ApplicationInfo) this.instance).clearApplicationVersionName();
-                return this;
+            public ByteString getApplicationVersionNameBytes() {
+                return ((ApplicationInfo) this.instance).getApplicationVersionNameBytes();
             }
 
             public Builder setApplicationVersionNameBytes(ByteString value) {
                 copyOnWrite();
                 ((ApplicationInfo) this.instance).setApplicationVersionNameBytes(value);
+                return this;
+            }
+
+            public Builder clearApplicationVersionName() {
+                copyOnWrite();
+                ((ApplicationInfo) this.instance).clearApplicationVersionName();
                 return this;
             }
 
@@ -4255,13 +4293,19 @@ public final class SystemHealthProto {
                 return ((ApplicationInfo) this.instance).getShortProcessName();
             }
 
+            public Builder setShortProcessName(String value) {
+                copyOnWrite();
+                ((ApplicationInfo) this.instance).setShortProcessName(value);
+                return this;
+            }
+
             public ByteString getShortProcessNameBytes() {
                 return ((ApplicationInfo) this.instance).getShortProcessNameBytes();
             }
 
-            public Builder setShortProcessName(String value) {
+            public Builder setShortProcessNameBytes(ByteString value) {
                 copyOnWrite();
-                ((ApplicationInfo) this.instance).setShortProcessName(value);
+                ((ApplicationInfo) this.instance).setShortProcessNameBytes(value);
                 return this;
             }
 
@@ -4270,56 +4314,6 @@ public final class SystemHealthProto {
                 ((ApplicationInfo) this.instance).clearShortProcessName();
                 return this;
             }
-
-            public Builder setShortProcessNameBytes(ByteString value) {
-                copyOnWrite();
-                ((ApplicationInfo) this.instance).setShortProcessNameBytes(value);
-                return this;
-            }
-        }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new ApplicationInfo();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0005\u0000\u0001\u0001\u0005\u0005\u0000\u0000\u0000\u0001\b\u0000\u0002\b\u0001\u0003\f\u0002\u0004\u0002\u0003\u0005\b\u0004", new Object[]{"bitField0_", "applicationPackage_", "applicationVersionName_", "hardwareVariant_", HardwareVariant.internalGetVerifier(), "primesVersion_", "shortProcessName_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<ApplicationInfo> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (ApplicationInfo.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(ApplicationInfo.class, DEFAULT_INSTANCE);
-        }
-
-        public static ApplicationInfo getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<ApplicationInfo> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
         }
     }
 
@@ -4329,9 +4323,14 @@ public final class SystemHealthProto {
         /* access modifiers changed from: private */
         public static final ClientErrorLoggingMetric DEFAULT_INSTANCE = new ClientErrorLoggingMetric();
         public static final int ERROR_MESSAGE_FIELD_NUMBER = 1;
-        private static volatile Parser<ClientErrorLoggingMetric> PARSER = null;
         public static final int PROCESS_STATS_FIELD_NUMBER = 2;
         public static final int THREAD_NAME_FIELD_NUMBER = 4;
+        private static volatile Parser<ClientErrorLoggingMetric> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(ClientErrorLoggingMetric.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoField(fieldNumber = 3, isEnforceUtf8 = false, isRequired = false, type = FieldType.STRING)
         @ProtoPresenceCheckedField(mask = 4, presenceBitsId = 0)
         private String activeComponentName_ = "";
@@ -4348,6 +4347,70 @@ public final class SystemHealthProto {
         private String threadName_ = "";
 
         private ClientErrorLoggingMetric() {
+        }
+
+        public static ClientErrorLoggingMetric parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (ClientErrorLoggingMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static ClientErrorLoggingMetric parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (ClientErrorLoggingMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static ClientErrorLoggingMetric parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (ClientErrorLoggingMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static ClientErrorLoggingMetric parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (ClientErrorLoggingMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static ClientErrorLoggingMetric parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (ClientErrorLoggingMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static ClientErrorLoggingMetric parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (ClientErrorLoggingMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static ClientErrorLoggingMetric parseFrom(InputStream input) throws IOException {
+            return (ClientErrorLoggingMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static ClientErrorLoggingMetric parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (ClientErrorLoggingMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static ClientErrorLoggingMetric parseDelimitedFrom(InputStream input) throws IOException {
+            return (ClientErrorLoggingMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static ClientErrorLoggingMetric parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (ClientErrorLoggingMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static ClientErrorLoggingMetric parseFrom(CodedInputStream input) throws IOException {
+            return (ClientErrorLoggingMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static ClientErrorLoggingMetric parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (ClientErrorLoggingMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(ClientErrorLoggingMetric prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static ClientErrorLoggingMetric getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<ClientErrorLoggingMetric> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasErrorMessage() {
@@ -4450,10 +4513,6 @@ public final class SystemHealthProto {
             return this.activeComponentName_;
         }
 
-        public ByteString getActiveComponentNameBytes() {
-            return ByteString.copyFromUtf8(this.activeComponentName_);
-        }
-
         /* access modifiers changed from: private */
         public void setActiveComponentName(String value) {
             if (value != null) {
@@ -4464,10 +4523,8 @@ public final class SystemHealthProto {
             throw new NullPointerException();
         }
 
-        /* access modifiers changed from: private */
-        public void clearActiveComponentName() {
-            this.bitField0_ &= -5;
-            this.activeComponentName_ = getDefaultInstance().getActiveComponentName();
+        public ByteString getActiveComponentNameBytes() {
+            return ByteString.copyFromUtf8(this.activeComponentName_);
         }
 
         /* access modifiers changed from: private */
@@ -4480,16 +4537,18 @@ public final class SystemHealthProto {
             throw new NullPointerException();
         }
 
+        /* access modifiers changed from: private */
+        public void clearActiveComponentName() {
+            this.bitField0_ &= -5;
+            this.activeComponentName_ = getDefaultInstance().getActiveComponentName();
+        }
+
         public boolean hasThreadName() {
             return (this.bitField0_ & 8) != 0;
         }
 
         public String getThreadName() {
             return this.threadName_;
-        }
-
-        public ByteString getThreadNameBytes() {
-            return ByteString.copyFromUtf8(this.threadName_);
         }
 
         /* access modifiers changed from: private */
@@ -4502,10 +4561,8 @@ public final class SystemHealthProto {
             throw new NullPointerException();
         }
 
-        /* access modifiers changed from: private */
-        public void clearThreadName() {
-            this.bitField0_ &= -9;
-            this.threadName_ = getDefaultInstance().getThreadName();
+        public ByteString getThreadNameBytes() {
+            return ByteString.copyFromUtf8(this.threadName_);
         }
 
         /* access modifiers changed from: private */
@@ -4518,60 +4575,42 @@ public final class SystemHealthProto {
             throw new NullPointerException();
         }
 
-        public static ClientErrorLoggingMetric parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (ClientErrorLoggingMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        /* access modifiers changed from: private */
+        public void clearThreadName() {
+            this.bitField0_ &= -9;
+            this.threadName_ = getDefaultInstance().getThreadName();
         }
 
-        public static ClientErrorLoggingMetric parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (ClientErrorLoggingMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static ClientErrorLoggingMetric parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (ClientErrorLoggingMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static ClientErrorLoggingMetric parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (ClientErrorLoggingMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static ClientErrorLoggingMetric parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (ClientErrorLoggingMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static ClientErrorLoggingMetric parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (ClientErrorLoggingMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static ClientErrorLoggingMetric parseFrom(InputStream input) throws IOException {
-            return (ClientErrorLoggingMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static ClientErrorLoggingMetric parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (ClientErrorLoggingMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static ClientErrorLoggingMetric parseDelimitedFrom(InputStream input) throws IOException {
-            return (ClientErrorLoggingMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static ClientErrorLoggingMetric parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (ClientErrorLoggingMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static ClientErrorLoggingMetric parseFrom(CodedInputStream input) throws IOException {
-            return (ClientErrorLoggingMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static ClientErrorLoggingMetric parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (ClientErrorLoggingMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(ClientErrorLoggingMetric prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new ClientErrorLoggingMetric();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0004\u0000\u0001\u0001\u0004\u0004\u0000\u0000\u0000\u0001\t\u0000\u0002\t\u0001\u0003\b\u0002\u0004\b\u0003", new Object[]{"bitField0_", "errorMessage_", "processStats_", "activeComponentName_", "threadName_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<ClientErrorLoggingMetric> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (ClientErrorLoggingMetric.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<ClientErrorLoggingMetric, Builder> implements ClientErrorLoggingMetricOrBuilder {
@@ -4651,25 +4690,25 @@ public final class SystemHealthProto {
                 return ((ClientErrorLoggingMetric) this.instance).getActiveComponentName();
             }
 
-            public ByteString getActiveComponentNameBytes() {
-                return ((ClientErrorLoggingMetric) this.instance).getActiveComponentNameBytes();
-            }
-
             public Builder setActiveComponentName(String value) {
                 copyOnWrite();
                 ((ClientErrorLoggingMetric) this.instance).setActiveComponentName(value);
                 return this;
             }
 
-            public Builder clearActiveComponentName() {
-                copyOnWrite();
-                ((ClientErrorLoggingMetric) this.instance).clearActiveComponentName();
-                return this;
+            public ByteString getActiveComponentNameBytes() {
+                return ((ClientErrorLoggingMetric) this.instance).getActiveComponentNameBytes();
             }
 
             public Builder setActiveComponentNameBytes(ByteString value) {
                 copyOnWrite();
                 ((ClientErrorLoggingMetric) this.instance).setActiveComponentNameBytes(value);
+                return this;
+            }
+
+            public Builder clearActiveComponentName() {
+                copyOnWrite();
+                ((ClientErrorLoggingMetric) this.instance).clearActiveComponentName();
                 return this;
             }
 
@@ -4681,13 +4720,19 @@ public final class SystemHealthProto {
                 return ((ClientErrorLoggingMetric) this.instance).getThreadName();
             }
 
+            public Builder setThreadName(String value) {
+                copyOnWrite();
+                ((ClientErrorLoggingMetric) this.instance).setThreadName(value);
+                return this;
+            }
+
             public ByteString getThreadNameBytes() {
                 return ((ClientErrorLoggingMetric) this.instance).getThreadNameBytes();
             }
 
-            public Builder setThreadName(String value) {
+            public Builder setThreadNameBytes(ByteString value) {
                 copyOnWrite();
-                ((ClientErrorLoggingMetric) this.instance).setThreadName(value);
+                ((ClientErrorLoggingMetric) this.instance).setThreadNameBytes(value);
                 return this;
             }
 
@@ -4696,56 +4741,6 @@ public final class SystemHealthProto {
                 ((ClientErrorLoggingMetric) this.instance).clearThreadName();
                 return this;
             }
-
-            public Builder setThreadNameBytes(ByteString value) {
-                copyOnWrite();
-                ((ClientErrorLoggingMetric) this.instance).setThreadNameBytes(value);
-                return this;
-            }
-        }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new ClientErrorLoggingMetric();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0004\u0000\u0001\u0001\u0004\u0004\u0000\u0000\u0000\u0001\t\u0000\u0002\t\u0001\u0003\b\u0002\u0004\b\u0003", new Object[]{"bitField0_", "errorMessage_", "processStats_", "activeComponentName_", "threadName_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<ClientErrorLoggingMetric> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (ClientErrorLoggingMetric.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(ClientErrorLoggingMetric.class, DEFAULT_INSTANCE);
-        }
-
-        public static ClientErrorLoggingMetric getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<ClientErrorLoggingMetric> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
         }
     }
 
@@ -4758,9 +4753,14 @@ public final class SystemHealthProto {
         public static final CrashMetric DEFAULT_INSTANCE = new CrashMetric();
         public static final int HASHED_STACK_TRACE_FIELD_NUMBER = 6;
         public static final int HAS_CRASHED_FIELD_NUMBER = 1;
-        private static volatile Parser<CrashMetric> PARSER = null;
         public static final int PROCESS_STATS_FIELD_NUMBER = 2;
         public static final int THREAD_NAME_FIELD_NUMBER = 4;
+        private static volatile Parser<CrashMetric> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(CrashMetric.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoField(fieldNumber = 3, isEnforceUtf8 = false, isRequired = false, type = FieldType.STRING)
         @ProtoPresenceCheckedField(mask = 4, presenceBitsId = 0)
         private String activeComponentName_ = "";
@@ -4788,70 +4788,68 @@ public final class SystemHealthProto {
         private CrashMetric() {
         }
 
-        public enum CrashType implements Internal.EnumLite {
-            UNKNOWN(0),
-            NULL_POINTER_EXCEPTION(1),
-            OUT_OF_MEMORY_ERROR(2),
-            OTHER_RUNTIME_EXCEPTION(3),
-            OTHER_ERROR(4);
-            
-            public static final int NULL_POINTER_EXCEPTION_VALUE = 1;
-            public static final int OTHER_ERROR_VALUE = 4;
-            public static final int OTHER_RUNTIME_EXCEPTION_VALUE = 3;
-            public static final int OUT_OF_MEMORY_ERROR_VALUE = 2;
-            public static final int UNKNOWN_VALUE = 0;
-            private static final Internal.EnumLiteMap<CrashType> internalValueMap = new Internal.EnumLiteMap<CrashType>() {
-                public CrashType findValueByNumber(int number) {
-                    return CrashType.forNumber(number);
-                }
-            };
-            private final int value;
+        public static CrashMetric parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (CrashMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
 
-            public final int getNumber() {
-                return this.value;
-            }
+        public static CrashMetric parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (CrashMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-            public static CrashType forNumber(int value2) {
-                if (value2 == 0) {
-                    return UNKNOWN;
-                }
-                if (value2 == 1) {
-                    return NULL_POINTER_EXCEPTION;
-                }
-                if (value2 == 2) {
-                    return OUT_OF_MEMORY_ERROR;
-                }
-                if (value2 == 3) {
-                    return OTHER_RUNTIME_EXCEPTION;
-                }
-                if (value2 != 4) {
-                    return null;
-                }
-                return OTHER_ERROR;
-            }
+        public static CrashMetric parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (CrashMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
 
-            public static Internal.EnumLiteMap<CrashType> internalGetValueMap() {
-                return internalValueMap;
-            }
+        public static CrashMetric parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (CrashMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-            public static Internal.EnumVerifier internalGetVerifier() {
-                return CrashTypeVerifier.INSTANCE;
-            }
+        public static CrashMetric parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (CrashMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
 
-            private static final class CrashTypeVerifier implements Internal.EnumVerifier {
-                static final Internal.EnumVerifier INSTANCE = new CrashTypeVerifier();
+        public static CrashMetric parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (CrashMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-                private CrashTypeVerifier() {
-                }
+        public static CrashMetric parseFrom(InputStream input) throws IOException {
+            return (CrashMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
 
-                public boolean isInRange(int number) {
-                    return CrashType.forNumber(number) != null;
-                }
-            }
+        public static CrashMetric parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (CrashMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
 
-            private CrashType(int value2) {
-                this.value = value2;
-            }
+        public static CrashMetric parseDelimitedFrom(InputStream input) throws IOException {
+            return (CrashMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static CrashMetric parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (CrashMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static CrashMetric parseFrom(CodedInputStream input) throws IOException {
+            return (CrashMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static CrashMetric parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (CrashMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(CrashMetric prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static CrashMetric getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<CrashMetric> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasHasCrashed() {
@@ -4928,10 +4926,6 @@ public final class SystemHealthProto {
             return this.activeComponentName_;
         }
 
-        public ByteString getActiveComponentNameBytes() {
-            return ByteString.copyFromUtf8(this.activeComponentName_);
-        }
-
         /* access modifiers changed from: private */
         public void setActiveComponentName(String value) {
             if (value != null) {
@@ -4942,10 +4936,8 @@ public final class SystemHealthProto {
             throw new NullPointerException();
         }
 
-        /* access modifiers changed from: private */
-        public void clearActiveComponentName() {
-            this.bitField0_ &= -5;
-            this.activeComponentName_ = getDefaultInstance().getActiveComponentName();
+        public ByteString getActiveComponentNameBytes() {
+            return ByteString.copyFromUtf8(this.activeComponentName_);
         }
 
         /* access modifiers changed from: private */
@@ -4958,16 +4950,18 @@ public final class SystemHealthProto {
             throw new NullPointerException();
         }
 
+        /* access modifiers changed from: private */
+        public void clearActiveComponentName() {
+            this.bitField0_ &= -5;
+            this.activeComponentName_ = getDefaultInstance().getActiveComponentName();
+        }
+
         public boolean hasThreadName() {
             return (this.bitField0_ & 8) != 0;
         }
 
         public String getThreadName() {
             return this.threadName_;
-        }
-
-        public ByteString getThreadNameBytes() {
-            return ByteString.copyFromUtf8(this.threadName_);
         }
 
         /* access modifiers changed from: private */
@@ -4980,10 +4974,8 @@ public final class SystemHealthProto {
             throw new NullPointerException();
         }
 
-        /* access modifiers changed from: private */
-        public void clearThreadName() {
-            this.bitField0_ &= -9;
-            this.threadName_ = getDefaultInstance().getThreadName();
+        public ByteString getThreadNameBytes() {
+            return ByteString.copyFromUtf8(this.threadName_);
         }
 
         /* access modifiers changed from: private */
@@ -4994,6 +4986,12 @@ public final class SystemHealthProto {
                 return;
             }
             throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearThreadName() {
+            this.bitField0_ &= -9;
+            this.threadName_ = getDefaultInstance().getThreadName();
         }
 
         public boolean hasCrashType() {
@@ -5049,10 +5047,6 @@ public final class SystemHealthProto {
             return this.crashClassName_;
         }
 
-        public ByteString getCrashClassNameBytes() {
-            return ByteString.copyFromUtf8(this.crashClassName_);
-        }
-
         /* access modifiers changed from: private */
         public void setCrashClassName(String value) {
             if (value != null) {
@@ -5063,10 +5057,8 @@ public final class SystemHealthProto {
             throw new NullPointerException();
         }
 
-        /* access modifiers changed from: private */
-        public void clearCrashClassName() {
-            this.bitField0_ &= -65;
-            this.crashClassName_ = getDefaultInstance().getCrashClassName();
+        public ByteString getCrashClassNameBytes() {
+            return ByteString.copyFromUtf8(this.crashClassName_);
         }
 
         /* access modifiers changed from: private */
@@ -5079,60 +5071,108 @@ public final class SystemHealthProto {
             throw new NullPointerException();
         }
 
-        public static CrashMetric parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (CrashMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        /* access modifiers changed from: private */
+        public void clearCrashClassName() {
+            this.bitField0_ &= -65;
+            this.crashClassName_ = getDefaultInstance().getCrashClassName();
         }
 
-        public static CrashMetric parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (CrashMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new CrashMetric();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0007\u0000\u0001\u0001\u0007\u0007\u0000\u0000\u0000\u0001\u0007\u0000\u0002\t\u0001\u0003\b\u0002\u0004\b\u0003\u0005\f\u0004\u0006\u0005\u0005\u0007\b\u0006", new Object[]{"bitField0_", "hasCrashed_", "processStats_", "activeComponentName_", "threadName_", "crashType_", CrashType.internalGetVerifier(), "hashedStackTrace_", "crashClassName_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<CrashMetric> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (CrashMetric.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
-        public static CrashMetric parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (CrashMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
+        public enum CrashType implements Internal.EnumLite {
+            UNKNOWN(0),
+            NULL_POINTER_EXCEPTION(1),
+            OUT_OF_MEMORY_ERROR(2),
+            OTHER_RUNTIME_EXCEPTION(3),
+            OTHER_ERROR(4);
 
-        public static CrashMetric parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (CrashMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
+            public static final int NULL_POINTER_EXCEPTION_VALUE = 1;
+            public static final int OTHER_ERROR_VALUE = 4;
+            public static final int OTHER_RUNTIME_EXCEPTION_VALUE = 3;
+            public static final int OUT_OF_MEMORY_ERROR_VALUE = 2;
+            public static final int UNKNOWN_VALUE = 0;
+            private static final Internal.EnumLiteMap<CrashType> internalValueMap = new Internal.EnumLiteMap<CrashType>() {
+                public CrashType findValueByNumber(int number) {
+                    return CrashType.forNumber(number);
+                }
+            };
+            private final int value;
 
-        public static CrashMetric parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (CrashMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
+            private CrashType(int value2) {
+                this.value = value2;
+            }
 
-        public static CrashMetric parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (CrashMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
+            public static CrashType forNumber(int value2) {
+                if (value2 == 0) {
+                    return UNKNOWN;
+                }
+                if (value2 == 1) {
+                    return NULL_POINTER_EXCEPTION;
+                }
+                if (value2 == 2) {
+                    return OUT_OF_MEMORY_ERROR;
+                }
+                if (value2 == 3) {
+                    return OTHER_RUNTIME_EXCEPTION;
+                }
+                if (value2 != 4) {
+                    return null;
+                }
+                return OTHER_ERROR;
+            }
 
-        public static CrashMetric parseFrom(InputStream input) throws IOException {
-            return (CrashMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
+            public static Internal.EnumLiteMap<CrashType> internalGetValueMap() {
+                return internalValueMap;
+            }
 
-        public static CrashMetric parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (CrashMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
+            public static Internal.EnumVerifier internalGetVerifier() {
+                return CrashTypeVerifier.INSTANCE;
+            }
 
-        public static CrashMetric parseDelimitedFrom(InputStream input) throws IOException {
-            return (CrashMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
+            public final int getNumber() {
+                return this.value;
+            }
 
-        public static CrashMetric parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (CrashMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
+            private static final class CrashTypeVerifier implements Internal.EnumVerifier {
+                static final Internal.EnumVerifier INSTANCE = new CrashTypeVerifier();
 
-        public static CrashMetric parseFrom(CodedInputStream input) throws IOException {
-            return (CrashMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
+                private CrashTypeVerifier() {
+                }
 
-        public static CrashMetric parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (CrashMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(CrashMetric prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+                public boolean isInRange(int number) {
+                    return CrashType.forNumber(number) != null;
+                }
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<CrashMetric, Builder> implements CrashMetricOrBuilder {
@@ -5200,25 +5240,25 @@ public final class SystemHealthProto {
                 return ((CrashMetric) this.instance).getActiveComponentName();
             }
 
-            public ByteString getActiveComponentNameBytes() {
-                return ((CrashMetric) this.instance).getActiveComponentNameBytes();
-            }
-
             public Builder setActiveComponentName(String value) {
                 copyOnWrite();
                 ((CrashMetric) this.instance).setActiveComponentName(value);
                 return this;
             }
 
-            public Builder clearActiveComponentName() {
-                copyOnWrite();
-                ((CrashMetric) this.instance).clearActiveComponentName();
-                return this;
+            public ByteString getActiveComponentNameBytes() {
+                return ((CrashMetric) this.instance).getActiveComponentNameBytes();
             }
 
             public Builder setActiveComponentNameBytes(ByteString value) {
                 copyOnWrite();
                 ((CrashMetric) this.instance).setActiveComponentNameBytes(value);
+                return this;
+            }
+
+            public Builder clearActiveComponentName() {
+                copyOnWrite();
+                ((CrashMetric) this.instance).clearActiveComponentName();
                 return this;
             }
 
@@ -5230,25 +5270,25 @@ public final class SystemHealthProto {
                 return ((CrashMetric) this.instance).getThreadName();
             }
 
-            public ByteString getThreadNameBytes() {
-                return ((CrashMetric) this.instance).getThreadNameBytes();
-            }
-
             public Builder setThreadName(String value) {
                 copyOnWrite();
                 ((CrashMetric) this.instance).setThreadName(value);
                 return this;
             }
 
-            public Builder clearThreadName() {
-                copyOnWrite();
-                ((CrashMetric) this.instance).clearThreadName();
-                return this;
+            public ByteString getThreadNameBytes() {
+                return ((CrashMetric) this.instance).getThreadNameBytes();
             }
 
             public Builder setThreadNameBytes(ByteString value) {
                 copyOnWrite();
                 ((CrashMetric) this.instance).setThreadNameBytes(value);
+                return this;
+            }
+
+            public Builder clearThreadName() {
+                copyOnWrite();
+                ((CrashMetric) this.instance).clearThreadName();
                 return this;
             }
 
@@ -5300,13 +5340,19 @@ public final class SystemHealthProto {
                 return ((CrashMetric) this.instance).getCrashClassName();
             }
 
+            public Builder setCrashClassName(String value) {
+                copyOnWrite();
+                ((CrashMetric) this.instance).setCrashClassName(value);
+                return this;
+            }
+
             public ByteString getCrashClassNameBytes() {
                 return ((CrashMetric) this.instance).getCrashClassNameBytes();
             }
 
-            public Builder setCrashClassName(String value) {
+            public Builder setCrashClassNameBytes(ByteString value) {
                 copyOnWrite();
-                ((CrashMetric) this.instance).setCrashClassName(value);
+                ((CrashMetric) this.instance).setCrashClassNameBytes(value);
                 return this;
             }
 
@@ -5315,56 +5361,6 @@ public final class SystemHealthProto {
                 ((CrashMetric) this.instance).clearCrashClassName();
                 return this;
             }
-
-            public Builder setCrashClassNameBytes(ByteString value) {
-                copyOnWrite();
-                ((CrashMetric) this.instance).setCrashClassNameBytes(value);
-                return this;
-            }
-        }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new CrashMetric();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0007\u0000\u0001\u0001\u0007\u0007\u0000\u0000\u0000\u0001\u0007\u0000\u0002\t\u0001\u0003\b\u0002\u0004\b\u0003\u0005\f\u0004\u0006\u0005\u0005\u0007\b\u0006", new Object[]{"bitField0_", "hasCrashed_", "processStats_", "activeComponentName_", "threadName_", "crashType_", CrashType.internalGetVerifier(), "hashedStackTrace_", "crashClassName_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<CrashMetric> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (CrashMetric.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(CrashMetric.class, DEFAULT_INSTANCE);
-        }
-
-        public static CrashMetric getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<CrashMetric> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
         }
     }
 
@@ -5374,10 +5370,79 @@ public final class SystemHealthProto {
         public static final MemoryLeakMetric DEFAULT_INSTANCE = new MemoryLeakMetric();
         public static final int OBJECT_INFO_FIELD_NUMBER = 1;
         private static volatile Parser<MemoryLeakMetric> PARSER;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(MemoryLeakMetric.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoField(fieldNumber = 1, type = FieldType.MESSAGE_LIST)
         private Internal.ProtobufList<ObjectInfo> objectInfo_ = emptyProtobufList();
 
         private MemoryLeakMetric() {
+        }
+
+        public static MemoryLeakMetric parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (MemoryLeakMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static MemoryLeakMetric parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (MemoryLeakMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static MemoryLeakMetric parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (MemoryLeakMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static MemoryLeakMetric parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (MemoryLeakMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static MemoryLeakMetric parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (MemoryLeakMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static MemoryLeakMetric parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (MemoryLeakMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static MemoryLeakMetric parseFrom(InputStream input) throws IOException {
+            return (MemoryLeakMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static MemoryLeakMetric parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (MemoryLeakMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static MemoryLeakMetric parseDelimitedFrom(InputStream input) throws IOException {
+            return (MemoryLeakMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static MemoryLeakMetric parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (MemoryLeakMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static MemoryLeakMetric parseFrom(CodedInputStream input) throws IOException {
+            return (MemoryLeakMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static MemoryLeakMetric parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (MemoryLeakMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(MemoryLeakMetric prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static MemoryLeakMetric getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<MemoryLeakMetric> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public List<ObjectInfo> getObjectInfoList() {
@@ -5477,60 +5542,36 @@ public final class SystemHealthProto {
             this.objectInfo_.remove(index);
         }
 
-        public static MemoryLeakMetric parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (MemoryLeakMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static MemoryLeakMetric parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (MemoryLeakMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static MemoryLeakMetric parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (MemoryLeakMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static MemoryLeakMetric parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (MemoryLeakMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static MemoryLeakMetric parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (MemoryLeakMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static MemoryLeakMetric parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (MemoryLeakMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static MemoryLeakMetric parseFrom(InputStream input) throws IOException {
-            return (MemoryLeakMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static MemoryLeakMetric parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (MemoryLeakMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static MemoryLeakMetric parseDelimitedFrom(InputStream input) throws IOException {
-            return (MemoryLeakMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static MemoryLeakMetric parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (MemoryLeakMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static MemoryLeakMetric parseFrom(CodedInputStream input) throws IOException {
-            return (MemoryLeakMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static MemoryLeakMetric parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (MemoryLeakMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(MemoryLeakMetric prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new MemoryLeakMetric();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0001\u0000\u0000\u0001\u0001\u0001\u0000\u0001\u0000\u0001\u001b", new Object[]{"objectInfo_", ObjectInfo.class});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<MemoryLeakMetric> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (MemoryLeakMetric.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<MemoryLeakMetric, Builder> implements MemoryLeakMetricOrBuilder {
@@ -5604,50 +5645,6 @@ public final class SystemHealthProto {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new MemoryLeakMetric();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0001\u0000\u0000\u0001\u0001\u0001\u0000\u0001\u0000\u0001\u001b", new Object[]{"objectInfo_", ObjectInfo.class});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<MemoryLeakMetric> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (MemoryLeakMetric.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(MemoryLeakMetric.class, DEFAULT_INSTANCE);
-        }
-
-        public static MemoryLeakMetric getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<MemoryLeakMetric> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -5657,9 +5654,14 @@ public final class SystemHealthProto {
         public static final ObjectInfo DEFAULT_INSTANCE = new ObjectInfo();
         public static final int LEAKED_COUNT_FIELD_NUMBER = 3;
         public static final int LEAK_PATH_FIELD_NUMBER = 4;
-        private static volatile Parser<ObjectInfo> PARSER = null;
         public static final int RELEASED_COUNT_FIELD_NUMBER = 2;
         public static final int RETAINED_HEAP_BYTES_FIELD_NUMBER = 5;
+        private static volatile Parser<ObjectInfo> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(ObjectInfo.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 1, isEnforceUtf8 = false, isRequired = false, type = FieldType.STRING)
@@ -5679,142 +5681,6 @@ public final class SystemHealthProto {
         private int retainedHeapBytes_;
 
         private ObjectInfo() {
-        }
-
-        public boolean hasClassName() {
-            return (this.bitField0_ & 1) != 0;
-        }
-
-        public String getClassName() {
-            return this.className_;
-        }
-
-        public ByteString getClassNameBytes() {
-            return ByteString.copyFromUtf8(this.className_);
-        }
-
-        /* access modifiers changed from: private */
-        public void setClassName(String value) {
-            if (value != null) {
-                this.bitField0_ |= 1;
-                this.className_ = value;
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        /* access modifiers changed from: private */
-        public void clearClassName() {
-            this.bitField0_ &= -2;
-            this.className_ = getDefaultInstance().getClassName();
-        }
-
-        /* access modifiers changed from: private */
-        public void setClassNameBytes(ByteString value) {
-            if (value != null) {
-                this.bitField0_ |= 1;
-                this.className_ = value.toStringUtf8();
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        public boolean hasReleasedCount() {
-            return (this.bitField0_ & 2) != 0;
-        }
-
-        public int getReleasedCount() {
-            return this.releasedCount_;
-        }
-
-        /* access modifiers changed from: private */
-        public void setReleasedCount(int value) {
-            this.bitField0_ |= 2;
-            this.releasedCount_ = value;
-        }
-
-        /* access modifiers changed from: private */
-        public void clearReleasedCount() {
-            this.bitField0_ &= -3;
-            this.releasedCount_ = 0;
-        }
-
-        public boolean hasLeakedCount() {
-            return (this.bitField0_ & 4) != 0;
-        }
-
-        public int getLeakedCount() {
-            return this.leakedCount_;
-        }
-
-        /* access modifiers changed from: private */
-        public void setLeakedCount(int value) {
-            this.bitField0_ |= 4;
-            this.leakedCount_ = value;
-        }
-
-        /* access modifiers changed from: private */
-        public void clearLeakedCount() {
-            this.bitField0_ &= -5;
-            this.leakedCount_ = 0;
-        }
-
-        public boolean hasLeakPath() {
-            return (this.bitField0_ & 8) != 0;
-        }
-
-        public String getLeakPath() {
-            return this.leakPath_;
-        }
-
-        public ByteString getLeakPathBytes() {
-            return ByteString.copyFromUtf8(this.leakPath_);
-        }
-
-        /* access modifiers changed from: private */
-        public void setLeakPath(String value) {
-            if (value != null) {
-                this.bitField0_ |= 8;
-                this.leakPath_ = value;
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        /* access modifiers changed from: private */
-        public void clearLeakPath() {
-            this.bitField0_ &= -9;
-            this.leakPath_ = getDefaultInstance().getLeakPath();
-        }
-
-        /* access modifiers changed from: private */
-        public void setLeakPathBytes(ByteString value) {
-            if (value != null) {
-                this.bitField0_ |= 8;
-                this.leakPath_ = value.toStringUtf8();
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        public boolean hasRetainedHeapBytes() {
-            return (this.bitField0_ & 16) != 0;
-        }
-
-        public int getRetainedHeapBytes() {
-            return this.retainedHeapBytes_;
-        }
-
-        /* access modifiers changed from: private */
-        public void setRetainedHeapBytes(int value) {
-            this.bitField0_ |= 16;
-            this.retainedHeapBytes_ = value;
-        }
-
-        /* access modifiers changed from: private */
-        public void clearRetainedHeapBytes() {
-            this.bitField0_ &= -17;
-            this.retainedHeapBytes_ = 0;
         }
 
         public static ObjectInfo parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
@@ -5873,6 +5739,182 @@ public final class SystemHealthProto {
             return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
         }
 
+        public static ObjectInfo getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<ObjectInfo> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
+        }
+
+        public boolean hasClassName() {
+            return (this.bitField0_ & 1) != 0;
+        }
+
+        public String getClassName() {
+            return this.className_;
+        }
+
+        /* access modifiers changed from: private */
+        public void setClassName(String value) {
+            if (value != null) {
+                this.bitField0_ |= 1;
+                this.className_ = value;
+                return;
+            }
+            throw new NullPointerException();
+        }
+
+        public ByteString getClassNameBytes() {
+            return ByteString.copyFromUtf8(this.className_);
+        }
+
+        /* access modifiers changed from: private */
+        public void setClassNameBytes(ByteString value) {
+            if (value != null) {
+                this.bitField0_ |= 1;
+                this.className_ = value.toStringUtf8();
+                return;
+            }
+            throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearClassName() {
+            this.bitField0_ &= -2;
+            this.className_ = getDefaultInstance().getClassName();
+        }
+
+        public boolean hasReleasedCount() {
+            return (this.bitField0_ & 2) != 0;
+        }
+
+        public int getReleasedCount() {
+            return this.releasedCount_;
+        }
+
+        /* access modifiers changed from: private */
+        public void setReleasedCount(int value) {
+            this.bitField0_ |= 2;
+            this.releasedCount_ = value;
+        }
+
+        /* access modifiers changed from: private */
+        public void clearReleasedCount() {
+            this.bitField0_ &= -3;
+            this.releasedCount_ = 0;
+        }
+
+        public boolean hasLeakedCount() {
+            return (this.bitField0_ & 4) != 0;
+        }
+
+        public int getLeakedCount() {
+            return this.leakedCount_;
+        }
+
+        /* access modifiers changed from: private */
+        public void setLeakedCount(int value) {
+            this.bitField0_ |= 4;
+            this.leakedCount_ = value;
+        }
+
+        /* access modifiers changed from: private */
+        public void clearLeakedCount() {
+            this.bitField0_ &= -5;
+            this.leakedCount_ = 0;
+        }
+
+        public boolean hasLeakPath() {
+            return (this.bitField0_ & 8) != 0;
+        }
+
+        public String getLeakPath() {
+            return this.leakPath_;
+        }
+
+        /* access modifiers changed from: private */
+        public void setLeakPath(String value) {
+            if (value != null) {
+                this.bitField0_ |= 8;
+                this.leakPath_ = value;
+                return;
+            }
+            throw new NullPointerException();
+        }
+
+        public ByteString getLeakPathBytes() {
+            return ByteString.copyFromUtf8(this.leakPath_);
+        }
+
+        /* access modifiers changed from: private */
+        public void setLeakPathBytes(ByteString value) {
+            if (value != null) {
+                this.bitField0_ |= 8;
+                this.leakPath_ = value.toStringUtf8();
+                return;
+            }
+            throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearLeakPath() {
+            this.bitField0_ &= -9;
+            this.leakPath_ = getDefaultInstance().getLeakPath();
+        }
+
+        public boolean hasRetainedHeapBytes() {
+            return (this.bitField0_ & 16) != 0;
+        }
+
+        public int getRetainedHeapBytes() {
+            return this.retainedHeapBytes_;
+        }
+
+        /* access modifiers changed from: private */
+        public void setRetainedHeapBytes(int value) {
+            this.bitField0_ |= 16;
+            this.retainedHeapBytes_ = value;
+        }
+
+        /* access modifiers changed from: private */
+        public void clearRetainedHeapBytes() {
+            this.bitField0_ &= -17;
+            this.retainedHeapBytes_ = 0;
+        }
+
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new ObjectInfo();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0005\u0000\u0001\u0001\u0005\u0005\u0000\u0000\u0000\u0001\b\u0000\u0002\u0004\u0001\u0003\u0004\u0002\u0004\b\u0003\u0005\u0004\u0004", new Object[]{"bitField0_", "className_", "releasedCount_", "leakedCount_", "leakPath_", "retainedHeapBytes_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<ObjectInfo> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (ObjectInfo.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
+        }
+
         public static final class Builder extends GeneratedMessageLite.Builder<ObjectInfo, Builder> implements ObjectInfoOrBuilder {
             private Builder() {
                 super(ObjectInfo.DEFAULT_INSTANCE);
@@ -5886,25 +5928,25 @@ public final class SystemHealthProto {
                 return ((ObjectInfo) this.instance).getClassName();
             }
 
-            public ByteString getClassNameBytes() {
-                return ((ObjectInfo) this.instance).getClassNameBytes();
-            }
-
             public Builder setClassName(String value) {
                 copyOnWrite();
                 ((ObjectInfo) this.instance).setClassName(value);
                 return this;
             }
 
-            public Builder clearClassName() {
-                copyOnWrite();
-                ((ObjectInfo) this.instance).clearClassName();
-                return this;
+            public ByteString getClassNameBytes() {
+                return ((ObjectInfo) this.instance).getClassNameBytes();
             }
 
             public Builder setClassNameBytes(ByteString value) {
                 copyOnWrite();
                 ((ObjectInfo) this.instance).setClassNameBytes(value);
+                return this;
+            }
+
+            public Builder clearClassName() {
+                copyOnWrite();
+                ((ObjectInfo) this.instance).clearClassName();
                 return this;
             }
 
@@ -5956,25 +5998,25 @@ public final class SystemHealthProto {
                 return ((ObjectInfo) this.instance).getLeakPath();
             }
 
-            public ByteString getLeakPathBytes() {
-                return ((ObjectInfo) this.instance).getLeakPathBytes();
-            }
-
             public Builder setLeakPath(String value) {
                 copyOnWrite();
                 ((ObjectInfo) this.instance).setLeakPath(value);
                 return this;
             }
 
-            public Builder clearLeakPath() {
-                copyOnWrite();
-                ((ObjectInfo) this.instance).clearLeakPath();
-                return this;
+            public ByteString getLeakPathBytes() {
+                return ((ObjectInfo) this.instance).getLeakPathBytes();
             }
 
             public Builder setLeakPathBytes(ByteString value) {
                 copyOnWrite();
                 ((ObjectInfo) this.instance).setLeakPathBytes(value);
+                return this;
+            }
+
+            public Builder clearLeakPath() {
+                copyOnWrite();
+                ((ObjectInfo) this.instance).clearLeakPath();
                 return this;
             }
 
@@ -5998,22 +6040,206 @@ public final class SystemHealthProto {
                 return this;
             }
         }
+    }
+
+    @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
+    public static final class PrimesStats extends GeneratedMessageLite<PrimesStats, Builder> implements PrimesStatsOrBuilder {
+        /* access modifiers changed from: private */
+        public static final PrimesStats DEFAULT_INSTANCE = new PrimesStats();
+        public static final int ESTIMATED_COUNT_FIELD_NUMBER = 2;
+        public static final int PRIMES_DEBUG_MESSAGE_FIELD_NUMBER = 3;
+        public static final int PRIMES_EVENT_FIELD_NUMBER = 1;
+        private static volatile Parser<PrimesStats> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(PrimesStats.class, DEFAULT_INSTANCE);
+        }
+
+        @ProtoPresenceBits(mo28548id = 0)
+        private int bitField0_;
+        @ProtoField(fieldNumber = 2, isRequired = false, type = FieldType.INT32)
+        @ProtoPresenceCheckedField(mask = 2, presenceBitsId = 0)
+        private int estimatedCount_ = 1;
+        @ProtoField(fieldNumber = 3, isRequired = false, type = FieldType.MESSAGE)
+        @ProtoPresenceCheckedField(mask = 4, presenceBitsId = 0)
+        private PrimesDebugMessage primesDebugMessage_;
+        @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.ENUM)
+        @ProtoPresenceCheckedField(mask = 1, presenceBitsId = 0)
+        private int primesEvent_;
+
+        private PrimesStats() {
+        }
+
+        public static PrimesStats parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (PrimesStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static PrimesStats parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (PrimesStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static PrimesStats parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (PrimesStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static PrimesStats parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (PrimesStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static PrimesStats parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (PrimesStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static PrimesStats parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (PrimesStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static PrimesStats parseFrom(InputStream input) throws IOException {
+            return (PrimesStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static PrimesStats parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (PrimesStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static PrimesStats parseDelimitedFrom(InputStream input) throws IOException {
+            return (PrimesStats) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static PrimesStats parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (PrimesStats) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static PrimesStats parseFrom(CodedInputStream input) throws IOException {
+            return (PrimesStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static PrimesStats parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (PrimesStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(PrimesStats prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static PrimesStats getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<PrimesStats> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
+        }
+
+        public boolean hasPrimesEvent() {
+            return (this.bitField0_ & 1) != 0;
+        }
+
+        public PrimesEvent getPrimesEvent() {
+            PrimesEvent result = PrimesEvent.forNumber(this.primesEvent_);
+            return result == null ? PrimesEvent.UNKNOWN : result;
+        }
+
+        /* access modifiers changed from: private */
+        public void setPrimesEvent(PrimesEvent value) {
+            if (value != null) {
+                this.bitField0_ |= 1;
+                this.primesEvent_ = value.getNumber();
+                return;
+            }
+            throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearPrimesEvent() {
+            this.bitField0_ &= -2;
+            this.primesEvent_ = 0;
+        }
+
+        public boolean hasEstimatedCount() {
+            return (this.bitField0_ & 2) != 0;
+        }
+
+        public int getEstimatedCount() {
+            return this.estimatedCount_;
+        }
+
+        /* access modifiers changed from: private */
+        public void setEstimatedCount(int value) {
+            this.bitField0_ |= 2;
+            this.estimatedCount_ = value;
+        }
+
+        /* access modifiers changed from: private */
+        public void clearEstimatedCount() {
+            this.bitField0_ &= -3;
+            this.estimatedCount_ = 1;
+        }
+
+        public boolean hasPrimesDebugMessage() {
+            return (this.bitField0_ & 4) != 0;
+        }
+
+        public PrimesDebugMessage getPrimesDebugMessage() {
+            PrimesDebugMessage primesDebugMessage = this.primesDebugMessage_;
+            return primesDebugMessage == null ? PrimesDebugMessage.getDefaultInstance() : primesDebugMessage;
+        }
+
+        /* access modifiers changed from: private */
+        public void setPrimesDebugMessage(PrimesDebugMessage value) {
+            if (value != null) {
+                this.primesDebugMessage_ = value;
+                this.bitField0_ |= 4;
+                return;
+            }
+            throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void setPrimesDebugMessage(PrimesDebugMessage.Builder builderForValue) {
+            this.primesDebugMessage_ = (PrimesDebugMessage) builderForValue.build();
+            this.bitField0_ |= 4;
+        }
+
+        /* access modifiers changed from: private */
+        public void mergePrimesDebugMessage(PrimesDebugMessage value) {
+            if (value != null) {
+                PrimesDebugMessage primesDebugMessage = this.primesDebugMessage_;
+                if (primesDebugMessage == null || primesDebugMessage == PrimesDebugMessage.getDefaultInstance()) {
+                    this.primesDebugMessage_ = value;
+                } else {
+                    this.primesDebugMessage_ = (PrimesDebugMessage) ((PrimesDebugMessage.Builder) PrimesDebugMessage.newBuilder(this.primesDebugMessage_).mergeFrom((GeneratedMessageLite) value)).buildPartial();
+                }
+                this.bitField0_ |= 4;
+                return;
+            }
+            throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearPrimesDebugMessage() {
+            this.primesDebugMessage_ = null;
+            this.bitField0_ &= -5;
+        }
 
         /* access modifiers changed from: protected */
         public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
             switch (method) {
                 case NEW_MUTABLE_INSTANCE:
-                    return new ObjectInfo();
+                    return new PrimesStats();
                 case NEW_BUILDER:
                     return new Builder();
                 case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0005\u0000\u0001\u0001\u0005\u0005\u0000\u0000\u0000\u0001\b\u0000\u0002\u0004\u0001\u0003\u0004\u0002\u0004\b\u0003\u0005\u0004\u0004", new Object[]{"bitField0_", "className_", "releasedCount_", "leakedCount_", "leakPath_", "retainedHeapBytes_"});
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0003\u0000\u0001\u0001\u0003\u0003\u0000\u0000\u0000\u0001\f\u0000\u0002\u0004\u0001\u0003\t\u0002", new Object[]{"bitField0_", "primesEvent_", PrimesEvent.internalGetVerifier(), "estimatedCount_", "primesDebugMessage_"});
                 case GET_DEFAULT_INSTANCE:
                     return DEFAULT_INSTANCE;
                 case GET_PARSER:
-                    Parser<ObjectInfo> parser = PARSER;
+                    Parser<PrimesStats> parser = PARSER;
                     if (parser == null) {
-                        synchronized (ObjectInfo.class) {
+                        synchronized (PrimesStats.class) {
                             parser = PARSER;
                             if (parser == null) {
                                 parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
@@ -6031,63 +6257,13 @@ public final class SystemHealthProto {
             }
         }
 
-        static {
-            GeneratedMessageLite.registerDefaultInstance(ObjectInfo.class, DEFAULT_INSTANCE);
-        }
-
-        public static ObjectInfo getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<ObjectInfo> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
-    }
-
-    @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
-    public static final class PrimesStats extends GeneratedMessageLite<PrimesStats, Builder> implements PrimesStatsOrBuilder {
-        /* access modifiers changed from: private */
-        public static final PrimesStats DEFAULT_INSTANCE = new PrimesStats();
-        public static final int ESTIMATED_COUNT_FIELD_NUMBER = 2;
-        private static volatile Parser<PrimesStats> PARSER = null;
-        public static final int PRIMES_DEBUG_MESSAGE_FIELD_NUMBER = 3;
-        public static final int PRIMES_EVENT_FIELD_NUMBER = 1;
-        @ProtoPresenceBits(mo28548id = 0)
-        private int bitField0_;
-        @ProtoField(fieldNumber = 2, isRequired = false, type = FieldType.INT32)
-        @ProtoPresenceCheckedField(mask = 2, presenceBitsId = 0)
-        private int estimatedCount_ = 1;
-        @ProtoField(fieldNumber = 3, isRequired = false, type = FieldType.MESSAGE)
-        @ProtoPresenceCheckedField(mask = 4, presenceBitsId = 0)
-        private PrimesDebugMessage primesDebugMessage_;
-        @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.ENUM)
-        @ProtoPresenceCheckedField(mask = 1, presenceBitsId = 0)
-        private int primesEvent_;
-
-        public interface PrimesDebugMessageOrBuilder extends MessageLiteOrBuilder {
-            CrashMetric getPreviousCrash();
-
-            PrimesHeapDumpCalibrationStatus getPrimesHeapDumpCalibrationStatus();
-
-            PrimesHeapDumpEvent getPrimesHeapDumpEvent();
-
-            boolean hasPreviousCrash();
-
-            boolean hasPrimesHeapDumpCalibrationStatus();
-
-            boolean hasPrimesHeapDumpEvent();
-        }
-
-        private PrimesStats() {
-        }
-
         public enum PrimesEvent implements Internal.EnumLite {
             UNKNOWN(0),
             PRIMES_INITIALIZED(1),
             PRIMES_CRASH_MONITORING_INITIALIZED(2),
             PRIMES_FIRST_ACTIVITY_LAUNCHED(3),
             PRIMES_CUSTOM_LAUNCHED(4);
-            
+
             public static final int PRIMES_CRASH_MONITORING_INITIALIZED_VALUE = 2;
             public static final int PRIMES_CUSTOM_LAUNCHED_VALUE = 4;
             public static final int PRIMES_FIRST_ACTIVITY_LAUNCHED_VALUE = 3;
@@ -6100,8 +6276,8 @@ public final class SystemHealthProto {
             };
             private final int value;
 
-            public final int getNumber() {
-                return this.value;
+            private PrimesEvent(int value2) {
+                this.value = value2;
             }
 
             public static PrimesEvent forNumber(int value2) {
@@ -6131,6 +6307,10 @@ public final class SystemHealthProto {
                 return PrimesEventVerifier.INSTANCE;
             }
 
+            public final int getNumber() {
+                return this.value;
+            }
+
             private static final class PrimesEventVerifier implements Internal.EnumVerifier {
                 static final Internal.EnumVerifier INSTANCE = new PrimesEventVerifier();
 
@@ -6141,20 +6321,35 @@ public final class SystemHealthProto {
                     return PrimesEvent.forNumber(number) != null;
                 }
             }
+        }
 
-            private PrimesEvent(int value2) {
-                this.value = value2;
-            }
+        public interface PrimesDebugMessageOrBuilder extends MessageLiteOrBuilder {
+            CrashMetric getPreviousCrash();
+
+            PrimesHeapDumpCalibrationStatus getPrimesHeapDumpCalibrationStatus();
+
+            PrimesHeapDumpEvent getPrimesHeapDumpEvent();
+
+            boolean hasPreviousCrash();
+
+            boolean hasPrimesHeapDumpCalibrationStatus();
+
+            boolean hasPrimesHeapDumpEvent();
         }
 
         @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
         public static final class PrimesDebugMessage extends GeneratedMessageLite<PrimesDebugMessage, Builder> implements PrimesDebugMessageOrBuilder {
             /* access modifiers changed from: private */
             public static final PrimesDebugMessage DEFAULT_INSTANCE = new PrimesDebugMessage();
-            private static volatile Parser<PrimesDebugMessage> PARSER = null;
             public static final int PREVIOUS_CRASH_FIELD_NUMBER = 1;
             public static final int PRIMES_HEAP_DUMP_CALIBRATION_STATUS_FIELD_NUMBER = 3;
             public static final int PRIMES_HEAP_DUMP_EVENT_FIELD_NUMBER = 2;
+            private static volatile Parser<PrimesDebugMessage> PARSER = null;
+
+            static {
+                GeneratedMessageLite.registerDefaultInstance(PrimesDebugMessage.class, DEFAULT_INSTANCE);
+            }
+
             @ProtoPresenceBits(mo28548id = 0)
             private int bitField0_;
             @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.MESSAGE)
@@ -6168,6 +6363,70 @@ public final class SystemHealthProto {
             private PrimesHeapDumpEvent primesHeapDumpEvent_;
 
             private PrimesDebugMessage() {
+            }
+
+            public static PrimesDebugMessage parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+                return (PrimesDebugMessage) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+            }
+
+            public static PrimesDebugMessage parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+                return (PrimesDebugMessage) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+            }
+
+            public static PrimesDebugMessage parseFrom(ByteString data) throws InvalidProtocolBufferException {
+                return (PrimesDebugMessage) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+            }
+
+            public static PrimesDebugMessage parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+                return (PrimesDebugMessage) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+            }
+
+            public static PrimesDebugMessage parseFrom(byte[] data) throws InvalidProtocolBufferException {
+                return (PrimesDebugMessage) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+            }
+
+            public static PrimesDebugMessage parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+                return (PrimesDebugMessage) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+            }
+
+            public static PrimesDebugMessage parseFrom(InputStream input) throws IOException {
+                return (PrimesDebugMessage) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+            }
+
+            public static PrimesDebugMessage parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+                return (PrimesDebugMessage) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+            }
+
+            public static PrimesDebugMessage parseDelimitedFrom(InputStream input) throws IOException {
+                return (PrimesDebugMessage) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+            }
+
+            public static PrimesDebugMessage parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+                return (PrimesDebugMessage) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+            }
+
+            public static PrimesDebugMessage parseFrom(CodedInputStream input) throws IOException {
+                return (PrimesDebugMessage) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+            }
+
+            public static PrimesDebugMessage parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+                return (PrimesDebugMessage) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+            }
+
+            public static Builder newBuilder() {
+                return (Builder) DEFAULT_INSTANCE.createBuilder();
+            }
+
+            public static Builder newBuilder(PrimesDebugMessage prototype) {
+                return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+            }
+
+            public static PrimesDebugMessage getDefaultInstance() {
+                return DEFAULT_INSTANCE;
+            }
+
+            public static Parser<PrimesDebugMessage> parser() {
+                return DEFAULT_INSTANCE.getParserForType();
             }
 
             public boolean hasPreviousCrash() {
@@ -6308,60 +6567,36 @@ public final class SystemHealthProto {
                 this.bitField0_ &= -5;
             }
 
-            public static PrimesDebugMessage parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-                return (PrimesDebugMessage) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-            }
-
-            public static PrimesDebugMessage parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-                return (PrimesDebugMessage) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-            }
-
-            public static PrimesDebugMessage parseFrom(ByteString data) throws InvalidProtocolBufferException {
-                return (PrimesDebugMessage) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-            }
-
-            public static PrimesDebugMessage parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-                return (PrimesDebugMessage) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-            }
-
-            public static PrimesDebugMessage parseFrom(byte[] data) throws InvalidProtocolBufferException {
-                return (PrimesDebugMessage) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-            }
-
-            public static PrimesDebugMessage parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-                return (PrimesDebugMessage) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-            }
-
-            public static PrimesDebugMessage parseFrom(InputStream input) throws IOException {
-                return (PrimesDebugMessage) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-            }
-
-            public static PrimesDebugMessage parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-                return (PrimesDebugMessage) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-            }
-
-            public static PrimesDebugMessage parseDelimitedFrom(InputStream input) throws IOException {
-                return (PrimesDebugMessage) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-            }
-
-            public static PrimesDebugMessage parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-                return (PrimesDebugMessage) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-            }
-
-            public static PrimesDebugMessage parseFrom(CodedInputStream input) throws IOException {
-                return (PrimesDebugMessage) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-            }
-
-            public static PrimesDebugMessage parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-                return (PrimesDebugMessage) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-            }
-
-            public static Builder newBuilder() {
-                return (Builder) DEFAULT_INSTANCE.createBuilder();
-            }
-
-            public static Builder newBuilder(PrimesDebugMessage prototype) {
-                return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+            /* access modifiers changed from: protected */
+            public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+                switch (method) {
+                    case NEW_MUTABLE_INSTANCE:
+                        return new PrimesDebugMessage();
+                    case NEW_BUILDER:
+                        return new Builder();
+                    case BUILD_MESSAGE_INFO:
+                        return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0003\u0000\u0001\u0001\u0003\u0003\u0000\u0000\u0000\u0001\t\u0000\u0002\t\u0001\u0003\t\u0002", new Object[]{"bitField0_", "previousCrash_", "primesHeapDumpEvent_", "primesHeapDumpCalibrationStatus_"});
+                    case GET_DEFAULT_INSTANCE:
+                        return DEFAULT_INSTANCE;
+                    case GET_PARSER:
+                        Parser<PrimesDebugMessage> parser = PARSER;
+                        if (parser == null) {
+                            synchronized (PrimesDebugMessage.class) {
+                                parser = PARSER;
+                                if (parser == null) {
+                                    parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                    PARSER = parser;
+                                }
+                            }
+                        }
+                        return parser;
+                    case GET_MEMOIZED_IS_INITIALIZED:
+                        return (byte) 1;
+                    case SET_MEMOIZED_IS_INITIALIZED:
+                        return null;
+                    default:
+                        throw new UnsupportedOperationException();
+                }
             }
 
             public static final class Builder extends GeneratedMessageLite.Builder<PrimesDebugMessage, Builder> implements PrimesDebugMessageOrBuilder {
@@ -6465,197 +6700,6 @@ public final class SystemHealthProto {
                     return this;
                 }
             }
-
-            /* access modifiers changed from: protected */
-            public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-                switch (method) {
-                    case NEW_MUTABLE_INSTANCE:
-                        return new PrimesDebugMessage();
-                    case NEW_BUILDER:
-                        return new Builder();
-                    case BUILD_MESSAGE_INFO:
-                        return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0003\u0000\u0001\u0001\u0003\u0003\u0000\u0000\u0000\u0001\t\u0000\u0002\t\u0001\u0003\t\u0002", new Object[]{"bitField0_", "previousCrash_", "primesHeapDumpEvent_", "primesHeapDumpCalibrationStatus_"});
-                    case GET_DEFAULT_INSTANCE:
-                        return DEFAULT_INSTANCE;
-                    case GET_PARSER:
-                        Parser<PrimesDebugMessage> parser = PARSER;
-                        if (parser == null) {
-                            synchronized (PrimesDebugMessage.class) {
-                                parser = PARSER;
-                                if (parser == null) {
-                                    parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                    PARSER = parser;
-                                }
-                            }
-                        }
-                        return parser;
-                    case GET_MEMOIZED_IS_INITIALIZED:
-                        return (byte) 1;
-                    case SET_MEMOIZED_IS_INITIALIZED:
-                        return null;
-                    default:
-                        throw new UnsupportedOperationException();
-                }
-            }
-
-            static {
-                GeneratedMessageLite.registerDefaultInstance(PrimesDebugMessage.class, DEFAULT_INSTANCE);
-            }
-
-            public static PrimesDebugMessage getDefaultInstance() {
-                return DEFAULT_INSTANCE;
-            }
-
-            public static Parser<PrimesDebugMessage> parser() {
-                return DEFAULT_INSTANCE.getParserForType();
-            }
-        }
-
-        public boolean hasPrimesEvent() {
-            return (this.bitField0_ & 1) != 0;
-        }
-
-        public PrimesEvent getPrimesEvent() {
-            PrimesEvent result = PrimesEvent.forNumber(this.primesEvent_);
-            return result == null ? PrimesEvent.UNKNOWN : result;
-        }
-
-        /* access modifiers changed from: private */
-        public void setPrimesEvent(PrimesEvent value) {
-            if (value != null) {
-                this.bitField0_ |= 1;
-                this.primesEvent_ = value.getNumber();
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        /* access modifiers changed from: private */
-        public void clearPrimesEvent() {
-            this.bitField0_ &= -2;
-            this.primesEvent_ = 0;
-        }
-
-        public boolean hasEstimatedCount() {
-            return (this.bitField0_ & 2) != 0;
-        }
-
-        public int getEstimatedCount() {
-            return this.estimatedCount_;
-        }
-
-        /* access modifiers changed from: private */
-        public void setEstimatedCount(int value) {
-            this.bitField0_ |= 2;
-            this.estimatedCount_ = value;
-        }
-
-        /* access modifiers changed from: private */
-        public void clearEstimatedCount() {
-            this.bitField0_ &= -3;
-            this.estimatedCount_ = 1;
-        }
-
-        public boolean hasPrimesDebugMessage() {
-            return (this.bitField0_ & 4) != 0;
-        }
-
-        public PrimesDebugMessage getPrimesDebugMessage() {
-            PrimesDebugMessage primesDebugMessage = this.primesDebugMessage_;
-            return primesDebugMessage == null ? PrimesDebugMessage.getDefaultInstance() : primesDebugMessage;
-        }
-
-        /* access modifiers changed from: private */
-        public void setPrimesDebugMessage(PrimesDebugMessage value) {
-            if (value != null) {
-                this.primesDebugMessage_ = value;
-                this.bitField0_ |= 4;
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        /* access modifiers changed from: private */
-        public void setPrimesDebugMessage(PrimesDebugMessage.Builder builderForValue) {
-            this.primesDebugMessage_ = (PrimesDebugMessage) builderForValue.build();
-            this.bitField0_ |= 4;
-        }
-
-        /* access modifiers changed from: private */
-        public void mergePrimesDebugMessage(PrimesDebugMessage value) {
-            if (value != null) {
-                PrimesDebugMessage primesDebugMessage = this.primesDebugMessage_;
-                if (primesDebugMessage == null || primesDebugMessage == PrimesDebugMessage.getDefaultInstance()) {
-                    this.primesDebugMessage_ = value;
-                } else {
-                    this.primesDebugMessage_ = (PrimesDebugMessage) ((PrimesDebugMessage.Builder) PrimesDebugMessage.newBuilder(this.primesDebugMessage_).mergeFrom((GeneratedMessageLite) value)).buildPartial();
-                }
-                this.bitField0_ |= 4;
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        /* access modifiers changed from: private */
-        public void clearPrimesDebugMessage() {
-            this.primesDebugMessage_ = null;
-            this.bitField0_ &= -5;
-        }
-
-        public static PrimesStats parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (PrimesStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static PrimesStats parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (PrimesStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static PrimesStats parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (PrimesStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static PrimesStats parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (PrimesStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static PrimesStats parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (PrimesStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static PrimesStats parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (PrimesStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static PrimesStats parseFrom(InputStream input) throws IOException {
-            return (PrimesStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static PrimesStats parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (PrimesStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static PrimesStats parseDelimitedFrom(InputStream input) throws IOException {
-            return (PrimesStats) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static PrimesStats parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (PrimesStats) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static PrimesStats parseFrom(CodedInputStream input) throws IOException {
-            return (PrimesStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static PrimesStats parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (PrimesStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(PrimesStats prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<PrimesStats, Builder> implements PrimesStatsOrBuilder {
@@ -6735,50 +6779,6 @@ public final class SystemHealthProto {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new PrimesStats();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0003\u0000\u0001\u0001\u0003\u0003\u0000\u0000\u0000\u0001\f\u0000\u0002\u0004\u0001\u0003\t\u0002", new Object[]{"bitField0_", "primesEvent_", PrimesEvent.internalGetVerifier(), "estimatedCount_", "primesDebugMessage_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<PrimesStats> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (PrimesStats.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(PrimesStats.class, DEFAULT_INSTANCE);
-        }
-
-        public static PrimesStats getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<PrimesStats> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -6797,6 +6797,11 @@ public final class SystemHealthProto {
         public static final int EXTERNAL_OBB_SIZE_FIELD_NUMBER = 8;
         public static final int PACKAGE_NAME_FIELD_NUMBER = 9;
         private static volatile Parser<PackageMetric> PARSER;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(PackageMetric.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.INT64)
@@ -6832,345 +6837,71 @@ public final class SystemHealthProto {
         @ProtoPresenceCheckedField(mask = 256, presenceBitsId = 0)
         private String packageName_ = "";
 
-        public interface DirStatsOrBuilder extends MessageLiteOrBuilder {
-            String getDirPath();
-
-            ByteString getDirPathBytes();
-
-            long getHashedDirPath(int i);
-
-            int getHashedDirPathCount();
-
-            List<Long> getHashedDirPathList();
-
-            long getSizeBytes();
-
-            boolean hasDirPath();
-
-            boolean hasSizeBytes();
-        }
-
         private PackageMetric() {
         }
 
-        @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
-        public static final class DirStats extends GeneratedMessageLite<DirStats, Builder> implements DirStatsOrBuilder {
-            /* access modifiers changed from: private */
-            public static final DirStats DEFAULT_INSTANCE = new DirStats();
-            public static final int DIR_PATH_FIELD_NUMBER = 1;
-            public static final int HASHED_DIR_PATH_FIELD_NUMBER = 3;
-            private static volatile Parser<DirStats> PARSER = null;
-            public static final int SIZE_BYTES_FIELD_NUMBER = 2;
-            @ProtoPresenceBits(mo28548id = 0)
-            private int bitField0_;
-            @ProtoField(fieldNumber = 1, isEnforceUtf8 = false, isRequired = false, type = FieldType.STRING)
-            @ProtoPresenceCheckedField(mask = 1, presenceBitsId = 0)
-            private String dirPath_ = "";
-            @ProtoField(fieldNumber = 3, type = FieldType.FIXED64_LIST)
-            private Internal.LongList hashedDirPath_ = emptyLongList();
-            @ProtoField(fieldNumber = 2, isRequired = false, type = FieldType.INT64)
-            @ProtoPresenceCheckedField(mask = 2, presenceBitsId = 0)
-            private long sizeBytes_;
+        public static PackageMetric parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (PackageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
 
-            private DirStats() {
-            }
+        public static PackageMetric parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (PackageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-            public boolean hasDirPath() {
-                return (this.bitField0_ & 1) != 0;
-            }
+        public static PackageMetric parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (PackageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
 
-            public String getDirPath() {
-                return this.dirPath_;
-            }
+        public static PackageMetric parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (PackageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-            public ByteString getDirPathBytes() {
-                return ByteString.copyFromUtf8(this.dirPath_);
-            }
+        public static PackageMetric parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (PackageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
 
-            /* access modifiers changed from: private */
-            public void setDirPath(String value) {
-                if (value != null) {
-                    this.bitField0_ |= 1;
-                    this.dirPath_ = value;
-                    return;
-                }
-                throw new NullPointerException();
-            }
+        public static PackageMetric parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (PackageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-            /* access modifiers changed from: private */
-            public void clearDirPath() {
-                this.bitField0_ &= -2;
-                this.dirPath_ = getDefaultInstance().getDirPath();
-            }
+        public static PackageMetric parseFrom(InputStream input) throws IOException {
+            return (PackageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
 
-            /* access modifiers changed from: private */
-            public void setDirPathBytes(ByteString value) {
-                if (value != null) {
-                    this.bitField0_ |= 1;
-                    this.dirPath_ = value.toStringUtf8();
-                    return;
-                }
-                throw new NullPointerException();
-            }
+        public static PackageMetric parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (PackageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
 
-            public List<Long> getHashedDirPathList() {
-                return this.hashedDirPath_;
-            }
+        public static PackageMetric parseDelimitedFrom(InputStream input) throws IOException {
+            return (PackageMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
 
-            public int getHashedDirPathCount() {
-                return this.hashedDirPath_.size();
-            }
+        public static PackageMetric parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (PackageMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
 
-            public long getHashedDirPath(int index) {
-                return this.hashedDirPath_.getLong(index);
-            }
+        public static PackageMetric parseFrom(CodedInputStream input) throws IOException {
+            return (PackageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
 
-            private void ensureHashedDirPathIsMutable() {
-                if (!this.hashedDirPath_.isModifiable()) {
-                    this.hashedDirPath_ = GeneratedMessageLite.mutableCopy(this.hashedDirPath_);
-                }
-            }
+        public static PackageMetric parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (PackageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
 
-            /* access modifiers changed from: private */
-            public void setHashedDirPath(int index, long value) {
-                ensureHashedDirPathIsMutable();
-                this.hashedDirPath_.setLong(index, value);
-            }
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
 
-            /* access modifiers changed from: private */
-            public void addHashedDirPath(long value) {
-                ensureHashedDirPathIsMutable();
-                this.hashedDirPath_.addLong(value);
-            }
+        public static Builder newBuilder(PackageMetric prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
 
-            /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-             method: com.google.protobuf.AbstractMessageLite.addAll(java.lang.Iterable, java.util.List):void
-             arg types: [java.lang.Iterable<? extends java.lang.Long>, com.google.protobuf.Internal$LongList]
-             candidates:
-              com.google.protobuf.AbstractMessageLite.addAll(java.lang.Iterable, java.util.Collection):void
-              com.google.protobuf.AbstractMessageLite.addAll(java.lang.Iterable, java.util.List):void */
-            /* access modifiers changed from: private */
-            public void addAllHashedDirPath(Iterable<? extends Long> values) {
-                ensureHashedDirPathIsMutable();
-                AbstractMessageLite.addAll((Iterable) values, (List) this.hashedDirPath_);
-            }
+        public static PackageMetric getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
 
-            /* access modifiers changed from: private */
-            public void clearHashedDirPath() {
-                this.hashedDirPath_ = emptyLongList();
-            }
-
-            public boolean hasSizeBytes() {
-                return (this.bitField0_ & 2) != 0;
-            }
-
-            public long getSizeBytes() {
-                return this.sizeBytes_;
-            }
-
-            /* access modifiers changed from: private */
-            public void setSizeBytes(long value) {
-                this.bitField0_ |= 2;
-                this.sizeBytes_ = value;
-            }
-
-            /* access modifiers changed from: private */
-            public void clearSizeBytes() {
-                this.bitField0_ &= -3;
-                this.sizeBytes_ = 0;
-            }
-
-            public static DirStats parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-                return (DirStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-            }
-
-            public static DirStats parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-                return (DirStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-            }
-
-            public static DirStats parseFrom(ByteString data) throws InvalidProtocolBufferException {
-                return (DirStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-            }
-
-            public static DirStats parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-                return (DirStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-            }
-
-            public static DirStats parseFrom(byte[] data) throws InvalidProtocolBufferException {
-                return (DirStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-            }
-
-            public static DirStats parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-                return (DirStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-            }
-
-            public static DirStats parseFrom(InputStream input) throws IOException {
-                return (DirStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-            }
-
-            public static DirStats parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-                return (DirStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-            }
-
-            public static DirStats parseDelimitedFrom(InputStream input) throws IOException {
-                return (DirStats) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-            }
-
-            public static DirStats parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-                return (DirStats) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-            }
-
-            public static DirStats parseFrom(CodedInputStream input) throws IOException {
-                return (DirStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-            }
-
-            public static DirStats parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-                return (DirStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-            }
-
-            public static Builder newBuilder() {
-                return (Builder) DEFAULT_INSTANCE.createBuilder();
-            }
-
-            public static Builder newBuilder(DirStats prototype) {
-                return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
-            }
-
-            public static final class Builder extends GeneratedMessageLite.Builder<DirStats, Builder> implements DirStatsOrBuilder {
-                private Builder() {
-                    super(DirStats.DEFAULT_INSTANCE);
-                }
-
-                public boolean hasDirPath() {
-                    return ((DirStats) this.instance).hasDirPath();
-                }
-
-                public String getDirPath() {
-                    return ((DirStats) this.instance).getDirPath();
-                }
-
-                public ByteString getDirPathBytes() {
-                    return ((DirStats) this.instance).getDirPathBytes();
-                }
-
-                public Builder setDirPath(String value) {
-                    copyOnWrite();
-                    ((DirStats) this.instance).setDirPath(value);
-                    return this;
-                }
-
-                public Builder clearDirPath() {
-                    copyOnWrite();
-                    ((DirStats) this.instance).clearDirPath();
-                    return this;
-                }
-
-                public Builder setDirPathBytes(ByteString value) {
-                    copyOnWrite();
-                    ((DirStats) this.instance).setDirPathBytes(value);
-                    return this;
-                }
-
-                public List<Long> getHashedDirPathList() {
-                    return Collections.unmodifiableList(((DirStats) this.instance).getHashedDirPathList());
-                }
-
-                public int getHashedDirPathCount() {
-                    return ((DirStats) this.instance).getHashedDirPathCount();
-                }
-
-                public long getHashedDirPath(int index) {
-                    return ((DirStats) this.instance).getHashedDirPath(index);
-                }
-
-                public Builder setHashedDirPath(int index, long value) {
-                    copyOnWrite();
-                    ((DirStats) this.instance).setHashedDirPath(index, value);
-                    return this;
-                }
-
-                public Builder addHashedDirPath(long value) {
-                    copyOnWrite();
-                    ((DirStats) this.instance).addHashedDirPath(value);
-                    return this;
-                }
-
-                public Builder addAllHashedDirPath(Iterable<? extends Long> values) {
-                    copyOnWrite();
-                    ((DirStats) this.instance).addAllHashedDirPath(values);
-                    return this;
-                }
-
-                public Builder clearHashedDirPath() {
-                    copyOnWrite();
-                    ((DirStats) this.instance).clearHashedDirPath();
-                    return this;
-                }
-
-                public boolean hasSizeBytes() {
-                    return ((DirStats) this.instance).hasSizeBytes();
-                }
-
-                public long getSizeBytes() {
-                    return ((DirStats) this.instance).getSizeBytes();
-                }
-
-                public Builder setSizeBytes(long value) {
-                    copyOnWrite();
-                    ((DirStats) this.instance).setSizeBytes(value);
-                    return this;
-                }
-
-                public Builder clearSizeBytes() {
-                    copyOnWrite();
-                    ((DirStats) this.instance).clearSizeBytes();
-                    return this;
-                }
-            }
-
-            /* access modifiers changed from: protected */
-            public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-                switch (method) {
-                    case NEW_MUTABLE_INSTANCE:
-                        return new DirStats();
-                    case NEW_BUILDER:
-                        return new Builder();
-                    case BUILD_MESSAGE_INFO:
-                        return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0003\u0000\u0001\u0001\u0003\u0003\u0000\u0001\u0000\u0001\b\u0000\u0002\u0002\u0001\u0003\u0017", new Object[]{"bitField0_", "dirPath_", "sizeBytes_", "hashedDirPath_"});
-                    case GET_DEFAULT_INSTANCE:
-                        return DEFAULT_INSTANCE;
-                    case GET_PARSER:
-                        Parser<DirStats> parser = PARSER;
-                        if (parser == null) {
-                            synchronized (DirStats.class) {
-                                parser = PARSER;
-                                if (parser == null) {
-                                    parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                    PARSER = parser;
-                                }
-                            }
-                        }
-                        return parser;
-                    case GET_MEMOIZED_IS_INITIALIZED:
-                        return (byte) 1;
-                    case SET_MEMOIZED_IS_INITIALIZED:
-                        return null;
-                    default:
-                        throw new UnsupportedOperationException();
-                }
-            }
-
-            static {
-                GeneratedMessageLite.registerDefaultInstance(DirStats.class, DEFAULT_INSTANCE);
-            }
-
-            public static DirStats getDefaultInstance() {
-                return DEFAULT_INSTANCE;
-            }
-
-            public static Parser<DirStats> parser() {
-                return DEFAULT_INSTANCE.getParserForType();
-            }
+        public static Parser<PackageMetric> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasCacheSize() {
@@ -7343,11 +7074,6 @@ public final class SystemHealthProto {
             return this.packageName_;
         }
 
-        @Deprecated
-        public ByteString getPackageNameBytes() {
-            return ByteString.copyFromUtf8(this.packageName_);
-        }
-
         /* access modifiers changed from: private */
         public void setPackageName(String value) {
             if (value != null) {
@@ -7358,10 +7084,9 @@ public final class SystemHealthProto {
             throw new NullPointerException();
         }
 
-        /* access modifiers changed from: private */
-        public void clearPackageName() {
-            this.bitField0_ &= -257;
-            this.packageName_ = getDefaultInstance().getPackageName();
+        @Deprecated
+        public ByteString getPackageNameBytes() {
+            return ByteString.copyFromUtf8(this.packageName_);
         }
 
         /* access modifiers changed from: private */
@@ -7372,6 +7097,12 @@ public final class SystemHealthProto {
                 return;
             }
             throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearPackageName() {
+            this.bitField0_ &= -257;
+            this.packageName_ = getDefaultInstance().getPackageName();
         }
 
         public List<DirStats> getDirStatsList() {
@@ -7493,60 +7224,375 @@ public final class SystemHealthProto {
             this.dataPartitionSizeBytes_ = 0;
         }
 
-        public static PackageMetric parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (PackageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new PackageMetric();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u000b\u0000\u0001\u0001\u000b\u000b\u0000\u0001\u0000\u0001\u0002\u0000\u0002\u0002\u0001\u0003\u0002\u0002\u0004\u0002\u0003\u0005\u0002\u0004\u0006\u0002\u0005\u0007\u0002\u0006\b\u0002\u0007\t\b\b\n\u001b\u000b\u0002\t", new Object[]{"bitField0_", "cacheSize_", "codeSize_", "dataSize_", "externalCacheSize_", "externalCodeSize_", "externalDataSize_", "externalMediaSize_", "externalObbSize_", "packageName_", "dirStats_", DirStats.class, "dataPartitionSizeBytes_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<PackageMetric> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (PackageMetric.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
-        public static PackageMetric parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (PackageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        public interface DirStatsOrBuilder extends MessageLiteOrBuilder {
+            String getDirPath();
+
+            ByteString getDirPathBytes();
+
+            long getHashedDirPath(int i);
+
+            int getHashedDirPathCount();
+
+            List<Long> getHashedDirPathList();
+
+            long getSizeBytes();
+
+            boolean hasDirPath();
+
+            boolean hasSizeBytes();
         }
 
-        public static PackageMetric parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (PackageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
+        @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
+        public static final class DirStats extends GeneratedMessageLite<DirStats, Builder> implements DirStatsOrBuilder {
+            /* access modifiers changed from: private */
+            public static final DirStats DEFAULT_INSTANCE = new DirStats();
+            public static final int DIR_PATH_FIELD_NUMBER = 1;
+            public static final int HASHED_DIR_PATH_FIELD_NUMBER = 3;
+            public static final int SIZE_BYTES_FIELD_NUMBER = 2;
+            private static volatile Parser<DirStats> PARSER = null;
 
-        public static PackageMetric parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (PackageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
+            static {
+                GeneratedMessageLite.registerDefaultInstance(DirStats.class, DEFAULT_INSTANCE);
+            }
 
-        public static PackageMetric parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (PackageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
+            @ProtoPresenceBits(mo28548id = 0)
+            private int bitField0_;
+            @ProtoField(fieldNumber = 1, isEnforceUtf8 = false, isRequired = false, type = FieldType.STRING)
+            @ProtoPresenceCheckedField(mask = 1, presenceBitsId = 0)
+            private String dirPath_ = "";
+            @ProtoField(fieldNumber = 3, type = FieldType.FIXED64_LIST)
+            private Internal.LongList hashedDirPath_ = emptyLongList();
+            @ProtoField(fieldNumber = 2, isRequired = false, type = FieldType.INT64)
+            @ProtoPresenceCheckedField(mask = 2, presenceBitsId = 0)
+            private long sizeBytes_;
 
-        public static PackageMetric parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (PackageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
+            private DirStats() {
+            }
 
-        public static PackageMetric parseFrom(InputStream input) throws IOException {
-            return (PackageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
+            public static DirStats parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+                return (DirStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+            }
 
-        public static PackageMetric parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (PackageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
+            public static DirStats parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+                return (DirStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+            }
 
-        public static PackageMetric parseDelimitedFrom(InputStream input) throws IOException {
-            return (PackageMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
+            public static DirStats parseFrom(ByteString data) throws InvalidProtocolBufferException {
+                return (DirStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+            }
 
-        public static PackageMetric parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (PackageMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
+            public static DirStats parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+                return (DirStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+            }
 
-        public static PackageMetric parseFrom(CodedInputStream input) throws IOException {
-            return (PackageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
+            public static DirStats parseFrom(byte[] data) throws InvalidProtocolBufferException {
+                return (DirStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+            }
 
-        public static PackageMetric parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (PackageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
+            public static DirStats parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+                return (DirStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+            }
 
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
+            public static DirStats parseFrom(InputStream input) throws IOException {
+                return (DirStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+            }
 
-        public static Builder newBuilder(PackageMetric prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+            public static DirStats parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+                return (DirStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+            }
+
+            public static DirStats parseDelimitedFrom(InputStream input) throws IOException {
+                return (DirStats) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+            }
+
+            public static DirStats parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+                return (DirStats) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+            }
+
+            public static DirStats parseFrom(CodedInputStream input) throws IOException {
+                return (DirStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+            }
+
+            public static DirStats parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+                return (DirStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+            }
+
+            public static Builder newBuilder() {
+                return (Builder) DEFAULT_INSTANCE.createBuilder();
+            }
+
+            public static Builder newBuilder(DirStats prototype) {
+                return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+            }
+
+            public static DirStats getDefaultInstance() {
+                return DEFAULT_INSTANCE;
+            }
+
+            public static Parser<DirStats> parser() {
+                return DEFAULT_INSTANCE.getParserForType();
+            }
+
+            public boolean hasDirPath() {
+                return (this.bitField0_ & 1) != 0;
+            }
+
+            public String getDirPath() {
+                return this.dirPath_;
+            }
+
+            /* access modifiers changed from: private */
+            public void setDirPath(String value) {
+                if (value != null) {
+                    this.bitField0_ |= 1;
+                    this.dirPath_ = value;
+                    return;
+                }
+                throw new NullPointerException();
+            }
+
+            public ByteString getDirPathBytes() {
+                return ByteString.copyFromUtf8(this.dirPath_);
+            }
+
+            /* access modifiers changed from: private */
+            public void setDirPathBytes(ByteString value) {
+                if (value != null) {
+                    this.bitField0_ |= 1;
+                    this.dirPath_ = value.toStringUtf8();
+                    return;
+                }
+                throw new NullPointerException();
+            }
+
+            /* access modifiers changed from: private */
+            public void clearDirPath() {
+                this.bitField0_ &= -2;
+                this.dirPath_ = getDefaultInstance().getDirPath();
+            }
+
+            public List<Long> getHashedDirPathList() {
+                return this.hashedDirPath_;
+            }
+
+            public int getHashedDirPathCount() {
+                return this.hashedDirPath_.size();
+            }
+
+            public long getHashedDirPath(int index) {
+                return this.hashedDirPath_.getLong(index);
+            }
+
+            private void ensureHashedDirPathIsMutable() {
+                if (!this.hashedDirPath_.isModifiable()) {
+                    this.hashedDirPath_ = GeneratedMessageLite.mutableCopy(this.hashedDirPath_);
+                }
+            }
+
+            /* access modifiers changed from: private */
+            public void setHashedDirPath(int index, long value) {
+                ensureHashedDirPathIsMutable();
+                this.hashedDirPath_.setLong(index, value);
+            }
+
+            /* access modifiers changed from: private */
+            public void addHashedDirPath(long value) {
+                ensureHashedDirPathIsMutable();
+                this.hashedDirPath_.addLong(value);
+            }
+
+            /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+             method: com.google.protobuf.AbstractMessageLite.addAll(java.lang.Iterable, java.util.List):void
+             arg types: [java.lang.Iterable<? extends java.lang.Long>, com.google.protobuf.Internal$LongList]
+             candidates:
+              com.google.protobuf.AbstractMessageLite.addAll(java.lang.Iterable, java.util.Collection):void
+              com.google.protobuf.AbstractMessageLite.addAll(java.lang.Iterable, java.util.List):void */
+            /* access modifiers changed from: private */
+            public void addAllHashedDirPath(Iterable<? extends Long> values) {
+                ensureHashedDirPathIsMutable();
+                AbstractMessageLite.addAll((Iterable) values, (List) this.hashedDirPath_);
+            }
+
+            /* access modifiers changed from: private */
+            public void clearHashedDirPath() {
+                this.hashedDirPath_ = emptyLongList();
+            }
+
+            public boolean hasSizeBytes() {
+                return (this.bitField0_ & 2) != 0;
+            }
+
+            public long getSizeBytes() {
+                return this.sizeBytes_;
+            }
+
+            /* access modifiers changed from: private */
+            public void setSizeBytes(long value) {
+                this.bitField0_ |= 2;
+                this.sizeBytes_ = value;
+            }
+
+            /* access modifiers changed from: private */
+            public void clearSizeBytes() {
+                this.bitField0_ &= -3;
+                this.sizeBytes_ = 0;
+            }
+
+            /* access modifiers changed from: protected */
+            public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+                switch (method) {
+                    case NEW_MUTABLE_INSTANCE:
+                        return new DirStats();
+                    case NEW_BUILDER:
+                        return new Builder();
+                    case BUILD_MESSAGE_INFO:
+                        return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0003\u0000\u0001\u0001\u0003\u0003\u0000\u0001\u0000\u0001\b\u0000\u0002\u0002\u0001\u0003\u0017", new Object[]{"bitField0_", "dirPath_", "sizeBytes_", "hashedDirPath_"});
+                    case GET_DEFAULT_INSTANCE:
+                        return DEFAULT_INSTANCE;
+                    case GET_PARSER:
+                        Parser<DirStats> parser = PARSER;
+                        if (parser == null) {
+                            synchronized (DirStats.class) {
+                                parser = PARSER;
+                                if (parser == null) {
+                                    parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                    PARSER = parser;
+                                }
+                            }
+                        }
+                        return parser;
+                    case GET_MEMOIZED_IS_INITIALIZED:
+                        return (byte) 1;
+                    case SET_MEMOIZED_IS_INITIALIZED:
+                        return null;
+                    default:
+                        throw new UnsupportedOperationException();
+                }
+            }
+
+            public static final class Builder extends GeneratedMessageLite.Builder<DirStats, Builder> implements DirStatsOrBuilder {
+                private Builder() {
+                    super(DirStats.DEFAULT_INSTANCE);
+                }
+
+                public boolean hasDirPath() {
+                    return ((DirStats) this.instance).hasDirPath();
+                }
+
+                public String getDirPath() {
+                    return ((DirStats) this.instance).getDirPath();
+                }
+
+                public Builder setDirPath(String value) {
+                    copyOnWrite();
+                    ((DirStats) this.instance).setDirPath(value);
+                    return this;
+                }
+
+                public ByteString getDirPathBytes() {
+                    return ((DirStats) this.instance).getDirPathBytes();
+                }
+
+                public Builder setDirPathBytes(ByteString value) {
+                    copyOnWrite();
+                    ((DirStats) this.instance).setDirPathBytes(value);
+                    return this;
+                }
+
+                public Builder clearDirPath() {
+                    copyOnWrite();
+                    ((DirStats) this.instance).clearDirPath();
+                    return this;
+                }
+
+                public List<Long> getHashedDirPathList() {
+                    return Collections.unmodifiableList(((DirStats) this.instance).getHashedDirPathList());
+                }
+
+                public int getHashedDirPathCount() {
+                    return ((DirStats) this.instance).getHashedDirPathCount();
+                }
+
+                public long getHashedDirPath(int index) {
+                    return ((DirStats) this.instance).getHashedDirPath(index);
+                }
+
+                public Builder setHashedDirPath(int index, long value) {
+                    copyOnWrite();
+                    ((DirStats) this.instance).setHashedDirPath(index, value);
+                    return this;
+                }
+
+                public Builder addHashedDirPath(long value) {
+                    copyOnWrite();
+                    ((DirStats) this.instance).addHashedDirPath(value);
+                    return this;
+                }
+
+                public Builder addAllHashedDirPath(Iterable<? extends Long> values) {
+                    copyOnWrite();
+                    ((DirStats) this.instance).addAllHashedDirPath(values);
+                    return this;
+                }
+
+                public Builder clearHashedDirPath() {
+                    copyOnWrite();
+                    ((DirStats) this.instance).clearHashedDirPath();
+                    return this;
+                }
+
+                public boolean hasSizeBytes() {
+                    return ((DirStats) this.instance).hasSizeBytes();
+                }
+
+                public long getSizeBytes() {
+                    return ((DirStats) this.instance).getSizeBytes();
+                }
+
+                public Builder setSizeBytes(long value) {
+                    copyOnWrite();
+                    ((DirStats) this.instance).setSizeBytes(value);
+                    return this;
+                }
+
+                public Builder clearSizeBytes() {
+                    copyOnWrite();
+                    ((DirStats) this.instance).clearSizeBytes();
+                    return this;
+                }
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<PackageMetric, Builder> implements PackageMetricOrBuilder {
@@ -7725,11 +7771,6 @@ public final class SystemHealthProto {
             }
 
             @Deprecated
-            public ByteString getPackageNameBytes() {
-                return ((PackageMetric) this.instance).getPackageNameBytes();
-            }
-
-            @Deprecated
             public Builder setPackageName(String value) {
                 copyOnWrite();
                 ((PackageMetric) this.instance).setPackageName(value);
@@ -7737,16 +7778,21 @@ public final class SystemHealthProto {
             }
 
             @Deprecated
-            public Builder clearPackageName() {
-                copyOnWrite();
-                ((PackageMetric) this.instance).clearPackageName();
-                return this;
+            public ByteString getPackageNameBytes() {
+                return ((PackageMetric) this.instance).getPackageNameBytes();
             }
 
             @Deprecated
             public Builder setPackageNameBytes(ByteString value) {
                 copyOnWrite();
                 ((PackageMetric) this.instance).setPackageNameBytes(value);
+                return this;
+            }
+
+            @Deprecated
+            public Builder clearPackageName() {
+                copyOnWrite();
+                ((PackageMetric) this.instance).clearPackageName();
                 return this;
             }
 
@@ -7840,50 +7886,6 @@ public final class SystemHealthProto {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new PackageMetric();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u000b\u0000\u0001\u0001\u000b\u000b\u0000\u0001\u0000\u0001\u0002\u0000\u0002\u0002\u0001\u0003\u0002\u0002\u0004\u0002\u0003\u0005\u0002\u0004\u0006\u0002\u0005\u0007\u0002\u0006\b\u0002\u0007\t\b\b\n\u001b\u000b\u0002\t", new Object[]{"bitField0_", "cacheSize_", "codeSize_", "dataSize_", "externalCacheSize_", "externalCodeSize_", "externalDataSize_", "externalMediaSize_", "externalObbSize_", "packageName_", "dirStats_", DirStats.class, "dataPartitionSizeBytes_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<PackageMetric> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (PackageMetric.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(PackageMetric.class, DEFAULT_INSTANCE);
-        }
-
-        public static PackageMetric getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<PackageMetric> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -7895,8 +7897,13 @@ public final class SystemHealthProto {
         public static final int FRAME_TIME_HISTOGRAM_FIELD_NUMBER = 5;
         public static final int JANKY_FRAME_COUNT_FIELD_NUMBER = 1;
         public static final int MAX_FRAME_RENDER_TIME_MS_FIELD_NUMBER = 3;
-        private static volatile Parser<JankMetric> PARSER = null;
         public static final int RENDERED_FRAME_COUNT_FIELD_NUMBER = 2;
+        private static volatile Parser<JankMetric> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(JankMetric.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 6, isRequired = false, type = FieldType.INT32)
@@ -7918,6 +7925,70 @@ public final class SystemHealthProto {
         private int renderedFrameCount_;
 
         private JankMetric() {
+        }
+
+        public static JankMetric parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (JankMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static JankMetric parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (JankMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static JankMetric parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (JankMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static JankMetric parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (JankMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static JankMetric parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (JankMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static JankMetric parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (JankMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static JankMetric parseFrom(InputStream input) throws IOException {
+            return (JankMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static JankMetric parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (JankMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static JankMetric parseDelimitedFrom(InputStream input) throws IOException {
+            return (JankMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static JankMetric parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (JankMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static JankMetric parseFrom(CodedInputStream input) throws IOException {
+            return (JankMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static JankMetric parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (JankMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(JankMetric prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static JankMetric getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<JankMetric> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasJankyFrameCount() {
@@ -8117,60 +8188,36 @@ public final class SystemHealthProto {
             this.deviceRefreshRate_ = 0;
         }
 
-        public static JankMetric parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (JankMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static JankMetric parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (JankMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static JankMetric parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (JankMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static JankMetric parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (JankMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static JankMetric parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (JankMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static JankMetric parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (JankMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static JankMetric parseFrom(InputStream input) throws IOException {
-            return (JankMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static JankMetric parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (JankMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static JankMetric parseDelimitedFrom(InputStream input) throws IOException {
-            return (JankMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static JankMetric parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (JankMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static JankMetric parseFrom(CodedInputStream input) throws IOException {
-            return (JankMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static JankMetric parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (JankMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(JankMetric prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new JankMetric();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0006\u0000\u0001\u0001\u0006\u0006\u0000\u0001\u0000\u0001\u0004\u0000\u0002\u0004\u0001\u0003\u0004\u0002\u0004\u0004\u0003\u0005\u001b\u0006\u0004\u0004", new Object[]{"bitField0_", "jankyFrameCount_", "renderedFrameCount_", "maxFrameRenderTimeMs_", "durationMs_", "frameTimeHistogram_", HistogramBucket.class, "deviceRefreshRate_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<JankMetric> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (JankMetric.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<JankMetric, Builder> implements JankMetricOrBuilder {
@@ -8344,50 +8391,6 @@ public final class SystemHealthProto {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new JankMetric();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0006\u0000\u0001\u0001\u0006\u0006\u0000\u0001\u0000\u0001\u0004\u0000\u0002\u0004\u0001\u0003\u0004\u0002\u0004\u0004\u0003\u0005\u001b\u0006\u0004\u0004", new Object[]{"bitField0_", "jankyFrameCount_", "renderedFrameCount_", "maxFrameRenderTimeMs_", "durationMs_", "frameTimeHistogram_", HistogramBucket.class, "deviceRefreshRate_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<JankMetric> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (JankMetric.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(JankMetric.class, DEFAULT_INSTANCE);
-        }
-
-        public static JankMetric getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<JankMetric> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -8398,6 +8401,11 @@ public final class SystemHealthProto {
         public static final int MAX_FIELD_NUMBER = 3;
         public static final int MIN_FIELD_NUMBER = 2;
         private static volatile Parser<HistogramBucket> PARSER;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(HistogramBucket.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.INT32)
@@ -8411,6 +8419,70 @@ public final class SystemHealthProto {
         private int min_;
 
         private HistogramBucket() {
+        }
+
+        public static HistogramBucket parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (HistogramBucket) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static HistogramBucket parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (HistogramBucket) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static HistogramBucket parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (HistogramBucket) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static HistogramBucket parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (HistogramBucket) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static HistogramBucket parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (HistogramBucket) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static HistogramBucket parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (HistogramBucket) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static HistogramBucket parseFrom(InputStream input) throws IOException {
+            return (HistogramBucket) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static HistogramBucket parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (HistogramBucket) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static HistogramBucket parseDelimitedFrom(InputStream input) throws IOException {
+            return (HistogramBucket) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static HistogramBucket parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (HistogramBucket) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static HistogramBucket parseFrom(CodedInputStream input) throws IOException {
+            return (HistogramBucket) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static HistogramBucket parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (HistogramBucket) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(HistogramBucket prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static HistogramBucket getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<HistogramBucket> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasCount() {
@@ -8473,60 +8545,36 @@ public final class SystemHealthProto {
             this.max_ = 0;
         }
 
-        public static HistogramBucket parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (HistogramBucket) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static HistogramBucket parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (HistogramBucket) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static HistogramBucket parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (HistogramBucket) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static HistogramBucket parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (HistogramBucket) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static HistogramBucket parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (HistogramBucket) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static HistogramBucket parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (HistogramBucket) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static HistogramBucket parseFrom(InputStream input) throws IOException {
-            return (HistogramBucket) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static HistogramBucket parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (HistogramBucket) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static HistogramBucket parseDelimitedFrom(InputStream input) throws IOException {
-            return (HistogramBucket) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static HistogramBucket parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (HistogramBucket) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static HistogramBucket parseFrom(CodedInputStream input) throws IOException {
-            return (HistogramBucket) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static HistogramBucket parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (HistogramBucket) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(HistogramBucket prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new HistogramBucket();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0003\u0000\u0001\u0001\u0003\u0003\u0000\u0000\u0000\u0001\u0004\u0000\u0002\u0004\u0001\u0003\u0004\u0002", new Object[]{"bitField0_", "count_", "min_", "max_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<HistogramBucket> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (HistogramBucket.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<HistogramBucket, Builder> implements HistogramBucketOrBuilder {
@@ -8594,50 +8642,6 @@ public final class SystemHealthProto {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new HistogramBucket();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0003\u0000\u0001\u0001\u0003\u0003\u0000\u0000\u0000\u0001\u0004\u0000\u0002\u0004\u0001\u0003\u0004\u0002", new Object[]{"bitField0_", "count_", "min_", "max_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<HistogramBucket> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (HistogramBucket.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(HistogramBucket.class, DEFAULT_INSTANCE);
-        }
-
-        public static HistogramBucket getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<HistogramBucket> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -8646,6 +8650,11 @@ public final class SystemHealthProto {
         /* access modifiers changed from: private */
         public static final MagicEyeMetric DEFAULT_INSTANCE = new MagicEyeMetric();
         private static volatile Parser<MagicEyeMetric> PARSER;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(MagicEyeMetric.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.ENUM)
         @ProtoPresenceCheckedField(mask = 1, presenceBitsId = 0)
         private int appStateEvent_;
@@ -8653,87 +8662,6 @@ public final class SystemHealthProto {
         private int bitField0_;
 
         private MagicEyeMetric() {
-        }
-
-        public enum AppStateEvent implements Internal.EnumLite {
-            UNKNOWN(0),
-            APP_TO_FOREGROUND(1),
-            APP_TO_BACKGROUND(2);
-            
-            public static final int APP_TO_BACKGROUND_VALUE = 2;
-            public static final int APP_TO_FOREGROUND_VALUE = 1;
-            public static final int UNKNOWN_VALUE = 0;
-            private static final Internal.EnumLiteMap<AppStateEvent> internalValueMap = new Internal.EnumLiteMap<AppStateEvent>() {
-                public AppStateEvent findValueByNumber(int number) {
-                    return AppStateEvent.forNumber(number);
-                }
-            };
-            private final int value;
-
-            public final int getNumber() {
-                return this.value;
-            }
-
-            public static AppStateEvent forNumber(int value2) {
-                if (value2 == 0) {
-                    return UNKNOWN;
-                }
-                if (value2 == 1) {
-                    return APP_TO_FOREGROUND;
-                }
-                if (value2 != 2) {
-                    return null;
-                }
-                return APP_TO_BACKGROUND;
-            }
-
-            public static Internal.EnumLiteMap<AppStateEvent> internalGetValueMap() {
-                return internalValueMap;
-            }
-
-            public static Internal.EnumVerifier internalGetVerifier() {
-                return AppStateEventVerifier.INSTANCE;
-            }
-
-            private static final class AppStateEventVerifier implements Internal.EnumVerifier {
-                static final Internal.EnumVerifier INSTANCE = new AppStateEventVerifier();
-
-                private AppStateEventVerifier() {
-                }
-
-                public boolean isInRange(int number) {
-                    return AppStateEvent.forNumber(number) != null;
-                }
-            }
-
-            private AppStateEvent(int value2) {
-                this.value = value2;
-            }
-        }
-
-        public boolean hasAppStateEvent() {
-            return (this.bitField0_ & 1) != 0;
-        }
-
-        public AppStateEvent getAppStateEvent() {
-            AppStateEvent result = AppStateEvent.forNumber(this.appStateEvent_);
-            return result == null ? AppStateEvent.UNKNOWN : result;
-        }
-
-        /* access modifiers changed from: private */
-        public void setAppStateEvent(AppStateEvent value) {
-            if (value != null) {
-                this.bitField0_ |= 1;
-                this.appStateEvent_ = value.getNumber();
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        /* access modifiers changed from: private */
-        public void clearAppStateEvent() {
-            this.bitField0_ &= -2;
-            this.appStateEvent_ = 0;
         }
 
         public static MagicEyeMetric parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
@@ -8792,30 +8720,37 @@ public final class SystemHealthProto {
             return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
         }
 
-        public static final class Builder extends GeneratedMessageLite.Builder<MagicEyeMetric, Builder> implements MagicEyeMetricOrBuilder {
-            private Builder() {
-                super(MagicEyeMetric.DEFAULT_INSTANCE);
-            }
+        public static MagicEyeMetric getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
 
-            public boolean hasAppStateEvent() {
-                return ((MagicEyeMetric) this.instance).hasAppStateEvent();
-            }
+        public static Parser<MagicEyeMetric> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
+        }
 
-            public AppStateEvent getAppStateEvent() {
-                return ((MagicEyeMetric) this.instance).getAppStateEvent();
-            }
+        public boolean hasAppStateEvent() {
+            return (this.bitField0_ & 1) != 0;
+        }
 
-            public Builder setAppStateEvent(AppStateEvent value) {
-                copyOnWrite();
-                ((MagicEyeMetric) this.instance).setAppStateEvent(value);
-                return this;
-            }
+        public AppStateEvent getAppStateEvent() {
+            AppStateEvent result = AppStateEvent.forNumber(this.appStateEvent_);
+            return result == null ? AppStateEvent.UNKNOWN : result;
+        }
 
-            public Builder clearAppStateEvent() {
-                copyOnWrite();
-                ((MagicEyeMetric) this.instance).clearAppStateEvent();
-                return this;
+        /* access modifiers changed from: private */
+        public void setAppStateEvent(AppStateEvent value) {
+            if (value != null) {
+                this.bitField0_ |= 1;
+                this.appStateEvent_ = value.getNumber();
+                return;
             }
+            throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearAppStateEvent() {
+            this.bitField0_ &= -2;
+            this.appStateEvent_ = 0;
         }
 
         /* access modifiers changed from: protected */
@@ -8850,16 +8785,86 @@ public final class SystemHealthProto {
             }
         }
 
-        static {
-            GeneratedMessageLite.registerDefaultInstance(MagicEyeMetric.class, DEFAULT_INSTANCE);
+        public enum AppStateEvent implements Internal.EnumLite {
+            UNKNOWN(0),
+            APP_TO_FOREGROUND(1),
+            APP_TO_BACKGROUND(2);
+
+            public static final int APP_TO_BACKGROUND_VALUE = 2;
+            public static final int APP_TO_FOREGROUND_VALUE = 1;
+            public static final int UNKNOWN_VALUE = 0;
+            private static final Internal.EnumLiteMap<AppStateEvent> internalValueMap = new Internal.EnumLiteMap<AppStateEvent>() {
+                public AppStateEvent findValueByNumber(int number) {
+                    return AppStateEvent.forNumber(number);
+                }
+            };
+            private final int value;
+
+            private AppStateEvent(int value2) {
+                this.value = value2;
+            }
+
+            public static AppStateEvent forNumber(int value2) {
+                if (value2 == 0) {
+                    return UNKNOWN;
+                }
+                if (value2 == 1) {
+                    return APP_TO_FOREGROUND;
+                }
+                if (value2 != 2) {
+                    return null;
+                }
+                return APP_TO_BACKGROUND;
+            }
+
+            public static Internal.EnumLiteMap<AppStateEvent> internalGetValueMap() {
+                return internalValueMap;
+            }
+
+            public static Internal.EnumVerifier internalGetVerifier() {
+                return AppStateEventVerifier.INSTANCE;
+            }
+
+            public final int getNumber() {
+                return this.value;
+            }
+
+            private static final class AppStateEventVerifier implements Internal.EnumVerifier {
+                static final Internal.EnumVerifier INSTANCE = new AppStateEventVerifier();
+
+                private AppStateEventVerifier() {
+                }
+
+                public boolean isInRange(int number) {
+                    return AppStateEvent.forNumber(number) != null;
+                }
+            }
         }
 
-        public static MagicEyeMetric getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
+        public static final class Builder extends GeneratedMessageLite.Builder<MagicEyeMetric, Builder> implements MagicEyeMetricOrBuilder {
+            private Builder() {
+                super(MagicEyeMetric.DEFAULT_INSTANCE);
+            }
 
-        public static Parser<MagicEyeMetric> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
+            public boolean hasAppStateEvent() {
+                return ((MagicEyeMetric) this.instance).hasAppStateEvent();
+            }
+
+            public AppStateEvent getAppStateEvent() {
+                return ((MagicEyeMetric) this.instance).getAppStateEvent();
+            }
+
+            public Builder setAppStateEvent(AppStateEvent value) {
+                copyOnWrite();
+                ((MagicEyeMetric) this.instance).setAppStateEvent(value);
+                return this;
+            }
+
+            public Builder clearAppStateEvent() {
+                copyOnWrite();
+                ((MagicEyeMetric) this.instance).clearAppStateEvent();
+                return this;
+            }
         }
     }
 
@@ -8868,9 +8873,14 @@ public final class SystemHealthProto {
         /* access modifiers changed from: private */
         public static final PrimesHeapDumpEvent DEFAULT_INSTANCE = new PrimesHeapDumpEvent();
         public static final int ERROR_FIELD_NUMBER = 1;
-        private static volatile Parser<PrimesHeapDumpEvent> PARSER = null;
         public static final int SERIALIZED_SIZE_KB_FIELD_NUMBER = 2;
         public static final int TOTAL_PSS_KB_SAMPLES_FIELD_NUMBER = 3;
+        private static volatile Parser<PrimesHeapDumpEvent> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(PrimesHeapDumpEvent.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.ENUM)
@@ -8885,70 +8895,68 @@ public final class SystemHealthProto {
         private PrimesHeapDumpEvent() {
         }
 
-        public enum PrimesHeapDumpError implements Internal.EnumLite {
-            UNKNOWN(0),
-            OUT_OF_MEMORY_PARSING(1),
-            OUT_OF_MEMORY_SERIALIZING(2),
-            SERIALIZED_HEAP_DUMP_TOO_LARGE(3),
-            NONE(4);
-            
-            public static final int NONE_VALUE = 4;
-            public static final int OUT_OF_MEMORY_PARSING_VALUE = 1;
-            public static final int OUT_OF_MEMORY_SERIALIZING_VALUE = 2;
-            public static final int SERIALIZED_HEAP_DUMP_TOO_LARGE_VALUE = 3;
-            public static final int UNKNOWN_VALUE = 0;
-            private static final Internal.EnumLiteMap<PrimesHeapDumpError> internalValueMap = new Internal.EnumLiteMap<PrimesHeapDumpError>() {
-                public PrimesHeapDumpError findValueByNumber(int number) {
-                    return PrimesHeapDumpError.forNumber(number);
-                }
-            };
-            private final int value;
+        public static PrimesHeapDumpEvent parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (PrimesHeapDumpEvent) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
 
-            public final int getNumber() {
-                return this.value;
-            }
+        public static PrimesHeapDumpEvent parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (PrimesHeapDumpEvent) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-            public static PrimesHeapDumpError forNumber(int value2) {
-                if (value2 == 0) {
-                    return UNKNOWN;
-                }
-                if (value2 == 1) {
-                    return OUT_OF_MEMORY_PARSING;
-                }
-                if (value2 == 2) {
-                    return OUT_OF_MEMORY_SERIALIZING;
-                }
-                if (value2 == 3) {
-                    return SERIALIZED_HEAP_DUMP_TOO_LARGE;
-                }
-                if (value2 != 4) {
-                    return null;
-                }
-                return NONE;
-            }
+        public static PrimesHeapDumpEvent parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (PrimesHeapDumpEvent) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
 
-            public static Internal.EnumLiteMap<PrimesHeapDumpError> internalGetValueMap() {
-                return internalValueMap;
-            }
+        public static PrimesHeapDumpEvent parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (PrimesHeapDumpEvent) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-            public static Internal.EnumVerifier internalGetVerifier() {
-                return PrimesHeapDumpErrorVerifier.INSTANCE;
-            }
+        public static PrimesHeapDumpEvent parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (PrimesHeapDumpEvent) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
 
-            private static final class PrimesHeapDumpErrorVerifier implements Internal.EnumVerifier {
-                static final Internal.EnumVerifier INSTANCE = new PrimesHeapDumpErrorVerifier();
+        public static PrimesHeapDumpEvent parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (PrimesHeapDumpEvent) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-                private PrimesHeapDumpErrorVerifier() {
-                }
+        public static PrimesHeapDumpEvent parseFrom(InputStream input) throws IOException {
+            return (PrimesHeapDumpEvent) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
 
-                public boolean isInRange(int number) {
-                    return PrimesHeapDumpError.forNumber(number) != null;
-                }
-            }
+        public static PrimesHeapDumpEvent parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (PrimesHeapDumpEvent) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
 
-            private PrimesHeapDumpError(int value2) {
-                this.value = value2;
-            }
+        public static PrimesHeapDumpEvent parseDelimitedFrom(InputStream input) throws IOException {
+            return (PrimesHeapDumpEvent) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static PrimesHeapDumpEvent parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (PrimesHeapDumpEvent) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static PrimesHeapDumpEvent parseFrom(CodedInputStream input) throws IOException {
+            return (PrimesHeapDumpEvent) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static PrimesHeapDumpEvent parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (PrimesHeapDumpEvent) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(PrimesHeapDumpEvent prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static PrimesHeapDumpEvent getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<PrimesHeapDumpEvent> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasError() {
@@ -9043,60 +9051,102 @@ public final class SystemHealthProto {
             this.totalPssKbSamples_ = emptyIntList();
         }
 
-        public static PrimesHeapDumpEvent parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (PrimesHeapDumpEvent) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new PrimesHeapDumpEvent();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0003\u0000\u0001\u0001\u0003\u0003\u0000\u0001\u0000\u0001\f\u0000\u0002\u0004\u0001\u0003\u0016", new Object[]{"bitField0_", "error_", PrimesHeapDumpError.internalGetVerifier(), "serializedSizeKb_", "totalPssKbSamples_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<PrimesHeapDumpEvent> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (PrimesHeapDumpEvent.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
-        public static PrimesHeapDumpEvent parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (PrimesHeapDumpEvent) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
+        public enum PrimesHeapDumpError implements Internal.EnumLite {
+            UNKNOWN(0),
+            OUT_OF_MEMORY_PARSING(1),
+            OUT_OF_MEMORY_SERIALIZING(2),
+            SERIALIZED_HEAP_DUMP_TOO_LARGE(3),
+            NONE(4);
 
-        public static PrimesHeapDumpEvent parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (PrimesHeapDumpEvent) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
+            public static final int NONE_VALUE = 4;
+            public static final int OUT_OF_MEMORY_PARSING_VALUE = 1;
+            public static final int OUT_OF_MEMORY_SERIALIZING_VALUE = 2;
+            public static final int SERIALIZED_HEAP_DUMP_TOO_LARGE_VALUE = 3;
+            public static final int UNKNOWN_VALUE = 0;
+            private static final Internal.EnumLiteMap<PrimesHeapDumpError> internalValueMap = new Internal.EnumLiteMap<PrimesHeapDumpError>() {
+                public PrimesHeapDumpError findValueByNumber(int number) {
+                    return PrimesHeapDumpError.forNumber(number);
+                }
+            };
+            private final int value;
 
-        public static PrimesHeapDumpEvent parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (PrimesHeapDumpEvent) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
+            private PrimesHeapDumpError(int value2) {
+                this.value = value2;
+            }
 
-        public static PrimesHeapDumpEvent parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (PrimesHeapDumpEvent) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
+            public static PrimesHeapDumpError forNumber(int value2) {
+                if (value2 == 0) {
+                    return UNKNOWN;
+                }
+                if (value2 == 1) {
+                    return OUT_OF_MEMORY_PARSING;
+                }
+                if (value2 == 2) {
+                    return OUT_OF_MEMORY_SERIALIZING;
+                }
+                if (value2 == 3) {
+                    return SERIALIZED_HEAP_DUMP_TOO_LARGE;
+                }
+                if (value2 != 4) {
+                    return null;
+                }
+                return NONE;
+            }
 
-        public static PrimesHeapDumpEvent parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (PrimesHeapDumpEvent) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
+            public static Internal.EnumLiteMap<PrimesHeapDumpError> internalGetValueMap() {
+                return internalValueMap;
+            }
 
-        public static PrimesHeapDumpEvent parseFrom(InputStream input) throws IOException {
-            return (PrimesHeapDumpEvent) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
+            public static Internal.EnumVerifier internalGetVerifier() {
+                return PrimesHeapDumpErrorVerifier.INSTANCE;
+            }
 
-        public static PrimesHeapDumpEvent parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (PrimesHeapDumpEvent) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
+            public final int getNumber() {
+                return this.value;
+            }
 
-        public static PrimesHeapDumpEvent parseDelimitedFrom(InputStream input) throws IOException {
-            return (PrimesHeapDumpEvent) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
+            private static final class PrimesHeapDumpErrorVerifier implements Internal.EnumVerifier {
+                static final Internal.EnumVerifier INSTANCE = new PrimesHeapDumpErrorVerifier();
 
-        public static PrimesHeapDumpEvent parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (PrimesHeapDumpEvent) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
+                private PrimesHeapDumpErrorVerifier() {
+                }
 
-        public static PrimesHeapDumpEvent parseFrom(CodedInputStream input) throws IOException {
-            return (PrimesHeapDumpEvent) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static PrimesHeapDumpEvent parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (PrimesHeapDumpEvent) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(PrimesHeapDumpEvent prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+                public boolean isInRange(int number) {
+                    return PrimesHeapDumpError.forNumber(number) != null;
+                }
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<PrimesHeapDumpEvent, Builder> implements PrimesHeapDumpEventOrBuilder {
@@ -9180,50 +9230,6 @@ public final class SystemHealthProto {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new PrimesHeapDumpEvent();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0003\u0000\u0001\u0001\u0003\u0003\u0000\u0001\u0000\u0001\f\u0000\u0002\u0004\u0001\u0003\u0016", new Object[]{"bitField0_", "error_", PrimesHeapDumpError.internalGetVerifier(), "serializedSizeKb_", "totalPssKbSamples_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<PrimesHeapDumpEvent> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (PrimesHeapDumpEvent.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(PrimesHeapDumpEvent.class, DEFAULT_INSTANCE);
-        }
-
-        public static PrimesHeapDumpEvent getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<PrimesHeapDumpEvent> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -9231,8 +9237,13 @@ public final class SystemHealthProto {
         public static final int AVAILABLE_DISK_SIZE_KB_FIELD_NUMBER = 1;
         /* access modifiers changed from: private */
         public static final DeviceInfo DEFAULT_INSTANCE = new DeviceInfo();
-        private static volatile Parser<DeviceInfo> PARSER = null;
         public static final int TOTAL_DISK_SIZE_KB_FIELD_NUMBER = 2;
+        private static volatile Parser<DeviceInfo> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(DeviceInfo.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.INT64)
         @ProtoPresenceCheckedField(mask = 1, presenceBitsId = 0)
         private long availableDiskSizeKb_;
@@ -9243,46 +9254,6 @@ public final class SystemHealthProto {
         private long totalDiskSizeKb_;
 
         private DeviceInfo() {
-        }
-
-        public boolean hasAvailableDiskSizeKb() {
-            return (this.bitField0_ & 1) != 0;
-        }
-
-        public long getAvailableDiskSizeKb() {
-            return this.availableDiskSizeKb_;
-        }
-
-        /* access modifiers changed from: private */
-        public void setAvailableDiskSizeKb(long value) {
-            this.bitField0_ |= 1;
-            this.availableDiskSizeKb_ = value;
-        }
-
-        /* access modifiers changed from: private */
-        public void clearAvailableDiskSizeKb() {
-            this.bitField0_ &= -2;
-            this.availableDiskSizeKb_ = 0;
-        }
-
-        public boolean hasTotalDiskSizeKb() {
-            return (this.bitField0_ & 2) != 0;
-        }
-
-        public long getTotalDiskSizeKb() {
-            return this.totalDiskSizeKb_;
-        }
-
-        /* access modifiers changed from: private */
-        public void setTotalDiskSizeKb(long value) {
-            this.bitField0_ |= 2;
-            this.totalDiskSizeKb_ = value;
-        }
-
-        /* access modifiers changed from: private */
-        public void clearTotalDiskSizeKb() {
-            this.bitField0_ &= -3;
-            this.totalDiskSizeKb_ = 0;
         }
 
         public static DeviceInfo parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
@@ -9341,6 +9312,86 @@ public final class SystemHealthProto {
             return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
         }
 
+        public static DeviceInfo getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<DeviceInfo> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
+        }
+
+        public boolean hasAvailableDiskSizeKb() {
+            return (this.bitField0_ & 1) != 0;
+        }
+
+        public long getAvailableDiskSizeKb() {
+            return this.availableDiskSizeKb_;
+        }
+
+        /* access modifiers changed from: private */
+        public void setAvailableDiskSizeKb(long value) {
+            this.bitField0_ |= 1;
+            this.availableDiskSizeKb_ = value;
+        }
+
+        /* access modifiers changed from: private */
+        public void clearAvailableDiskSizeKb() {
+            this.bitField0_ &= -2;
+            this.availableDiskSizeKb_ = 0;
+        }
+
+        public boolean hasTotalDiskSizeKb() {
+            return (this.bitField0_ & 2) != 0;
+        }
+
+        public long getTotalDiskSizeKb() {
+            return this.totalDiskSizeKb_;
+        }
+
+        /* access modifiers changed from: private */
+        public void setTotalDiskSizeKb(long value) {
+            this.bitField0_ |= 2;
+            this.totalDiskSizeKb_ = value;
+        }
+
+        /* access modifiers changed from: private */
+        public void clearTotalDiskSizeKb() {
+            this.bitField0_ &= -3;
+            this.totalDiskSizeKb_ = 0;
+        }
+
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new DeviceInfo();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0000\u0000\u0001\u0002\u0000\u0002\u0002\u0001", new Object[]{"bitField0_", "availableDiskSizeKb_", "totalDiskSizeKb_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<DeviceInfo> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (DeviceInfo.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
+        }
+
         public static final class Builder extends GeneratedMessageLite.Builder<DeviceInfo, Builder> implements DeviceInfoOrBuilder {
             private Builder() {
                 super(DeviceInfo.DEFAULT_INSTANCE);
@@ -9386,50 +9437,6 @@ public final class SystemHealthProto {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new DeviceInfo();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0000\u0000\u0001\u0002\u0000\u0002\u0002\u0001", new Object[]{"bitField0_", "availableDiskSizeKb_", "totalDiskSizeKb_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<DeviceInfo> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (DeviceInfo.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(DeviceInfo.class, DEFAULT_INSTANCE);
-        }
-
-        public static DeviceInfo getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<DeviceInfo> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -9438,269 +9445,79 @@ public final class SystemHealthProto {
         public static final PrimesForPrimes DEFAULT_INSTANCE = new PrimesForPrimes();
         public static final int INTERNAL_TIMERS_FIELD_NUMBER = 1;
         private static volatile Parser<PrimesForPrimes> PARSER;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(PrimesForPrimes.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoField(fieldNumber = 1, type = FieldType.MESSAGE_LIST)
         private Internal.ProtobufList<InternalTimer> internalTimers_ = emptyProtobufList();
-
-        public interface InternalTimerOrBuilder extends MessageLiteOrBuilder {
-            MicroCpuTime getDuration();
-
-            PrimesForPrimesEventProto.PrimesForPrimesEvent getPrimesForPrimesEvent();
-
-            boolean hasDuration();
-
-            boolean hasPrimesForPrimesEvent();
-        }
 
         private PrimesForPrimes() {
         }
 
-        @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
-        public static final class InternalTimer extends GeneratedMessageLite<InternalTimer, Builder> implements InternalTimerOrBuilder {
-            /* access modifiers changed from: private */
-            public static final InternalTimer DEFAULT_INSTANCE = new InternalTimer();
-            public static final int DURATION_FIELD_NUMBER = 2;
-            private static volatile Parser<InternalTimer> PARSER = null;
-            public static final int PRIMES_FOR_PRIMES_EVENT_FIELD_NUMBER = 1;
-            @ProtoPresenceBits(mo28548id = 0)
-            private int bitField0_;
-            @ProtoField(fieldNumber = 2, isRequired = false, type = FieldType.MESSAGE)
-            @ProtoPresenceCheckedField(mask = 2, presenceBitsId = 0)
-            private MicroCpuTime duration_;
-            @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.ENUM)
-            @ProtoPresenceCheckedField(mask = 1, presenceBitsId = 0)
-            private int primesForPrimesEvent_;
+        public static PrimesForPrimes parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (PrimesForPrimes) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
 
-            private InternalTimer() {
-            }
+        public static PrimesForPrimes parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (PrimesForPrimes) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-            public boolean hasPrimesForPrimesEvent() {
-                return (this.bitField0_ & 1) != 0;
-            }
+        public static PrimesForPrimes parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (PrimesForPrimes) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
 
-            public PrimesForPrimesEventProto.PrimesForPrimesEvent getPrimesForPrimesEvent() {
-                PrimesForPrimesEventProto.PrimesForPrimesEvent result = PrimesForPrimesEventProto.PrimesForPrimesEvent.forNumber(this.primesForPrimesEvent_);
-                return result == null ? PrimesForPrimesEventProto.PrimesForPrimesEvent.UNKNOWN : result;
-            }
+        public static PrimesForPrimes parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (PrimesForPrimes) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-            /* access modifiers changed from: private */
-            public void setPrimesForPrimesEvent(PrimesForPrimesEventProto.PrimesForPrimesEvent value) {
-                if (value != null) {
-                    this.bitField0_ |= 1;
-                    this.primesForPrimesEvent_ = value.getNumber();
-                    return;
-                }
-                throw new NullPointerException();
-            }
+        public static PrimesForPrimes parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (PrimesForPrimes) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
 
-            /* access modifiers changed from: private */
-            public void clearPrimesForPrimesEvent() {
-                this.bitField0_ &= -2;
-                this.primesForPrimesEvent_ = 0;
-            }
+        public static PrimesForPrimes parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (PrimesForPrimes) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-            public boolean hasDuration() {
-                return (this.bitField0_ & 2) != 0;
-            }
+        public static PrimesForPrimes parseFrom(InputStream input) throws IOException {
+            return (PrimesForPrimes) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
 
-            public MicroCpuTime getDuration() {
-                MicroCpuTime microCpuTime = this.duration_;
-                return microCpuTime == null ? MicroCpuTime.getDefaultInstance() : microCpuTime;
-            }
+        public static PrimesForPrimes parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (PrimesForPrimes) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
 
-            /* access modifiers changed from: private */
-            public void setDuration(MicroCpuTime value) {
-                if (value != null) {
-                    this.duration_ = value;
-                    this.bitField0_ |= 2;
-                    return;
-                }
-                throw new NullPointerException();
-            }
+        public static PrimesForPrimes parseDelimitedFrom(InputStream input) throws IOException {
+            return (PrimesForPrimes) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
 
-            /* access modifiers changed from: private */
-            public void setDuration(MicroCpuTime.Builder builderForValue) {
-                this.duration_ = (MicroCpuTime) builderForValue.build();
-                this.bitField0_ |= 2;
-            }
+        public static PrimesForPrimes parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (PrimesForPrimes) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
 
-            /* access modifiers changed from: private */
-            public void mergeDuration(MicroCpuTime value) {
-                if (value != null) {
-                    MicroCpuTime microCpuTime = this.duration_;
-                    if (microCpuTime == null || microCpuTime == MicroCpuTime.getDefaultInstance()) {
-                        this.duration_ = value;
-                    } else {
-                        this.duration_ = (MicroCpuTime) ((MicroCpuTime.Builder) MicroCpuTime.newBuilder(this.duration_).mergeFrom((GeneratedMessageLite) value)).buildPartial();
-                    }
-                    this.bitField0_ |= 2;
-                    return;
-                }
-                throw new NullPointerException();
-            }
+        public static PrimesForPrimes parseFrom(CodedInputStream input) throws IOException {
+            return (PrimesForPrimes) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
 
-            /* access modifiers changed from: private */
-            public void clearDuration() {
-                this.duration_ = null;
-                this.bitField0_ &= -3;
-            }
+        public static PrimesForPrimes parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (PrimesForPrimes) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
 
-            public static InternalTimer parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-                return (InternalTimer) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-            }
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
 
-            public static InternalTimer parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-                return (InternalTimer) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-            }
+        public static Builder newBuilder(PrimesForPrimes prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
 
-            public static InternalTimer parseFrom(ByteString data) throws InvalidProtocolBufferException {
-                return (InternalTimer) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-            }
+        public static PrimesForPrimes getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
 
-            public static InternalTimer parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-                return (InternalTimer) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-            }
-
-            public static InternalTimer parseFrom(byte[] data) throws InvalidProtocolBufferException {
-                return (InternalTimer) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-            }
-
-            public static InternalTimer parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-                return (InternalTimer) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-            }
-
-            public static InternalTimer parseFrom(InputStream input) throws IOException {
-                return (InternalTimer) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-            }
-
-            public static InternalTimer parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-                return (InternalTimer) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-            }
-
-            public static InternalTimer parseDelimitedFrom(InputStream input) throws IOException {
-                return (InternalTimer) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-            }
-
-            public static InternalTimer parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-                return (InternalTimer) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-            }
-
-            public static InternalTimer parseFrom(CodedInputStream input) throws IOException {
-                return (InternalTimer) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-            }
-
-            public static InternalTimer parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-                return (InternalTimer) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-            }
-
-            public static Builder newBuilder() {
-                return (Builder) DEFAULT_INSTANCE.createBuilder();
-            }
-
-            public static Builder newBuilder(InternalTimer prototype) {
-                return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
-            }
-
-            public static final class Builder extends GeneratedMessageLite.Builder<InternalTimer, Builder> implements InternalTimerOrBuilder {
-                private Builder() {
-                    super(InternalTimer.DEFAULT_INSTANCE);
-                }
-
-                public boolean hasPrimesForPrimesEvent() {
-                    return ((InternalTimer) this.instance).hasPrimesForPrimesEvent();
-                }
-
-                public PrimesForPrimesEventProto.PrimesForPrimesEvent getPrimesForPrimesEvent() {
-                    return ((InternalTimer) this.instance).getPrimesForPrimesEvent();
-                }
-
-                public Builder setPrimesForPrimesEvent(PrimesForPrimesEventProto.PrimesForPrimesEvent value) {
-                    copyOnWrite();
-                    ((InternalTimer) this.instance).setPrimesForPrimesEvent(value);
-                    return this;
-                }
-
-                public Builder clearPrimesForPrimesEvent() {
-                    copyOnWrite();
-                    ((InternalTimer) this.instance).clearPrimesForPrimesEvent();
-                    return this;
-                }
-
-                public boolean hasDuration() {
-                    return ((InternalTimer) this.instance).hasDuration();
-                }
-
-                public MicroCpuTime getDuration() {
-                    return ((InternalTimer) this.instance).getDuration();
-                }
-
-                public Builder setDuration(MicroCpuTime value) {
-                    copyOnWrite();
-                    ((InternalTimer) this.instance).setDuration(value);
-                    return this;
-                }
-
-                public Builder setDuration(MicroCpuTime.Builder builderForValue) {
-                    copyOnWrite();
-                    ((InternalTimer) this.instance).setDuration(builderForValue);
-                    return this;
-                }
-
-                public Builder mergeDuration(MicroCpuTime value) {
-                    copyOnWrite();
-                    ((InternalTimer) this.instance).mergeDuration(value);
-                    return this;
-                }
-
-                public Builder clearDuration() {
-                    copyOnWrite();
-                    ((InternalTimer) this.instance).clearDuration();
-                    return this;
-                }
-            }
-
-            /* access modifiers changed from: protected */
-            public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-                switch (method) {
-                    case NEW_MUTABLE_INSTANCE:
-                        return new InternalTimer();
-                    case NEW_BUILDER:
-                        return new Builder();
-                    case BUILD_MESSAGE_INFO:
-                        return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0000\u0000\u0001\f\u0000\u0002\t\u0001", new Object[]{"bitField0_", "primesForPrimesEvent_", PrimesForPrimesEventProto.PrimesForPrimesEvent.internalGetVerifier(), "duration_"});
-                    case GET_DEFAULT_INSTANCE:
-                        return DEFAULT_INSTANCE;
-                    case GET_PARSER:
-                        Parser<InternalTimer> parser = PARSER;
-                        if (parser == null) {
-                            synchronized (InternalTimer.class) {
-                                parser = PARSER;
-                                if (parser == null) {
-                                    parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                    PARSER = parser;
-                                }
-                            }
-                        }
-                        return parser;
-                    case GET_MEMOIZED_IS_INITIALIZED:
-                        return (byte) 1;
-                    case SET_MEMOIZED_IS_INITIALIZED:
-                        return null;
-                    default:
-                        throw new UnsupportedOperationException();
-                }
-            }
-
-            static {
-                GeneratedMessageLite.registerDefaultInstance(InternalTimer.class, DEFAULT_INSTANCE);
-            }
-
-            public static InternalTimer getDefaultInstance() {
-                return DEFAULT_INSTANCE;
-            }
-
-            public static Parser<InternalTimer> parser() {
-                return DEFAULT_INSTANCE.getParserForType();
-            }
+        public static Parser<PrimesForPrimes> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public List<InternalTimer> getInternalTimersList() {
@@ -9800,60 +9617,296 @@ public final class SystemHealthProto {
             this.internalTimers_.remove(index);
         }
 
-        public static PrimesForPrimes parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (PrimesForPrimes) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new PrimesForPrimes();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0001\u0000\u0000\u0001\u0001\u0001\u0000\u0001\u0000\u0001\u001b", new Object[]{"internalTimers_", InternalTimer.class});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<PrimesForPrimes> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (PrimesForPrimes.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
-        public static PrimesForPrimes parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (PrimesForPrimes) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        public interface InternalTimerOrBuilder extends MessageLiteOrBuilder {
+            MicroCpuTime getDuration();
+
+            PrimesForPrimesEventProto.PrimesForPrimesEvent getPrimesForPrimesEvent();
+
+            boolean hasDuration();
+
+            boolean hasPrimesForPrimesEvent();
         }
 
-        public static PrimesForPrimes parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (PrimesForPrimes) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
+        @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
+        public static final class InternalTimer extends GeneratedMessageLite<InternalTimer, Builder> implements InternalTimerOrBuilder {
+            /* access modifiers changed from: private */
+            public static final InternalTimer DEFAULT_INSTANCE = new InternalTimer();
+            public static final int DURATION_FIELD_NUMBER = 2;
+            public static final int PRIMES_FOR_PRIMES_EVENT_FIELD_NUMBER = 1;
+            private static volatile Parser<InternalTimer> PARSER = null;
 
-        public static PrimesForPrimes parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (PrimesForPrimes) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
+            static {
+                GeneratedMessageLite.registerDefaultInstance(InternalTimer.class, DEFAULT_INSTANCE);
+            }
 
-        public static PrimesForPrimes parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (PrimesForPrimes) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
+            @ProtoPresenceBits(mo28548id = 0)
+            private int bitField0_;
+            @ProtoField(fieldNumber = 2, isRequired = false, type = FieldType.MESSAGE)
+            @ProtoPresenceCheckedField(mask = 2, presenceBitsId = 0)
+            private MicroCpuTime duration_;
+            @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.ENUM)
+            @ProtoPresenceCheckedField(mask = 1, presenceBitsId = 0)
+            private int primesForPrimesEvent_;
 
-        public static PrimesForPrimes parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (PrimesForPrimes) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
+            private InternalTimer() {
+            }
 
-        public static PrimesForPrimes parseFrom(InputStream input) throws IOException {
-            return (PrimesForPrimes) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
+            public static InternalTimer parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+                return (InternalTimer) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+            }
 
-        public static PrimesForPrimes parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (PrimesForPrimes) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
+            public static InternalTimer parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+                return (InternalTimer) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+            }
 
-        public static PrimesForPrimes parseDelimitedFrom(InputStream input) throws IOException {
-            return (PrimesForPrimes) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
+            public static InternalTimer parseFrom(ByteString data) throws InvalidProtocolBufferException {
+                return (InternalTimer) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+            }
 
-        public static PrimesForPrimes parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (PrimesForPrimes) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
+            public static InternalTimer parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+                return (InternalTimer) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+            }
 
-        public static PrimesForPrimes parseFrom(CodedInputStream input) throws IOException {
-            return (PrimesForPrimes) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
+            public static InternalTimer parseFrom(byte[] data) throws InvalidProtocolBufferException {
+                return (InternalTimer) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+            }
 
-        public static PrimesForPrimes parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (PrimesForPrimes) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
+            public static InternalTimer parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+                return (InternalTimer) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+            }
 
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
+            public static InternalTimer parseFrom(InputStream input) throws IOException {
+                return (InternalTimer) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+            }
 
-        public static Builder newBuilder(PrimesForPrimes prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+            public static InternalTimer parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+                return (InternalTimer) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+            }
+
+            public static InternalTimer parseDelimitedFrom(InputStream input) throws IOException {
+                return (InternalTimer) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+            }
+
+            public static InternalTimer parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+                return (InternalTimer) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+            }
+
+            public static InternalTimer parseFrom(CodedInputStream input) throws IOException {
+                return (InternalTimer) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+            }
+
+            public static InternalTimer parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+                return (InternalTimer) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+            }
+
+            public static Builder newBuilder() {
+                return (Builder) DEFAULT_INSTANCE.createBuilder();
+            }
+
+            public static Builder newBuilder(InternalTimer prototype) {
+                return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+            }
+
+            public static InternalTimer getDefaultInstance() {
+                return DEFAULT_INSTANCE;
+            }
+
+            public static Parser<InternalTimer> parser() {
+                return DEFAULT_INSTANCE.getParserForType();
+            }
+
+            public boolean hasPrimesForPrimesEvent() {
+                return (this.bitField0_ & 1) != 0;
+            }
+
+            public PrimesForPrimesEventProto.PrimesForPrimesEvent getPrimesForPrimesEvent() {
+                PrimesForPrimesEventProto.PrimesForPrimesEvent result = PrimesForPrimesEventProto.PrimesForPrimesEvent.forNumber(this.primesForPrimesEvent_);
+                return result == null ? PrimesForPrimesEventProto.PrimesForPrimesEvent.UNKNOWN : result;
+            }
+
+            /* access modifiers changed from: private */
+            public void setPrimesForPrimesEvent(PrimesForPrimesEventProto.PrimesForPrimesEvent value) {
+                if (value != null) {
+                    this.bitField0_ |= 1;
+                    this.primesForPrimesEvent_ = value.getNumber();
+                    return;
+                }
+                throw new NullPointerException();
+            }
+
+            /* access modifiers changed from: private */
+            public void clearPrimesForPrimesEvent() {
+                this.bitField0_ &= -2;
+                this.primesForPrimesEvent_ = 0;
+            }
+
+            public boolean hasDuration() {
+                return (this.bitField0_ & 2) != 0;
+            }
+
+            public MicroCpuTime getDuration() {
+                MicroCpuTime microCpuTime = this.duration_;
+                return microCpuTime == null ? MicroCpuTime.getDefaultInstance() : microCpuTime;
+            }
+
+            /* access modifiers changed from: private */
+            public void setDuration(MicroCpuTime value) {
+                if (value != null) {
+                    this.duration_ = value;
+                    this.bitField0_ |= 2;
+                    return;
+                }
+                throw new NullPointerException();
+            }
+
+            /* access modifiers changed from: private */
+            public void setDuration(MicroCpuTime.Builder builderForValue) {
+                this.duration_ = (MicroCpuTime) builderForValue.build();
+                this.bitField0_ |= 2;
+            }
+
+            /* access modifiers changed from: private */
+            public void mergeDuration(MicroCpuTime value) {
+                if (value != null) {
+                    MicroCpuTime microCpuTime = this.duration_;
+                    if (microCpuTime == null || microCpuTime == MicroCpuTime.getDefaultInstance()) {
+                        this.duration_ = value;
+                    } else {
+                        this.duration_ = (MicroCpuTime) ((MicroCpuTime.Builder) MicroCpuTime.newBuilder(this.duration_).mergeFrom((GeneratedMessageLite) value)).buildPartial();
+                    }
+                    this.bitField0_ |= 2;
+                    return;
+                }
+                throw new NullPointerException();
+            }
+
+            /* access modifiers changed from: private */
+            public void clearDuration() {
+                this.duration_ = null;
+                this.bitField0_ &= -3;
+            }
+
+            /* access modifiers changed from: protected */
+            public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+                switch (method) {
+                    case NEW_MUTABLE_INSTANCE:
+                        return new InternalTimer();
+                    case NEW_BUILDER:
+                        return new Builder();
+                    case BUILD_MESSAGE_INFO:
+                        return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0000\u0000\u0001\f\u0000\u0002\t\u0001", new Object[]{"bitField0_", "primesForPrimesEvent_", PrimesForPrimesEventProto.PrimesForPrimesEvent.internalGetVerifier(), "duration_"});
+                    case GET_DEFAULT_INSTANCE:
+                        return DEFAULT_INSTANCE;
+                    case GET_PARSER:
+                        Parser<InternalTimer> parser = PARSER;
+                        if (parser == null) {
+                            synchronized (InternalTimer.class) {
+                                parser = PARSER;
+                                if (parser == null) {
+                                    parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                    PARSER = parser;
+                                }
+                            }
+                        }
+                        return parser;
+                    case GET_MEMOIZED_IS_INITIALIZED:
+                        return (byte) 1;
+                    case SET_MEMOIZED_IS_INITIALIZED:
+                        return null;
+                    default:
+                        throw new UnsupportedOperationException();
+                }
+            }
+
+            public static final class Builder extends GeneratedMessageLite.Builder<InternalTimer, Builder> implements InternalTimerOrBuilder {
+                private Builder() {
+                    super(InternalTimer.DEFAULT_INSTANCE);
+                }
+
+                public boolean hasPrimesForPrimesEvent() {
+                    return ((InternalTimer) this.instance).hasPrimesForPrimesEvent();
+                }
+
+                public PrimesForPrimesEventProto.PrimesForPrimesEvent getPrimesForPrimesEvent() {
+                    return ((InternalTimer) this.instance).getPrimesForPrimesEvent();
+                }
+
+                public Builder setPrimesForPrimesEvent(PrimesForPrimesEventProto.PrimesForPrimesEvent value) {
+                    copyOnWrite();
+                    ((InternalTimer) this.instance).setPrimesForPrimesEvent(value);
+                    return this;
+                }
+
+                public Builder clearPrimesForPrimesEvent() {
+                    copyOnWrite();
+                    ((InternalTimer) this.instance).clearPrimesForPrimesEvent();
+                    return this;
+                }
+
+                public boolean hasDuration() {
+                    return ((InternalTimer) this.instance).hasDuration();
+                }
+
+                public MicroCpuTime getDuration() {
+                    return ((InternalTimer) this.instance).getDuration();
+                }
+
+                public Builder setDuration(MicroCpuTime value) {
+                    copyOnWrite();
+                    ((InternalTimer) this.instance).setDuration(value);
+                    return this;
+                }
+
+                public Builder setDuration(MicroCpuTime.Builder builderForValue) {
+                    copyOnWrite();
+                    ((InternalTimer) this.instance).setDuration(builderForValue);
+                    return this;
+                }
+
+                public Builder mergeDuration(MicroCpuTime value) {
+                    copyOnWrite();
+                    ((InternalTimer) this.instance).mergeDuration(value);
+                    return this;
+                }
+
+                public Builder clearDuration() {
+                    copyOnWrite();
+                    ((InternalTimer) this.instance).clearDuration();
+                    return this;
+                }
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<PrimesForPrimes, Builder> implements PrimesForPrimesOrBuilder {
@@ -9927,50 +9980,6 @@ public final class SystemHealthProto {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new PrimesForPrimes();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0001\u0000\u0000\u0001\u0001\u0001\u0000\u0001\u0000\u0001\u001b", new Object[]{"internalTimers_", InternalTimer.class});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<PrimesForPrimes> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (PrimesForPrimes.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(PrimesForPrimes.class, DEFAULT_INSTANCE);
-        }
-
-        public static PrimesForPrimes getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<PrimesForPrimes> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -9978,8 +9987,13 @@ public final class SystemHealthProto {
         public static final int CPU_MICROS_FIELD_NUMBER = 1;
         /* access modifiers changed from: private */
         public static final MicroCpuTime DEFAULT_INSTANCE = new MicroCpuTime();
-        private static volatile Parser<MicroCpuTime> PARSER = null;
         public static final int WALL_MICROS_FIELD_NUMBER = 2;
+        private static volatile Parser<MicroCpuTime> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(MicroCpuTime.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.INT64)
@@ -9990,46 +10004,6 @@ public final class SystemHealthProto {
         private long wallMicros_;
 
         private MicroCpuTime() {
-        }
-
-        public boolean hasCpuMicros() {
-            return (this.bitField0_ & 1) != 0;
-        }
-
-        public long getCpuMicros() {
-            return this.cpuMicros_;
-        }
-
-        /* access modifiers changed from: private */
-        public void setCpuMicros(long value) {
-            this.bitField0_ |= 1;
-            this.cpuMicros_ = value;
-        }
-
-        /* access modifiers changed from: private */
-        public void clearCpuMicros() {
-            this.bitField0_ &= -2;
-            this.cpuMicros_ = 0;
-        }
-
-        public boolean hasWallMicros() {
-            return (this.bitField0_ & 2) != 0;
-        }
-
-        public long getWallMicros() {
-            return this.wallMicros_;
-        }
-
-        /* access modifiers changed from: private */
-        public void setWallMicros(long value) {
-            this.bitField0_ |= 2;
-            this.wallMicros_ = value;
-        }
-
-        /* access modifiers changed from: private */
-        public void clearWallMicros() {
-            this.bitField0_ &= -3;
-            this.wallMicros_ = 0;
         }
 
         public static MicroCpuTime parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
@@ -10088,6 +10062,86 @@ public final class SystemHealthProto {
             return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
         }
 
+        public static MicroCpuTime getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<MicroCpuTime> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
+        }
+
+        public boolean hasCpuMicros() {
+            return (this.bitField0_ & 1) != 0;
+        }
+
+        public long getCpuMicros() {
+            return this.cpuMicros_;
+        }
+
+        /* access modifiers changed from: private */
+        public void setCpuMicros(long value) {
+            this.bitField0_ |= 1;
+            this.cpuMicros_ = value;
+        }
+
+        /* access modifiers changed from: private */
+        public void clearCpuMicros() {
+            this.bitField0_ &= -2;
+            this.cpuMicros_ = 0;
+        }
+
+        public boolean hasWallMicros() {
+            return (this.bitField0_ & 2) != 0;
+        }
+
+        public long getWallMicros() {
+            return this.wallMicros_;
+        }
+
+        /* access modifiers changed from: private */
+        public void setWallMicros(long value) {
+            this.bitField0_ |= 2;
+            this.wallMicros_ = value;
+        }
+
+        /* access modifiers changed from: private */
+        public void clearWallMicros() {
+            this.bitField0_ &= -3;
+            this.wallMicros_ = 0;
+        }
+
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new MicroCpuTime();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0000\u0000\u0001\u0002\u0000\u0002\u0002\u0001", new Object[]{"bitField0_", "cpuMicros_", "wallMicros_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<MicroCpuTime> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (MicroCpuTime.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
+        }
+
         public static final class Builder extends GeneratedMessageLite.Builder<MicroCpuTime, Builder> implements MicroCpuTimeOrBuilder {
             private Builder() {
                 super(MicroCpuTime.DEFAULT_INSTANCE);
@@ -10133,50 +10187,6 @@ public final class SystemHealthProto {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new MicroCpuTime();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0000\u0000\u0001\u0002\u0000\u0002\u0002\u0001", new Object[]{"bitField0_", "cpuMicros_", "wallMicros_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<MicroCpuTime> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (MicroCpuTime.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(MicroCpuTime.class, DEFAULT_INSTANCE);
-        }
-
-        public static MicroCpuTime getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<MicroCpuTime> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -10186,6 +10196,11 @@ public final class SystemHealthProto {
         public static final PrimesHeapDumpCalibrationStatus DEFAULT_INSTANCE = new PrimesHeapDumpCalibrationStatus();
         public static final int NEW_SAMPLE_PERCENTILE_FIELD_NUMBER = 2;
         private static volatile Parser<PrimesHeapDumpCalibrationStatus> PARSER;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(PrimesHeapDumpCalibrationStatus.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.INT32)
@@ -10196,46 +10211,6 @@ public final class SystemHealthProto {
         private float newSamplePercentile_;
 
         private PrimesHeapDumpCalibrationStatus() {
-        }
-
-        public boolean hasCurrentSampleCount() {
-            return (this.bitField0_ & 1) != 0;
-        }
-
-        public int getCurrentSampleCount() {
-            return this.currentSampleCount_;
-        }
-
-        /* access modifiers changed from: private */
-        public void setCurrentSampleCount(int value) {
-            this.bitField0_ |= 1;
-            this.currentSampleCount_ = value;
-        }
-
-        /* access modifiers changed from: private */
-        public void clearCurrentSampleCount() {
-            this.bitField0_ &= -2;
-            this.currentSampleCount_ = 0;
-        }
-
-        public boolean hasNewSamplePercentile() {
-            return (this.bitField0_ & 2) != 0;
-        }
-
-        public float getNewSamplePercentile() {
-            return this.newSamplePercentile_;
-        }
-
-        /* access modifiers changed from: private */
-        public void setNewSamplePercentile(float value) {
-            this.bitField0_ |= 2;
-            this.newSamplePercentile_ = value;
-        }
-
-        /* access modifiers changed from: private */
-        public void clearNewSamplePercentile() {
-            this.bitField0_ &= -3;
-            this.newSamplePercentile_ = 0.0f;
         }
 
         public static PrimesHeapDumpCalibrationStatus parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
@@ -10294,6 +10269,86 @@ public final class SystemHealthProto {
             return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
         }
 
+        public static PrimesHeapDumpCalibrationStatus getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<PrimesHeapDumpCalibrationStatus> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
+        }
+
+        public boolean hasCurrentSampleCount() {
+            return (this.bitField0_ & 1) != 0;
+        }
+
+        public int getCurrentSampleCount() {
+            return this.currentSampleCount_;
+        }
+
+        /* access modifiers changed from: private */
+        public void setCurrentSampleCount(int value) {
+            this.bitField0_ |= 1;
+            this.currentSampleCount_ = value;
+        }
+
+        /* access modifiers changed from: private */
+        public void clearCurrentSampleCount() {
+            this.bitField0_ &= -2;
+            this.currentSampleCount_ = 0;
+        }
+
+        public boolean hasNewSamplePercentile() {
+            return (this.bitField0_ & 2) != 0;
+        }
+
+        public float getNewSamplePercentile() {
+            return this.newSamplePercentile_;
+        }
+
+        /* access modifiers changed from: private */
+        public void setNewSamplePercentile(float value) {
+            this.bitField0_ |= 2;
+            this.newSamplePercentile_ = value;
+        }
+
+        /* access modifiers changed from: private */
+        public void clearNewSamplePercentile() {
+            this.bitField0_ &= -3;
+            this.newSamplePercentile_ = 0.0f;
+        }
+
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new PrimesHeapDumpCalibrationStatus();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0000\u0000\u0001\u0004\u0000\u0002\u0001\u0001", new Object[]{"bitField0_", "currentSampleCount_", "newSamplePercentile_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<PrimesHeapDumpCalibrationStatus> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (PrimesHeapDumpCalibrationStatus.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
+        }
+
         public static final class Builder extends GeneratedMessageLite.Builder<PrimesHeapDumpCalibrationStatus, Builder> implements PrimesHeapDumpCalibrationStatusOrBuilder {
             private Builder() {
                 super(PrimesHeapDumpCalibrationStatus.DEFAULT_INSTANCE);
@@ -10339,58 +10394,19 @@ public final class SystemHealthProto {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new PrimesHeapDumpCalibrationStatus();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0000\u0000\u0001\u0004\u0000\u0002\u0001\u0001", new Object[]{"bitField0_", "currentSampleCount_", "newSamplePercentile_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<PrimesHeapDumpCalibrationStatus> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (PrimesHeapDumpCalibrationStatus.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(PrimesHeapDumpCalibrationStatus.class, DEFAULT_INSTANCE);
-        }
-
-        public static PrimesHeapDumpCalibrationStatus getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<PrimesHeapDumpCalibrationStatus> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
     public static final class StrictModeViolationMetric extends GeneratedMessageLite<StrictModeViolationMetric, Builder> implements StrictModeViolationMetricOrBuilder {
         /* access modifiers changed from: private */
         public static final StrictModeViolationMetric DEFAULT_INSTANCE = new StrictModeViolationMetric();
-        private static volatile Parser<StrictModeViolationMetric> PARSER = null;
         public static final int VIOLATION_TYPE_FIELD_NUMBER = 1;
+        private static volatile Parser<StrictModeViolationMetric> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(StrictModeViolationMetric.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.ENUM)
@@ -10398,92 +10414,6 @@ public final class SystemHealthProto {
         private int violationType_;
 
         private StrictModeViolationMetric() {
-        }
-
-        public enum ViolationType implements Internal.EnumLite {
-            UNKNOWN(0),
-            DISK_READ(1),
-            DISK_WRITE(2),
-            SLOW(3);
-            
-            public static final int DISK_READ_VALUE = 1;
-            public static final int DISK_WRITE_VALUE = 2;
-            public static final int SLOW_VALUE = 3;
-            public static final int UNKNOWN_VALUE = 0;
-            private static final Internal.EnumLiteMap<ViolationType> internalValueMap = new Internal.EnumLiteMap<ViolationType>() {
-                public ViolationType findValueByNumber(int number) {
-                    return ViolationType.forNumber(number);
-                }
-            };
-            private final int value;
-
-            public final int getNumber() {
-                return this.value;
-            }
-
-            public static ViolationType forNumber(int value2) {
-                if (value2 == 0) {
-                    return UNKNOWN;
-                }
-                if (value2 == 1) {
-                    return DISK_READ;
-                }
-                if (value2 == 2) {
-                    return DISK_WRITE;
-                }
-                if (value2 != 3) {
-                    return null;
-                }
-                return SLOW;
-            }
-
-            public static Internal.EnumLiteMap<ViolationType> internalGetValueMap() {
-                return internalValueMap;
-            }
-
-            public static Internal.EnumVerifier internalGetVerifier() {
-                return ViolationTypeVerifier.INSTANCE;
-            }
-
-            private static final class ViolationTypeVerifier implements Internal.EnumVerifier {
-                static final Internal.EnumVerifier INSTANCE = new ViolationTypeVerifier();
-
-                private ViolationTypeVerifier() {
-                }
-
-                public boolean isInRange(int number) {
-                    return ViolationType.forNumber(number) != null;
-                }
-            }
-
-            private ViolationType(int value2) {
-                this.value = value2;
-            }
-        }
-
-        public boolean hasViolationType() {
-            return (this.bitField0_ & 1) != 0;
-        }
-
-        public ViolationType getViolationType() {
-            ViolationType result = ViolationType.forNumber(this.violationType_);
-            return result == null ? ViolationType.UNKNOWN : result;
-        }
-
-        /* access modifiers changed from: private */
-        public void setViolationType(ViolationType value) {
-            if (value != null) {
-                this.bitField0_ |= 1;
-                this.violationType_ = value.getNumber();
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        /* access modifiers changed from: private */
-        public void clearViolationType() {
-            this.bitField0_ &= -2;
-            this.violationType_ = 0;
         }
 
         public static StrictModeViolationMetric parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
@@ -10542,30 +10472,37 @@ public final class SystemHealthProto {
             return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
         }
 
-        public static final class Builder extends GeneratedMessageLite.Builder<StrictModeViolationMetric, Builder> implements StrictModeViolationMetricOrBuilder {
-            private Builder() {
-                super(StrictModeViolationMetric.DEFAULT_INSTANCE);
-            }
+        public static StrictModeViolationMetric getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
 
-            public boolean hasViolationType() {
-                return ((StrictModeViolationMetric) this.instance).hasViolationType();
-            }
+        public static Parser<StrictModeViolationMetric> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
+        }
 
-            public ViolationType getViolationType() {
-                return ((StrictModeViolationMetric) this.instance).getViolationType();
-            }
+        public boolean hasViolationType() {
+            return (this.bitField0_ & 1) != 0;
+        }
 
-            public Builder setViolationType(ViolationType value) {
-                copyOnWrite();
-                ((StrictModeViolationMetric) this.instance).setViolationType(value);
-                return this;
-            }
+        public ViolationType getViolationType() {
+            ViolationType result = ViolationType.forNumber(this.violationType_);
+            return result == null ? ViolationType.UNKNOWN : result;
+        }
 
-            public Builder clearViolationType() {
-                copyOnWrite();
-                ((StrictModeViolationMetric) this.instance).clearViolationType();
-                return this;
+        /* access modifiers changed from: private */
+        public void setViolationType(ViolationType value) {
+            if (value != null) {
+                this.bitField0_ |= 1;
+                this.violationType_ = value.getNumber();
+                return;
             }
+            throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearViolationType() {
+            this.bitField0_ &= -2;
+            this.violationType_ = 0;
         }
 
         /* access modifiers changed from: protected */
@@ -10600,16 +10537,91 @@ public final class SystemHealthProto {
             }
         }
 
-        static {
-            GeneratedMessageLite.registerDefaultInstance(StrictModeViolationMetric.class, DEFAULT_INSTANCE);
+        public enum ViolationType implements Internal.EnumLite {
+            UNKNOWN(0),
+            DISK_READ(1),
+            DISK_WRITE(2),
+            SLOW(3);
+
+            public static final int DISK_READ_VALUE = 1;
+            public static final int DISK_WRITE_VALUE = 2;
+            public static final int SLOW_VALUE = 3;
+            public static final int UNKNOWN_VALUE = 0;
+            private static final Internal.EnumLiteMap<ViolationType> internalValueMap = new Internal.EnumLiteMap<ViolationType>() {
+                public ViolationType findValueByNumber(int number) {
+                    return ViolationType.forNumber(number);
+                }
+            };
+            private final int value;
+
+            private ViolationType(int value2) {
+                this.value = value2;
+            }
+
+            public static ViolationType forNumber(int value2) {
+                if (value2 == 0) {
+                    return UNKNOWN;
+                }
+                if (value2 == 1) {
+                    return DISK_READ;
+                }
+                if (value2 == 2) {
+                    return DISK_WRITE;
+                }
+                if (value2 != 3) {
+                    return null;
+                }
+                return SLOW;
+            }
+
+            public static Internal.EnumLiteMap<ViolationType> internalGetValueMap() {
+                return internalValueMap;
+            }
+
+            public static Internal.EnumVerifier internalGetVerifier() {
+                return ViolationTypeVerifier.INSTANCE;
+            }
+
+            public final int getNumber() {
+                return this.value;
+            }
+
+            private static final class ViolationTypeVerifier implements Internal.EnumVerifier {
+                static final Internal.EnumVerifier INSTANCE = new ViolationTypeVerifier();
+
+                private ViolationTypeVerifier() {
+                }
+
+                public boolean isInRange(int number) {
+                    return ViolationType.forNumber(number) != null;
+                }
+            }
         }
 
-        public static StrictModeViolationMetric getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
+        public static final class Builder extends GeneratedMessageLite.Builder<StrictModeViolationMetric, Builder> implements StrictModeViolationMetricOrBuilder {
+            private Builder() {
+                super(StrictModeViolationMetric.DEFAULT_INSTANCE);
+            }
 
-        public static Parser<StrictModeViolationMetric> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
+            public boolean hasViolationType() {
+                return ((StrictModeViolationMetric) this.instance).hasViolationType();
+            }
+
+            public ViolationType getViolationType() {
+                return ((StrictModeViolationMetric) this.instance).getViolationType();
+            }
+
+            public Builder setViolationType(ViolationType value) {
+                copyOnWrite();
+                ((StrictModeViolationMetric) this.instance).setViolationType(value);
+                return this;
+            }
+
+            public Builder clearViolationType() {
+                copyOnWrite();
+                ((StrictModeViolationMetric) this.instance).clearViolationType();
+                return this;
+            }
         }
     }
 }

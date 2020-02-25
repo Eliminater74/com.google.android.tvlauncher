@@ -10,7 +10,6 @@ import android.support.annotation.StyleRes;
 import android.support.p001v4.view.GravityCompat;
 import android.support.p001v4.view.ViewCompat;
 import android.support.p004v7.appcompat.C0233R;
-import android.support.p004v7.view.menu.MenuPresenter;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.PopupWindow;
@@ -19,17 +18,17 @@ import android.widget.PopupWindow;
 /* renamed from: android.support.v7.view.menu.MenuPopupHelper */
 public class MenuPopupHelper implements MenuHelper {
     private static final int TOUCH_EPICENTER_SIZE_DP = 48;
-    private View mAnchorView;
     private final Context mContext;
-    private int mDropDownGravity;
-    private boolean mForceShowIcon;
     private final PopupWindow.OnDismissListener mInternalOnDismissListener;
     private final MenuBuilder mMenu;
-    private PopupWindow.OnDismissListener mOnDismissListener;
     private final boolean mOverflowOnly;
-    private MenuPopup mPopup;
     private final int mPopupStyleAttr;
     private final int mPopupStyleRes;
+    private View mAnchorView;
+    private int mDropDownGravity;
+    private boolean mForceShowIcon;
+    private PopupWindow.OnDismissListener mOnDismissListener;
+    private MenuPopup mPopup;
     private MenuPresenter.Callback mPresenterCallback;
 
     public MenuPopupHelper(@NonNull Context context, @NonNull MenuBuilder menu) {
@@ -75,12 +74,12 @@ public class MenuPopupHelper implements MenuHelper {
         }
     }
 
-    public void setGravity(int gravity) {
-        this.mDropDownGravity = gravity;
-    }
-
     public int getGravity() {
         return this.mDropDownGravity;
+    }
+
+    public void setGravity(int gravity) {
+        this.mDropDownGravity = gravity;
     }
 
     public void show() {

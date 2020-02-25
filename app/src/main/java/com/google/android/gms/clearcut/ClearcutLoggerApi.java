@@ -1,17 +1,14 @@
 package com.google.android.gms.clearcut;
 
 import android.content.Context;
+
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.Result;
 import com.google.android.gms.common.api.Status;
+
 import java.util.concurrent.TimeUnit;
 
 public interface ClearcutLoggerApi {
-
-    @Deprecated
-    public interface ExpiryTimeResult extends Result {
-        long getExpiryTimeMillis();
-    }
 
     @Deprecated
     void disconnectAsync(Object obj);
@@ -43,4 +40,9 @@ public interface ClearcutLoggerApi {
 
     @Deprecated
     PendingResult<Status> stopCollectForDebug();
+
+    @Deprecated
+    public interface ExpiryTimeResult extends Result {
+        long getExpiryTimeMillis();
+    }
 }

@@ -4,9 +4,11 @@ import android.annotation.TargetApi;
 import android.media.AudioTimestamp;
 import android.media.AudioTrack;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.util.Util;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -28,11 +30,6 @@ final class AudioTimestampPoller {
     private long lastTimestampSampleTimeUs;
     private long sampleIntervalUs;
     private int state;
-
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    private @interface State {
-    }
 
     public AudioTimestampPoller(AudioTrack audioTrack) {
         if (Util.SDK_INT >= 19) {
@@ -150,6 +147,11 @@ final class AudioTimestampPoller {
         } else {
             throw new IllegalStateException();
         }
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    private @interface State {
     }
 
     @TargetApi(19)

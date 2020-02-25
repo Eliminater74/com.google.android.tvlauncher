@@ -8,7 +8,7 @@ import android.support.annotation.RequiresApi;
 import android.view.Gravity;
 
 @RequiresApi(21)
-/* renamed from: android.support.v4.graphics.drawable.RoundedBitmapDrawable21 */
+        /* renamed from: android.support.v4.graphics.drawable.RoundedBitmapDrawable21 */
 class RoundedBitmapDrawable21 extends RoundedBitmapDrawable {
     protected RoundedBitmapDrawable21(Resources res, Bitmap bitmap) {
         super(res, bitmap);

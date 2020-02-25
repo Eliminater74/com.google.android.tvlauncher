@@ -7,6 +7,13 @@ import java.util.RandomAccess;
 /* compiled from: LongArrayList */
 final class zzgph extends zzgms<Long> implements zzgos<Long>, RandomAccess {
     private static final zzgph zza;
+
+    static {
+        zzgph zzgph = new zzgph();
+        zza = zzgph;
+        zzgph.zzb();
+    }
+
     private long[] zzb;
     private int zzc;
 
@@ -170,11 +177,5 @@ final class zzgph extends zzgms<Long> implements zzgos<Long>, RandomAccess {
 
     public final /* synthetic */ Object get(int i) {
         return Long.valueOf(zzb(i));
-    }
-
-    static {
-        zzgph zzgph = new zzgph();
-        zza = zzgph;
-        zzgph.zzb();
     }
 }

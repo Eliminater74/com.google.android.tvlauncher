@@ -3,16 +3,18 @@ package com.google.common.collect;
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.util.AbstractMap;
 import java.util.Map;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible(emulated = true, serializable = true)
 final class RegularImmutableMap<K, V> extends ImmutableMap<K, V> {
+    static final ImmutableMap<Object, Object> EMPTY = new RegularImmutableMap(null, new Object[0], 0);
     private static final byte ABSENT = -1;
     private static final int BYTE_MASK = 255;
     private static final int BYTE_MAX_SIZE = 128;
-    static final ImmutableMap<Object, Object> EMPTY = new RegularImmutableMap(null, new Object[0], 0);
     private static final int SHORT_MASK = 65535;
     private static final int SHORT_MAX_SIZE = 32768;
     private static final long serialVersionUID = 0;
@@ -20,6 +22,12 @@ final class RegularImmutableMap<K, V> extends ImmutableMap<K, V> {
     final transient Object[] alternatingKeysAndValues;
     private final transient Object hashTable;
     private final transient int size;
+
+    private RegularImmutableMap(Object hashTable2, Object[] alternatingKeysAndValues2, int size2) {
+        this.hashTable = hashTable2;
+        this.alternatingKeysAndValues = alternatingKeysAndValues2;
+        this.size = size2;
+    }
 
     static <K, V> RegularImmutableMap<K, V> create(int n, Object[] alternatingKeysAndValues2) {
         if (n == 0) {
@@ -199,21 +207,6 @@ final class RegularImmutableMap<K, V> extends ImmutableMap<K, V> {
         return new IllegalArgumentException(sb.toString());
     }
 
-    private RegularImmutableMap(Object hashTable2, Object[] alternatingKeysAndValues2, int size2) {
-        this.hashTable = hashTable2;
-        this.alternatingKeysAndValues = alternatingKeysAndValues2;
-        this.size = size2;
-    }
-
-    public int size() {
-        return this.size;
-    }
-
-    @NullableDecl
-    public V get(@NullableDecl Object key) {
-        return get(this.hashTable, this.alternatingKeysAndValues, this.size, 0, key);
-    }
-
     static Object get(@NullableDecl Object hashTableObject, @NullableDecl Object[] alternatingKeysAndValues2, int size2, int keyOffset, @NullableDecl Object key) {
         if (key == null) {
             return null;
@@ -275,9 +268,33 @@ final class RegularImmutableMap<K, V> extends ImmutableMap<K, V> {
         }
     }
 
+    public int size() {
+        return this.size;
+    }
+
+    @NullableDecl
+    public V get(@NullableDecl Object key) {
+        return get(this.hashTable, this.alternatingKeysAndValues, this.size, 0, key);
+    }
+
     /* access modifiers changed from: package-private */
     public ImmutableSet<Map.Entry<K, V>> createEntrySet() {
         return new EntrySet(this, this.alternatingKeysAndValues, 0, this.size);
+    }
+
+    /* access modifiers changed from: package-private */
+    public ImmutableSet<K> createKeySet() {
+        return new KeySet(this, new KeysOrValuesAsList(this.alternatingKeysAndValues, 0, this.size));
+    }
+
+    /* access modifiers changed from: package-private */
+    public ImmutableCollection<V> createValues() {
+        return new KeysOrValuesAsList(this.alternatingKeysAndValues, 1, this.size);
+    }
+
+    /* access modifiers changed from: package-private */
+    public boolean isPartialView() {
+        return false;
     }
 
     static class EntrySet<K, V> extends ImmutableSet<Map.Entry<K, V>> {
@@ -285,9 +302,9 @@ final class RegularImmutableMap<K, V> extends ImmutableMap<K, V> {
         public final transient Object[] alternatingKeysAndValues;
         /* access modifiers changed from: private */
         public final transient int keyOffset;
-        private final transient ImmutableMap<K, V> map;
         /* access modifiers changed from: private */
         public final transient int size;
+        private final transient ImmutableMap<K, V> map;
 
         EntrySet(ImmutableMap<K, V> map2, Object[] alternatingKeysAndValues2, int keyOffset2, int size2) {
             this.map = map2;
@@ -344,11 +361,6 @@ final class RegularImmutableMap<K, V> extends ImmutableMap<K, V> {
         public int size() {
             return this.size;
         }
-    }
-
-    /* access modifiers changed from: package-private */
-    public ImmutableSet<K> createKeySet() {
-        return new KeySet(this, new KeysOrValuesAsList(this.alternatingKeysAndValues, 0, this.size));
     }
 
     static final class KeysOrValuesAsList extends ImmutableList<Object> {
@@ -411,15 +423,5 @@ final class RegularImmutableMap<K, V> extends ImmutableMap<K, V> {
         public int size() {
             return this.map.size();
         }
-    }
-
-    /* access modifiers changed from: package-private */
-    public ImmutableCollection<V> createValues() {
-        return new KeysOrValuesAsList(this.alternatingKeysAndValues, 1, this.size);
-    }
-
-    /* access modifiers changed from: package-private */
-    public boolean isPartialView() {
-        return false;
     }
 }

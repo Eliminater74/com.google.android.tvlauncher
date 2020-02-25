@@ -1,10 +1,10 @@
 package com.google.android.exoplayer2.extractor.mp3;
 
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.extractor.MpegAudioHeader;
 import com.google.android.exoplayer2.extractor.SeekMap;
 import com.google.android.exoplayer2.extractor.SeekPoint;
-import com.google.android.exoplayer2.extractor.mp3.Mp3Extractor;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.Util;
@@ -16,6 +16,13 @@ final class VbriSeeker implements Mp3Extractor.Seeker {
     private final long durationUs;
     private final long[] positions;
     private final long[] timesUs;
+
+    private VbriSeeker(long[] timesUs2, long[] positions2, long durationUs2, long dataEndPosition2) {
+        this.timesUs = timesUs2;
+        this.positions = positions2;
+        this.durationUs = durationUs2;
+        this.dataEndPosition = dataEndPosition2;
+    }
 
     @Nullable
     public static VbriSeeker create(long inputLength, long position, MpegAudioHeader mpegAudioHeader, ParsableByteArray frame) {
@@ -68,13 +75,6 @@ final class VbriSeeker implements Mp3Extractor.Seeker {
             Log.m30w(TAG, sb.toString());
         }
         return new VbriSeeker(timesUs2, positions2, durationUs4, position2);
-    }
-
-    private VbriSeeker(long[] timesUs2, long[] positions2, long durationUs2, long dataEndPosition2) {
-        this.timesUs = timesUs2;
-        this.positions = positions2;
-        this.durationUs = durationUs2;
-        this.dataEndPosition = dataEndPosition2;
     }
 
     public boolean isSeekable() {

@@ -1,12 +1,13 @@
 package com.google.android.exoplayer2.extractor.p007ts;
 
 import android.util.SparseArray;
+
 import com.google.android.exoplayer2.Format;
-import com.google.android.exoplayer2.extractor.p007ts.TsPayloadReader;
 import com.google.android.exoplayer2.text.cea.Cea708InitializationData;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.common.primitives.SignedBytes;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -16,7 +17,6 @@ import java.util.List;
 
 /* renamed from: com.google.android.exoplayer2.extractor.ts.DefaultTsPayloadReaderFactory */
 public final class DefaultTsPayloadReaderFactory implements TsPayloadReader.Factory {
-    private static final int DESCRIPTOR_TAG_CAPTION_SERVICE = 134;
     public static final int FLAG_ALLOW_NON_IDR_KEYFRAMES = 1;
     public static final int FLAG_DETECT_ACCESS_UNITS = 8;
     public static final int FLAG_ENABLE_HDMV_DTS_AUDIO_STREAMS = 64;
@@ -24,14 +24,9 @@ public final class DefaultTsPayloadReaderFactory implements TsPayloadReader.Fact
     public static final int FLAG_IGNORE_H264_STREAM = 4;
     public static final int FLAG_IGNORE_SPLICE_INFO_STREAM = 16;
     public static final int FLAG_OVERRIDE_CAPTION_DESCRIPTORS = 32;
+    private static final int DESCRIPTOR_TAG_CAPTION_SERVICE = 134;
     private final List<Format> closedCaptionFormats;
     private final int flags;
-
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    /* renamed from: com.google.android.exoplayer2.extractor.ts.DefaultTsPayloadReaderFactory$Flags */
-    public @interface Flags {
-    }
 
     public DefaultTsPayloadReaderFactory() {
         this(0);
@@ -161,5 +156,11 @@ public final class DefaultTsPayloadReaderFactory implements TsPayloadReader.Fact
 
     private boolean isSet(int flag) {
         return (this.flags & flag) != 0;
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    /* renamed from: com.google.android.exoplayer2.extractor.ts.DefaultTsPayloadReaderFactory$Flags */
+    public @interface Flags {
     }
 }

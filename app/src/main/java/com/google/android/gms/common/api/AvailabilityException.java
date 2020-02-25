@@ -2,11 +2,12 @@ package com.google.android.gms.common.api;
 
 import android.support.p001v4.util.ArrayMap;
 import android.text.TextUtils;
+
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.Api;
 import com.google.android.gms.common.api.internal.zzi;
 import com.google.android.gms.common.internal.Hide;
 import com.google.android.gms.common.internal.zzau;
+
 import java.util.ArrayList;
 
 public class AvailabilityException extends Exception {

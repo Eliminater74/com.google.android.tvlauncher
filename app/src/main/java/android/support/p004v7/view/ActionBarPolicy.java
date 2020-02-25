@@ -14,12 +14,12 @@ import android.view.ViewConfiguration;
 public class ActionBarPolicy {
     private Context mContext;
 
-    public static ActionBarPolicy get(Context context) {
-        return new ActionBarPolicy(context);
-    }
-
     private ActionBarPolicy(Context context) {
         this.mContext = context;
+    }
+
+    public static ActionBarPolicy get(Context context) {
+        return new ActionBarPolicy(context);
     }
 
     public int getMaxActionButtons() {

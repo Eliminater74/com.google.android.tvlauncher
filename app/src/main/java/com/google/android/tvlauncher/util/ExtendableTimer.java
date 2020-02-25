@@ -23,10 +23,6 @@ public class ExtendableTimer {
     private boolean mStarted;
     private long mTimeoutMillis;
 
-    public interface Listener {
-        void onTimerFired(ExtendableTimer extendableTimer);
-    }
-
     @VisibleForTesting
     static ExtendableTimer getPool() {
         return sPool;
@@ -166,6 +162,10 @@ public class ExtendableTimer {
 
     public boolean isStarted() {
         return this.mStarted;
+    }
+
+    public interface Listener {
+        void onTimerFired(ExtendableTimer extendableTimer);
     }
 
     @SuppressLint({"HandlerLeak"})

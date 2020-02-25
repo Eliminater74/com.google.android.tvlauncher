@@ -4,11 +4,17 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.p001v4.util.ArrayMap;
 import android.support.p001v4.util.SimpleArrayMap;
+
 import com.bumptech.glide.util.CachedHashCodeArrayMap;
+
 import java.security.MessageDigest;
 
 public final class Options implements Key {
     private final ArrayMap<Option<?>, Object> values = new CachedHashCodeArrayMap();
+
+    private static <T> void updateDiskCacheKey(@NonNull Option<T> option, @NonNull Object value, @NonNull MessageDigest md) {
+        option.update(value, md);
+    }
 
     public void putAll(@NonNull Options other) {
         this.values.putAll((SimpleArrayMap<? extends Option<?>, ? extends Object>) other.values);
@@ -49,9 +55,5 @@ public final class Options implements Key {
         sb.append(valueOf);
         sb.append('}');
         return sb.toString();
-    }
-
-    private static <T> void updateDiskCacheKey(@NonNull Option<T> option, @NonNull Object value, @NonNull MessageDigest md) {
-        option.update(value, md);
     }
 }

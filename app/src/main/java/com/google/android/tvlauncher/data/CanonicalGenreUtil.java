@@ -4,8 +4,11 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.media.tv.TvContract;
 import android.text.TextUtils;
+
 import androidx.tvprovider.media.p005tv.TvContractCompat;
+
 import com.google.android.tvlauncher.C1188R;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

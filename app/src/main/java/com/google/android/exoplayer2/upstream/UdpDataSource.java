@@ -2,6 +2,7 @@ package com.google.android.exoplayer2.upstream;
 
 import android.net.Uri;
 import android.support.annotation.Nullable;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -13,27 +14,21 @@ import java.net.SocketException;
 public final class UdpDataSource extends BaseDataSource {
     public static final int DEFAULT_MAX_PACKET_SIZE = 2000;
     public static final int DEFAULT_SOCKET_TIMEOUT_MILLIS = 8000;
+    private final DatagramPacket packet;
+    private final byte[] packetBuffer;
+    private final int socketTimeoutMillis;
     @Nullable
     private InetAddress address;
     @Nullable
     private MulticastSocket multicastSocket;
     private boolean opened;
-    private final DatagramPacket packet;
-    private final byte[] packetBuffer;
     private int packetRemaining;
     @Nullable
     private DatagramSocket socket;
     @Nullable
     private InetSocketAddress socketAddress;
-    private final int socketTimeoutMillis;
     @Nullable
     private Uri uri;
-
-    public static final class UdpDataSourceException extends IOException {
-        public UdpDataSourceException(IOException cause) {
-            super(cause);
-        }
-    }
 
     public UdpDataSource() {
         this(2000);
@@ -144,6 +139,12 @@ public final class UdpDataSource extends BaseDataSource {
         if (this.opened) {
             this.opened = false;
             transferEnded();
+        }
+    }
+
+    public static final class UdpDataSourceException extends IOException {
+        public UdpDataSourceException(IOException cause) {
+            super(cause);
         }
     }
 }

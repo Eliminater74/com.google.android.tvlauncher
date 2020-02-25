@@ -18,8 +18,8 @@ import android.widget.ProgressBar;
 /* renamed from: android.support.v7.widget.AppCompatProgressBarHelper */
 class AppCompatProgressBarHelper {
     private static final int[] TINT_ATTRS = {16843067, 16843068};
-    private Bitmap mSampleTile;
     private final ProgressBar mView;
+    private Bitmap mSampleTile;
 
     AppCompatProgressBarHelper(ProgressBar view) {
         this.mView = view;

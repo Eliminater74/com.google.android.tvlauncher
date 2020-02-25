@@ -9,14 +9,14 @@ class ExternalAppsUpdateReceiver extends BroadcastReceiver {
     ExternalAppsUpdateReceiver() {
     }
 
-    public void onReceive(Context context, Intent intent) {
-        LaunchItemsManagerProvider.getInstance(context).refreshLaunchItems();
-    }
-
     public static IntentFilter getIntentFilter() {
         IntentFilter filter = new IntentFilter();
         filter.addAction("android.intent.action.EXTERNAL_APPLICATIONS_AVAILABLE");
         filter.addAction("android.intent.action.EXTERNAL_APPLICATIONS_UNAVAILABLE");
         return filter;
+    }
+
+    public void onReceive(Context context, Intent intent) {
+        LaunchItemsManagerProvider.getInstance(context).refreshLaunchItems();
     }
 }

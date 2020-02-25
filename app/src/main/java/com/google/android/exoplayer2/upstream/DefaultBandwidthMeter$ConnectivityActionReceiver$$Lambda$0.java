@@ -1,7 +1,5 @@
 package com.google.android.exoplayer2.upstream;
 
-import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-
 final /* synthetic */ class DefaultBandwidthMeter$ConnectivityActionReceiver$$Lambda$0 implements Runnable {
     private final DefaultBandwidthMeter.ConnectivityActionReceiver arg$1;
     private final DefaultBandwidthMeter arg$2;

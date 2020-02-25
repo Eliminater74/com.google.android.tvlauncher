@@ -7,11 +7,13 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
+
 import androidx.leanback.preference.LeanbackPreferenceFragment;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceScreen;
 import androidx.preference.SwitchPreference;
+
 import com.google.android.tvlauncher.C1188R;
 import com.google.android.tvlauncher.appsview.AppsViewActivity;
 import com.google.android.tvlauncher.data.TvDataManager;

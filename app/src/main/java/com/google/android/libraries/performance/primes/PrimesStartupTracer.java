@@ -1,14 +1,14 @@
 package com.google.android.libraries.performance.primes;
 
 import android.support.annotation.VisibleForTesting;
-import com.google.android.libraries.performance.primes.PrimesStartupMeasureListener;
+
 import com.google.android.libraries.performance.primes.tracing.TraceData;
 import com.google.android.libraries.performance.primes.tracing.Tracer;
 
 final class PrimesStartupTracer implements PrimesStartupMeasureListener.OnActivityInit, PrimesStartupMeasureListener.OnDraw {
-    private static final int MAX_START_TRACE_BUFFER_SIZE = 100;
     @VisibleForTesting
     static final String STARTUP_TRACE_ROOT_SPAN = "More Insights";
+    private static final int MAX_START_TRACE_BUFFER_SIZE = 100;
     private boolean activeStartupTrace = false;
     private volatile int minSpanDurationMs;
     private volatile TraceData startupTraceData = null;

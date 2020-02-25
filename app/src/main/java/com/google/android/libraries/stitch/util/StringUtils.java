@@ -3,6 +3,7 @@ package com.google.android.libraries.stitch.util;
 import android.support.p001v4.media.session.PlaybackStateCompat;
 import android.text.Html;
 import android.text.TextUtils;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -18,9 +19,9 @@ import java.util.Random;
 
 public final class StringUtils {
     public static final String NO_WHITESPACE_CHAR_CLASS = "[^\\u0009\\u000A\\u000B\\u000C\\u000D\\u0020\\u0085\\u00A0\\u1680\\u180E\\u2000\\u2001\\u2002\\u2003\\u2004\\u2005\\u2006\\u2007\\u2008\\u2009\\u200A\\u2028\\u2029\\u202F\\u205F\\u3000]";
-    private static final char[] NUMBERS_AND_LETTERS = "0123456789abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
     public static final String WHITESPACE_CHARS = "\\u0009\\u000A\\u000B\\u000C\\u000D\\u0020\\u0085\\u00A0\\u1680\\u180E\\u2000\\u2001\\u2002\\u2003\\u2004\\u2005\\u2006\\u2007\\u2008\\u2009\\u200A\\u2028\\u2029\\u202F\\u205F\\u3000";
     public static final String WHITESPACE_CHAR_CLASS = "[\\u0009\\u000A\\u000B\\u000C\\u000D\\u0020\\u0085\\u00A0\\u1680\\u180E\\u2000\\u2001\\u2002\\u2003\\u2004\\u2005\\u2006\\u2007\\u2008\\u2009\\u200A\\u2028\\u2029\\u202F\\u205F\\u3000]";
+    private static final char[] NUMBERS_AND_LETTERS = "0123456789abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
     private static final Random randGen = new Random();
     private static final ThreadLocal<StringBuilderPool> sStringBuilderPool = new ThreadLocal<StringBuilderPool>() {
         /* access modifiers changed from: protected */
@@ -28,37 +29,6 @@ public final class StringUtils {
             return new StringBuilderPool();
         }
     };
-
-    private static final class StringBuilderPool {
-        private static final int DEFAULT_CAPACITY = 256;
-        private int mAcquiredCount;
-        private StringBuilder mStringBuilder;
-
-        private StringBuilderPool() {
-            this.mStringBuilder = new StringBuilder(256);
-            this.mAcquiredCount = 0;
-        }
-
-        public StringBuilder acquire() {
-            this.mAcquiredCount++;
-            if (this.mAcquiredCount == 1) {
-                return this.mStringBuilder;
-            }
-            return new StringBuilder(256);
-        }
-
-        public void release(StringBuilder sb) {
-            int i = this.mAcquiredCount;
-            if (i < 1) {
-                throw new IllegalStateException("Cannot release more StringBuilders than have been acquired");
-            } else if (i != 1 || sb == this.mStringBuilder) {
-                sb.setLength(0);
-                this.mAcquiredCount--;
-            } else {
-                throw new IllegalArgumentException("Tried to release wrong StringBuilder instance");
-            }
-        }
-    }
 
     private StringUtils() {
     }
@@ -208,5 +178,36 @@ public final class StringUtils {
             return index;
         }
         return index - 1;
+    }
+
+    private static final class StringBuilderPool {
+        private static final int DEFAULT_CAPACITY = 256;
+        private int mAcquiredCount;
+        private StringBuilder mStringBuilder;
+
+        private StringBuilderPool() {
+            this.mStringBuilder = new StringBuilder(256);
+            this.mAcquiredCount = 0;
+        }
+
+        public StringBuilder acquire() {
+            this.mAcquiredCount++;
+            if (this.mAcquiredCount == 1) {
+                return this.mStringBuilder;
+            }
+            return new StringBuilder(256);
+        }
+
+        public void release(StringBuilder sb) {
+            int i = this.mAcquiredCount;
+            if (i < 1) {
+                throw new IllegalStateException("Cannot release more StringBuilders than have been acquired");
+            } else if (i != 1 || sb == this.mStringBuilder) {
+                sb.setLength(0);
+                this.mAcquiredCount--;
+            } else {
+                throw new IllegalArgumentException("Tried to release wrong StringBuilder instance");
+            }
+        }
     }
 }

@@ -6,8 +6,9 @@ import android.support.annotation.IntRange;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.util.AttributeSet;
+
 import androidx.leanback.C0364R;
-import androidx.leanback.widget.picker.PickerUtility;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -15,21 +16,21 @@ import java.util.List;
 import java.util.Locale;
 
 public class TimePicker extends Picker {
+    static final String TAG = "TimePicker";
     private static final int AM_INDEX = 0;
     private static final int HOURS_IN_HALF_DAY = 12;
     private static final int PM_INDEX = 1;
-    static final String TAG = "TimePicker";
+    private final PickerUtility.TimeConstant mConstant;
     PickerColumn mAmPmColumn;
     int mColAmPmIndex;
     int mColHourIndex;
     int mColMinuteIndex;
-    private final PickerUtility.TimeConstant mConstant;
+    PickerColumn mHourColumn;
+    PickerColumn mMinuteColumn;
     private int mCurrentAmPmIndex;
     private int mCurrentHour;
     private int mCurrentMinute;
-    PickerColumn mHourColumn;
     private boolean mIs24hFormat;
-    PickerColumn mMinuteColumn;
     private String mTimePickerFormat;
 
     public TimePicker(Context context, AttributeSet attrs) {
@@ -69,6 +70,15 @@ public class TimePicker extends Picker {
         if (value != column.getMaxValue()) {
             column.setMaxValue(value);
         }
+    }
+
+    private static boolean isAnyOf(char c, char[] any) {
+        for (char c2 : any) {
+            if (c == c2) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
@@ -137,15 +147,6 @@ public class TimePicker extends Picker {
         }
         separators.add(sb.toString());
         return separators;
-    }
-
-    private static boolean isAnyOf(char c, char[] any) {
-        for (char c2 : any) {
-            if (c == c2) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private String extractTimeFields() {
@@ -239,6 +240,16 @@ public class TimePicker extends Picker {
         }
     }
 
+    public int getHour() {
+        if (this.mIs24hFormat) {
+            return this.mCurrentHour;
+        }
+        if (this.mCurrentAmPmIndex == 0) {
+            return this.mCurrentHour % 12;
+        }
+        return (this.mCurrentHour % 12) + 12;
+    }
+
     public void setHour(@IntRange(from = 0, mo124to = 23) int hour) {
         if (hour < 0 || hour > 23) {
             throw new IllegalArgumentException("hour: " + hour + " is not in [0-23] range in");
@@ -262,14 +273,8 @@ public class TimePicker extends Picker {
         setColumnValue(this.mColHourIndex, this.mCurrentHour, false);
     }
 
-    public int getHour() {
-        if (this.mIs24hFormat) {
-            return this.mCurrentHour;
-        }
-        if (this.mCurrentAmPmIndex == 0) {
-            return this.mCurrentHour % 12;
-        }
-        return (this.mCurrentHour % 12) + 12;
+    public int getMinute() {
+        return this.mCurrentMinute;
     }
 
     public void setMinute(@IntRange(from = 0, mo124to = 59) int minute) {
@@ -278,10 +283,6 @@ public class TimePicker extends Picker {
         }
         this.mCurrentMinute = minute;
         setColumnValue(this.mColMinuteIndex, this.mCurrentMinute, false);
-    }
-
-    public int getMinute() {
-        return this.mCurrentMinute;
     }
 
     public void setIs24Hour(boolean is24Hour) {

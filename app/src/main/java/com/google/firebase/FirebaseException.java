@@ -1,6 +1,7 @@
 package com.google.firebase;
 
 import android.support.annotation.NonNull;
+
 import com.google.android.gms.common.internal.zzau;
 
 public class FirebaseException extends Exception {

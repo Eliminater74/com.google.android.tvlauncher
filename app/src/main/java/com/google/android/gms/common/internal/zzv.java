@@ -3,6 +3,7 @@ package com.google.android.gms.common.internal;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.SparseIntArray;
+
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.GoogleApiAvailabilityLight;
 import com.google.android.gms.common.api.Api;

@@ -26,23 +26,37 @@ import android.widget.Checkable;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.leanback.C0364R;
 import androidx.leanback.transition.TransitionEpicenterCallback;
 import androidx.leanback.transition.TransitionHelper;
 import androidx.leanback.transition.TransitionListener;
-import androidx.leanback.widget.GuidedActionAdapter;
-import androidx.leanback.widget.GuidedActionsRelativeLayout;
-import androidx.leanback.widget.ItemAlignmentFacet;
 import androidx.leanback.widget.picker.DatePicker;
+
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
 public class GuidedActionsStylist implements FragmentAnimationProvider {
-    private static final String TAG = "GuidedActionsStylist";
     public static final int VIEW_TYPE_DATE_PICKER = 1;
     public static final int VIEW_TYPE_DEFAULT = 0;
     static final ItemAlignmentFacet sGuidedActionItemAlignFacet = new ItemAlignmentFacet();
+    private static final String TAG = "GuidedActionsStylist";
+
+    static {
+        ItemAlignmentFacet.ItemAlignmentDef alignedDef = new ItemAlignmentFacet.ItemAlignmentDef();
+        alignedDef.setItemAlignmentViewId(C0364R.C0366id.guidedactions_item_title);
+        alignedDef.setAlignedToTextViewBaseline(true);
+        alignedDef.setItemAlignmentOffset(0);
+        alignedDef.setItemAlignmentOffsetWithPadding(true);
+        alignedDef.setItemAlignmentOffsetPercent(0.0f);
+        sGuidedActionItemAlignFacet.setAlignmentDefs(new ItemAlignmentFacet.ItemAlignmentDef[]{alignedDef});
+    }
+
+    Object mExpandTransition;
+    GuidedAction mExpandedAction = null;
+    ViewGroup mMainView;
+    VerticalGridView mSubActionsGridView;
     private VerticalGridView mActionsGridView;
     private boolean mBackToCollapseActivatorView = true;
     private boolean mBackToCollapseSubActions = true;
@@ -58,193 +72,45 @@ public class GuidedActionsStylist implements FragmentAnimationProvider {
     private float mEnabledChevronAlpha;
     private float mEnabledDescriptionAlpha;
     private float mEnabledTextAlpha;
-    Object mExpandTransition;
-    GuidedAction mExpandedAction = null;
     private float mKeyLinePercent;
-    ViewGroup mMainView;
     private View mSubActionsBackground;
-    VerticalGridView mSubActionsGridView;
     private int mTitleMaxLines;
     private int mTitleMinLines;
     private int mVerticalPadding;
 
-    static {
-        ItemAlignmentFacet.ItemAlignmentDef alignedDef = new ItemAlignmentFacet.ItemAlignmentDef();
-        alignedDef.setItemAlignmentViewId(C0364R.C0366id.guidedactions_item_title);
-        alignedDef.setAlignedToTextViewBaseline(true);
-        alignedDef.setItemAlignmentOffset(0);
-        alignedDef.setItemAlignmentOffsetWithPadding(true);
-        alignedDef.setItemAlignmentOffsetPercent(0.0f);
-        sGuidedActionItemAlignFacet.setAlignmentDefs(new ItemAlignmentFacet.ItemAlignmentDef[]{alignedDef});
+    private static void setMaxLines(TextView view, int maxLines) {
+        if (maxLines == 1) {
+            view.setSingleLine(true);
+            return;
+        }
+        view.setSingleLine(false);
+        view.setMaxLines(maxLines);
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder implements FacetProvider {
-        GuidedAction mAction;
-        View mActivatorView;
-        ImageView mCheckmarkView;
-        ImageView mChevronView;
-        private View mContentView;
-        final View.AccessibilityDelegate mDelegate;
-        TextView mDescriptionView;
-        int mEditingMode;
-        ImageView mIconView;
-        private final boolean mIsSubAction;
-        Animator mPressAnimator;
-        TextView mTitleView;
+    private static float getFloat(Context ctx, TypedValue typedValue, int attrId) {
+        ctx.getTheme().resolveAttribute(attrId, typedValue, true);
+        return typedValue.getFloat();
+    }
 
-        public ViewHolder(View v) {
-            this(v, false);
-        }
+    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+     method: ClspMth{android.content.res.Resources.getValue(int, android.util.TypedValue, boolean):void throws android.content.res.Resources$NotFoundException}
+     arg types: [int, android.util.TypedValue, int]
+     candidates:
+      ClspMth{android.content.res.Resources.getValue(java.lang.String, android.util.TypedValue, boolean):void throws android.content.res.Resources$NotFoundException}
+      ClspMth{android.content.res.Resources.getValue(int, android.util.TypedValue, boolean):void throws android.content.res.Resources$NotFoundException} */
+    private static float getFloatValue(Resources resources, TypedValue typedValue, int resId) {
+        resources.getValue(resId, typedValue, true);
+        return typedValue.getFloat();
+    }
 
-        public ViewHolder(View v, boolean isSubAction) {
-            super(v);
-            this.mEditingMode = 0;
-            this.mDelegate = new View.AccessibilityDelegate() {
-                public void onInitializeAccessibilityEvent(View host, AccessibilityEvent event) {
-                    super.onInitializeAccessibilityEvent(host, event);
-                    event.setChecked(ViewHolder.this.mAction != null && ViewHolder.this.mAction.isChecked());
-                }
+    private static int getInteger(Context ctx, TypedValue typedValue, int attrId) {
+        ctx.getTheme().resolveAttribute(attrId, typedValue, true);
+        return ctx.getResources().getInteger(typedValue.resourceId);
+    }
 
-                public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfo info) {
-                    super.onInitializeAccessibilityNodeInfo(host, info);
-                    boolean z = true;
-                    info.setCheckable((ViewHolder.this.mAction == null || ViewHolder.this.mAction.getCheckSetId() == 0) ? false : true);
-                    if (ViewHolder.this.mAction == null || !ViewHolder.this.mAction.isChecked()) {
-                        z = false;
-                    }
-                    info.setChecked(z);
-                }
-            };
-            this.mContentView = v.findViewById(C0364R.C0366id.guidedactions_item_content);
-            this.mTitleView = (TextView) v.findViewById(C0364R.C0366id.guidedactions_item_title);
-            this.mActivatorView = v.findViewById(C0364R.C0366id.guidedactions_activator_item);
-            this.mDescriptionView = (TextView) v.findViewById(C0364R.C0366id.guidedactions_item_description);
-            this.mIconView = (ImageView) v.findViewById(C0364R.C0366id.guidedactions_item_icon);
-            this.mCheckmarkView = (ImageView) v.findViewById(C0364R.C0366id.guidedactions_item_checkmark);
-            this.mChevronView = (ImageView) v.findViewById(C0364R.C0366id.guidedactions_item_chevron);
-            this.mIsSubAction = isSubAction;
-            v.setAccessibilityDelegate(this.mDelegate);
-        }
-
-        public View getContentView() {
-            return this.mContentView;
-        }
-
-        public TextView getTitleView() {
-            return this.mTitleView;
-        }
-
-        public EditText getEditableTitleView() {
-            TextView textView = this.mTitleView;
-            if (textView instanceof EditText) {
-                return (EditText) textView;
-            }
-            return null;
-        }
-
-        public TextView getDescriptionView() {
-            return this.mDescriptionView;
-        }
-
-        public EditText getEditableDescriptionView() {
-            TextView textView = this.mDescriptionView;
-            if (textView instanceof EditText) {
-                return (EditText) textView;
-            }
-            return null;
-        }
-
-        public ImageView getIconView() {
-            return this.mIconView;
-        }
-
-        public ImageView getCheckmarkView() {
-            return this.mCheckmarkView;
-        }
-
-        public ImageView getChevronView() {
-            return this.mChevronView;
-        }
-
-        public boolean isInEditing() {
-            return this.mEditingMode != 0;
-        }
-
-        public boolean isInEditingText() {
-            int i = this.mEditingMode;
-            return i == 1 || i == 2;
-        }
-
-        public boolean isInEditingTitle() {
-            return this.mEditingMode == 1;
-        }
-
-        public boolean isInEditingDescription() {
-            return this.mEditingMode == 2;
-        }
-
-        public boolean isInEditingActivatorView() {
-            return this.mEditingMode == 3;
-        }
-
-        public View getEditingView() {
-            int i = this.mEditingMode;
-            if (i == 1) {
-                return this.mTitleView;
-            }
-            if (i == 2) {
-                return this.mDescriptionView;
-            }
-            if (i != 3) {
-                return null;
-            }
-            return this.mActivatorView;
-        }
-
-        public boolean isSubAction() {
-            return this.mIsSubAction;
-        }
-
-        public GuidedAction getAction() {
-            return this.mAction;
-        }
-
-        /* access modifiers changed from: package-private */
-        public void setActivated(boolean activated) {
-            this.mActivatorView.setActivated(activated);
-            if (this.itemView instanceof GuidedActionItemContainer) {
-                ((GuidedActionItemContainer) this.itemView).setFocusOutAllowed(!activated);
-            }
-        }
-
-        public Object getFacet(Class<?> facetClass) {
-            if (facetClass == ItemAlignmentFacet.class) {
-                return GuidedActionsStylist.sGuidedActionItemAlignFacet;
-            }
-            return null;
-        }
-
-        /* access modifiers changed from: package-private */
-        public void press(boolean pressed) {
-            Animator animator = this.mPressAnimator;
-            if (animator != null) {
-                animator.cancel();
-                this.mPressAnimator = null;
-            }
-            int themeAttrId = pressed ? C0364R.attr.guidedActionPressedAnimation : C0364R.attr.guidedActionUnpressedAnimation;
-            Context ctx = this.itemView.getContext();
-            TypedValue typedValue = new TypedValue();
-            if (ctx.getTheme().resolveAttribute(themeAttrId, typedValue, true)) {
-                this.mPressAnimator = AnimatorInflater.loadAnimator(ctx, typedValue.resourceId);
-                this.mPressAnimator.setTarget(this.itemView);
-                this.mPressAnimator.addListener(new AnimatorListenerAdapter() {
-                    public void onAnimationEnd(Animator animation) {
-                        ViewHolder.this.mPressAnimator = null;
-                    }
-                });
-                this.mPressAnimator.start();
-            }
-        }
+    private static int getDimension(Context ctx, TypedValue typedValue, int attrId) {
+        ctx.getTheme().resolveAttribute(attrId, typedValue, true);
+        return ctx.getResources().getDimensionPixelSize(typedValue.resourceId);
     }
 
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
@@ -487,15 +353,6 @@ public class GuidedActionsStylist implements FragmentAnimationProvider {
         }
     }
 
-    private static void setMaxLines(TextView view, int maxLines) {
-        if (maxLines == 1) {
-            view.setSingleLine(true);
-            return;
-        }
-        view.setSingleLine(false);
-        view.setMaxLines(maxLines);
-    }
-
     /* access modifiers changed from: protected */
     public void setupImeOptions(ViewHolder vh, GuidedAction action) {
         setupNextImeOptions(vh.getEditableTitleView());
@@ -727,20 +584,20 @@ public class GuidedActionsStylist implements FragmentAnimationProvider {
         expandAction(avh == null ? null : avh.getAction(), isExpandTransitionSupported());
     }
 
-    public final void setBackKeyToCollapseSubActions(boolean backToCollapse) {
-        this.mBackToCollapseSubActions = backToCollapse;
-    }
-
     public final boolean isBackKeyToCollapseSubActions() {
         return this.mBackToCollapseSubActions;
     }
 
-    public final void setBackKeyToCollapseActivatorView(boolean backToCollapse) {
-        this.mBackToCollapseActivatorView = backToCollapse;
+    public final void setBackKeyToCollapseSubActions(boolean backToCollapse) {
+        this.mBackToCollapseSubActions = backToCollapse;
     }
 
     public final boolean isBackKeyToCollapseActivatorView() {
         return this.mBackToCollapseActivatorView;
+    }
+
+    public final void setBackKeyToCollapseActivatorView(boolean backToCollapse) {
+        this.mBackToCollapseActivatorView = backToCollapse;
     }
 
     public void expandAction(GuidedAction action, boolean withTransition) {
@@ -1019,32 +876,6 @@ public class GuidedActionsStylist implements FragmentAnimationProvider {
     public void onImeDisappearing(@NonNull List<Animator> list) {
     }
 
-    private static float getFloat(Context ctx, TypedValue typedValue, int attrId) {
-        ctx.getTheme().resolveAttribute(attrId, typedValue, true);
-        return typedValue.getFloat();
-    }
-
-    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-     method: ClspMth{android.content.res.Resources.getValue(int, android.util.TypedValue, boolean):void throws android.content.res.Resources$NotFoundException}
-     arg types: [int, android.util.TypedValue, int]
-     candidates:
-      ClspMth{android.content.res.Resources.getValue(java.lang.String, android.util.TypedValue, boolean):void throws android.content.res.Resources$NotFoundException}
-      ClspMth{android.content.res.Resources.getValue(int, android.util.TypedValue, boolean):void throws android.content.res.Resources$NotFoundException} */
-    private static float getFloatValue(Resources resources, TypedValue typedValue, int resId) {
-        resources.getValue(resId, typedValue, true);
-        return typedValue.getFloat();
-    }
-
-    private static int getInteger(Context ctx, TypedValue typedValue, int attrId) {
-        ctx.getTheme().resolveAttribute(attrId, typedValue, true);
-        return ctx.getResources().getInteger(typedValue.resourceId);
-    }
-
-    private static int getDimension(Context ctx, TypedValue typedValue, int attrId) {
-        ctx.getTheme().resolveAttribute(attrId, typedValue, true);
-        return ctx.getResources().getDimensionPixelSize(typedValue.resourceId);
-    }
-
     private boolean setIcon(ImageView iconView, GuidedAction action) {
         Drawable icon = null;
         if (iconView != null) {
@@ -1065,5 +896,174 @@ public class GuidedActionsStylist implements FragmentAnimationProvider {
 
     private int getDescriptionMaxHeight(Context context, TextView title) {
         return (this.mDisplayHeight - (this.mVerticalPadding * 2)) - ((this.mTitleMaxLines * 2) * title.getLineHeight());
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder implements FacetProvider {
+        final View.AccessibilityDelegate mDelegate;
+        private final boolean mIsSubAction;
+        GuidedAction mAction;
+        View mActivatorView;
+        ImageView mCheckmarkView;
+        ImageView mChevronView;
+        TextView mDescriptionView;
+        int mEditingMode;
+        ImageView mIconView;
+        Animator mPressAnimator;
+        TextView mTitleView;
+        private View mContentView;
+
+        public ViewHolder(View v) {
+            this(v, false);
+        }
+
+        public ViewHolder(View v, boolean isSubAction) {
+            super(v);
+            this.mEditingMode = 0;
+            this.mDelegate = new View.AccessibilityDelegate() {
+                public void onInitializeAccessibilityEvent(View host, AccessibilityEvent event) {
+                    super.onInitializeAccessibilityEvent(host, event);
+                    event.setChecked(ViewHolder.this.mAction != null && ViewHolder.this.mAction.isChecked());
+                }
+
+                public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfo info) {
+                    super.onInitializeAccessibilityNodeInfo(host, info);
+                    boolean z = true;
+                    info.setCheckable((ViewHolder.this.mAction == null || ViewHolder.this.mAction.getCheckSetId() == 0) ? false : true);
+                    if (ViewHolder.this.mAction == null || !ViewHolder.this.mAction.isChecked()) {
+                        z = false;
+                    }
+                    info.setChecked(z);
+                }
+            };
+            this.mContentView = v.findViewById(C0364R.C0366id.guidedactions_item_content);
+            this.mTitleView = (TextView) v.findViewById(C0364R.C0366id.guidedactions_item_title);
+            this.mActivatorView = v.findViewById(C0364R.C0366id.guidedactions_activator_item);
+            this.mDescriptionView = (TextView) v.findViewById(C0364R.C0366id.guidedactions_item_description);
+            this.mIconView = (ImageView) v.findViewById(C0364R.C0366id.guidedactions_item_icon);
+            this.mCheckmarkView = (ImageView) v.findViewById(C0364R.C0366id.guidedactions_item_checkmark);
+            this.mChevronView = (ImageView) v.findViewById(C0364R.C0366id.guidedactions_item_chevron);
+            this.mIsSubAction = isSubAction;
+            v.setAccessibilityDelegate(this.mDelegate);
+        }
+
+        public View getContentView() {
+            return this.mContentView;
+        }
+
+        public TextView getTitleView() {
+            return this.mTitleView;
+        }
+
+        public EditText getEditableTitleView() {
+            TextView textView = this.mTitleView;
+            if (textView instanceof EditText) {
+                return (EditText) textView;
+            }
+            return null;
+        }
+
+        public TextView getDescriptionView() {
+            return this.mDescriptionView;
+        }
+
+        public EditText getEditableDescriptionView() {
+            TextView textView = this.mDescriptionView;
+            if (textView instanceof EditText) {
+                return (EditText) textView;
+            }
+            return null;
+        }
+
+        public ImageView getIconView() {
+            return this.mIconView;
+        }
+
+        public ImageView getCheckmarkView() {
+            return this.mCheckmarkView;
+        }
+
+        public ImageView getChevronView() {
+            return this.mChevronView;
+        }
+
+        public boolean isInEditing() {
+            return this.mEditingMode != 0;
+        }
+
+        public boolean isInEditingText() {
+            int i = this.mEditingMode;
+            return i == 1 || i == 2;
+        }
+
+        public boolean isInEditingTitle() {
+            return this.mEditingMode == 1;
+        }
+
+        public boolean isInEditingDescription() {
+            return this.mEditingMode == 2;
+        }
+
+        public boolean isInEditingActivatorView() {
+            return this.mEditingMode == 3;
+        }
+
+        public View getEditingView() {
+            int i = this.mEditingMode;
+            if (i == 1) {
+                return this.mTitleView;
+            }
+            if (i == 2) {
+                return this.mDescriptionView;
+            }
+            if (i != 3) {
+                return null;
+            }
+            return this.mActivatorView;
+        }
+
+        public boolean isSubAction() {
+            return this.mIsSubAction;
+        }
+
+        public GuidedAction getAction() {
+            return this.mAction;
+        }
+
+        /* access modifiers changed from: package-private */
+        public void setActivated(boolean activated) {
+            this.mActivatorView.setActivated(activated);
+            if (this.itemView instanceof GuidedActionItemContainer) {
+                ((GuidedActionItemContainer) this.itemView).setFocusOutAllowed(!activated);
+            }
+        }
+
+        public Object getFacet(Class<?> facetClass) {
+            if (facetClass == ItemAlignmentFacet.class) {
+                return GuidedActionsStylist.sGuidedActionItemAlignFacet;
+            }
+            return null;
+        }
+
+        /* access modifiers changed from: package-private */
+        public void press(boolean pressed) {
+            Animator animator = this.mPressAnimator;
+            if (animator != null) {
+                animator.cancel();
+                this.mPressAnimator = null;
+            }
+            int themeAttrId = pressed ? C0364R.attr.guidedActionPressedAnimation : C0364R.attr.guidedActionUnpressedAnimation;
+            Context ctx = this.itemView.getContext();
+            TypedValue typedValue = new TypedValue();
+            if (ctx.getTheme().resolveAttribute(themeAttrId, typedValue, true)) {
+                this.mPressAnimator = AnimatorInflater.loadAnimator(ctx, typedValue.resourceId);
+                this.mPressAnimator.setTarget(this.itemView);
+                this.mPressAnimator.addListener(new AnimatorListenerAdapter() {
+                    public void onAnimationEnd(Animator animation) {
+                        ViewHolder.this.mPressAnimator = null;
+                    }
+                });
+                this.mPressAnimator.start();
+            }
+        }
     }
 }

@@ -14,6 +14,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
+
 import com.google.android.tvlauncher.C1188R;
 import com.google.android.tvlauncher.util.TestsBuildCompat;
 
@@ -25,10 +26,6 @@ public class FadingEdgeContainer extends FrameLayout {
     private static final int GRADIENT_CURVE_STEEPNESS = 100;
     private static final int GRADIENT_STEPS = 20;
     private static final String TAG = "FadingEdgeContainer";
-    private boolean mFadeEnabled = true;
-    private int mFadeWidth;
-    private Paint mGradientPaint;
-    private Rect mGradientRect;
 
     static {
         FADE_COLORS_LTR[0] = 0;
@@ -54,6 +51,11 @@ public class FadingEdgeContainer extends FrameLayout {
             }
         }
     }
+
+    private boolean mFadeEnabled = true;
+    private int mFadeWidth;
+    private Paint mGradientPaint;
+    private Rect mGradientRect;
 
     public FadingEdgeContainer(@NonNull Context context) {
         super(context);

@@ -3,6 +3,7 @@ package com.google.android.exoplayer2.source.dash;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.FormatHolder;
@@ -19,6 +20,7 @@ import com.google.android.exoplayer2.source.dash.manifest.DashManifest;
 import com.google.android.exoplayer2.upstream.Allocator;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
@@ -26,30 +28,37 @@ import java.util.TreeMap;
 
 public final class PlayerEmsgHandler implements Handler.Callback {
     private static final int EMSG_MANIFEST_EXPIRED = 1;
-    private final Allocator allocator;
     /* access modifiers changed from: private */
     public final EventMessageDecoder decoder = new EventMessageDecoder();
-    private long expiredManifestPublishTimeUs;
     /* access modifiers changed from: private */
     public final Handler handler = Util.createHandler(this);
+    private final Allocator allocator;
+    private final TreeMap<Long, Long> manifestPublishTimeToExpiryTimeUs = new TreeMap<>();
+    private final PlayerEmsgCallback playerEmsgCallback;
+    private long expiredManifestPublishTimeUs;
     private boolean isWaitingForManifestRefresh;
     private long lastLoadedChunkEndTimeBeforeRefreshUs = C0841C.TIME_UNSET;
     private long lastLoadedChunkEndTimeUs = C0841C.TIME_UNSET;
     private DashManifest manifest;
-    private final TreeMap<Long, Long> manifestPublishTimeToExpiryTimeUs = new TreeMap<>();
-    private final PlayerEmsgCallback playerEmsgCallback;
     private boolean released;
-
-    public interface PlayerEmsgCallback {
-        void onDashManifestPublishTimeExpired(long j);
-
-        void onDashManifestRefreshRequested();
-    }
 
     public PlayerEmsgHandler(DashManifest manifest2, PlayerEmsgCallback playerEmsgCallback2, Allocator allocator2) {
         this.manifest = manifest2;
         this.playerEmsgCallback = playerEmsgCallback2;
         this.allocator = allocator2;
+    }
+
+    public static boolean isPlayerEmsgEvent(String schemeIdUri, String value) {
+        return "urn:mpeg:dash:event:2012".equals(schemeIdUri) && (IcyHeaders.REQUEST_HEADER_ENABLE_METADATA_VALUE.equals(value) || "2".equals(value) || "3".equals(value));
+    }
+
+    /* access modifiers changed from: private */
+    public static long getManifestPublishTimeMsInEmsg(EventMessage eventMessage) {
+        try {
+            return Util.parseXsDateTime(Util.fromUtf8Bytes(eventMessage.messageData));
+        } catch (ParserException e) {
+            return C0841C.TIME_UNSET;
+        }
     }
 
     public void updateManifest(DashManifest newManifest) {
@@ -101,10 +110,6 @@ public final class PlayerEmsgHandler implements Handler.Callback {
         if (this.lastLoadedChunkEndTimeUs != C0841C.TIME_UNSET || chunk.endTimeUs > this.lastLoadedChunkEndTimeUs) {
             this.lastLoadedChunkEndTimeUs = chunk.endTimeUs;
         }
-    }
-
-    public static boolean isPlayerEmsgEvent(String schemeIdUri, String value) {
-        return "urn:mpeg:dash:event:2012".equals(schemeIdUri) && (IcyHeaders.REQUEST_HEADER_ENABLE_METADATA_VALUE.equals(value) || "2".equals(value) || "3".equals(value));
     }
 
     public PlayerTrackEmsgHandler newPlayerTrackEmsgHandler() {
@@ -164,12 +169,19 @@ public final class PlayerEmsgHandler implements Handler.Callback {
         }
     }
 
-    /* access modifiers changed from: private */
-    public static long getManifestPublishTimeMsInEmsg(EventMessage eventMessage) {
-        try {
-            return Util.parseXsDateTime(Util.fromUtf8Bytes(eventMessage.messageData));
-        } catch (ParserException e) {
-            return C0841C.TIME_UNSET;
+    public interface PlayerEmsgCallback {
+        void onDashManifestPublishTimeExpired(long j);
+
+        void onDashManifestRefreshRequested();
+    }
+
+    private static final class ManifestExpiryEventInfo {
+        public final long eventTimeUs;
+        public final long manifestPublishTimeMsInEmsg;
+
+        public ManifestExpiryEventInfo(long eventTimeUs2, long manifestPublishTimeMsInEmsg2) {
+            this.eventTimeUs = eventTimeUs2;
+            this.manifestPublishTimeMsInEmsg = manifestPublishTimeMsInEmsg2;
         }
     }
 
@@ -248,16 +260,6 @@ public final class PlayerEmsgHandler implements Handler.Callback {
 
         private void onManifestExpiredMessageEncountered(long eventTimeUs, long manifestPublishTimeMsInEmsg) {
             PlayerEmsgHandler.this.handler.sendMessage(PlayerEmsgHandler.this.handler.obtainMessage(1, new ManifestExpiryEventInfo(eventTimeUs, manifestPublishTimeMsInEmsg)));
-        }
-    }
-
-    private static final class ManifestExpiryEventInfo {
-        public final long eventTimeUs;
-        public final long manifestPublishTimeMsInEmsg;
-
-        public ManifestExpiryEventInfo(long eventTimeUs2, long manifestPublishTimeMsInEmsg2) {
-            this.eventTimeUs = eventTimeUs2;
-            this.manifestPublishTimeMsInEmsg = manifestPublishTimeMsInEmsg2;
         }
     }
 }

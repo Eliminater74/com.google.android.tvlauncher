@@ -4,6 +4,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.util.Log;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -11,6 +12,9 @@ import java.io.IOException;
 public final class EnvironmentCompat {
     public static final String MEDIA_UNKNOWN = "unknown";
     private static final String TAG = "EnvironmentCompat";
+
+    private EnvironmentCompat() {
+    }
 
     public static String getStorageState(@NonNull File path) {
         if (Build.VERSION.SDK_INT >= 19) {
@@ -25,8 +29,5 @@ public final class EnvironmentCompat {
             Log.w(TAG, "Failed to resolve canonical path: " + e);
             return "unknown";
         }
-    }
-
-    private EnvironmentCompat() {
     }
 }

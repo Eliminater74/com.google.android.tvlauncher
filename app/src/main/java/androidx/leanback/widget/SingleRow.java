@@ -3,7 +3,7 @@ package androidx.leanback.widget;
 import android.support.annotation.NonNull;
 import android.support.p001v4.util.CircularIntArray;
 import android.support.p004v7.widget.RecyclerView;
-import androidx.leanback.widget.Grid;
+
 import java.io.PrintWriter;
 
 class SingleRow extends Grid {

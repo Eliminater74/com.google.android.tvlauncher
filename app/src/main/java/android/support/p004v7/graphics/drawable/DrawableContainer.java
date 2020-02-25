@@ -18,10 +18,11 @@ import android.support.annotation.RequiresApi;
 import android.support.annotation.RestrictTo;
 import android.support.p001v4.graphics.drawable.DrawableCompat;
 import android.util.SparseArray;
+
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-/* renamed from: android.support.v7.graphics.drawable.DrawableContainer */
+        /* renamed from: android.support.v7.graphics.drawable.DrawableContainer */
 class DrawableContainer extends Drawable implements Drawable.Callback {
     private static final boolean DEBUG = false;
     private static final boolean DEFAULT_DITHER = true;
@@ -41,6 +42,11 @@ class DrawableContainer extends Drawable implements Drawable.Callback {
     private boolean mMutated;
 
     DrawableContainer() {
+    }
+
+    static int resolveDensity(@Nullable Resources r, int parentDensity) {
+        int densityDpi = r == null ? parentDensity : r.getDisplayMetrics().densityDpi;
+        return densityDpi == 0 ? ClientAnalytics.LogRequest.LogSource.JAM_KIOSK_ANDROID_PRIMES_VALUE : densityDpi;
     }
 
     public void draw(@NonNull Canvas canvas) {
@@ -94,6 +100,10 @@ class DrawableContainer extends Drawable implements Drawable.Callback {
         }
     }
 
+    public int getAlpha() {
+        return this.mAlpha;
+    }
+
     public void setAlpha(int alpha) {
         if (!this.mHasAlpha || this.mAlpha != alpha) {
             this.mHasAlpha = true;
@@ -108,10 +118,6 @@ class DrawableContainer extends Drawable implements Drawable.Callback {
                 animate(false);
             }
         }
-    }
-
-    public int getAlpha() {
-        return this.mAlpha;
     }
 
     public void setDither(boolean dither) {
@@ -179,6 +185,10 @@ class DrawableContainer extends Drawable implements Drawable.Callback {
         return this.mDrawableContainerState.isStateful();
     }
 
+    public boolean isAutoMirrored() {
+        return this.mDrawableContainerState.mAutoMirrored;
+    }
+
     public void setAutoMirrored(boolean mirrored) {
         if (this.mDrawableContainerState.mAutoMirrored != mirrored) {
             DrawableContainerState drawableContainerState = this.mDrawableContainerState;
@@ -188,10 +198,6 @@ class DrawableContainer extends Drawable implements Drawable.Callback {
                 DrawableCompat.setAutoMirrored(drawable, drawableContainerState.mAutoMirrored);
             }
         }
-    }
-
-    public boolean isAutoMirrored() {
-        return this.mDrawableContainerState.mAutoMirrored;
     }
 
     public void jumpToCurrentState() {
@@ -370,13 +376,13 @@ class DrawableContainer extends Drawable implements Drawable.Callback {
     }
 
     /* access modifiers changed from: package-private */
-    public void setCurrentIndex(int index) {
-        selectDrawable(index);
+    public int getCurrentIndex() {
+        return this.mCurIndex;
     }
 
     /* access modifiers changed from: package-private */
-    public int getCurrentIndex() {
-        return this.mCurIndex;
+    public void setCurrentIndex(int index) {
+        selectDrawable(index);
     }
 
     /* access modifiers changed from: package-private */
@@ -547,6 +553,21 @@ class DrawableContainer extends Drawable implements Drawable.Callback {
         return this.mDrawableContainerState;
     }
 
+    /* access modifiers changed from: package-private */
+    public void setConstantState(DrawableContainerState state) {
+        this.mDrawableContainerState = state;
+        int i = this.mCurIndex;
+        if (i >= 0) {
+            this.mCurrDrawable = state.getChild(i);
+            Drawable drawable = this.mCurrDrawable;
+            if (drawable != null) {
+                initializeDrawableForDisplay(drawable);
+            }
+        }
+        this.mLastIndex = -1;
+        this.mLastDrawable = null;
+    }
+
     @NonNull
     public Drawable mutate() {
         if (!this.mMutated && super.mutate() == this) {
@@ -571,6 +592,7 @@ class DrawableContainer extends Drawable implements Drawable.Callback {
 
     /* renamed from: android.support.v7.graphics.drawable.DrawableContainer$DrawableContainerState */
     static abstract class DrawableContainerState extends Drawable.ConstantState {
+        final DrawableContainer mOwner;
         boolean mAutoMirrored;
         boolean mCanConstantState;
         int mChangingConfigurations;
@@ -600,7 +622,6 @@ class DrawableContainer extends Drawable implements Drawable.Callback {
         boolean mMutated;
         int mNumChildren;
         int mOpacity;
-        final DrawableContainer mOwner;
         Resources mSourceRes;
         boolean mStateful;
         ColorStateList mTintList;
@@ -880,12 +901,12 @@ class DrawableContainer extends Drawable implements Drawable.Callback {
             return r;
         }
 
-        public final void setConstantSize(boolean constant) {
-            this.mConstantSize = constant;
-        }
-
         public final boolean isConstantSize() {
             return this.mConstantSize;
+        }
+
+        public final void setConstantSize(boolean constant) {
+            this.mConstantSize = constant;
         }
 
         public final int getConstantWidth() {
@@ -947,20 +968,20 @@ class DrawableContainer extends Drawable implements Drawable.Callback {
             }
         }
 
-        public final void setEnterFadeDuration(int duration) {
-            this.mEnterFadeDuration = duration;
-        }
-
         public final int getEnterFadeDuration() {
             return this.mEnterFadeDuration;
         }
 
-        public final void setExitFadeDuration(int duration) {
-            this.mExitFadeDuration = duration;
+        public final void setEnterFadeDuration(int duration) {
+            this.mEnterFadeDuration = duration;
         }
 
         public final int getExitFadeDuration() {
             return this.mExitFadeDuration;
+        }
+
+        public final void setExitFadeDuration(int duration) {
+            this.mExitFadeDuration = duration;
         }
 
         public final int getOpacity() {
@@ -1028,21 +1049,6 @@ class DrawableContainer extends Drawable implements Drawable.Callback {
         }
     }
 
-    /* access modifiers changed from: package-private */
-    public void setConstantState(DrawableContainerState state) {
-        this.mDrawableContainerState = state;
-        int i = this.mCurIndex;
-        if (i >= 0) {
-            this.mCurrDrawable = state.getChild(i);
-            Drawable drawable = this.mCurrDrawable;
-            if (drawable != null) {
-                initializeDrawableForDisplay(drawable);
-            }
-        }
-        this.mLastIndex = -1;
-        this.mLastDrawable = null;
-    }
-
     /* renamed from: android.support.v7.graphics.drawable.DrawableContainer$BlockInvalidateCallback */
     static class BlockInvalidateCallback implements Drawable.Callback {
         private Drawable.Callback mCallback;
@@ -1077,10 +1083,5 @@ class DrawableContainer extends Drawable implements Drawable.Callback {
                 callback.unscheduleDrawable(who, what);
             }
         }
-    }
-
-    static int resolveDensity(@Nullable Resources r, int parentDensity) {
-        int densityDpi = r == null ? parentDensity : r.getDisplayMetrics().densityDpi;
-        return densityDpi == 0 ? ClientAnalytics.LogRequest.LogSource.JAM_KIOSK_ANDROID_PRIMES_VALUE : densityDpi;
     }
 }

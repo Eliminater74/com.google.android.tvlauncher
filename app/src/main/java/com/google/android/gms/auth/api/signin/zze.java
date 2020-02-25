@@ -1,6 +1,7 @@
 package com.google.android.gms.auth.api.signin;
 
 import android.os.Parcelable;
+
 import com.google.android.gms.common.internal.Hide;
 
 @Hide

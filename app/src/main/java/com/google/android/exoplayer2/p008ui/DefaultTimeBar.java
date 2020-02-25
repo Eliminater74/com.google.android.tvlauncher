@@ -17,10 +17,11 @@ import android.view.View;
 import android.view.ViewParent;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
+
 import com.google.android.exoplayer2.C0841C;
-import com.google.android.exoplayer2.p008ui.TimeBar;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Util;
+
 import java.util.Formatter;
 import java.util.Iterator;
 import java.util.Locale;
@@ -28,45 +29,33 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 /* renamed from: com.google.android.exoplayer2.ui.DefaultTimeBar */
 public class DefaultTimeBar extends View implements TimeBar {
-    private static final String ACCESSIBILITY_CLASS_NAME = "android.widget.SeekBar";
     public static final int DEFAULT_AD_MARKER_COLOR = -1291845888;
     public static final int DEFAULT_AD_MARKER_WIDTH_DP = 4;
     public static final int DEFAULT_BAR_HEIGHT_DP = 4;
-    private static final int DEFAULT_INCREMENT_COUNT = 20;
     public static final int DEFAULT_PLAYED_COLOR = -1;
     public static final int DEFAULT_SCRUBBER_DISABLED_SIZE_DP = 0;
     public static final int DEFAULT_SCRUBBER_DRAGGED_SIZE_DP = 16;
     public static final int DEFAULT_SCRUBBER_ENABLED_SIZE_DP = 12;
     public static final int DEFAULT_TOUCH_TARGET_HEIGHT_DP = 26;
+    private static final String ACCESSIBILITY_CLASS_NAME = "android.widget.SeekBar";
+    private static final int DEFAULT_INCREMENT_COUNT = 20;
     private static final int FINE_SCRUB_RATIO = 3;
     private static final int FINE_SCRUB_Y_THRESHOLD_DP = -50;
     private static final long STOP_SCRUBBING_TIMEOUT_MS = 1000;
-    private int adGroupCount;
-    @Nullable
-    private long[] adGroupTimesMs;
     private final Paint adMarkerPaint = new Paint();
     private final int adMarkerWidth;
     private final int barHeight;
     private final Rect bufferedBar = new Rect();
     private final Paint bufferedPaint = new Paint();
-    private long bufferedPosition;
     private final float density;
-    private long duration;
     private final int fineScrubYThreshold;
     private final StringBuilder formatBuilder;
     private final Formatter formatter;
-    private int keyCountIncrement;
-    private long keyTimeIncrement;
-    private int lastCoarseScrubXPosition;
     private final CopyOnWriteArraySet<TimeBar.OnScrubListener> listeners;
     private final int[] locationOnScreen;
-    @Nullable
-    private boolean[] playedAdGroups;
     private final Paint playedAdMarkerPaint = new Paint();
     private final Paint playedPaint = new Paint();
-    private long position;
     private final Rect progressBar = new Rect();
-    private long scrubPosition;
     private final Rect scrubberBar = new Rect();
     private final int scrubberDisabledSize;
     private final int scrubberDraggedSize;
@@ -75,12 +64,24 @@ public class DefaultTimeBar extends View implements TimeBar {
     private final int scrubberEnabledSize;
     private final int scrubberPadding;
     private final Paint scrubberPaint = new Paint();
-    private boolean scrubbing;
     private final Rect seekBounds = new Rect();
     private final Runnable stopScrubbingRunnable;
     private final Point touchPosition;
     private final int touchTargetHeight;
     private final Paint unplayedPaint = new Paint();
+    private int adGroupCount;
+    @Nullable
+    private long[] adGroupTimesMs;
+    private long bufferedPosition;
+    private long duration;
+    private int keyCountIncrement;
+    private long keyTimeIncrement;
+    private int lastCoarseScrubXPosition;
+    @Nullable
+    private boolean[] playedAdGroups;
+    private long position;
+    private long scrubPosition;
+    private boolean scrubbing;
 
     /* JADX INFO: super call moved to the top of the method (can break code semantics) */
     public DefaultTimeBar(Context context, AttributeSet attrs) {
@@ -172,6 +173,34 @@ public class DefaultTimeBar extends View implements TimeBar {
         if (getImportantForAccessibility() == 0) {
             setImportantForAccessibility(1);
         }
+    }
+
+    private static boolean setDrawableLayoutDirection(Drawable drawable, int layoutDirection) {
+        return Util.SDK_INT >= 23 && drawable.setLayoutDirection(layoutDirection);
+    }
+
+    public static int getDefaultScrubberColor(int playedColor) {
+        return -16777216 | playedColor;
+    }
+
+    public static int getDefaultUnplayedColor(int playedColor) {
+        return (16777215 & playedColor) | 855638016;
+    }
+
+    public static int getDefaultBufferedColor(int playedColor) {
+        return (16777215 & playedColor) | -872415232;
+    }
+
+    public static int getDefaultPlayedAdMarkerColor(int adMarkerColor) {
+        return (16777215 & adMarkerColor) | 855638016;
+    }
+
+    private static int dpToPx(float density2, int dps) {
+        return (int) ((((float) dps) * density2) + 0.5f);
+    }
+
+    private static int pxToDp(float density2, int px) {
+        return (int) (((float) px) / density2);
     }
 
     /* access modifiers changed from: package-private */
@@ -682,33 +711,5 @@ public class DefaultTimeBar extends View implements TimeBar {
 
     private boolean setDrawableLayoutDirection(Drawable drawable) {
         return Util.SDK_INT >= 23 && setDrawableLayoutDirection(drawable, getLayoutDirection());
-    }
-
-    private static boolean setDrawableLayoutDirection(Drawable drawable, int layoutDirection) {
-        return Util.SDK_INT >= 23 && drawable.setLayoutDirection(layoutDirection);
-    }
-
-    public static int getDefaultScrubberColor(int playedColor) {
-        return -16777216 | playedColor;
-    }
-
-    public static int getDefaultUnplayedColor(int playedColor) {
-        return (16777215 & playedColor) | 855638016;
-    }
-
-    public static int getDefaultBufferedColor(int playedColor) {
-        return (16777215 & playedColor) | -872415232;
-    }
-
-    public static int getDefaultPlayedAdMarkerColor(int adMarkerColor) {
-        return (16777215 & adMarkerColor) | 855638016;
-    }
-
-    private static int dpToPx(float density2, int dps) {
-        return (int) ((((float) dps) * density2) + 0.5f);
-    }
-
-    private static int pxToDp(float density2, int px) {
-        return (int) (((float) px) / density2);
     }
 }

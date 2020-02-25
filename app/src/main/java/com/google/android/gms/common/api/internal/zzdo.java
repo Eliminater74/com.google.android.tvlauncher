@@ -3,6 +3,7 @@ package com.google.android.gms.common.api.internal;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.util.Log;
+
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.Releasable;
@@ -13,23 +14,24 @@ import com.google.android.gms.common.api.ResultTransform;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.common.api.TransformedResult;
 import com.google.android.gms.common.internal.zzau;
+
 import java.lang.ref.WeakReference;
 
 /* compiled from: TransformedResultImpl */
 public final class zzdo<R extends Result> extends TransformedResult<R> implements ResultCallback<R> {
+    /* access modifiers changed from: private */
+    public final Object zze = new Object();
+    /* access modifiers changed from: private */
+    public final WeakReference<GoogleApiClient> zzg;
+    /* access modifiers changed from: private */
+    public final zzdq zzh;
     /* access modifiers changed from: private */
     public ResultTransform<? super R, ? extends Result> zza = null;
     /* access modifiers changed from: private */
     public zzdo<? extends Result> zzb = null;
     private volatile ResultCallbacks<? super R> zzc = null;
     private PendingResult<R> zzd = null;
-    /* access modifiers changed from: private */
-    public final Object zze = new Object();
     private Status zzf = null;
-    /* access modifiers changed from: private */
-    public final WeakReference<GoogleApiClient> zzg;
-    /* access modifiers changed from: private */
-    public final zzdq zzh;
     private boolean zzi = false;
 
     public zzdo(WeakReference<GoogleApiClient> weakReference) {
@@ -37,6 +39,21 @@ public final class zzdo<R extends Result> extends TransformedResult<R> implement
         this.zzg = weakReference;
         GoogleApiClient googleApiClient = this.zzg.get();
         this.zzh = new zzdq(this, googleApiClient != null ? googleApiClient.zzc() : Looper.getMainLooper());
+    }
+
+    /* access modifiers changed from: private */
+    public static void zza(Result result) {
+        if (result instanceof Releasable) {
+            try {
+                ((Releasable) result).release();
+            } catch (RuntimeException e) {
+                String valueOf = String.valueOf(result);
+                StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 18);
+                sb.append("Unable to release ");
+                sb.append(valueOf);
+                Log.w("TransformedResultImpl", sb.toString(), e);
+            }
+        }
     }
 
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
@@ -167,20 +184,5 @@ public final class zzdo<R extends Result> extends TransformedResult<R> implement
 
     private final boolean zzc() {
         return (this.zzc == null || this.zzg.get() == null) ? false : true;
-    }
-
-    /* access modifiers changed from: private */
-    public static void zza(Result result) {
-        if (result instanceof Releasable) {
-            try {
-                ((Releasable) result).release();
-            } catch (RuntimeException e) {
-                String valueOf = String.valueOf(result);
-                StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 18);
-                sb.append("Unable to release ");
-                sb.append(valueOf);
-                Log.w("TransformedResultImpl", sb.toString(), e);
-            }
-        }
     }
 }

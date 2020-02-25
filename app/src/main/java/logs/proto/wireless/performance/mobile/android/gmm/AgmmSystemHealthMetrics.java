@@ -15,6 +15,7 @@ import com.google.protobuf.ProtoMessage;
 import com.google.protobuf.ProtoPresenceBits;
 import com.google.protobuf.ProtoPresenceCheckedField;
 import com.google.protobuf.ProtoSyntax;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -22,6 +23,12 @@ import java.util.Collections;
 import java.util.List;
 
 public final class AgmmSystemHealthMetrics {
+
+    private AgmmSystemHealthMetrics() {
+    }
+
+    public static void registerAllExtensions(ExtensionRegistryLite registry) {
+    }
 
     public interface SystemHealthMetricExtensionOrBuilder extends MessageLiteOrBuilder {
         int getCustomEntryPoint();
@@ -49,12 +56,6 @@ public final class AgmmSystemHealthMetrics {
         boolean hasCustomFeatureName();
     }
 
-    private AgmmSystemHealthMetrics() {
-    }
-
-    public static void registerAllExtensions(ExtensionRegistryLite registry) {
-    }
-
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
     public static final class SystemHealthMetricExtension extends GeneratedMessageLite<SystemHealthMetricExtension, Builder> implements SystemHealthMetricExtensionOrBuilder {
         public static final int CUSTOM_ENTRY_POINT_FIELD_NUMBER = 1;
@@ -63,8 +64,13 @@ public final class AgmmSystemHealthMetrics {
         /* access modifiers changed from: private */
         public static final SystemHealthMetricExtension DEFAULT_INSTANCE = new SystemHealthMetricExtension();
         public static final int OVERLAPPING_EVENTS_FIELD_NUMBER = 5;
-        private static volatile Parser<SystemHealthMetricExtension> PARSER = null;
         public static final int VES_APPEARED_IN_THE_FLOW_FIELD_NUMBER = 4;
+        private static volatile Parser<SystemHealthMetricExtension> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(SystemHealthMetricExtension.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.INT32)
@@ -81,284 +87,71 @@ public final class AgmmSystemHealthMetrics {
         @ProtoField(fieldNumber = 4, type = FieldType.MESSAGE_LIST)
         private Internal.ProtobufList<VEInfo> vesAppearedInTheFlow_ = emptyProtobufList();
 
-        public interface VEInfoOrBuilder extends MessageLiteOrBuilder {
-            int getLeafVeTypeId();
-
-            VEInfo.VEAction getVeAction();
-
-            boolean hasLeafVeTypeId();
-
-            boolean hasVeAction();
-        }
-
         private SystemHealthMetricExtension() {
         }
 
-        @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
-        public static final class VEInfo extends GeneratedMessageLite<VEInfo, Builder> implements VEInfoOrBuilder {
-            /* access modifiers changed from: private */
-            public static final VEInfo DEFAULT_INSTANCE = new VEInfo();
-            public static final int LEAF_VE_TYPE_ID_FIELD_NUMBER = 1;
-            private static volatile Parser<VEInfo> PARSER = null;
-            public static final int VE_ACTION_FIELD_NUMBER = 2;
-            @ProtoPresenceBits(mo28548id = 0)
-            private int bitField0_;
-            @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.INT32)
-            @ProtoPresenceCheckedField(mask = 1, presenceBitsId = 0)
-            private int leafVeTypeId_;
-            @ProtoField(fieldNumber = 2, isRequired = false, type = FieldType.ENUM)
-            @ProtoPresenceCheckedField(mask = 2, presenceBitsId = 0)
-            private int veAction_;
+        public static SystemHealthMetricExtension parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (SystemHealthMetricExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
 
-            private VEInfo() {
-            }
+        public static SystemHealthMetricExtension parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (SystemHealthMetricExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-            public enum VEAction implements Internal.EnumLite {
-                UNKNOWN_ACTION(0),
-                PAGE_ACTIVATION(1),
-                INTERACTION(2);
-                
-                public static final int INTERACTION_VALUE = 2;
-                public static final int PAGE_ACTIVATION_VALUE = 1;
-                public static final int UNKNOWN_ACTION_VALUE = 0;
-                private static final Internal.EnumLiteMap<VEAction> internalValueMap = new Internal.EnumLiteMap<VEAction>() {
-                    public VEAction findValueByNumber(int number) {
-                        return VEAction.forNumber(number);
-                    }
-                };
-                private final int value;
+        public static SystemHealthMetricExtension parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (SystemHealthMetricExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
 
-                public final int getNumber() {
-                    return this.value;
-                }
+        public static SystemHealthMetricExtension parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (SystemHealthMetricExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-                public static VEAction forNumber(int value2) {
-                    if (value2 == 0) {
-                        return UNKNOWN_ACTION;
-                    }
-                    if (value2 == 1) {
-                        return PAGE_ACTIVATION;
-                    }
-                    if (value2 != 2) {
-                        return null;
-                    }
-                    return INTERACTION;
-                }
+        public static SystemHealthMetricExtension parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (SystemHealthMetricExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
 
-                public static Internal.EnumLiteMap<VEAction> internalGetValueMap() {
-                    return internalValueMap;
-                }
+        public static SystemHealthMetricExtension parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (SystemHealthMetricExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-                public static Internal.EnumVerifier internalGetVerifier() {
-                    return VEActionVerifier.INSTANCE;
-                }
+        public static SystemHealthMetricExtension parseFrom(InputStream input) throws IOException {
+            return (SystemHealthMetricExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
 
-                private static final class VEActionVerifier implements Internal.EnumVerifier {
-                    static final Internal.EnumVerifier INSTANCE = new VEActionVerifier();
+        public static SystemHealthMetricExtension parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (SystemHealthMetricExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
 
-                    private VEActionVerifier() {
-                    }
+        public static SystemHealthMetricExtension parseDelimitedFrom(InputStream input) throws IOException {
+            return (SystemHealthMetricExtension) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
 
-                    public boolean isInRange(int number) {
-                        return VEAction.forNumber(number) != null;
-                    }
-                }
+        public static SystemHealthMetricExtension parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (SystemHealthMetricExtension) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
 
-                private VEAction(int value2) {
-                    this.value = value2;
-                }
-            }
+        public static SystemHealthMetricExtension parseFrom(CodedInputStream input) throws IOException {
+            return (SystemHealthMetricExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
 
-            public boolean hasLeafVeTypeId() {
-                return (this.bitField0_ & 1) != 0;
-            }
+        public static SystemHealthMetricExtension parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (SystemHealthMetricExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
 
-            public int getLeafVeTypeId() {
-                return this.leafVeTypeId_;
-            }
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
 
-            /* access modifiers changed from: private */
-            public void setLeafVeTypeId(int value) {
-                this.bitField0_ |= 1;
-                this.leafVeTypeId_ = value;
-            }
+        public static Builder newBuilder(SystemHealthMetricExtension prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
 
-            /* access modifiers changed from: private */
-            public void clearLeafVeTypeId() {
-                this.bitField0_ &= -2;
-                this.leafVeTypeId_ = 0;
-            }
+        public static SystemHealthMetricExtension getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
 
-            public boolean hasVeAction() {
-                return (this.bitField0_ & 2) != 0;
-            }
-
-            public VEAction getVeAction() {
-                VEAction result = VEAction.forNumber(this.veAction_);
-                return result == null ? VEAction.UNKNOWN_ACTION : result;
-            }
-
-            /* access modifiers changed from: private */
-            public void setVeAction(VEAction value) {
-                if (value != null) {
-                    this.bitField0_ |= 2;
-                    this.veAction_ = value.getNumber();
-                    return;
-                }
-                throw new NullPointerException();
-            }
-
-            /* access modifiers changed from: private */
-            public void clearVeAction() {
-                this.bitField0_ &= -3;
-                this.veAction_ = 0;
-            }
-
-            public static VEInfo parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-                return (VEInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-            }
-
-            public static VEInfo parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-                return (VEInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-            }
-
-            public static VEInfo parseFrom(ByteString data) throws InvalidProtocolBufferException {
-                return (VEInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-            }
-
-            public static VEInfo parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-                return (VEInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-            }
-
-            public static VEInfo parseFrom(byte[] data) throws InvalidProtocolBufferException {
-                return (VEInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-            }
-
-            public static VEInfo parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-                return (VEInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-            }
-
-            public static VEInfo parseFrom(InputStream input) throws IOException {
-                return (VEInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-            }
-
-            public static VEInfo parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-                return (VEInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-            }
-
-            public static VEInfo parseDelimitedFrom(InputStream input) throws IOException {
-                return (VEInfo) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-            }
-
-            public static VEInfo parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-                return (VEInfo) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-            }
-
-            public static VEInfo parseFrom(CodedInputStream input) throws IOException {
-                return (VEInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-            }
-
-            public static VEInfo parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-                return (VEInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-            }
-
-            public static Builder newBuilder() {
-                return (Builder) DEFAULT_INSTANCE.createBuilder();
-            }
-
-            public static Builder newBuilder(VEInfo prototype) {
-                return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
-            }
-
-            public static final class Builder extends GeneratedMessageLite.Builder<VEInfo, Builder> implements VEInfoOrBuilder {
-                private Builder() {
-                    super(VEInfo.DEFAULT_INSTANCE);
-                }
-
-                public boolean hasLeafVeTypeId() {
-                    return ((VEInfo) this.instance).hasLeafVeTypeId();
-                }
-
-                public int getLeafVeTypeId() {
-                    return ((VEInfo) this.instance).getLeafVeTypeId();
-                }
-
-                public Builder setLeafVeTypeId(int value) {
-                    copyOnWrite();
-                    ((VEInfo) this.instance).setLeafVeTypeId(value);
-                    return this;
-                }
-
-                public Builder clearLeafVeTypeId() {
-                    copyOnWrite();
-                    ((VEInfo) this.instance).clearLeafVeTypeId();
-                    return this;
-                }
-
-                public boolean hasVeAction() {
-                    return ((VEInfo) this.instance).hasVeAction();
-                }
-
-                public VEAction getVeAction() {
-                    return ((VEInfo) this.instance).getVeAction();
-                }
-
-                public Builder setVeAction(VEAction value) {
-                    copyOnWrite();
-                    ((VEInfo) this.instance).setVeAction(value);
-                    return this;
-                }
-
-                public Builder clearVeAction() {
-                    copyOnWrite();
-                    ((VEInfo) this.instance).clearVeAction();
-                    return this;
-                }
-            }
-
-            /* access modifiers changed from: protected */
-            public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-                switch (method) {
-                    case NEW_MUTABLE_INSTANCE:
-                        return new VEInfo();
-                    case NEW_BUILDER:
-                        return new Builder();
-                    case BUILD_MESSAGE_INFO:
-                        return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0000\u0000\u0001\u0004\u0000\u0002\f\u0001", new Object[]{"bitField0_", "leafVeTypeId_", "veAction_", VEAction.internalGetVerifier()});
-                    case GET_DEFAULT_INSTANCE:
-                        return DEFAULT_INSTANCE;
-                    case GET_PARSER:
-                        Parser<VEInfo> parser = PARSER;
-                        if (parser == null) {
-                            synchronized (VEInfo.class) {
-                                parser = PARSER;
-                                if (parser == null) {
-                                    parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                    PARSER = parser;
-                                }
-                            }
-                        }
-                        return parser;
-                    case GET_MEMOIZED_IS_INITIALIZED:
-                        return (byte) 1;
-                    case SET_MEMOIZED_IS_INITIALIZED:
-                        return null;
-                    default:
-                        throw new UnsupportedOperationException();
-                }
-            }
-
-            static {
-                GeneratedMessageLite.registerDefaultInstance(VEInfo.class, DEFAULT_INSTANCE);
-            }
-
-            public static VEInfo getDefaultInstance() {
-                return DEFAULT_INSTANCE;
-            }
-
-            public static Parser<VEInfo> parser() {
-                return DEFAULT_INSTANCE.getParserForType();
-            }
+        public static Parser<SystemHealthMetricExtension> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasCustomEntryPoint() {
@@ -565,60 +358,314 @@ public final class AgmmSystemHealthMetrics {
             this.overlappingEvents_ = emptyIntList();
         }
 
-        public static SystemHealthMetricExtension parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (SystemHealthMetricExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new SystemHealthMetricExtension();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0005\u0000\u0001\u0001\u0005\u0005\u0000\u0002\u0000\u0001\u0004\u0000\u0002\u0004\u0001\u0003\u0004\u0002\u0004\u001b\u0005\u0016", new Object[]{"bitField0_", "customEntryPoint_", "customExitPoint_", "customFeatureName_", "vesAppearedInTheFlow_", VEInfo.class, "overlappingEvents_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<SystemHealthMetricExtension> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (SystemHealthMetricExtension.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
-        public static SystemHealthMetricExtension parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (SystemHealthMetricExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        public interface VEInfoOrBuilder extends MessageLiteOrBuilder {
+            int getLeafVeTypeId();
+
+            VEInfo.VEAction getVeAction();
+
+            boolean hasLeafVeTypeId();
+
+            boolean hasVeAction();
         }
 
-        public static SystemHealthMetricExtension parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (SystemHealthMetricExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
+        @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
+        public static final class VEInfo extends GeneratedMessageLite<VEInfo, Builder> implements VEInfoOrBuilder {
+            /* access modifiers changed from: private */
+            public static final VEInfo DEFAULT_INSTANCE = new VEInfo();
+            public static final int LEAF_VE_TYPE_ID_FIELD_NUMBER = 1;
+            public static final int VE_ACTION_FIELD_NUMBER = 2;
+            private static volatile Parser<VEInfo> PARSER = null;
 
-        public static SystemHealthMetricExtension parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (SystemHealthMetricExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
+            static {
+                GeneratedMessageLite.registerDefaultInstance(VEInfo.class, DEFAULT_INSTANCE);
+            }
 
-        public static SystemHealthMetricExtension parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (SystemHealthMetricExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
+            @ProtoPresenceBits(mo28548id = 0)
+            private int bitField0_;
+            @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.INT32)
+            @ProtoPresenceCheckedField(mask = 1, presenceBitsId = 0)
+            private int leafVeTypeId_;
+            @ProtoField(fieldNumber = 2, isRequired = false, type = FieldType.ENUM)
+            @ProtoPresenceCheckedField(mask = 2, presenceBitsId = 0)
+            private int veAction_;
 
-        public static SystemHealthMetricExtension parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (SystemHealthMetricExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
+            private VEInfo() {
+            }
 
-        public static SystemHealthMetricExtension parseFrom(InputStream input) throws IOException {
-            return (SystemHealthMetricExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
+            public static VEInfo parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+                return (VEInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+            }
 
-        public static SystemHealthMetricExtension parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (SystemHealthMetricExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
+            public static VEInfo parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+                return (VEInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+            }
 
-        public static SystemHealthMetricExtension parseDelimitedFrom(InputStream input) throws IOException {
-            return (SystemHealthMetricExtension) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
+            public static VEInfo parseFrom(ByteString data) throws InvalidProtocolBufferException {
+                return (VEInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+            }
 
-        public static SystemHealthMetricExtension parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (SystemHealthMetricExtension) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
+            public static VEInfo parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+                return (VEInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+            }
 
-        public static SystemHealthMetricExtension parseFrom(CodedInputStream input) throws IOException {
-            return (SystemHealthMetricExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
+            public static VEInfo parseFrom(byte[] data) throws InvalidProtocolBufferException {
+                return (VEInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+            }
 
-        public static SystemHealthMetricExtension parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (SystemHealthMetricExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
+            public static VEInfo parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+                return (VEInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+            }
 
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
+            public static VEInfo parseFrom(InputStream input) throws IOException {
+                return (VEInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+            }
 
-        public static Builder newBuilder(SystemHealthMetricExtension prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+            public static VEInfo parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+                return (VEInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+            }
+
+            public static VEInfo parseDelimitedFrom(InputStream input) throws IOException {
+                return (VEInfo) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+            }
+
+            public static VEInfo parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+                return (VEInfo) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+            }
+
+            public static VEInfo parseFrom(CodedInputStream input) throws IOException {
+                return (VEInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+            }
+
+            public static VEInfo parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+                return (VEInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+            }
+
+            public static Builder newBuilder() {
+                return (Builder) DEFAULT_INSTANCE.createBuilder();
+            }
+
+            public static Builder newBuilder(VEInfo prototype) {
+                return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+            }
+
+            public static VEInfo getDefaultInstance() {
+                return DEFAULT_INSTANCE;
+            }
+
+            public static Parser<VEInfo> parser() {
+                return DEFAULT_INSTANCE.getParserForType();
+            }
+
+            public boolean hasLeafVeTypeId() {
+                return (this.bitField0_ & 1) != 0;
+            }
+
+            public int getLeafVeTypeId() {
+                return this.leafVeTypeId_;
+            }
+
+            /* access modifiers changed from: private */
+            public void setLeafVeTypeId(int value) {
+                this.bitField0_ |= 1;
+                this.leafVeTypeId_ = value;
+            }
+
+            /* access modifiers changed from: private */
+            public void clearLeafVeTypeId() {
+                this.bitField0_ &= -2;
+                this.leafVeTypeId_ = 0;
+            }
+
+            public boolean hasVeAction() {
+                return (this.bitField0_ & 2) != 0;
+            }
+
+            public VEAction getVeAction() {
+                VEAction result = VEAction.forNumber(this.veAction_);
+                return result == null ? VEAction.UNKNOWN_ACTION : result;
+            }
+
+            /* access modifiers changed from: private */
+            public void setVeAction(VEAction value) {
+                if (value != null) {
+                    this.bitField0_ |= 2;
+                    this.veAction_ = value.getNumber();
+                    return;
+                }
+                throw new NullPointerException();
+            }
+
+            /* access modifiers changed from: private */
+            public void clearVeAction() {
+                this.bitField0_ &= -3;
+                this.veAction_ = 0;
+            }
+
+            /* access modifiers changed from: protected */
+            public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+                switch (method) {
+                    case NEW_MUTABLE_INSTANCE:
+                        return new VEInfo();
+                    case NEW_BUILDER:
+                        return new Builder();
+                    case BUILD_MESSAGE_INFO:
+                        return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0000\u0000\u0001\u0004\u0000\u0002\f\u0001", new Object[]{"bitField0_", "leafVeTypeId_", "veAction_", VEAction.internalGetVerifier()});
+                    case GET_DEFAULT_INSTANCE:
+                        return DEFAULT_INSTANCE;
+                    case GET_PARSER:
+                        Parser<VEInfo> parser = PARSER;
+                        if (parser == null) {
+                            synchronized (VEInfo.class) {
+                                parser = PARSER;
+                                if (parser == null) {
+                                    parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                    PARSER = parser;
+                                }
+                            }
+                        }
+                        return parser;
+                    case GET_MEMOIZED_IS_INITIALIZED:
+                        return (byte) 1;
+                    case SET_MEMOIZED_IS_INITIALIZED:
+                        return null;
+                    default:
+                        throw new UnsupportedOperationException();
+                }
+            }
+
+            public enum VEAction implements Internal.EnumLite {
+                UNKNOWN_ACTION(0),
+                PAGE_ACTIVATION(1),
+                INTERACTION(2);
+
+                public static final int INTERACTION_VALUE = 2;
+                public static final int PAGE_ACTIVATION_VALUE = 1;
+                public static final int UNKNOWN_ACTION_VALUE = 0;
+                private static final Internal.EnumLiteMap<VEAction> internalValueMap = new Internal.EnumLiteMap<VEAction>() {
+                    public VEAction findValueByNumber(int number) {
+                        return VEAction.forNumber(number);
+                    }
+                };
+                private final int value;
+
+                private VEAction(int value2) {
+                    this.value = value2;
+                }
+
+                public static VEAction forNumber(int value2) {
+                    if (value2 == 0) {
+                        return UNKNOWN_ACTION;
+                    }
+                    if (value2 == 1) {
+                        return PAGE_ACTIVATION;
+                    }
+                    if (value2 != 2) {
+                        return null;
+                    }
+                    return INTERACTION;
+                }
+
+                public static Internal.EnumLiteMap<VEAction> internalGetValueMap() {
+                    return internalValueMap;
+                }
+
+                public static Internal.EnumVerifier internalGetVerifier() {
+                    return VEActionVerifier.INSTANCE;
+                }
+
+                public final int getNumber() {
+                    return this.value;
+                }
+
+                private static final class VEActionVerifier implements Internal.EnumVerifier {
+                    static final Internal.EnumVerifier INSTANCE = new VEActionVerifier();
+
+                    private VEActionVerifier() {
+                    }
+
+                    public boolean isInRange(int number) {
+                        return VEAction.forNumber(number) != null;
+                    }
+                }
+            }
+
+            public static final class Builder extends GeneratedMessageLite.Builder<VEInfo, Builder> implements VEInfoOrBuilder {
+                private Builder() {
+                    super(VEInfo.DEFAULT_INSTANCE);
+                }
+
+                public boolean hasLeafVeTypeId() {
+                    return ((VEInfo) this.instance).hasLeafVeTypeId();
+                }
+
+                public int getLeafVeTypeId() {
+                    return ((VEInfo) this.instance).getLeafVeTypeId();
+                }
+
+                public Builder setLeafVeTypeId(int value) {
+                    copyOnWrite();
+                    ((VEInfo) this.instance).setLeafVeTypeId(value);
+                    return this;
+                }
+
+                public Builder clearLeafVeTypeId() {
+                    copyOnWrite();
+                    ((VEInfo) this.instance).clearLeafVeTypeId();
+                    return this;
+                }
+
+                public boolean hasVeAction() {
+                    return ((VEInfo) this.instance).hasVeAction();
+                }
+
+                public VEAction getVeAction() {
+                    return ((VEInfo) this.instance).getVeAction();
+                }
+
+                public Builder setVeAction(VEAction value) {
+                    copyOnWrite();
+                    ((VEInfo) this.instance).setVeAction(value);
+                    return this;
+                }
+
+                public Builder clearVeAction() {
+                    copyOnWrite();
+                    ((VEInfo) this.instance).clearVeAction();
+                    return this;
+                }
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<SystemHealthMetricExtension, Builder> implements SystemHealthMetricExtensionOrBuilder {
@@ -787,50 +834,6 @@ public final class AgmmSystemHealthMetrics {
                 ((SystemHealthMetricExtension) this.instance).clearOverlappingEvents();
                 return this;
             }
-        }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new SystemHealthMetricExtension();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0005\u0000\u0001\u0001\u0005\u0005\u0000\u0002\u0000\u0001\u0004\u0000\u0002\u0004\u0001\u0003\u0004\u0002\u0004\u001b\u0005\u0016", new Object[]{"bitField0_", "customEntryPoint_", "customExitPoint_", "customFeatureName_", "vesAppearedInTheFlow_", VEInfo.class, "overlappingEvents_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<SystemHealthMetricExtension> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (SystemHealthMetricExtension.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(SystemHealthMetricExtension.class, DEFAULT_INSTANCE);
-        }
-
-        public static SystemHealthMetricExtension getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<SystemHealthMetricExtension> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
         }
     }
 }

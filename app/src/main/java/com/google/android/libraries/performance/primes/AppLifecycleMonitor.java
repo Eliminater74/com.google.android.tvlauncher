@@ -3,11 +3,13 @@ package com.google.android.libraries.performance.primes;
 import android.app.Application;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
-import com.google.android.libraries.performance.primes.AppLifecycleTracker;
 
 public class AppLifecycleMonitor {
     private static volatile AppLifecycleMonitor instance;
     final AppLifecycleTracker tracker = new AppLifecycleTracker();
+
+    private AppLifecycleMonitor() {
+    }
 
     public static AppLifecycleMonitor getInstance(Application application) {
         if (instance == null) {
@@ -34,9 +36,6 @@ public class AppLifecycleMonitor {
         AppLifecycleMonitor monitor = new AppLifecycleMonitor();
         monitor.attachToApp(application);
         return monitor;
-    }
-
-    private AppLifecycleMonitor() {
     }
 
     private void attachToApp(Application application) {

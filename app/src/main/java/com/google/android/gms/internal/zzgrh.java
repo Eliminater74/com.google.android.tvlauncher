@@ -4,9 +4,9 @@ import java.util.ListIterator;
 
 /* compiled from: UnmodifiableLazyStringList */
 final class zzgrh implements ListIterator<String> {
-    private ListIterator<String> zza = this.zzc.zza.listIterator(this.zzb);
     private final /* synthetic */ int zzb;
     private final /* synthetic */ zzgrg zzc;
+    private ListIterator<String> zza = this.zzc.zza.listIterator(this.zzb);
 
     zzgrh(zzgrg zzgrg, int i) {
         this.zzc = zzgrg;

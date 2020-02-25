@@ -15,6 +15,9 @@ public class TalkContract {
     public static final Uri AUTHORITY_URI = Uri.parse("content://com.google.android.providers.talk");
     public static final String GTALK_CATEGORY = "com.android.im.category.GTALK";
 
+    private TalkContract() {
+    }
+
     public interface AccountColumns {
         public static final String KEEP_SIGNED_IN = "keep_signed_in";
         public static final String LAST_LOGIN_STATE = "last_login_state";
@@ -27,14 +30,6 @@ public class TalkContract {
         public static final String ACCOUNT_ID = "account_id";
         public static final String NAME = "name";
         public static final String VALUE = "value";
-    }
-
-    public static final class AccountStatus implements BaseColumns, AccountStatusColumns {
-        public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/gtalk-account-status";
-        public static final String CONTENT_TYPE = "vnd.android.cursor.dir/gtalk-account-status";
-        public static final Uri CONTENT_URI = Uri.parse("content://com.google.android.providers.talk/accountStatus");
-        public static final Uri CONTENT_URI_UNREAD_CHATS = Uri.parse("content://com.google.android.providers.talk/accountStatus/new_messages");
-        public static final String DEFAULT_SORT_ORDER = "name ASC";
     }
 
     public interface AccountStatusColumns {
@@ -191,13 +186,6 @@ public class TalkContract {
         public static final String TIMESTAMP = "ts";
     }
 
-    public static final class Presence implements BaseColumns, PresenceColumns {
-        public static final String CONTENT_TYPE = "vnd.android.cursor.dir/gtalk-presence";
-        public static final Uri CONTENT_URI = Uri.parse("content://com.google.android.providers.talk/presence");
-        public static final Uri CONTENT_URI_BY_ACCOUNT = Uri.parse("content://com.google.android.providers.talk/presence/account");
-        public static final String DEFAULT_SORT_ORDER = "mode DESC";
-    }
-
     public interface PresenceColumns extends CommonPresenceColumns {
         public static final String CAPABILITIES = "cap";
         public static final int CAPABILITY_HAS_CAMERA_V1 = 4;
@@ -232,15 +220,27 @@ public class TalkContract {
         public static final int SENT = 2;
     }
 
-    public static final class ServerToDeviceRmqIds implements BaseColumns, ServerToDeviceRmqIdsColumn {
-        public static final Uri CONTENT_URI = Uri.parse("content://com.google.android.providers.talk/s2dids");
-    }
-
     public interface ServerToDeviceRmqIdsColumn {
         public static final String RMQ_ID = "rmq_id";
     }
 
-    private TalkContract() {
+    public static final class AccountStatus implements BaseColumns, AccountStatusColumns {
+        public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/gtalk-account-status";
+        public static final String CONTENT_TYPE = "vnd.android.cursor.dir/gtalk-account-status";
+        public static final Uri CONTENT_URI = Uri.parse("content://com.google.android.providers.talk/accountStatus");
+        public static final Uri CONTENT_URI_UNREAD_CHATS = Uri.parse("content://com.google.android.providers.talk/accountStatus/new_messages");
+        public static final String DEFAULT_SORT_ORDER = "name ASC";
+    }
+
+    public static final class Presence implements BaseColumns, PresenceColumns {
+        public static final String CONTENT_TYPE = "vnd.android.cursor.dir/gtalk-presence";
+        public static final Uri CONTENT_URI = Uri.parse("content://com.google.android.providers.talk/presence");
+        public static final Uri CONTENT_URI_BY_ACCOUNT = Uri.parse("content://com.google.android.providers.talk/presence/account");
+        public static final String DEFAULT_SORT_ORDER = "mode DESC";
+    }
+
+    public static final class ServerToDeviceRmqIds implements BaseColumns, ServerToDeviceRmqIdsColumn {
+        public static final Uri CONTENT_URI = Uri.parse("content://com.google.android.providers.talk/s2dids");
     }
 
     public static final class Account implements BaseColumns, AccountColumns {
@@ -273,13 +273,13 @@ public class TalkContract {
     }
 
     public static final class ContactsEtag implements BaseColumns, ContactsEtagColumns {
-        private static int COLUMN_ETAG = 0;
-        private static int COLUMN_OTR_ETAG = 0;
-        private static final String[] CONTACT_ETAG_PROJECTION = {ContactsEtagColumns.ETAG};
-        private static final String[] CONTACT_OTR_ETAG_PROJECTION = {ContactsEtagColumns.OTR_ETAG};
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/gtalk-contactsEtag";
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/gtalk-contactsEtag";
         public static final Uri CONTENT_URI = Uri.parse("content://com.google.android.providers.talk/contactsEtag");
+        private static final String[] CONTACT_ETAG_PROJECTION = {ContactsEtagColumns.ETAG};
+        private static final String[] CONTACT_OTR_ETAG_PROJECTION = {ContactsEtagColumns.OTR_ETAG};
+        private static int COLUMN_ETAG = 0;
+        private static int COLUMN_OTR_ETAG = 0;
 
         private ContactsEtag() {
         }
@@ -424,9 +424,6 @@ public class TalkContract {
     public static class AccountSettings implements AccountSettingsColumns {
         public static final String CONTENT_TYPE = "vnd.android-dir/gtalk-accountSettings";
         public static final Uri CONTENT_URI = Uri.parse("content://com.google.android.providers.talk/accountSettings");
-        private static final int DISABLED = 2;
-        private static final int ENABLED = 1;
-        private static final int ENABLED_MASK = 3;
         public static final String IMAGE_STABILIZATION_HIGH = "high";
         public static final String IMAGE_STABILIZATION_LOW = "low";
         public static final String IMAGE_STABILIZATION_MEDIUM = "medium";
@@ -462,15 +459,18 @@ public class TalkContract {
         public static final String SETTING_VIDEO_VIBRATE = "vibrate-video";
         public static final String SETTING_VIDEO_VIBRATE_WHEN = "vibrate-when-video";
         public static final String SHOW_OFFLINE_CONTACTS = "show_offline_contacts";
-        private static final int UNSET = 0;
-        private static final int USER_SET = 16;
-        private static final int USER_SET_MASK = 16;
         public static final String VIBRATE_ALWAYS = "always";
         public static final String VIBRATE_NEVER = "never";
         public static final String VIBRATE_SILENT = "silent";
         public static final String VIDEOCHAT_BLOCK = "off";
         public static final String VIDEOCHAT_VIDEO = "video";
         public static final String VIDEOCHAT_VOICE = "audio";
+        private static final int DISABLED = 2;
+        private static final int ENABLED = 1;
+        private static final int ENABLED_MASK = 3;
+        private static final int UNSET = 0;
+        private static final int USER_SET = 16;
+        private static final int USER_SET_MASK = 16;
 
         private AccountSettings() {
         }
@@ -643,32 +643,39 @@ public class TalkContract {
                 this.mAccountId = accountId;
             }
 
-            public void setAutomaticallyConnectToGTalkServer(boolean autoConnect) {
-                AccountSettings.setAutomaticallyConnectGTalk(this.mContentResolver, autoConnect, this.mAccountId);
+            private static boolean isTablet(Context ctx) {
+                if ((ctx.getResources().getConfiguration().screenLayout & 15) > 3) {
+                    return true;
+                }
+                return false;
+            }
+
+            public static int getCapabilities(boolean video, boolean audio) {
+                return (video ? (char) 6 : 0) | audio ? 1 : 0;
             }
 
             public boolean getAutomaticallyConnectToGTalkServer() {
                 return getBoolean(AccountSettings.SETTING_AUTOMATICALLY_CONNECT_GTALK, true);
             }
 
-            public void setHideOfflineContacts(boolean hideOfflineContacts) {
-                AccountSettings.setHideOfflineContacts(this.mContentResolver, hideOfflineContacts, this.mAccountId);
+            public void setAutomaticallyConnectToGTalkServer(boolean autoConnect) {
+                AccountSettings.setAutomaticallyConnectGTalk(this.mContentResolver, autoConnect, this.mAccountId);
             }
 
             public boolean getHideOfflineContacts() {
                 return getBoolean(AccountSettings.SETTING_HIDE_OFFLINE_CONTACTS, false);
             }
 
-            public void setTextVibrate(boolean vibrate) {
-                AccountSettings.setTextVibrate(this.mContentResolver, vibrate, this.mAccountId);
+            public void setHideOfflineContacts(boolean hideOfflineContacts) {
+                AccountSettings.setHideOfflineContacts(this.mContentResolver, hideOfflineContacts, this.mAccountId);
             }
 
             public boolean getTextVibrate() {
                 return getBoolean(AccountSettings.SETTING_TEXT_VIBRATE, false);
             }
 
-            public void setTextVibrateWhen(String when) {
-                AccountSettings.setTextVibrateWhen(this.mContentResolver, when, this.mAccountId);
+            public void setTextVibrate(boolean vibrate) {
+                AccountSettings.setTextVibrate(this.mContentResolver, vibrate, this.mAccountId);
             }
 
             public String getTextVibrateWhen() {
@@ -679,16 +686,16 @@ public class TalkContract {
                 return getTextVibrate() ? AccountSettings.VIBRATE_ALWAYS : AccountSettings.VIBRATE_NEVER;
             }
 
-            public void setVideoVibrate(boolean vibrate) {
-                AccountSettings.setVideoVibrate(this.mContentResolver, vibrate, this.mAccountId);
+            public void setTextVibrateWhen(String when) {
+                AccountSettings.setTextVibrateWhen(this.mContentResolver, when, this.mAccountId);
             }
 
             public boolean getVideoVibrate() {
                 return getBoolean(AccountSettings.SETTING_VIDEO_VIBRATE, false);
             }
 
-            public void setVideoVibrateWhen(String when) {
-                AccountSettings.setVideoVibrateWhen(this.mContentResolver, when, this.mAccountId);
+            public void setVideoVibrate(boolean vibrate) {
+                AccountSettings.setVideoVibrate(this.mContentResolver, vibrate, this.mAccountId);
             }
 
             public String getVideoVibrateWhen() {
@@ -699,44 +706,48 @@ public class TalkContract {
                 return getVideoVibrate() ? AccountSettings.VIBRATE_ALWAYS : AccountSettings.VIBRATE_NEVER;
             }
 
-            public void setVideoImageStabilization(String imageStabilization) {
-                AccountSettings.setVideoImageStabilization(this.mContentResolver, imageStabilization, this.mAccountId);
+            public void setVideoVibrateWhen(String when) {
+                AccountSettings.setVideoVibrateWhen(this.mContentResolver, when, this.mAccountId);
             }
 
             public String getVideoImageStabilization() {
                 return getString(AccountSettings.SETTING_VIDEO_IMAGE_STABILIZATION, null);
             }
 
-            public void setTextNotification(String notificationType) {
-                AccountSettings.setNotificationType(this.mContentResolver, notificationType, this.mAccountId);
+            public void setVideoImageStabilization(String imageStabilization) {
+                AccountSettings.setVideoImageStabilization(this.mContentResolver, imageStabilization, this.mAccountId);
             }
 
             public String getTextNotification() {
                 return getString(AccountSettings.SETTING_IM_NOTIFICATION_TYPE, AccountSettings.NOTIFICATION_STATUS_BAR);
             }
 
-            public void setVideoNotification(String notificationType) {
-                AccountSettings.setVideoNotificationType(this.mContentResolver, notificationType, this.mAccountId);
+            public void setTextNotification(String notificationType) {
+                AccountSettings.setNotificationType(this.mContentResolver, notificationType, this.mAccountId);
             }
 
             public String getVideoNotification() {
                 return getString(AccountSettings.SETTING_VIDEO_NOTIFICATION_TYPE, AccountSettings.NOTIFICATION_POPUP);
             }
 
-            public void setTextRingtoneURI(String ringtoneUri) {
-                AccountSettings.setTextRingtoneURI(this.mContentResolver, ringtoneUri, this.mAccountId);
+            public void setVideoNotification(String notificationType) {
+                AccountSettings.setVideoNotificationType(this.mContentResolver, notificationType, this.mAccountId);
             }
 
             public String getTextRingtoneURI() {
                 return getString(AccountSettings.SETTING_TEXT_RINGTONE, AccountSettings.SETTING_TEXT_RINGTONE_DEFAULT);
             }
 
-            public void setVideoRingtoneURI(String ringtoneUri) {
-                AccountSettings.setVideoRingtoneURI(this.mContentResolver, ringtoneUri, this.mAccountId);
+            public void setTextRingtoneURI(String ringtoneUri) {
+                AccountSettings.setTextRingtoneURI(this.mContentResolver, ringtoneUri, this.mAccountId);
             }
 
             public String getVideoRingtoneURI() {
                 return getString(AccountSettings.SETTING_VIDEO_RINGTONE, AccountSettings.SETTING_VIDEO_RINGTONE_DEFAULT);
+            }
+
+            public void setVideoRingtoneURI(String ringtoneUri) {
+                AccountSettings.setVideoRingtoneURI(this.mContentResolver, ringtoneUri, this.mAccountId);
             }
 
             public void setShowMobileIndicator(boolean showMobile) {
@@ -745,17 +756,6 @@ public class TalkContract {
 
             public boolean getShowMobileIndicator(Context ctx) {
                 return getBoolean(AccountSettings.SETTING_SHOW_MOBILE_INDICATOR, !isTablet(ctx));
-            }
-
-            private static boolean isTablet(Context ctx) {
-                if ((ctx.getResources().getConfiguration().screenLayout & 15) > 3) {
-                    return true;
-                }
-                return false;
-            }
-
-            public void setAudioChatEnabled(boolean enabled) {
-                AccountSettings.setAudioChatEnabled(this.mContentResolver, enabled, this.mAccountId);
             }
 
             @Deprecated
@@ -767,12 +767,12 @@ public class TalkContract {
                 return AccountSettings.isEnabled(getLong(AccountSettings.SETTING_ALLOW_AUDIOCHAT_V2, 2));
             }
 
-            public boolean getAudioChatUnset() {
-                return getLong(AccountSettings.SETTING_ALLOW_AUDIOCHAT_V2, 0) == 0;
+            public void setAudioChatEnabled(boolean enabled) {
+                AccountSettings.setAudioChatEnabled(this.mContentResolver, enabled, this.mAccountId);
             }
 
-            public void setVideoChatEnabled(boolean enabled) {
-                AccountSettings.setVideoChatEnabled(this.mContentResolver, enabled, this.mAccountId);
+            public boolean getAudioChatUnset() {
+                return getLong(AccountSettings.SETTING_ALLOW_AUDIOCHAT_V2, 0) == 0;
             }
 
             @Deprecated
@@ -784,6 +784,10 @@ public class TalkContract {
                 return AccountSettings.isEnabled(getLong(AccountSettings.SETTING_ALLOW_VIDEOCHAT_V2, 2));
             }
 
+            public void setVideoChatEnabled(boolean enabled) {
+                AccountSettings.setVideoChatEnabled(this.mContentResolver, enabled, this.mAccountId);
+            }
+
             public boolean getVideoChatUnset() {
                 return getLong(AccountSettings.SETTING_ALLOW_VIDEOCHAT_V2, 0) == 0;
             }
@@ -793,12 +797,12 @@ public class TalkContract {
                 return AccountSettings.setCameraEnabled(this.mContentResolver, enabled, userSet, getLong(AccountSettings.SETTING_ALLOW_CAMERA, 0), this.mAccountId);
             }
 
-            public void setCameraEnabled(boolean enabled) {
-                AccountSettings.setCameraEnabled(this.mContentResolver, enabled, this.mAccountId);
-            }
-
             public boolean getCameraEnabled() {
                 return AccountSettings.isEnabled(getLong(AccountSettings.SETTING_ALLOW_CAMERA, 2));
+            }
+
+            public void setCameraEnabled(boolean enabled) {
+                AccountSettings.setCameraEnabled(this.mContentResolver, enabled, this.mAccountId);
             }
 
             public boolean getCameraUnset() {
@@ -820,48 +824,44 @@ public class TalkContract {
                 return caps2;
             }
 
-            public static int getCapabilities(boolean video, boolean audio) {
-                return (video ? (char) 6 : 0) | audio ? 1 : 0;
+            public boolean getShowAwayOnIdle() {
+                return getBoolean(AccountSettings.SETTING_SHOW_AWAY_ON_IDLE, true);
             }
 
             public void setShowAwayOnIdle(boolean showAway) {
                 AccountSettings.setShowAwayOnIdle(this.mContentResolver, showAway, this.mAccountId);
             }
 
-            public boolean getShowAwayOnIdle() {
-                return getBoolean(AccountSettings.SETTING_SHOW_AWAY_ON_IDLE, true);
+            public boolean getNotifyFriendInvitation() {
+                return getBoolean(AccountSettings.SETTING_NOTIFY_FRIEND_INVITE, true);
             }
 
             public void setNotifyFriendInvitation(boolean notify) {
                 AccountSettings.setNotifyFriendInvitation(this.mContentResolver, notify, this.mAccountId);
             }
 
-            public boolean getNotifyFriendInvitation() {
-                return getBoolean(AccountSettings.SETTING_NOTIFY_FRIEND_INVITE, true);
+            public boolean getUploadHeartbeatStat() {
+                return getBoolean(AccountSettings.SETTING_UPLOAD_HEARTBEAT_STAT, false);
             }
 
             public void setUploadHeartbeatStat(boolean uploadStat) {
                 AccountSettings.setUploadHeartbeatStat(this.mContentResolver, uploadStat, this.mAccountId);
             }
 
-            public boolean getUploadHeartbeatStat() {
-                return getBoolean(AccountSettings.SETTING_UPLOAD_HEARTBEAT_STAT, false);
+            public long getHeartbeatInterval() {
+                return getLong(AccountSettings.SETTING_HEARTBEAT_INTERVAL, 0);
             }
 
             public void setHeartbeatInterval(long interval) {
                 AccountSettings.setHeartbeatInterval(this.mContentResolver, interval, this.mAccountId);
             }
 
-            public long getHeartbeatInterval() {
-                return getLong(AccountSettings.SETTING_HEARTBEAT_INTERVAL, 0);
+            public String getJidResource() {
+                return getString("jid_resource", null);
             }
 
             public void setJidResource(String jidResource) {
                 AccountSettings.setJidResource(this.mContentResolver, jidResource, this.mAccountId);
-            }
-
-            public String getJidResource() {
-                return getString("jid_resource", null);
             }
 
             private boolean getBoolean(String name, boolean def) {

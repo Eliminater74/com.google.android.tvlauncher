@@ -4,6 +4,7 @@ import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.extractor.ExtractorInput;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.common.primitives.UnsignedBytes;
+
 import java.io.IOException;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -19,18 +20,13 @@ final class DefaultEbmlReader implements EbmlReader {
     private static final int MAX_LENGTH_BYTES = 8;
     private static final int VALID_FLOAT32_ELEMENT_SIZE_BYTES = 4;
     private static final int VALID_FLOAT64_ELEMENT_SIZE_BYTES = 8;
+    private final ArrayDeque<MasterElement> masterElementsStack = new ArrayDeque<>();
+    private final byte[] scratch = new byte[8];
+    private final VarintReader varintReader = new VarintReader();
     private long elementContentSize;
     private int elementId;
     private int elementState;
-    private final ArrayDeque<MasterElement> masterElementsStack = new ArrayDeque<>();
     private EbmlProcessor processor;
-    private final byte[] scratch = new byte[8];
-    private final VarintReader varintReader = new VarintReader();
-
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    private @interface ElementState {
-    }
 
     public void init(EbmlProcessor processor2) {
         this.processor = processor2;
@@ -165,6 +161,11 @@ final class DefaultEbmlReader implements EbmlReader {
             trimmedLength--;
         }
         return new String(stringBytes, 0, trimmedLength);
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    private @interface ElementState {
     }
 
     private static final class MasterElement {

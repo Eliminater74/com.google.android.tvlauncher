@@ -28,7 +28,9 @@ import android.view.ViewOutlineProvider;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
 import androidx.palette.graphics.Palette;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.request.BaseRequestOptions;
@@ -62,22 +64,23 @@ import com.google.android.tvlauncher.util.palette.PaletteBitmapContainer;
 import com.google.android.tvrecommendations.shared.util.Constants;
 import com.google.logs.tvlauncher.config.TvLauncherConstants;
 import com.google.protos.logs.proto.wireless.android.tvlauncher.TvlauncherClientLog;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.Locale;
 
 public class ProgramController implements View.OnClickListener, ContextMenu.OnItemClickListener, View.OnLongClickListener, ProgramView.OnWindowVisibilityChangedListener, BackHomeControllerListeners.OnHomePressedListener {
-    private static final boolean DEBUG = false;
     static final boolean ENABLE_DOUBLE_CLICK_ADS = true;
-    private static final double EPS = 0.001d;
-    private static final long LIVE_PLAYBACK_PROGRESS_UPDATE_INTERVAL_MS = 60000;
     @VisibleForTesting
     static final int MENU_ADD_TO_WATCH_NEXT = 2;
     @VisibleForTesting
     static final int MENU_PRIMARY_ACTION = 1;
-    private static final int MENU_REMOVE_FROM_WATCH_NEXT = 4;
     @VisibleForTesting
     static final int MENU_REMOVE_PREVIEW_PROGRAM = 3;
+    private static final boolean DEBUG = false;
+    private static final double EPS = 0.001d;
+    private static final long LIVE_PLAYBACK_PROGRESS_UPDATE_INTERVAL_MS = 60000;
+    private static final int MENU_REMOVE_FROM_WATCH_NEXT = 4;
     private static final int PREVIEW_IMAGE_FADE_DURATION_MILLIS = 300;
     private static final int PREVIEW_MEDIA_START_DELAY_MILLIS = 1250;
     private static final int SCALING_ERROR_MARGIN = 20;
@@ -86,105 +89,101 @@ public class ProgramController implements View.OnClickListener, ContextMenu.OnIt
     private static final int STATE_PLAYBACK_STOPPED = 0;
     private static final String TAG = "ProgramController";
     private static boolean sPreviewImageTranscoderRegistered = false;
+    /* access modifiers changed from: private */
+    public final View mPreviewAudioContainer;
+    /* access modifiers changed from: private */
+    public final View mPreviewDelayOverlay;
+    /* access modifiers changed from: private */
+    public final InstantVideoView mPreviewVideo;
+    /* access modifiers changed from: private */
+    public final ImageView mThumbnail;
+    /* access modifiers changed from: private */
+    public final ProgramView mView;
     private final MeasureFormat mA11yDurationFormat;
-    private String mActionUri;
+    private final EventLogger mEventLogger;
+    private final RequestOptions mImageRequestOptions;
+    private final ColorStateList mLiveProgressBarForegroundColor;
+    private final int mPreviewImageExpandedVerticalMargin;
+    private final int mProgramDefaultBackgroundColor;
+    private final ColorDrawable mProgramDefaultBackgroundDrawable;
+    private final String mProgramMenuAddToWatchNextNotAvailableText;
+    private final String mProgramMenuAddToWatchNextText;
+    private final String mProgramMenuAlreadyInWatchNextText;
+    private final String mProgramMenuRemoveText;
+    private final ProgramSettings mProgramSettings;
+    private final ColorStateList mWatchNextProgressBarForegroundColor;
     /* access modifiers changed from: private */
     public BitmapDrawable mBlurredPreviewImageDrawable;
+    /* access modifiers changed from: private */
+    public boolean mIsWatchNextProgram;
+    /* access modifiers changed from: private */
+    public LauncherAudioPlayer mLauncherAudioPlayer;
+    /* access modifiers changed from: private */
+    public OnProgramViewFocusChangedListener mOnProgramViewFocusChangedListener;
+    /* access modifiers changed from: private */
+    public String mPreviewAudioUri;
+    /* access modifiers changed from: private */
+    public Palette mPreviewImagePalette;
+    /* access modifiers changed from: private */
+    public String mPreviewVideoUri;
+    /* access modifiers changed from: private */
+    public ContextMenu mProgramMenu;
+    /* access modifiers changed from: private */
+    public boolean mProgramSelected;
+    /* access modifiers changed from: private */
+    public ProgramViewLiveProgressUpdateCallback mProgramViewLiveProgressUpdateCallback;
+    /* access modifiers changed from: private */
+    public SponsoredProgramControllerHelper mSponsoredProgramControllerHelper;
+    /* access modifiers changed from: private */
+    public long mStartedPreviewVideoMillis;
+    /* access modifiers changed from: private */
+    public String mThumbnailUri;
+    /* access modifiers changed from: private */
+    public InstantVideoView.VideoCallback mVideoCallback;
+    @VisibleForTesting
+    View.OnFocusChangeListener mOnFocusChangeListener;
+    private String mActionUri;
     private boolean mCanAddToWatchNext;
     private boolean mCanRemoveProgram;
     private long mChannelId;
     private String mContentId;
     private String mDebugTitle;
-    private final EventLogger mEventLogger;
     private ScaleFocusHandler mFocusHandler;
     private Double mFocusedAspectRatio;
     private RecyclerViewStateProvider mHomeListStateProvider;
-    private final RequestOptions mImageRequestOptions;
     private IntentLaunchDispatcher mIntentLauncher;
     private boolean mIsLegacy;
     private boolean mIsSponsored;
     private boolean mIsSponsoredBranded;
-    /* access modifiers changed from: private */
-    public boolean mIsWatchNextProgram;
-    /* access modifiers changed from: private */
-    public LauncherAudioPlayer mLauncherAudioPlayer;
     private RecyclerViewStateProvider mListStateProvider;
-    private final ColorStateList mLiveProgressBarForegroundColor;
     private Runnable mLiveProgressUpdateRunnable;
     private String mLogoContentDescription;
     private String mLogoUri;
-    @VisibleForTesting
-    View.OnFocusChangeListener mOnFocusChangeListener;
     private BackHomeControllerListeners.OnHomeNotHandledListener mOnHomeNotHandledListener;
-    /* access modifiers changed from: private */
-    public OnProgramViewFocusChangedListener mOnProgramViewFocusChangedListener;
-    /* access modifiers changed from: private */
-    public final View mPreviewAudioContainer;
-    /* access modifiers changed from: private */
-    public String mPreviewAudioUri;
-    /* access modifiers changed from: private */
-    public final View mPreviewDelayOverlay;
     private ImageViewTargetWithTrace<ProgramPreviewImageData> mPreviewImageBlurGlideTarget;
-    private final int mPreviewImageExpandedVerticalMargin;
     private ValueAnimator mPreviewImageFadeInAnimator;
     private Animator.AnimatorListener mPreviewImageFadeInAnimatorListener;
     private ValueAnimator mPreviewImageFadeOutAnimator;
     private Animator.AnimatorListener mPreviewImageFadeOutAnimatorListener;
     private ValueAnimator.AnimatorUpdateListener mPreviewImageFadeUpdateListener;
     private boolean mPreviewImageNeedsTreatment;
-    /* access modifiers changed from: private */
-    public Palette mPreviewImagePalette;
     private ImageViewTargetWithTrace<PaletteBitmapContainer> mPreviewImagePaletteGlideTarget;
     private float mPreviewImageVisibilityValue;
     private SharedPreferences mPreviewMediaPref;
-    /* access modifiers changed from: private */
-    public final InstantVideoView mPreviewVideo;
-    /* access modifiers changed from: private */
-    public String mPreviewVideoUri;
-    private final int mProgramDefaultBackgroundColor;
-    private final ColorDrawable mProgramDefaultBackgroundDrawable;
     private long mProgramDuration;
     private long mProgramId;
     private boolean mProgramIsLive;
     private long mProgramLiveEndTime;
     private long mProgramLiveStartTime;
-    /* access modifiers changed from: private */
-    public ContextMenu mProgramMenu;
-    private final String mProgramMenuAddToWatchNextNotAvailableText;
-    private final String mProgramMenuAddToWatchNextText;
-    private final String mProgramMenuAlreadyInWatchNextText;
-    private final String mProgramMenuRemoveText;
     private String mProgramPackageName;
-    /* access modifiers changed from: private */
-    public boolean mProgramSelected;
-    private final ProgramSettings mProgramSettings;
     private int mProgramState;
     private int mProgramType;
-    /* access modifiers changed from: private */
-    public ProgramViewLiveProgressUpdateCallback mProgramViewLiveProgressUpdateCallback;
     private String mSponsoredProgramContentDescription;
-    /* access modifiers changed from: private */
-    public SponsoredProgramControllerHelper mSponsoredProgramControllerHelper;
     private Runnable mStartPreviewAudioRunnable;
     private Runnable mStartPreviewVideoRunnable;
-    /* access modifiers changed from: private */
-    public long mStartedPreviewVideoMillis;
-    /* access modifiers changed from: private */
-    public final ImageView mThumbnail;
     private ImageViewTargetWithTrace<Drawable> mThumbnailImageGlideTarget;
-    /* access modifiers changed from: private */
-    public String mThumbnailUri;
     private Double mUnfocusedAspectRatio;
-    /* access modifiers changed from: private */
-    public InstantVideoView.VideoCallback mVideoCallback;
-    /* access modifiers changed from: private */
-    public final ProgramView mView;
-    private final ColorStateList mWatchNextProgressBarForegroundColor;
     private int mWatchedPreviewVideoSeconds;
-
-    @Retention(RetentionPolicy.SOURCE)
-    @interface PlaybackStoppedState {
-    }
 
     /* JADX INFO: this call moved to the top of the method (can break code semantics) */
     ProgramController(ProgramView v, EventLogger eventLogger, boolean isSponsored, boolean isSponsoredBranded) {
@@ -387,6 +386,12 @@ public class ProgramController implements View.OnClickListener, ContextMenu.OnIt
     @VisibleForTesting
     public ContextMenu getProgramMenu() {
         return this.mProgramMenu;
+    }
+
+    /* access modifiers changed from: package-private */
+    @VisibleForTesting
+    public void setProgramMenu(ContextMenu contextMenu) {
+        this.mProgramMenu = contextMenu;
     }
 
     /* access modifiers changed from: package-private */
@@ -1151,12 +1156,6 @@ public class ProgramController implements View.OnClickListener, ContextMenu.OnIt
         this.mLauncherAudioPlayer = launcherAudioPlayer;
     }
 
-    /* access modifiers changed from: package-private */
-    @VisibleForTesting
-    public void setProgramMenu(ContextMenu contextMenu) {
-        this.mProgramMenu = contextMenu;
-    }
-
     public void onClick(View v) {
         if (Util.isAccessibilityEnabled(v.getContext())) {
             onLongClick(v);
@@ -1336,5 +1335,9 @@ public class ProgramController implements View.OnClickListener, ContextMenu.OnIt
         sb.append('\'');
         sb.append('}');
         return sb.toString();
+    }
+
+    @Retention(RetentionPolicy.SOURCE)
+    @interface PlaybackStoppedState {
     }
 }

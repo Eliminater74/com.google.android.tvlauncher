@@ -1,17 +1,19 @@
 package com.google.common.collect;
 
 import com.google.common.annotations.GwtCompatible;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.util.Comparator;
 import java.util.SortedSet;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible
 public abstract class ForwardingSortedSetMultimap<K, V> extends ForwardingSetMultimap<K, V> implements SortedSetMultimap<K, V> {
-    /* access modifiers changed from: protected */
-    public abstract SortedSetMultimap<K, V> delegate();
-
     protected ForwardingSortedSetMultimap() {
     }
+
+    /* access modifiers changed from: protected */
+    public abstract SortedSetMultimap<K, V> delegate();
 
     public SortedSet<V> get(@NullableDecl K key) {
         return delegate().get((Object) key);

@@ -1,10 +1,11 @@
 package com.google.android.exoplayer2.video.spherical;
 
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.util.ParsableBitArray;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.Util;
-import com.google.android.exoplayer2.video.spherical.Projection;
+
 import java.util.ArrayList;
 import java.util.zip.Inflater;
 

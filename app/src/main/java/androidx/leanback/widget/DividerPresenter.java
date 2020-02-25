@@ -3,8 +3,8 @@ package androidx.leanback.widget;
 import android.support.annotation.RestrictTo;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+
 import androidx.leanback.C0364R;
-import androidx.leanback.widget.Presenter;
 
 public class DividerPresenter extends Presenter {
     private final int mLayoutResourceId;

@@ -2,7 +2,9 @@ package com.google.android.libraries.performance.primes.aggregation;
 
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+
 import java.util.Arrays;
+
 import logs.proto.wireless.performance.mobile.AggregatedMetricProto;
 
 public final class MetricAggregatorIdentifier {
@@ -11,6 +13,12 @@ public final class MetricAggregatorIdentifier {
     @Nullable
     private final String customCounterName;
     private final AggregatedMetricProto.AggregatedMetric.Identifier.Metric metric;
+
+    private MetricAggregatorIdentifier(AggregatedMetricProto.AggregatedMetric.Identifier.Metric metricType, @Nullable String componentName2, @Nullable String customCounterName2) {
+        this.metric = metricType;
+        this.componentName = componentName2;
+        this.customCounterName = customCounterName2;
+    }
 
     public static final MetricAggregatorIdentifier forMetricAndComponent(AggregatedMetricProto.AggregatedMetric.Identifier.Metric metricType, String componentName2) {
         return new MetricAggregatorIdentifier(metricType, componentName2, null);
@@ -22,12 +30,6 @@ public final class MetricAggregatorIdentifier {
 
     public static final MetricAggregatorIdentifier forCustomCounter(String counterName, @Nullable String componentName2) {
         return new MetricAggregatorIdentifier(AggregatedMetricProto.AggregatedMetric.Identifier.Metric.CUSTOM_COUNTER, componentName2, counterName);
-    }
-
-    private MetricAggregatorIdentifier(AggregatedMetricProto.AggregatedMetric.Identifier.Metric metricType, @Nullable String componentName2, @Nullable String customCounterName2) {
-        this.metric = metricType;
-        this.componentName = componentName2;
-        this.customCounterName = customCounterName2;
     }
 
     public boolean equals(@Nullable Object other) {

@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+
 import com.google.android.tvlauncher.C1188R;
 import com.google.android.tvlauncher.TvlauncherLogEnum;
 import com.google.android.tvlauncher.analytics.FragmentEventLogger;
@@ -17,15 +18,22 @@ import com.google.android.tvlauncher.appsview.data.LaunchItemsManagerProvider;
 import com.google.android.tvlauncher.util.OemConfiguration;
 import com.google.android.tvlauncher.util.Util;
 import com.google.protos.logs.proto.wireless.android.tvlauncher.TvlauncherClientLog;
+
 import java.util.ArrayList;
 
 public class EditModeFragment extends Fragment {
     public static final int EDIT_TYPE_APPS = 0;
     public static final int EDIT_TYPE_GAMES = 1;
-    private static final String KEY_BOTTOM_KEYLINE = "key_bottom_keyline";
     public static final String KEY_EDIT_MODE_FOCUSED_POSITION = "key_edit_mode_focused_position";
     public static final String KEY_EDIT_MODE_TYPE = "key_edit_mode_type";
+    private static final String KEY_BOTTOM_KEYLINE = "key_bottom_keyline";
     private static final String KEY_TOP_KEYLINE = "key_top_keyline";
+    private final FragmentEventLogger mEventLogger = new FragmentEventLogger(this);
+    private final LaunchItemsManager mLaunchItemsManager = LaunchItemsManagerProvider.getInstance(getContext());
+    /* access modifiers changed from: private */
+    public EditModeGridView mGridView;
+    /* access modifiers changed from: private */
+    public OnShowAccessibilityMenuListener mOnShowAccessibilityMenuListener;
     private RecyclerView.AdapterDataObserver mAdapterDataObserver = new RecyclerView.AdapterDataObserver() {
         public void onItemRangeChanged(int positionStart, int itemCount, Object payload) {
             EditModeFragment.this.mGridView.updateAccessibilityContextMenuIfNeeded();
@@ -42,14 +50,14 @@ public class EditModeFragment extends Fragment {
     private EditModeGridAdapter mEditAdapter;
     private View mEditModeView;
     private int mEditType;
-    private final FragmentEventLogger mEventLogger = new FragmentEventLogger(this);
     private int mFocusPosition;
-    /* access modifiers changed from: private */
-    public EditModeGridView mGridView;
-    private final LaunchItemsManager mLaunchItemsManager = LaunchItemsManagerProvider.getInstance(getContext());
     private OemConfiguration.LayoutOrderOptions mLayoutOrderOptions = OemConfiguration.get(getContext()).getAppsViewLayoutOption();
-    /* access modifiers changed from: private */
-    public OnShowAccessibilityMenuListener mOnShowAccessibilityMenuListener;
+
+    public EditModeFragment() {
+        if (this.mLayoutOrderOptions == null) {
+            this.mLayoutOrderOptions = OemConfiguration.LayoutOrderOptions.APPS_OEM_GAMES;
+        }
+    }
 
     public static EditModeFragment newInstance(int editModeType, int focusedAppPosition, int topKeyline, int bottomKeyline) {
         Bundle args = new Bundle();
@@ -60,12 +68,6 @@ public class EditModeFragment extends Fragment {
         EditModeFragment fragment = new EditModeFragment();
         fragment.setArguments(args);
         return fragment;
-    }
-
-    public EditModeFragment() {
-        if (this.mLayoutOrderOptions == null) {
-            this.mLayoutOrderOptions = OemConfiguration.LayoutOrderOptions.APPS_OEM_GAMES;
-        }
     }
 
     public void onCreate(Bundle savedInstanceState) {
@@ -100,32 +102,6 @@ public class EditModeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         this.mEditModeView = inflater.inflate(C1188R.layout.edit_mode_view, container, false);
         return this.mEditModeView;
-    }
-
-    /* renamed from: com.google.android.tvlauncher.appsview.EditModeFragment$3 */
-    static /* synthetic */ class C12133 {
-
-        /* renamed from: $SwitchMap$com$google$android$tvlauncher$util$OemConfiguration$LayoutOrderOptions */
-        static final /* synthetic */ int[] f130x70c2e182 = new int[OemConfiguration.LayoutOrderOptions.values().length];
-
-        static {
-            try {
-                f130x70c2e182[OemConfiguration.LayoutOrderOptions.APPS_OEM.ordinal()] = 1;
-            } catch (NoSuchFieldError e) {
-            }
-            try {
-                f130x70c2e182[OemConfiguration.LayoutOrderOptions.APPS_OEM_GAMES.ordinal()] = 2;
-            } catch (NoSuchFieldError e2) {
-            }
-            try {
-                f130x70c2e182[OemConfiguration.LayoutOrderOptions.APPS_GAMES_OEM.ordinal()] = 3;
-            } catch (NoSuchFieldError e3) {
-            }
-            try {
-                f130x70c2e182[OemConfiguration.LayoutOrderOptions.GAMES_APPS_OEM.ordinal()] = 4;
-            } catch (NoSuchFieldError e4) {
-            }
-        }
     }
 
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -221,5 +197,31 @@ public class EditModeFragment extends Fragment {
         super.onDestroy();
         this.mEditAdapter.unregisterAdapterDataObserver(this.mAdapterDataObserver);
         this.mLaunchItemsManager.unregisterAppsViewChangeListener(this.mEditAdapter);
+    }
+
+    /* renamed from: com.google.android.tvlauncher.appsview.EditModeFragment$3 */
+    static /* synthetic */ class C12133 {
+
+        /* renamed from: $SwitchMap$com$google$android$tvlauncher$util$OemConfiguration$LayoutOrderOptions */
+        static final /* synthetic */ int[] f130x70c2e182 = new int[OemConfiguration.LayoutOrderOptions.values().length];
+
+        static {
+            try {
+                f130x70c2e182[OemConfiguration.LayoutOrderOptions.APPS_OEM.ordinal()] = 1;
+            } catch (NoSuchFieldError e) {
+            }
+            try {
+                f130x70c2e182[OemConfiguration.LayoutOrderOptions.APPS_OEM_GAMES.ordinal()] = 2;
+            } catch (NoSuchFieldError e2) {
+            }
+            try {
+                f130x70c2e182[OemConfiguration.LayoutOrderOptions.APPS_GAMES_OEM.ordinal()] = 3;
+            } catch (NoSuchFieldError e3) {
+            }
+            try {
+                f130x70c2e182[OemConfiguration.LayoutOrderOptions.GAMES_APPS_OEM.ordinal()] = 4;
+            } catch (NoSuchFieldError e4) {
+            }
+        }
     }
 }

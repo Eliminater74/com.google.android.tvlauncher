@@ -22,6 +22,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.widget.TextView;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -32,29 +33,91 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /* renamed from: android.support.v7.widget.AppCompatTextViewAutoSizeHelper */
 class AppCompatTextViewAutoSizeHelper {
+    static final float UNSET_AUTO_SIZE_UNIFORM_CONFIGURATION_VALUE = -1.0f;
     private static final int DEFAULT_AUTO_SIZE_GRANULARITY_IN_PX = 1;
     private static final int DEFAULT_AUTO_SIZE_MAX_TEXT_SIZE_IN_SP = 112;
     private static final int DEFAULT_AUTO_SIZE_MIN_TEXT_SIZE_IN_SP = 12;
     private static final String TAG = "ACTVAutoSizeHelper";
     private static final RectF TEMP_RECTF = new RectF();
-    static final float UNSET_AUTO_SIZE_UNIFORM_CONFIGURATION_VALUE = -1.0f;
     private static final int VERY_WIDE = 1048576;
     private static ConcurrentHashMap<String, Field> sTextViewFieldByNameCache = new ConcurrentHashMap<>();
     private static ConcurrentHashMap<String, Method> sTextViewMethodByNameCache = new ConcurrentHashMap<>();
+    private final Context mContext;
+    private final TextView mTextView;
     private float mAutoSizeMaxTextSizeInPx = -1.0f;
     private float mAutoSizeMinTextSizeInPx = -1.0f;
     private float mAutoSizeStepGranularityInPx = -1.0f;
     private int[] mAutoSizeTextSizesInPx = new int[0];
     private int mAutoSizeTextType = 0;
-    private final Context mContext;
     private boolean mHasPresetAutoSizeValues = false;
     private boolean mNeedsAutoSizeText = false;
     private TextPaint mTempTextPaint;
-    private final TextView mTextView;
 
     AppCompatTextViewAutoSizeHelper(TextView textView) {
         this.mTextView = textView;
         this.mContext = this.mTextView.getContext();
+    }
+
+    private static <T> T invokeAndReturnWithDefault(@NonNull Object object, @NonNull String methodName, @NonNull T defaultValue) {
+        try {
+            T result = getTextViewMethod(methodName).invoke(object, new Object[0]);
+            if (result != null || 0 == 0) {
+                return result;
+            }
+        } catch (Exception ex) {
+            Log.w(TAG, "Failed to invoke TextView#" + methodName + "() method", ex);
+            if (0 != 0 || 1 == 0) {
+                return null;
+            }
+        } catch (Throwable th) {
+            if (0 == 0 && 1 != 0) {
+            }
+            throw th;
+        }
+        return defaultValue;
+    }
+
+    private static <T> T accessAndReturnWithDefault(@NonNull Object object, @NonNull String fieldName, @NonNull T defaultValue) {
+        try {
+            Field field = getTextViewField(fieldName);
+            if (field == null) {
+                return defaultValue;
+            }
+            return field.get(object);
+        } catch (IllegalAccessException e) {
+            Log.w(TAG, "Failed to access TextView#" + fieldName + " member", e);
+            return defaultValue;
+        }
+    }
+
+    @Nullable
+    private static Method getTextViewMethod(@NonNull String methodName) {
+        try {
+            Method method = sTextViewMethodByNameCache.get(methodName);
+            if (method == null && (method = TextView.class.getDeclaredMethod(methodName, new Class[0])) != null) {
+                method.setAccessible(true);
+                sTextViewMethodByNameCache.put(methodName, method);
+            }
+            return method;
+        } catch (Exception ex) {
+            Log.w(TAG, "Failed to retrieve TextView#" + methodName + "() method", ex);
+            return null;
+        }
+    }
+
+    @Nullable
+    private static Field getTextViewField(@NonNull String fieldName) {
+        try {
+            Field field = sTextViewFieldByNameCache.get(fieldName);
+            if (field == null && (field = TextView.class.getDeclaredField(fieldName)) != null) {
+                field.setAccessible(true);
+                sTextViewFieldByNameCache.put(fieldName, field);
+            }
+            return field;
+        } catch (NoSuchFieldException e) {
+            Log.w(TAG, "Failed to access TextView#" + fieldName + " member", e);
+            return null;
+        }
     }
 
     /* access modifiers changed from: package-private */
@@ -425,68 +488,6 @@ class AppCompatTextViewAutoSizeHelper {
 
     private StaticLayout createStaticLayoutForMeasuringPre16(CharSequence text, Layout.Alignment alignment, int availableWidth) {
         return new StaticLayout(text, this.mTempTextPaint, availableWidth, alignment, ((Float) accessAndReturnWithDefault(this.mTextView, "mSpacingMult", Float.valueOf(1.0f))).floatValue(), ((Float) accessAndReturnWithDefault(this.mTextView, "mSpacingAdd", Float.valueOf(0.0f))).floatValue(), ((Boolean) accessAndReturnWithDefault(this.mTextView, "mIncludePad", true)).booleanValue());
-    }
-
-    private static <T> T invokeAndReturnWithDefault(@NonNull Object object, @NonNull String methodName, @NonNull T defaultValue) {
-        try {
-            T result = getTextViewMethod(methodName).invoke(object, new Object[0]);
-            if (result != null || 0 == 0) {
-                return result;
-            }
-        } catch (Exception ex) {
-            Log.w(TAG, "Failed to invoke TextView#" + methodName + "() method", ex);
-            if (0 != 0 || 1 == 0) {
-                return null;
-            }
-        } catch (Throwable th) {
-            if (0 == 0 && 1 != 0) {
-            }
-            throw th;
-        }
-        return defaultValue;
-    }
-
-    private static <T> T accessAndReturnWithDefault(@NonNull Object object, @NonNull String fieldName, @NonNull T defaultValue) {
-        try {
-            Field field = getTextViewField(fieldName);
-            if (field == null) {
-                return defaultValue;
-            }
-            return field.get(object);
-        } catch (IllegalAccessException e) {
-            Log.w(TAG, "Failed to access TextView#" + fieldName + " member", e);
-            return defaultValue;
-        }
-    }
-
-    @Nullable
-    private static Method getTextViewMethod(@NonNull String methodName) {
-        try {
-            Method method = sTextViewMethodByNameCache.get(methodName);
-            if (method == null && (method = TextView.class.getDeclaredMethod(methodName, new Class[0])) != null) {
-                method.setAccessible(true);
-                sTextViewMethodByNameCache.put(methodName, method);
-            }
-            return method;
-        } catch (Exception ex) {
-            Log.w(TAG, "Failed to retrieve TextView#" + methodName + "() method", ex);
-            return null;
-        }
-    }
-
-    @Nullable
-    private static Field getTextViewField(@NonNull String fieldName) {
-        try {
-            Field field = sTextViewFieldByNameCache.get(fieldName);
-            if (field == null && (field = TextView.class.getDeclaredField(fieldName)) != null) {
-                field.setAccessible(true);
-                sTextViewFieldByNameCache.put(fieldName, field);
-            }
-            return field;
-        } catch (NoSuchFieldException e) {
-            Log.w(TAG, "Failed to access TextView#" + fieldName + " member", e);
-            return null;
-        }
     }
 
     /* access modifiers changed from: package-private */

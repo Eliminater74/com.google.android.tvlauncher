@@ -1,11 +1,20 @@
 package com.google.android.libraries.performance.primes;
 
 import android.support.annotation.Nullable;
+
 import com.google.android.libraries.performance.primes.scenario.PrimesScenarioConfigurations;
 import com.google.android.libraries.performance.primes.transmitter.MetricTransmitter;
 import com.google.common.base.Optional;
 
 public abstract class PrimesConfigurations {
+    static PrimesConfigurations lazyValid(PrimesConfigurations configs) {
+        return configs instanceof LazyValid ? configs : new LazyValid(configs);
+    }
+
+    public static Builder newBuilder() {
+        return new Builder();
+    }
+
     public MetricTransmitter metricTransmitter() {
         return MetricTransmitter.NOOP_TRANSMITTER;
     }
@@ -70,13 +79,10 @@ public abstract class PrimesConfigurations {
         return Optional.absent();
     }
 
-    static PrimesConfigurations lazyValid(PrimesConfigurations configs) {
-        return configs instanceof LazyValid ? configs : new LazyValid(configs);
-    }
-
     static final class LazyValid extends PrimesConfigurations {
-        private volatile Optional<PrimesBatteryConfigurations> batteryConfigurations;
         private final PrimesConfigurations configs;
+        private final Object mutex = new Object();
+        private volatile Optional<PrimesBatteryConfigurations> batteryConfigurations;
         private volatile Optional<PrimesCpuConfigurations> cpuConfigurations;
         private volatile Optional<PrimesCrashConfigurations> crashConfigurations;
         private volatile Optional<PrimesExperimentalConfigurations> experimentalConfigurations;
@@ -86,7 +92,6 @@ public abstract class PrimesConfigurations {
         private volatile Optional<PrimesMemoryLeakConfigurations> memoryLeakConfigurations;
         private volatile MetricTransmitter metricTransmitter;
         private volatile Optional<PrimesMiniHeapDumpConfigurations> miniHeapDumpConfigurations;
-        private final Object mutex = new Object();
         private volatile Optional<PrimesNetworkConfigurations> networkConfigurations;
         private volatile Optional<PrimesPackageConfigurations> packageConfigurations;
         private volatile Optional<PrimesTraceConfigurations> primesTraceConfigurations;
@@ -288,10 +293,6 @@ public abstract class PrimesConfigurations {
             }
             return this.scenarioConfigurations;
         }
-    }
-
-    public static Builder newBuilder() {
-        return new Builder();
     }
 
     public static final class Builder {

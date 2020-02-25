@@ -2,13 +2,14 @@ package com.google.android.exoplayer2.decoder;
 
 import android.annotation.TargetApi;
 import android.media.MediaCodec;
+
 import com.google.android.exoplayer2.util.Util;
 
 public final class CryptoInfo {
+    private final MediaCodec.CryptoInfo frameworkCryptoInfo = new MediaCodec.CryptoInfo();
+    private final PatternHolderV24 patternHolder;
     public int clearBlocks;
     public int encryptedBlocks;
-    private final MediaCodec.CryptoInfo frameworkCryptoInfo = new MediaCodec.CryptoInfo();
-
     /* renamed from: iv */
     public byte[] f75iv;
     public byte[] key;
@@ -16,7 +17,6 @@ public final class CryptoInfo {
     public int[] numBytesOfClearData;
     public int[] numBytesOfEncryptedData;
     public int numSubSamples;
-    private final PatternHolderV24 patternHolder;
 
     public CryptoInfo() {
         this.patternHolder = Util.SDK_INT >= 24 ? new PatternHolderV24(this.frameworkCryptoInfo) : null;

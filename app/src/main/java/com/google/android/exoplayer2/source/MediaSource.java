@@ -2,17 +2,15 @@ package com.google.android.exoplayer2.source;
 
 import android.os.Handler;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.upstream.Allocator;
 import com.google.android.exoplayer2.upstream.TransferListener;
+
 import java.io.IOException;
 
 public interface MediaSource {
-
-    public interface SourceInfoRefreshListener {
-        void onSourceInfoRefreshed(MediaSource mediaSource, Timeline timeline, @Nullable Object obj);
-    }
 
     void addEventListener(Handler handler, MediaSourceEventListener mediaSourceEventListener);
 
@@ -33,6 +31,10 @@ public interface MediaSource {
     void releaseSource(SourceInfoRefreshListener sourceInfoRefreshListener);
 
     void removeEventListener(MediaSourceEventListener mediaSourceEventListener);
+
+    public interface SourceInfoRefreshListener {
+        void onSourceInfoRefreshed(MediaSource mediaSource, Timeline timeline, @Nullable Object obj);
+    }
 
     public static final class MediaPeriodId {
         public final int adGroupIndex;

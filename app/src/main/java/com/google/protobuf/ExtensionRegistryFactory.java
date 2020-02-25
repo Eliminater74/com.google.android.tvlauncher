@@ -1,8 +1,8 @@
 package com.google.protobuf;
 
 final class ExtensionRegistryFactory {
-    static final Class<?> EXTENSION_REGISTRY_CLASS = reflectExtensionRegistry();
     static final String FULL_REGISTRY_CLASS_NAME = "com.google.protobuf.ExtensionRegistry";
+    static final Class<?> EXTENSION_REGISTRY_CLASS = reflectExtensionRegistry();
 
     ExtensionRegistryFactory() {
     }

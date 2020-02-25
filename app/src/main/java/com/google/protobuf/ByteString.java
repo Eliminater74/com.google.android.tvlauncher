@@ -1,6 +1,7 @@
 package com.google.protobuf;
 
 import com.google.common.primitives.UnsignedBytes;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,8 +23,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 public abstract class ByteString implements Iterable<Byte>, Serializable {
-    static final int CONCATENATE_BY_COPY_SIZE = 128;
     public static final ByteString EMPTY = new LiteralByteString(Internal.EMPTY_BYTE_ARRAY);
+    static final int CONCATENATE_BY_COPY_SIZE = 128;
     static final int MAX_READ_FROM_CHUNK_SIZE = 8192;
     static final int MIN_READ_FROM_CHUNK_SIZE = 256;
     private static final int UNSIGNED_BYTE_MASK = 255;
@@ -43,124 +44,7 @@ public abstract class ByteString implements Iterable<Byte>, Serializable {
     private static final ByteArrayCopier byteArrayCopier = (Android.isOnAndroidDevice() ? new SystemByteArrayCopier() : new ArraysByteArrayCopier());
     private int hash = 0;
 
-    private interface ByteArrayCopier {
-        byte[] copyFrom(byte[] bArr, int i, int i2);
-    }
-
-    public interface ByteIterator extends Iterator<Byte> {
-        byte nextByte();
-    }
-
-    public abstract ByteBuffer asReadOnlyByteBuffer();
-
-    public abstract List<ByteBuffer> asReadOnlyByteBufferList();
-
-    public abstract byte byteAt(int i);
-
-    public abstract void copyTo(ByteBuffer byteBuffer);
-
-    /* access modifiers changed from: protected */
-    public abstract void copyToInternal(byte[] bArr, int i, int i2, int i3);
-
-    public abstract boolean equals(Object obj);
-
-    /* access modifiers changed from: protected */
-    public abstract int getTreeDepth();
-
-    /* access modifiers changed from: package-private */
-    public abstract byte internalByteAt(int i);
-
-    /* access modifiers changed from: protected */
-    public abstract boolean isBalanced();
-
-    public abstract boolean isValidUtf8();
-
-    public abstract CodedInputStream newCodedInput();
-
-    public abstract InputStream newInput();
-
-    /* access modifiers changed from: protected */
-    public abstract int partialHash(int i, int i2, int i3);
-
-    /* access modifiers changed from: protected */
-    public abstract int partialIsValidUtf8(int i, int i2, int i3);
-
-    public abstract int size();
-
-    public abstract ByteString substring(int i, int i2);
-
-    /* access modifiers changed from: protected */
-    public abstract String toStringInternal(Charset charset);
-
-    /* access modifiers changed from: package-private */
-    public abstract void writeTo(ByteOutput byteOutput) throws IOException;
-
-    public abstract void writeTo(OutputStream outputStream) throws IOException;
-
-    /* access modifiers changed from: package-private */
-    public abstract void writeToInternal(OutputStream outputStream, int i, int i2) throws IOException;
-
-    /* access modifiers changed from: package-private */
-    public abstract void writeToReverse(ByteOutput byteOutput) throws IOException;
-
-    private static final class SystemByteArrayCopier implements ByteArrayCopier {
-        private SystemByteArrayCopier() {
-        }
-
-        public byte[] copyFrom(byte[] bytes, int offset, int size) {
-            byte[] copy = new byte[size];
-            System.arraycopy(bytes, offset, copy, 0, size);
-            return copy;
-        }
-    }
-
-    private static final class ArraysByteArrayCopier implements ByteArrayCopier {
-        private ArraysByteArrayCopier() {
-        }
-
-        public byte[] copyFrom(byte[] bytes, int offset, int size) {
-            return Arrays.copyOfRange(bytes, offset, offset + size);
-        }
-    }
-
     ByteString() {
-    }
-
-    public ByteIterator iterator() {
-        return new AbstractByteIterator() {
-            private final int limit = ByteString.this.size();
-            private int position = 0;
-
-            public boolean hasNext() {
-                return this.position < this.limit;
-            }
-
-            public byte nextByte() {
-                int currentPos = this.position;
-                if (currentPos < this.limit) {
-                    this.position = currentPos + 1;
-                    return ByteString.this.internalByteAt(currentPos);
-                }
-                throw new NoSuchElementException();
-            }
-        };
-    }
-
-    static abstract class AbstractByteIterator implements ByteIterator {
-        AbstractByteIterator() {
-        }
-
-        public final Byte next() {
-            return Byte.valueOf(nextByte());
-        }
-
-        public final void remove() {
-            throw new UnsupportedOperationException();
-        }
-    }
-
-    public final boolean isEmpty() {
-        return size() == 0;
     }
 
     /* access modifiers changed from: private */
@@ -170,18 +54,6 @@ public abstract class ByteString implements Iterable<Byte>, Serializable {
 
     public static Comparator<ByteString> unsignedLexicographicalComparator() {
         return UNSIGNED_LEXICOGRAPHICAL_COMPARATOR;
-    }
-
-    public final ByteString substring(int beginIndex) {
-        return substring(beginIndex, size());
-    }
-
-    public final boolean startsWith(ByteString prefix) {
-        return size() >= prefix.size() && substring(0, prefix.size()).equals(prefix);
-    }
-
-    public final boolean endsWith(ByteString suffix) {
-        return size() >= suffix.size() && substring(size() - suffix.size()).equals(suffix);
     }
 
     public static ByteString copyFrom(byte[] bytes, int offset, int size) {
@@ -268,20 +140,6 @@ public abstract class ByteString implements Iterable<Byte>, Serializable {
         return copyFrom(buf, 0, bytesRead);
     }
 
-    public final ByteString concat(ByteString other) {
-        if (Integer.MAX_VALUE - size() >= other.size()) {
-            return RopeByteString.concatenate(this, other);
-        }
-        int size = size();
-        int size2 = other.size();
-        StringBuilder sb = new StringBuilder(53);
-        sb.append("ByteString would be too long: ");
-        sb.append(size);
-        sb.append("+");
-        sb.append(size2);
-        throw new IllegalArgumentException(sb.toString());
-    }
-
     public static ByteString copyFrom(Iterable<ByteString> byteStrings) {
         int tempSize;
         if (!(byteStrings instanceof Collection)) {
@@ -311,6 +169,166 @@ public abstract class ByteString implements Iterable<Byte>, Serializable {
             int halfLength = length >>> 1;
             return balancedConcat(iterator, halfLength).concat(balancedConcat(iterator, length - halfLength));
         }
+    }
+
+    public static Output newOutput(int initialCapacity) {
+        return new Output(initialCapacity);
+    }
+
+    public static Output newOutput() {
+        return new Output(128);
+    }
+
+    static CodedBuilder newCodedBuilder(int size) {
+        return new CodedBuilder(size);
+    }
+
+    static void checkIndex(int index, int size) {
+        if (((size - (index + 1)) | index) >= 0) {
+            return;
+        }
+        if (index < 0) {
+            StringBuilder sb = new StringBuilder(22);
+            sb.append("Index < 0: ");
+            sb.append(index);
+            throw new ArrayIndexOutOfBoundsException(sb.toString());
+        }
+        StringBuilder sb2 = new StringBuilder(40);
+        sb2.append("Index > length: ");
+        sb2.append(index);
+        sb2.append(", ");
+        sb2.append(size);
+        throw new ArrayIndexOutOfBoundsException(sb2.toString());
+    }
+
+    static int checkRange(int startIndex, int endIndex, int size) {
+        int length = endIndex - startIndex;
+        if ((startIndex | endIndex | length | (size - endIndex)) >= 0) {
+            return length;
+        }
+        if (startIndex < 0) {
+            StringBuilder sb = new StringBuilder(32);
+            sb.append("Beginning index: ");
+            sb.append(startIndex);
+            sb.append(" < 0");
+            throw new IndexOutOfBoundsException(sb.toString());
+        } else if (endIndex < startIndex) {
+            StringBuilder sb2 = new StringBuilder(66);
+            sb2.append("Beginning index larger than ending index: ");
+            sb2.append(startIndex);
+            sb2.append(", ");
+            sb2.append(endIndex);
+            throw new IndexOutOfBoundsException(sb2.toString());
+        } else {
+            StringBuilder sb3 = new StringBuilder(37);
+            sb3.append("End index: ");
+            sb3.append(endIndex);
+            sb3.append(" >= ");
+            sb3.append(size);
+            throw new IndexOutOfBoundsException(sb3.toString());
+        }
+    }
+
+    public abstract ByteBuffer asReadOnlyByteBuffer();
+
+    public abstract List<ByteBuffer> asReadOnlyByteBufferList();
+
+    public abstract byte byteAt(int i);
+
+    public abstract void copyTo(ByteBuffer byteBuffer);
+
+    /* access modifiers changed from: protected */
+    public abstract void copyToInternal(byte[] bArr, int i, int i2, int i3);
+
+    public abstract boolean equals(Object obj);
+
+    /* access modifiers changed from: protected */
+    public abstract int getTreeDepth();
+
+    /* access modifiers changed from: package-private */
+    public abstract byte internalByteAt(int i);
+
+    /* access modifiers changed from: protected */
+    public abstract boolean isBalanced();
+
+    public abstract boolean isValidUtf8();
+
+    public abstract CodedInputStream newCodedInput();
+
+    public abstract InputStream newInput();
+
+    /* access modifiers changed from: protected */
+    public abstract int partialHash(int i, int i2, int i3);
+
+    /* access modifiers changed from: protected */
+    public abstract int partialIsValidUtf8(int i, int i2, int i3);
+
+    public abstract int size();
+
+    public abstract ByteString substring(int i, int i2);
+
+    /* access modifiers changed from: protected */
+    public abstract String toStringInternal(Charset charset);
+
+    /* access modifiers changed from: package-private */
+    public abstract void writeTo(ByteOutput byteOutput) throws IOException;
+
+    public abstract void writeTo(OutputStream outputStream) throws IOException;
+
+    /* access modifiers changed from: package-private */
+    public abstract void writeToInternal(OutputStream outputStream, int i, int i2) throws IOException;
+
+    /* access modifiers changed from: package-private */
+    public abstract void writeToReverse(ByteOutput byteOutput) throws IOException;
+
+    public ByteIterator iterator() {
+        return new AbstractByteIterator() {
+            private final int limit = ByteString.this.size();
+            private int position = 0;
+
+            public boolean hasNext() {
+                return this.position < this.limit;
+            }
+
+            public byte nextByte() {
+                int currentPos = this.position;
+                if (currentPos < this.limit) {
+                    this.position = currentPos + 1;
+                    return ByteString.this.internalByteAt(currentPos);
+                }
+                throw new NoSuchElementException();
+            }
+        };
+    }
+
+    public final boolean isEmpty() {
+        return size() == 0;
+    }
+
+    public final ByteString substring(int beginIndex) {
+        return substring(beginIndex, size());
+    }
+
+    public final boolean startsWith(ByteString prefix) {
+        return size() >= prefix.size() && substring(0, prefix.size()).equals(prefix);
+    }
+
+    public final boolean endsWith(ByteString suffix) {
+        return size() >= suffix.size() && substring(size() - suffix.size()).equals(suffix);
+    }
+
+    public final ByteString concat(ByteString other) {
+        if (Integer.MAX_VALUE - size() >= other.size()) {
+            return RopeByteString.concatenate(this, other);
+        }
+        int size = size();
+        int size2 = other.size();
+        StringBuilder sb = new StringBuilder(53);
+        sb.append("ByteString would be too long: ");
+        sb.append(size);
+        sb.append("+");
+        sb.append(size2);
+        throw new IllegalArgumentException(sb.toString());
     }
 
     public void copyTo(byte[] target, int offset) {
@@ -362,12 +380,75 @@ public abstract class ByteString implements Iterable<Byte>, Serializable {
         return toString(Internal.UTF_8);
     }
 
-    static abstract class LeafByteString extends ByteString {
-        /* access modifiers changed from: package-private */
-        public abstract boolean equalsRange(ByteString byteString, int i, int i2);
+    public final int hashCode() {
+        int h = this.hash;
+        if (h == 0) {
+            int size = size();
+            h = partialHash(size, 0, size);
+            if (h == 0) {
+                h = 1;
+            }
+            this.hash = h;
+        }
+        return h;
+    }
 
+    /* access modifiers changed from: protected */
+    public final int peekCachedHashCode() {
+        return this.hash;
+    }
+
+    public final String toString() {
+        return String.format("<ByteString@%s size=%d>", Integer.toHexString(System.identityHashCode(this)), Integer.valueOf(size()));
+    }
+
+    private interface ByteArrayCopier {
+        byte[] copyFrom(byte[] bArr, int i, int i2);
+    }
+
+    public interface ByteIterator extends Iterator<Byte> {
+        byte nextByte();
+    }
+
+    private static final class SystemByteArrayCopier implements ByteArrayCopier {
+        private SystemByteArrayCopier() {
+        }
+
+        public byte[] copyFrom(byte[] bytes, int offset, int size) {
+            byte[] copy = new byte[size];
+            System.arraycopy(bytes, offset, copy, 0, size);
+            return copy;
+        }
+    }
+
+    private static final class ArraysByteArrayCopier implements ByteArrayCopier {
+        private ArraysByteArrayCopier() {
+        }
+
+        public byte[] copyFrom(byte[] bytes, int offset, int size) {
+            return Arrays.copyOfRange(bytes, offset, offset + size);
+        }
+    }
+
+    static abstract class AbstractByteIterator implements ByteIterator {
+        AbstractByteIterator() {
+        }
+
+        public final Byte next() {
+            return Byte.valueOf(nextByte());
+        }
+
+        public final void remove() {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    static abstract class LeafByteString extends ByteString {
         LeafByteString() {
         }
+
+        /* access modifiers changed from: package-private */
+        public abstract boolean equalsRange(ByteString byteString, int i, int i2);
 
         /* access modifiers changed from: protected */
         public final int getTreeDepth() {
@@ -385,34 +466,13 @@ public abstract class ByteString implements Iterable<Byte>, Serializable {
         }
     }
 
-    public final int hashCode() {
-        int h = this.hash;
-        if (h == 0) {
-            int size = size();
-            h = partialHash(size, 0, size);
-            if (h == 0) {
-                h = 1;
-            }
-            this.hash = h;
-        }
-        return h;
-    }
-
-    public static Output newOutput(int initialCapacity) {
-        return new Output(initialCapacity);
-    }
-
-    public static Output newOutput() {
-        return new Output(128);
-    }
-
     public static final class Output extends OutputStream {
         private static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
+        private final ArrayList<ByteString> flushedBuffers;
+        private final int initialCapacity;
         private byte[] buffer;
         private int bufferPos;
-        private final ArrayList<ByteString> flushedBuffers;
         private int flushedBuffersTotalBytes;
-        private final int initialCapacity;
 
         Output(int initialCapacity2) {
             if (initialCapacity2 >= 0) {
@@ -509,10 +569,6 @@ public abstract class ByteString implements Iterable<Byte>, Serializable {
         }
     }
 
-    static CodedBuilder newCodedBuilder(int size) {
-        return new CodedBuilder(size);
-    }
-
     static final class CodedBuilder {
         private final byte[] buffer;
         private final CodedOutputStream output;
@@ -530,61 +586,6 @@ public abstract class ByteString implements Iterable<Byte>, Serializable {
         public CodedOutputStream getCodedOutput() {
             return this.output;
         }
-    }
-
-    /* access modifiers changed from: protected */
-    public final int peekCachedHashCode() {
-        return this.hash;
-    }
-
-    static void checkIndex(int index, int size) {
-        if (((size - (index + 1)) | index) >= 0) {
-            return;
-        }
-        if (index < 0) {
-            StringBuilder sb = new StringBuilder(22);
-            sb.append("Index < 0: ");
-            sb.append(index);
-            throw new ArrayIndexOutOfBoundsException(sb.toString());
-        }
-        StringBuilder sb2 = new StringBuilder(40);
-        sb2.append("Index > length: ");
-        sb2.append(index);
-        sb2.append(", ");
-        sb2.append(size);
-        throw new ArrayIndexOutOfBoundsException(sb2.toString());
-    }
-
-    static int checkRange(int startIndex, int endIndex, int size) {
-        int length = endIndex - startIndex;
-        if ((startIndex | endIndex | length | (size - endIndex)) >= 0) {
-            return length;
-        }
-        if (startIndex < 0) {
-            StringBuilder sb = new StringBuilder(32);
-            sb.append("Beginning index: ");
-            sb.append(startIndex);
-            sb.append(" < 0");
-            throw new IndexOutOfBoundsException(sb.toString());
-        } else if (endIndex < startIndex) {
-            StringBuilder sb2 = new StringBuilder(66);
-            sb2.append("Beginning index larger than ending index: ");
-            sb2.append(startIndex);
-            sb2.append(", ");
-            sb2.append(endIndex);
-            throw new IndexOutOfBoundsException(sb2.toString());
-        } else {
-            StringBuilder sb3 = new StringBuilder(37);
-            sb3.append("End index: ");
-            sb3.append(endIndex);
-            sb3.append(" >= ");
-            sb3.append(size);
-            throw new IndexOutOfBoundsException(sb3.toString());
-        }
-    }
-
-    public final String toString() {
-        return String.format("<ByteString@%s size=%d>", Integer.toHexString(System.identityHashCode(this)), Integer.valueOf(size()));
     }
 
     private static class LiteralByteString extends LeafByteString {

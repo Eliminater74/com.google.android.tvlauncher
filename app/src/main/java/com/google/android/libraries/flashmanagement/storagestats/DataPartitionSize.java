@@ -2,12 +2,13 @@ package com.google.android.libraries.flashmanagement.storagestats;
 
 import android.content.Context;
 import android.os.Build;
+
 import java.io.File;
 
 public class DataPartitionSize {
     private final Context context;
-    private File dataPartition;
     private final Object lock = new Object();
+    private File dataPartition;
 
     public DataPartitionSize(Context context2) {
         this.context = context2.getApplicationContext();

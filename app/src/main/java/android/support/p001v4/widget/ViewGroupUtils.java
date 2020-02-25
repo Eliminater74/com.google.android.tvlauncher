@@ -14,6 +14,9 @@ public class ViewGroupUtils {
     private static final ThreadLocal<Matrix> sMatrix = new ThreadLocal<>();
     private static final ThreadLocal<RectF> sRectF = new ThreadLocal<>();
 
+    private ViewGroupUtils() {
+    }
+
     static void offsetDescendantRect(ViewGroup parent, View descendant, Rect rect) {
         Matrix m = sMatrix.get();
         if (m == null) {
@@ -49,8 +52,5 @@ public class ViewGroupUtils {
         if (!view.getMatrix().isIdentity()) {
             m.preConcat(view.getMatrix());
         }
-    }
-
-    private ViewGroupUtils() {
     }
 }

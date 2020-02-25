@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.annotation.RestrictTo;
 import android.support.p001v4.content.res.TypedArrayUtils;
 import android.util.AttributeSet;
-import androidx.preference.PreferenceManager;
 
 public final class PreferenceScreen extends PreferenceGroup {
     private boolean mShouldUseGeneratedIds = true;

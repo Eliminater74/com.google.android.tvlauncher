@@ -1,11 +1,15 @@
 package com.google.android.libraries.clock;
 
 import android.util.Log;
+
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public final class ClockUtils {
     private static final String TAG = "ClockUtils";
+
+    private ClockUtils() {
+    }
 
     public static String fixTimeZone(String timeZone) {
         if (timeZone == null) {
@@ -39,8 +43,5 @@ public final class ClockUtils {
 
     public static long uptimeMillisToElapsedNanos(Clock clock, long uptimeMillis) {
         return TimeUnit.NANOSECONDS.convert(uptimeMillis - clock.uptimeMillis(), TimeUnit.MILLISECONDS) + clock.elapsedRealtimeNanos();
-    }
-
-    private ClockUtils() {
     }
 }

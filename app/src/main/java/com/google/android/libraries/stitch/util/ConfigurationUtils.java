@@ -6,6 +6,9 @@ import android.os.Build;
 public final class ConfigurationUtils {
     private static final int TABLET_MIN_DPS = 600;
 
+    private ConfigurationUtils() {
+    }
+
     public static boolean isTablet(Configuration configuration) {
         if (Build.VERSION.SDK_INT < 13) {
             int screenSize = configuration.screenLayout & 15;
@@ -18,8 +21,5 @@ public final class ConfigurationUtils {
         } else {
             return false;
         }
-    }
-
-    private ConfigurationUtils() {
     }
 }

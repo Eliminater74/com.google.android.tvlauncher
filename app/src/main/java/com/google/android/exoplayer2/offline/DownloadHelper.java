@@ -7,6 +7,7 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.Pair;
 import android.util.SparseIntArray;
+
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.RendererCapabilities;
 import com.google.android.exoplayer2.RenderersFactory;
@@ -30,6 +31,10 @@ import com.google.android.exoplayer2.upstream.DefaultAllocator;
 import com.google.android.exoplayer2.upstream.TransferListener;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Util;
+
+import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
+import org.checkerframework.checker.nullness.qual.RequiresNonNull;
+
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
@@ -37,15 +42,13 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
-import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 public final class DownloadHelper {
+    public static final DefaultTrackSelector.Parameters DEFAULT_TRACK_SELECTOR_PARAMETERS = new DefaultTrackSelector.ParametersBuilder().setForceHighestSupportedBitrate(true).build();
     @Nullable
     private static final Constructor<?> DASH_FACTORY_CONSTRUCTOR;
     @Nullable
     private static final Method DASH_FACTORY_CREATE_METHOD;
-    public static final DefaultTrackSelector.Parameters DEFAULT_TRACK_SELECTOR_PARAMETERS = new DefaultTrackSelector.ParametersBuilder().setForceHighestSupportedBitrate(true).build();
     @Nullable
     private static final Constructor<?> HLS_FACTORY_CONSTRUCTOR;
     @Nullable
@@ -54,29 +57,6 @@ public final class DownloadHelper {
     private static final Constructor<?> SS_FACTORY_CONSTRUCTOR;
     @Nullable
     private static final Method SS_FACTORY_CREATE_METHOD;
-    @Nullable
-    private final String cacheKey;
-    private Callback callback;
-    private final Handler callbackHandler;
-    private final String downloadType;
-    private List<TrackSelection>[][] immutableTrackSelectionsByPeriodAndRenderer;
-    private boolean isPreparedWithMedia;
-    private MappingTrackSelector.MappedTrackInfo[] mappedTrackInfos;
-    private MediaPreparer mediaPreparer;
-    @Nullable
-    private final MediaSource mediaSource;
-    private final RendererCapabilities[] rendererCapabilities;
-    private final SparseIntArray scratchSet;
-    private TrackGroupArray[] trackGroupArrays;
-    private List<TrackSelection>[][] trackSelectionsByPeriodAndRenderer;
-    private final DefaultTrackSelector trackSelector = new DefaultTrackSelector(new DownloadTrackSelection.Factory());
-    private final Uri uri;
-
-    public interface Callback {
-        void onPrepareError(DownloadHelper downloadHelper, IOException iOException);
-
-        void onPrepared(DownloadHelper downloadHelper);
-    }
 
     static {
         Pair<Constructor<?>, Method> dashFactoryMethods = getMediaSourceFactoryMethods("com.google.android.exoplayer2.source.dash.DashMediaSource$Factory");
@@ -88,6 +68,36 @@ public final class DownloadHelper {
         Pair<Constructor<?>, Method> ssFactoryMethods = getMediaSourceFactoryMethods("com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource$Factory");
         SS_FACTORY_CONSTRUCTOR = (Constructor) ssFactoryMethods.first;
         SS_FACTORY_CREATE_METHOD = (Method) ssFactoryMethods.second;
+    }
+
+    @Nullable
+    private final String cacheKey;
+    private final Handler callbackHandler;
+    private final String downloadType;
+    @Nullable
+    private final MediaSource mediaSource;
+    private final RendererCapabilities[] rendererCapabilities;
+    private final SparseIntArray scratchSet;
+    private final DefaultTrackSelector trackSelector = new DefaultTrackSelector(new DownloadTrackSelection.Factory());
+    private final Uri uri;
+    private Callback callback;
+    private List<TrackSelection>[][] immutableTrackSelectionsByPeriodAndRenderer;
+    private boolean isPreparedWithMedia;
+    private MappingTrackSelector.MappedTrackInfo[] mappedTrackInfos;
+    private MediaPreparer mediaPreparer;
+    private TrackGroupArray[] trackGroupArrays;
+    private List<TrackSelection>[][] trackSelectionsByPeriodAndRenderer;
+
+    public DownloadHelper(String downloadType2, Uri uri2, @Nullable String cacheKey2, @Nullable MediaSource mediaSource2, DefaultTrackSelector.Parameters trackSelectorParameters, RendererCapabilities[] rendererCapabilities2) {
+        this.downloadType = downloadType2;
+        this.uri = uri2;
+        this.cacheKey = cacheKey2;
+        this.mediaSource = mediaSource2;
+        this.rendererCapabilities = rendererCapabilities2;
+        this.scratchSet = new SparseIntArray();
+        this.trackSelector.setParameters(trackSelectorParameters);
+        this.trackSelector.init(DownloadHelper$$Lambda$0.$instance, new DummyBandwidthMeter());
+        this.callbackHandler = new Handler(Util.getLooper());
     }
 
     public static DownloadHelper forProgressive(Uri uri2) {
@@ -122,19 +132,30 @@ public final class DownloadHelper {
         return new DownloadHelper(DownloadRequest.TYPE_SS, uri2, null, createMediaSource(uri2, dataSourceFactory, SS_FACTORY_CONSTRUCTOR, SS_FACTORY_CREATE_METHOD), trackSelectorParameters, Util.getRendererCapabilities(renderersFactory, drmSessionManager));
     }
 
-    public DownloadHelper(String downloadType2, Uri uri2, @Nullable String cacheKey2, @Nullable MediaSource mediaSource2, DefaultTrackSelector.Parameters trackSelectorParameters, RendererCapabilities[] rendererCapabilities2) {
-        this.downloadType = downloadType2;
-        this.uri = uri2;
-        this.cacheKey = cacheKey2;
-        this.mediaSource = mediaSource2;
-        this.rendererCapabilities = rendererCapabilities2;
-        this.scratchSet = new SparseIntArray();
-        this.trackSelector.setParameters(trackSelectorParameters);
-        this.trackSelector.init(DownloadHelper$$Lambda$0.$instance, new DummyBandwidthMeter());
-        this.callbackHandler = new Handler(Util.getLooper());
+    static final /* synthetic */ void lambda$new$0$DownloadHelper() {
     }
 
-    static final /* synthetic */ void lambda$new$0$DownloadHelper() {
+    private static Pair<Constructor<?>, Method> getMediaSourceFactoryMethods(String className) {
+        Constructor<?> constructor = null;
+        Method createMethod = null;
+        try {
+            Class<?> factoryClazz = Class.forName(className);
+            constructor = factoryClazz.getConstructor(DataSource.Factory.class);
+            createMethod = factoryClazz.getMethod("createMediaSource", Uri.class);
+        } catch (Exception e) {
+        }
+        return Pair.create(constructor, createMethod);
+    }
+
+    private static MediaSource createMediaSource(Uri uri2, DataSource.Factory dataSourceFactory, @Nullable Constructor<?> factoryConstructor, @Nullable Method createMediaSourceMethod) {
+        if (factoryConstructor == null || createMediaSourceMethod == null) {
+            throw new IllegalStateException("Module missing to create media source.");
+        }
+        try {
+            return (MediaSource) Assertions.checkNotNull(createMediaSourceMethod.invoke(factoryConstructor.newInstance(dataSourceFactory), uri2));
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to instantiate media source.", e);
+        }
     }
 
     public void prepare(Callback callback2) {
@@ -380,27 +401,10 @@ public final class DownloadHelper {
         }
     }
 
-    private static Pair<Constructor<?>, Method> getMediaSourceFactoryMethods(String className) {
-        Constructor<?> constructor = null;
-        Method createMethod = null;
-        try {
-            Class<?> factoryClazz = Class.forName(className);
-            constructor = factoryClazz.getConstructor(DataSource.Factory.class);
-            createMethod = factoryClazz.getMethod("createMediaSource", Uri.class);
-        } catch (Exception e) {
-        }
-        return Pair.create(constructor, createMethod);
-    }
+    public interface Callback {
+        void onPrepareError(DownloadHelper downloadHelper, IOException iOException);
 
-    private static MediaSource createMediaSource(Uri uri2, DataSource.Factory dataSourceFactory, @Nullable Constructor<?> factoryConstructor, @Nullable Method createMediaSourceMethod) {
-        if (factoryConstructor == null || createMediaSourceMethod == null) {
-            throw new IllegalStateException("Module missing to create media source.");
-        }
-        try {
-            return (MediaSource) Assertions.checkNotNull(createMediaSourceMethod.invoke(factoryConstructor.newInstance(dataSourceFactory), uri2));
-        } catch (Exception e) {
-            throw new IllegalStateException("Failed to instantiate media source.", e);
-        }
+        void onPrepared(DownloadHelper downloadHelper);
     }
 
     private static final class MediaPreparer implements MediaSource.SourceInfoRefreshListener, MediaPeriod.Callback, Handler.Callback {
@@ -413,15 +417,15 @@ public final class DownloadHelper {
         private final Allocator allocator = new DefaultAllocator(true, 65536);
         private final DownloadHelper downloadHelper;
         private final Handler downloadHelperHandler = Util.createHandler(new DownloadHelper$MediaPreparer$$Lambda$0(this));
-        @Nullable
-        public Object manifest;
-        public MediaPeriod[] mediaPeriods;
         private final MediaSource mediaSource;
         private final Handler mediaSourceHandler;
         private final HandlerThread mediaSourceThread = new HandlerThread("DownloadHelper");
         private final ArrayList<MediaPeriod> pendingMediaPeriods;
-        private boolean released;
+        @Nullable
+        public Object manifest;
+        public MediaPeriod[] mediaPeriods;
         public Timeline timeline;
+        private boolean released;
 
         public MediaPreparer(MediaSource mediaSource2, DownloadHelper downloadHelper2) {
             this.mediaSource = mediaSource2;
@@ -541,29 +545,6 @@ public final class DownloadHelper {
 
     private static final class DownloadTrackSelection extends BaseTrackSelection {
 
-        private static final class Factory implements TrackSelection.Factory {
-            public TrackSelection createTrackSelection(TrackGroup trackGroup, BandwidthMeter bandwidthMeter, int... iArr) {
-                return TrackSelection$Factory$$CC.createTrackSelection$$dflt$$(this, trackGroup, bandwidthMeter, iArr);
-            }
-
-            private Factory() {
-            }
-
-            public TrackSelection[] createTrackSelections(TrackSelection.Definition[] definitions, BandwidthMeter bandwidthMeter) {
-                DownloadTrackSelection downloadTrackSelection;
-                TrackSelection[] selections = new TrackSelection[definitions.length];
-                for (int i = 0; i < definitions.length; i++) {
-                    if (definitions[i] == null) {
-                        downloadTrackSelection = null;
-                    } else {
-                        downloadTrackSelection = new DownloadTrackSelection(definitions[i].group, definitions[i].tracks);
-                    }
-                    selections[i] = downloadTrackSelection;
-                }
-                return selections;
-            }
-        }
-
         public DownloadTrackSelection(TrackGroup trackGroup, int[] tracks) {
             super(trackGroup, tracks);
         }
@@ -579,6 +560,29 @@ public final class DownloadHelper {
         @Nullable
         public Object getSelectionData() {
             return null;
+        }
+
+        private static final class Factory implements TrackSelection.Factory {
+            private Factory() {
+            }
+
+            public TrackSelection createTrackSelection(TrackGroup trackGroup, BandwidthMeter bandwidthMeter, int... iArr) {
+                return TrackSelection$Factory$$CC.createTrackSelection$$dflt$$(this, trackGroup, bandwidthMeter, iArr);
+            }
+
+            public TrackSelection[] createTrackSelections(TrackSelection.Definition[] definitions, BandwidthMeter bandwidthMeter) {
+                DownloadTrackSelection downloadTrackSelection;
+                TrackSelection[] selections = new TrackSelection[definitions.length];
+                for (int i = 0; i < definitions.length; i++) {
+                    if (definitions[i] == null) {
+                        downloadTrackSelection = null;
+                    } else {
+                        downloadTrackSelection = new DownloadTrackSelection(definitions[i].group, definitions[i].tracks);
+                    }
+                    selections[i] = downloadTrackSelection;
+                }
+                return selections;
+            }
         }
     }
 

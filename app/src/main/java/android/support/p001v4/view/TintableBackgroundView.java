@@ -9,10 +9,10 @@ public interface TintableBackgroundView {
     @Nullable
     ColorStateList getSupportBackgroundTintList();
 
+    void setSupportBackgroundTintList(@Nullable ColorStateList colorStateList);
+
     @Nullable
     PorterDuff.Mode getSupportBackgroundTintMode();
-
-    void setSupportBackgroundTintList(@Nullable ColorStateList colorStateList);
 
     void setSupportBackgroundTintMode(@Nullable PorterDuff.Mode mode);
 }

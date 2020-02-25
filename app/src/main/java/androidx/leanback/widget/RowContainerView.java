@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+
 import androidx.leanback.C0364R;
 
 final class RowContainerView extends LinearLayout {
@@ -54,12 +55,6 @@ final class RowContainerView extends LinearLayout {
         this.mHeaderDock.setVisibility(show ? 0 : 8);
     }
 
-    public void setForeground(Drawable d) {
-        this.mForeground = d;
-        setWillNotDraw(this.mForeground == null);
-        invalidate();
-    }
-
     public void setForegroundColor(@ColorInt int color) {
         Drawable drawable = this.mForeground;
         if (drawable instanceof ColorDrawable) {
@@ -72,6 +67,12 @@ final class RowContainerView extends LinearLayout {
 
     public Drawable getForeground() {
         return this.mForeground;
+    }
+
+    public void setForeground(Drawable d) {
+        this.mForeground = d;
+        setWillNotDraw(this.mForeground == null);
+        invalidate();
     }
 
     /* access modifiers changed from: protected */

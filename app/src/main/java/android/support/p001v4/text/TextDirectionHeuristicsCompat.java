@@ -15,9 +15,7 @@ public final class TextDirectionHeuristicsCompat {
     private static final int STATE_TRUE = 0;
     private static final int STATE_UNKNOWN = 2;
 
-    /* renamed from: android.support.v4.text.TextDirectionHeuristicsCompat$TextDirectionAlgorithm */
-    private interface TextDirectionAlgorithm {
-        int checkRtl(CharSequence charSequence, int i, int i2);
+    private TextDirectionHeuristicsCompat() {
     }
 
     static int isRtlText(int directionality) {
@@ -49,16 +47,21 @@ public final class TextDirectionHeuristicsCompat {
         return 1;
     }
 
+    /* renamed from: android.support.v4.text.TextDirectionHeuristicsCompat$TextDirectionAlgorithm */
+    private interface TextDirectionAlgorithm {
+        int checkRtl(CharSequence charSequence, int i, int i2);
+    }
+
     /* renamed from: android.support.v4.text.TextDirectionHeuristicsCompat$TextDirectionHeuristicImpl */
     private static abstract class TextDirectionHeuristicImpl implements TextDirectionHeuristicCompat {
         private final TextDirectionAlgorithm mAlgorithm;
 
-        /* access modifiers changed from: protected */
-        public abstract boolean defaultIsRtl();
-
         TextDirectionHeuristicImpl(TextDirectionAlgorithm algorithm) {
             this.mAlgorithm = algorithm;
         }
+
+        /* access modifiers changed from: protected */
+        public abstract boolean defaultIsRtl();
 
         public boolean isRtl(char[] array, int start, int count) {
             return isRtl(CharBuffer.wrap(array), start, count);
@@ -105,6 +108,9 @@ public final class TextDirectionHeuristicsCompat {
     private static class FirstStrong implements TextDirectionAlgorithm {
         static final FirstStrong INSTANCE = new FirstStrong();
 
+        private FirstStrong() {
+        }
+
         public int checkRtl(CharSequence cs, int start, int count) {
             int result = 2;
             int e = start + count;
@@ -113,15 +119,16 @@ public final class TextDirectionHeuristicsCompat {
             }
             return result;
         }
-
-        private FirstStrong() {
-        }
     }
 
     /* renamed from: android.support.v4.text.TextDirectionHeuristicsCompat$AnyStrong */
     private static class AnyStrong implements TextDirectionAlgorithm {
         static final AnyStrong INSTANCE_RTL = new AnyStrong(true);
         private final boolean mLookForRtl;
+
+        private AnyStrong(boolean lookForRtl) {
+            this.mLookForRtl = lookForRtl;
+        }
 
         public int checkRtl(CharSequence cs, int start, int count) {
             boolean haveUnlookedFor = false;
@@ -147,10 +154,6 @@ public final class TextDirectionHeuristicsCompat {
             }
             return 2;
         }
-
-        private AnyStrong(boolean lookForRtl) {
-            this.mLookForRtl = lookForRtl;
-        }
     }
 
     /* renamed from: android.support.v4.text.TextDirectionHeuristicsCompat$TextDirectionHeuristicLocale */
@@ -165,8 +168,5 @@ public final class TextDirectionHeuristicsCompat {
         public boolean defaultIsRtl() {
             return TextUtilsCompat.getLayoutDirectionFromLocale(Locale.getDefault()) == 1;
         }
-    }
-
-    private TextDirectionHeuristicsCompat() {
     }
 }

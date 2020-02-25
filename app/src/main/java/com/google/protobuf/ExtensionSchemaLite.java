@@ -1,7 +1,5 @@
 package com.google.protobuf;
 
-import com.google.protobuf.GeneratedMessageLite;
-import com.google.protobuf.WireFormat;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;

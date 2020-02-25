@@ -13,6 +13,7 @@ import android.support.p001v4.content.res.FontResourcesParserCompat;
 import android.support.p001v4.provider.FontsContractCompat;
 import android.support.p001v4.util.SimpleArrayMap;
 import android.util.Log;
+
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -22,7 +23,7 @@ import java.util.List;
 
 @RequiresApi(24)
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-/* renamed from: android.support.v4.graphics.TypefaceCompatApi24Impl */
+        /* renamed from: android.support.v4.graphics.TypefaceCompatApi24Impl */
 class TypefaceCompatApi24Impl extends TypefaceCompatBaseImpl {
     private static final String ADD_FONT_WEIGHT_STYLE_METHOD = "addFontWeightStyle";
     private static final String CREATE_FROM_FAMILIES_WITH_DEFAULT_METHOD = "createFromFamiliesWithDefault";
@@ -32,9 +33,6 @@ class TypefaceCompatApi24Impl extends TypefaceCompatBaseImpl {
     private static final Method sCreateFromFamiliesWithDefault;
     private static final Class sFontFamily;
     private static final Constructor sFontFamilyCtor;
-
-    TypefaceCompatApi24Impl() {
-    }
 
     static {
         Method addFontMethod;
@@ -57,6 +55,9 @@ class TypefaceCompatApi24Impl extends TypefaceCompatBaseImpl {
         sFontFamily = fontFamilyClass;
         sAddFontWeightStyle = addFontMethod;
         sCreateFromFamiliesWithDefault = createFromFamiliesWithDefaultMethod;
+    }
+
+    TypefaceCompatApi24Impl() {
     }
 
     public static boolean isUsable() {

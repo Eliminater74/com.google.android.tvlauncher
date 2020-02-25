@@ -2,6 +2,7 @@ package com.google.android.libraries.performance.primes.hprof.collect;
 
 import com.google.android.libraries.stitch.util.Preconditions;
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.util.Arrays;
 
 public final class IntIntMap {
@@ -12,10 +13,6 @@ public final class IntIntMap {
     private int sizeIndex;
     private int[] values;
 
-    static int hash(int input) {
-        return (input << 1) - (input << 8);
-    }
-
     public IntIntMap() {
         this(-1);
     }
@@ -23,6 +20,10 @@ public final class IntIntMap {
     public IntIntMap(int emptyValue2) {
         this.emptyValue = emptyValue2;
         init();
+    }
+
+    static int hash(int input) {
+        return (input << 1) - (input << 8);
     }
 
     public void clear() {
@@ -114,11 +115,11 @@ public final class IntIntMap {
 
     public static class Enumerator {
         private final int emptyValue;
-        private int key;
         private final int[] keys;
+        private final int[] values;
+        private int key;
         private int nextIndex;
         private int value;
-        private final int[] values;
 
         public Enumerator(int[] keys2, int[] values2, int emptyValue2) {
             this.keys = keys2;

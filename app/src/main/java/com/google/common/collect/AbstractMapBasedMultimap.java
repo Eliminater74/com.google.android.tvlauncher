@@ -1,11 +1,11 @@
 package com.google.common.collect;
 
-import WrappedCollection.WrappedIterator;
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.AbstractMultimap;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimaps;
+
+import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.Serializable;
 import java.util.AbstractCollection;
 import java.util.Collection;
@@ -21,8 +21,8 @@ import java.util.RandomAccess;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
-import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
+import WrappedCollection.WrappedIterator;
 
 @GwtCompatible
 abstract class AbstractMapBasedMultimap<K, V> extends AbstractMultimap<K, V> implements Serializable {
@@ -31,8 +31,10 @@ abstract class AbstractMapBasedMultimap<K, V> extends AbstractMultimap<K, V> imp
     public transient Map<K, Collection<V>> map;
     private transient int totalSize;
 
-    /* access modifiers changed from: package-private */
-    public abstract Collection<V> createCollection();
+    protected AbstractMapBasedMultimap(Map<K, Collection<V>> map2) {
+        Preconditions.checkArgument(map2.isEmpty());
+        this.map = map2;
+    }
 
     static /* synthetic */ int access$208(AbstractMapBasedMultimap x0) {
         int i = x0.totalSize;
@@ -58,10 +60,16 @@ abstract class AbstractMapBasedMultimap<K, V> extends AbstractMultimap<K, V> imp
         return i;
     }
 
-    protected AbstractMapBasedMultimap(Map<K, Collection<V>> map2) {
-        Preconditions.checkArgument(map2.isEmpty());
-        this.map = map2;
+    /* access modifiers changed from: private */
+    public static <E> Iterator<E> iteratorOrListIterator(Collection<E> collection) {
+        if (collection instanceof List) {
+            return ((List) collection).listIterator();
+        }
+        return collection.iterator();
     }
+
+    /* access modifiers changed from: package-private */
+    public abstract Collection<V> createCollection();
 
     /* access modifiers changed from: package-private */
     public final void setMap(Map<K, Collection<V>> map2) {
@@ -196,14 +204,104 @@ abstract class AbstractMapBasedMultimap<K, V> extends AbstractMultimap<K, V> imp
         return new WrappedList(key, list, ancestor);
     }
 
+    /* access modifiers changed from: package-private */
+    public Set<K> createKeySet() {
+        return new KeySet(this.map);
+    }
+
+    /* access modifiers changed from: package-private */
+    public final Set<K> createMaybeNavigableKeySet() {
+        Map<K, Collection<V>> map2 = this.map;
+        if (map2 instanceof NavigableMap) {
+            return new NavigableKeySet((NavigableMap) map2);
+        }
+        if (map2 instanceof SortedMap) {
+            return new SortedKeySet((SortedMap) map2);
+        }
+        return new KeySet(map2);
+    }
+
+    /* access modifiers changed from: private */
+    public void removeValuesForKey(Object key) {
+        Collection<V> collection = (Collection) Maps.safeRemove(this.map, key);
+        if (collection != null) {
+            int count = collection.size();
+            collection.clear();
+            this.totalSize -= count;
+        }
+    }
+
+    public Collection<V> values() {
+        return super.values();
+    }
+
+    /* access modifiers changed from: package-private */
+    public Collection<V> createValues() {
+        return new AbstractMultimap.Values();
+    }
+
+    /* access modifiers changed from: package-private */
+    public Iterator<V> valueIterator() {
+        return new AbstractMapBasedMultimap<K, V>.Itr<V>(this) {
+            /* access modifiers changed from: package-private */
+            public V output(K k, V value) {
+                return value;
+            }
+        };
+    }
+
+    /* access modifiers changed from: package-private */
+    public Multiset<K> createKeys() {
+        return new Multimaps.Keys(this);
+    }
+
+    public Collection<Map.Entry<K, V>> entries() {
+        return super.entries();
+    }
+
+    /* access modifiers changed from: package-private */
+    public Collection<Map.Entry<K, V>> createEntries() {
+        if (this instanceof SetMultimap) {
+            return new AbstractMultimap.EntrySet(this);
+        }
+        return new AbstractMultimap.Entries();
+    }
+
+    /* access modifiers changed from: package-private */
+    public Iterator<Map.Entry<K, V>> entryIterator() {
+        return new AbstractMapBasedMultimap<K, V>.Itr<Map.Entry<K, V>>(this) {
+            /* access modifiers changed from: package-private */
+            public Map.Entry<K, V> output(K key, V value) {
+                return Maps.immutableEntry(key, value);
+            }
+        };
+    }
+
+    /* access modifiers changed from: package-private */
+    public Map<K, Collection<V>> createAsMap() {
+        return new AsMap(this.map);
+    }
+
+    /* access modifiers changed from: package-private */
+    public final Map<K, Collection<V>> createMaybeNavigableAsMap() {
+        Map<K, Collection<V>> map2 = this.map;
+        if (map2 instanceof NavigableMap) {
+            return new NavigableAsMap((NavigableMap) map2);
+        }
+        if (map2 instanceof SortedMap) {
+            return new SortedAsMap((SortedMap) map2);
+        }
+        return new AsMap(map2);
+    }
+
     class WrappedCollection extends AbstractCollection<V> {
         @NullableDecl
         final AbstractMapBasedMultimap<K, V>.WrappedCollection ancestor;
         @NullableDecl
         final Collection<V> ancestorDelegate;
-        Collection<V> delegate;
         @NullableDecl
         final K key;
+        Collection<V> delegate;
 
         WrappedCollection(@NullableDecl K key2, Collection<V> delegate2, @NullableDecl AbstractMapBasedMultimap<K, V>.WrappedCollection ancestor2) {
             this.key = key2;
@@ -282,49 +380,6 @@ abstract class AbstractMapBasedMultimap<K, V> extends AbstractMultimap<K, V> imp
         public Iterator<V> iterator() {
             refreshIfEmpty();
             return new WrappedIterator();
-        }
-
-        class WrappedIterator implements Iterator<V> {
-            final Iterator<V> delegateIterator;
-            final Collection<V> originalDelegate = WrappedCollection.this.delegate;
-
-            WrappedIterator() {
-                this.delegateIterator = AbstractMapBasedMultimap.iteratorOrListIterator(WrappedCollection.this.delegate);
-            }
-
-            WrappedIterator(Iterator<V> delegateIterator2) {
-                this.delegateIterator = delegateIterator2;
-            }
-
-            /* access modifiers changed from: package-private */
-            public void validateIterator() {
-                WrappedCollection.this.refreshIfEmpty();
-                if (WrappedCollection.this.delegate != this.originalDelegate) {
-                    throw new ConcurrentModificationException();
-                }
-            }
-
-            public boolean hasNext() {
-                validateIterator();
-                return this.delegateIterator.hasNext();
-            }
-
-            public V next() {
-                validateIterator();
-                return this.delegateIterator.next();
-            }
-
-            public void remove() {
-                this.delegateIterator.remove();
-                AbstractMapBasedMultimap.access$210(AbstractMapBasedMultimap.this);
-                WrappedCollection.this.removeIfEmpty();
-            }
-
-            /* access modifiers changed from: package-private */
-            public Iterator<V> getDelegateIterator() {
-                validateIterator();
-                return this.delegateIterator;
-            }
         }
 
         public boolean add(V value) {
@@ -412,14 +467,49 @@ abstract class AbstractMapBasedMultimap<K, V> extends AbstractMultimap<K, V> imp
             }
             return changed;
         }
-    }
 
-    /* access modifiers changed from: private */
-    public static <E> Iterator<E> iteratorOrListIterator(Collection<E> collection) {
-        if (collection instanceof List) {
-            return ((List) collection).listIterator();
+        class WrappedIterator implements Iterator<V> {
+            final Iterator<V> delegateIterator;
+            final Collection<V> originalDelegate = WrappedCollection.this.delegate;
+
+            WrappedIterator() {
+                this.delegateIterator = AbstractMapBasedMultimap.iteratorOrListIterator(WrappedCollection.this.delegate);
+            }
+
+            WrappedIterator(Iterator<V> delegateIterator2) {
+                this.delegateIterator = delegateIterator2;
+            }
+
+            /* access modifiers changed from: package-private */
+            public void validateIterator() {
+                WrappedCollection.this.refreshIfEmpty();
+                if (WrappedCollection.this.delegate != this.originalDelegate) {
+                    throw new ConcurrentModificationException();
+                }
+            }
+
+            public boolean hasNext() {
+                validateIterator();
+                return this.delegateIterator.hasNext();
+            }
+
+            public V next() {
+                validateIterator();
+                return this.delegateIterator.next();
+            }
+
+            public void remove() {
+                this.delegateIterator.remove();
+                AbstractMapBasedMultimap.access$210(AbstractMapBasedMultimap.this);
+                WrappedCollection.this.removeIfEmpty();
+            }
+
+            /* access modifiers changed from: package-private */
+            public Iterator<V> getDelegateIterator() {
+                validateIterator();
+                return this.delegateIterator;
+            }
         }
-        return collection.iterator();
     }
 
     class WrappedSet extends AbstractMapBasedMultimap<K, V>.WrappedCollection implements Set<V> {
@@ -668,23 +758,6 @@ abstract class AbstractMapBasedMultimap<K, V> extends AbstractMultimap<K, V> imp
         }
     }
 
-    /* access modifiers changed from: package-private */
-    public Set<K> createKeySet() {
-        return new KeySet(this.map);
-    }
-
-    /* access modifiers changed from: package-private */
-    public final Set<K> createMaybeNavigableKeySet() {
-        Map<K, Collection<V>> map2 = this.map;
-        if (map2 instanceof NavigableMap) {
-            return new NavigableKeySet((NavigableMap) map2);
-        }
-        if (map2 instanceof SortedMap) {
-            return new SortedKeySet((SortedMap) map2);
-        }
-        return new KeySet(map2);
-    }
-
     private class KeySet extends Maps.KeySet<K, Collection<V>> {
         KeySet(Map<K, Collection<V>> subMap) {
             super(subMap);
@@ -846,30 +919,20 @@ abstract class AbstractMapBasedMultimap<K, V> extends AbstractMultimap<K, V> imp
         }
     }
 
-    /* access modifiers changed from: private */
-    public void removeValuesForKey(Object key) {
-        Collection<V> collection = (Collection) Maps.safeRemove(this.map, key);
-        if (collection != null) {
-            int count = collection.size();
-            collection.clear();
-            this.totalSize -= count;
-        }
-    }
-
     private abstract class Itr<T> implements Iterator<T> {
+        final Iterator<Map.Entry<K, Collection<V>>> keyIterator;
         @MonotonicNonNullDecl
         Collection<V> collection = null;
         @NullableDecl
         K key = null;
-        final Iterator<Map.Entry<K, Collection<V>>> keyIterator;
         Iterator<V> valueIterator = Iterators.emptyModifiableIterator();
-
-        /* access modifiers changed from: package-private */
-        public abstract T output(K k, V v);
 
         Itr() {
             this.keyIterator = AbstractMapBasedMultimap.this.map.entrySet().iterator();
         }
+
+        /* access modifiers changed from: package-private */
+        public abstract T output(K k, V v);
 
         public boolean hasNext() {
             return this.keyIterator.hasNext() || this.valueIterator.hasNext();
@@ -892,69 +955,6 @@ abstract class AbstractMapBasedMultimap<K, V> extends AbstractMultimap<K, V> imp
             }
             AbstractMapBasedMultimap.access$210(AbstractMapBasedMultimap.this);
         }
-    }
-
-    public Collection<V> values() {
-        return super.values();
-    }
-
-    /* access modifiers changed from: package-private */
-    public Collection<V> createValues() {
-        return new AbstractMultimap.Values();
-    }
-
-    /* access modifiers changed from: package-private */
-    public Iterator<V> valueIterator() {
-        return new AbstractMapBasedMultimap<K, V>.Itr<V>(this) {
-            /* access modifiers changed from: package-private */
-            public V output(K k, V value) {
-                return value;
-            }
-        };
-    }
-
-    /* access modifiers changed from: package-private */
-    public Multiset<K> createKeys() {
-        return new Multimaps.Keys(this);
-    }
-
-    public Collection<Map.Entry<K, V>> entries() {
-        return super.entries();
-    }
-
-    /* access modifiers changed from: package-private */
-    public Collection<Map.Entry<K, V>> createEntries() {
-        if (this instanceof SetMultimap) {
-            return new AbstractMultimap.EntrySet(this);
-        }
-        return new AbstractMultimap.Entries();
-    }
-
-    /* access modifiers changed from: package-private */
-    public Iterator<Map.Entry<K, V>> entryIterator() {
-        return new AbstractMapBasedMultimap<K, V>.Itr<Map.Entry<K, V>>(this) {
-            /* access modifiers changed from: package-private */
-            public Map.Entry<K, V> output(K key, V value) {
-                return Maps.immutableEntry(key, value);
-            }
-        };
-    }
-
-    /* access modifiers changed from: package-private */
-    public Map<K, Collection<V>> createAsMap() {
-        return new AsMap(this.map);
-    }
-
-    /* access modifiers changed from: package-private */
-    public final Map<K, Collection<V>> createMaybeNavigableAsMap() {
-        Map<K, Collection<V>> map2 = this.map;
-        if (map2 instanceof NavigableMap) {
-            return new NavigableAsMap((NavigableMap) map2);
-        }
-        if (map2 instanceof SortedMap) {
-            return new SortedAsMap((SortedMap) map2);
-        }
-        return new AsMap(map2);
     }
 
     private class AsMap extends Maps.ViewCachingAbstractMap<K, Collection<V>> {
@@ -1054,9 +1054,9 @@ abstract class AbstractMapBasedMultimap<K, V> extends AbstractMultimap<K, V> imp
         }
 
         class AsMapIterator implements Iterator<Map.Entry<K, Collection<V>>> {
+            final Iterator<Map.Entry<K, Collection<V>>> delegateIterator = AsMap.this.submap.entrySet().iterator();
             @NullableDecl
             Collection<V> collection;
-            final Iterator<Map.Entry<K, Collection<V>>> delegateIterator = AsMap.this.submap.entrySet().iterator();
 
             AsMapIterator() {
             }

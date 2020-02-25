@@ -6,6 +6,10 @@ public final class InstanceFactory<T> implements Factory<T>, Lazy<T> {
     private static final InstanceFactory<Object> NULL_INSTANCE_FACTORY = new InstanceFactory<>(null);
     private final T instance;
 
+    private InstanceFactory(T instance2) {
+        this.instance = instance2;
+    }
+
     public static <T> Factory<T> create(T instance2) {
         return new InstanceFactory(Preconditions.checkNotNull(instance2, "instance cannot be null"));
     }
@@ -19,10 +23,6 @@ public final class InstanceFactory<T> implements Factory<T>, Lazy<T> {
 
     private static <T> InstanceFactory<T> nullInstanceFactory() {
         return NULL_INSTANCE_FACTORY;
-    }
-
-    private InstanceFactory(T instance2) {
-        this.instance = instance2;
     }
 
     public T get() {

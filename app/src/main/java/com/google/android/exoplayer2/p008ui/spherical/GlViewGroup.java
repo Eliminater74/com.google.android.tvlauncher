@@ -10,6 +10,7 @@ import android.support.annotation.UiThread;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.widget.FrameLayout;
+
 import com.google.android.exoplayer2.util.Assertions;
 
 /* renamed from: com.google.android.exoplayer2.ui.spherical.GlViewGroup */

@@ -1,6 +1,5 @@
 package com.google.android.gms.internal;
 
-import com.google.android.gms.internal.zzgoj;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -8,13 +7,6 @@ import java.util.Map;
 /* compiled from: CodedOutputStreamWriter */
 final class zzgnr implements zzgrx {
     private final zzgnp zza;
-
-    public static zzgnr zza(zzgnp zzgnp) {
-        if (zzgnp.zza != null) {
-            return zzgnp.zza;
-        }
-        return new zzgnr(zzgnp);
-    }
 
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
      method: com.google.android.gms.internal.zzgon.zza(java.lang.Object, java.lang.String):T
@@ -25,6 +17,13 @@ final class zzgnr implements zzgrx {
     private zzgnr(zzgnp zzgnp) {
         this.zza = (zzgnp) zzgon.zza((Object) zzgnp, "output");
         this.zza.zza = this;
+    }
+
+    public static zzgnr zza(zzgnp zzgnp) {
+        if (zzgnp.zza != null) {
+            return zzgnp.zza;
+        }
+        return new zzgnr(zzgnp);
     }
 
     public final int zza() {

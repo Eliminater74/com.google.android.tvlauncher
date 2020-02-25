@@ -1,7 +1,5 @@
 package com.google.android.libraries.gcoreclient.common.api.support;
 
-import com.google.android.libraries.gcoreclient.common.api.support.GcoreExceptionMapper;
-
 final /* synthetic */ class GcoreExceptionMapper$$Lambda$0 implements GcoreExceptionMapper.ExceptionSupplier {
     private final GcoreExceptionMapper.SystemExceptionSupplier arg$1;
 

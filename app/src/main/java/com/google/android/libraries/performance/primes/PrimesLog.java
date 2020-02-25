@@ -2,49 +2,24 @@ package com.google.android.libraries.performance.primes;
 
 import android.os.Process;
 import android.util.Log;
+
 import com.google.android.libraries.stitch.util.Preconditions;
+
 import java.util.ArrayDeque;
 import java.util.Locale;
 
 public final class PrimesLog {
+    static final String PRIMES_TAG = "Primes";
     private static final String MICROS_UNIT = "μs";
     private static final String MILLIS_UNIT = "ms";
     private static final String NANOS_UNIT = "ns";
-    static final String PRIMES_TAG = "Primes";
     private static boolean logAll;
-
-    public static void enableAllLogs() {
-        logAll = true;
-    }
 
     private PrimesLog() {
     }
 
-    private static final class TicsHolder {
-        private static final ThreadLocal<ArrayDeque<CpuWallTime>> tics = new ThreadLocal<ArrayDeque<CpuWallTime>>() {
-            /* access modifiers changed from: protected */
-            public ArrayDeque<CpuWallTime> initialValue() {
-                return new ArrayDeque<>();
-            }
-        };
-
-        private TicsHolder() {
-        }
-
-        /* access modifiers changed from: private */
-        public static void tic() {
-            tics.get().add(CpuWallTime.now());
-        }
-
-        /* access modifiers changed from: private */
-        public static CpuWallTime toc() {
-            return (CpuWallTime) Preconditions.checkNotNull((CpuWallTime) tics.get().pollLast());
-        }
-
-        /* access modifiers changed from: private */
-        public static int ticSize() {
-            return tics.get().size();
-        }
+    public static void enableAllLogs() {
+        logAll = true;
     }
 
     public static void tic() {
@@ -208,5 +183,32 @@ public final class PrimesLog {
 
     public static boolean eLoggable(String tag) {
         return Log.isLoggable(tag, 6);
+    }
+
+    private static final class TicsHolder {
+        private static final ThreadLocal<ArrayDeque<CpuWallTime>> tics = new ThreadLocal<ArrayDeque<CpuWallTime>>() {
+            /* access modifiers changed from: protected */
+            public ArrayDeque<CpuWallTime> initialValue() {
+                return new ArrayDeque<>();
+            }
+        };
+
+        private TicsHolder() {
+        }
+
+        /* access modifiers changed from: private */
+        public static void tic() {
+            tics.get().add(CpuWallTime.now());
+        }
+
+        /* access modifiers changed from: private */
+        public static CpuWallTime toc() {
+            return (CpuWallTime) Preconditions.checkNotNull((CpuWallTime) tics.get().pollLast());
+        }
+
+        /* access modifiers changed from: private */
+        public static int ticSize() {
+            return tics.get().size();
+        }
     }
 }

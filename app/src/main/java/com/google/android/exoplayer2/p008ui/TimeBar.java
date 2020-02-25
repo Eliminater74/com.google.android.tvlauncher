@@ -5,15 +5,6 @@ import android.support.annotation.Nullable;
 /* renamed from: com.google.android.exoplayer2.ui.TimeBar */
 public interface TimeBar {
 
-    /* renamed from: com.google.android.exoplayer2.ui.TimeBar$OnScrubListener */
-    public interface OnScrubListener {
-        void onScrubMove(TimeBar timeBar, long j);
-
-        void onScrubStart(TimeBar timeBar, long j);
-
-        void onScrubStop(TimeBar timeBar, long j, boolean z);
-    }
-
     void addListener(OnScrubListener onScrubListener);
 
     long getPreferredUpdateDelay();
@@ -33,4 +24,13 @@ public interface TimeBar {
     void setKeyTimeIncrement(long j);
 
     void setPosition(long j);
+
+    /* renamed from: com.google.android.exoplayer2.ui.TimeBar$OnScrubListener */
+    public interface OnScrubListener {
+        void onScrubMove(TimeBar timeBar, long j);
+
+        void onScrubStart(TimeBar timeBar, long j);
+
+        void onScrubStop(TimeBar timeBar, long j, boolean z);
+    }
 }

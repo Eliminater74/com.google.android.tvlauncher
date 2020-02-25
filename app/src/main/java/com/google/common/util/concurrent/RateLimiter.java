@@ -5,30 +5,23 @@ import com.google.common.annotations.GwtIncompatible;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
-import com.google.common.util.concurrent.SmoothRateLimiter;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
+
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
-import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
 
 @GwtIncompatible
 @Beta
 public abstract class RateLimiter {
+    private final SleepingStopwatch stopwatch;
     @MonotonicNonNullDecl
     private volatile Object mutexDoNotUseDirectly;
-    private final SleepingStopwatch stopwatch;
 
-    /* access modifiers changed from: package-private */
-    public abstract double doGetRate();
-
-    /* access modifiers changed from: package-private */
-    public abstract void doSetRate(double d, long j);
-
-    /* access modifiers changed from: package-private */
-    public abstract long queryEarliestAvailable(long j);
-
-    /* access modifiers changed from: package-private */
-    public abstract long reserveEarliestAvailable(int i, long j);
+    RateLimiter(SleepingStopwatch stopwatch2) {
+        this.stopwatch = (SleepingStopwatch) Preconditions.checkNotNull(stopwatch2);
+    }
 
     public static RateLimiter create(double permitsPerSecond) {
         return create(permitsPerSecond, SleepingStopwatch.createFromSystemTimer());
@@ -53,6 +46,22 @@ public abstract class RateLimiter {
         return rateLimiter;
     }
 
+    private static void checkPermits(int permits) {
+        Preconditions.checkArgument(permits > 0, "Requested permits (%s) must be positive", permits);
+    }
+
+    /* access modifiers changed from: package-private */
+    public abstract double doGetRate();
+
+    /* access modifiers changed from: package-private */
+    public abstract void doSetRate(double d, long j);
+
+    /* access modifiers changed from: package-private */
+    public abstract long queryEarliestAvailable(long j);
+
+    /* access modifiers changed from: package-private */
+    public abstract long reserveEarliestAvailable(int i, long j);
+
     private Object mutex() {
         Object mutex = this.mutexDoNotUseDirectly;
         if (mutex == null) {
@@ -68,8 +77,12 @@ public abstract class RateLimiter {
         return mutex;
     }
 
-    RateLimiter(SleepingStopwatch stopwatch2) {
-        this.stopwatch = (SleepingStopwatch) Preconditions.checkNotNull(stopwatch2);
+    public final double getRate() {
+        double doGetRate;
+        synchronized (mutex()) {
+            doGetRate = doGetRate();
+        }
+        return doGetRate;
     }
 
     public final void setRate(double permitsPerSecond) {
@@ -77,14 +90,6 @@ public abstract class RateLimiter {
         synchronized (mutex()) {
             doSetRate(permitsPerSecond, this.stopwatch.readMicros());
         }
-    }
-
-    public final double getRate() {
-        double doGetRate;
-        synchronized (mutex()) {
-            doGetRate = doGetRate();
-        }
-        return doGetRate;
     }
 
     @CanIgnoreReturnValue
@@ -170,12 +175,6 @@ public abstract class RateLimiter {
     }
 
     static abstract class SleepingStopwatch {
-        /* access modifiers changed from: protected */
-        public abstract long readMicros();
-
-        /* access modifiers changed from: protected */
-        public abstract void sleepMicrosUninterruptibly(long j);
-
         protected SleepingStopwatch() {
         }
 
@@ -196,9 +195,11 @@ public abstract class RateLimiter {
                 }
             };
         }
-    }
 
-    private static void checkPermits(int permits) {
-        Preconditions.checkArgument(permits > 0, "Requested permits (%s) must be positive", permits);
+        /* access modifiers changed from: protected */
+        public abstract long readMicros();
+
+        /* access modifiers changed from: protected */
+        public abstract void sleepMicrosUninterruptibly(long j);
     }
 }

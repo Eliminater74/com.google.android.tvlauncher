@@ -3,6 +3,7 @@ package com.google.android.tvlauncher.notifications;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.Button;
+
 import com.google.android.tvlauncher.C1188R;
 
 public class NotificationTrayButton extends Button {

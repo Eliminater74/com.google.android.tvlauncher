@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.util.Log;
+
 import com.google.android.gms.common.internal.Hide;
 import com.google.android.gms.common.internal.zzau;
 import com.google.android.gms.internal.zzbmk;
@@ -32,6 +33,40 @@ public class GoogleSignatureVerifier {
             }
         }
         return zza;
+    }
+
+    @Hide
+    public static boolean zza(PackageInfo packageInfo, boolean z) {
+        zzf zzf;
+        if (!(packageInfo == null || packageInfo.signatures == null)) {
+            if (z) {
+                zzf = zza(packageInfo, zzi.zza);
+            } else {
+                zzf = zza(packageInfo, zzi.zza[0]);
+            }
+            if (zzf != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Hide
+    private static zzf zza(PackageInfo packageInfo, zzf... zzfArr) {
+        if (packageInfo.signatures == null) {
+            return null;
+        }
+        if (packageInfo.signatures.length != 1) {
+            Log.w("GoogleSignatureVerifier", "Package has more than one signature.");
+            return null;
+        }
+        zzg zzg = new zzg(packageInfo.signatures[0].toByteArray());
+        for (int i = 0; i < zzfArr.length; i++) {
+            if (zzfArr[i].equals(zzg)) {
+                return zzfArr[i];
+            }
+        }
+        return null;
     }
 
     @Hide
@@ -93,22 +128,6 @@ public class GoogleSignatureVerifier {
         zzn zzb2 = zzb(packageInfo);
         zzb2.zzd();
         return zzb2.zza;
-    }
-
-    @Hide
-    public static boolean zza(PackageInfo packageInfo, boolean z) {
-        zzf zzf;
-        if (!(packageInfo == null || packageInfo.signatures == null)) {
-            if (z) {
-                zzf = zza(packageInfo, zzi.zza);
-            } else {
-                zzf = zza(packageInfo, zzi.zza[0]);
-            }
-            if (zzf != null) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
@@ -173,23 +192,5 @@ public class GoogleSignatureVerifier {
             return zza2;
         }
         return zzn.zza("debuggable release cert app rejected");
-    }
-
-    @Hide
-    private static zzf zza(PackageInfo packageInfo, zzf... zzfArr) {
-        if (packageInfo.signatures == null) {
-            return null;
-        }
-        if (packageInfo.signatures.length != 1) {
-            Log.w("GoogleSignatureVerifier", "Package has more than one signature.");
-            return null;
-        }
-        zzg zzg = new zzg(packageInfo.signatures[0].toByteArray());
-        for (int i = 0; i < zzfArr.length; i++) {
-            if (zzfArr[i].equals(zzg)) {
-                return zzfArr[i];
-            }
-        }
-        return null;
     }
 }

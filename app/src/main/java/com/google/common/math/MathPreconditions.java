@@ -2,13 +2,18 @@ package com.google.common.math;
 
 import com.google.common.annotations.GwtCompatible;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.math.BigInteger;
 import java.math.RoundingMode;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible
 @CanIgnoreReturnValue
 final class MathPreconditions {
+    private MathPreconditions() {
+    }
+
     static int checkPositive(@NullableDecl String role, int x) {
         if (x > 0) {
             return x;
@@ -139,8 +144,5 @@ final class MathPreconditions {
             sb.append(")");
             throw new ArithmeticException(sb.toString());
         }
-    }
-
-    private MathPreconditions() {
     }
 }

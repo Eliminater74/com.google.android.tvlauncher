@@ -9,6 +9,7 @@ import android.support.p001v4.view.ViewCompat;
 import android.support.p001v4.view.ViewGroupCompat;
 import android.view.View;
 import android.view.ViewGroup;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,48 @@ import java.util.Map;
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
 /* renamed from: android.support.v4.app.FragmentTransitionImpl */
 public abstract class FragmentTransitionImpl {
+    protected static void bfsAddViewChildren(List<View> views, View startView) {
+        int startIndex = views.size();
+        if (!containedBeforeIndex(views, startView, startIndex)) {
+            views.add(startView);
+            for (int index = startIndex; index < views.size(); index++) {
+                View view = views.get(index);
+                if (view instanceof ViewGroup) {
+                    ViewGroup viewGroup = (ViewGroup) view;
+                    int childCount = viewGroup.getChildCount();
+                    for (int childIndex = 0; childIndex < childCount; childIndex++) {
+                        View child = viewGroup.getChildAt(childIndex);
+                        if (!containedBeforeIndex(views, child, startIndex)) {
+                            views.add(child);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private static boolean containedBeforeIndex(List<View> views, View view, int maxIndex) {
+        for (int i = 0; i < maxIndex; i++) {
+            if (views.get(i) == view) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected static boolean isNullOrEmpty(List list) {
+        return list == null || list.isEmpty();
+    }
+
+    static String findKeyForValue(Map<String, String> map, String value) {
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            if (value.equals(entry.getValue())) {
+                return (String) entry.getKey();
+            }
+        }
+        return null;
+    }
+
     public abstract void addTarget(Object obj, View view);
 
     public abstract void addTargets(Object obj, ArrayList<View> arrayList);
@@ -171,47 +214,5 @@ public abstract class FragmentTransitionImpl {
                 }
             }
         });
-    }
-
-    protected static void bfsAddViewChildren(List<View> views, View startView) {
-        int startIndex = views.size();
-        if (!containedBeforeIndex(views, startView, startIndex)) {
-            views.add(startView);
-            for (int index = startIndex; index < views.size(); index++) {
-                View view = views.get(index);
-                if (view instanceof ViewGroup) {
-                    ViewGroup viewGroup = (ViewGroup) view;
-                    int childCount = viewGroup.getChildCount();
-                    for (int childIndex = 0; childIndex < childCount; childIndex++) {
-                        View child = viewGroup.getChildAt(childIndex);
-                        if (!containedBeforeIndex(views, child, startIndex)) {
-                            views.add(child);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private static boolean containedBeforeIndex(List<View> views, View view, int maxIndex) {
-        for (int i = 0; i < maxIndex; i++) {
-            if (views.get(i) == view) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    protected static boolean isNullOrEmpty(List list) {
-        return list == null || list.isEmpty();
-    }
-
-    static String findKeyForValue(Map<String, String> map, String value) {
-        for (Map.Entry<String, String> entry : map.entrySet()) {
-            if (value.equals(entry.getValue())) {
-                return (String) entry.getKey();
-            }
-        }
-        return null;
     }
 }

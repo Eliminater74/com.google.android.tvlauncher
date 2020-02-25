@@ -7,44 +7,12 @@ public abstract class PlayerAdapter {
 
     public abstract void play();
 
-    public static class Callback {
-        public void onPlayStateChanged(PlayerAdapter adapter) {
-        }
-
-        public void onPreparedStateChanged(PlayerAdapter adapter) {
-        }
-
-        public void onPlayCompleted(PlayerAdapter adapter) {
-        }
-
-        public void onCurrentPositionChanged(PlayerAdapter adapter) {
-        }
-
-        public void onBufferedPositionChanged(PlayerAdapter adapter) {
-        }
-
-        public void onDurationChanged(PlayerAdapter adapter) {
-        }
-
-        public void onVideoSizeChanged(PlayerAdapter adapter, int width, int height) {
-        }
-
-        public void onError(PlayerAdapter adapter, int errorCode, String errorMessage) {
-        }
-
-        public void onBufferingStateChanged(PlayerAdapter adapter, boolean start) {
-        }
-
-        public void onMetadataChanged(PlayerAdapter adapter) {
-        }
+    public final Callback getCallback() {
+        return this.mCallback;
     }
 
     public final void setCallback(Callback callback) {
         this.mCallback = callback;
-    }
-
-    public final Callback getCallback() {
-        return this.mCallback;
     }
 
     public boolean isPrepared() {
@@ -99,5 +67,37 @@ public abstract class PlayerAdapter {
     }
 
     public void onDetachedFromHost() {
+    }
+
+    public static class Callback {
+        public void onPlayStateChanged(PlayerAdapter adapter) {
+        }
+
+        public void onPreparedStateChanged(PlayerAdapter adapter) {
+        }
+
+        public void onPlayCompleted(PlayerAdapter adapter) {
+        }
+
+        public void onCurrentPositionChanged(PlayerAdapter adapter) {
+        }
+
+        public void onBufferedPositionChanged(PlayerAdapter adapter) {
+        }
+
+        public void onDurationChanged(PlayerAdapter adapter) {
+        }
+
+        public void onVideoSizeChanged(PlayerAdapter adapter, int width, int height) {
+        }
+
+        public void onError(PlayerAdapter adapter, int errorCode, String errorMessage) {
+        }
+
+        public void onBufferingStateChanged(PlayerAdapter adapter, boolean start) {
+        }
+
+        public void onMetadataChanged(PlayerAdapter adapter) {
+        }
     }
 }

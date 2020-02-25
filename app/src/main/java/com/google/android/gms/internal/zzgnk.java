@@ -5,14 +5,44 @@ import java.io.IOException;
 /* compiled from: CodedInputStream */
 public abstract class zzgnk {
     private static volatile boolean zzf;
+
+    static {
+        zzf = false;
+        zzf = true;
+    }
+
     int zza;
     int zzb;
     zzgnn zzc;
     private int zzd;
     private boolean zze;
 
+    private zzgnk() {
+        this.zzb = 100;
+        this.zzd = Integer.MAX_VALUE;
+        this.zze = false;
+    }
+
     public static zzgnk zza(byte[] bArr, int i, int i2) {
         return zza(bArr, i, i2, false);
+    }
+
+    static zzgnk zza(byte[] bArr, int i, int i2, boolean z) {
+        zzgnm zzgnm = new zzgnm(bArr, i, i2, z);
+        try {
+            zzgnm.zzd(i2);
+            return zzgnm;
+        } catch (zzgot e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+
+    public static int zzg(int i) {
+        return (-(i & 1)) ^ (i >>> 1);
+    }
+
+    public static long zza(long j) {
+        return (-(j & 1)) ^ (j >>> 1);
     }
 
     public abstract int zza() throws IOException;
@@ -70,22 +100,6 @@ public abstract class zzgnk {
 
     public abstract int zzu();
 
-    static zzgnk zza(byte[] bArr, int i, int i2, boolean z) {
-        zzgnm zzgnm = new zzgnm(bArr, i, i2, z);
-        try {
-            zzgnm.zzd(i2);
-            return zzgnm;
-        } catch (zzgot e) {
-            throw new IllegalArgumentException(e);
-        }
-    }
-
-    private zzgnk() {
-        this.zzb = 100;
-        this.zzd = Integer.MAX_VALUE;
-        this.zze = false;
-    }
-
     public final int zzc(int i) {
         if (i >= 0) {
             int i2 = this.zzb;
@@ -96,18 +110,5 @@ public abstract class zzgnk {
         sb.append("Recursion limit cannot be negative: ");
         sb.append(i);
         throw new IllegalArgumentException(sb.toString());
-    }
-
-    public static int zzg(int i) {
-        return (-(i & 1)) ^ (i >>> 1);
-    }
-
-    public static long zza(long j) {
-        return (-(j & 1)) ^ (j >>> 1);
-    }
-
-    static {
-        zzf = false;
-        zzf = true;
     }
 }

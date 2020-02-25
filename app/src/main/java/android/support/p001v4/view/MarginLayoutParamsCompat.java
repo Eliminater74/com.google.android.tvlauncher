@@ -5,6 +5,9 @@ import android.view.ViewGroup;
 
 /* renamed from: android.support.v4.view.MarginLayoutParamsCompat */
 public final class MarginLayoutParamsCompat {
+    private MarginLayoutParamsCompat() {
+    }
+
     public static int getMarginStart(ViewGroup.MarginLayoutParams lp) {
         if (Build.VERSION.SDK_INT >= 17) {
             return lp.getMarginStart();
@@ -65,8 +68,5 @@ public final class MarginLayoutParamsCompat {
         if (Build.VERSION.SDK_INT >= 17) {
             lp.resolveLayoutDirection(layoutDirection);
         }
-    }
-
-    private MarginLayoutParamsCompat() {
     }
 }

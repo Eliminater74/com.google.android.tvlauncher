@@ -1,6 +1,7 @@
 package com.google.apps.tiktok.tracing;
 
 import java.util.UUID;
+
 import javax.inject.Inject;
 
 public final class TraceSampler {

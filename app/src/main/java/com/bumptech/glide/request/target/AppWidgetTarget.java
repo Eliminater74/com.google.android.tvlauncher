@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.widget.RemoteViews;
+
 import com.bumptech.glide.request.transition.Transition;
 import com.bumptech.glide.util.Preconditions;
 
@@ -16,10 +17,6 @@ public class AppWidgetTarget extends SimpleTarget<Bitmap> {
     private final RemoteViews remoteViews;
     private final int viewId;
     private final int[] widgetIds;
-
-    public /* bridge */ /* synthetic */ void onResourceReady(@NonNull Object obj, @Nullable Transition transition) {
-        onResourceReady((Bitmap) obj, (Transition<? super Bitmap>) transition);
-    }
 
     public AppWidgetTarget(Context context2, int width, int height, int viewId2, RemoteViews remoteViews2, int... widgetIds2) {
         super(width, height);
@@ -49,6 +46,10 @@ public class AppWidgetTarget extends SimpleTarget<Bitmap> {
 
     public AppWidgetTarget(Context context2, int viewId2, RemoteViews remoteViews2, ComponentName componentName2) {
         this(context2, Integer.MIN_VALUE, Integer.MIN_VALUE, viewId2, remoteViews2, componentName2);
+    }
+
+    public /* bridge */ /* synthetic */ void onResourceReady(@NonNull Object obj, @Nullable Transition transition) {
+        onResourceReady((Bitmap) obj, (Transition<? super Bitmap>) transition);
     }
 
     private void update() {

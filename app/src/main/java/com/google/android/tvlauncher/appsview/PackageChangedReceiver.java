@@ -9,20 +9,19 @@ import android.net.Uri;
 public class PackageChangedReceiver extends BroadcastReceiver {
     private Listener mListener;
 
-    public interface Listener {
-        void onPackageAdded(String str);
-
-        void onPackageChanged(String str);
-
-        void onPackageFullyRemoved(String str);
-
-        void onPackageRemoved(String str);
-
-        void onPackageReplaced(String str);
-    }
-
     public PackageChangedReceiver(Listener listener) {
         this.mListener = listener;
+    }
+
+    public static IntentFilter getIntentFilter() {
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("android.intent.action.PACKAGE_ADDED");
+        filter.addAction("android.intent.action.PACKAGE_CHANGED");
+        filter.addAction("android.intent.action.PACKAGE_FULLY_REMOVED");
+        filter.addAction("android.intent.action.PACKAGE_REMOVED");
+        filter.addAction("android.intent.action.PACKAGE_REPLACED");
+        filter.addDataScheme("package");
+        return filter;
     }
 
     public void onReceive(Context context, Intent intent) {
@@ -45,22 +44,23 @@ public class PackageChangedReceiver extends BroadcastReceiver {
         }
     }
 
-    public static IntentFilter getIntentFilter() {
-        IntentFilter filter = new IntentFilter();
-        filter.addAction("android.intent.action.PACKAGE_ADDED");
-        filter.addAction("android.intent.action.PACKAGE_CHANGED");
-        filter.addAction("android.intent.action.PACKAGE_FULLY_REMOVED");
-        filter.addAction("android.intent.action.PACKAGE_REMOVED");
-        filter.addAction("android.intent.action.PACKAGE_REPLACED");
-        filter.addDataScheme("package");
-        return filter;
-    }
-
     private String getPackageName(Intent intent) {
         Uri uri = intent.getData();
         if (uri != null) {
             return uri.getSchemeSpecificPart();
         }
         return null;
+    }
+
+    public interface Listener {
+        void onPackageAdded(String str);
+
+        void onPackageChanged(String str);
+
+        void onPackageFullyRemoved(String str);
+
+        void onPackageRemoved(String str);
+
+        void onPackageReplaced(String str);
     }
 }

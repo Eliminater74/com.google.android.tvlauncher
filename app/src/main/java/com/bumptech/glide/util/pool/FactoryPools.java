@@ -3,6 +3,7 @@ package com.bumptech.glide.util.pool;
 import android.support.annotation.NonNull;
 import android.support.p001v4.util.Pools;
 import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,19 +14,6 @@ public final class FactoryPools {
         }
     };
     private static final String TAG = "FactoryPools";
-
-    public interface Factory<T> {
-        T create();
-    }
-
-    public interface Poolable {
-        @NonNull
-        StateVerifier getVerifier();
-    }
-
-    public interface Resetter<T> {
-        void reset(@NonNull T t);
-    }
 
     private FactoryPools() {
     }
@@ -72,6 +60,19 @@ public final class FactoryPools {
     @NonNull
     private static <T> Resetter<T> emptyResetter() {
         return EMPTY_RESETTER;
+    }
+
+    public interface Factory<T> {
+        T create();
+    }
+
+    public interface Poolable {
+        @NonNull
+        StateVerifier getVerifier();
+    }
+
+    public interface Resetter<T> {
+        void reset(@NonNull T t);
     }
 
     private static final class FactoryPool<T> implements Pools.Pool<T> {

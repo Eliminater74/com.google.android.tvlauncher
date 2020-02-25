@@ -2,7 +2,9 @@ package androidx.concurrent.futures;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import com.google.common.util.concurrent.ListenableFuture;
+
 import java.lang.ref.WeakReference;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
@@ -10,11 +12,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 public final class CallbackToFutureAdapter {
-
-    public interface Resolver<T> {
-        @Nullable
-        Object attachCompleter(@NonNull Completer<T> completer) throws Exception;
-    }
 
     private CallbackToFutureAdapter() {
     }
@@ -34,6 +31,11 @@ public final class CallbackToFutureAdapter {
             safeFuture.setException(e);
         }
         return safeFuture;
+    }
+
+    public interface Resolver<T> {
+        @Nullable
+        Object attachCompleter(@NonNull Completer<T> completer) throws Exception;
     }
 
     private static final class SafeFuture<T> implements ListenableFuture<T> {
@@ -103,10 +105,10 @@ public final class CallbackToFutureAdapter {
     }
 
     public static final class Completer<T> {
-        private boolean attemptedSetting;
-        private ResolvableFuture<Void> cancellationFuture = ResolvableFuture.create();
         SafeFuture<T> future;
         Object tag;
+        private boolean attemptedSetting;
+        private ResolvableFuture<Void> cancellationFuture = ResolvableFuture.create();
 
         Completer() {
         }

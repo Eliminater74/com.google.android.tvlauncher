@@ -1,6 +1,7 @@
 package com.google.android.tvlauncher.model;
 
 import android.text.TextUtils;
+
 import java.util.Objects;
 
 public class ChannelPackage {

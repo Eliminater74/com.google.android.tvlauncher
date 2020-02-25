@@ -3,16 +3,18 @@ package com.google.common.primitives;
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.Serializable;
 import java.math.BigInteger;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible(serializable = true)
 public final class UnsignedLong extends Number implements Comparable<UnsignedLong>, Serializable {
     public static final UnsignedLong MAX_VALUE = new UnsignedLong(-1);
     public static final UnsignedLong ONE = new UnsignedLong(1);
-    private static final long UNSIGNED_MASK = Long.MAX_VALUE;
     public static final UnsignedLong ZERO = new UnsignedLong(0);
+    private static final long UNSIGNED_MASK = Long.MAX_VALUE;
     private final long value;
 
     private UnsignedLong(long value2) {

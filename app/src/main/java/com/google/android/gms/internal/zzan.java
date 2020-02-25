@@ -7,7 +7,6 @@ import java.util.List;
 
 /* compiled from: DiskBasedCache */
 final class zzan {
-    long zza;
     final String zzb;
     final String zzc;
     final long zzd;
@@ -15,6 +14,7 @@ final class zzan {
     final long zzf;
     final long zzg;
     final List<zzl> zzh;
+    long zza;
 
     private zzan(String str, String str2, long j, long j2, long j3, long j4, List<zzl> list) {
         this.zzb = str;

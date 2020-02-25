@@ -1,24 +1,19 @@
 package com.bumptech.glide.load.model;
 
 import android.support.annotation.NonNull;
+
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.Options;
 import com.bumptech.glide.load.data.DataFetcher;
-import com.bumptech.glide.load.model.ModelLoader;
 import com.bumptech.glide.signature.ObjectKey;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 public class ByteArrayLoader<Data> implements ModelLoader<byte[], Data> {
     private final Converter<Data> converter;
-
-    public interface Converter<Data> {
-        Data convert(byte[] bArr);
-
-        Class<Data> getDataClass();
-    }
 
     public ByteArrayLoader(Converter<Data> converter2) {
         this.converter = converter2;
@@ -30,6 +25,12 @@ public class ByteArrayLoader<Data> implements ModelLoader<byte[], Data> {
 
     public boolean handles(@NonNull byte[] model) {
         return true;
+    }
+
+    public interface Converter<Data> {
+        Data convert(byte[] bArr);
+
+        Class<Data> getDataClass();
     }
 
     private static class Fetcher<Data> implements DataFetcher<Data> {

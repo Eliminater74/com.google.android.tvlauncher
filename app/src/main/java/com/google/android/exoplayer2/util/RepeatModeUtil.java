@@ -9,11 +9,6 @@ public final class RepeatModeUtil {
     public static final int REPEAT_TOGGLE_MODE_NONE = 0;
     public static final int REPEAT_TOGGLE_MODE_ONE = 1;
 
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface RepeatToggleModes {
-    }
-
     private RepeatModeUtil() {
     }
 
@@ -41,5 +36,10 @@ public final class RepeatModeUtil {
         } else {
             return false;
         }
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface RepeatToggleModes {
     }
 }

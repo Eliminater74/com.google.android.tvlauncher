@@ -3,7 +3,6 @@ package androidx.leanback.widget;
 import android.support.p004v7.widget.RecyclerView;
 import android.util.Property;
 import android.view.View;
-import androidx.leanback.widget.Parallax;
 
 public class RecyclerViewParallax extends Parallax<ChildPositionProperty> {
     boolean mIsVertical;
@@ -18,6 +17,51 @@ public class RecyclerViewParallax extends Parallax<ChildPositionProperty> {
         }
     };
     RecyclerView mRecylerView;
+
+    public ChildPositionProperty createProperty(String name, int index) {
+        return new ChildPositionProperty(name, index);
+    }
+
+    public float getMaxValue() {
+        RecyclerView recyclerView = this.mRecylerView;
+        if (recyclerView == null) {
+            return 0.0f;
+        }
+        return (float) (this.mIsVertical ? recyclerView.getHeight() : recyclerView.getWidth());
+    }
+
+    public void updateValues() {
+        for (Property prop : getProperties()) {
+            ((ChildPositionProperty) prop).updateValue(this);
+        }
+        super.updateValues();
+    }
+
+    public RecyclerView getRecyclerView() {
+        return this.mRecylerView;
+    }
+
+    public void setRecyclerView(RecyclerView recyclerView) {
+        RecyclerView recyclerView2 = this.mRecylerView;
+        if (recyclerView2 != recyclerView) {
+            if (recyclerView2 != null) {
+                recyclerView2.removeOnScrollListener(this.mOnScrollListener);
+                this.mRecylerView.removeOnLayoutChangeListener(this.mOnLayoutChangeListener);
+            }
+            this.mRecylerView = recyclerView;
+            RecyclerView recyclerView3 = this.mRecylerView;
+            if (recyclerView3 != null) {
+                recyclerView3.getLayoutManager();
+                boolean z = false;
+                if (RecyclerView.LayoutManager.getProperties(this.mRecylerView.getContext(), null, 0, 0).orientation == 1) {
+                    z = true;
+                }
+                this.mIsVertical = z;
+                this.mRecylerView.addOnScrollListener(this.mOnScrollListener);
+                this.mRecylerView.addOnLayoutChangeListener(this.mOnLayoutChangeListener);
+            }
+        }
+    }
 
     public static final class ChildPositionProperty extends Parallax.IntProperty {
         int mAdapterPosition;
@@ -175,50 +219,5 @@ public class RecyclerViewParallax extends Parallax<ChildPositionProperty> {
             */
             throw new UnsupportedOperationException("Method not decompiled: androidx.leanback.widget.RecyclerViewParallax.ChildPositionProperty.updateValue(androidx.leanback.widget.RecyclerViewParallax):void");
         }
-    }
-
-    public ChildPositionProperty createProperty(String name, int index) {
-        return new ChildPositionProperty(name, index);
-    }
-
-    public float getMaxValue() {
-        RecyclerView recyclerView = this.mRecylerView;
-        if (recyclerView == null) {
-            return 0.0f;
-        }
-        return (float) (this.mIsVertical ? recyclerView.getHeight() : recyclerView.getWidth());
-    }
-
-    public void setRecyclerView(RecyclerView recyclerView) {
-        RecyclerView recyclerView2 = this.mRecylerView;
-        if (recyclerView2 != recyclerView) {
-            if (recyclerView2 != null) {
-                recyclerView2.removeOnScrollListener(this.mOnScrollListener);
-                this.mRecylerView.removeOnLayoutChangeListener(this.mOnLayoutChangeListener);
-            }
-            this.mRecylerView = recyclerView;
-            RecyclerView recyclerView3 = this.mRecylerView;
-            if (recyclerView3 != null) {
-                recyclerView3.getLayoutManager();
-                boolean z = false;
-                if (RecyclerView.LayoutManager.getProperties(this.mRecylerView.getContext(), null, 0, 0).orientation == 1) {
-                    z = true;
-                }
-                this.mIsVertical = z;
-                this.mRecylerView.addOnScrollListener(this.mOnScrollListener);
-                this.mRecylerView.addOnLayoutChangeListener(this.mOnLayoutChangeListener);
-            }
-        }
-    }
-
-    public void updateValues() {
-        for (Property prop : getProperties()) {
-            ((ChildPositionProperty) prop).updateValue(this);
-        }
-        super.updateValues();
-    }
-
-    public RecyclerView getRecyclerView() {
-        return this.mRecylerView;
     }
 }

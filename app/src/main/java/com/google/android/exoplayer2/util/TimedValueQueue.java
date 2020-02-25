@@ -1,6 +1,7 @@
 package com.google.android.exoplayer2.util;
 
 import android.support.annotation.Nullable;
+
 import java.util.Arrays;
 
 public final class TimedValueQueue<V> {
@@ -17,6 +18,10 @@ public final class TimedValueQueue<V> {
     public TimedValueQueue(int initialBufferSize) {
         this.timestamps = new long[initialBufferSize];
         this.values = newArray(initialBufferSize);
+    }
+
+    private static <V> V[] newArray(int length) {
+        return new Object[length];
     }
 
     public synchronized void add(long timestamp, V value) {
@@ -103,9 +108,5 @@ public final class TimedValueQueue<V> {
         this.timestamps[next] = timestamp;
         vArr[next] = value;
         this.size = i2 + 1;
-    }
-
-    private static <V> V[] newArray(int length) {
-        return new Object[length];
     }
 }

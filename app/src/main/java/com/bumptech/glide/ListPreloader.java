@@ -3,37 +3,26 @@ package com.bumptech.glide;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.widget.AbsListView;
+
 import com.bumptech.glide.request.target.BaseTarget;
 import com.bumptech.glide.request.target.SizeReadyCallback;
 import com.bumptech.glide.request.transition.Transition;
 import com.bumptech.glide.util.Util;
+
 import java.util.List;
 import java.util.Queue;
 
 public class ListPreloader<T> implements AbsListView.OnScrollListener {
-    private boolean isIncreasing = true;
-    private int lastEnd;
-    private int lastFirstVisible = -1;
-    private int lastStart;
     private final int maxPreload;
     private final PreloadSizeProvider<T> preloadDimensionProvider;
     private final PreloadModelProvider<T> preloadModelProvider;
     private final PreloadTargetQueue preloadTargetQueue;
     private final RequestManager requestManager;
+    private boolean isIncreasing = true;
+    private int lastEnd;
+    private int lastFirstVisible = -1;
+    private int lastStart;
     private int totalItemCount;
-
-    public interface PreloadModelProvider<U> {
-        @NonNull
-        List<U> getPreloadItems(int i);
-
-        @Nullable
-        RequestBuilder<?> getPreloadRequestBuilder(@NonNull U u);
-    }
-
-    public interface PreloadSizeProvider<T> {
-        @Nullable
-        int[] getPreloadSize(@NonNull T t, int i, int i2);
-    }
 
     public ListPreloader(@NonNull RequestManager requestManager2, @NonNull PreloadModelProvider<T> preloadModelProvider2, @NonNull PreloadSizeProvider<T> preloadDimensionProvider2, int maxPreload2) {
         this.requestManager = requestManager2;
@@ -125,6 +114,19 @@ public class ListPreloader<T> implements AbsListView.OnScrollListener {
         for (int i = 0; i < this.maxPreload; i++) {
             this.requestManager.clear(this.preloadTargetQueue.next(0, 0));
         }
+    }
+
+    public interface PreloadModelProvider<U> {
+        @NonNull
+        List<U> getPreloadItems(int i);
+
+        @Nullable
+        RequestBuilder<?> getPreloadRequestBuilder(@NonNull U u);
+    }
+
+    public interface PreloadSizeProvider<T> {
+        @Nullable
+        int[] getPreloadSize(@NonNull T t, int i, int i2);
     }
 
     private static final class PreloadTargetQueue {

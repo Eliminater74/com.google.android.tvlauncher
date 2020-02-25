@@ -1,6 +1,7 @@
 package com.google.android.libraries.gcoreclient.phenotype;
 
 import android.content.SharedPreferences;
+
 import com.google.android.libraries.gcoreclient.common.api.GcoreGoogleApiClient;
 import com.google.android.libraries.gcoreclient.common.api.GcorePendingResult;
 import com.google.android.libraries.gcoreclient.common.api.GcoreResult;
@@ -9,14 +10,6 @@ import com.google.android.libraries.gcoreclient.common.api.GcoreStatus;
 public interface Phenotype {
     public static final int ERROR_STALE_SNAPSHOT_TOKEN = 29501;
     public static final String LOGGED_OUT_USER = "";
-
-    public interface Factory {
-        Phenotype create();
-    }
-
-    public interface GcoreConfigurationsResult extends GcoreResult {
-        GcoreConfigurations getConfigurations();
-    }
 
     GcorePendingResult<GcoreStatus> commitToConfiguration(GcoreGoogleApiClient gcoreGoogleApiClient, String str);
 
@@ -39,4 +32,12 @@ public interface Phenotype {
     GcorePendingResult<GcoreStatus> weakRegister(GcoreGoogleApiClient gcoreGoogleApiClient, String str, int i, String[] strArr, int[] iArr, byte[] bArr);
 
     void writeToSharedPrefs(SharedPreferences sharedPreferences, GcoreConfigurations gcoreConfigurations);
+
+    public interface Factory {
+        Phenotype create();
+    }
+
+    public interface GcoreConfigurationsResult extends GcoreResult {
+        GcoreConfigurations getConfigurations();
+    }
 }

@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import com.google.android.gms.common.api.internal.LifecycleCallback;
 import com.google.android.gms.common.api.internal.zzcf;
 import com.google.android.gms.common.internal.zzau;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,44 +33,6 @@ final class zzu<TResult> extends Task<TResult> {
             z = this.zzc;
         }
         return z;
-    }
-
-    /* compiled from: TaskImpl */
-    static class zza extends LifecycleCallback {
-        private final List<WeakReference<zzq<?>>> zza = new ArrayList();
-
-        public static zza zza(Activity activity) {
-            zzcf zzb = zzb(activity);
-            zza zza2 = (zza) zzb.zza("TaskOnStopCallback", zza.class);
-            if (zza2 == null) {
-                return new zza(zzb);
-            }
-            return zza2;
-        }
-
-        private zza(zzcf zzcf) {
-            super(zzcf);
-            this.zzd.zza("TaskOnStopCallback", this);
-        }
-
-        public final <T> void zza(zzq<T> zzq) {
-            synchronized (this.zza) {
-                this.zza.add(new WeakReference(zzq));
-            }
-        }
-
-        @MainThread
-        public final void zza() {
-            synchronized (this.zza) {
-                for (WeakReference<zzq<?>> weakReference : this.zza) {
-                    zzq zzq = (zzq) weakReference.get();
-                    if (zzq != null) {
-                        zzq.zza();
-                    }
-                }
-                this.zza.clear();
-            }
-        }
     }
 
     public final boolean isCanceled() {
@@ -344,6 +308,44 @@ final class zzu<TResult> extends Task<TResult> {
         synchronized (this.zza) {
             if (this.zzc) {
                 this.zzb.zza(this);
+            }
+        }
+    }
+
+    /* compiled from: TaskImpl */
+    static class zza extends LifecycleCallback {
+        private final List<WeakReference<zzq<?>>> zza = new ArrayList();
+
+        private zza(zzcf zzcf) {
+            super(zzcf);
+            this.zzd.zza("TaskOnStopCallback", this);
+        }
+
+        public static zza zza(Activity activity) {
+            zzcf zzb = zzb(activity);
+            zza zza2 = (zza) zzb.zza("TaskOnStopCallback", zza.class);
+            if (zza2 == null) {
+                return new zza(zzb);
+            }
+            return zza2;
+        }
+
+        public final <T> void zza(zzq<T> zzq) {
+            synchronized (this.zza) {
+                this.zza.add(new WeakReference(zzq));
+            }
+        }
+
+        @MainThread
+        public final void zza() {
+            synchronized (this.zza) {
+                for (WeakReference<zzq<?>> weakReference : this.zza) {
+                    zzq zzq = (zzq) weakReference.get();
+                    if (zzq != null) {
+                        zzq.zza();
+                    }
+                }
+                this.zza.clear();
             }
         }
     }

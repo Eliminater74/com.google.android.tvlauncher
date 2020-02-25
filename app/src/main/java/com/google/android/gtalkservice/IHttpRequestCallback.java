@@ -10,8 +10,8 @@ public interface IHttpRequestCallback extends IInterface {
     void requestComplete(byte[] bArr) throws RemoteException;
 
     public static abstract class Stub extends Binder implements IHttpRequestCallback {
-        private static final String DESCRIPTOR = "com.google.android.gtalkservice.IHttpRequestCallback";
         static final int TRANSACTION_requestComplete = 1;
+        private static final String DESCRIPTOR = "com.google.android.gtalkservice.IHttpRequestCallback";
 
         public Stub() {
             attachInterface(this, DESCRIPTOR);

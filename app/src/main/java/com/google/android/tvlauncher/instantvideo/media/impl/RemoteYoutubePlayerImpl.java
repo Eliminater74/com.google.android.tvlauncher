@@ -12,12 +12,27 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+
 import com.google.android.tvlauncher.instantvideo.media.MediaPlayer;
-import com.google.android.tvlauncher.instantvideo.media.impl.IRemoteYoutubePlayerClient;
-import com.google.android.tvlauncher.instantvideo.media.impl.IRemoteYoutubePlayerService;
 
 public class RemoteYoutubePlayerImpl implements MediaPlayer {
     private static final String TAG = "RemoteYoutubePlayerImpl";
+    /* access modifiers changed from: private */
+    public final RemoteYoutubeView mView;
+    private final Context mContext;
+    /* access modifiers changed from: private */
+    public MediaPlayer.VideoCallback mListener;
+    /* access modifiers changed from: private */
+    public int mPlaybackState = 2;
+    /* access modifiers changed from: private */
+    public IRemoteYoutubePlayerService mService;
+    /* access modifiers changed from: private */
+    public String mSessionToken;
+    /* access modifiers changed from: private */
+    public Surface mSurface;
+    private ServiceConnection mServiceConnection;
+    private float mVolume;
+    private Uri mYoutubeUri;
     private IRemoteYoutubePlayerClient.Stub mClient = new IRemoteYoutubePlayerClient.Stub() {
         public void onSessionCreated(String sessionToken) throws RemoteException {
             String unused = RemoteYoutubePlayerImpl.this.mSessionToken = sessionToken;
@@ -61,22 +76,6 @@ public class RemoteYoutubePlayerImpl implements MediaPlayer {
             });
         }
     };
-    private final Context mContext;
-    /* access modifiers changed from: private */
-    public MediaPlayer.VideoCallback mListener;
-    /* access modifiers changed from: private */
-    public int mPlaybackState = 2;
-    /* access modifiers changed from: private */
-    public IRemoteYoutubePlayerService mService;
-    private ServiceConnection mServiceConnection;
-    /* access modifiers changed from: private */
-    public String mSessionToken;
-    /* access modifiers changed from: private */
-    public Surface mSurface;
-    /* access modifiers changed from: private */
-    public final RemoteYoutubeView mView;
-    private float mVolume;
-    private Uri mYoutubeUri;
 
     public RemoteYoutubePlayerImpl(Context context) {
         this.mView = new RemoteYoutubeView(context);
@@ -101,13 +100,13 @@ public class RemoteYoutubePlayerImpl implements MediaPlayer {
         return this.mPlaybackState;
     }
 
+    public Uri getVideoUri() {
+        return this.mYoutubeUri;
+    }
+
     public void setVideoUri(Uri uri) {
         this.mYoutubeUri = uri;
         connectIfConfigured();
-    }
-
-    public Uri getVideoUri() {
-        return this.mYoutubeUri;
     }
 
     /* access modifiers changed from: private */

@@ -4,209 +4,18 @@ import android.os.health.HealthStats;
 import android.os.health.TimerStat;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
-import com.google.android.libraries.performance.primes.battery.HashingNameSanitizer;
+
 import com.google.protobuf.MessageLite;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
 import logs.proto.wireless.performance.mobile.BatteryMetric;
 
 final class HealthStatsProtos {
     private HealthStatsProtos() {
-    }
-
-    private static abstract class ProtoStatsOps<S, P extends MessageLite> {
-        /* access modifiers changed from: package-private */
-        @Nullable
-        public abstract P convert(String str, S s);
-
-        /* access modifiers changed from: package-private */
-        public abstract String nameOf(P p);
-
-        /* access modifiers changed from: package-private */
-        @Nullable
-        public abstract P subtract(@Nullable P p, @Nullable P p2);
-
-        private ProtoStatsOps() {
-        }
-
-        /* access modifiers changed from: package-private */
-        @Nullable
-        public P find(List<P> vals, String name) {
-            for (P val : vals) {
-                if (name.equals(nameOf(val))) {
-                    return val;
-                }
-            }
-            return null;
-        }
-
-        /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-         method: com.google.android.libraries.performance.primes.battery.HealthStatsProtos.ProtoStatsOps.subtract(com.google.protobuf.MessageLite, com.google.protobuf.MessageLite):P
-         arg types: [P, P]
-         candidates:
-          com.google.android.libraries.performance.primes.battery.HealthStatsProtos.ProtoStatsOps.subtract(java.util.List, java.util.List):java.util.List<P>
-          com.google.android.libraries.performance.primes.battery.HealthStatsProtos.ProtoStatsOps.subtract(com.google.protobuf.MessageLite, com.google.protobuf.MessageLite):P */
-        /* access modifiers changed from: package-private */
-        public List<P> subtract(List<P> a, List<P> b) {
-            if (a.isEmpty()) {
-                return a;
-            }
-            ArrayList<P> ret = new ArrayList<>();
-            for (P aa : a) {
-                P diff = subtract((MessageLite) aa, (MessageLite) find(b, nameOf(aa)));
-                if (diff != null) {
-                    ret.add(diff);
-                }
-            }
-            return ret;
-        }
-
-        /* access modifiers changed from: package-private */
-        public List<P> convert(Map<String, S> statsMap) {
-            P proto;
-            ArrayList<P> protos = new ArrayList<>();
-            for (Map.Entry<String, S> entry : statsMap.entrySet()) {
-                if (!(entry.getValue() == null || (proto = convert(entry.getKey(), entry.getValue())) == null)) {
-                    protos.add(proto);
-                }
-            }
-            return protos;
-        }
-    }
-
-    private static class CounterOps extends ProtoStatsOps<Long, BatteryMetric.Counter> {
-        /* access modifiers changed from: private */
-        public static final CounterOps INSTANCE = new CounterOps();
-
-        private CounterOps() {
-            super();
-        }
-
-        /* access modifiers changed from: package-private */
-        @Nullable
-        public BatteryMetric.Counter subtract(@Nullable BatteryMetric.Counter a, @Nullable BatteryMetric.Counter b) {
-            return HealthStatsProtos.subtract(a, b);
-        }
-
-        /* access modifiers changed from: package-private */
-        public String nameOf(BatteryMetric.Counter val) {
-            return val.getName().getUnhashedName();
-        }
-
-        /* access modifiers changed from: package-private */
-        @Nullable
-        public BatteryMetric.Counter convert(String name, Long value) {
-            return HealthStatsProtos.counter(name, value.intValue());
-        }
-    }
-
-    private static final class TimerOps extends ProtoStatsOps<TimerStat, BatteryMetric.Timer> {
-        /* access modifiers changed from: private */
-        public static final TimerOps INSTANCE = new TimerOps();
-
-        private TimerOps() {
-            super();
-        }
-
-        /* access modifiers changed from: package-private */
-        @Nullable
-        public BatteryMetric.Timer convert(String name, TimerStat timerStat) {
-            return HealthStatsProtos.timer(name, timerStat);
-        }
-
-        /* access modifiers changed from: package-private */
-        @Nullable
-        public BatteryMetric.Timer subtract(@Nullable BatteryMetric.Timer a, @Nullable BatteryMetric.Timer b) {
-            return HealthStatsProtos.subtract(a, b);
-        }
-
-        /* access modifiers changed from: package-private */
-        public String nameOf(BatteryMetric.Timer val) {
-            if (val.getName().hasUnhashedName()) {
-                return val.getName().getUnhashedName();
-            }
-            return Long.toHexString(val.getName().getHash());
-        }
-    }
-
-    private static final class PackageHealthProtoOps extends ProtoStatsOps<HealthStats, BatteryMetric.PackageHealthProto> {
-        /* access modifiers changed from: private */
-        public static final PackageHealthProtoOps INSTANCE = new PackageHealthProtoOps();
-
-        private PackageHealthProtoOps() {
-            super();
-        }
-
-        /* access modifiers changed from: package-private */
-        @Nullable
-        public BatteryMetric.PackageHealthProto convert(String name, HealthStats stats) {
-            return HealthStatsProtos.packageHealthProto(name, stats);
-        }
-
-        /* access modifiers changed from: package-private */
-        @Nullable
-        public BatteryMetric.PackageHealthProto subtract(@Nullable BatteryMetric.PackageHealthProto a, @Nullable BatteryMetric.PackageHealthProto b) {
-            return HealthStatsProtos.subtract(a, b);
-        }
-
-        /* access modifiers changed from: package-private */
-        public String nameOf(BatteryMetric.PackageHealthProto val) {
-            return val.getName().getUnhashedName();
-        }
-    }
-
-    private static final class ProcessHealthProtoOps extends ProtoStatsOps<HealthStats, BatteryMetric.ProcessHealthProto> {
-        /* access modifiers changed from: private */
-        public static final ProcessHealthProtoOps INSTANCE = new ProcessHealthProtoOps();
-
-        private ProcessHealthProtoOps() {
-            super();
-        }
-
-        /* access modifiers changed from: package-private */
-        @Nullable
-        public BatteryMetric.ProcessHealthProto convert(String name, HealthStats stats) {
-            return HealthStatsProtos.processHealthProto(name, stats);
-        }
-
-        /* access modifiers changed from: package-private */
-        @Nullable
-        public BatteryMetric.ProcessHealthProto subtract(@Nullable BatteryMetric.ProcessHealthProto a, @Nullable BatteryMetric.ProcessHealthProto b) {
-            return HealthStatsProtos.subtract(a, b);
-        }
-
-        /* access modifiers changed from: package-private */
-        public String nameOf(BatteryMetric.ProcessHealthProto val) {
-            return val.getName().getUnhashedName();
-        }
-    }
-
-    private static final class ServiceHealthProtoOps extends ProtoStatsOps<HealthStats, BatteryMetric.ServiceHealthProto> {
-        /* access modifiers changed from: private */
-        public static final ServiceHealthProtoOps INSTANCE = new ServiceHealthProtoOps();
-
-        private ServiceHealthProtoOps() {
-            super();
-        }
-
-        /* access modifiers changed from: package-private */
-        @Nullable
-        public BatteryMetric.ServiceHealthProto convert(String name, HealthStats stats) {
-            return HealthStatsProtos.serviceHealthProto(name, stats);
-        }
-
-        /* access modifiers changed from: package-private */
-        @Nullable
-        public BatteryMetric.ServiceHealthProto subtract(@Nullable BatteryMetric.ServiceHealthProto a, @Nullable BatteryMetric.ServiceHealthProto b) {
-            return HealthStatsProtos.subtract(a, b);
-        }
-
-        /* access modifiers changed from: package-private */
-        public String nameOf(BatteryMetric.ServiceHealthProto val) {
-            return val.getName().getUnhashedName();
-        }
     }
 
     private static BatteryMetric.HashedString hashedString(String name) {
@@ -1077,5 +886,198 @@ final class HealthStatsProtos {
 
     private static Map<String, HealthStats> getStatsMap(@Nullable HealthStats stats, int key) {
         return (stats == null || !stats.hasStats(key)) ? Collections.emptyMap() : stats.getStats(key);
+    }
+
+    private static abstract class ProtoStatsOps<S, P extends MessageLite> {
+        private ProtoStatsOps() {
+        }
+
+        /* access modifiers changed from: package-private */
+        @Nullable
+        public abstract P convert(String str, S s);
+
+        /* access modifiers changed from: package-private */
+        public abstract String nameOf(P p);
+
+        /* access modifiers changed from: package-private */
+        @Nullable
+        public abstract P subtract(@Nullable P p, @Nullable P p2);
+
+        /* access modifiers changed from: package-private */
+        @Nullable
+        public P find(List<P> vals, String name) {
+            for (P val : vals) {
+                if (name.equals(nameOf(val))) {
+                    return val;
+                }
+            }
+            return null;
+        }
+
+        /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+         method: com.google.android.libraries.performance.primes.battery.HealthStatsProtos.ProtoStatsOps.subtract(com.google.protobuf.MessageLite, com.google.protobuf.MessageLite):P
+         arg types: [P, P]
+         candidates:
+          com.google.android.libraries.performance.primes.battery.HealthStatsProtos.ProtoStatsOps.subtract(java.util.List, java.util.List):java.util.List<P>
+          com.google.android.libraries.performance.primes.battery.HealthStatsProtos.ProtoStatsOps.subtract(com.google.protobuf.MessageLite, com.google.protobuf.MessageLite):P */
+        /* access modifiers changed from: package-private */
+        public List<P> subtract(List<P> a, List<P> b) {
+            if (a.isEmpty()) {
+                return a;
+            }
+            ArrayList<P> ret = new ArrayList<>();
+            for (P aa : a) {
+                P diff = subtract((MessageLite) aa, (MessageLite) find(b, nameOf(aa)));
+                if (diff != null) {
+                    ret.add(diff);
+                }
+            }
+            return ret;
+        }
+
+        /* access modifiers changed from: package-private */
+        public List<P> convert(Map<String, S> statsMap) {
+            P proto;
+            ArrayList<P> protos = new ArrayList<>();
+            for (Map.Entry<String, S> entry : statsMap.entrySet()) {
+                if (!(entry.getValue() == null || (proto = convert(entry.getKey(), entry.getValue())) == null)) {
+                    protos.add(proto);
+                }
+            }
+            return protos;
+        }
+    }
+
+    private static class CounterOps extends ProtoStatsOps<Long, BatteryMetric.Counter> {
+        /* access modifiers changed from: private */
+        public static final CounterOps INSTANCE = new CounterOps();
+
+        private CounterOps() {
+            super();
+        }
+
+        /* access modifiers changed from: package-private */
+        @Nullable
+        public BatteryMetric.Counter subtract(@Nullable BatteryMetric.Counter a, @Nullable BatteryMetric.Counter b) {
+            return HealthStatsProtos.subtract(a, b);
+        }
+
+        /* access modifiers changed from: package-private */
+        public String nameOf(BatteryMetric.Counter val) {
+            return val.getName().getUnhashedName();
+        }
+
+        /* access modifiers changed from: package-private */
+        @Nullable
+        public BatteryMetric.Counter convert(String name, Long value) {
+            return HealthStatsProtos.counter(name, value.intValue());
+        }
+    }
+
+    private static final class TimerOps extends ProtoStatsOps<TimerStat, BatteryMetric.Timer> {
+        /* access modifiers changed from: private */
+        public static final TimerOps INSTANCE = new TimerOps();
+
+        private TimerOps() {
+            super();
+        }
+
+        /* access modifiers changed from: package-private */
+        @Nullable
+        public BatteryMetric.Timer convert(String name, TimerStat timerStat) {
+            return HealthStatsProtos.timer(name, timerStat);
+        }
+
+        /* access modifiers changed from: package-private */
+        @Nullable
+        public BatteryMetric.Timer subtract(@Nullable BatteryMetric.Timer a, @Nullable BatteryMetric.Timer b) {
+            return HealthStatsProtos.subtract(a, b);
+        }
+
+        /* access modifiers changed from: package-private */
+        public String nameOf(BatteryMetric.Timer val) {
+            if (val.getName().hasUnhashedName()) {
+                return val.getName().getUnhashedName();
+            }
+            return Long.toHexString(val.getName().getHash());
+        }
+    }
+
+    private static final class PackageHealthProtoOps extends ProtoStatsOps<HealthStats, BatteryMetric.PackageHealthProto> {
+        /* access modifiers changed from: private */
+        public static final PackageHealthProtoOps INSTANCE = new PackageHealthProtoOps();
+
+        private PackageHealthProtoOps() {
+            super();
+        }
+
+        /* access modifiers changed from: package-private */
+        @Nullable
+        public BatteryMetric.PackageHealthProto convert(String name, HealthStats stats) {
+            return HealthStatsProtos.packageHealthProto(name, stats);
+        }
+
+        /* access modifiers changed from: package-private */
+        @Nullable
+        public BatteryMetric.PackageHealthProto subtract(@Nullable BatteryMetric.PackageHealthProto a, @Nullable BatteryMetric.PackageHealthProto b) {
+            return HealthStatsProtos.subtract(a, b);
+        }
+
+        /* access modifiers changed from: package-private */
+        public String nameOf(BatteryMetric.PackageHealthProto val) {
+            return val.getName().getUnhashedName();
+        }
+    }
+
+    private static final class ProcessHealthProtoOps extends ProtoStatsOps<HealthStats, BatteryMetric.ProcessHealthProto> {
+        /* access modifiers changed from: private */
+        public static final ProcessHealthProtoOps INSTANCE = new ProcessHealthProtoOps();
+
+        private ProcessHealthProtoOps() {
+            super();
+        }
+
+        /* access modifiers changed from: package-private */
+        @Nullable
+        public BatteryMetric.ProcessHealthProto convert(String name, HealthStats stats) {
+            return HealthStatsProtos.processHealthProto(name, stats);
+        }
+
+        /* access modifiers changed from: package-private */
+        @Nullable
+        public BatteryMetric.ProcessHealthProto subtract(@Nullable BatteryMetric.ProcessHealthProto a, @Nullable BatteryMetric.ProcessHealthProto b) {
+            return HealthStatsProtos.subtract(a, b);
+        }
+
+        /* access modifiers changed from: package-private */
+        public String nameOf(BatteryMetric.ProcessHealthProto val) {
+            return val.getName().getUnhashedName();
+        }
+    }
+
+    private static final class ServiceHealthProtoOps extends ProtoStatsOps<HealthStats, BatteryMetric.ServiceHealthProto> {
+        /* access modifiers changed from: private */
+        public static final ServiceHealthProtoOps INSTANCE = new ServiceHealthProtoOps();
+
+        private ServiceHealthProtoOps() {
+            super();
+        }
+
+        /* access modifiers changed from: package-private */
+        @Nullable
+        public BatteryMetric.ServiceHealthProto convert(String name, HealthStats stats) {
+            return HealthStatsProtos.serviceHealthProto(name, stats);
+        }
+
+        /* access modifiers changed from: package-private */
+        @Nullable
+        public BatteryMetric.ServiceHealthProto subtract(@Nullable BatteryMetric.ServiceHealthProto a, @Nullable BatteryMetric.ServiceHealthProto b) {
+            return HealthStatsProtos.subtract(a, b);
+        }
+
+        /* access modifiers changed from: package-private */
+        public String nameOf(BatteryMetric.ServiceHealthProto val) {
+            return val.getName().getUnhashedName();
+        }
     }
 }

@@ -1,7 +1,9 @@
 package com.google.common.collect;
 
 import com.google.common.annotations.GwtIncompatible;
-import com.google.common.collect.Maps;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.util.Iterator;
 import java.util.Map;
 import java.util.NavigableMap;
@@ -9,18 +11,17 @@ import java.util.NavigableSet;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.SortedMap;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtIncompatible
 abstract class AbstractNavigableMap<K, V> extends Maps.IteratorBasedAbstractMap<K, V> implements NavigableMap<K, V> {
+    AbstractNavigableMap() {
+    }
+
     /* access modifiers changed from: package-private */
     public abstract Iterator<Map.Entry<K, V>> descendingEntryIterator();
 
     @NullableDecl
     public abstract V get(@NullableDecl Object obj);
-
-    AbstractNavigableMap() {
-    }
 
     @NullableDecl
     public Map.Entry<K, V> firstEntry() {

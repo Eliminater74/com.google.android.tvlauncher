@@ -6,9 +6,10 @@ import android.content.ServiceConnection;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+
 import com.google.android.exoplayer2.DefaultRenderersFactory;
-import com.google.android.gms.common.internal.GmsClientSupervisor;
 import com.google.android.gms.common.stats.zza;
+
 import java.util.HashMap;
 
 /* compiled from: GmsClientSupervisorImpl */
@@ -21,9 +22,9 @@ final class zzq extends GmsClientSupervisor implements Handler.Callback {
     public final Handler zzc;
     /* access modifiers changed from: private */
     public final zza zzd;
-    private final long zze;
     /* access modifiers changed from: private */
     public final long zzf;
+    private final long zze;
 
     zzq(Context context) {
         this.zzb = context.getApplicationContext();

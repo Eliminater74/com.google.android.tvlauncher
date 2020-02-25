@@ -1,9 +1,11 @@
 package gen_binder;
 
 import android.content.Context;
+
 import com.google.android.libraries.gcoreclient.clearcut.impl.StitchModule;
 import com.google.android.libraries.stitch.binder.Binder;
 import com.google.android.libraries.stitch.binder.Module;
+
 import java.util.HashMap;
 
 /* renamed from: gen_binder.com$google$android$libraries$gcoreclient$clearcut$impl$StitchModule */

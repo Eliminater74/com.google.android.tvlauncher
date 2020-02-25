@@ -20,47 +20,62 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewParent;
 import android.view.animation.Interpolator;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /* renamed from: android.support.v7.widget.helper.ItemTouchHelper */
 public class ItemTouchHelper extends RecyclerView.ItemDecoration implements RecyclerView.OnChildAttachStateChangeListener {
-    static final int ACTION_MODE_DRAG_MASK = 16711680;
-    private static final int ACTION_MODE_IDLE_MASK = 255;
-    static final int ACTION_MODE_SWIPE_MASK = 65280;
     public static final int ACTION_STATE_DRAG = 2;
     public static final int ACTION_STATE_IDLE = 0;
     public static final int ACTION_STATE_SWIPE = 1;
-    private static final int ACTIVE_POINTER_ID_NONE = -1;
     public static final int ANIMATION_TYPE_DRAG = 8;
     public static final int ANIMATION_TYPE_SWIPE_CANCEL = 4;
     public static final int ANIMATION_TYPE_SWIPE_SUCCESS = 2;
-    private static final boolean DEBUG = false;
-    static final int DIRECTION_FLAG_COUNT = 8;
     public static final int DOWN = 2;
     public static final int END = 32;
     public static final int LEFT = 4;
-    private static final int PIXELS_PER_SECOND = 1000;
     public static final int RIGHT = 8;
     public static final int START = 16;
-    private static final String TAG = "ItemTouchHelper";
-
     /* renamed from: UP */
     public static final int f29UP = 1;
-    private int mActionState = 0;
+    static final int ACTION_MODE_DRAG_MASK = 16711680;
+    static final int ACTION_MODE_SWIPE_MASK = 65280;
+    static final int DIRECTION_FLAG_COUNT = 8;
+    private static final int ACTION_MODE_IDLE_MASK = 255;
+    private static final int ACTIVE_POINTER_ID_NONE = -1;
+    private static final boolean DEBUG = false;
+    private static final int PIXELS_PER_SECOND = 1000;
+    private static final String TAG = "ItemTouchHelper";
+    final List<View> mPendingCleanup = new ArrayList();
+    private final float[] mTmpPosition = new float[2];
     int mActivePointerId = -1;
     @NonNull
     Callback mCallback;
-    private RecyclerView.ChildDrawingOrderCallback mChildDrawingOrderCallback = null;
-    private List<Integer> mDistances;
-    private long mDragScrollStartTimeInMs;
     float mDx;
     float mDy;
     GestureDetectorCompat mGestureDetector;
     float mInitialTouchX;
     float mInitialTouchY;
+    View mOverdrawChild = null;
+    int mOverdrawChildPosition = -1;
+    List<RecoverAnimation> mRecoverAnimations = new ArrayList();
+    RecyclerView mRecyclerView;
+    RecyclerView.ViewHolder mSelected = null;
+    int mSelectedFlags;
+    VelocityTracker mVelocityTracker;
+    private int mActionState = 0;
+    private RecyclerView.ChildDrawingOrderCallback mChildDrawingOrderCallback = null;
+    private List<Integer> mDistances;
+    private long mDragScrollStartTimeInMs;
     private ItemTouchHelperGestureListener mItemTouchHelperGestureListener;
     private float mMaxSwipeVelocity;
+    private float mSelectedStartX;
+    private float mSelectedStartY;
+    private int mSlop;
+    private List<RecyclerView.ViewHolder> mSwapTargets;
+    private float mSwipeEscapeVelocity;
+    private Rect mTmpRect;
     private final RecyclerView.OnItemTouchListener mOnItemTouchListener = new RecyclerView.OnItemTouchListener() {
         public boolean onInterceptTouchEvent(@NonNull RecyclerView recyclerView, @NonNull MotionEvent event) {
             int index;
@@ -157,11 +172,6 @@ public class ItemTouchHelper extends RecyclerView.ItemDecoration implements Recy
             }
         }
     };
-    View mOverdrawChild = null;
-    int mOverdrawChildPosition = -1;
-    final List<View> mPendingCleanup = new ArrayList();
-    List<RecoverAnimation> mRecoverAnimations = new ArrayList();
-    RecyclerView mRecyclerView;
     final Runnable mScrollRunnable = new Runnable() {
         public void run() {
             if (ItemTouchHelper.this.mSelected != null && ItemTouchHelper.this.scrollIfNecessary()) {
@@ -174,21 +184,6 @@ public class ItemTouchHelper extends RecyclerView.ItemDecoration implements Recy
             }
         }
     };
-    RecyclerView.ViewHolder mSelected = null;
-    int mSelectedFlags;
-    private float mSelectedStartX;
-    private float mSelectedStartY;
-    private int mSlop;
-    private List<RecyclerView.ViewHolder> mSwapTargets;
-    private float mSwipeEscapeVelocity;
-    private final float[] mTmpPosition = new float[2];
-    private Rect mTmpRect;
-    VelocityTracker mVelocityTracker;
-
-    /* renamed from: android.support.v7.widget.helper.ItemTouchHelper$ViewDropHandler */
-    public interface ViewDropHandler {
-        void prepareForDrop(@NonNull View view, @NonNull View view2, int i, int i2);
-    }
 
     public ItemTouchHelper(@NonNull Callback callback) {
         this.mCallback = callback;
@@ -934,13 +929,18 @@ public class ItemTouchHelper extends RecyclerView.ItemDecoration implements Recy
         }
     }
 
+    /* renamed from: android.support.v7.widget.helper.ItemTouchHelper$ViewDropHandler */
+    public interface ViewDropHandler {
+        void prepareForDrop(@NonNull View view, @NonNull View view2, int i, int i2);
+    }
+
     /* renamed from: android.support.v7.widget.helper.ItemTouchHelper$Callback */
     public static abstract class Callback {
-        private static final int ABS_HORIZONTAL_DIR_FLAGS = 789516;
         public static final int DEFAULT_DRAG_ANIMATION_DURATION = 200;
         public static final int DEFAULT_SWIPE_ANIMATION_DURATION = 250;
-        private static final long DRAG_SCROLL_ACCELERATION_LIMIT_TIME_MS = 2000;
         static final int RELATIVE_DIR_FLAGS = 3158064;
+        private static final int ABS_HORIZONTAL_DIR_FLAGS = 789516;
+        private static final long DRAG_SCROLL_ACCELERATION_LIMIT_TIME_MS = 2000;
         private static final Interpolator sDragScrollInterpolator = new Interpolator() {
             public float getInterpolation(float t) {
                 return t * t * t * t * t;
@@ -953,12 +953,6 @@ public class ItemTouchHelper extends RecyclerView.ItemDecoration implements Recy
             }
         };
         private int mCachedMaxScrollSpeed = -1;
-
-        public abstract int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder);
-
-        public abstract boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder viewHolder2);
-
-        public abstract void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i);
 
         @NonNull
         public static ItemTouchUIUtil getDefaultUIUtil() {
@@ -984,6 +978,12 @@ public class ItemTouchHelper extends RecyclerView.ItemDecoration implements Recy
         public static int makeFlag(int actionState, int directions) {
             return directions << (actionState * 8);
         }
+
+        public abstract int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder);
+
+        public abstract boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder viewHolder2);
+
+        public abstract void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i);
 
         public int convertToAbsoluteDirection(int flags, int layoutDirection) {
             int masked = flags & RELATIVE_DIR_FLAGS;
@@ -1244,61 +1244,24 @@ public class ItemTouchHelper extends RecyclerView.ItemDecoration implements Recy
         }
     }
 
-    /* renamed from: android.support.v7.widget.helper.ItemTouchHelper$ItemTouchHelperGestureListener */
-    private class ItemTouchHelperGestureListener extends GestureDetector.SimpleOnGestureListener {
-        private boolean mShouldReactToLongPress = true;
-
-        ItemTouchHelperGestureListener() {
-        }
-
-        /* access modifiers changed from: package-private */
-        public void doNotReactToLongPress() {
-            this.mShouldReactToLongPress = false;
-        }
-
-        public boolean onDown(MotionEvent e) {
-            return true;
-        }
-
-        public void onLongPress(MotionEvent e) {
-            View child;
-            RecyclerView.ViewHolder vh;
-            if (this.mShouldReactToLongPress && (child = ItemTouchHelper.this.findChildView(e)) != null && (vh = ItemTouchHelper.this.mRecyclerView.getChildViewHolder(child)) != null && ItemTouchHelper.this.mCallback.hasDragFlag(ItemTouchHelper.this.mRecyclerView, vh) && e.getPointerId(0) == ItemTouchHelper.this.mActivePointerId) {
-                int index = e.findPointerIndex(ItemTouchHelper.this.mActivePointerId);
-                float x = e.getX(index);
-                float y = e.getY(index);
-                ItemTouchHelper itemTouchHelper = ItemTouchHelper.this;
-                itemTouchHelper.mInitialTouchX = x;
-                itemTouchHelper.mInitialTouchY = y;
-                itemTouchHelper.mDy = 0.0f;
-                itemTouchHelper.mDx = 0.0f;
-                if (itemTouchHelper.mCallback.isLongPressDragEnabled()) {
-                    ItemTouchHelper.this.select(vh, 2);
-                }
-            }
-        }
-    }
-
     /* renamed from: android.support.v7.widget.helper.ItemTouchHelper$RecoverAnimation */
     private static class RecoverAnimation implements Animator.AnimatorListener {
         final int mActionState;
         final int mAnimationType;
-        boolean mEnded = false;
-        private float mFraction;
-        boolean mIsPendingCleanup;
-        boolean mOverridden = false;
         final float mStartDx;
         final float mStartDy;
         final float mTargetX;
         final float mTargetY;
-        private final ValueAnimator mValueAnimator;
         final RecyclerView.ViewHolder mViewHolder;
-
+        private final ValueAnimator mValueAnimator;
+        boolean mEnded = false;
+        boolean mIsPendingCleanup;
+        boolean mOverridden = false;
         /* renamed from: mX */
         float f30mX;
-
         /* renamed from: mY */
         float f31mY;
+        private float mFraction;
 
         RecoverAnimation(RecyclerView.ViewHolder viewHolder, int animationType, int actionState, float startDx, float startDy, float targetX, float targetY) {
             this.mActionState = actionState;
@@ -1368,6 +1331,41 @@ public class ItemTouchHelper extends RecyclerView.ItemDecoration implements Recy
         }
 
         public void onAnimationRepeat(Animator animation) {
+        }
+    }
+
+    /* renamed from: android.support.v7.widget.helper.ItemTouchHelper$ItemTouchHelperGestureListener */
+    private class ItemTouchHelperGestureListener extends GestureDetector.SimpleOnGestureListener {
+        private boolean mShouldReactToLongPress = true;
+
+        ItemTouchHelperGestureListener() {
+        }
+
+        /* access modifiers changed from: package-private */
+        public void doNotReactToLongPress() {
+            this.mShouldReactToLongPress = false;
+        }
+
+        public boolean onDown(MotionEvent e) {
+            return true;
+        }
+
+        public void onLongPress(MotionEvent e) {
+            View child;
+            RecyclerView.ViewHolder vh;
+            if (this.mShouldReactToLongPress && (child = ItemTouchHelper.this.findChildView(e)) != null && (vh = ItemTouchHelper.this.mRecyclerView.getChildViewHolder(child)) != null && ItemTouchHelper.this.mCallback.hasDragFlag(ItemTouchHelper.this.mRecyclerView, vh) && e.getPointerId(0) == ItemTouchHelper.this.mActivePointerId) {
+                int index = e.findPointerIndex(ItemTouchHelper.this.mActivePointerId);
+                float x = e.getX(index);
+                float y = e.getY(index);
+                ItemTouchHelper itemTouchHelper = ItemTouchHelper.this;
+                itemTouchHelper.mInitialTouchX = x;
+                itemTouchHelper.mInitialTouchY = y;
+                itemTouchHelper.mDy = 0.0f;
+                itemTouchHelper.mDx = 0.0f;
+                if (itemTouchHelper.mCallback.isLongPressDragEnabled()) {
+                    ItemTouchHelper.this.select(vh, 2);
+                }
+            }
         }
     }
 }

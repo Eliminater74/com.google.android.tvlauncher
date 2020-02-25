@@ -1,6 +1,7 @@
 package com.google.android.libraries.performance.primes;
 
 import com.google.android.libraries.stitch.util.Preconditions;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -13,13 +14,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 final class PrimesScheduledExecutorService implements ScheduledExecutorService {
-    private final ScheduledExecutorService executor;
     /* access modifiers changed from: private */
     public final FailureCallback failureCallback;
-
-    interface FailureCallback {
-        void onFailure(Throwable th);
-    }
+    private final ScheduledExecutorService executor;
 
     PrimesScheduledExecutorService(ScheduledExecutorService scheduledExecutorService, FailureCallback failureCallback2) {
         this.executor = (ScheduledExecutorService) Preconditions.checkNotNull(scheduledExecutorService);
@@ -156,5 +153,9 @@ final class PrimesScheduledExecutorService implements ScheduledExecutorService {
             return r0
         */
         throw new UnsupportedOperationException("Method not decompiled: com.google.android.libraries.performance.primes.PrimesScheduledExecutorService.invokeAll(java.util.Collection, long, java.util.concurrent.TimeUnit):java.util.List");
+    }
+
+    interface FailureCallback {
+        void onFailure(Throwable th);
     }
 }

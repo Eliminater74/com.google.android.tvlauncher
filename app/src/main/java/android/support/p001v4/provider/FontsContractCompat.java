@@ -21,11 +21,12 @@ import android.support.p001v4.content.res.FontResourcesParserCompat;
 import android.support.p001v4.graphics.TypefaceCompat;
 import android.support.p001v4.graphics.TypefaceCompatUtil;
 import android.support.p001v4.media.MediaDescriptionCompat;
-import android.support.p001v4.provider.SelfDestructiveThread;
 import android.support.p001v4.util.LruCache;
 import android.support.p001v4.util.Preconditions;
 import android.support.p001v4.util.SimpleArrayMap;
+
 import com.google.android.exoplayer2.offline.DownloadService;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.nio.ByteBuffer;
@@ -39,13 +40,17 @@ import java.util.Map;
 
 /* renamed from: android.support.v4.provider.FontsContractCompat */
 public class FontsContractCompat {
-    private static final int BACKGROUND_THREAD_KEEP_ALIVE_DURATION_MS = 10000;
     @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
     public static final String PARCEL_FONT_RESULTS = "font_results";
     @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
     static final int RESULT_CODE_PROVIDER_NOT_FOUND = -1;
     @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
     static final int RESULT_CODE_WRONG_CERTIFICATES = -2;
+    static final Object sLock = new Object();
+    @GuardedBy("sLock")
+    static final SimpleArrayMap<String, ArrayList<SelfDestructiveThread.ReplyCallback<TypefaceResult>>> sPendingReplies = new SimpleArrayMap<>();
+    static final LruCache<String, Typeface> sTypefaceCache = new LruCache<>(16);
+    private static final int BACKGROUND_THREAD_KEEP_ALIVE_DURATION_MS = 10000;
     private static final SelfDestructiveThread sBackgroundThread = new SelfDestructiveThread("fonts", 10, 10000);
     private static final Comparator<byte[]> sByteArrayComparator = new Comparator<byte[]>() {
         public int compare(byte[] l, byte[] r) {
@@ -60,24 +65,6 @@ public class FontsContractCompat {
             return 0;
         }
     };
-    static final Object sLock = new Object();
-    @GuardedBy("sLock")
-    static final SimpleArrayMap<String, ArrayList<SelfDestructiveThread.ReplyCallback<TypefaceResult>>> sPendingReplies = new SimpleArrayMap<>();
-    static final LruCache<String, Typeface> sTypefaceCache = new LruCache<>(16);
-
-    /* renamed from: android.support.v4.provider.FontsContractCompat$Columns */
-    public static final class Columns implements BaseColumns {
-        public static final String FILE_ID = "file_id";
-        public static final String ITALIC = "font_italic";
-        public static final String RESULT_CODE = "result_code";
-        public static final int RESULT_CODE_FONT_NOT_FOUND = 1;
-        public static final int RESULT_CODE_FONT_UNAVAILABLE = 2;
-        public static final int RESULT_CODE_MALFORMED_QUERY = 3;
-        public static final int RESULT_CODE_OK = 0;
-        public static final String TTC_INDEX = "font_ttc_index";
-        public static final String VARIATION_SETTINGS = "font_variation_settings";
-        public static final String WEIGHT = "font_weight";
-    }
 
     private FontsContractCompat() {
     }
@@ -100,17 +87,6 @@ public class FontsContractCompat {
             return new TypefaceResult(null, resultCode);
         } catch (PackageManager.NameNotFoundException e) {
             return new TypefaceResult(null, -1);
-        }
-    }
-
-    /* renamed from: android.support.v4.provider.FontsContractCompat$TypefaceResult */
-    private static final class TypefaceResult {
-        final int mResult;
-        final Typeface mTypeface;
-
-        TypefaceResult(@Nullable Typeface typeface, int result) {
-            this.mTypeface = typeface;
-            this.mResult = result;
         }
     }
 
@@ -218,95 +194,6 @@ public class FontsContractCompat {
             throw r3
         */
         throw new UnsupportedOperationException("Method not decompiled: android.support.p001v4.provider.FontsContractCompat.getFontSync(android.content.Context, android.support.v4.provider.FontRequest, android.support.v4.content.res.ResourcesCompat$FontCallback, android.os.Handler, boolean, int, int):android.graphics.Typeface");
-    }
-
-    /* renamed from: android.support.v4.provider.FontsContractCompat$FontInfo */
-    public static class FontInfo {
-        private final boolean mItalic;
-        private final int mResultCode;
-        private final int mTtcIndex;
-        private final Uri mUri;
-        private final int mWeight;
-
-        @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-        public FontInfo(@NonNull Uri uri, @IntRange(from = 0) int ttcIndex, @IntRange(from = 1, mo124to = 1000) int weight, boolean italic, int resultCode) {
-            this.mUri = (Uri) Preconditions.checkNotNull(uri);
-            this.mTtcIndex = ttcIndex;
-            this.mWeight = weight;
-            this.mItalic = italic;
-            this.mResultCode = resultCode;
-        }
-
-        @NonNull
-        public Uri getUri() {
-            return this.mUri;
-        }
-
-        @IntRange(from = MediaDescriptionCompat.BT_FOLDER_TYPE_MIXED)
-        public int getTtcIndex() {
-            return this.mTtcIndex;
-        }
-
-        @IntRange(from = 1, mo124to = DownloadService.DEFAULT_FOREGROUND_NOTIFICATION_UPDATE_INTERVAL)
-        public int getWeight() {
-            return this.mWeight;
-        }
-
-        public boolean isItalic() {
-            return this.mItalic;
-        }
-
-        public int getResultCode() {
-            return this.mResultCode;
-        }
-    }
-
-    /* renamed from: android.support.v4.provider.FontsContractCompat$FontFamilyResult */
-    public static class FontFamilyResult {
-        public static final int STATUS_OK = 0;
-        public static final int STATUS_UNEXPECTED_DATA_PROVIDED = 2;
-        public static final int STATUS_WRONG_CERTIFICATES = 1;
-        private final FontInfo[] mFonts;
-        private final int mStatusCode;
-
-        @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-        public FontFamilyResult(int statusCode, @Nullable FontInfo[] fonts) {
-            this.mStatusCode = statusCode;
-            this.mFonts = fonts;
-        }
-
-        public int getStatusCode() {
-            return this.mStatusCode;
-        }
-
-        public FontInfo[] getFonts() {
-            return this.mFonts;
-        }
-    }
-
-    /* renamed from: android.support.v4.provider.FontsContractCompat$FontRequestCallback */
-    public static class FontRequestCallback {
-        public static final int FAIL_REASON_FONT_LOAD_ERROR = -3;
-        public static final int FAIL_REASON_FONT_NOT_FOUND = 1;
-        public static final int FAIL_REASON_FONT_UNAVAILABLE = 2;
-        public static final int FAIL_REASON_MALFORMED_QUERY = 3;
-        public static final int FAIL_REASON_PROVIDER_NOT_FOUND = -1;
-        public static final int FAIL_REASON_SECURITY_VIOLATION = -4;
-        public static final int FAIL_REASON_WRONG_CERTIFICATES = -2;
-        @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-        public static final int RESULT_OK = 0;
-
-        @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-        @Retention(RetentionPolicy.SOURCE)
-        /* renamed from: android.support.v4.provider.FontsContractCompat$FontRequestCallback$FontRequestFailReason */
-        public @interface FontRequestFailReason {
-        }
-
-        public void onTypefaceRetrieved(Typeface typeface) {
-        }
-
-        public void onTypefaceRequestFailed(int reason) {
-        }
     }
 
     public static void requestFont(@NonNull Context context, @NonNull FontRequest request, @NonNull FontRequestCallback callback, @NonNull Handler handler) {
@@ -682,5 +569,119 @@ public class FontsContractCompat {
             return
         */
         throw new UnsupportedOperationException("Method not decompiled: android.support.p001v4.provider.FontsContractCompat.getFontFromProvider(android.content.Context, android.support.v4.provider.FontRequest, java.lang.String, android.os.CancellationSignal):android.support.v4.provider.FontsContractCompat$FontInfo[]");
+    }
+
+    /* renamed from: android.support.v4.provider.FontsContractCompat$Columns */
+    public static final class Columns implements BaseColumns {
+        public static final String FILE_ID = "file_id";
+        public static final String ITALIC = "font_italic";
+        public static final String RESULT_CODE = "result_code";
+        public static final int RESULT_CODE_FONT_NOT_FOUND = 1;
+        public static final int RESULT_CODE_FONT_UNAVAILABLE = 2;
+        public static final int RESULT_CODE_MALFORMED_QUERY = 3;
+        public static final int RESULT_CODE_OK = 0;
+        public static final String TTC_INDEX = "font_ttc_index";
+        public static final String VARIATION_SETTINGS = "font_variation_settings";
+        public static final String WEIGHT = "font_weight";
+    }
+
+    /* renamed from: android.support.v4.provider.FontsContractCompat$TypefaceResult */
+    private static final class TypefaceResult {
+        final int mResult;
+        final Typeface mTypeface;
+
+        TypefaceResult(@Nullable Typeface typeface, int result) {
+            this.mTypeface = typeface;
+            this.mResult = result;
+        }
+    }
+
+    /* renamed from: android.support.v4.provider.FontsContractCompat$FontInfo */
+    public static class FontInfo {
+        private final boolean mItalic;
+        private final int mResultCode;
+        private final int mTtcIndex;
+        private final Uri mUri;
+        private final int mWeight;
+
+        @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+        public FontInfo(@NonNull Uri uri, @IntRange(from = 0) int ttcIndex, @IntRange(from = 1, mo124to = 1000) int weight, boolean italic, int resultCode) {
+            this.mUri = (Uri) Preconditions.checkNotNull(uri);
+            this.mTtcIndex = ttcIndex;
+            this.mWeight = weight;
+            this.mItalic = italic;
+            this.mResultCode = resultCode;
+        }
+
+        @NonNull
+        public Uri getUri() {
+            return this.mUri;
+        }
+
+        @IntRange(from = MediaDescriptionCompat.BT_FOLDER_TYPE_MIXED)
+        public int getTtcIndex() {
+            return this.mTtcIndex;
+        }
+
+        @IntRange(from = 1, mo124to = DownloadService.DEFAULT_FOREGROUND_NOTIFICATION_UPDATE_INTERVAL)
+        public int getWeight() {
+            return this.mWeight;
+        }
+
+        public boolean isItalic() {
+            return this.mItalic;
+        }
+
+        public int getResultCode() {
+            return this.mResultCode;
+        }
+    }
+
+    /* renamed from: android.support.v4.provider.FontsContractCompat$FontFamilyResult */
+    public static class FontFamilyResult {
+        public static final int STATUS_OK = 0;
+        public static final int STATUS_UNEXPECTED_DATA_PROVIDED = 2;
+        public static final int STATUS_WRONG_CERTIFICATES = 1;
+        private final FontInfo[] mFonts;
+        private final int mStatusCode;
+
+        @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+        public FontFamilyResult(int statusCode, @Nullable FontInfo[] fonts) {
+            this.mStatusCode = statusCode;
+            this.mFonts = fonts;
+        }
+
+        public int getStatusCode() {
+            return this.mStatusCode;
+        }
+
+        public FontInfo[] getFonts() {
+            return this.mFonts;
+        }
+    }
+
+    /* renamed from: android.support.v4.provider.FontsContractCompat$FontRequestCallback */
+    public static class FontRequestCallback {
+        public static final int FAIL_REASON_FONT_LOAD_ERROR = -3;
+        public static final int FAIL_REASON_FONT_NOT_FOUND = 1;
+        public static final int FAIL_REASON_FONT_UNAVAILABLE = 2;
+        public static final int FAIL_REASON_MALFORMED_QUERY = 3;
+        public static final int FAIL_REASON_PROVIDER_NOT_FOUND = -1;
+        public static final int FAIL_REASON_SECURITY_VIOLATION = -4;
+        public static final int FAIL_REASON_WRONG_CERTIFICATES = -2;
+        @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+        public static final int RESULT_OK = 0;
+
+        public void onTypefaceRetrieved(Typeface typeface) {
+        }
+
+        public void onTypefaceRequestFailed(int reason) {
+        }
+
+        @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+        @Retention(RetentionPolicy.SOURCE)
+        /* renamed from: android.support.v4.provider.FontsContractCompat$FontRequestCallback$FontRequestFailReason */
+        public @interface FontRequestFailReason {
+        }
     }
 }

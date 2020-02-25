@@ -9,11 +9,6 @@ public final class UnsupportedDrmException extends Exception {
     public static final int REASON_UNSUPPORTED_SCHEME = 1;
     public final int reason;
 
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface Reason {
-    }
-
     public UnsupportedDrmException(int reason2) {
         this.reason = reason2;
     }
@@ -21,5 +16,10 @@ public final class UnsupportedDrmException extends Exception {
     public UnsupportedDrmException(int reason2, Exception cause) {
         super(cause);
         this.reason = reason2;
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface Reason {
     }
 }

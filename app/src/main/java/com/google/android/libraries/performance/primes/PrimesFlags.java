@@ -10,10 +10,6 @@ public final class PrimesFlags {
     private final boolean startupTraceEnabled;
     private final boolean urlAutoSanitizationEnabled;
 
-    public static Builder newBuilder() {
-        return new Builder();
-    }
-
     PrimesFlags(boolean leakDetectionEnabled2, boolean leakDetectionV2Enabled2, boolean memorySummaryDisabled2, boolean magicEyeLogEnabled2, boolean persistCrashStatsEnabled2, boolean startupTraceEnabled2, boolean urlAutoSanitizationEnabled2, boolean primesForPrimesEnabled2) {
         this.leakDetectionEnabled = leakDetectionEnabled2;
         this.leakDetectionV2Enabled = leakDetectionV2Enabled2;
@@ -23,6 +19,10 @@ public final class PrimesFlags {
         this.startupTraceEnabled = startupTraceEnabled2;
         this.urlAutoSanitizationEnabled = urlAutoSanitizationEnabled2;
         this.primesForPrimesEnabled = primesForPrimesEnabled2;
+    }
+
+    public static Builder newBuilder() {
+        return new Builder();
     }
 
     public boolean isLeakDetectionEnabled() {

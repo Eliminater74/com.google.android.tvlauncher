@@ -4,6 +4,9 @@ import android.support.annotation.RestrictTo;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
 public class Util {
+    private Util() {
+    }
+
     /* JADX WARN: Type inference failed for: r1v0, types: [android.view.ViewParent] */
     /* JADX WARNING: Multi-variable type inference failed */
     /* JADX WARNING: Unknown variable types count: 1 */
@@ -29,8 +32,5 @@ public class Util {
             return r0
         */
         throw new UnsupportedOperationException("Method not decompiled: androidx.leanback.widget.Util.isDescendant(android.view.ViewGroup, android.view.View):boolean");
-    }
-
-    private Util() {
     }
 }

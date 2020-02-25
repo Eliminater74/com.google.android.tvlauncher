@@ -16,6 +16,7 @@ import com.google.protobuf.ProtoMessage;
 import com.google.protobuf.ProtoPresenceBits;
 import com.google.protobuf.ProtoPresenceCheckedField;
 import com.google.protobuf.ProtoSyntax;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -23,6 +24,12 @@ import java.util.Collections;
 import java.util.List;
 
 public final class ExtensionGmail {
+
+    private ExtensionGmail() {
+    }
+
+    public static void registerAllExtensions(ExtensionRegistryLite registry) {
+    }
 
     public interface ExchangeInfoOrBuilder extends MessageLiteOrBuilder {
         ExchangeInfo.DpcInfo getDpcInfo();
@@ -149,12 +156,6 @@ public final class ExtensionGmail {
         boolean hasWebviewThreadDump();
     }
 
-    private ExtensionGmail() {
-    }
-
-    public static void registerAllExtensions(ExtensionRegistryLite registry) {
-    }
-
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
     public static final class GmailExtension extends GeneratedMessageLite<GmailExtension, Builder> implements GmailExtensionOrBuilder {
         public static final int ACCOUNT_TYPE_FIELD_NUMBER = 1;
@@ -170,7 +171,6 @@ public final class ExtensionGmail {
         public static final int IS_GOOGLER_ACCOUNT_FIELD_NUMBER = 11;
         public static final int NUM_ACCOUNTS_FIELD_NUMBER = 10;
         public static final int OPEN_CONVERSATION_ANNOTATIONS_FIELD_NUMBER = 4;
-        private static volatile Parser<GmailExtension> PARSER = null;
         public static final int RECYCLER_VIEW_ENABLED_FIELD_NUMBER = 9;
         public static final int WEBVIEW_VERSION_FIELD_NUMBER = 6;
         private static final Internal.ListAdapter.Converter<Integer, PrimesMetricExtensionEnums.Annotation> annotation_converter_ = new Internal.ListAdapter.Converter<Integer, PrimesMetricExtensionEnums.Annotation>() {
@@ -179,6 +179,12 @@ public final class ExtensionGmail {
                 return result == null ? PrimesMetricExtensionEnums.Annotation.UNKNOWN_ANNOTATION : result;
             }
         };
+        private static volatile Parser<GmailExtension> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(GmailExtension.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.ENUM)
         @ProtoPresenceCheckedField(mask = 1, presenceBitsId = 0)
         private int accountType_;
@@ -220,6 +226,70 @@ public final class ExtensionGmail {
         private String webviewVersion_ = "";
 
         private GmailExtension() {
+        }
+
+        public static GmailExtension parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (GmailExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static GmailExtension parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (GmailExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static GmailExtension parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (GmailExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static GmailExtension parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (GmailExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static GmailExtension parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (GmailExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static GmailExtension parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (GmailExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static GmailExtension parseFrom(InputStream input) throws IOException {
+            return (GmailExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static GmailExtension parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (GmailExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static GmailExtension parseDelimitedFrom(InputStream input) throws IOException {
+            return (GmailExtension) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static GmailExtension parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (GmailExtension) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static GmailExtension parseFrom(CodedInputStream input) throws IOException {
+            return (GmailExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static GmailExtension parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (GmailExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(GmailExtension prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static GmailExtension getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<GmailExtension> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasAccountType() {
@@ -371,10 +441,6 @@ public final class ExtensionGmail {
             return this.webviewVersion_;
         }
 
-        public ByteString getWebviewVersionBytes() {
-            return ByteString.copyFromUtf8(this.webviewVersion_);
-        }
-
         /* access modifiers changed from: private */
         public void setWebviewVersion(String value) {
             if (value != null) {
@@ -385,10 +451,8 @@ public final class ExtensionGmail {
             throw new NullPointerException();
         }
 
-        /* access modifiers changed from: private */
-        public void clearWebviewVersion() {
-            this.bitField0_ &= -33;
-            this.webviewVersion_ = getDefaultInstance().getWebviewVersion();
+        public ByteString getWebviewVersionBytes() {
+            return ByteString.copyFromUtf8(this.webviewVersion_);
         }
 
         /* access modifiers changed from: private */
@@ -399,6 +463,12 @@ public final class ExtensionGmail {
                 return;
             }
             throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearWebviewVersion() {
+            this.bitField0_ &= -33;
+            this.webviewVersion_ = getDefaultInstance().getWebviewVersion();
         }
 
         public boolean hasExchangeInfo() {
@@ -534,10 +604,6 @@ public final class ExtensionGmail {
             this.isGooglerAccount_ = false;
         }
 
-        static {
-            GeneratedMessageLite.registerDefaultInstance(GmailExtension.class, DEFAULT_INSTANCE);
-        }
-
         public List<PrimesMetricExtensionEnums.Annotation> getAnnotationList() {
             return new Internal.ListAdapter(this.annotation_, annotation_converter_);
         }
@@ -639,60 +705,36 @@ public final class ExtensionGmail {
             this.activeBteIds_ = emptyIntList();
         }
 
-        public static GmailExtension parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (GmailExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static GmailExtension parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (GmailExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static GmailExtension parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (GmailExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static GmailExtension parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (GmailExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static GmailExtension parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (GmailExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static GmailExtension parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (GmailExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static GmailExtension parseFrom(InputStream input) throws IOException {
-            return (GmailExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static GmailExtension parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (GmailExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static GmailExtension parseDelimitedFrom(InputStream input) throws IOException {
-            return (GmailExtension) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static GmailExtension parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (GmailExtension) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static GmailExtension parseFrom(CodedInputStream input) throws IOException {
-            return (GmailExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static GmailExtension parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (GmailExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(GmailExtension prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new GmailExtension();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\r\u0000\u0001\u0001\r\r\u0000\u0002\u0000\u0001\f\u0000\u0002\f\u0001\u0003\u0004\u0002\u0004\t\u0003\u0005\f\u0004\u0006\b\u0005\u0007\t\u0006\b\f\u0007\t\u0007\b\n\u0004\t\u000b\u0007\n\f\u001e\r\u0016", new Object[]{"bitField0_", "accountType_", PrimesMetricExtensionEnums.AccountType.internalGetVerifier(), "folderType_", PrimesMetricExtensionEnums.FolderType.internalGetVerifier(), "classLoadLatency_", "openConversationAnnotations_", "cancellationReason_", PrimesMetricExtensionEnums.CancellationReason.internalGetVerifier(), "webviewVersion_", "exchangeInfo_", "dataLayer_", PrimesMetricExtensionEnums.DataLayer.internalGetVerifier(), "recyclerViewEnabled_", "numAccounts_", "isGooglerAccount_", "annotation_", PrimesMetricExtensionEnums.Annotation.internalGetVerifier(), "activeBteIds_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<GmailExtension> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (GmailExtension.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<GmailExtension, Builder> implements GmailExtensionOrBuilder {
@@ -820,25 +862,25 @@ public final class ExtensionGmail {
                 return ((GmailExtension) this.instance).getWebviewVersion();
             }
 
-            public ByteString getWebviewVersionBytes() {
-                return ((GmailExtension) this.instance).getWebviewVersionBytes();
-            }
-
             public Builder setWebviewVersion(String value) {
                 copyOnWrite();
                 ((GmailExtension) this.instance).setWebviewVersion(value);
                 return this;
             }
 
-            public Builder clearWebviewVersion() {
-                copyOnWrite();
-                ((GmailExtension) this.instance).clearWebviewVersion();
-                return this;
+            public ByteString getWebviewVersionBytes() {
+                return ((GmailExtension) this.instance).getWebviewVersionBytes();
             }
 
             public Builder setWebviewVersionBytes(ByteString value) {
                 copyOnWrite();
                 ((GmailExtension) this.instance).setWebviewVersionBytes(value);
+                return this;
+            }
+
+            public Builder clearWebviewVersion() {
+                copyOnWrite();
+                ((GmailExtension) this.instance).clearWebviewVersion();
                 return this;
             }
 
@@ -1037,46 +1079,6 @@ public final class ExtensionGmail {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new GmailExtension();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\r\u0000\u0001\u0001\r\r\u0000\u0002\u0000\u0001\f\u0000\u0002\f\u0001\u0003\u0004\u0002\u0004\t\u0003\u0005\f\u0004\u0006\b\u0005\u0007\t\u0006\b\f\u0007\t\u0007\b\n\u0004\t\u000b\u0007\n\f\u001e\r\u0016", new Object[]{"bitField0_", "accountType_", PrimesMetricExtensionEnums.AccountType.internalGetVerifier(), "folderType_", PrimesMetricExtensionEnums.FolderType.internalGetVerifier(), "classLoadLatency_", "openConversationAnnotations_", "cancellationReason_", PrimesMetricExtensionEnums.CancellationReason.internalGetVerifier(), "webviewVersion_", "exchangeInfo_", "dataLayer_", PrimesMetricExtensionEnums.DataLayer.internalGetVerifier(), "recyclerViewEnabled_", "numAccounts_", "isGooglerAccount_", "annotation_", PrimesMetricExtensionEnums.Annotation.internalGetVerifier(), "activeBteIds_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<GmailExtension> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (GmailExtension.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        public static GmailExtension getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<GmailExtension> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -1090,10 +1092,15 @@ public final class ExtensionGmail {
         public static final int HAS_LOADED_DYNAMIC_MAIL_FIELD_NUMBER = 10;
         public static final int IS_COLD_OPEN_FIELD_NUMBER = 4;
         public static final int NUM_MESSAGES_FIELD_NUMBER = 2;
-        private static volatile Parser<OpenConversationAnnotations> PARSER = null;
         public static final int USE_DOM_CONTENT_LOADED_SIGNAL_FIELD_NUMBER = 6;
         public static final int WEBVIEW_DUMP_HASH_FIELD_NUMBER = 7;
         public static final int WEBVIEW_THREAD_DUMP_FIELD_NUMBER = 8;
+        private static volatile Parser<OpenConversationAnnotations> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(OpenConversationAnnotations.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.ENUM)
@@ -1128,6 +1135,70 @@ public final class ExtensionGmail {
         private String webviewThreadDump_ = "";
 
         private OpenConversationAnnotations() {
+        }
+
+        public static OpenConversationAnnotations parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (OpenConversationAnnotations) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static OpenConversationAnnotations parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (OpenConversationAnnotations) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static OpenConversationAnnotations parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (OpenConversationAnnotations) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static OpenConversationAnnotations parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (OpenConversationAnnotations) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static OpenConversationAnnotations parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (OpenConversationAnnotations) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static OpenConversationAnnotations parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (OpenConversationAnnotations) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static OpenConversationAnnotations parseFrom(InputStream input) throws IOException {
+            return (OpenConversationAnnotations) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static OpenConversationAnnotations parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (OpenConversationAnnotations) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static OpenConversationAnnotations parseDelimitedFrom(InputStream input) throws IOException {
+            return (OpenConversationAnnotations) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static OpenConversationAnnotations parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (OpenConversationAnnotations) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static OpenConversationAnnotations parseFrom(CodedInputStream input) throws IOException {
+            return (OpenConversationAnnotations) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static OpenConversationAnnotations parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (OpenConversationAnnotations) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(OpenConversationAnnotations prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static OpenConversationAnnotations getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<OpenConversationAnnotations> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasContentSource() {
@@ -1283,10 +1354,6 @@ public final class ExtensionGmail {
             return this.webviewThreadDump_;
         }
 
-        public ByteString getWebviewThreadDumpBytes() {
-            return ByteString.copyFromUtf8(this.webviewThreadDump_);
-        }
-
         /* access modifiers changed from: private */
         public void setWebviewThreadDump(String value) {
             if (value != null) {
@@ -1297,10 +1364,8 @@ public final class ExtensionGmail {
             throw new NullPointerException();
         }
 
-        /* access modifiers changed from: private */
-        public void clearWebviewThreadDump() {
-            this.bitField0_ &= -129;
-            this.webviewThreadDump_ = getDefaultInstance().getWebviewThreadDump();
+        public ByteString getWebviewThreadDumpBytes() {
+            return ByteString.copyFromUtf8(this.webviewThreadDump_);
         }
 
         /* access modifiers changed from: private */
@@ -1311,6 +1376,12 @@ public final class ExtensionGmail {
                 return;
             }
             throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearWebviewThreadDump() {
+            this.bitField0_ &= -129;
+            this.webviewThreadDump_ = getDefaultInstance().getWebviewThreadDump();
         }
 
         public boolean hasDeferWebviewImageLoadUntilCvRevealed() {
@@ -1353,60 +1424,36 @@ public final class ExtensionGmail {
             this.hasLoadedDynamicMail_ = false;
         }
 
-        public static OpenConversationAnnotations parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (OpenConversationAnnotations) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static OpenConversationAnnotations parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (OpenConversationAnnotations) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static OpenConversationAnnotations parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (OpenConversationAnnotations) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static OpenConversationAnnotations parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (OpenConversationAnnotations) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static OpenConversationAnnotations parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (OpenConversationAnnotations) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static OpenConversationAnnotations parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (OpenConversationAnnotations) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static OpenConversationAnnotations parseFrom(InputStream input) throws IOException {
-            return (OpenConversationAnnotations) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static OpenConversationAnnotations parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (OpenConversationAnnotations) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static OpenConversationAnnotations parseDelimitedFrom(InputStream input) throws IOException {
-            return (OpenConversationAnnotations) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static OpenConversationAnnotations parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (OpenConversationAnnotations) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static OpenConversationAnnotations parseFrom(CodedInputStream input) throws IOException {
-            return (OpenConversationAnnotations) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static OpenConversationAnnotations parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (OpenConversationAnnotations) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(OpenConversationAnnotations prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new OpenConversationAnnotations();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\n\u0000\u0001\u0001\n\n\u0000\u0000\u0000\u0001\f\u0000\u0002\u0004\u0001\u0003\u0007\u0002\u0004\u0007\u0003\u0005\u0004\u0004\u0006\u0007\u0005\u0007\u0004\u0006\b\b\u0007\t\u0007\b\n\u0007\t", new Object[]{"bitField0_", "contentSource_", PrimesMetricExtensionEnums.ContentSource.internalGetVerifier(), "numMessages_", "hasInlineAttachments_", "isColdOpen_", "conversationIndex_", "useDomContentLoadedSignal_", "webviewDumpHash_", "webviewThreadDump_", "deferWebviewImageLoadUntilCvRevealed_", "hasLoadedDynamicMail_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<OpenConversationAnnotations> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (OpenConversationAnnotations.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<OpenConversationAnnotations, Builder> implements OpenConversationAnnotationsOrBuilder {
@@ -1562,25 +1609,25 @@ public final class ExtensionGmail {
                 return ((OpenConversationAnnotations) this.instance).getWebviewThreadDump();
             }
 
-            public ByteString getWebviewThreadDumpBytes() {
-                return ((OpenConversationAnnotations) this.instance).getWebviewThreadDumpBytes();
-            }
-
             public Builder setWebviewThreadDump(String value) {
                 copyOnWrite();
                 ((OpenConversationAnnotations) this.instance).setWebviewThreadDump(value);
                 return this;
             }
 
-            public Builder clearWebviewThreadDump() {
-                copyOnWrite();
-                ((OpenConversationAnnotations) this.instance).clearWebviewThreadDump();
-                return this;
+            public ByteString getWebviewThreadDumpBytes() {
+                return ((OpenConversationAnnotations) this.instance).getWebviewThreadDumpBytes();
             }
 
             public Builder setWebviewThreadDumpBytes(ByteString value) {
                 copyOnWrite();
                 ((OpenConversationAnnotations) this.instance).setWebviewThreadDumpBytes(value);
+                return this;
+            }
+
+            public Builder clearWebviewThreadDump() {
+                copyOnWrite();
+                ((OpenConversationAnnotations) this.instance).clearWebviewThreadDump();
                 return this;
             }
 
@@ -1624,50 +1671,6 @@ public final class ExtensionGmail {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new OpenConversationAnnotations();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\n\u0000\u0001\u0001\n\n\u0000\u0000\u0000\u0001\f\u0000\u0002\u0004\u0001\u0003\u0007\u0002\u0004\u0007\u0003\u0005\u0004\u0004\u0006\u0007\u0005\u0007\u0004\u0006\b\b\u0007\t\u0007\b\n\u0007\t", new Object[]{"bitField0_", "contentSource_", PrimesMetricExtensionEnums.ContentSource.internalGetVerifier(), "numMessages_", "hasInlineAttachments_", "isColdOpen_", "conversationIndex_", "useDomContentLoadedSignal_", "webviewDumpHash_", "webviewThreadDump_", "deferWebviewImageLoadUntilCvRevealed_", "hasLoadedDynamicMail_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<OpenConversationAnnotations> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (OpenConversationAnnotations.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(OpenConversationAnnotations.class, DEFAULT_INSTANCE);
-        }
-
-        public static OpenConversationAnnotations getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<OpenConversationAnnotations> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -1678,6 +1681,11 @@ public final class ExtensionGmail {
         public static final int EXCHANGE_ACCOUNT_INFO_FIELD_NUMBER = 2;
         public static final int EXCHANGE_INFO_ID_FIELD_NUMBER = 1;
         private static volatile Parser<ExchangeInfo> PARSER;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(ExchangeInfo.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 3, isRequired = false, type = FieldType.MESSAGE)
@@ -1689,611 +1697,71 @@ public final class ExtensionGmail {
         @ProtoPresenceCheckedField(mask = 1, presenceBitsId = 0)
         private long exchangeInfoId_;
 
-        public interface DpcInfoOrBuilder extends MessageLiteOrBuilder {
-            String getDpcPackageName();
-
-            ByteString getDpcPackageNameBytes();
-
-            DpcInfo.ManagementMode getManagementMode();
-
-            boolean hasDpcPackageName();
-
-            boolean hasManagementMode();
-        }
-
-        public interface ExchangeAccountInfoOrBuilder extends MessageLiteOrBuilder {
-            ExchangeAccountInfo.EasVersion getEasVersion();
-
-            boolean getIsManaged();
-
-            boolean hasEasVersion();
-
-            boolean hasIsManaged();
-        }
-
         private ExchangeInfo() {
         }
 
-        @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
-        public static final class ExchangeAccountInfo extends GeneratedMessageLite<ExchangeAccountInfo, Builder> implements ExchangeAccountInfoOrBuilder {
-            /* access modifiers changed from: private */
-            public static final ExchangeAccountInfo DEFAULT_INSTANCE = new ExchangeAccountInfo();
-            public static final int EAS_VERSION_FIELD_NUMBER = 2;
-            public static final int IS_MANAGED_FIELD_NUMBER = 1;
-            private static volatile Parser<ExchangeAccountInfo> PARSER;
-            @ProtoPresenceBits(mo28548id = 0)
-            private int bitField0_;
-            @ProtoField(fieldNumber = 2, isRequired = false, type = FieldType.ENUM)
-            @ProtoPresenceCheckedField(mask = 2, presenceBitsId = 0)
-            private int easVersion_;
-            @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.BOOL)
-            @ProtoPresenceCheckedField(mask = 1, presenceBitsId = 0)
-            private boolean isManaged_;
-
-            private ExchangeAccountInfo() {
-            }
-
-            public enum EasVersion implements Internal.EnumLite {
-                OTHER(0),
-                V_2_5(1),
-                V_12_0(2),
-                V_12_1(3),
-                V_14_0(4),
-                V_14_1(5),
-                V_16_0(6),
-                V_16_1(7);
-                
-                public static final int OTHER_VALUE = 0;
-                public static final int V_12_0_VALUE = 2;
-                public static final int V_12_1_VALUE = 3;
-                public static final int V_14_0_VALUE = 4;
-                public static final int V_14_1_VALUE = 5;
-                public static final int V_16_0_VALUE = 6;
-                public static final int V_16_1_VALUE = 7;
-                public static final int V_2_5_VALUE = 1;
-                private static final Internal.EnumLiteMap<EasVersion> internalValueMap = new Internal.EnumLiteMap<EasVersion>() {
-                    public EasVersion findValueByNumber(int number) {
-                        return EasVersion.forNumber(number);
-                    }
-                };
-                private final int value;
-
-                public final int getNumber() {
-                    return this.value;
-                }
-
-                public static EasVersion forNumber(int value2) {
-                    switch (value2) {
-                        case 0:
-                            return OTHER;
-                        case 1:
-                            return V_2_5;
-                        case 2:
-                            return V_12_0;
-                        case 3:
-                            return V_12_1;
-                        case 4:
-                            return V_14_0;
-                        case 5:
-                            return V_14_1;
-                        case 6:
-                            return V_16_0;
-                        case 7:
-                            return V_16_1;
-                        default:
-                            return null;
-                    }
-                }
-
-                public static Internal.EnumLiteMap<EasVersion> internalGetValueMap() {
-                    return internalValueMap;
-                }
-
-                public static Internal.EnumVerifier internalGetVerifier() {
-                    return EasVersionVerifier.INSTANCE;
-                }
-
-                private static final class EasVersionVerifier implements Internal.EnumVerifier {
-                    static final Internal.EnumVerifier INSTANCE = new EasVersionVerifier();
-
-                    private EasVersionVerifier() {
-                    }
-
-                    public boolean isInRange(int number) {
-                        return EasVersion.forNumber(number) != null;
-                    }
-                }
-
-                private EasVersion(int value2) {
-                    this.value = value2;
-                }
-            }
-
-            public boolean hasIsManaged() {
-                return (this.bitField0_ & 1) != 0;
-            }
-
-            public boolean getIsManaged() {
-                return this.isManaged_;
-            }
-
-            /* access modifiers changed from: private */
-            public void setIsManaged(boolean value) {
-                this.bitField0_ |= 1;
-                this.isManaged_ = value;
-            }
-
-            /* access modifiers changed from: private */
-            public void clearIsManaged() {
-                this.bitField0_ &= -2;
-                this.isManaged_ = false;
-            }
-
-            public boolean hasEasVersion() {
-                return (this.bitField0_ & 2) != 0;
-            }
-
-            public EasVersion getEasVersion() {
-                EasVersion result = EasVersion.forNumber(this.easVersion_);
-                return result == null ? EasVersion.OTHER : result;
-            }
-
-            /* access modifiers changed from: private */
-            public void setEasVersion(EasVersion value) {
-                if (value != null) {
-                    this.bitField0_ |= 2;
-                    this.easVersion_ = value.getNumber();
-                    return;
-                }
-                throw new NullPointerException();
-            }
-
-            /* access modifiers changed from: private */
-            public void clearEasVersion() {
-                this.bitField0_ &= -3;
-                this.easVersion_ = 0;
-            }
-
-            public static ExchangeAccountInfo parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-                return (ExchangeAccountInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-            }
-
-            public static ExchangeAccountInfo parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-                return (ExchangeAccountInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-            }
-
-            public static ExchangeAccountInfo parseFrom(ByteString data) throws InvalidProtocolBufferException {
-                return (ExchangeAccountInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-            }
-
-            public static ExchangeAccountInfo parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-                return (ExchangeAccountInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-            }
-
-            public static ExchangeAccountInfo parseFrom(byte[] data) throws InvalidProtocolBufferException {
-                return (ExchangeAccountInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-            }
-
-            public static ExchangeAccountInfo parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-                return (ExchangeAccountInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-            }
-
-            public static ExchangeAccountInfo parseFrom(InputStream input) throws IOException {
-                return (ExchangeAccountInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-            }
-
-            public static ExchangeAccountInfo parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-                return (ExchangeAccountInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-            }
-
-            public static ExchangeAccountInfo parseDelimitedFrom(InputStream input) throws IOException {
-                return (ExchangeAccountInfo) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-            }
-
-            public static ExchangeAccountInfo parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-                return (ExchangeAccountInfo) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-            }
-
-            public static ExchangeAccountInfo parseFrom(CodedInputStream input) throws IOException {
-                return (ExchangeAccountInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-            }
-
-            public static ExchangeAccountInfo parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-                return (ExchangeAccountInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-            }
-
-            public static Builder newBuilder() {
-                return (Builder) DEFAULT_INSTANCE.createBuilder();
-            }
-
-            public static Builder newBuilder(ExchangeAccountInfo prototype) {
-                return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
-            }
-
-            public static final class Builder extends GeneratedMessageLite.Builder<ExchangeAccountInfo, Builder> implements ExchangeAccountInfoOrBuilder {
-                private Builder() {
-                    super(ExchangeAccountInfo.DEFAULT_INSTANCE);
-                }
-
-                public boolean hasIsManaged() {
-                    return ((ExchangeAccountInfo) this.instance).hasIsManaged();
-                }
-
-                public boolean getIsManaged() {
-                    return ((ExchangeAccountInfo) this.instance).getIsManaged();
-                }
-
-                public Builder setIsManaged(boolean value) {
-                    copyOnWrite();
-                    ((ExchangeAccountInfo) this.instance).setIsManaged(value);
-                    return this;
-                }
-
-                public Builder clearIsManaged() {
-                    copyOnWrite();
-                    ((ExchangeAccountInfo) this.instance).clearIsManaged();
-                    return this;
-                }
-
-                public boolean hasEasVersion() {
-                    return ((ExchangeAccountInfo) this.instance).hasEasVersion();
-                }
-
-                public EasVersion getEasVersion() {
-                    return ((ExchangeAccountInfo) this.instance).getEasVersion();
-                }
-
-                public Builder setEasVersion(EasVersion value) {
-                    copyOnWrite();
-                    ((ExchangeAccountInfo) this.instance).setEasVersion(value);
-                    return this;
-                }
-
-                public Builder clearEasVersion() {
-                    copyOnWrite();
-                    ((ExchangeAccountInfo) this.instance).clearEasVersion();
-                    return this;
-                }
-            }
-
-            /* access modifiers changed from: protected */
-            public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-                switch (method) {
-                    case NEW_MUTABLE_INSTANCE:
-                        return new ExchangeAccountInfo();
-                    case NEW_BUILDER:
-                        return new Builder();
-                    case BUILD_MESSAGE_INFO:
-                        return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0000\u0000\u0001\u0007\u0000\u0002\f\u0001", new Object[]{"bitField0_", "isManaged_", "easVersion_", EasVersion.internalGetVerifier()});
-                    case GET_DEFAULT_INSTANCE:
-                        return DEFAULT_INSTANCE;
-                    case GET_PARSER:
-                        Parser<ExchangeAccountInfo> parser = PARSER;
-                        if (parser == null) {
-                            synchronized (ExchangeAccountInfo.class) {
-                                parser = PARSER;
-                                if (parser == null) {
-                                    parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                    PARSER = parser;
-                                }
-                            }
-                        }
-                        return parser;
-                    case GET_MEMOIZED_IS_INITIALIZED:
-                        return (byte) 1;
-                    case SET_MEMOIZED_IS_INITIALIZED:
-                        return null;
-                    default:
-                        throw new UnsupportedOperationException();
-                }
-            }
-
-            static {
-                GeneratedMessageLite.registerDefaultInstance(ExchangeAccountInfo.class, DEFAULT_INSTANCE);
-            }
-
-            public static ExchangeAccountInfo getDefaultInstance() {
-                return DEFAULT_INSTANCE;
-            }
-
-            public static Parser<ExchangeAccountInfo> parser() {
-                return DEFAULT_INSTANCE.getParserForType();
-            }
+        public static ExchangeInfo parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (ExchangeInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
         }
 
-        @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
-        public static final class DpcInfo extends GeneratedMessageLite<DpcInfo, Builder> implements DpcInfoOrBuilder {
-            /* access modifiers changed from: private */
-            public static final DpcInfo DEFAULT_INSTANCE = new DpcInfo();
-            public static final int DPC_PACKAGE_NAME_FIELD_NUMBER = 2;
-            public static final int MANAGEMENT_MODE_FIELD_NUMBER = 1;
-            private static volatile Parser<DpcInfo> PARSER;
-            @ProtoPresenceBits(mo28548id = 0)
-            private int bitField0_;
-            @ProtoField(fieldNumber = 2, isEnforceUtf8 = false, isRequired = false, type = FieldType.STRING)
-            @ProtoPresenceCheckedField(mask = 2, presenceBitsId = 0)
-            private String dpcPackageName_ = "";
-            @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.ENUM)
-            @ProtoPresenceCheckedField(mask = 1, presenceBitsId = 0)
-            private int managementMode_;
+        public static ExchangeInfo parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (ExchangeInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-            private DpcInfo() {
-            }
+        public static ExchangeInfo parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (ExchangeInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
 
-            public enum ManagementMode implements Internal.EnumLite {
-                OTHER(0),
-                DEVICE_OWNER(1),
-                PROFILE_OWNER(2);
-                
-                public static final int DEVICE_OWNER_VALUE = 1;
-                public static final int OTHER_VALUE = 0;
-                public static final int PROFILE_OWNER_VALUE = 2;
-                private static final Internal.EnumLiteMap<ManagementMode> internalValueMap = new Internal.EnumLiteMap<ManagementMode>() {
-                    public ManagementMode findValueByNumber(int number) {
-                        return ManagementMode.forNumber(number);
-                    }
-                };
-                private final int value;
+        public static ExchangeInfo parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (ExchangeInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-                public final int getNumber() {
-                    return this.value;
-                }
+        public static ExchangeInfo parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (ExchangeInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
 
-                public static ManagementMode forNumber(int value2) {
-                    if (value2 == 0) {
-                        return OTHER;
-                    }
-                    if (value2 == 1) {
-                        return DEVICE_OWNER;
-                    }
-                    if (value2 != 2) {
-                        return null;
-                    }
-                    return PROFILE_OWNER;
-                }
+        public static ExchangeInfo parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (ExchangeInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-                public static Internal.EnumLiteMap<ManagementMode> internalGetValueMap() {
-                    return internalValueMap;
-                }
+        public static ExchangeInfo parseFrom(InputStream input) throws IOException {
+            return (ExchangeInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
 
-                public static Internal.EnumVerifier internalGetVerifier() {
-                    return ManagementModeVerifier.INSTANCE;
-                }
+        public static ExchangeInfo parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (ExchangeInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
 
-                private static final class ManagementModeVerifier implements Internal.EnumVerifier {
-                    static final Internal.EnumVerifier INSTANCE = new ManagementModeVerifier();
+        public static ExchangeInfo parseDelimitedFrom(InputStream input) throws IOException {
+            return (ExchangeInfo) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
 
-                    private ManagementModeVerifier() {
-                    }
+        public static ExchangeInfo parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (ExchangeInfo) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
 
-                    public boolean isInRange(int number) {
-                        return ManagementMode.forNumber(number) != null;
-                    }
-                }
+        public static ExchangeInfo parseFrom(CodedInputStream input) throws IOException {
+            return (ExchangeInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
 
-                private ManagementMode(int value2) {
-                    this.value = value2;
-                }
-            }
+        public static ExchangeInfo parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (ExchangeInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
 
-            public boolean hasManagementMode() {
-                return (this.bitField0_ & 1) != 0;
-            }
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
 
-            public ManagementMode getManagementMode() {
-                ManagementMode result = ManagementMode.forNumber(this.managementMode_);
-                return result == null ? ManagementMode.OTHER : result;
-            }
+        public static Builder newBuilder(ExchangeInfo prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
 
-            /* access modifiers changed from: private */
-            public void setManagementMode(ManagementMode value) {
-                if (value != null) {
-                    this.bitField0_ |= 1;
-                    this.managementMode_ = value.getNumber();
-                    return;
-                }
-                throw new NullPointerException();
-            }
+        public static ExchangeInfo getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
 
-            /* access modifiers changed from: private */
-            public void clearManagementMode() {
-                this.bitField0_ &= -2;
-                this.managementMode_ = 0;
-            }
-
-            public boolean hasDpcPackageName() {
-                return (this.bitField0_ & 2) != 0;
-            }
-
-            public String getDpcPackageName() {
-                return this.dpcPackageName_;
-            }
-
-            public ByteString getDpcPackageNameBytes() {
-                return ByteString.copyFromUtf8(this.dpcPackageName_);
-            }
-
-            /* access modifiers changed from: private */
-            public void setDpcPackageName(String value) {
-                if (value != null) {
-                    this.bitField0_ |= 2;
-                    this.dpcPackageName_ = value;
-                    return;
-                }
-                throw new NullPointerException();
-            }
-
-            /* access modifiers changed from: private */
-            public void clearDpcPackageName() {
-                this.bitField0_ &= -3;
-                this.dpcPackageName_ = getDefaultInstance().getDpcPackageName();
-            }
-
-            /* access modifiers changed from: private */
-            public void setDpcPackageNameBytes(ByteString value) {
-                if (value != null) {
-                    this.bitField0_ |= 2;
-                    this.dpcPackageName_ = value.toStringUtf8();
-                    return;
-                }
-                throw new NullPointerException();
-            }
-
-            public static DpcInfo parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-                return (DpcInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-            }
-
-            public static DpcInfo parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-                return (DpcInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-            }
-
-            public static DpcInfo parseFrom(ByteString data) throws InvalidProtocolBufferException {
-                return (DpcInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-            }
-
-            public static DpcInfo parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-                return (DpcInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-            }
-
-            public static DpcInfo parseFrom(byte[] data) throws InvalidProtocolBufferException {
-                return (DpcInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-            }
-
-            public static DpcInfo parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-                return (DpcInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-            }
-
-            public static DpcInfo parseFrom(InputStream input) throws IOException {
-                return (DpcInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-            }
-
-            public static DpcInfo parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-                return (DpcInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-            }
-
-            public static DpcInfo parseDelimitedFrom(InputStream input) throws IOException {
-                return (DpcInfo) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-            }
-
-            public static DpcInfo parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-                return (DpcInfo) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-            }
-
-            public static DpcInfo parseFrom(CodedInputStream input) throws IOException {
-                return (DpcInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-            }
-
-            public static DpcInfo parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-                return (DpcInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-            }
-
-            public static Builder newBuilder() {
-                return (Builder) DEFAULT_INSTANCE.createBuilder();
-            }
-
-            public static Builder newBuilder(DpcInfo prototype) {
-                return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
-            }
-
-            public static final class Builder extends GeneratedMessageLite.Builder<DpcInfo, Builder> implements DpcInfoOrBuilder {
-                private Builder() {
-                    super(DpcInfo.DEFAULT_INSTANCE);
-                }
-
-                public boolean hasManagementMode() {
-                    return ((DpcInfo) this.instance).hasManagementMode();
-                }
-
-                public ManagementMode getManagementMode() {
-                    return ((DpcInfo) this.instance).getManagementMode();
-                }
-
-                public Builder setManagementMode(ManagementMode value) {
-                    copyOnWrite();
-                    ((DpcInfo) this.instance).setManagementMode(value);
-                    return this;
-                }
-
-                public Builder clearManagementMode() {
-                    copyOnWrite();
-                    ((DpcInfo) this.instance).clearManagementMode();
-                    return this;
-                }
-
-                public boolean hasDpcPackageName() {
-                    return ((DpcInfo) this.instance).hasDpcPackageName();
-                }
-
-                public String getDpcPackageName() {
-                    return ((DpcInfo) this.instance).getDpcPackageName();
-                }
-
-                public ByteString getDpcPackageNameBytes() {
-                    return ((DpcInfo) this.instance).getDpcPackageNameBytes();
-                }
-
-                public Builder setDpcPackageName(String value) {
-                    copyOnWrite();
-                    ((DpcInfo) this.instance).setDpcPackageName(value);
-                    return this;
-                }
-
-                public Builder clearDpcPackageName() {
-                    copyOnWrite();
-                    ((DpcInfo) this.instance).clearDpcPackageName();
-                    return this;
-                }
-
-                public Builder setDpcPackageNameBytes(ByteString value) {
-                    copyOnWrite();
-                    ((DpcInfo) this.instance).setDpcPackageNameBytes(value);
-                    return this;
-                }
-            }
-
-            /* access modifiers changed from: protected */
-            public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-                switch (method) {
-                    case NEW_MUTABLE_INSTANCE:
-                        return new DpcInfo();
-                    case NEW_BUILDER:
-                        return new Builder();
-                    case BUILD_MESSAGE_INFO:
-                        return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0000\u0000\u0001\f\u0000\u0002\b\u0001", new Object[]{"bitField0_", "managementMode_", ManagementMode.internalGetVerifier(), "dpcPackageName_"});
-                    case GET_DEFAULT_INSTANCE:
-                        return DEFAULT_INSTANCE;
-                    case GET_PARSER:
-                        Parser<DpcInfo> parser = PARSER;
-                        if (parser == null) {
-                            synchronized (DpcInfo.class) {
-                                parser = PARSER;
-                                if (parser == null) {
-                                    parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                    PARSER = parser;
-                                }
-                            }
-                        }
-                        return parser;
-                    case GET_MEMOIZED_IS_INITIALIZED:
-                        return (byte) 1;
-                    case SET_MEMOIZED_IS_INITIALIZED:
-                        return null;
-                    default:
-                        throw new UnsupportedOperationException();
-                }
-            }
-
-            static {
-                GeneratedMessageLite.registerDefaultInstance(DpcInfo.class, DEFAULT_INSTANCE);
-            }
-
-            public static DpcInfo getDefaultInstance() {
-                return DEFAULT_INSTANCE;
-            }
-
-            public static Parser<DpcInfo> parser() {
-                return DEFAULT_INSTANCE.getParserForType();
-            }
+        public static Parser<ExchangeInfo> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasExchangeInfoId() {
@@ -2459,60 +1927,642 @@ public final class ExtensionGmail {
             this.bitField0_ &= -3;
         }
 
-        public static ExchangeInfo parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (ExchangeInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new ExchangeInfo();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0003\u0000\u0001\u0001\u0003\u0003\u0000\u0001\u0000\u0001\u0005\u0000\u0002\u001b\u0003\t\u0001", new Object[]{"bitField0_", "exchangeInfoId_", "exchangeAccountInfo_", ExchangeAccountInfo.class, "dpcInfo_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<ExchangeInfo> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (ExchangeInfo.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
-        public static ExchangeInfo parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (ExchangeInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        public interface DpcInfoOrBuilder extends MessageLiteOrBuilder {
+            String getDpcPackageName();
+
+            ByteString getDpcPackageNameBytes();
+
+            DpcInfo.ManagementMode getManagementMode();
+
+            boolean hasDpcPackageName();
+
+            boolean hasManagementMode();
         }
 
-        public static ExchangeInfo parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (ExchangeInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        public interface ExchangeAccountInfoOrBuilder extends MessageLiteOrBuilder {
+            ExchangeAccountInfo.EasVersion getEasVersion();
+
+            boolean getIsManaged();
+
+            boolean hasEasVersion();
+
+            boolean hasIsManaged();
         }
 
-        public static ExchangeInfo parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (ExchangeInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
+        public static final class ExchangeAccountInfo extends GeneratedMessageLite<ExchangeAccountInfo, Builder> implements ExchangeAccountInfoOrBuilder {
+            /* access modifiers changed from: private */
+            public static final ExchangeAccountInfo DEFAULT_INSTANCE = new ExchangeAccountInfo();
+            public static final int EAS_VERSION_FIELD_NUMBER = 2;
+            public static final int IS_MANAGED_FIELD_NUMBER = 1;
+            private static volatile Parser<ExchangeAccountInfo> PARSER;
+
+            static {
+                GeneratedMessageLite.registerDefaultInstance(ExchangeAccountInfo.class, DEFAULT_INSTANCE);
+            }
+
+            @ProtoPresenceBits(mo28548id = 0)
+            private int bitField0_;
+            @ProtoField(fieldNumber = 2, isRequired = false, type = FieldType.ENUM)
+            @ProtoPresenceCheckedField(mask = 2, presenceBitsId = 0)
+            private int easVersion_;
+            @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.BOOL)
+            @ProtoPresenceCheckedField(mask = 1, presenceBitsId = 0)
+            private boolean isManaged_;
+
+            private ExchangeAccountInfo() {
+            }
+
+            public static ExchangeAccountInfo parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+                return (ExchangeAccountInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+            }
+
+            public static ExchangeAccountInfo parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+                return (ExchangeAccountInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+            }
+
+            public static ExchangeAccountInfo parseFrom(ByteString data) throws InvalidProtocolBufferException {
+                return (ExchangeAccountInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+            }
+
+            public static ExchangeAccountInfo parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+                return (ExchangeAccountInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+            }
+
+            public static ExchangeAccountInfo parseFrom(byte[] data) throws InvalidProtocolBufferException {
+                return (ExchangeAccountInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+            }
+
+            public static ExchangeAccountInfo parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+                return (ExchangeAccountInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+            }
+
+            public static ExchangeAccountInfo parseFrom(InputStream input) throws IOException {
+                return (ExchangeAccountInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+            }
+
+            public static ExchangeAccountInfo parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+                return (ExchangeAccountInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+            }
+
+            public static ExchangeAccountInfo parseDelimitedFrom(InputStream input) throws IOException {
+                return (ExchangeAccountInfo) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+            }
+
+            public static ExchangeAccountInfo parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+                return (ExchangeAccountInfo) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+            }
+
+            public static ExchangeAccountInfo parseFrom(CodedInputStream input) throws IOException {
+                return (ExchangeAccountInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+            }
+
+            public static ExchangeAccountInfo parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+                return (ExchangeAccountInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+            }
+
+            public static Builder newBuilder() {
+                return (Builder) DEFAULT_INSTANCE.createBuilder();
+            }
+
+            public static Builder newBuilder(ExchangeAccountInfo prototype) {
+                return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+            }
+
+            public static ExchangeAccountInfo getDefaultInstance() {
+                return DEFAULT_INSTANCE;
+            }
+
+            public static Parser<ExchangeAccountInfo> parser() {
+                return DEFAULT_INSTANCE.getParserForType();
+            }
+
+            public boolean hasIsManaged() {
+                return (this.bitField0_ & 1) != 0;
+            }
+
+            public boolean getIsManaged() {
+                return this.isManaged_;
+            }
+
+            /* access modifiers changed from: private */
+            public void setIsManaged(boolean value) {
+                this.bitField0_ |= 1;
+                this.isManaged_ = value;
+            }
+
+            /* access modifiers changed from: private */
+            public void clearIsManaged() {
+                this.bitField0_ &= -2;
+                this.isManaged_ = false;
+            }
+
+            public boolean hasEasVersion() {
+                return (this.bitField0_ & 2) != 0;
+            }
+
+            public EasVersion getEasVersion() {
+                EasVersion result = EasVersion.forNumber(this.easVersion_);
+                return result == null ? EasVersion.OTHER : result;
+            }
+
+            /* access modifiers changed from: private */
+            public void setEasVersion(EasVersion value) {
+                if (value != null) {
+                    this.bitField0_ |= 2;
+                    this.easVersion_ = value.getNumber();
+                    return;
+                }
+                throw new NullPointerException();
+            }
+
+            /* access modifiers changed from: private */
+            public void clearEasVersion() {
+                this.bitField0_ &= -3;
+                this.easVersion_ = 0;
+            }
+
+            /* access modifiers changed from: protected */
+            public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+                switch (method) {
+                    case NEW_MUTABLE_INSTANCE:
+                        return new ExchangeAccountInfo();
+                    case NEW_BUILDER:
+                        return new Builder();
+                    case BUILD_MESSAGE_INFO:
+                        return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0000\u0000\u0001\u0007\u0000\u0002\f\u0001", new Object[]{"bitField0_", "isManaged_", "easVersion_", EasVersion.internalGetVerifier()});
+                    case GET_DEFAULT_INSTANCE:
+                        return DEFAULT_INSTANCE;
+                    case GET_PARSER:
+                        Parser<ExchangeAccountInfo> parser = PARSER;
+                        if (parser == null) {
+                            synchronized (ExchangeAccountInfo.class) {
+                                parser = PARSER;
+                                if (parser == null) {
+                                    parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                    PARSER = parser;
+                                }
+                            }
+                        }
+                        return parser;
+                    case GET_MEMOIZED_IS_INITIALIZED:
+                        return (byte) 1;
+                    case SET_MEMOIZED_IS_INITIALIZED:
+                        return null;
+                    default:
+                        throw new UnsupportedOperationException();
+                }
+            }
+
+            public enum EasVersion implements Internal.EnumLite {
+                OTHER(0),
+                V_2_5(1),
+                V_12_0(2),
+                V_12_1(3),
+                V_14_0(4),
+                V_14_1(5),
+                V_16_0(6),
+                V_16_1(7);
+
+                public static final int OTHER_VALUE = 0;
+                public static final int V_12_0_VALUE = 2;
+                public static final int V_12_1_VALUE = 3;
+                public static final int V_14_0_VALUE = 4;
+                public static final int V_14_1_VALUE = 5;
+                public static final int V_16_0_VALUE = 6;
+                public static final int V_16_1_VALUE = 7;
+                public static final int V_2_5_VALUE = 1;
+                private static final Internal.EnumLiteMap<EasVersion> internalValueMap = new Internal.EnumLiteMap<EasVersion>() {
+                    public EasVersion findValueByNumber(int number) {
+                        return EasVersion.forNumber(number);
+                    }
+                };
+                private final int value;
+
+                private EasVersion(int value2) {
+                    this.value = value2;
+                }
+
+                public static EasVersion forNumber(int value2) {
+                    switch (value2) {
+                        case 0:
+                            return OTHER;
+                        case 1:
+                            return V_2_5;
+                        case 2:
+                            return V_12_0;
+                        case 3:
+                            return V_12_1;
+                        case 4:
+                            return V_14_0;
+                        case 5:
+                            return V_14_1;
+                        case 6:
+                            return V_16_0;
+                        case 7:
+                            return V_16_1;
+                        default:
+                            return null;
+                    }
+                }
+
+                public static Internal.EnumLiteMap<EasVersion> internalGetValueMap() {
+                    return internalValueMap;
+                }
+
+                public static Internal.EnumVerifier internalGetVerifier() {
+                    return EasVersionVerifier.INSTANCE;
+                }
+
+                public final int getNumber() {
+                    return this.value;
+                }
+
+                private static final class EasVersionVerifier implements Internal.EnumVerifier {
+                    static final Internal.EnumVerifier INSTANCE = new EasVersionVerifier();
+
+                    private EasVersionVerifier() {
+                    }
+
+                    public boolean isInRange(int number) {
+                        return EasVersion.forNumber(number) != null;
+                    }
+                }
+            }
+
+            public static final class Builder extends GeneratedMessageLite.Builder<ExchangeAccountInfo, Builder> implements ExchangeAccountInfoOrBuilder {
+                private Builder() {
+                    super(ExchangeAccountInfo.DEFAULT_INSTANCE);
+                }
+
+                public boolean hasIsManaged() {
+                    return ((ExchangeAccountInfo) this.instance).hasIsManaged();
+                }
+
+                public boolean getIsManaged() {
+                    return ((ExchangeAccountInfo) this.instance).getIsManaged();
+                }
+
+                public Builder setIsManaged(boolean value) {
+                    copyOnWrite();
+                    ((ExchangeAccountInfo) this.instance).setIsManaged(value);
+                    return this;
+                }
+
+                public Builder clearIsManaged() {
+                    copyOnWrite();
+                    ((ExchangeAccountInfo) this.instance).clearIsManaged();
+                    return this;
+                }
+
+                public boolean hasEasVersion() {
+                    return ((ExchangeAccountInfo) this.instance).hasEasVersion();
+                }
+
+                public EasVersion getEasVersion() {
+                    return ((ExchangeAccountInfo) this.instance).getEasVersion();
+                }
+
+                public Builder setEasVersion(EasVersion value) {
+                    copyOnWrite();
+                    ((ExchangeAccountInfo) this.instance).setEasVersion(value);
+                    return this;
+                }
+
+                public Builder clearEasVersion() {
+                    copyOnWrite();
+                    ((ExchangeAccountInfo) this.instance).clearEasVersion();
+                    return this;
+                }
+            }
         }
 
-        public static ExchangeInfo parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (ExchangeInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
+        @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
+        public static final class DpcInfo extends GeneratedMessageLite<DpcInfo, Builder> implements DpcInfoOrBuilder {
+            /* access modifiers changed from: private */
+            public static final DpcInfo DEFAULT_INSTANCE = new DpcInfo();
+            public static final int DPC_PACKAGE_NAME_FIELD_NUMBER = 2;
+            public static final int MANAGEMENT_MODE_FIELD_NUMBER = 1;
+            private static volatile Parser<DpcInfo> PARSER;
 
-        public static ExchangeInfo parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (ExchangeInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
+            static {
+                GeneratedMessageLite.registerDefaultInstance(DpcInfo.class, DEFAULT_INSTANCE);
+            }
 
-        public static ExchangeInfo parseFrom(InputStream input) throws IOException {
-            return (ExchangeInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
+            @ProtoPresenceBits(mo28548id = 0)
+            private int bitField0_;
+            @ProtoField(fieldNumber = 2, isEnforceUtf8 = false, isRequired = false, type = FieldType.STRING)
+            @ProtoPresenceCheckedField(mask = 2, presenceBitsId = 0)
+            private String dpcPackageName_ = "";
+            @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.ENUM)
+            @ProtoPresenceCheckedField(mask = 1, presenceBitsId = 0)
+            private int managementMode_;
 
-        public static ExchangeInfo parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (ExchangeInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
+            private DpcInfo() {
+            }
 
-        public static ExchangeInfo parseDelimitedFrom(InputStream input) throws IOException {
-            return (ExchangeInfo) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
+            public static DpcInfo parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+                return (DpcInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+            }
 
-        public static ExchangeInfo parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (ExchangeInfo) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
+            public static DpcInfo parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+                return (DpcInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+            }
 
-        public static ExchangeInfo parseFrom(CodedInputStream input) throws IOException {
-            return (ExchangeInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
+            public static DpcInfo parseFrom(ByteString data) throws InvalidProtocolBufferException {
+                return (DpcInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+            }
 
-        public static ExchangeInfo parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (ExchangeInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
+            public static DpcInfo parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+                return (DpcInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+            }
 
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
+            public static DpcInfo parseFrom(byte[] data) throws InvalidProtocolBufferException {
+                return (DpcInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+            }
 
-        public static Builder newBuilder(ExchangeInfo prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+            public static DpcInfo parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+                return (DpcInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+            }
+
+            public static DpcInfo parseFrom(InputStream input) throws IOException {
+                return (DpcInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+            }
+
+            public static DpcInfo parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+                return (DpcInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+            }
+
+            public static DpcInfo parseDelimitedFrom(InputStream input) throws IOException {
+                return (DpcInfo) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+            }
+
+            public static DpcInfo parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+                return (DpcInfo) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+            }
+
+            public static DpcInfo parseFrom(CodedInputStream input) throws IOException {
+                return (DpcInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+            }
+
+            public static DpcInfo parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+                return (DpcInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+            }
+
+            public static Builder newBuilder() {
+                return (Builder) DEFAULT_INSTANCE.createBuilder();
+            }
+
+            public static Builder newBuilder(DpcInfo prototype) {
+                return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+            }
+
+            public static DpcInfo getDefaultInstance() {
+                return DEFAULT_INSTANCE;
+            }
+
+            public static Parser<DpcInfo> parser() {
+                return DEFAULT_INSTANCE.getParserForType();
+            }
+
+            public boolean hasManagementMode() {
+                return (this.bitField0_ & 1) != 0;
+            }
+
+            public ManagementMode getManagementMode() {
+                ManagementMode result = ManagementMode.forNumber(this.managementMode_);
+                return result == null ? ManagementMode.OTHER : result;
+            }
+
+            /* access modifiers changed from: private */
+            public void setManagementMode(ManagementMode value) {
+                if (value != null) {
+                    this.bitField0_ |= 1;
+                    this.managementMode_ = value.getNumber();
+                    return;
+                }
+                throw new NullPointerException();
+            }
+
+            /* access modifiers changed from: private */
+            public void clearManagementMode() {
+                this.bitField0_ &= -2;
+                this.managementMode_ = 0;
+            }
+
+            public boolean hasDpcPackageName() {
+                return (this.bitField0_ & 2) != 0;
+            }
+
+            public String getDpcPackageName() {
+                return this.dpcPackageName_;
+            }
+
+            /* access modifiers changed from: private */
+            public void setDpcPackageName(String value) {
+                if (value != null) {
+                    this.bitField0_ |= 2;
+                    this.dpcPackageName_ = value;
+                    return;
+                }
+                throw new NullPointerException();
+            }
+
+            public ByteString getDpcPackageNameBytes() {
+                return ByteString.copyFromUtf8(this.dpcPackageName_);
+            }
+
+            /* access modifiers changed from: private */
+            public void setDpcPackageNameBytes(ByteString value) {
+                if (value != null) {
+                    this.bitField0_ |= 2;
+                    this.dpcPackageName_ = value.toStringUtf8();
+                    return;
+                }
+                throw new NullPointerException();
+            }
+
+            /* access modifiers changed from: private */
+            public void clearDpcPackageName() {
+                this.bitField0_ &= -3;
+                this.dpcPackageName_ = getDefaultInstance().getDpcPackageName();
+            }
+
+            /* access modifiers changed from: protected */
+            public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+                switch (method) {
+                    case NEW_MUTABLE_INSTANCE:
+                        return new DpcInfo();
+                    case NEW_BUILDER:
+                        return new Builder();
+                    case BUILD_MESSAGE_INFO:
+                        return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0000\u0000\u0001\f\u0000\u0002\b\u0001", new Object[]{"bitField0_", "managementMode_", ManagementMode.internalGetVerifier(), "dpcPackageName_"});
+                    case GET_DEFAULT_INSTANCE:
+                        return DEFAULT_INSTANCE;
+                    case GET_PARSER:
+                        Parser<DpcInfo> parser = PARSER;
+                        if (parser == null) {
+                            synchronized (DpcInfo.class) {
+                                parser = PARSER;
+                                if (parser == null) {
+                                    parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                    PARSER = parser;
+                                }
+                            }
+                        }
+                        return parser;
+                    case GET_MEMOIZED_IS_INITIALIZED:
+                        return (byte) 1;
+                    case SET_MEMOIZED_IS_INITIALIZED:
+                        return null;
+                    default:
+                        throw new UnsupportedOperationException();
+                }
+            }
+
+            public enum ManagementMode implements Internal.EnumLite {
+                OTHER(0),
+                DEVICE_OWNER(1),
+                PROFILE_OWNER(2);
+
+                public static final int DEVICE_OWNER_VALUE = 1;
+                public static final int OTHER_VALUE = 0;
+                public static final int PROFILE_OWNER_VALUE = 2;
+                private static final Internal.EnumLiteMap<ManagementMode> internalValueMap = new Internal.EnumLiteMap<ManagementMode>() {
+                    public ManagementMode findValueByNumber(int number) {
+                        return ManagementMode.forNumber(number);
+                    }
+                };
+                private final int value;
+
+                private ManagementMode(int value2) {
+                    this.value = value2;
+                }
+
+                public static ManagementMode forNumber(int value2) {
+                    if (value2 == 0) {
+                        return OTHER;
+                    }
+                    if (value2 == 1) {
+                        return DEVICE_OWNER;
+                    }
+                    if (value2 != 2) {
+                        return null;
+                    }
+                    return PROFILE_OWNER;
+                }
+
+                public static Internal.EnumLiteMap<ManagementMode> internalGetValueMap() {
+                    return internalValueMap;
+                }
+
+                public static Internal.EnumVerifier internalGetVerifier() {
+                    return ManagementModeVerifier.INSTANCE;
+                }
+
+                public final int getNumber() {
+                    return this.value;
+                }
+
+                private static final class ManagementModeVerifier implements Internal.EnumVerifier {
+                    static final Internal.EnumVerifier INSTANCE = new ManagementModeVerifier();
+
+                    private ManagementModeVerifier() {
+                    }
+
+                    public boolean isInRange(int number) {
+                        return ManagementMode.forNumber(number) != null;
+                    }
+                }
+            }
+
+            public static final class Builder extends GeneratedMessageLite.Builder<DpcInfo, Builder> implements DpcInfoOrBuilder {
+                private Builder() {
+                    super(DpcInfo.DEFAULT_INSTANCE);
+                }
+
+                public boolean hasManagementMode() {
+                    return ((DpcInfo) this.instance).hasManagementMode();
+                }
+
+                public ManagementMode getManagementMode() {
+                    return ((DpcInfo) this.instance).getManagementMode();
+                }
+
+                public Builder setManagementMode(ManagementMode value) {
+                    copyOnWrite();
+                    ((DpcInfo) this.instance).setManagementMode(value);
+                    return this;
+                }
+
+                public Builder clearManagementMode() {
+                    copyOnWrite();
+                    ((DpcInfo) this.instance).clearManagementMode();
+                    return this;
+                }
+
+                public boolean hasDpcPackageName() {
+                    return ((DpcInfo) this.instance).hasDpcPackageName();
+                }
+
+                public String getDpcPackageName() {
+                    return ((DpcInfo) this.instance).getDpcPackageName();
+                }
+
+                public Builder setDpcPackageName(String value) {
+                    copyOnWrite();
+                    ((DpcInfo) this.instance).setDpcPackageName(value);
+                    return this;
+                }
+
+                public ByteString getDpcPackageNameBytes() {
+                    return ((DpcInfo) this.instance).getDpcPackageNameBytes();
+                }
+
+                public Builder setDpcPackageNameBytes(ByteString value) {
+                    copyOnWrite();
+                    ((DpcInfo) this.instance).setDpcPackageNameBytes(value);
+                    return this;
+                }
+
+                public Builder clearDpcPackageName() {
+                    copyOnWrite();
+                    ((DpcInfo) this.instance).clearDpcPackageName();
+                    return this;
+                }
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<ExchangeInfo, Builder> implements ExchangeInfoOrBuilder {
@@ -2637,50 +2687,6 @@ public final class ExtensionGmail {
                 ((ExchangeInfo) this.instance).clearDpcInfo();
                 return this;
             }
-        }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new ExchangeInfo();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0003\u0000\u0001\u0001\u0003\u0003\u0000\u0001\u0000\u0001\u0005\u0000\u0002\u001b\u0003\t\u0001", new Object[]{"bitField0_", "exchangeInfoId_", "exchangeAccountInfo_", ExchangeAccountInfo.class, "dpcInfo_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<ExchangeInfo> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (ExchangeInfo.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(ExchangeInfo.class, DEFAULT_INSTANCE);
-        }
-
-        public static ExchangeInfo getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<ExchangeInfo> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
         }
     }
 }

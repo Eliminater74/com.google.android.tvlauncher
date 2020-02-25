@@ -1,193 +1,19 @@
 package androidx.leanback.util;
 
 import android.support.annotation.RestrictTo;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
 public final class StateMachine {
-    static final boolean DEBUG = false;
     public static final int STATUS_INVOKED = 1;
     public static final int STATUS_ZERO = 0;
+    static final boolean DEBUG = false;
     static final String TAG = "StateMachine";
     final ArrayList<State> mFinishedStates = new ArrayList<>();
     final ArrayList<State> mStates = new ArrayList<>();
     final ArrayList<State> mUnfinishedStates = new ArrayList<>();
-
-    public static class Event {
-        final String mName;
-
-        public Event(String name) {
-            this.mName = name;
-        }
-    }
-
-    public static class Condition {
-        final String mName;
-
-        public Condition(String name) {
-            this.mName = name;
-        }
-
-        public boolean canProceed() {
-            return true;
-        }
-    }
-
-    static class Transition {
-        final Condition mCondition;
-        final Event mEvent;
-        final State mFromState;
-        int mState = 0;
-        final State mToState;
-
-        Transition(State fromState, State toState, Event event) {
-            if (event != null) {
-                this.mFromState = fromState;
-                this.mToState = toState;
-                this.mEvent = event;
-                this.mCondition = null;
-                return;
-            }
-            throw new IllegalArgumentException();
-        }
-
-        Transition(State fromState, State toState) {
-            this.mFromState = fromState;
-            this.mToState = toState;
-            this.mEvent = null;
-            this.mCondition = null;
-        }
-
-        Transition(State fromState, State toState, Condition condition) {
-            if (condition != null) {
-                this.mFromState = fromState;
-                this.mToState = toState;
-                this.mEvent = null;
-                this.mCondition = condition;
-                return;
-            }
-            throw new IllegalArgumentException();
-        }
-
-        public String toString() {
-            String signalName;
-            Event event = this.mEvent;
-            if (event != null) {
-                signalName = event.mName;
-            } else {
-                Condition condition = this.mCondition;
-                if (condition != null) {
-                    signalName = condition.mName;
-                } else {
-                    signalName = "auto";
-                }
-            }
-            return "[" + this.mFromState.mName + " -> " + this.mToState.mName + " <" + signalName + ">]";
-        }
-    }
-
-    public static class State {
-        final boolean mBranchEnd;
-        final boolean mBranchStart;
-        ArrayList<Transition> mIncomings;
-        int mInvokedOutTransitions;
-        final String mName;
-        ArrayList<Transition> mOutgoings;
-        int mStatus;
-
-        public String toString() {
-            return "[" + this.mName + " " + this.mStatus + "]";
-        }
-
-        public State(String name) {
-            this(name, false, true);
-        }
-
-        public State(String name, boolean branchStart, boolean branchEnd) {
-            this.mStatus = 0;
-            this.mInvokedOutTransitions = 0;
-            this.mName = name;
-            this.mBranchStart = branchStart;
-            this.mBranchEnd = branchEnd;
-        }
-
-        /* access modifiers changed from: package-private */
-        public void addIncoming(Transition t) {
-            if (this.mIncomings == null) {
-                this.mIncomings = new ArrayList<>();
-            }
-            this.mIncomings.add(t);
-        }
-
-        /* access modifiers changed from: package-private */
-        public void addOutgoing(Transition t) {
-            if (this.mOutgoings == null) {
-                this.mOutgoings = new ArrayList<>();
-            }
-            this.mOutgoings.add(t);
-        }
-
-        public void run() {
-        }
-
-        /* access modifiers changed from: package-private */
-        public final boolean checkPreCondition() {
-            ArrayList<Transition> arrayList = this.mIncomings;
-            if (arrayList == null) {
-                return true;
-            }
-            if (this.mBranchEnd) {
-                Iterator<Transition> it = arrayList.iterator();
-                while (it.hasNext()) {
-                    if (it.next().mState != 1) {
-                        return false;
-                    }
-                }
-                return true;
-            }
-            Iterator<Transition> it2 = arrayList.iterator();
-            while (it2.hasNext()) {
-                if (it2.next().mState == 1) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        /* access modifiers changed from: package-private */
-        public final boolean runIfNeeded() {
-            if (this.mStatus == 1 || !checkPreCondition()) {
-                return false;
-            }
-            this.mStatus = 1;
-            run();
-            signalAutoTransitionsAfterRun();
-            return true;
-        }
-
-        /* access modifiers changed from: package-private */
-        public final void signalAutoTransitionsAfterRun() {
-            ArrayList<Transition> arrayList = this.mOutgoings;
-            if (arrayList != null) {
-                Iterator<Transition> it = arrayList.iterator();
-                while (it.hasNext()) {
-                    Transition t = it.next();
-                    if (t.mEvent == null && (t.mCondition == null || t.mCondition.canProceed())) {
-                        this.mInvokedOutTransitions++;
-                        t.mState = 1;
-                        if (!this.mBranchStart) {
-                            return;
-                        }
-                    }
-                }
-            }
-        }
-
-        public final int getStatus() {
-            return this.mStatus;
-        }
-    }
 
     public void addState(State state) {
         if (!this.mStates.contains(state)) {
@@ -268,6 +94,181 @@ public final class StateMachine {
                     it2.next().mState = 0;
                 }
             }
+        }
+    }
+
+    public static class Event {
+        final String mName;
+
+        public Event(String name) {
+            this.mName = name;
+        }
+    }
+
+    public static class Condition {
+        final String mName;
+
+        public Condition(String name) {
+            this.mName = name;
+        }
+
+        public boolean canProceed() {
+            return true;
+        }
+    }
+
+    static class Transition {
+        final Condition mCondition;
+        final Event mEvent;
+        final State mFromState;
+        final State mToState;
+        int mState = 0;
+
+        Transition(State fromState, State toState, Event event) {
+            if (event != null) {
+                this.mFromState = fromState;
+                this.mToState = toState;
+                this.mEvent = event;
+                this.mCondition = null;
+                return;
+            }
+            throw new IllegalArgumentException();
+        }
+
+        Transition(State fromState, State toState) {
+            this.mFromState = fromState;
+            this.mToState = toState;
+            this.mEvent = null;
+            this.mCondition = null;
+        }
+
+        Transition(State fromState, State toState, Condition condition) {
+            if (condition != null) {
+                this.mFromState = fromState;
+                this.mToState = toState;
+                this.mEvent = null;
+                this.mCondition = condition;
+                return;
+            }
+            throw new IllegalArgumentException();
+        }
+
+        public String toString() {
+            String signalName;
+            Event event = this.mEvent;
+            if (event != null) {
+                signalName = event.mName;
+            } else {
+                Condition condition = this.mCondition;
+                if (condition != null) {
+                    signalName = condition.mName;
+                } else {
+                    signalName = "auto";
+                }
+            }
+            return "[" + this.mFromState.mName + " -> " + this.mToState.mName + " <" + signalName + ">]";
+        }
+    }
+
+    public static class State {
+        final boolean mBranchEnd;
+        final boolean mBranchStart;
+        final String mName;
+        ArrayList<Transition> mIncomings;
+        int mInvokedOutTransitions;
+        ArrayList<Transition> mOutgoings;
+        int mStatus;
+
+        public State(String name) {
+            this(name, false, true);
+        }
+
+        public State(String name, boolean branchStart, boolean branchEnd) {
+            this.mStatus = 0;
+            this.mInvokedOutTransitions = 0;
+            this.mName = name;
+            this.mBranchStart = branchStart;
+            this.mBranchEnd = branchEnd;
+        }
+
+        public String toString() {
+            return "[" + this.mName + " " + this.mStatus + "]";
+        }
+
+        /* access modifiers changed from: package-private */
+        public void addIncoming(Transition t) {
+            if (this.mIncomings == null) {
+                this.mIncomings = new ArrayList<>();
+            }
+            this.mIncomings.add(t);
+        }
+
+        /* access modifiers changed from: package-private */
+        public void addOutgoing(Transition t) {
+            if (this.mOutgoings == null) {
+                this.mOutgoings = new ArrayList<>();
+            }
+            this.mOutgoings.add(t);
+        }
+
+        public void run() {
+        }
+
+        /* access modifiers changed from: package-private */
+        public final boolean checkPreCondition() {
+            ArrayList<Transition> arrayList = this.mIncomings;
+            if (arrayList == null) {
+                return true;
+            }
+            if (this.mBranchEnd) {
+                Iterator<Transition> it = arrayList.iterator();
+                while (it.hasNext()) {
+                    if (it.next().mState != 1) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            Iterator<Transition> it2 = arrayList.iterator();
+            while (it2.hasNext()) {
+                if (it2.next().mState == 1) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /* access modifiers changed from: package-private */
+        public final boolean runIfNeeded() {
+            if (this.mStatus == 1 || !checkPreCondition()) {
+                return false;
+            }
+            this.mStatus = 1;
+            run();
+            signalAutoTransitionsAfterRun();
+            return true;
+        }
+
+        /* access modifiers changed from: package-private */
+        public final void signalAutoTransitionsAfterRun() {
+            ArrayList<Transition> arrayList = this.mOutgoings;
+            if (arrayList != null) {
+                Iterator<Transition> it = arrayList.iterator();
+                while (it.hasNext()) {
+                    Transition t = it.next();
+                    if (t.mEvent == null && (t.mCondition == null || t.mCondition.canProceed())) {
+                        this.mInvokedOutTransitions++;
+                        t.mState = 1;
+                        if (!this.mBranchStart) {
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
+        public final int getStatus() {
+            return this.mStatus;
         }
     }
 }

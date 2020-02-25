@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+
 import androidx.leanback.C0364R;
 import androidx.leanback.transition.TransitionHelper;
 import androidx.leanback.widget.DiffCallback;
@@ -32,32 +33,33 @@ import androidx.leanback.widget.GuidedActionAdapter;
 import androidx.leanback.widget.GuidedActionAdapterGroup;
 import androidx.leanback.widget.GuidedActionsStylist;
 import androidx.leanback.widget.NonOverlappingLinearLayout;
+
 import java.util.ArrayList;
 import java.util.List;
 
 @Deprecated
 public class GuidedStepFragment extends Fragment implements GuidedActionAdapter.FocusListener {
-    private static final boolean DEBUG = false;
-    private static final String ENTRY_NAME_ENTRANCE = "GuidedStepEntrance";
-    private static final String ENTRY_NAME_REPLACE = "GuidedStepDefault";
-    private static final String EXTRA_ACTION_PREFIX = "action_";
-    private static final String EXTRA_BUTTON_ACTION_PREFIX = "buttonaction_";
     public static final String EXTRA_UI_STYLE = "uiStyle";
-    private static final boolean IS_FRAMEWORK_FRAGMENT = true;
     @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
     public static final int SLIDE_FROM_BOTTOM = 1;
     @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
     public static final int SLIDE_FROM_SIDE = 0;
-    private static final String TAG = "GuidedStepF";
-    private static final String TAG_LEAN_BACK_ACTIONS_FRAGMENT = "leanBackGuidedStepFragment";
     public static final int UI_STYLE_ACTIVITY_ROOT = 2;
     @Deprecated
     public static final int UI_STYLE_DEFAULT = 0;
     public static final int UI_STYLE_ENTRANCE = 1;
     public static final int UI_STYLE_REPLACE = 0;
+    private static final boolean DEBUG = false;
+    private static final String ENTRY_NAME_ENTRANCE = "GuidedStepEntrance";
+    private static final String ENTRY_NAME_REPLACE = "GuidedStepDefault";
+    private static final String EXTRA_ACTION_PREFIX = "action_";
+    private static final String EXTRA_BUTTON_ACTION_PREFIX = "buttonaction_";
+    private static final boolean IS_FRAMEWORK_FRAGMENT = true;
+    private static final String TAG = "GuidedStepF";
+    private static final String TAG_LEAN_BACK_ACTIONS_FRAGMENT = "leanBackGuidedStepFragment";
+    GuidedActionsStylist mActionsStylist;
     private int entranceTransitionType = 0;
     private List<GuidedAction> mActions = new ArrayList();
-    GuidedActionsStylist mActionsStylist;
     private GuidedActionAdapter mAdapter;
     private GuidedActionAdapterGroup mAdapterGroup;
     private List<GuidedAction> mButtonActions = new ArrayList();
@@ -67,17 +69,94 @@ public class GuidedStepFragment extends Fragment implements GuidedActionAdapter.
     private GuidedActionAdapter mSubAdapter;
     private ContextThemeWrapper mThemeWrapper;
 
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    public static class DummyFragment extends Fragment {
-        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            View v = new View(inflater.getContext());
-            v.setVisibility(8);
-            return v;
+    public GuidedStepFragment() {
+        onProvideFragmentTransitions();
+    }
+
+    public static int add(FragmentManager fragmentManager, GuidedStepFragment fragment) {
+        return add(fragmentManager, fragment, 16908290);
+    }
+
+    public static int add(FragmentManager fragmentManager, GuidedStepFragment fragment, int id) {
+        GuidedStepFragment current = getCurrentGuidedStepFragment(fragmentManager);
+        int i = 1;
+        boolean inGuidedStep = current != null;
+        if (Build.VERSION.SDK_INT >= 21 && Build.VERSION.SDK_INT < 23 && !inGuidedStep) {
+            fragmentManager.beginTransaction().replace(id, new DummyFragment(), TAG_LEAN_BACK_ACTIONS_FRAGMENT).commit();
+        }
+        FragmentTransaction ft = fragmentManager.beginTransaction();
+        if (inGuidedStep) {
+            i = 0;
+        }
+        fragment.setUiStyle(i);
+        ft.addToBackStack(fragment.generateStackEntryName());
+        if (current != null) {
+            fragment.onAddSharedElementTransition(ft, current);
+        }
+        return ft.replace(id, fragment, TAG_LEAN_BACK_ACTIONS_FRAGMENT).commit();
+    }
+
+    private static void addNonNullSharedElementTransition(FragmentTransaction ft, View subView, String transitionName) {
+        if (Build.VERSION.SDK_INT >= 21 && subView != null) {
+            ft.addSharedElement(subView, transitionName);
         }
     }
 
-    public GuidedStepFragment() {
-        onProvideFragmentTransitions();
+    static String generateStackEntryName(int uiStyle, Class guidedStepFragmentClass) {
+        if (uiStyle == 0) {
+            return ENTRY_NAME_REPLACE + guidedStepFragmentClass.getName();
+        } else if (uiStyle != 1) {
+            return "";
+        } else {
+            return ENTRY_NAME_ENTRANCE + guidedStepFragmentClass.getName();
+        }
+    }
+
+    static boolean isStackEntryUiStyleEntrance(String backStackEntryName) {
+        return backStackEntryName != null && backStackEntryName.startsWith(ENTRY_NAME_ENTRANCE);
+    }
+
+    static String getGuidedStepFragmentClassName(String backStackEntryName) {
+        if (backStackEntryName.startsWith(ENTRY_NAME_REPLACE)) {
+            return backStackEntryName.substring(ENTRY_NAME_REPLACE.length());
+        }
+        if (backStackEntryName.startsWith(ENTRY_NAME_ENTRANCE)) {
+            return backStackEntryName.substring(ENTRY_NAME_ENTRANCE.length());
+        }
+        return "";
+    }
+
+    public static int addAsRoot(Activity activity, GuidedStepFragment fragment, int id) {
+        activity.getWindow().getDecorView();
+        FragmentManager fragmentManager = activity.getFragmentManager();
+        if (fragmentManager.findFragmentByTag(TAG_LEAN_BACK_ACTIONS_FRAGMENT) != null) {
+            Log.w(TAG, "Fragment is already exists, likely calling addAsRoot() when savedInstanceState is not null in Activity.onCreate().");
+            return -1;
+        }
+        FragmentTransaction ft = fragmentManager.beginTransaction();
+        fragment.setUiStyle(2);
+        return ft.replace(id, fragment, TAG_LEAN_BACK_ACTIONS_FRAGMENT).commit();
+    }
+
+    public static GuidedStepFragment getCurrentGuidedStepFragment(FragmentManager fm) {
+        Fragment f = fm.findFragmentByTag(TAG_LEAN_BACK_ACTIONS_FRAGMENT);
+        if (f instanceof GuidedStepFragment) {
+            return (GuidedStepFragment) f;
+        }
+        return null;
+    }
+
+    static boolean isSaveEnabled(GuidedAction action) {
+        return action.isAutoSaveRestoreEnabled() && action.getId() != -1;
+    }
+
+    private static boolean isGuidedStepTheme(Context context) {
+        int resId = C0364R.attr.guidedStepThemeFlag;
+        TypedValue typedValue = new TypedValue();
+        if (!context.getTheme().resolveAttribute(resId, typedValue, true) || typedValue.type != 18 || typedValue.data == 0) {
+            return false;
+        }
+        return true;
     }
 
     public GuidanceStylist onCreateGuidanceStylist() {
@@ -161,29 +240,6 @@ public class GuidedStepFragment extends Fragment implements GuidedActionAdapter.
         return -2;
     }
 
-    public static int add(FragmentManager fragmentManager, GuidedStepFragment fragment) {
-        return add(fragmentManager, fragment, 16908290);
-    }
-
-    public static int add(FragmentManager fragmentManager, GuidedStepFragment fragment, int id) {
-        GuidedStepFragment current = getCurrentGuidedStepFragment(fragmentManager);
-        int i = 1;
-        boolean inGuidedStep = current != null;
-        if (Build.VERSION.SDK_INT >= 21 && Build.VERSION.SDK_INT < 23 && !inGuidedStep) {
-            fragmentManager.beginTransaction().replace(id, new DummyFragment(), TAG_LEAN_BACK_ACTIONS_FRAGMENT).commit();
-        }
-        FragmentTransaction ft = fragmentManager.beginTransaction();
-        if (inGuidedStep) {
-            i = 0;
-        }
-        fragment.setUiStyle(i);
-        ft.addToBackStack(fragment.generateStackEntryName());
-        if (current != null) {
-            fragment.onAddSharedElementTransition(ft, current);
-        }
-        return ft.replace(id, fragment, TAG_LEAN_BACK_ACTIONS_FRAGMENT).commit();
-    }
-
     /* access modifiers changed from: protected */
     public void onAddSharedElementTransition(FragmentTransaction ft, GuidedStepFragment disappearing) {
         View fragmentView = disappearing.getView();
@@ -198,59 +254,9 @@ public class GuidedStepFragment extends Fragment implements GuidedActionAdapter.
         addNonNullSharedElementTransition(ft, fragmentView.findViewById(C0364R.C0366id.guidedactions_list_background2), "guidedactions_list_background2");
     }
 
-    private static void addNonNullSharedElementTransition(FragmentTransaction ft, View subView, String transitionName) {
-        if (Build.VERSION.SDK_INT >= 21 && subView != null) {
-            ft.addSharedElement(subView, transitionName);
-        }
-    }
-
     /* access modifiers changed from: package-private */
     public final String generateStackEntryName() {
         return generateStackEntryName(getUiStyle(), getClass());
-    }
-
-    static String generateStackEntryName(int uiStyle, Class guidedStepFragmentClass) {
-        if (uiStyle == 0) {
-            return ENTRY_NAME_REPLACE + guidedStepFragmentClass.getName();
-        } else if (uiStyle != 1) {
-            return "";
-        } else {
-            return ENTRY_NAME_ENTRANCE + guidedStepFragmentClass.getName();
-        }
-    }
-
-    static boolean isStackEntryUiStyleEntrance(String backStackEntryName) {
-        return backStackEntryName != null && backStackEntryName.startsWith(ENTRY_NAME_ENTRANCE);
-    }
-
-    static String getGuidedStepFragmentClassName(String backStackEntryName) {
-        if (backStackEntryName.startsWith(ENTRY_NAME_REPLACE)) {
-            return backStackEntryName.substring(ENTRY_NAME_REPLACE.length());
-        }
-        if (backStackEntryName.startsWith(ENTRY_NAME_ENTRANCE)) {
-            return backStackEntryName.substring(ENTRY_NAME_ENTRANCE.length());
-        }
-        return "";
-    }
-
-    public static int addAsRoot(Activity activity, GuidedStepFragment fragment, int id) {
-        activity.getWindow().getDecorView();
-        FragmentManager fragmentManager = activity.getFragmentManager();
-        if (fragmentManager.findFragmentByTag(TAG_LEAN_BACK_ACTIONS_FRAGMENT) != null) {
-            Log.w(TAG, "Fragment is already exists, likely calling addAsRoot() when savedInstanceState is not null in Activity.onCreate().");
-            return -1;
-        }
-        FragmentTransaction ft = fragmentManager.beginTransaction();
-        fragment.setUiStyle(2);
-        return ft.replace(id, fragment, TAG_LEAN_BACK_ACTIONS_FRAGMENT).commit();
-    }
-
-    public static GuidedStepFragment getCurrentGuidedStepFragment(FragmentManager fm) {
-        Fragment f = fm.findFragmentByTag(TAG_LEAN_BACK_ACTIONS_FRAGMENT);
-        if (f instanceof GuidedStepFragment) {
-            return (GuidedStepFragment) f;
-        }
-        return null;
     }
 
     public GuidanceStylist getGuidanceStylist() {
@@ -263,6 +269,14 @@ public class GuidedStepFragment extends Fragment implements GuidedActionAdapter.
 
     public List<GuidedAction> getButtonActions() {
         return this.mButtonActions;
+    }
+
+    public void setButtonActions(List<GuidedAction> actions) {
+        this.mButtonActions = actions;
+        GuidedActionAdapter guidedActionAdapter = this.mButtonAdapter;
+        if (guidedActionAdapter != null) {
+            guidedActionAdapter.setActions(this.mButtonActions);
+        }
     }
 
     public GuidedAction findButtonActionById(long id) {
@@ -290,14 +304,6 @@ public class GuidedStepFragment extends Fragment implements GuidedActionAdapter.
         return this.mButtonActionsStylist;
     }
 
-    public void setButtonActions(List<GuidedAction> actions) {
-        this.mButtonActions = actions;
-        GuidedActionAdapter guidedActionAdapter = this.mButtonAdapter;
-        if (guidedActionAdapter != null) {
-            guidedActionAdapter.setActions(this.mButtonActions);
-        }
-    }
-
     public void notifyButtonActionChanged(int position) {
         GuidedActionAdapter guidedActionAdapter = this.mButtonAdapter;
         if (guidedActionAdapter != null) {
@@ -313,16 +319,24 @@ public class GuidedStepFragment extends Fragment implements GuidedActionAdapter.
         return holder.itemView;
     }
 
-    public void setSelectedButtonActionPosition(int position) {
-        this.mButtonActionsStylist.getActionsGridView().setSelectedPosition(position);
-    }
-
     public int getSelectedButtonActionPosition() {
         return this.mButtonActionsStylist.getActionsGridView().getSelectedPosition();
     }
 
+    public void setSelectedButtonActionPosition(int position) {
+        this.mButtonActionsStylist.getActionsGridView().setSelectedPosition(position);
+    }
+
     public List<GuidedAction> getActions() {
         return this.mActions;
+    }
+
+    public void setActions(List<GuidedAction> actions) {
+        this.mActions = actions;
+        GuidedActionAdapter guidedActionAdapter = this.mAdapter;
+        if (guidedActionAdapter != null) {
+            guidedActionAdapter.setActions(this.mActions);
+        }
     }
 
     public GuidedAction findActionById(long id) {
@@ -346,14 +360,6 @@ public class GuidedStepFragment extends Fragment implements GuidedActionAdapter.
         return -1;
     }
 
-    public void setActions(List<GuidedAction> actions) {
-        this.mActions = actions;
-        GuidedActionAdapter guidedActionAdapter = this.mAdapter;
-        if (guidedActionAdapter != null) {
-            guidedActionAdapter.setActions(this.mActions);
-        }
-    }
-
     public void setActionsDiffCallback(DiffCallback<GuidedAction> diffCallback) {
         this.mAdapter.setDiffCallback(diffCallback);
     }
@@ -373,12 +379,12 @@ public class GuidedStepFragment extends Fragment implements GuidedActionAdapter.
         return holder.itemView;
     }
 
-    public void setSelectedActionPosition(int position) {
-        this.mActionsStylist.getActionsGridView().setSelectedPosition(position);
-    }
-
     public int getSelectedActionPosition() {
         return this.mActionsStylist.getActionsGridView().getSelectedPosition();
+    }
+
+    public void setSelectedActionPosition(int position) {
+        this.mActionsStylist.getActionsGridView().setSelectedPosition(position);
     }
 
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
@@ -443,6 +449,14 @@ public class GuidedStepFragment extends Fragment implements GuidedActionAdapter.
         return inflater.inflate(C0364R.layout.lb_guidedstep_background, container, false);
     }
 
+    public int getUiStyle() {
+        Bundle b = getArguments();
+        if (b == null) {
+            return 1;
+        }
+        return b.getInt("uiStyle", 1);
+    }
+
     public void setUiStyle(int style) {
         int oldStyle = getUiStyle();
         Bundle arguments = getArguments();
@@ -458,14 +472,6 @@ public class GuidedStepFragment extends Fragment implements GuidedActionAdapter.
         if (style != oldStyle) {
             onProvideFragmentTransitions();
         }
-    }
-
-    public int getUiStyle() {
-        Bundle b = getArguments();
-        if (b == null) {
-            return 1;
-        }
-        return b.getInt("uiStyle", 1);
     }
 
     public void onCreate(Bundle savedInstanceState) {
@@ -618,10 +624,6 @@ public class GuidedStepFragment extends Fragment implements GuidedActionAdapter.
         return EXTRA_BUTTON_ACTION_PREFIX + action.getId();
     }
 
-    static boolean isSaveEnabled(GuidedAction action) {
-        return action.isAutoSaveRestoreEnabled() && action.getId() != -1;
-    }
-
     /* access modifiers changed from: package-private */
     public final void onRestoreActions(List<GuidedAction> actions, Bundle savedInstanceState) {
         int size = actions.size();
@@ -670,15 +672,6 @@ public class GuidedStepFragment extends Fragment implements GuidedActionAdapter.
         super.onSaveInstanceState(outState);
         onSaveActions(this.mActions, outState);
         onSaveButtonActions(this.mButtonActions, outState);
-    }
-
-    private static boolean isGuidedStepTheme(Context context) {
-        int resId = C0364R.attr.guidedStepThemeFlag;
-        TypedValue typedValue = new TypedValue();
-        if (!context.getTheme().resolveAttribute(resId, typedValue, true) || typedValue.type != 18 || typedValue.data == 0) {
-            return false;
-        }
-        return true;
     }
 
     public void finishGuidedStepFragments() {
@@ -781,5 +774,14 @@ public class GuidedStepFragment extends Fragment implements GuidedActionAdapter.
         AnimatorSet set = new AnimatorSet();
         set.playTogether(animators);
         set.start();
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    public static class DummyFragment extends Fragment {
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            View v = new View(inflater.getContext());
+            v.setVisibility(8);
+            return v;
+        }
     }
 }

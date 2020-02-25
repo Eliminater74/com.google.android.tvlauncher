@@ -1,6 +1,7 @@
 package com.google.android.libraries.social.analytics.visualelement;
 
 import com.google.android.libraries.stitch.util.Objects;
+
 import java.io.Serializable;
 import java.util.Locale;
 

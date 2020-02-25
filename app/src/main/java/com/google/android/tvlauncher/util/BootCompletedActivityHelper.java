@@ -7,7 +7,9 @@ import android.content.pm.ResolveInfo;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
+
 import com.google.android.tvrecommendations.shared.util.AppUtil;
+
 import java.util.List;
 
 public class BootCompletedActivityHelper {

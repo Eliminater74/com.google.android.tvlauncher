@@ -1,6 +1,7 @@
 package com.google.android.libraries.performance.primes.aggregation.impl;
 
 import com.google.android.libraries.performance.primes.aggregation.MetricAggregatorIdentifier;
+
 import logs.proto.wireless.performance.mobile.AggregatedMetricProto;
 
 public final class MetricAggregator {

@@ -9,6 +9,14 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.CLASS)
 public @interface RequiresPermission {
 
+    String[] allOf() default {};
+
+    String[] anyOf() default {};
+
+    boolean conditional() default false;
+
+    String value() default "";
+
     @Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
     public @interface Read {
         RequiresPermission value() default @RequiresPermission;
@@ -18,12 +26,4 @@ public @interface RequiresPermission {
     public @interface Write {
         RequiresPermission value() default @RequiresPermission;
     }
-
-    String[] allOf() default {};
-
-    String[] anyOf() default {};
-
-    boolean conditional() default false;
-
-    String value() default "";
 }

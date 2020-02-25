@@ -2,19 +2,18 @@ package com.google.common.base;
 
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.CharMatcher;
+
 import java.util.BitSet;
 
 @GwtIncompatible
 final class SmallCharMatcher extends CharMatcher.NamedFastMatcher {
 
+    static final int MAX_SIZE = 1023;
     /* renamed from: C1 */
     private static final int f165C1 = -862048943;
-
     /* renamed from: C2 */
     private static final int f166C2 = 461845907;
     private static final double DESIRED_LOAD_FACTOR = 0.5d;
-    static final int MAX_SIZE = 1023;
     private final boolean containsZero;
     private final long filter;
     private final char[] table;
@@ -28,10 +27,6 @@ final class SmallCharMatcher extends CharMatcher.NamedFastMatcher {
 
     static int smear(int hashCode) {
         return Integer.rotateLeft(f165C1 * hashCode, 15) * f166C2;
-    }
-
-    private boolean checkFilter(int c) {
-        return 1 == ((this.filter >> c) & 1);
     }
 
     @VisibleForTesting
@@ -68,6 +63,10 @@ final class SmallCharMatcher extends CharMatcher.NamedFastMatcher {
             filter2 = filter3;
         }
         return new SmallCharMatcher(table2, filter2, containsZero2, description);
+    }
+
+    private boolean checkFilter(int c) {
+        return 1 == ((this.filter >> c) & 1);
     }
 
     public boolean matches(char c) {

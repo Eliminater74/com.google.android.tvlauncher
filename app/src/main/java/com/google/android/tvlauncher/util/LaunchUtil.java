@@ -3,6 +3,7 @@ package com.google.android.tvlauncher.util;
 import android.content.Intent;
 import android.support.p001v4.app.ActivityOptionsCompat;
 import android.view.View;
+
 import com.google.android.exoplayer2.C0841C;
 
 public final class LaunchUtil {

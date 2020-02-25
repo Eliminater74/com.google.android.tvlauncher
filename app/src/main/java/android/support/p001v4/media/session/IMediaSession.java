@@ -11,10 +11,9 @@ import android.os.RemoteException;
 import android.support.p001v4.media.MediaDescriptionCompat;
 import android.support.p001v4.media.MediaMetadataCompat;
 import android.support.p001v4.media.RatingCompat;
-import android.support.p001v4.media.session.IMediaControllerCallback;
-import android.support.p001v4.media.session.MediaSessionCompat;
 import android.text.TextUtils;
 import android.view.KeyEvent;
+
 import java.util.List;
 
 /* renamed from: android.support.v4.media.session.IMediaSession */
@@ -47,9 +46,13 @@ public interface IMediaSession extends IInterface {
 
     int getRepeatMode() throws RemoteException;
 
+    void setRepeatMode(int i) throws RemoteException;
+
     Bundle getSessionInfo() throws RemoteException;
 
     int getShuffleMode() throws RemoteException;
+
+    void setShuffleMode(int i) throws RemoteException;
 
     String getTag() throws RemoteException;
 
@@ -57,7 +60,11 @@ public interface IMediaSession extends IInterface {
 
     boolean isCaptioningEnabled() throws RemoteException;
 
+    void setCaptioningEnabled(boolean z) throws RemoteException;
+
     boolean isShuffleModeEnabledRemoved() throws RemoteException;
+
+    void setShuffleModeEnabledRemoved(boolean z) throws RemoteException;
 
     boolean isTransportControlEnabled() throws RemoteException;
 
@@ -103,15 +110,7 @@ public interface IMediaSession extends IInterface {
 
     boolean sendMediaButton(KeyEvent keyEvent) throws RemoteException;
 
-    void setCaptioningEnabled(boolean z) throws RemoteException;
-
     void setPlaybackSpeed(float f) throws RemoteException;
-
-    void setRepeatMode(int i) throws RemoteException;
-
-    void setShuffleMode(int i) throws RemoteException;
-
-    void setShuffleModeEnabledRemoved(boolean z) throws RemoteException;
 
     void setVolumeTo(int i, int i2, String str) throws RemoteException;
 
@@ -123,7 +122,6 @@ public interface IMediaSession extends IInterface {
 
     /* renamed from: android.support.v4.media.session.IMediaSession$Stub */
     public static abstract class Stub extends Binder implements IMediaSession {
-        private static final String DESCRIPTOR = "android.support.v4.media.session.IMediaSession";
         static final int TRANSACTION_addQueueItem = 41;
         static final int TRANSACTION_addQueueItemAt = 42;
         static final int TRANSACTION_adjustVolume = 11;
@@ -175,6 +173,7 @@ public interface IMediaSession extends IInterface {
         static final int TRANSACTION_skipToQueueItem = 17;
         static final int TRANSACTION_stop = 19;
         static final int TRANSACTION_unregisterCallbackListener = 4;
+        private static final String DESCRIPTOR = "android.support.v4.media.session.IMediaSession";
 
         public Stub() {
             attachInterface(this, DESCRIPTOR);
@@ -988,6 +987,20 @@ public interface IMediaSession extends IInterface {
                 }
             }
 
+            public void setCaptioningEnabled(boolean enabled) throws RemoteException {
+                Parcel _data = Parcel.obtain();
+                Parcel _reply = Parcel.obtain();
+                try {
+                    _data.writeInterfaceToken(Stub.DESCRIPTOR);
+                    _data.writeInt(enabled ? 1 : 0);
+                    this.mRemote.transact(46, _data, _reply, 0);
+                    _reply.readException();
+                } finally {
+                    _reply.recycle();
+                    _data.recycle();
+                }
+            }
+
             public int getRepeatMode() throws RemoteException {
                 Parcel _data = Parcel.obtain();
                 Parcel _reply = Parcel.obtain();
@@ -996,6 +1009,20 @@ public interface IMediaSession extends IInterface {
                     this.mRemote.transact(37, _data, _reply, 0);
                     _reply.readException();
                     return _reply.readInt();
+                } finally {
+                    _reply.recycle();
+                    _data.recycle();
+                }
+            }
+
+            public void setRepeatMode(int repeatMode) throws RemoteException {
+                Parcel _data = Parcel.obtain();
+                Parcel _reply = Parcel.obtain();
+                try {
+                    _data.writeInterfaceToken(Stub.DESCRIPTOR);
+                    _data.writeInt(repeatMode);
+                    this.mRemote.transact(39, _data, _reply, 0);
+                    _reply.readException();
                 } finally {
                     _reply.recycle();
                     _data.recycle();
@@ -1020,6 +1047,20 @@ public interface IMediaSession extends IInterface {
                 }
             }
 
+            public void setShuffleModeEnabledRemoved(boolean shuffleMode) throws RemoteException {
+                Parcel _data = Parcel.obtain();
+                Parcel _reply = Parcel.obtain();
+                try {
+                    _data.writeInterfaceToken(Stub.DESCRIPTOR);
+                    _data.writeInt(shuffleMode ? 1 : 0);
+                    this.mRemote.transact(40, _data, _reply, 0);
+                    _reply.readException();
+                } finally {
+                    _reply.recycle();
+                    _data.recycle();
+                }
+            }
+
             public int getShuffleMode() throws RemoteException {
                 Parcel _data = Parcel.obtain();
                 Parcel _reply = Parcel.obtain();
@@ -1028,6 +1069,20 @@ public interface IMediaSession extends IInterface {
                     this.mRemote.transact(47, _data, _reply, 0);
                     _reply.readException();
                     return _reply.readInt();
+                } finally {
+                    _reply.recycle();
+                    _data.recycle();
+                }
+            }
+
+            public void setShuffleMode(int shuffleMode) throws RemoteException {
+                Parcel _data = Parcel.obtain();
+                Parcel _reply = Parcel.obtain();
+                try {
+                    _data.writeInterfaceToken(Stub.DESCRIPTOR);
+                    _data.writeInt(shuffleMode);
+                    this.mRemote.transact(48, _data, _reply, 0);
+                    _reply.readException();
                 } finally {
                     _reply.recycle();
                     _data.recycle();
@@ -1439,62 +1494,6 @@ public interface IMediaSession extends IInterface {
                     _data.writeInterfaceToken(Stub.DESCRIPTOR);
                     _data.writeFloat(speed);
                     this.mRemote.transact(49, _data, _reply, 0);
-                    _reply.readException();
-                } finally {
-                    _reply.recycle();
-                    _data.recycle();
-                }
-            }
-
-            public void setCaptioningEnabled(boolean enabled) throws RemoteException {
-                Parcel _data = Parcel.obtain();
-                Parcel _reply = Parcel.obtain();
-                try {
-                    _data.writeInterfaceToken(Stub.DESCRIPTOR);
-                    _data.writeInt(enabled ? 1 : 0);
-                    this.mRemote.transact(46, _data, _reply, 0);
-                    _reply.readException();
-                } finally {
-                    _reply.recycle();
-                    _data.recycle();
-                }
-            }
-
-            public void setRepeatMode(int repeatMode) throws RemoteException {
-                Parcel _data = Parcel.obtain();
-                Parcel _reply = Parcel.obtain();
-                try {
-                    _data.writeInterfaceToken(Stub.DESCRIPTOR);
-                    _data.writeInt(repeatMode);
-                    this.mRemote.transact(39, _data, _reply, 0);
-                    _reply.readException();
-                } finally {
-                    _reply.recycle();
-                    _data.recycle();
-                }
-            }
-
-            public void setShuffleModeEnabledRemoved(boolean shuffleMode) throws RemoteException {
-                Parcel _data = Parcel.obtain();
-                Parcel _reply = Parcel.obtain();
-                try {
-                    _data.writeInterfaceToken(Stub.DESCRIPTOR);
-                    _data.writeInt(shuffleMode ? 1 : 0);
-                    this.mRemote.transact(40, _data, _reply, 0);
-                    _reply.readException();
-                } finally {
-                    _reply.recycle();
-                    _data.recycle();
-                }
-            }
-
-            public void setShuffleMode(int shuffleMode) throws RemoteException {
-                Parcel _data = Parcel.obtain();
-                Parcel _reply = Parcel.obtain();
-                try {
-                    _data.writeInterfaceToken(Stub.DESCRIPTOR);
-                    _data.writeInt(shuffleMode);
-                    this.mRemote.transact(48, _data, _reply, 0);
                     _reply.readException();
                 } finally {
                     _reply.recycle();

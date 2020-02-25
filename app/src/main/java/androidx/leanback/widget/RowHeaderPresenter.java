@@ -7,8 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import androidx.leanback.C0364R;
-import androidx.leanback.widget.Presenter;
 
 public class RowHeaderPresenter extends Presenter {
     private final boolean mAnimateSelect;
@@ -32,47 +32,22 @@ public class RowHeaderPresenter extends Presenter {
         this.mAnimateSelect = animateSelect;
     }
 
-    public void setNullItemVisibilityGone(boolean nullItemVisibilityGone) {
-        this.mNullItemVisibilityGone = nullItemVisibilityGone;
+    protected static float getFontDescent(TextView textView, Paint fontMeasurePaint) {
+        if (fontMeasurePaint.getTextSize() != textView.getTextSize()) {
+            fontMeasurePaint.setTextSize(textView.getTextSize());
+        }
+        if (fontMeasurePaint.getTypeface() != textView.getTypeface()) {
+            fontMeasurePaint.setTypeface(textView.getTypeface());
+        }
+        return fontMeasurePaint.descent();
     }
 
     public boolean isNullItemVisibilityGone() {
         return this.mNullItemVisibilityGone;
     }
 
-    public static class ViewHolder extends Presenter.ViewHolder {
-        TextView mDescriptionView;
-        int mOriginalTextColor;
-        float mSelectLevel;
-        RowHeaderView mTitleView;
-        float mUnselectAlpha;
-
-        public ViewHolder(View view) {
-            super(view);
-            this.mTitleView = (RowHeaderView) view.findViewById(C0364R.C0366id.row_header);
-            this.mDescriptionView = (TextView) view.findViewById(C0364R.C0366id.row_header_description);
-            initColors();
-        }
-
-        @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-        public ViewHolder(RowHeaderView view) {
-            super(view);
-            this.mTitleView = view;
-            initColors();
-        }
-
-        /* access modifiers changed from: package-private */
-        public void initColors() {
-            RowHeaderView rowHeaderView = this.mTitleView;
-            if (rowHeaderView != null) {
-                this.mOriginalTextColor = rowHeaderView.getCurrentTextColor();
-            }
-            this.mUnselectAlpha = this.view.getResources().getFraction(C0364R.fraction.lb_browse_header_unselect_alpha, 1, 1);
-        }
-
-        public final float getSelectLevel() {
-            return this.mSelectLevel;
-        }
+    public void setNullItemVisibilityGone(boolean nullItemVisibilityGone) {
+        this.mNullItemVisibilityGone = nullItemVisibilityGone;
     }
 
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
@@ -154,13 +129,38 @@ public class RowHeaderPresenter extends Presenter {
         return space;
     }
 
-    protected static float getFontDescent(TextView textView, Paint fontMeasurePaint) {
-        if (fontMeasurePaint.getTextSize() != textView.getTextSize()) {
-            fontMeasurePaint.setTextSize(textView.getTextSize());
+    public static class ViewHolder extends Presenter.ViewHolder {
+        TextView mDescriptionView;
+        int mOriginalTextColor;
+        float mSelectLevel;
+        RowHeaderView mTitleView;
+        float mUnselectAlpha;
+
+        public ViewHolder(View view) {
+            super(view);
+            this.mTitleView = (RowHeaderView) view.findViewById(C0364R.C0366id.row_header);
+            this.mDescriptionView = (TextView) view.findViewById(C0364R.C0366id.row_header_description);
+            initColors();
         }
-        if (fontMeasurePaint.getTypeface() != textView.getTypeface()) {
-            fontMeasurePaint.setTypeface(textView.getTypeface());
+
+        @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+        public ViewHolder(RowHeaderView view) {
+            super(view);
+            this.mTitleView = view;
+            initColors();
         }
-        return fontMeasurePaint.descent();
+
+        /* access modifiers changed from: package-private */
+        public void initColors() {
+            RowHeaderView rowHeaderView = this.mTitleView;
+            if (rowHeaderView != null) {
+                this.mOriginalTextColor = rowHeaderView.getCurrentTextColor();
+            }
+            this.mUnselectAlpha = this.view.getResources().getFraction(C0364R.fraction.lb_browse_header_unselect_alpha, 1, 1);
+        }
+
+        public final float getSelectLevel() {
+            return this.mSelectLevel;
+        }
     }
 }

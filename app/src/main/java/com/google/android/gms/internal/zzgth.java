@@ -1,6 +1,7 @@
 package com.google.android.gms.internal;
 
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.io.IOException;
 
 /* compiled from: CountersProto */
@@ -9,6 +10,11 @@ public final class zzgth extends zzgsb<zzgth> {
     public long zza = 0;
     public zzgtg[] zzb = zzgtg.zza();
     private String zzd = "";
+
+    public zzgth() {
+        this.zzay = null;
+        this.zzaz = -1;
+    }
 
     public static zzgth[] zza() {
         if (zzc == null) {
@@ -19,11 +25,6 @@ public final class zzgth extends zzgsb<zzgth> {
             }
         }
         return zzc;
-    }
-
-    public zzgth() {
-        this.zzay = null;
-        this.zzaz = -1;
     }
 
     public final boolean equals(Object obj) {

@@ -5,19 +5,99 @@ import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.leanback.C0364R;
-import androidx.leanback.widget.ControlBar;
-import androidx.leanback.widget.ObjectAdapter;
-import androidx.leanback.widget.Presenter;
 
 class ControlBarPresenter extends Presenter {
     static final int MAX_CONTROLS = 7;
     private static int sChildMarginDefault;
     private static int sControlIconWidth;
     boolean mDefaultFocusToMiddle = true;
-    private int mLayoutResourceId;
     OnControlClickedListener mOnControlClickedListener;
     OnControlSelectedListener mOnControlSelectedListener;
+    private int mLayoutResourceId;
+
+    public ControlBarPresenter(int layoutResourceId) {
+        this.mLayoutResourceId = layoutResourceId;
+    }
+
+    public int getLayoutResourceId() {
+        return this.mLayoutResourceId;
+    }
+
+    public void setOnControlClickedListener(OnControlClickedListener listener) {
+        this.mOnControlClickedListener = listener;
+    }
+
+    public OnControlClickedListener getOnItemViewClickedListener() {
+        return this.mOnControlClickedListener;
+    }
+
+    public void setOnControlSelectedListener(OnControlSelectedListener listener) {
+        this.mOnControlSelectedListener = listener;
+    }
+
+    public OnControlSelectedListener getOnItemControlListener() {
+        return this.mOnControlSelectedListener;
+    }
+
+    public void setBackgroundColor(ViewHolder vh, int color) {
+        vh.mControlsContainer.setBackgroundColor(color);
+    }
+
+    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+     method: ClspMth{android.view.LayoutInflater.inflate(int, android.view.ViewGroup, boolean):android.view.View}
+     arg types: [int, android.view.ViewGroup, int]
+     candidates:
+      ClspMth{android.view.LayoutInflater.inflate(org.xmlpull.v1.XmlPullParser, android.view.ViewGroup, boolean):android.view.View}
+      ClspMth{android.view.LayoutInflater.inflate(int, android.view.ViewGroup, boolean):android.view.View} */
+    public Presenter.ViewHolder onCreateViewHolder(ViewGroup parent) {
+        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(getLayoutResourceId(), parent, false));
+    }
+
+    public void onBindViewHolder(Presenter.ViewHolder holder, Object item) {
+        ViewHolder vh = (ViewHolder) holder;
+        BoundData data = (BoundData) item;
+        if (vh.mAdapter != data.adapter) {
+            vh.mAdapter = data.adapter;
+            if (vh.mAdapter != null) {
+                vh.mAdapter.registerObserver(vh.mDataObserver);
+            }
+        }
+        vh.mPresenter = data.presenter;
+        vh.mData = data;
+        vh.showControls(vh.mPresenter);
+    }
+
+    public void onUnbindViewHolder(Presenter.ViewHolder holder) {
+        ViewHolder vh = (ViewHolder) holder;
+        if (vh.mAdapter != null) {
+            vh.mAdapter.unregisterObserver(vh.mDataObserver);
+            vh.mAdapter = null;
+        }
+        vh.mData = null;
+    }
+
+    /* access modifiers changed from: package-private */
+    public int getChildMarginDefault(Context context) {
+        if (sChildMarginDefault == 0) {
+            sChildMarginDefault = context.getResources().getDimensionPixelSize(C0364R.dimen.lb_playback_controls_child_margin_default);
+        }
+        return sChildMarginDefault;
+    }
+
+    /* access modifiers changed from: package-private */
+    public int getControlIconWidth(Context context) {
+        if (sControlIconWidth == 0) {
+            sControlIconWidth = context.getResources().getDimensionPixelSize(C0364R.dimen.lb_control_icon_width);
+        }
+        return sControlIconWidth;
+    }
+
+    /* access modifiers changed from: package-private */
+    public void setDefaultFocusToMiddle(boolean defaultFocusToMiddle) {
+        this.mDefaultFocusToMiddle = defaultFocusToMiddle;
+    }
 
     interface OnControlClickedListener {
         void onControlClicked(Presenter.ViewHolder viewHolder, Object obj, BoundData boundData);
@@ -141,87 +221,5 @@ class ControlBarPresenter extends Presenter {
         public ObjectAdapter getDisplayedAdapter() {
             return this.mAdapter;
         }
-    }
-
-    public ControlBarPresenter(int layoutResourceId) {
-        this.mLayoutResourceId = layoutResourceId;
-    }
-
-    public int getLayoutResourceId() {
-        return this.mLayoutResourceId;
-    }
-
-    public void setOnControlClickedListener(OnControlClickedListener listener) {
-        this.mOnControlClickedListener = listener;
-    }
-
-    public OnControlClickedListener getOnItemViewClickedListener() {
-        return this.mOnControlClickedListener;
-    }
-
-    public void setOnControlSelectedListener(OnControlSelectedListener listener) {
-        this.mOnControlSelectedListener = listener;
-    }
-
-    public OnControlSelectedListener getOnItemControlListener() {
-        return this.mOnControlSelectedListener;
-    }
-
-    public void setBackgroundColor(ViewHolder vh, int color) {
-        vh.mControlsContainer.setBackgroundColor(color);
-    }
-
-    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-     method: ClspMth{android.view.LayoutInflater.inflate(int, android.view.ViewGroup, boolean):android.view.View}
-     arg types: [int, android.view.ViewGroup, int]
-     candidates:
-      ClspMth{android.view.LayoutInflater.inflate(org.xmlpull.v1.XmlPullParser, android.view.ViewGroup, boolean):android.view.View}
-      ClspMth{android.view.LayoutInflater.inflate(int, android.view.ViewGroup, boolean):android.view.View} */
-    public Presenter.ViewHolder onCreateViewHolder(ViewGroup parent) {
-        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(getLayoutResourceId(), parent, false));
-    }
-
-    public void onBindViewHolder(Presenter.ViewHolder holder, Object item) {
-        ViewHolder vh = (ViewHolder) holder;
-        BoundData data = (BoundData) item;
-        if (vh.mAdapter != data.adapter) {
-            vh.mAdapter = data.adapter;
-            if (vh.mAdapter != null) {
-                vh.mAdapter.registerObserver(vh.mDataObserver);
-            }
-        }
-        vh.mPresenter = data.presenter;
-        vh.mData = data;
-        vh.showControls(vh.mPresenter);
-    }
-
-    public void onUnbindViewHolder(Presenter.ViewHolder holder) {
-        ViewHolder vh = (ViewHolder) holder;
-        if (vh.mAdapter != null) {
-            vh.mAdapter.unregisterObserver(vh.mDataObserver);
-            vh.mAdapter = null;
-        }
-        vh.mData = null;
-    }
-
-    /* access modifiers changed from: package-private */
-    public int getChildMarginDefault(Context context) {
-        if (sChildMarginDefault == 0) {
-            sChildMarginDefault = context.getResources().getDimensionPixelSize(C0364R.dimen.lb_playback_controls_child_margin_default);
-        }
-        return sChildMarginDefault;
-    }
-
-    /* access modifiers changed from: package-private */
-    public int getControlIconWidth(Context context) {
-        if (sControlIconWidth == 0) {
-            sControlIconWidth = context.getResources().getDimensionPixelSize(C0364R.dimen.lb_control_icon_width);
-        }
-        return sControlIconWidth;
-    }
-
-    /* access modifiers changed from: package-private */
-    public void setDefaultFocusToMiddle(boolean defaultFocusToMiddle) {
-        this.mDefaultFocusToMiddle = defaultFocusToMiddle;
     }
 }

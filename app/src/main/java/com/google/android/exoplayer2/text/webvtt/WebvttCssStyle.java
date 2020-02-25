@@ -1,7 +1,9 @@
 package com.google.android.exoplayer2.text.webvtt;
 
 import android.text.Layout;
+
 import com.google.android.exoplayer2.util.Util;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -13,15 +15,14 @@ public final class WebvttCssStyle {
     public static final int FONT_SIZE_UNIT_EM = 2;
     public static final int FONT_SIZE_UNIT_PERCENT = 3;
     public static final int FONT_SIZE_UNIT_PIXEL = 1;
-    private static final int OFF = 0;
-
-    /* renamed from: ON */
-    private static final int f104ON = 1;
     public static final int STYLE_BOLD = 1;
     public static final int STYLE_BOLD_ITALIC = 3;
     public static final int STYLE_ITALIC = 2;
     public static final int STYLE_NORMAL = 0;
     public static final int UNSPECIFIED = -1;
+    private static final int OFF = 0;
+    /* renamed from: ON */
+    private static final int f104ON = 1;
     private int backgroundColor;
     private int bold;
     private int fontColor;
@@ -39,23 +40,18 @@ public final class WebvttCssStyle {
     private Layout.Alignment textAlign;
     private int underline;
 
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface FontSizeUnit {
-    }
-
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    private @interface OptionalBoolean {
-    }
-
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface StyleFlags {
-    }
-
     public WebvttCssStyle() {
         reset();
+    }
+
+    private static int updateScoreForMatch(int currentScore, String target, String actual, int score) {
+        if (target.isEmpty() || currentScore == -1) {
+            return currentScore;
+        }
+        if (target.equals(actual)) {
+            return currentScore + score;
+        }
+        return -1;
     }
 
     public void reset() {
@@ -193,9 +189,8 @@ public final class WebvttCssStyle {
         return this;
     }
 
-    public WebvttCssStyle setFontSize(float fontSize2) {
-        this.fontSize = fontSize2;
-        return this;
+    public int getFontSizeUnit() {
+        return this.fontSizeUnit;
     }
 
     public WebvttCssStyle setFontSizeUnit(short unit) {
@@ -203,12 +198,13 @@ public final class WebvttCssStyle {
         return this;
     }
 
-    public int getFontSizeUnit() {
-        return this.fontSizeUnit;
-    }
-
     public float getFontSize() {
         return this.fontSize;
+    }
+
+    public WebvttCssStyle setFontSize(float fontSize2) {
+        this.fontSize = fontSize2;
+        return this;
     }
 
     public void cascadeFrom(WebvttCssStyle style) {
@@ -245,13 +241,18 @@ public final class WebvttCssStyle {
         }
     }
 
-    private static int updateScoreForMatch(int currentScore, String target, String actual, int score) {
-        if (target.isEmpty() || currentScore == -1) {
-            return currentScore;
-        }
-        if (target.equals(actual)) {
-            return currentScore + score;
-        }
-        return -1;
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface FontSizeUnit {
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    private @interface OptionalBoolean {
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface StyleFlags {
     }
 }

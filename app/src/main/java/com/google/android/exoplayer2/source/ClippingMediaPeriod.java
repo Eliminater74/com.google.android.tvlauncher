@@ -5,31 +5,42 @@ import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.FormatHolder;
 import com.google.android.exoplayer2.SeekParameters;
 import com.google.android.exoplayer2.decoder.DecoderInputBuffer;
-import com.google.android.exoplayer2.source.MediaPeriod;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.IOException;
 import java.util.List;
 
 public final class ClippingMediaPeriod implements MediaPeriod, MediaPeriod.Callback {
-    private MediaPeriod.Callback callback;
-    long endUs;
     public final MediaPeriod mediaPeriod;
+    long endUs;
+    long startUs;
+    private MediaPeriod.Callback callback;
     private long pendingInitialDiscontinuityPositionUs;
     private ClippingSampleStream[] sampleStreams = new ClippingSampleStream[0];
-    long startUs;
-
-    public List getStreamKeys(List list) {
-        return MediaPeriod$$CC.getStreamKeys$$dflt$$(this, list);
-    }
 
     public ClippingMediaPeriod(MediaPeriod mediaPeriod2, boolean enableInitialDiscontinuity, long startUs2, long endUs2) {
         this.mediaPeriod = mediaPeriod2;
         this.pendingInitialDiscontinuityPositionUs = enableInitialDiscontinuity ? startUs2 : C0841C.TIME_UNSET;
         this.startUs = startUs2;
         this.endUs = endUs2;
+    }
+
+    private static boolean shouldKeepInitialDiscontinuity(long startUs2, TrackSelection[] selections) {
+        if (startUs2 != 0) {
+            for (TrackSelection trackSelection : selections) {
+                if (trackSelection != null && !MimeTypes.isAudio(trackSelection.getSelectedFormat().sampleMimeType)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public List getStreamKeys(List list) {
+        return MediaPeriod$$CC.getStreamKeys$$dflt$$(this, list);
     }
 
     public void updateClipping(long startUs2, long endUs2) {
@@ -285,17 +296,6 @@ public final class ClippingMediaPeriod implements MediaPeriod, MediaPeriod.Callb
             return seekParameters;
         }
         return new SeekParameters(toleranceBeforeUs, toleranceAfterUs);
-    }
-
-    private static boolean shouldKeepInitialDiscontinuity(long startUs2, TrackSelection[] selections) {
-        if (startUs2 != 0) {
-            for (TrackSelection trackSelection : selections) {
-                if (trackSelection != null && !MimeTypes.isAudio(trackSelection.getSelectedFormat().sampleMimeType)) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     private final class ClippingSampleStream implements SampleStream {

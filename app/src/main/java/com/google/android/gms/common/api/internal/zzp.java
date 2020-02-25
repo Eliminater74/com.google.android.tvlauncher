@@ -6,26 +6,22 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+
 import java.util.concurrent.atomic.AtomicReference;
 
 /* compiled from: BaseLifecycleHelper */
 public abstract class zzp extends LifecycleCallback implements DialogInterface.OnCancelListener {
-    protected volatile boolean zza;
     protected final AtomicReference<zzq> zzb;
     protected final GoogleApiAvailability zzc;
     private final Handler zze;
+    protected volatile boolean zza;
 
     protected zzp(zzcf zzcf) {
         this(zzcf, GoogleApiAvailability.getInstance());
     }
-
-    /* access modifiers changed from: protected */
-    public abstract void zza(ConnectionResult connectionResult, int i);
-
-    /* access modifiers changed from: protected */
-    public abstract void zzc();
 
     private zzp(zzcf zzcf, GoogleApiAvailability googleApiAvailability) {
         super(zzcf);
@@ -33,6 +29,19 @@ public abstract class zzp extends LifecycleCallback implements DialogInterface.O
         this.zze = new Handler(Looper.getMainLooper());
         this.zzc = googleApiAvailability;
     }
+
+    private static int zza(@Nullable zzq zzq) {
+        if (zzq == null) {
+            return -1;
+        }
+        return zzq.zza();
+    }
+
+    /* access modifiers changed from: protected */
+    public abstract void zza(ConnectionResult connectionResult, int i);
+
+    /* access modifiers changed from: protected */
+    public abstract void zzc();
 
     public void onCancel(DialogInterface dialogInterface) {
         zza(new ConnectionResult(13, null), zza(this.zzb.get()));
@@ -157,12 +166,5 @@ public abstract class zzp extends LifecycleCallback implements DialogInterface.O
         if (this.zzb.compareAndSet(null, zzq)) {
             this.zze.post(new zzr(this, zzq));
         }
-    }
-
-    private static int zza(@Nullable zzq zzq) {
-        if (zzq == null) {
-            return -1;
-        }
-        return zzq.zza();
     }
 }

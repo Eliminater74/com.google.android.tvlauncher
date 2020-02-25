@@ -1,6 +1,7 @@
 package com.google.android.libraries.performance.primes.scenario;
 
 import android.support.annotation.Nullable;
+
 import com.google.android.libraries.performance.primes.NoPiiString;
 import com.google.android.libraries.stitch.util.Preconditions;
 
@@ -13,16 +14,16 @@ public final class ScenarioEndInfo {
         this.end = end2;
     }
 
+    public static Builder newBuilder() {
+        return new Builder();
+    }
+
     public String getScenarioName() {
         return this.scenarioName;
     }
 
     public String getEnd() {
         return this.end;
-    }
-
-    public static Builder newBuilder() {
-        return new Builder();
     }
 
     public static final class Builder {

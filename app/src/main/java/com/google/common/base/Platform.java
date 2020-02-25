@@ -1,13 +1,15 @@
 package com.google.common.base;
 
 import com.google.common.annotations.GwtCompatible;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.lang.ref.WeakReference;
 import java.util.Locale;
 import java.util.ServiceConfigurationError;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible(emulated = true)
 final class Platform {

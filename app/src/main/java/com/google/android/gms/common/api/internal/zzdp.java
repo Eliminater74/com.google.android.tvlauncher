@@ -1,6 +1,7 @@
 package com.google.android.gms.common.api.internal;
 
 import android.support.annotation.WorkerThread;
+
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Result;
 

@@ -1,6 +1,7 @@
 package com.google.android.gms.internal;
 
 import java.security.cert.X509Certificate;
+
 import javax.net.ssl.X509TrustManager;
 
 /* compiled from: SSLCertificateSocketFactory */

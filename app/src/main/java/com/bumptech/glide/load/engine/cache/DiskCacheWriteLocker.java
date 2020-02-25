@@ -1,6 +1,7 @@
 package com.bumptech.glide.load.engine.cache;
 
 import com.bumptech.glide.util.Preconditions;
+
 import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.Map;
@@ -67,8 +68,8 @@ final class DiskCacheWriteLocker {
     }
 
     private static class WriteLock {
-        int interestedThreads;
         final Lock lock = new ReentrantLock();
+        int interestedThreads;
 
         WriteLock() {
         }

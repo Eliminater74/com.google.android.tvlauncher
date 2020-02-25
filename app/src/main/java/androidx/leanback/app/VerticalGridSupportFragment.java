@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.leanback.C0364R;
 import androidx.leanback.transition.TransitionHelper;
 import androidx.leanback.util.StateMachine;
@@ -20,12 +21,18 @@ import androidx.leanback.widget.VerticalGridPresenter;
 public class VerticalGridSupportFragment extends BaseSupportFragment {
     static final boolean DEBUG = false;
     static final String TAG = "VerticalGF";
+    VerticalGridPresenter.ViewHolder mGridViewHolder;
+    OnItemViewSelectedListener mOnItemViewSelectedListener;
+    private ObjectAdapter mAdapter;
+    private VerticalGridPresenter mGridPresenter;
     final StateMachine.State STATE_SET_ENTRANCE_START_STATE = new StateMachine.State("SET_ENTRANCE_START_STATE") {
         public void run() {
             VerticalGridSupportFragment.this.setEntranceTransitionState(false);
         }
     };
-    private ObjectAdapter mAdapter;
+    private OnItemViewClickedListener mOnItemViewClickedListener;
+    private Object mSceneAfterEntranceTransition;
+    private int mSelectedPosition = -1;
     private final OnChildLaidOutListener mChildLaidOutListener = new OnChildLaidOutListener() {
         public void onChildLaidOut(ViewGroup parent, View view, int position, long id) {
             if (position == 0) {
@@ -33,12 +40,6 @@ public class VerticalGridSupportFragment extends BaseSupportFragment {
             }
         }
     };
-    private VerticalGridPresenter mGridPresenter;
-    VerticalGridPresenter.ViewHolder mGridViewHolder;
-    private OnItemViewClickedListener mOnItemViewClickedListener;
-    OnItemViewSelectedListener mOnItemViewSelectedListener;
-    private Object mSceneAfterEntranceTransition;
-    private int mSelectedPosition = -1;
     private final OnItemViewSelectedListener mViewSelectedListener = new OnItemViewSelectedListener() {
         public void onItemSelected(Presenter.ViewHolder itemViewHolder, Object item, RowPresenter.ViewHolder rowViewHolder, Row row) {
             VerticalGridSupportFragment.this.gridOnItemSelected(VerticalGridSupportFragment.this.mGridViewHolder.getGridView().getSelectedPosition());
@@ -60,6 +61,10 @@ public class VerticalGridSupportFragment extends BaseSupportFragment {
         this.mStateMachine.addTransition(this.STATE_ENTRANCE_ON_PREPARED, this.STATE_SET_ENTRANCE_START_STATE, this.EVT_ON_CREATEVIEW);
     }
 
+    public VerticalGridPresenter getGridPresenter() {
+        return this.mGridPresenter;
+    }
+
     public void setGridPresenter(VerticalGridPresenter gridPresenter) {
         if (gridPresenter != null) {
             this.mGridPresenter = gridPresenter;
@@ -74,17 +79,13 @@ public class VerticalGridSupportFragment extends BaseSupportFragment {
         throw new IllegalArgumentException("Grid presenter may not be null");
     }
 
-    public VerticalGridPresenter getGridPresenter() {
-        return this.mGridPresenter;
+    public ObjectAdapter getAdapter() {
+        return this.mAdapter;
     }
 
     public void setAdapter(ObjectAdapter adapter) {
         this.mAdapter = adapter;
         updateAdapter();
-    }
-
-    public ObjectAdapter getAdapter() {
-        return this.mAdapter;
     }
 
     public void setOnItemViewSelectedListener(OnItemViewSelectedListener listener) {
@@ -110,16 +111,16 @@ public class VerticalGridSupportFragment extends BaseSupportFragment {
         }
     }
 
+    public OnItemViewClickedListener getOnItemViewClickedListener() {
+        return this.mOnItemViewClickedListener;
+    }
+
     public void setOnItemViewClickedListener(OnItemViewClickedListener listener) {
         this.mOnItemViewClickedListener = listener;
         VerticalGridPresenter verticalGridPresenter = this.mGridPresenter;
         if (verticalGridPresenter != null) {
             verticalGridPresenter.setOnItemViewClickedListener(this.mOnItemViewClickedListener);
         }
-    }
-
-    public OnItemViewClickedListener getOnItemViewClickedListener() {
-        return this.mOnItemViewClickedListener;
     }
 
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead

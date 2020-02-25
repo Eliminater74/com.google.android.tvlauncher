@@ -5,6 +5,7 @@ import android.database.ContentObserver;
 import android.support.annotation.GuardedBy;
 import android.support.p001v4.content.PermissionChecker;
 import android.util.Log;
+
 import com.google.android.gsf.Gservices;
 
 final class GservicesLoader implements FlagLoader {
@@ -12,17 +13,6 @@ final class GservicesLoader implements FlagLoader {
     @GuardedBy("GservicesLoader.class")
     static GservicesLoader loader;
     private final Context context;
-
-    static GservicesLoader getLoader(Context context2) {
-        GservicesLoader gservicesLoader;
-        synchronized (GservicesLoader.class) {
-            if (loader == null) {
-                loader = PermissionChecker.checkSelfPermission(context2, Gservices.PERMISSION_READ_GSERVICES) == 0 ? new GservicesLoader(context2) : new GservicesLoader();
-            }
-            gservicesLoader = loader;
-        }
-        return gservicesLoader;
-    }
 
     private GservicesLoader(Context context2) {
         this.context = context2;
@@ -35,6 +25,17 @@ final class GservicesLoader implements FlagLoader {
 
     private GservicesLoader() {
         this.context = null;
+    }
+
+    static GservicesLoader getLoader(Context context2) {
+        GservicesLoader gservicesLoader;
+        synchronized (GservicesLoader.class) {
+            if (loader == null) {
+                loader = PermissionChecker.checkSelfPermission(context2, Gservices.PERMISSION_READ_GSERVICES) == 0 ? new GservicesLoader(context2) : new GservicesLoader();
+            }
+            gservicesLoader = loader;
+        }
+        return gservicesLoader;
     }
 
     public String getFlag(String flagName) {

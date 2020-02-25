@@ -1,7 +1,5 @@
 package com.google.android.exoplayer2.mediacodec;
 
-import com.google.android.exoplayer2.mediacodec.MediaCodecUtil;
-
 final /* synthetic */ class MediaCodecUtil$$Lambda$1 implements MediaCodecUtil.ScoreProvider {
     static final MediaCodecUtil.ScoreProvider $instance = new MediaCodecUtil$$Lambda$1();
 

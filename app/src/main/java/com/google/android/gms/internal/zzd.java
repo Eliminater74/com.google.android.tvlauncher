@@ -1,19 +1,20 @@
 package com.google.android.gms.internal;
 
 import android.os.Process;
+
 import java.util.concurrent.BlockingQueue;
 
 /* compiled from: CacheDispatcher */
 public final class zzd extends Thread {
     private static final boolean zza = zzaf.zza;
-    private final BlockingQueue<zzr<?>> zzb;
     /* access modifiers changed from: private */
     public final BlockingQueue<zzr<?>> zzc;
-    private final zzb zzd;
     /* access modifiers changed from: private */
     public final zzaa zze;
-    private volatile boolean zzf = false;
+    private final BlockingQueue<zzr<?>> zzb;
+    private final zzb zzd;
     private final zzf zzg;
+    private volatile boolean zzf = false;
 
     public zzd(BlockingQueue<zzr<?>> blockingQueue, BlockingQueue<zzr<?>> blockingQueue2, zzb zzb2, zzaa zzaa) {
         this.zzb = blockingQueue;

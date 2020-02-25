@@ -6,6 +6,7 @@ import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.p001v4.util.ArrayMap;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailabilityLight;
 import com.google.android.gms.common.api.Api;
@@ -14,6 +15,7 @@ import com.google.android.gms.common.internal.ClientSettings;
 import com.google.android.gms.internal.zzbme;
 import com.google.android.gms.signin.SignInOptions;
 import com.google.android.gms.signin.zzd;
+
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -33,20 +35,20 @@ public final class zzab implements zzcc {
     public final Map<Api.zzc<?>, zzaa<?>> zza = new HashMap();
     /* access modifiers changed from: private */
     public final Map<Api.zzc<?>, zzaa<?>> zzb = new HashMap();
-    private final Map<Api<?>, Boolean> zzc;
-    private final zzbn zzd;
     /* access modifiers changed from: private */
     public final zzbb zze;
     /* access modifiers changed from: private */
     public final Lock zzf;
-    private final Looper zzg;
-    private final GoogleApiAvailabilityLight zzh;
     /* access modifiers changed from: private */
     public final Condition zzi;
-    private final ClientSettings zzj;
-    private final boolean zzk;
     /* access modifiers changed from: private */
     public final boolean zzl;
+    private final Map<Api<?>, Boolean> zzc;
+    private final zzbn zzd;
+    private final Looper zzg;
+    private final GoogleApiAvailabilityLight zzh;
+    private final ClientSettings zzj;
+    private final boolean zzk;
     private final Queue<zzn<?, ?>> zzm = new LinkedList();
     /* access modifiers changed from: private */
     public boolean zzn;
@@ -54,9 +56,9 @@ public final class zzab implements zzcc {
     public Map<zzi<?>, ConnectionResult> zzo;
     /* access modifiers changed from: private */
     public Map<zzi<?>, ConnectionResult> zzp;
-    private zzae zzq;
     /* access modifiers changed from: private */
     public ConnectionResult zzr;
+    private zzae zzq;
 
     public zzab(Context context, Lock lock, Looper looper, GoogleApiAvailabilityLight googleApiAvailabilityLight, Map<Api.zzc<?>, Api.Client> map, ClientSettings clientSettings, Map<Api<?>, Boolean> map2, Api.zza<? extends zzd, SignInOptions> zza2, ArrayList<zzu> arrayList, zzbb zzbb, boolean z) {
         boolean z2;

@@ -3,22 +3,22 @@ package com.google.android.exoplayer2.source;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.Timeline;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.MediaSourceEventListener;
 import com.google.android.exoplayer2.upstream.TransferListener;
 import com.google.android.exoplayer2.util.Assertions;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 
 public abstract class BaseMediaSource implements MediaSource {
     private final MediaSourceEventListener.EventDispatcher eventDispatcher = new MediaSourceEventListener.EventDispatcher();
+    private final ArrayList<MediaSource.SourceInfoRefreshListener> sourceInfoListeners = new ArrayList<>(1);
     @Nullable
     private Looper looper;
     @Nullable
     private Object manifest;
-    private final ArrayList<MediaSource.SourceInfoRefreshListener> sourceInfoListeners = new ArrayList<>(1);
     @Nullable
     private Timeline timeline;
 

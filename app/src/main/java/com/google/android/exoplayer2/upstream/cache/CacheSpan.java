@@ -2,7 +2,9 @@ package com.google.android.exoplayer2.upstream.cache;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.C0841C;
+
 import java.io.File;
 
 public class CacheSpan implements Comparable<CacheSpan> {

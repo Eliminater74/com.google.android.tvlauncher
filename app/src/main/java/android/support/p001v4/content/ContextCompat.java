@@ -66,7 +66,9 @@ import android.view.accessibility.AccessibilityManager;
 import android.view.accessibility.CaptioningManager;
 import android.view.inputmethod.InputMethodManager;
 import android.view.textservice.TextServicesManager;
+
 import androidx.tvprovider.media.p005tv.TvContractCompat;
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.concurrent.Executor;
@@ -263,21 +265,6 @@ public class ContextCompat {
         return new MainHandlerExecutor(new Handler(context.getMainLooper()));
     }
 
-    /* renamed from: android.support.v4.content.ContextCompat$MainHandlerExecutor */
-    private static class MainHandlerExecutor implements Executor {
-        private final Handler mHandler;
-
-        MainHandlerExecutor(@NonNull Handler handler) {
-            this.mHandler = handler;
-        }
-
-        public void execute(Runnable command) {
-            if (!this.mHandler.post(command)) {
-                throw new RejectedExecutionException(this.mHandler + " is shutting down");
-            }
-        }
-    }
-
     public static void startForegroundService(@NonNull Context context, @NonNull Intent intent) {
         if (Build.VERSION.SDK_INT >= 26) {
             context.startForegroundService(intent);
@@ -306,12 +293,24 @@ public class ContextCompat {
         return LegacyServiceMapHolder.SERVICES.get(serviceClass);
     }
 
+    /* renamed from: android.support.v4.content.ContextCompat$MainHandlerExecutor */
+    private static class MainHandlerExecutor implements Executor {
+        private final Handler mHandler;
+
+        MainHandlerExecutor(@NonNull Handler handler) {
+            this.mHandler = handler;
+        }
+
+        public void execute(Runnable command) {
+            if (!this.mHandler.post(command)) {
+                throw new RejectedExecutionException(this.mHandler + " is shutting down");
+            }
+        }
+    }
+
     /* renamed from: android.support.v4.content.ContextCompat$LegacyServiceMapHolder */
     private static final class LegacyServiceMapHolder {
         static final HashMap<Class<?>, String> SERVICES = new HashMap<>();
-
-        private LegacyServiceMapHolder() {
-        }
 
         static {
             if (Build.VERSION.SDK_INT >= 22) {
@@ -377,6 +376,9 @@ public class ContextCompat {
             SERVICES.put(WifiP2pManager.class, "wifip2p");
             SERVICES.put(WifiManager.class, "wifi");
             SERVICES.put(WindowManager.class, "window");
+        }
+
+        private LegacyServiceMapHolder() {
         }
     }
 }

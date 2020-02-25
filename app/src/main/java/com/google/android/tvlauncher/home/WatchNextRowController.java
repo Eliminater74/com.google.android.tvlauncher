@@ -3,12 +3,13 @@ package com.google.android.tvlauncher.home;
 import android.content.Context;
 import android.support.p004v7.widget.RecyclerView;
 import android.view.View;
+
 import androidx.leanback.widget.HorizontalGridView;
+
 import com.google.android.tvlauncher.BackHomeControllerListeners;
 import com.google.android.tvlauncher.C1188R;
 import com.google.android.tvlauncher.analytics.EventLogger;
 import com.google.android.tvlauncher.data.TvDataManager;
-import com.google.android.tvlauncher.home.RecyclerViewFastScrollingManager;
 import com.google.android.tvlauncher.home.util.ChannelUtil;
 import com.google.android.tvlauncher.home.util.ProgramStateUtil;
 import com.google.android.tvlauncher.home.view.ChannelItemsAnimator;
@@ -21,11 +22,11 @@ class WatchNextRowController implements HomeRow, ChannelView.OnStateChangeGestur
     private static final String TAG = "WatchNextRowController";
     private final ChannelView mChannelView;
     private final EventLogger mEventLogger;
+    private final HorizontalGridView mItemsListView = this.mChannelView.getItemsListView();
     private RecyclerViewFastScrollingManager mFastScrollingManager;
     private boolean mHomeIsFastScrolling;
     private RecyclerViewStateProvider mHomeListStateProvider;
     private WatchNextItemsAdapter mItemsAdapter;
-    private final HorizontalGridView mItemsListView = this.mChannelView.getItemsListView();
     private WatchNextItemMetadataController mMetadataController;
     private BackHomeControllerListeners.OnBackNotHandledListener mOnBackNotHandledListener;
     private BackHomeControllerListeners.OnHomeNotHandledListener mOnHomeNotHandledListener;

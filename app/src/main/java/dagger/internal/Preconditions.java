@@ -1,6 +1,9 @@
 package dagger.internal;
 
 public final class Preconditions {
+    private Preconditions() {
+    }
+
     public static <T> T checkNotNull(T reference) {
         if (reference != null) {
             return reference;
@@ -38,8 +41,5 @@ public final class Preconditions {
         if (requirement == null) {
             throw new IllegalStateException(String.valueOf(clazz.getCanonicalName()).concat(" must be set"));
         }
-    }
-
-    private Preconditions() {
     }
 }

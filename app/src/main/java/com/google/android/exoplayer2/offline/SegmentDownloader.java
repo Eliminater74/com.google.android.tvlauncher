@@ -2,8 +2,7 @@ package com.google.android.exoplayer2.offline;
 
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import com.google.android.exoplayer2.offline.Downloader;
-import com.google.android.exoplayer2.offline.FilterableManifest;
+
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.cache.Cache;
@@ -12,6 +11,7 @@ import com.google.android.exoplayer2.upstream.cache.CacheKeyFactory;
 import com.google.android.exoplayer2.upstream.cache.CacheUtil;
 import com.google.android.exoplayer2.util.PriorityTaskManager;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,26 +28,6 @@ public abstract class SegmentDownloader<M extends FilterableManifest<M>> impleme
     private final PriorityTaskManager priorityTaskManager;
     private final ArrayList<StreamKey> streamKeys;
 
-    /* access modifiers changed from: protected */
-    public abstract M getManifest(DataSource dataSource2, DataSpec dataSpec) throws IOException;
-
-    /* access modifiers changed from: protected */
-    public abstract List<Segment> getSegments(DataSource dataSource2, M m, boolean z) throws InterruptedException, IOException;
-
-    protected static class Segment implements Comparable<Segment> {
-        public final DataSpec dataSpec;
-        public final long startTimeUs;
-
-        public Segment(long startTimeUs2, DataSpec dataSpec2) {
-            this.startTimeUs = startTimeUs2;
-            this.dataSpec = dataSpec2;
-        }
-
-        public int compareTo(@NonNull Segment other) {
-            return Util.compareLong(this.startTimeUs, other.startTimeUs);
-        }
-    }
-
     public SegmentDownloader(Uri manifestUri, List<StreamKey> streamKeys2, DownloaderConstructorHelper constructorHelper) {
         this.manifestDataSpec = getCompressibleDataSpec(manifestUri);
         this.streamKeys = new ArrayList<>(streamKeys2);
@@ -57,6 +37,16 @@ public abstract class SegmentDownloader<M extends FilterableManifest<M>> impleme
         this.cacheKeyFactory = constructorHelper.getCacheKeyFactory();
         this.priorityTaskManager = constructorHelper.getPriorityTaskManager();
     }
+
+    protected static DataSpec getCompressibleDataSpec(Uri uri) {
+        return new DataSpec(uri, 0, -1, null, 1);
+    }
+
+    /* access modifiers changed from: protected */
+    public abstract M getManifest(DataSource dataSource2, DataSpec dataSpec) throws IOException;
+
+    /* access modifiers changed from: protected */
+    public abstract List<Segment> getSegments(DataSource dataSource2, M m, boolean z) throws InterruptedException, IOException;
 
     /*  JADX ERROR: JadxRuntimeException in pass: MethodInvokeVisitor
         jadx.core.utils.exceptions.JadxRuntimeException: Not class type: M
@@ -212,16 +202,26 @@ public abstract class SegmentDownloader<M extends FilterableManifest<M>> impleme
         CacheUtil.remove(dataSpec, this.cache, this.cacheKeyFactory);
     }
 
-    protected static DataSpec getCompressibleDataSpec(Uri uri) {
-        return new DataSpec(uri, 0, -1, null, 1);
+    protected static class Segment implements Comparable<Segment> {
+        public final DataSpec dataSpec;
+        public final long startTimeUs;
+
+        public Segment(long startTimeUs2, DataSpec dataSpec2) {
+            this.startTimeUs = startTimeUs2;
+            this.dataSpec = dataSpec2;
+        }
+
+        public int compareTo(@NonNull Segment other) {
+            return Util.compareLong(this.startTimeUs, other.startTimeUs);
+        }
     }
 
     private static final class ProgressNotifier implements CacheUtil.ProgressListener {
-        private long bytesDownloaded;
         private final long contentLength;
         private final Downloader.ProgressListener progressListener;
-        private int segmentsDownloaded;
         private final int totalSegments;
+        private long bytesDownloaded;
+        private int segmentsDownloaded;
 
         public ProgressNotifier(Downloader.ProgressListener progressListener2, long contentLength2, int totalSegments2, long bytesDownloaded2, int segmentsDownloaded2) {
             this.progressListener = progressListener2;

@@ -56,14 +56,6 @@ public class AppCompatRadioButton extends RadioButton implements TintableCompoun
         return appCompatCompoundButtonHelper != null ? appCompatCompoundButtonHelper.getCompoundPaddingLeft(value) : value;
     }
 
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    public void setSupportButtonTintList(@Nullable ColorStateList tint) {
-        AppCompatCompoundButtonHelper appCompatCompoundButtonHelper = this.mCompoundButtonHelper;
-        if (appCompatCompoundButtonHelper != null) {
-            appCompatCompoundButtonHelper.setSupportButtonTintList(tint);
-        }
-    }
-
     @Nullable
     @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
     public ColorStateList getSupportButtonTintList() {
@@ -75,10 +67,10 @@ public class AppCompatRadioButton extends RadioButton implements TintableCompoun
     }
 
     @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    public void setSupportButtonTintMode(@Nullable PorterDuff.Mode tintMode) {
+    public void setSupportButtonTintList(@Nullable ColorStateList tint) {
         AppCompatCompoundButtonHelper appCompatCompoundButtonHelper = this.mCompoundButtonHelper;
         if (appCompatCompoundButtonHelper != null) {
-            appCompatCompoundButtonHelper.setSupportButtonTintMode(tintMode);
+            appCompatCompoundButtonHelper.setSupportButtonTintList(tint);
         }
     }
 
@@ -93,10 +85,10 @@ public class AppCompatRadioButton extends RadioButton implements TintableCompoun
     }
 
     @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    public void setSupportBackgroundTintList(@Nullable ColorStateList tint) {
-        AppCompatBackgroundHelper appCompatBackgroundHelper = this.mBackgroundTintHelper;
-        if (appCompatBackgroundHelper != null) {
-            appCompatBackgroundHelper.setSupportBackgroundTintList(tint);
+    public void setSupportButtonTintMode(@Nullable PorterDuff.Mode tintMode) {
+        AppCompatCompoundButtonHelper appCompatCompoundButtonHelper = this.mCompoundButtonHelper;
+        if (appCompatCompoundButtonHelper != null) {
+            appCompatCompoundButtonHelper.setSupportButtonTintMode(tintMode);
         }
     }
 
@@ -111,10 +103,10 @@ public class AppCompatRadioButton extends RadioButton implements TintableCompoun
     }
 
     @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    public void setSupportBackgroundTintMode(@Nullable PorterDuff.Mode tintMode) {
+    public void setSupportBackgroundTintList(@Nullable ColorStateList tint) {
         AppCompatBackgroundHelper appCompatBackgroundHelper = this.mBackgroundTintHelper;
         if (appCompatBackgroundHelper != null) {
-            appCompatBackgroundHelper.setSupportBackgroundTintMode(tintMode);
+            appCompatBackgroundHelper.setSupportBackgroundTintList(tint);
         }
     }
 
@@ -126,6 +118,14 @@ public class AppCompatRadioButton extends RadioButton implements TintableCompoun
             return appCompatBackgroundHelper.getSupportBackgroundTintMode();
         }
         return null;
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    public void setSupportBackgroundTintMode(@Nullable PorterDuff.Mode tintMode) {
+        AppCompatBackgroundHelper appCompatBackgroundHelper = this.mBackgroundTintHelper;
+        if (appCompatBackgroundHelper != null) {
+            appCompatBackgroundHelper.setSupportBackgroundTintMode(tintMode);
+        }
     }
 
     public void setBackgroundDrawable(Drawable background) {

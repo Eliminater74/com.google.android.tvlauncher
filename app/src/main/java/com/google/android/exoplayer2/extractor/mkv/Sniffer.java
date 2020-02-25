@@ -1,16 +1,18 @@
 package com.google.android.exoplayer2.extractor.mkv;
 
 import android.support.p001v4.media.session.PlaybackStateCompat;
+
 import com.google.android.exoplayer2.extractor.ExtractorInput;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.common.primitives.UnsignedBytes;
+
 import java.io.IOException;
 
 final class Sniffer {
     private static final int ID_EBML = 440786851;
     private static final int SEARCH_LENGTH = 1024;
-    private int peekLength;
     private final ParsableByteArray scratch = new ParsableByteArray(8);
+    private int peekLength;
 
     public boolean sniff(ExtractorInput input) throws IOException, InterruptedException {
         ExtractorInput extractorInput = input;

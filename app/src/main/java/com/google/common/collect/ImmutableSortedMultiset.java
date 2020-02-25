@@ -4,12 +4,10 @@ import com.google.android.tvlauncher.notifications.NotificationsContract;
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMultiset;
-import com.google.common.collect.Multiset;
 import com.google.common.math.IntMath;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.concurrent.LazyInit;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
@@ -23,11 +21,8 @@ public abstract class ImmutableSortedMultiset<E> extends ImmutableSortedMultiset
     @LazyInit
     transient ImmutableSortedMultiset<E> descendingMultiset;
 
-    public abstract ImmutableSortedSet<E> elementSet();
-
-    public abstract ImmutableSortedMultiset<E> headMultiset(Object obj, BoundType boundType);
-
-    public abstract ImmutableSortedMultiset<E> tailMultiset(Object obj, BoundType boundType);
+    ImmutableSortedMultiset() {
+    }
 
     /* renamed from: of */
     public static <E> ImmutableSortedMultiset<E> m174of() {
@@ -123,8 +118,23 @@ public abstract class ImmutableSortedMultiset<E> extends ImmutableSortedMultiset
         return new RegularImmutableSortedMultiset(comparator);
     }
 
-    ImmutableSortedMultiset() {
+    public static <E> Builder<E> orderedBy(Comparator<E> comparator) {
+        return new Builder<>(comparator);
     }
+
+    public static <E extends Comparable<?>> Builder<E> reverseOrder() {
+        return new Builder<>(Ordering.natural().reverse());
+    }
+
+    public static <E extends Comparable<?>> Builder<E> naturalOrder() {
+        return new Builder<>(Ordering.natural());
+    }
+
+    public abstract ImmutableSortedSet<E> elementSet();
+
+    public abstract ImmutableSortedMultiset<E> headMultiset(Object obj, BoundType boundType);
+
+    public abstract ImmutableSortedMultiset<E> tailMultiset(Object obj, BoundType boundType);
 
     public final Comparator<? super E> comparator() {
         return elementSet().comparator();
@@ -176,23 +186,16 @@ public abstract class ImmutableSortedMultiset<E> extends ImmutableSortedMultiset
         return tailMultiset((Object) lowerBound, lowerBoundType).headMultiset((Object) upperBound, upperBoundType);
     }
 
-    public static <E> Builder<E> orderedBy(Comparator<E> comparator) {
-        return new Builder<>(comparator);
-    }
-
-    public static <E extends Comparable<?>> Builder<E> reverseOrder() {
-        return new Builder<>(Ordering.natural().reverse());
-    }
-
-    public static <E extends Comparable<?>> Builder<E> naturalOrder() {
-        return new Builder<>(Ordering.natural());
+    /* access modifiers changed from: package-private */
+    public Object writeReplace() {
+        return new SerializedForm(this);
     }
 
     public static class Builder<E> extends ImmutableMultiset.Builder<E> {
         private final Comparator<? super E> comparator;
-        private int[] counts = new int[4];
         @VisibleForTesting
         E[] elements = new Object[4];
+        private int[] counts = new int[4];
         private boolean forceCopyElements;
         private int length;
 
@@ -406,10 +409,5 @@ public abstract class ImmutableSortedMultiset<E> extends ImmutableSortedMultiset
             }
             return builder.build();
         }
-    }
-
-    /* access modifiers changed from: package-private */
-    public Object writeReplace() {
-        return new SerializedForm(this);
     }
 }

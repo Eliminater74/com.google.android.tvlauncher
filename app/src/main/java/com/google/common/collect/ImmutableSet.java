@@ -4,29 +4,31 @@ import com.google.common.annotations.Beta;
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableCollection;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.concurrent.LazyInit;
 import com.google.j2objc.annotations.RetainedWith;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.SortedSet;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible(emulated = true, serializable = true)
 public abstract class ImmutableSet<E> extends ImmutableCollection<E> implements Set<E> {
+    static final int MAX_TABLE_SIZE = 1073741824;
     private static final int CUTOFF = 751619276;
     private static final double DESIRED_LOAD_FACTOR = 0.7d;
-    static final int MAX_TABLE_SIZE = 1073741824;
     @NullableDecl
     @RetainedWith
     @LazyInit
     private transient ImmutableList<E> asList;
 
-    public abstract UnmodifiableIterator<E> iterator();
+    ImmutableSet() {
+    }
 
     /* renamed from: of */
     public static <E> ImmutableSet<E> m149of() {
@@ -185,8 +187,17 @@ public abstract class ImmutableSet<E> extends ImmutableCollection<E> implements 
         return m150of(objArr[0]);
     }
 
-    ImmutableSet() {
+    public static <E> Builder<E> builder() {
+        return new Builder<>();
     }
+
+    @Beta
+    public static <E> Builder<E> builderWithExpectedSize(int expectedSize) {
+        CollectPreconditions.checkNonnegative(expectedSize, "expectedSize");
+        return new Builder<>(expectedSize);
+    }
+
+    public abstract UnmodifiableIterator<E> iterator();
 
     /* access modifiers changed from: package-private */
     public boolean isHashCodeFast() {
@@ -222,6 +233,11 @@ public abstract class ImmutableSet<E> extends ImmutableCollection<E> implements 
         return ImmutableList.asImmutableList(toArray());
     }
 
+    /* access modifiers changed from: package-private */
+    public Object writeReplace() {
+        return new SerializedForm(toArray());
+    }
+
     private static class SerializedForm implements Serializable {
         private static final long serialVersionUID = 0;
         final Object[] elements;
@@ -236,26 +252,11 @@ public abstract class ImmutableSet<E> extends ImmutableCollection<E> implements 
         }
     }
 
-    /* access modifiers changed from: package-private */
-    public Object writeReplace() {
-        return new SerializedForm(toArray());
-    }
-
-    public static <E> Builder<E> builder() {
-        return new Builder<>();
-    }
-
-    @Beta
-    public static <E> Builder<E> builderWithExpectedSize(int expectedSize) {
-        CollectPreconditions.checkNonnegative(expectedSize, "expectedSize");
-        return new Builder<>(expectedSize);
-    }
-
     public static class Builder<E> extends ImmutableCollection.ArrayBasedBuilder<E> {
-        private int hashCode;
         @NullableDecl
         @VisibleForTesting
         Object[] hashTable;
+        private int hashCode;
 
         public Builder() {
             super(4);

@@ -16,6 +16,9 @@ public final class NavUtils {
     public static final String PARENT_ACTIVITY = "android.support.PARENT_ACTIVITY";
     private static final String TAG = "NavUtils";
 
+    private NavUtils() {
+    }
+
     public static boolean shouldUpRecreateTask(@NonNull Activity sourceActivity, @NonNull Intent targetIntent) {
         if (Build.VERSION.SDK_INT >= 16) {
             return sourceActivity.shouldUpRecreateTask(targetIntent);
@@ -123,8 +126,5 @@ public final class NavUtils {
             return parentActivity;
         }
         return context.getPackageName() + parentActivity;
-    }
-
-    private NavUtils() {
     }
 }

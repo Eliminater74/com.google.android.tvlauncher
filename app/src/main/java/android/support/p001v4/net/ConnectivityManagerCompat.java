@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresPermission;
 import android.support.annotation.RestrictTo;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -17,10 +18,7 @@ public final class ConnectivityManagerCompat {
     public static final int RESTRICT_BACKGROUND_STATUS_ENABLED = 3;
     public static final int RESTRICT_BACKGROUND_STATUS_WHITELISTED = 2;
 
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    @Retention(RetentionPolicy.SOURCE)
-    /* renamed from: android.support.v4.net.ConnectivityManagerCompat$RestrictBackgroundStatus */
-    public @interface RestrictBackgroundStatus {
+    private ConnectivityManagerCompat() {
     }
 
     @RequiresPermission("android.permission.ACCESS_NETWORK_STATE")
@@ -67,6 +65,9 @@ public final class ConnectivityManagerCompat {
         return 3;
     }
 
-    private ConnectivityManagerCompat() {
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    @Retention(RetentionPolicy.SOURCE)
+    /* renamed from: android.support.v4.net.ConnectivityManagerCompat$RestrictBackgroundStatus */
+    public @interface RestrictBackgroundStatus {
     }
 }

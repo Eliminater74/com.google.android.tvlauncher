@@ -1,6 +1,5 @@
 package com.google.protobuf.nano;
 
-import com.google.protobuf.nano.ExtendableMessageNano;
 import java.io.IOException;
 
 public abstract class ExtendableMessageNano<M extends ExtendableMessageNano<M>> extends MessageNano {

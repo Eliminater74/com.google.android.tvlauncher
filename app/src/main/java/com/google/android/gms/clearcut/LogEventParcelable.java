@@ -2,7 +2,7 @@ package com.google.android.gms.clearcut;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import com.google.android.gms.clearcut.ClearcutLogger;
+
 import com.google.android.gms.clearcut.internal.PlayLoggerContext;
 import com.google.android.gms.common.internal.Hide;
 import com.google.android.gms.common.internal.zzak;
@@ -10,18 +10,19 @@ import com.google.android.gms.internal.zzbkv;
 import com.google.android.gms.internal.zzbky;
 import com.google.android.gms.internal.zzgtd;
 import com.google.android.gms.phenotype.ExperimentTokens;
+
 import java.util.Arrays;
 
 @Hide
 public class LogEventParcelable extends zzbkv {
     public static final Parcelable.Creator<LogEventParcelable> CREATOR = new zzq();
-    public boolean addPhenotypeExperimentTokens;
     public final ClearcutLogger.MessageProducer clientVisualElementsProducer;
+    public final ClearcutLogger.MessageProducer extensionProducer;
+    public final zzgtd logEvent;
+    public boolean addPhenotypeExperimentTokens;
     public int[] experimentIds;
     public byte[][] experimentTokens;
     public ExperimentTokens[] experimentTokensParcelables;
-    public final ClearcutLogger.MessageProducer extensionProducer;
-    public final zzgtd logEvent;
     public byte[] logEventBytes;
     public String[] mendelPackages;
     public PlayLoggerContext playLoggerContext;

@@ -5,13 +5,14 @@ import android.content.res.AssetFileDescriptor;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 import android.support.annotation.NonNull;
+
 import com.bumptech.glide.load.Options;
 import com.bumptech.glide.load.data.AssetFileDescriptorLocalUriFetcher;
 import com.bumptech.glide.load.data.DataFetcher;
 import com.bumptech.glide.load.data.FileDescriptorLocalUriFetcher;
 import com.bumptech.glide.load.data.StreamLocalUriFetcher;
-import com.bumptech.glide.load.model.ModelLoader;
 import com.bumptech.glide.signature.ObjectKey;
+
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collections;
@@ -21,10 +22,6 @@ import java.util.Set;
 public class UriLoader<Data> implements ModelLoader<Uri, Data> {
     private static final Set<String> SCHEMES = Collections.unmodifiableSet(new HashSet(Arrays.asList("file", "android.resource", "content")));
     private final LocalUriFetcherFactory<Data> factory;
-
-    public interface LocalUriFetcherFactory<Data> {
-        DataFetcher<Data> build(Uri uri);
-    }
 
     public UriLoader(LocalUriFetcherFactory<Data> factory2) {
         this.factory = factory2;
@@ -36,6 +33,10 @@ public class UriLoader<Data> implements ModelLoader<Uri, Data> {
 
     public boolean handles(@NonNull Uri model) {
         return SCHEMES.contains(model.getScheme());
+    }
+
+    public interface LocalUriFetcherFactory<Data> {
+        DataFetcher<Data> build(Uri uri);
     }
 
     public static class StreamFactory implements ModelLoaderFactory<Uri, InputStream>, LocalUriFetcherFactory<InputStream> {

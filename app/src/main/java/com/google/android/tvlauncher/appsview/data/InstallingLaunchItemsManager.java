@@ -1,12 +1,17 @@
 package com.google.android.tvlauncher.appsview.data;
 
 import android.content.Context;
+
 import com.google.android.tvlauncher.appsview.LaunchItem;
 
 class InstallingLaunchItemsManager implements InstallingLaunchItemListener {
     private static InstallingLaunchItemsManager sInstallingLaunchItemsManager;
     private final Context mContext;
     private InstallingLaunchItemListener mInstallingLaunchItemListener;
+
+    private InstallingLaunchItemsManager(Context context) {
+        this.mContext = context.getApplicationContext();
+    }
 
     public static InstallingLaunchItemsManager getInstance(Context context) {
         if (sInstallingLaunchItemsManager == null) {
@@ -17,10 +22,6 @@ class InstallingLaunchItemsManager implements InstallingLaunchItemListener {
             }
         }
         return sInstallingLaunchItemsManager;
-    }
-
-    private InstallingLaunchItemsManager(Context context) {
-        this.mContext = context.getApplicationContext();
     }
 
     public void onInstallingLaunchItemAdded(LaunchItem launchItem) {

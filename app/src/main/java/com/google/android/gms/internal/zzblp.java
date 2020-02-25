@@ -2,7 +2,9 @@ package com.google.android.gms.internal;
 
 import android.support.annotation.Nullable;
 import android.util.Log;
+
 import com.google.android.gms.common.internal.zzt;
+
 import java.util.Locale;
 
 /* compiled from: Logger */

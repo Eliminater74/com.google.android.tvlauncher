@@ -7,6 +7,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+
 import java.lang.reflect.Field;
 
 /* renamed from: android.support.v4.view.LayoutInflaterCompat */
@@ -15,25 +16,7 @@ public final class LayoutInflaterCompat {
     private static boolean sCheckedField;
     private static Field sLayoutInflaterFactory2Field;
 
-    /* renamed from: android.support.v4.view.LayoutInflaterCompat$Factory2Wrapper */
-    static class Factory2Wrapper implements LayoutInflater.Factory2 {
-        final LayoutInflaterFactory mDelegateFactory;
-
-        Factory2Wrapper(LayoutInflaterFactory delegateFactory) {
-            this.mDelegateFactory = delegateFactory;
-        }
-
-        public View onCreateView(String name, Context context, AttributeSet attrs) {
-            return this.mDelegateFactory.onCreateView(null, name, context, attrs);
-        }
-
-        public View onCreateView(View parent, String name, Context context, AttributeSet attributeSet) {
-            return this.mDelegateFactory.onCreateView(parent, name, context, attributeSet);
-        }
-
-        public String toString() {
-            return getClass().getName() + "{" + this.mDelegateFactory + "}";
-        }
+    private LayoutInflaterCompat() {
     }
 
     private static void forceSetFactory2(LayoutInflater inflater, LayoutInflater.Factory2 factory) {
@@ -54,9 +37,6 @@ public final class LayoutInflaterCompat {
                 Log.e(TAG, "forceSetFactory2 could not set the Factory2 on LayoutInflater " + inflater + "; inflation may have unexpected results.", e2);
             }
         }
-    }
-
-    private LayoutInflaterCompat() {
     }
 
     @Deprecated
@@ -101,5 +81,26 @@ public final class LayoutInflaterCompat {
             return ((Factory2Wrapper) factory).mDelegateFactory;
         }
         return null;
+    }
+
+    /* renamed from: android.support.v4.view.LayoutInflaterCompat$Factory2Wrapper */
+    static class Factory2Wrapper implements LayoutInflater.Factory2 {
+        final LayoutInflaterFactory mDelegateFactory;
+
+        Factory2Wrapper(LayoutInflaterFactory delegateFactory) {
+            this.mDelegateFactory = delegateFactory;
+        }
+
+        public View onCreateView(String name, Context context, AttributeSet attrs) {
+            return this.mDelegateFactory.onCreateView(null, name, context, attrs);
+        }
+
+        public View onCreateView(View parent, String name, Context context, AttributeSet attributeSet) {
+            return this.mDelegateFactory.onCreateView(parent, name, context, attributeSet);
+        }
+
+        public String toString() {
+            return getClass().getName() + "{" + this.mDelegateFactory + "}";
+        }
     }
 }

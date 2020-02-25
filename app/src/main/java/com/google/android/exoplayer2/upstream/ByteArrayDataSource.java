@@ -2,12 +2,14 @@ package com.google.android.exoplayer2.upstream;
 
 import android.net.Uri;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.util.Assertions;
+
 import java.io.IOException;
 
 public final class ByteArrayDataSource extends BaseDataSource {
-    private int bytesRemaining;
     private final byte[] data;
+    private int bytesRemaining;
     private boolean opened;
     private int readPosition;
     @Nullable

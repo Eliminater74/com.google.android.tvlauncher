@@ -9,6 +9,8 @@ import android.support.annotation.Nullable;
 @SuppressLint({"BanParcelableUsage"})
 /* renamed from: android.support.v4.view.AbsSavedState */
 public abstract class AbsSavedState implements Parcelable {
+    public static final AbsSavedState EMPTY_STATE = new AbsSavedState() {
+    };
     public static final Parcelable.Creator<AbsSavedState> CREATOR = new Parcelable.ClassLoaderCreator<AbsSavedState>() {
         public AbsSavedState createFromParcel(Parcel in, ClassLoader loader) {
             if (in.readParcelable(loader) == null) {
@@ -31,8 +33,6 @@ public abstract class AbsSavedState implements Parcelable {
         public AbsSavedState[] newArray(int size) {
             return new AbsSavedState[size];
         }
-    };
-    public static final AbsSavedState EMPTY_STATE = new AbsSavedState() {
     };
     private final Parcelable mSuperState;
 

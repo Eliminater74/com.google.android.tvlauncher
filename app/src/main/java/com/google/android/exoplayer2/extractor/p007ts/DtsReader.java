@@ -4,7 +4,6 @@ import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.audio.DtsUtil;
 import com.google.android.exoplayer2.extractor.ExtractorOutput;
 import com.google.android.exoplayer2.extractor.TrackOutput;
-import com.google.android.exoplayer2.extractor.p007ts.TsPayloadReader;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 
 /* renamed from: com.google.android.exoplayer2.extractor.ts.DtsReader */
@@ -13,11 +12,11 @@ public final class DtsReader implements ElementaryStreamReader {
     private static final int STATE_FINDING_SYNC = 0;
     private static final int STATE_READING_HEADER = 1;
     private static final int STATE_READING_SAMPLE = 2;
+    private final ParsableByteArray headerScratchBytes = new ParsableByteArray(new byte[18]);
+    private final String language;
     private int bytesRead;
     private Format format;
     private String formatId;
-    private final ParsableByteArray headerScratchBytes = new ParsableByteArray(new byte[18]);
-    private final String language;
     private TrackOutput output;
     private long sampleDurationUs;
     private int sampleSize;

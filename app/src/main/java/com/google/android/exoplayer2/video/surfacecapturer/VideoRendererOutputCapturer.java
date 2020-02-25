@@ -7,11 +7,11 @@ import android.os.HandlerThread;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.view.Surface;
+
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.Renderer;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Util;
-import com.google.android.exoplayer2.video.surfacecapturer.SurfaceCapturer;
 
 public final class VideoRendererOutputCapturer implements Handler.Callback {
     private static final int MSG_RELEASE = 2;
@@ -20,14 +20,10 @@ public final class VideoRendererOutputCapturer implements Handler.Callback {
     private final ExoPlayer exoPlayer;
     private final Handler handler;
     private final HandlerThread handlerThread = new HandlerThread("VideoRendererOutputCapturer");
-    private volatile boolean released;
     private final Renderer renderer;
+    private volatile boolean released;
     @Nullable
     private SurfaceCapturer surfaceCapturer;
-
-    public interface Callback extends SurfaceCapturer.Callback {
-        void onOutputSizeSet(int i, int i2);
-    }
 
     public VideoRendererOutputCapturer(Callback callback, Handler callbackHandler, SingleFrameMediaCodecVideoRenderer videoRenderer, ExoPlayer exoPlayer2) {
         this.renderer = (Renderer) Assertions.checkNotNull(videoRenderer);
@@ -151,6 +147,10 @@ public final class VideoRendererOutputCapturer implements Handler.Callback {
             this.released = true;
             notifyAll();
         }
+    }
+
+    public interface Callback extends SurfaceCapturer.Callback {
+        void onOutputSizeSet(int i, int i2);
     }
 
     private static final class EventDispatcher implements Callback {

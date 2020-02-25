@@ -2,10 +2,11 @@ package com.bumptech.glide.load.engine;
 
 import android.support.annotation.NonNull;
 import android.support.p001v4.util.Pools;
+
 import com.bumptech.glide.load.Options;
 import com.bumptech.glide.load.data.DataRewinder;
-import com.bumptech.glide.load.engine.DecodePath;
 import com.bumptech.glide.util.Preconditions;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

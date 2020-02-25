@@ -2,8 +2,9 @@ package com.bumptech.glide.load.model;
 
 import android.net.Uri;
 import android.support.annotation.NonNull;
+
 import com.bumptech.glide.load.Options;
-import com.bumptech.glide.load.model.ModelLoader;
+
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collections;

@@ -2,6 +2,7 @@ package com.google.android.exoplayer2.text.cea;
 
 import android.support.annotation.NonNull;
 import android.text.Layout;
+
 import com.google.android.exoplayer2.text.Cue;
 
 final class Cea708Cue extends Cue implements Comparable<Cea708Cue> {

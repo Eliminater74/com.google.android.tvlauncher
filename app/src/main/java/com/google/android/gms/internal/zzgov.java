@@ -12,7 +12,7 @@ public enum zzgov {
     BYTE_STRING(zzgnb.class, zzgnb.class, zzgnb.zza),
     ENUM(Integer.TYPE, Integer.class, null),
     MESSAGE(Object.class, Object.class, null);
-    
+
     private final Class<?> zzk;
     private final Class<?> zzl;
     private final Object zzm;

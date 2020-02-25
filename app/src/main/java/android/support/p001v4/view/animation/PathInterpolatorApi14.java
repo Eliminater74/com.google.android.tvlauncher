@@ -36,6 +36,20 @@ class PathInterpolatorApi14 implements Interpolator {
         this(createCubic(controlX1, controlY1, controlX2, controlY2));
     }
 
+    private static Path createQuad(float controlX, float controlY) {
+        Path path = new Path();
+        path.moveTo(0.0f, 0.0f);
+        path.quadTo(controlX, controlY, 1.0f, 1.0f);
+        return path;
+    }
+
+    private static Path createCubic(float controlX1, float controlY1, float controlX2, float controlY2) {
+        Path path = new Path();
+        path.moveTo(0.0f, 0.0f);
+        path.cubicTo(controlX1, controlY1, controlX2, controlY2, 1.0f, 1.0f);
+        return path;
+    }
+
     public float getInterpolation(float t) {
         if (t <= 0.0f) {
             return 0.0f;
@@ -61,19 +75,5 @@ class PathInterpolatorApi14 implements Interpolator {
         float[] fArr2 = this.f13mY;
         float startY = fArr2[startIndex];
         return ((fArr2[endIndex] - startY) * ((t - fArr[startIndex]) / xRange)) + startY;
-    }
-
-    private static Path createQuad(float controlX, float controlY) {
-        Path path = new Path();
-        path.moveTo(0.0f, 0.0f);
-        path.quadTo(controlX, controlY, 1.0f, 1.0f);
-        return path;
-    }
-
-    private static Path createCubic(float controlX1, float controlY1, float controlX2, float controlY2) {
-        Path path = new Path();
-        path.moveTo(0.0f, 0.0f);
-        path.cubicTo(controlX1, controlY1, controlX2, controlY2, 1.0f, 1.0f);
-        return path;
     }
 }

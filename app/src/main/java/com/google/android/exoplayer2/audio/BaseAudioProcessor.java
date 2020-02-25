@@ -1,16 +1,17 @@
 package com.google.android.exoplayer2.audio;
 
 import android.support.annotation.CallSuper;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 public abstract class BaseAudioProcessor implements AudioProcessor {
-    private ByteBuffer buffer = EMPTY_BUFFER;
     protected int channelCount = -1;
     protected int encoding = -1;
+    protected int sampleRateHz = -1;
+    private ByteBuffer buffer = EMPTY_BUFFER;
     private boolean inputEnded;
     private ByteBuffer outputBuffer = EMPTY_BUFFER;
-    protected int sampleRateHz = -1;
 
     public boolean isActive() {
         return this.sampleRateHz != -1;

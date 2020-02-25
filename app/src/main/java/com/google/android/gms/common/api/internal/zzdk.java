@@ -2,6 +2,7 @@ package com.google.android.gms.common.api.internal;
 
 import android.os.Bundle;
 import android.support.p001v4.app.Fragment;
+
 import com.google.android.gms.common.api.ResultStore;
 
 /* compiled from: SupportLifecycleTrackingFragment */

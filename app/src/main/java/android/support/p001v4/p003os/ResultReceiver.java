@@ -7,7 +7,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.RemoteException;
 import android.support.annotation.RestrictTo;
-import android.support.p001v4.p003os.IResultReceiver;
 
 @SuppressLint({"BanParcelableUsage"})
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
@@ -26,38 +25,15 @@ public class ResultReceiver implements Parcelable {
     final boolean mLocal;
     IResultReceiver mReceiver;
 
-    /* renamed from: android.support.v4.os.ResultReceiver$MyRunnable */
-    class MyRunnable implements Runnable {
-        final int mResultCode;
-        final Bundle mResultData;
-
-        MyRunnable(int resultCode, Bundle resultData) {
-            this.mResultCode = resultCode;
-            this.mResultData = resultData;
-        }
-
-        public void run() {
-            ResultReceiver.this.onReceiveResult(this.mResultCode, this.mResultData);
-        }
-    }
-
-    /* renamed from: android.support.v4.os.ResultReceiver$MyResultReceiver */
-    class MyResultReceiver extends IResultReceiver.Stub {
-        MyResultReceiver() {
-        }
-
-        public void send(int resultCode, Bundle resultData) {
-            if (ResultReceiver.this.mHandler != null) {
-                ResultReceiver.this.mHandler.post(new MyRunnable(resultCode, resultData));
-            } else {
-                ResultReceiver.this.onReceiveResult(resultCode, resultData);
-            }
-        }
-    }
-
     public ResultReceiver(Handler handler) {
         this.mLocal = true;
         this.mHandler = handler;
+    }
+
+    ResultReceiver(Parcel in) {
+        this.mLocal = false;
+        this.mHandler = null;
+        this.mReceiver = IResultReceiver.Stub.asInterface(in.readStrongBinder());
     }
 
     public void send(int resultCode, Bundle resultData) {
@@ -96,9 +72,32 @@ public class ResultReceiver implements Parcelable {
         }
     }
 
-    ResultReceiver(Parcel in) {
-        this.mLocal = false;
-        this.mHandler = null;
-        this.mReceiver = IResultReceiver.Stub.asInterface(in.readStrongBinder());
+    /* renamed from: android.support.v4.os.ResultReceiver$MyRunnable */
+    class MyRunnable implements Runnable {
+        final int mResultCode;
+        final Bundle mResultData;
+
+        MyRunnable(int resultCode, Bundle resultData) {
+            this.mResultCode = resultCode;
+            this.mResultData = resultData;
+        }
+
+        public void run() {
+            ResultReceiver.this.onReceiveResult(this.mResultCode, this.mResultData);
+        }
+    }
+
+    /* renamed from: android.support.v4.os.ResultReceiver$MyResultReceiver */
+    class MyResultReceiver extends IResultReceiver.Stub {
+        MyResultReceiver() {
+        }
+
+        public void send(int resultCode, Bundle resultData) {
+            if (ResultReceiver.this.mHandler != null) {
+                ResultReceiver.this.mHandler.post(new MyRunnable(resultCode, resultData));
+            } else {
+                ResultReceiver.this.onReceiveResult(resultCode, resultData);
+            }
+        }
     }
 }

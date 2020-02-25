@@ -1,6 +1,7 @@
 package com.google.android.libraries.stitch.util;
 
 import android.text.TextUtils;
+
 import java.util.Arrays;
 
 public final class Objects {

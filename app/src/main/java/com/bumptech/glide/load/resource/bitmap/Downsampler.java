@@ -7,6 +7,7 @@ import android.os.Build;
 import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
 import android.util.Log;
+
 import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.ImageHeaderParser;
 import com.bumptech.glide.load.ImageHeaderParserUtils;
@@ -15,11 +16,11 @@ import com.bumptech.glide.load.Options;
 import com.bumptech.glide.load.engine.Resource;
 import com.bumptech.glide.load.engine.bitmap_recycle.ArrayPool;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
-import com.bumptech.glide.load.resource.bitmap.DownsampleStrategy;
 import com.bumptech.glide.util.LogTime;
 import com.bumptech.glide.util.Preconditions;
 import com.bumptech.glide.util.Util;
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -36,6 +37,8 @@ public final class Downsampler {
     public static final Option<DecodeFormat> DECODE_FORMAT = Option.memory("com.bumptech.glide.load.resource.bitmap.Downsampler.DecodeFormat", DecodeFormat.DEFAULT);
     @Deprecated
     public static final Option<DownsampleStrategy> DOWNSAMPLE_STRATEGY = DownsampleStrategy.OPTION;
+    public static final Option<Boolean> FIX_BITMAP_SIZE_TO_REQUESTED_DIMENSIONS = Option.memory("com.bumptech.glide.load.resource.bitmap.Downsampler.FixBitmapSize", false);
+    static final String TAG = "Downsampler";
     private static final DecodeCallbacks EMPTY_CALLBACKS = new DecodeCallbacks() {
         public void onObtainBounds() {
         }
@@ -43,169 +46,23 @@ public final class Downsampler {
         public void onDecodeComplete(BitmapPool bitmapPool, Bitmap downsampled) {
         }
     };
-    public static final Option<Boolean> FIX_BITMAP_SIZE_TO_REQUESTED_DIMENSIONS = Option.memory("com.bumptech.glide.load.resource.bitmap.Downsampler.FixBitmapSize", false);
     private static final String ICO_MIME_TYPE = "image/x-ico";
     private static final int MARK_POSITION = 10485760;
-    private static final Set<String> NO_DOWNSAMPLE_PRE_N_MIME_TYPES = Collections.unmodifiableSet(new HashSet(Arrays.asList(WBMP_MIME_TYPE, ICO_MIME_TYPE)));
     private static final Queue<BitmapFactory.Options> OPTIONS_QUEUE = Util.createQueue(0);
-    static final String TAG = "Downsampler";
     private static final Set<ImageHeaderParser.ImageType> TYPES_THAT_USE_POOL_PRE_KITKAT = Collections.unmodifiableSet(EnumSet.of(ImageHeaderParser.ImageType.JPEG, ImageHeaderParser.ImageType.PNG_A, ImageHeaderParser.ImageType.PNG));
     private static final String WBMP_MIME_TYPE = "image/vnd.wap.wbmp";
+    private static final Set<String> NO_DOWNSAMPLE_PRE_N_MIME_TYPES = Collections.unmodifiableSet(new HashSet(Arrays.asList(WBMP_MIME_TYPE, ICO_MIME_TYPE)));
     private final BitmapPool bitmapPool;
     private final ArrayPool byteArrayPool;
     private final DisplayMetrics displayMetrics;
     private final HardwareConfigState hardwareConfigState = HardwareConfigState.getInstance();
     private final List<ImageHeaderParser> parsers;
 
-    public interface DecodeCallbacks {
-        void onDecodeComplete(BitmapPool bitmapPool, Bitmap bitmap) throws IOException;
-
-        void onObtainBounds();
-    }
-
     public Downsampler(List<ImageHeaderParser> parsers2, DisplayMetrics displayMetrics2, BitmapPool bitmapPool2, ArrayPool byteArrayPool2) {
         this.parsers = parsers2;
         this.displayMetrics = (DisplayMetrics) Preconditions.checkNotNull(displayMetrics2);
         this.bitmapPool = (BitmapPool) Preconditions.checkNotNull(bitmapPool2);
         this.byteArrayPool = (ArrayPool) Preconditions.checkNotNull(byteArrayPool2);
-    }
-
-    public boolean handles(InputStream is) {
-        return true;
-    }
-
-    public boolean handles(ByteBuffer byteBuffer) {
-        return true;
-    }
-
-    public Resource<Bitmap> decode(InputStream is, int outWidth, int outHeight, Options options) throws IOException {
-        return decode(is, outWidth, outHeight, options, EMPTY_CALLBACKS);
-    }
-
-    public Resource<Bitmap> decode(InputStream is, int requestedWidth, int requestedHeight, Options options, DecodeCallbacks callbacks) throws IOException {
-        Options options2 = options;
-        Preconditions.checkArgument(is.markSupported(), "You must provide an InputStream that supports mark()");
-        byte[] bytesForOptions = (byte[]) this.byteArrayPool.get(65536, byte[].class);
-        BitmapFactory.Options bitmapFactoryOptions = getDefaultOptions();
-        bitmapFactoryOptions.inTempStorage = bytesForOptions;
-        DecodeFormat decodeFormat = (DecodeFormat) options2.get(DECODE_FORMAT);
-        try {
-            return BitmapResource.obtain(decodeFromWrappedStreams(is, bitmapFactoryOptions, (DownsampleStrategy) options2.get(DownsampleStrategy.OPTION), decodeFormat, options2.get(ALLOW_HARDWARE_CONFIG) != null && ((Boolean) options2.get(ALLOW_HARDWARE_CONFIG)).booleanValue(), requestedWidth, requestedHeight, ((Boolean) options2.get(FIX_BITMAP_SIZE_TO_REQUESTED_DIMENSIONS)).booleanValue(), callbacks), this.bitmapPool);
-        } finally {
-            releaseOptions(bitmapFactoryOptions);
-            this.byteArrayPool.put(bytesForOptions);
-        }
-    }
-
-    private Bitmap decodeFromWrappedStreams(InputStream is, BitmapFactory.Options options, DownsampleStrategy downsampleStrategy, DecodeFormat decodeFormat, boolean isHardwareConfigAllowed, int requestedWidth, int requestedHeight, boolean fixBitmapToRequestedDimensions, DecodeCallbacks callbacks) throws IOException {
-        boolean isHardwareConfigAllowed2;
-        Downsampler downsampler;
-        String str;
-        int expectedHeight;
-        int expectedWidth;
-        int expectedWidth2;
-        InputStream inputStream = is;
-        BitmapFactory.Options options2 = options;
-        DecodeCallbacks decodeCallbacks = callbacks;
-        long startTime = LogTime.getLogTime();
-        int[] sourceDimensions = getDimensions(inputStream, options2, decodeCallbacks, this.bitmapPool);
-        boolean z = false;
-        int sourceWidth = sourceDimensions[0];
-        int sourceHeight = sourceDimensions[1];
-        String sourceMimeType = options2.outMimeType;
-        if (sourceWidth == -1 || sourceHeight == -1) {
-            isHardwareConfigAllowed2 = false;
-        } else {
-            isHardwareConfigAllowed2 = isHardwareConfigAllowed;
-        }
-        int orientation = ImageHeaderParserUtils.getOrientation(this.parsers, inputStream, this.byteArrayPool);
-        int degreesToRotate = TransformationUtils.getExifOrientationDegrees(orientation);
-        boolean isExifOrientationRequired = TransformationUtils.isExifOrientationRequired(orientation);
-        int i = requestedWidth;
-        int targetWidth = i == Integer.MIN_VALUE ? sourceWidth : i;
-        int i2 = requestedHeight;
-        int targetHeight = i2 == Integer.MIN_VALUE ? sourceHeight : i2;
-        ImageHeaderParser.ImageType imageType = ImageHeaderParserUtils.getType(this.parsers, inputStream, this.byteArrayPool);
-        BitmapPool bitmapPool2 = this.bitmapPool;
-        ImageHeaderParser.ImageType imageType2 = imageType;
-        calculateScaling(imageType, is, callbacks, bitmapPool2, downsampleStrategy, degreesToRotate, sourceWidth, sourceHeight, targetWidth, targetHeight, options);
-        int orientation2 = orientation;
-        String sourceMimeType2 = sourceMimeType;
-        int sourceHeight2 = sourceHeight;
-        int sourceWidth2 = sourceWidth;
-        DecodeCallbacks decodeCallbacks2 = decodeCallbacks;
-        BitmapFactory.Options options3 = options2;
-        calculateConfig(is, decodeFormat, isHardwareConfigAllowed2, isExifOrientationRequired, options, targetWidth, targetHeight);
-        if (Build.VERSION.SDK_INT >= 19) {
-            z = true;
-        }
-        boolean isKitKatOrGreater = z;
-        if (options3.inSampleSize == 1 || isKitKatOrGreater) {
-            downsampler = this;
-            if (downsampler.shouldUsePool(imageType2)) {
-                if (sourceWidth2 < 0 || sourceHeight2 < 0 || !fixBitmapToRequestedDimensions || !isKitKatOrGreater) {
-                    float densityMultiplier = isScaling(options) != 0 ? ((float) options3.inTargetDensity) / ((float) options3.inDensity) : 1.0f;
-                    int sampleSize = options3.inSampleSize;
-                    String str2 = TAG;
-                    int expectedWidth3 = Math.round(((float) ((int) Math.ceil((double) (((float) sourceWidth2) / ((float) sampleSize))))) * densityMultiplier);
-                    int expectedHeight2 = Math.round(((float) ((int) Math.ceil((double) (((float) sourceHeight2) / ((float) sampleSize))))) * densityMultiplier);
-                    str = str2;
-                    if (Log.isLoggable(str, 2)) {
-                        int i3 = options3.inTargetDensity;
-                        int downsampledHeight = options3.inDensity;
-                        StringBuilder sb = new StringBuilder(192);
-                        sb.append("Calculated target [");
-                        sb.append(expectedWidth3);
-                        sb.append("x");
-                        sb.append(expectedHeight2);
-                        expectedWidth2 = expectedWidth3;
-                        sb.append("] for source [");
-                        sb.append(sourceWidth2);
-                        sb.append("x");
-                        sb.append(sourceHeight2);
-                        sb.append("], sampleSize: ");
-                        sb.append(sampleSize);
-                        sb.append(", targetDensity: ");
-                        sb.append(i3);
-                        sb.append(", density: ");
-                        sb.append(downsampledHeight);
-                        sb.append(", density multiplier: ");
-                        sb.append(densityMultiplier);
-                        Log.v(str, sb.toString());
-                    } else {
-                        expectedWidth2 = expectedWidth3;
-                    }
-                    expectedHeight = expectedHeight2;
-                    expectedWidth = expectedWidth2;
-                } else {
-                    expectedWidth = targetWidth;
-                    expectedHeight = targetHeight;
-                    str = TAG;
-                }
-                if (expectedWidth > 0 && expectedHeight > 0) {
-                    setInBitmap(options3, downsampler.bitmapPool, expectedWidth, expectedHeight);
-                }
-            } else {
-                str = TAG;
-            }
-        } else {
-            downsampler = this;
-            str = TAG;
-        }
-        Bitmap downsampled = decodeStream(is, options3, decodeCallbacks2, downsampler.bitmapPool);
-        decodeCallbacks2.onDecodeComplete(downsampler.bitmapPool, downsampled);
-        if (Log.isLoggable(str, 2)) {
-            logDecode(sourceWidth2, sourceHeight2, sourceMimeType2, options, downsampled, requestedWidth, requestedHeight, startTime);
-        }
-        Bitmap rotated = null;
-        if (downsampled != null) {
-            downsampled.setDensity(downsampler.displayMetrics.densityDpi);
-            rotated = TransformationUtils.rotateImageExif(downsampler.bitmapPool, downsampled, orientation2);
-            if (!downsampled.equals(rotated)) {
-                downsampler.bitmapPool.put(downsampled);
-            }
-        }
-        return rotated;
     }
 
     /* JADX INFO: Multiple debug info for r15v12 int: [D('powerOfTwoHeight' int), D('dimensions' int[])] */
@@ -386,38 +243,6 @@ public final class Downsampler {
 
     private static int round(double value) {
         return (int) (0.5d + value);
-    }
-
-    private boolean shouldUsePool(ImageHeaderParser.ImageType imageType) {
-        if (Build.VERSION.SDK_INT >= 19) {
-            return true;
-        }
-        return TYPES_THAT_USE_POOL_PRE_KITKAT.contains(imageType);
-    }
-
-    private void calculateConfig(InputStream is, DecodeFormat format, boolean isHardwareConfigAllowed, boolean isExifOrientationRequired, BitmapFactory.Options optionsWithScaling, int targetWidth, int targetHeight) {
-        if (!this.hardwareConfigState.setHardwareConfigIfAllowed(targetWidth, targetHeight, optionsWithScaling, format, isHardwareConfigAllowed, isExifOrientationRequired)) {
-            if (format == DecodeFormat.PREFER_ARGB_8888 || Build.VERSION.SDK_INT == 16) {
-                optionsWithScaling.inPreferredConfig = Bitmap.Config.ARGB_8888;
-                return;
-            }
-            boolean hasAlpha = false;
-            try {
-                hasAlpha = ImageHeaderParserUtils.getType(this.parsers, is, this.byteArrayPool).hasAlpha();
-            } catch (IOException e) {
-                if (Log.isLoggable(TAG, 3)) {
-                    String valueOf = String.valueOf(format);
-                    StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 72);
-                    sb.append("Cannot determine whether the image has alpha or not from header, format ");
-                    sb.append(valueOf);
-                    Log.d(TAG, sb.toString(), e);
-                }
-            }
-            optionsWithScaling.inPreferredConfig = hasAlpha ? Bitmap.Config.ARGB_8888 : Bitmap.Config.RGB_565;
-            if (optionsWithScaling.inPreferredConfig == Bitmap.Config.RGB_565) {
-                optionsWithScaling.inDither = true;
-            }
-        }
     }
 
     private static int[] getDimensions(InputStream is, BitmapFactory.Options options, DecodeCallbacks decodeCallbacks, BitmapPool bitmapPool2) throws IOException {
@@ -608,5 +433,181 @@ public final class Downsampler {
         decodeBitmapOptions.outMimeType = null;
         decodeBitmapOptions.inBitmap = null;
         decodeBitmapOptions.inMutable = true;
+    }
+
+    public boolean handles(InputStream is) {
+        return true;
+    }
+
+    public boolean handles(ByteBuffer byteBuffer) {
+        return true;
+    }
+
+    public Resource<Bitmap> decode(InputStream is, int outWidth, int outHeight, Options options) throws IOException {
+        return decode(is, outWidth, outHeight, options, EMPTY_CALLBACKS);
+    }
+
+    public Resource<Bitmap> decode(InputStream is, int requestedWidth, int requestedHeight, Options options, DecodeCallbacks callbacks) throws IOException {
+        Options options2 = options;
+        Preconditions.checkArgument(is.markSupported(), "You must provide an InputStream that supports mark()");
+        byte[] bytesForOptions = (byte[]) this.byteArrayPool.get(65536, byte[].class);
+        BitmapFactory.Options bitmapFactoryOptions = getDefaultOptions();
+        bitmapFactoryOptions.inTempStorage = bytesForOptions;
+        DecodeFormat decodeFormat = (DecodeFormat) options2.get(DECODE_FORMAT);
+        try {
+            return BitmapResource.obtain(decodeFromWrappedStreams(is, bitmapFactoryOptions, (DownsampleStrategy) options2.get(DownsampleStrategy.OPTION), decodeFormat, options2.get(ALLOW_HARDWARE_CONFIG) != null && ((Boolean) options2.get(ALLOW_HARDWARE_CONFIG)).booleanValue(), requestedWidth, requestedHeight, ((Boolean) options2.get(FIX_BITMAP_SIZE_TO_REQUESTED_DIMENSIONS)).booleanValue(), callbacks), this.bitmapPool);
+        } finally {
+            releaseOptions(bitmapFactoryOptions);
+            this.byteArrayPool.put(bytesForOptions);
+        }
+    }
+
+    private Bitmap decodeFromWrappedStreams(InputStream is, BitmapFactory.Options options, DownsampleStrategy downsampleStrategy, DecodeFormat decodeFormat, boolean isHardwareConfigAllowed, int requestedWidth, int requestedHeight, boolean fixBitmapToRequestedDimensions, DecodeCallbacks callbacks) throws IOException {
+        boolean isHardwareConfigAllowed2;
+        Downsampler downsampler;
+        String str;
+        int expectedHeight;
+        int expectedWidth;
+        int expectedWidth2;
+        InputStream inputStream = is;
+        BitmapFactory.Options options2 = options;
+        DecodeCallbacks decodeCallbacks = callbacks;
+        long startTime = LogTime.getLogTime();
+        int[] sourceDimensions = getDimensions(inputStream, options2, decodeCallbacks, this.bitmapPool);
+        boolean z = false;
+        int sourceWidth = sourceDimensions[0];
+        int sourceHeight = sourceDimensions[1];
+        String sourceMimeType = options2.outMimeType;
+        if (sourceWidth == -1 || sourceHeight == -1) {
+            isHardwareConfigAllowed2 = false;
+        } else {
+            isHardwareConfigAllowed2 = isHardwareConfigAllowed;
+        }
+        int orientation = ImageHeaderParserUtils.getOrientation(this.parsers, inputStream, this.byteArrayPool);
+        int degreesToRotate = TransformationUtils.getExifOrientationDegrees(orientation);
+        boolean isExifOrientationRequired = TransformationUtils.isExifOrientationRequired(orientation);
+        int i = requestedWidth;
+        int targetWidth = i == Integer.MIN_VALUE ? sourceWidth : i;
+        int i2 = requestedHeight;
+        int targetHeight = i2 == Integer.MIN_VALUE ? sourceHeight : i2;
+        ImageHeaderParser.ImageType imageType = ImageHeaderParserUtils.getType(this.parsers, inputStream, this.byteArrayPool);
+        BitmapPool bitmapPool2 = this.bitmapPool;
+        ImageHeaderParser.ImageType imageType2 = imageType;
+        calculateScaling(imageType, is, callbacks, bitmapPool2, downsampleStrategy, degreesToRotate, sourceWidth, sourceHeight, targetWidth, targetHeight, options);
+        int orientation2 = orientation;
+        String sourceMimeType2 = sourceMimeType;
+        int sourceHeight2 = sourceHeight;
+        int sourceWidth2 = sourceWidth;
+        DecodeCallbacks decodeCallbacks2 = decodeCallbacks;
+        BitmapFactory.Options options3 = options2;
+        calculateConfig(is, decodeFormat, isHardwareConfigAllowed2, isExifOrientationRequired, options, targetWidth, targetHeight);
+        if (Build.VERSION.SDK_INT >= 19) {
+            z = true;
+        }
+        boolean isKitKatOrGreater = z;
+        if (options3.inSampleSize == 1 || isKitKatOrGreater) {
+            downsampler = this;
+            if (downsampler.shouldUsePool(imageType2)) {
+                if (sourceWidth2 < 0 || sourceHeight2 < 0 || !fixBitmapToRequestedDimensions || !isKitKatOrGreater) {
+                    float densityMultiplier = isScaling(options) != 0 ? ((float) options3.inTargetDensity) / ((float) options3.inDensity) : 1.0f;
+                    int sampleSize = options3.inSampleSize;
+                    String str2 = TAG;
+                    int expectedWidth3 = Math.round(((float) ((int) Math.ceil((double) (((float) sourceWidth2) / ((float) sampleSize))))) * densityMultiplier);
+                    int expectedHeight2 = Math.round(((float) ((int) Math.ceil((double) (((float) sourceHeight2) / ((float) sampleSize))))) * densityMultiplier);
+                    str = str2;
+                    if (Log.isLoggable(str, 2)) {
+                        int i3 = options3.inTargetDensity;
+                        int downsampledHeight = options3.inDensity;
+                        StringBuilder sb = new StringBuilder(192);
+                        sb.append("Calculated target [");
+                        sb.append(expectedWidth3);
+                        sb.append("x");
+                        sb.append(expectedHeight2);
+                        expectedWidth2 = expectedWidth3;
+                        sb.append("] for source [");
+                        sb.append(sourceWidth2);
+                        sb.append("x");
+                        sb.append(sourceHeight2);
+                        sb.append("], sampleSize: ");
+                        sb.append(sampleSize);
+                        sb.append(", targetDensity: ");
+                        sb.append(i3);
+                        sb.append(", density: ");
+                        sb.append(downsampledHeight);
+                        sb.append(", density multiplier: ");
+                        sb.append(densityMultiplier);
+                        Log.v(str, sb.toString());
+                    } else {
+                        expectedWidth2 = expectedWidth3;
+                    }
+                    expectedHeight = expectedHeight2;
+                    expectedWidth = expectedWidth2;
+                } else {
+                    expectedWidth = targetWidth;
+                    expectedHeight = targetHeight;
+                    str = TAG;
+                }
+                if (expectedWidth > 0 && expectedHeight > 0) {
+                    setInBitmap(options3, downsampler.bitmapPool, expectedWidth, expectedHeight);
+                }
+            } else {
+                str = TAG;
+            }
+        } else {
+            downsampler = this;
+            str = TAG;
+        }
+        Bitmap downsampled = decodeStream(is, options3, decodeCallbacks2, downsampler.bitmapPool);
+        decodeCallbacks2.onDecodeComplete(downsampler.bitmapPool, downsampled);
+        if (Log.isLoggable(str, 2)) {
+            logDecode(sourceWidth2, sourceHeight2, sourceMimeType2, options, downsampled, requestedWidth, requestedHeight, startTime);
+        }
+        Bitmap rotated = null;
+        if (downsampled != null) {
+            downsampled.setDensity(downsampler.displayMetrics.densityDpi);
+            rotated = TransformationUtils.rotateImageExif(downsampler.bitmapPool, downsampled, orientation2);
+            if (!downsampled.equals(rotated)) {
+                downsampler.bitmapPool.put(downsampled);
+            }
+        }
+        return rotated;
+    }
+
+    private boolean shouldUsePool(ImageHeaderParser.ImageType imageType) {
+        if (Build.VERSION.SDK_INT >= 19) {
+            return true;
+        }
+        return TYPES_THAT_USE_POOL_PRE_KITKAT.contains(imageType);
+    }
+
+    private void calculateConfig(InputStream is, DecodeFormat format, boolean isHardwareConfigAllowed, boolean isExifOrientationRequired, BitmapFactory.Options optionsWithScaling, int targetWidth, int targetHeight) {
+        if (!this.hardwareConfigState.setHardwareConfigIfAllowed(targetWidth, targetHeight, optionsWithScaling, format, isHardwareConfigAllowed, isExifOrientationRequired)) {
+            if (format == DecodeFormat.PREFER_ARGB_8888 || Build.VERSION.SDK_INT == 16) {
+                optionsWithScaling.inPreferredConfig = Bitmap.Config.ARGB_8888;
+                return;
+            }
+            boolean hasAlpha = false;
+            try {
+                hasAlpha = ImageHeaderParserUtils.getType(this.parsers, is, this.byteArrayPool).hasAlpha();
+            } catch (IOException e) {
+                if (Log.isLoggable(TAG, 3)) {
+                    String valueOf = String.valueOf(format);
+                    StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 72);
+                    sb.append("Cannot determine whether the image has alpha or not from header, format ");
+                    sb.append(valueOf);
+                    Log.d(TAG, sb.toString(), e);
+                }
+            }
+            optionsWithScaling.inPreferredConfig = hasAlpha ? Bitmap.Config.ARGB_8888 : Bitmap.Config.RGB_565;
+            if (optionsWithScaling.inPreferredConfig == Bitmap.Config.RGB_565) {
+                optionsWithScaling.inDither = true;
+            }
+        }
+    }
+
+    public interface DecodeCallbacks {
+        void onDecodeComplete(BitmapPool bitmapPool, Bitmap bitmap) throws IOException;
+
+        void onObtainBounds();
     }
 }

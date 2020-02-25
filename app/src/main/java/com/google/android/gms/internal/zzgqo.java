@@ -1,6 +1,5 @@
 package com.google.android.gms.internal;
 
-import java.lang.Comparable;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,21 +17,25 @@ class zzgqo<K extends Comparable<K>, V> extends AbstractMap<K, V> {
     public List<zzgqv> zzb;
     /* access modifiers changed from: private */
     public Map<K, V> zzc;
-    private boolean zzd;
-    private volatile zzgqx zze;
     /* access modifiers changed from: private */
     public Map<K, V> zzf;
+    private boolean zzd;
+    private volatile zzgqx zze;
     private volatile zzgqr zzg;
-
-    static <FieldDescriptorType extends zzgoc<FieldDescriptorType>> zzgqo<FieldDescriptorType, Object> zza(int i) {
-        return new zzgqp(i);
-    }
 
     private zzgqo(int i) {
         this.zza = i;
         this.zzb = Collections.emptyList();
         this.zzc = Collections.emptyMap();
         this.zzf = Collections.emptyMap();
+    }
+
+    /* synthetic */ zzgqo(int i, zzgqp zzgqp) {
+        this(i);
+    }
+
+    static <FieldDescriptorType extends zzgoc<FieldDescriptorType>> zzgqo<FieldDescriptorType, Object> zza(int i) {
+        return new zzgqp(i);
     }
 
     public void zza() {
@@ -246,9 +249,5 @@ class zzgqo<K extends Comparable<K>, V> extends AbstractMap<K, V> {
             return i + this.zzc.hashCode();
         }
         return i;
-    }
-
-    /* synthetic */ zzgqo(int i, zzgqp zzgqp) {
-        this(i);
     }
 }

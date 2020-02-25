@@ -5,6 +5,7 @@ import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
 import java.io.Serializable;
 import java.util.ArrayDeque;
 import java.util.Collection;
@@ -14,9 +15,9 @@ import java.util.Queue;
 @Beta
 public final class EvictingQueue<E> extends ForwardingQueue<E> implements Serializable {
     private static final long serialVersionUID = 0;
-    private final Queue<E> delegate;
     @VisibleForTesting
     final int maxSize;
+    private final Queue<E> delegate;
 
     private EvictingQueue(int maxSize2) {
         Preconditions.checkArgument(maxSize2 >= 0, "maxSize (%s) must >= 0", maxSize2);

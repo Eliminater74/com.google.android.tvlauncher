@@ -3,6 +3,7 @@ package com.google.android.exoplayer2.source;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
+
 import java.util.Arrays;
 
 public final class TrackGroupArray implements Parcelable {
@@ -16,9 +17,9 @@ public final class TrackGroupArray implements Parcelable {
         }
     };
     public static final TrackGroupArray EMPTY = new TrackGroupArray(new TrackGroup[0]);
-    private int hashCode;
     public final int length;
     private final TrackGroup[] trackGroups;
+    private int hashCode;
 
     public TrackGroupArray(TrackGroup... trackGroups2) {
         this.trackGroups = trackGroups2;

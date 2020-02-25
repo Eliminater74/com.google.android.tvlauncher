@@ -2,6 +2,7 @@ package com.google.common.collect;
 
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.base.Preconditions;
+
 import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.Queue;

@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 
@@ -20,31 +21,6 @@ public class Loader<D> {
     private boolean mProcessingChange = false;
     private boolean mReset = true;
     private boolean mStarted = false;
-
-    /* renamed from: android.support.v4.content.Loader$OnLoadCanceledListener */
-    public interface OnLoadCanceledListener<D> {
-        void onLoadCanceled(@NonNull Loader<D> loader);
-    }
-
-    /* renamed from: android.support.v4.content.Loader$OnLoadCompleteListener */
-    public interface OnLoadCompleteListener<D> {
-        void onLoadComplete(@NonNull Loader<D> loader, @Nullable D d);
-    }
-
-    /* renamed from: android.support.v4.content.Loader$ForceLoadContentObserver */
-    public final class ForceLoadContentObserver extends ContentObserver {
-        public ForceLoadContentObserver() {
-            super(new Handler());
-        }
-
-        public boolean deliverSelfNotifications() {
-            return true;
-        }
-
-        public void onChange(boolean selfChange) {
-            Loader.this.onContentChanged();
-        }
-    }
 
     public Loader(@NonNull Context context) {
         this.mContext = context.getApplicationContext();
@@ -277,6 +253,31 @@ public class Loader<D> {
             writer.print(this.mAbandoned);
             writer.print(" mReset=");
             writer.println(this.mReset);
+        }
+    }
+
+    /* renamed from: android.support.v4.content.Loader$OnLoadCanceledListener */
+    public interface OnLoadCanceledListener<D> {
+        void onLoadCanceled(@NonNull Loader<D> loader);
+    }
+
+    /* renamed from: android.support.v4.content.Loader$OnLoadCompleteListener */
+    public interface OnLoadCompleteListener<D> {
+        void onLoadComplete(@NonNull Loader<D> loader, @Nullable D d);
+    }
+
+    /* renamed from: android.support.v4.content.Loader$ForceLoadContentObserver */
+    public final class ForceLoadContentObserver extends ContentObserver {
+        public ForceLoadContentObserver() {
+            super(new Handler());
+        }
+
+        public boolean deliverSelfNotifications() {
+            return true;
+        }
+
+        public void onChange(boolean selfChange) {
+            Loader.this.onContentChanged();
         }
     }
 }

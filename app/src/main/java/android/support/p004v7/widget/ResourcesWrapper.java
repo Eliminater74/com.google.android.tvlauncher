@@ -13,9 +13,11 @@ import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
+
+import org.xmlpull.v1.XmlPullParserException;
+
 import java.io.IOException;
 import java.io.InputStream;
-import org.xmlpull.v1.XmlPullParserException;
 
 /* renamed from: android.support.v7.widget.ResourcesWrapper */
 class ResourcesWrapper extends Resources {

@@ -5,9 +5,10 @@ import android.content.res.Resources;
 import android.support.annotation.DimenRes;
 import android.util.SparseArray;
 import android.widget.ImageView;
+
 import androidx.leanback.widget.HorizontalGridView;
+
 import com.google.android.tvlauncher.C1188R;
-import com.google.android.tvlauncher.home.util.ChannelStateSettings;
 
 public class ChannelUtil {
     public static SparseArray<ChannelStateSettings> getDefaultChannelStateSettings(Context context) {

@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.CompoundButton;
+
 import java.lang.reflect.Field;
 
 /* renamed from: android.support.v4.widget.CompoundButtonCompat */

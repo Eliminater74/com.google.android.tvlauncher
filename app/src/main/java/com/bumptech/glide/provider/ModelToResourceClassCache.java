@@ -3,7 +3,9 @@ package com.bumptech.glide.provider;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.p001v4.util.ArrayMap;
+
 import com.bumptech.glide.util.MultiClassKey;
+
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 

@@ -21,9 +21,11 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityManager;
 import android.widget.Toast;
+
 import androidx.leanback.widget.FacetProvider;
 import androidx.leanback.widget.ItemAlignmentFacet;
 import androidx.leanback.widget.VerticalGridView;
+
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
@@ -64,6 +66,7 @@ import com.google.android.tvlauncher.view.HomeTopRowView;
 import com.google.android.tvlauncher.view.SearchView;
 import com.google.android.tvlauncher.widget.PartnerWidgetInfo;
 import com.google.logs.tvlauncher.config.TvLauncherConstants;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
@@ -72,6 +75,10 @@ import java.util.List;
 import java.util.Set;
 
 class HomeController extends RecyclerView.Adapter<HomeRowViewHolder> implements HomeTopRowView.OnActionListener, BackHomeControllerListeners.OnBackPressedListener, BackHomeControllerListeners.OnBackNotHandledListener, BackHomeControllerListeners.OnHomePressedListener, BackHomeControllerListeners.OnHomeNotHandledListener, AccessibilityManager.AccessibilityStateChangeListener, LaunchItemsManager.AppsViewChangeListener, HomeTopRowView.OnHomeTopRowFocusChangedListener {
+    static final int STATE_CHANNEL_ACTIONS = 2;
+    static final int STATE_DEFAULT = 0;
+    static final int STATE_MOVE_CHANNEL = 3;
+    static final int STATE_ZOOMED_OUT = 1;
     private static final int ACCESSIBILITY_APP_SELECT_DELAY_MILLIS = 50;
     private static final int BACKGROUND_UPDATE_DELAY_MILLIS = 2000;
     private static final boolean DEBUG = false;
@@ -108,25 +115,200 @@ class HomeController extends RecyclerView.Adapter<HomeRowViewHolder> implements 
     private static final int ROW_TYPE_UNBRANDED_SPONSORED_CHANNEL = 5;
     private static final int ROW_TYPE_WATCH_NEXT = 2;
     private static final int ROW_TYPE_WATCH_NEXT_POSITION = 2;
-    static final int STATE_CHANNEL_ACTIONS = 2;
-    static final int STATE_DEFAULT = 0;
-    static final int STATE_MOVE_CHANNEL = 3;
-    static final int STATE_ZOOMED_OUT = 1;
     private static final String TAG = "HomeController";
     private static final int THRESHOLD_HOME_PRESS_PAUSE_INTERVAL_MILLIS = 200;
-    private Set<ChannelRowController> mActiveChannelRowControllers = new HashSet();
-    private Set<WatchNextRowController> mActiveWatchNextRowControllers = new HashSet();
-    private Set<String> mAddToWatchNextPackagesBlacklist;
+    /* access modifiers changed from: private */
+    public final Context mContext;
+    /* access modifiers changed from: private */
+    public final TvDataManager mDataManager;
+    /* access modifiers changed from: private */
+    public final EventLogger mEventLogger;
+    /* access modifiers changed from: private */
+    public final Runnable mNotifyChannelItemMetadataChangedRunnable = new HomeController$$Lambda$3(this);
+    /* access modifiers changed from: private */
+    public final Runnable mNotifyWatchNextCardSelectionChangedRunnable = new HomeController$$Lambda$4(this);
+    private final Runnable mNotifyIdleStateChangedRunnable = new HomeController$$Lambda$5(this);
+    private final Runnable mNotifySelectionChangedRunnable = new HomeController$$Lambda$1(this);
+    private final Runnable mNotifyStateChangedRunnable = new HomeController$$Lambda$2(this);
+    private final Runnable mNotifyTopRowStateChangedRunnable = new HomeController$$Lambda$0(this);
     /* access modifiers changed from: private */
     public ItemAlignmentFacet mAppsRowDefaultWithTrayFacet;
     /* access modifiers changed from: private */
     public ItemAlignmentFacet mAppsRowZoomedOutWithTrayFacet;
-    private Drawable mAssistantIcon;
-    private String[] mAssistantSuggestions;
     /* access modifiers changed from: private */
     public HomeBackgroundController mBackgroundController;
+    /* access modifiers changed from: private */
+    public ItemAlignmentFacet mConfigureChannelsFacet;
+    /* access modifiers changed from: private */
+    public EmptyChannelsHelper mEmptyChannelsHelper;
+    /* access modifiers changed from: private */
+    public RecyclerViewFastScrollingManager mFastScrollingManager;
+    /* access modifiers changed from: private */
+    public Handler mHandler = new Handler();
+    /* access modifiers changed from: private */
+    public ProgramController mLastSelectedProgramController;
+    /* access modifiers changed from: private */
+    public final Runnable mUpdateBackgroundForProgramAfterDelayRunnable = new Runnable() {
+        public void run() {
+            if (!HomeController.this.mFastScrollingManager.isFastScrollingEnabled() && HomeController.this.mBackgroundController != null && HomeController.this.mLastSelectedProgramController != null && HomeController.this.mLastSelectedProgramController.isViewFocused() && HomeController.this.mLastSelectedProgramController.getPreviewImagePalette() != null) {
+                HomeController.this.mBackgroundController.updateBackground(HomeController.this.mLastSelectedProgramController.getPreviewImagePalette());
+            }
+        }
+    };
+    /* access modifiers changed from: private */
+    public VerticalGridView mList;
+    private final RecyclerViewStateProvider mHomeListStateProvider = new RecyclerViewStateProvider() {
+        public boolean isAnimating() {
+            return HomeController.this.mList != null && HomeController.this.mList.isAnimating();
+        }
+
+        public boolean isAnimating(RecyclerView.ItemAnimator.ItemAnimatorFinishedListener listener) {
+            if (HomeController.this.mList != null && HomeController.this.mList.getItemAnimator() != null) {
+                return HomeController.this.mList.getItemAnimator().isRunning(listener);
+            }
+            if (listener == null) {
+                return false;
+            }
+            listener.onAnimationsFinished();
+            return false;
+        }
+    };
+    /* access modifiers changed from: private */
+    public Cursor mNotifTrayCursor = null;
+    /* access modifiers changed from: private */
+    public ItemAlignmentFacet mSecondToLastRowZoomedOutFacet;
+    /* access modifiers changed from: private */
+    public boolean mSelectFirstAppWhenRowSelected;
+    /* access modifiers changed from: private */
+    public long mSelectedId;
+    /* access modifiers changed from: private */
+    public int mSelectedPosition = 1;
+    private final Runnable mUpdateBackgroundForTopRowsAfterDelayRunnable = new Runnable() {
+        public void run() {
+            if (HomeController.this.mBackgroundController != null && HomeController.this.mSelectedPosition <= 1) {
+                HomeController.this.mBackgroundController.enterDarkMode();
+            }
+        }
+    };
+    /* access modifiers changed from: private */
+    public ItemAlignmentFacet mSponsoredChannelFacet;
+    /* access modifiers changed from: private */
+    public int mState = 0;
+    /* access modifiers changed from: private */
+    public ItemAlignmentFacet mThirdToLastRowZoomedOutFacet;
+    /* access modifiers changed from: private */
+    public boolean mWatchNextEnabled;
+    /* access modifiers changed from: private */
+    public Handler mWatchNextHandler = new Handler();
+    /* access modifiers changed from: private */
+    public Runnable mRequeryWatchNext = new Runnable() {
+        public void run() {
+            if (HomeController.this.mWatchNextEnabled) {
+                HomeController.this.mDataManager.loadWatchNextProgramData();
+            }
+            HomeController.this.mWatchNextHandler.postDelayed(HomeController.this.mRequeryWatchNext, 600000);
+        }
+    };
+    /* access modifiers changed from: private */
+    public boolean mWatchNextVisible;
+    private final OnProgramSelectedListener mOnProgramSelectedListener = new OnProgramSelectedListener() {
+        public void onProgramSelected(Program program, ProgramController programController) {
+            ProgramController unused = HomeController.this.mLastSelectedProgramController = programController;
+            if (HomeController.this.mState == 0 && HomeController.this.mFastScrollingManager.isFastScrollingEnabled()) {
+                HomeController homeController = HomeController.this;
+                if (homeController.hasFastScrollingMode(homeController.mSelectedPosition)) {
+                    return;
+                }
+            }
+            if (HomeController.this.mBackgroundController != null) {
+                HomeController.this.mHandler.removeCallbacks(HomeController.this.mUpdateBackgroundForProgramAfterDelayRunnable);
+                HomeController.this.mHandler.postDelayed(HomeController.this.mUpdateBackgroundForProgramAfterDelayRunnable, AdaptiveTrackSelection.DEFAULT_MIN_TIME_BETWEEN_BUFFER_REEVALUTATION_MS);
+            }
+            HomeController homeController2 = HomeController.this;
+            int rowType = homeController2.getItemViewType(homeController2.mSelectedPosition);
+            if (rowType != 4 && rowType != 5) {
+                HomeController.this.mHandler.removeCallbacks(HomeController.this.mNotifyChannelItemMetadataChangedRunnable);
+                if (HomeController.this.mList == null || HomeController.this.mList.isComputingLayout()) {
+                    Log.w(HomeController.TAG, "list is still computing layout => schedule item metadata change");
+                    HomeController.this.mHandler.post(HomeController.this.mNotifyChannelItemMetadataChangedRunnable);
+                } else {
+                    HomeController.this.mNotifyChannelItemMetadataChangedRunnable.run();
+                }
+                HomeController homeController3 = HomeController.this;
+                if (homeController3.getItemViewType(homeController3.mSelectedPosition) == 2) {
+                    HomeController.this.mHandler.removeCallbacks(HomeController.this.mNotifyWatchNextCardSelectionChangedRunnable);
+                    if (HomeController.this.mList == null || HomeController.this.mList.isComputingLayout()) {
+                        Log.w(HomeController.TAG, "list is still computing layout => schedule watch next card selection changed");
+                        HomeController.this.mHandler.post(HomeController.this.mNotifyWatchNextCardSelectionChangedRunnable);
+                        return;
+                    }
+                    HomeController.this.mNotifyWatchNextCardSelectionChangedRunnable.run();
+                }
+            }
+        }
+    };
+    /* access modifiers changed from: private */
+    public Runnable mRefreshWatchNextOffset = new Runnable() {
+        public void run() {
+            if (HomeController.this.mWatchNextEnabled) {
+                HomeController.this.mDataManager.refreshWatchNextOffset();
+                HomeController.this.updateWatchNextVisibility();
+            }
+            HomeController.this.mWatchNextHandler.postDelayed(HomeController.this.mRefreshWatchNextOffset, 600000);
+        }
+    };
+    private final BroadcastReceiver mTimeSetReceiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            HomeController.this.mWatchNextHandler.removeCallbacks(HomeController.this.mRefreshWatchNextOffset);
+            HomeController.this.mWatchNextHandler.removeCallbacks(HomeController.this.mRequeryWatchNext);
+            HomeController.this.mWatchNextHandler.post(HomeController.this.mRefreshWatchNextOffset);
+            HomeController.this.mWatchNextHandler.post(HomeController.this.mRequeryWatchNext);
+        }
+    };
+    /* access modifiers changed from: private */
+    public final WatchNextProgramsObserver mWatchNextProgramsObserver = new WatchNextProgramsObserver() {
+        public void onProgramsChange() {
+            if (HomeController.this.mWatchNextEnabled) {
+                if (HomeController.this.mWatchNextVisible) {
+                    HomeController homeController = HomeController.this;
+                    if (homeController.getItemViewType(homeController.mSelectedPosition) == 2) {
+                        HomeController homeController2 = HomeController.this;
+                        homeController2.notifyItemChanged(homeController2.mSelectedPosition, HomeController.PAYLOAD_WATCH_NEXT_DATA_CHANGED);
+                    }
+                }
+                HomeController.this.updateWatchNextVisibility();
+            }
+        }
+    };
+    private Set<ChannelRowController> mActiveChannelRowControllers = new HashSet();
+    private Set<WatchNextRowController> mActiveWatchNextRowControllers = new HashSet();
+    private Set<String> mAddToWatchNextPackagesBlacklist;
+    private Drawable mAssistantIcon;
+    private String[] mAssistantSuggestions;
     private int mChannelKeyline;
     private RequestManager mChannelLogoRequestManager;
+    private boolean mHotwordEnabled;
+    private boolean mInputIconVisible;
+    private IntentLaunchDispatcher mIntentLauncher;
+    private boolean mIsIdle = false;
+    private long mLastPausedTime;
+    private int mMicStatus;
+    private Cursor mNotifCountCursor = null;
+    private BackHomeControllerListeners.OnBackNotHandledListener mOnBackNotHandledListener;
+    private PartnerWidgetInfo mPartnerWidgetInfo;
+    private HashSet<Integer> mPrevSelectedPositions = new HashSet<>();
+    private Set<String> mRemoveProgramPackagesBlacklist;
+    private Runnable mSelectFirstAppRunnable = new Runnable() {
+        public void run() {
+            if (HomeController.this.mSelectFirstAppWhenRowSelected && HomeController.this.mSelectedPosition == 1) {
+                HomeRow appsRow = HomeController.this.getHomeRow(1);
+                if (appsRow instanceof FavoriteLaunchItemsRowController) {
+                    ((FavoriteLaunchItemsRowController) appsRow).setSelectedItemPosition(0);
+                    boolean unused = HomeController.this.mSelectFirstAppWhenRowSelected = false;
+                }
+            }
+        }
+    };
     private final HomeChannelsObserver mChannelsObserver = new HomeChannelsObserver() {
         public void onChannelsChange() {
             HomeController.this.mEmptyChannelsHelper.onChannelsChange();
@@ -192,170 +374,8 @@ class HomeController extends RecyclerView.Adapter<HomeRowViewHolder> implements 
             HomeController.this.mEmptyChannelsHelper.onChannelEmptyStatusChange(channelId);
         }
     };
-    /* access modifiers changed from: private */
-    public ItemAlignmentFacet mConfigureChannelsFacet;
-    /* access modifiers changed from: private */
-    public final Context mContext;
-    /* access modifiers changed from: private */
-    public final TvDataManager mDataManager;
-    /* access modifiers changed from: private */
-    public EmptyChannelsHelper mEmptyChannelsHelper;
-    /* access modifiers changed from: private */
-    public final EventLogger mEventLogger;
-    /* access modifiers changed from: private */
-    public RecyclerViewFastScrollingManager mFastScrollingManager;
-    /* access modifiers changed from: private */
-    public Handler mHandler = new Handler();
-    private final RecyclerViewStateProvider mHomeListStateProvider = new RecyclerViewStateProvider() {
-        public boolean isAnimating() {
-            return HomeController.this.mList != null && HomeController.this.mList.isAnimating();
-        }
-
-        public boolean isAnimating(RecyclerView.ItemAnimator.ItemAnimatorFinishedListener listener) {
-            if (HomeController.this.mList != null && HomeController.this.mList.getItemAnimator() != null) {
-                return HomeController.this.mList.getItemAnimator().isRunning(listener);
-            }
-            if (listener == null) {
-                return false;
-            }
-            listener.onAnimationsFinished();
-            return false;
-        }
-    };
-    private boolean mHotwordEnabled;
-    private boolean mInputIconVisible;
-    private IntentLaunchDispatcher mIntentLauncher;
-    private boolean mIsIdle = false;
-    private long mLastPausedTime;
-    /* access modifiers changed from: private */
-    public ProgramController mLastSelectedProgramController;
-    /* access modifiers changed from: private */
-    public VerticalGridView mList;
-    private int mMicStatus;
-    private Cursor mNotifCountCursor = null;
-    /* access modifiers changed from: private */
-    public Cursor mNotifTrayCursor = null;
-    /* access modifiers changed from: private */
-    public final Runnable mNotifyChannelItemMetadataChangedRunnable = new HomeController$$Lambda$3(this);
-    private final Runnable mNotifyIdleStateChangedRunnable = new HomeController$$Lambda$5(this);
-    private final Runnable mNotifySelectionChangedRunnable = new HomeController$$Lambda$1(this);
-    private final Runnable mNotifyStateChangedRunnable = new HomeController$$Lambda$2(this);
-    private final Runnable mNotifyTopRowStateChangedRunnable = new HomeController$$Lambda$0(this);
-    /* access modifiers changed from: private */
-    public final Runnable mNotifyWatchNextCardSelectionChangedRunnable = new HomeController$$Lambda$4(this);
-    private BackHomeControllerListeners.OnBackNotHandledListener mOnBackNotHandledListener;
-    private final OnProgramSelectedListener mOnProgramSelectedListener = new OnProgramSelectedListener() {
-        public void onProgramSelected(Program program, ProgramController programController) {
-            ProgramController unused = HomeController.this.mLastSelectedProgramController = programController;
-            if (HomeController.this.mState == 0 && HomeController.this.mFastScrollingManager.isFastScrollingEnabled()) {
-                HomeController homeController = HomeController.this;
-                if (homeController.hasFastScrollingMode(homeController.mSelectedPosition)) {
-                    return;
-                }
-            }
-            if (HomeController.this.mBackgroundController != null) {
-                HomeController.this.mHandler.removeCallbacks(HomeController.this.mUpdateBackgroundForProgramAfterDelayRunnable);
-                HomeController.this.mHandler.postDelayed(HomeController.this.mUpdateBackgroundForProgramAfterDelayRunnable, AdaptiveTrackSelection.DEFAULT_MIN_TIME_BETWEEN_BUFFER_REEVALUTATION_MS);
-            }
-            HomeController homeController2 = HomeController.this;
-            int rowType = homeController2.getItemViewType(homeController2.mSelectedPosition);
-            if (rowType != 4 && rowType != 5) {
-                HomeController.this.mHandler.removeCallbacks(HomeController.this.mNotifyChannelItemMetadataChangedRunnable);
-                if (HomeController.this.mList == null || HomeController.this.mList.isComputingLayout()) {
-                    Log.w(HomeController.TAG, "list is still computing layout => schedule item metadata change");
-                    HomeController.this.mHandler.post(HomeController.this.mNotifyChannelItemMetadataChangedRunnable);
-                } else {
-                    HomeController.this.mNotifyChannelItemMetadataChangedRunnable.run();
-                }
-                HomeController homeController3 = HomeController.this;
-                if (homeController3.getItemViewType(homeController3.mSelectedPosition) == 2) {
-                    HomeController.this.mHandler.removeCallbacks(HomeController.this.mNotifyWatchNextCardSelectionChangedRunnable);
-                    if (HomeController.this.mList == null || HomeController.this.mList.isComputingLayout()) {
-                        Log.w(HomeController.TAG, "list is still computing layout => schedule watch next card selection changed");
-                        HomeController.this.mHandler.post(HomeController.this.mNotifyWatchNextCardSelectionChangedRunnable);
-                        return;
-                    }
-                    HomeController.this.mNotifyWatchNextCardSelectionChangedRunnable.run();
-                }
-            }
-        }
-    };
-    private PartnerWidgetInfo mPartnerWidgetInfo;
-    private HashSet<Integer> mPrevSelectedPositions = new HashSet<>();
-    /* access modifiers changed from: private */
-    public Runnable mRefreshWatchNextOffset = new Runnable() {
-        public void run() {
-            if (HomeController.this.mWatchNextEnabled) {
-                HomeController.this.mDataManager.refreshWatchNextOffset();
-                HomeController.this.updateWatchNextVisibility();
-            }
-            HomeController.this.mWatchNextHandler.postDelayed(HomeController.this.mRefreshWatchNextOffset, 600000);
-        }
-    };
-    private Set<String> mRemoveProgramPackagesBlacklist;
-    /* access modifiers changed from: private */
-    public Runnable mRequeryWatchNext = new Runnable() {
-        public void run() {
-            if (HomeController.this.mWatchNextEnabled) {
-                HomeController.this.mDataManager.loadWatchNextProgramData();
-            }
-            HomeController.this.mWatchNextHandler.postDelayed(HomeController.this.mRequeryWatchNext, 600000);
-        }
-    };
-    /* access modifiers changed from: private */
-    public ItemAlignmentFacet mSecondToLastRowZoomedOutFacet;
-    private Runnable mSelectFirstAppRunnable = new Runnable() {
-        public void run() {
-            if (HomeController.this.mSelectFirstAppWhenRowSelected && HomeController.this.mSelectedPosition == 1) {
-                HomeRow appsRow = HomeController.this.getHomeRow(1);
-                if (appsRow instanceof FavoriteLaunchItemsRowController) {
-                    ((FavoriteLaunchItemsRowController) appsRow).setSelectedItemPosition(0);
-                    boolean unused = HomeController.this.mSelectFirstAppWhenRowSelected = false;
-                }
-            }
-        }
-    };
-    /* access modifiers changed from: private */
-    public boolean mSelectFirstAppWhenRowSelected;
-    /* access modifiers changed from: private */
-    public long mSelectedId;
-    /* access modifiers changed from: private */
-    public int mSelectedPosition = 1;
-    /* access modifiers changed from: private */
-    public ItemAlignmentFacet mSponsoredChannelFacet;
     private boolean mStarted;
-    /* access modifiers changed from: private */
-    public int mState = 0;
-    /* access modifiers changed from: private */
-    public ItemAlignmentFacet mThirdToLastRowZoomedOutFacet;
     private IntentFilter mTimeFilter = new IntentFilter();
-    private final BroadcastReceiver mTimeSetReceiver = new BroadcastReceiver() {
-        public void onReceive(Context context, Intent intent) {
-            HomeController.this.mWatchNextHandler.removeCallbacks(HomeController.this.mRefreshWatchNextOffset);
-            HomeController.this.mWatchNextHandler.removeCallbacks(HomeController.this.mRequeryWatchNext);
-            HomeController.this.mWatchNextHandler.post(HomeController.this.mRefreshWatchNextOffset);
-            HomeController.this.mWatchNextHandler.post(HomeController.this.mRequeryWatchNext);
-        }
-    };
-    /* access modifiers changed from: private */
-    public final Runnable mUpdateBackgroundForProgramAfterDelayRunnable = new Runnable() {
-        public void run() {
-            if (!HomeController.this.mFastScrollingManager.isFastScrollingEnabled() && HomeController.this.mBackgroundController != null && HomeController.this.mLastSelectedProgramController != null && HomeController.this.mLastSelectedProgramController.isViewFocused() && HomeController.this.mLastSelectedProgramController.getPreviewImagePalette() != null) {
-                HomeController.this.mBackgroundController.updateBackground(HomeController.this.mLastSelectedProgramController.getPreviewImagePalette());
-            }
-        }
-    };
-    private final Runnable mUpdateBackgroundForTopRowsAfterDelayRunnable = new Runnable() {
-        public void run() {
-            if (HomeController.this.mBackgroundController != null && HomeController.this.mSelectedPosition <= 1) {
-                HomeController.this.mBackgroundController.enterDarkMode();
-            }
-        }
-    };
-    /* access modifiers changed from: private */
-    public boolean mWatchNextEnabled;
-    /* access modifiers changed from: private */
-    public Handler mWatchNextHandler = new Handler();
     private SharedPreferences.OnSharedPreferenceChangeListener mWatchNextPrefListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             boolean watchNextEnabled;
@@ -370,30 +390,57 @@ class HomeController extends RecyclerView.Adapter<HomeRowViewHolder> implements 
             }
         }
     };
-    /* access modifiers changed from: private */
-    public final WatchNextProgramsObserver mWatchNextProgramsObserver = new WatchNextProgramsObserver() {
-        public void onProgramsChange() {
-            if (HomeController.this.mWatchNextEnabled) {
-                if (HomeController.this.mWatchNextVisible) {
-                    HomeController homeController = HomeController.this;
-                    if (homeController.getItemViewType(homeController.mSelectedPosition) == 2) {
-                        HomeController homeController2 = HomeController.this;
-                        homeController2.notifyItemChanged(homeController2.mSelectedPosition, HomeController.PAYLOAD_WATCH_NEXT_DATA_CHANGED);
-                    }
-                }
-                HomeController.this.updateWatchNextVisibility();
-            }
-        }
-    };
-    /* access modifiers changed from: private */
-    public boolean mWatchNextVisible;
 
-    @Retention(RetentionPolicy.SOURCE)
-    @interface RowType {
+    HomeController(Context context, EventLogger eventLogger, TvDataManager dataManager, EmptyChannelsHelper emptyChannelsHelper) {
+        this.mContext = context;
+        this.mEventLogger = eventLogger;
+        this.mDataManager = dataManager;
+        this.mEmptyChannelsHelper = emptyChannelsHelper;
+        this.mIntentLauncher = ((TvLauncherApplicationBase) context.getApplicationContext()).getIntentLauncher();
+        this.mTimeFilter.addAction("android.intent.action.TIME_SET");
+        this.mTimeFilter.addAction("android.intent.action.DATE_CHANGED");
+        this.mTimeFilter.addAction("android.intent.action.TIMEZONE_CHANGED");
+        this.mChannelKeyline = this.mContext.getResources().getDimensionPixelSize(C1188R.dimen.channel_items_list_keyline);
+        this.mAppsRowZoomedOutWithTrayFacet = createChannelItemAlignmentFacet(C1188R.dimen.channel_items_list_apps_row_zoomed_out_notif_tray_keyline_offset);
+        this.mAppsRowDefaultWithTrayFacet = createChannelItemAlignmentFacet(C1188R.dimen.channel_items_list_apps_row_notif_tray_keyline_offset);
+        this.mSponsoredChannelFacet = createChannelItemAlignmentFacet(C1188R.dimen.channel_items_list_sponsored_channel_keyline_offset);
+        this.mConfigureChannelsFacet = KeylineUtil.createItemAlignmentFacet(this.mContext.getResources().getDimensionPixelSize(C1188R.dimen.home_configure_channels_keyline_offset), Integer.valueOf(C1188R.C1191id.button));
+        this.mSecondToLastRowZoomedOutFacet = createChannelItemAlignmentFacet(C1188R.dimen.channel_items_list_second_to_last_row_zoomed_out_keyline_offset);
+        this.mThirdToLastRowZoomedOutFacet = createChannelItemAlignmentFacet(C1188R.dimen.channel_items_list_third_to_last_row_zoomed_out_keyline_offset);
+        setHasStableIds(true);
+        SharedPreferences watchNextPreferences = context.getSharedPreferences(WatchNextPrefs.WATCH_NEXT_PREF_FILE_NAME, 0);
+        this.mWatchNextEnabled = watchNextPreferences.getBoolean(WatchNextPrefs.SHOW_WATCH_NEXT_ROW_KEY, OemConfiguration.get(this.mContext).isWatchNextChannelEnabledByDefault());
+        watchNextPreferences.registerOnSharedPreferenceChangeListener(this.mWatchNextPrefListener);
+        PaletteUtil.registerGlidePaletteTranscoder(this.mContext);
+        this.mAddToWatchNextPackagesBlacklist = GservicesUtils.retrievePackagesBlacklistedForWatchNext(this.mContext.getContentResolver());
+        this.mRemoveProgramPackagesBlacklist = GservicesUtils.retrievePackagesBlacklistedForProgramRemoval(this.mContext.getContentResolver());
+        registerChannelsObserverAndLoadDataIfNeeded();
+        if (this.mWatchNextEnabled) {
+            registerObserverAndUpdateWatchNextDataIfNeeded();
+        }
+        this.mStarted = true;
+        updateSelectedId();
     }
 
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface State {
+    private static String stateToString(int state) {
+        String stateString;
+        if (state == 0) {
+            stateString = "STATE_DEFAULT";
+        } else if (state == 1) {
+            stateString = "STATE_ZOOMED_OUT";
+        } else if (state == 2) {
+            stateString = "STATE_CHANNEL_ACTIONS";
+        } else if (state != 3) {
+            stateString = "STATE_UNKNOWN";
+        } else {
+            stateString = "STATE_MOVE_CHANNEL";
+        }
+        StringBuilder sb = new StringBuilder(String.valueOf(stateString).length() + 14);
+        sb.append(stateString);
+        sb.append(" (");
+        sb.append(state);
+        sb.append(")");
+        return sb.toString();
     }
 
     public /* bridge */ /* synthetic */ void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i, @NonNull List list) {
@@ -459,58 +506,6 @@ class HomeController extends RecyclerView.Adapter<HomeRowViewHolder> implements 
     /* access modifiers changed from: package-private */
     public final /* synthetic */ void lambda$new$5$HomeController() {
         notifyItemChanged(0, PAYLOAD_IDLE_STATE);
-    }
-
-    private static String stateToString(int state) {
-        String stateString;
-        if (state == 0) {
-            stateString = "STATE_DEFAULT";
-        } else if (state == 1) {
-            stateString = "STATE_ZOOMED_OUT";
-        } else if (state == 2) {
-            stateString = "STATE_CHANNEL_ACTIONS";
-        } else if (state != 3) {
-            stateString = "STATE_UNKNOWN";
-        } else {
-            stateString = "STATE_MOVE_CHANNEL";
-        }
-        StringBuilder sb = new StringBuilder(String.valueOf(stateString).length() + 14);
-        sb.append(stateString);
-        sb.append(" (");
-        sb.append(state);
-        sb.append(")");
-        return sb.toString();
-    }
-
-    HomeController(Context context, EventLogger eventLogger, TvDataManager dataManager, EmptyChannelsHelper emptyChannelsHelper) {
-        this.mContext = context;
-        this.mEventLogger = eventLogger;
-        this.mDataManager = dataManager;
-        this.mEmptyChannelsHelper = emptyChannelsHelper;
-        this.mIntentLauncher = ((TvLauncherApplicationBase) context.getApplicationContext()).getIntentLauncher();
-        this.mTimeFilter.addAction("android.intent.action.TIME_SET");
-        this.mTimeFilter.addAction("android.intent.action.DATE_CHANGED");
-        this.mTimeFilter.addAction("android.intent.action.TIMEZONE_CHANGED");
-        this.mChannelKeyline = this.mContext.getResources().getDimensionPixelSize(C1188R.dimen.channel_items_list_keyline);
-        this.mAppsRowZoomedOutWithTrayFacet = createChannelItemAlignmentFacet(C1188R.dimen.channel_items_list_apps_row_zoomed_out_notif_tray_keyline_offset);
-        this.mAppsRowDefaultWithTrayFacet = createChannelItemAlignmentFacet(C1188R.dimen.channel_items_list_apps_row_notif_tray_keyline_offset);
-        this.mSponsoredChannelFacet = createChannelItemAlignmentFacet(C1188R.dimen.channel_items_list_sponsored_channel_keyline_offset);
-        this.mConfigureChannelsFacet = KeylineUtil.createItemAlignmentFacet(this.mContext.getResources().getDimensionPixelSize(C1188R.dimen.home_configure_channels_keyline_offset), Integer.valueOf(C1188R.C1191id.button));
-        this.mSecondToLastRowZoomedOutFacet = createChannelItemAlignmentFacet(C1188R.dimen.channel_items_list_second_to_last_row_zoomed_out_keyline_offset);
-        this.mThirdToLastRowZoomedOutFacet = createChannelItemAlignmentFacet(C1188R.dimen.channel_items_list_third_to_last_row_zoomed_out_keyline_offset);
-        setHasStableIds(true);
-        SharedPreferences watchNextPreferences = context.getSharedPreferences(WatchNextPrefs.WATCH_NEXT_PREF_FILE_NAME, 0);
-        this.mWatchNextEnabled = watchNextPreferences.getBoolean(WatchNextPrefs.SHOW_WATCH_NEXT_ROW_KEY, OemConfiguration.get(this.mContext).isWatchNextChannelEnabledByDefault());
-        watchNextPreferences.registerOnSharedPreferenceChangeListener(this.mWatchNextPrefListener);
-        PaletteUtil.registerGlidePaletteTranscoder(this.mContext);
-        this.mAddToWatchNextPackagesBlacklist = GservicesUtils.retrievePackagesBlacklistedForWatchNext(this.mContext.getContentResolver());
-        this.mRemoveProgramPackagesBlacklist = GservicesUtils.retrievePackagesBlacklistedForProgramRemoval(this.mContext.getContentResolver());
-        registerChannelsObserverAndLoadDataIfNeeded();
-        if (this.mWatchNextEnabled) {
-            registerObserverAndUpdateWatchNextDataIfNeeded();
-        }
-        this.mStarted = true;
-        updateSelectedId();
     }
 
     public void setList(VerticalGridView list) {
@@ -880,6 +875,12 @@ class HomeController extends RecyclerView.Adapter<HomeRowViewHolder> implements 
 
     /* access modifiers changed from: package-private */
     @VisibleForTesting
+    public int getState() {
+        return this.mState;
+    }
+
+    /* access modifiers changed from: package-private */
+    @VisibleForTesting
     public void setState(int state) {
         boolean z = true;
         if (Util.isAccessibilityEnabled(this.mContext) && (state == 1 || state == 2 || state == 3)) {
@@ -918,12 +919,6 @@ class HomeController extends RecyclerView.Adapter<HomeRowViewHolder> implements 
                 this.mNotifyStateChangedRunnable.run();
             }
         }
-    }
-
-    /* access modifiers changed from: package-private */
-    @VisibleForTesting
-    public int getState() {
-        return this.mState;
     }
 
     /* access modifiers changed from: package-private */
@@ -1432,6 +1427,24 @@ class HomeController extends RecyclerView.Adapter<HomeRowViewHolder> implements 
     public void onEditModeItemOrderChange(ArrayList<LaunchItem> arrayList, boolean isGameItems, Pair<Integer, Integer> pair) {
     }
 
+    public void onHomeTopRowFocusChanged() {
+        this.mHandler.removeCallbacks(this.mNotifyTopRowStateChangedRunnable);
+        if (this.mList.isComputingLayout()) {
+            Log.w(TAG, "onHomeTopRowFocusChanged: still computing layout => scheduling");
+            this.mHandler.post(this.mNotifyTopRowStateChangedRunnable);
+            return;
+        }
+        this.mNotifyTopRowStateChangedRunnable.run();
+    }
+
+    @Retention(RetentionPolicy.SOURCE)
+    @interface RowType {
+    }
+
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface State {
+    }
+
     class HomeRowViewHolder extends RecyclerView.ViewHolder implements OnHomeStateChangeListener, OnHomeRowSelectedListener, OnHomeRowRemovedListener, FacetProvider {
         HomeRow homeRow;
 
@@ -1488,16 +1501,6 @@ class HomeController extends RecyclerView.Adapter<HomeRowViewHolder> implements 
                 return null;
             }
         }
-    }
-
-    public void onHomeTopRowFocusChanged() {
-        this.mHandler.removeCallbacks(this.mNotifyTopRowStateChangedRunnable);
-        if (this.mList.isComputingLayout()) {
-            Log.w(TAG, "onHomeTopRowFocusChanged: still computing layout => scheduling");
-            this.mHandler.post(this.mNotifyTopRowStateChangedRunnable);
-            return;
-        }
-        this.mNotifyTopRowStateChangedRunnable.run();
     }
 
     private class ChannelEventLogger implements EventLogger {

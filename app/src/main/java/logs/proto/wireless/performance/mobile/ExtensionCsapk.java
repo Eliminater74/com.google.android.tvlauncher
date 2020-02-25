@@ -13,12 +13,18 @@ import com.google.protobuf.ProtoMessage;
 import com.google.protobuf.ProtoPresenceBits;
 import com.google.protobuf.ProtoPresenceCheckedField;
 import com.google.protobuf.ProtoSyntax;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import logs.proto.wireless.performance.mobile.ExtensionBugle;
 
 public final class ExtensionCsapk {
+
+    private ExtensionCsapk() {
+    }
+
+    public static void registerAllExtensions(ExtensionRegistryLite registry) {
+    }
 
     public interface CsapkExtensionOrBuilder extends MessageLiteOrBuilder {
         boolean getIsRcsEnabled();
@@ -54,12 +60,6 @@ public final class ExtensionCsapk {
         boolean hasSimOperatorName();
     }
 
-    private ExtensionCsapk() {
-    }
-
-    public static void registerAllExtensions(ExtensionRegistryLite registry) {
-    }
-
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
     public static final class CsapkExtension extends GeneratedMessageLite<CsapkExtension, Builder> implements CsapkExtensionOrBuilder {
         /* access modifiers changed from: private */
@@ -69,8 +69,13 @@ public final class ExtensionCsapk {
         public static final int MNC_FIELD_NUMBER = 3;
         public static final int MVNO_FIELD_NUMBER = 6;
         public static final int NETWORK_OPERATOR_NAME_FIELD_NUMBER = 5;
-        private static volatile Parser<CsapkExtension> PARSER = null;
         public static final int SIM_OPERATOR_NAME_FIELD_NUMBER = 4;
+        private static volatile Parser<CsapkExtension> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(CsapkExtension.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.BOOL)
@@ -93,203 +98,6 @@ public final class ExtensionCsapk {
         private String simOperatorName_ = "";
 
         private CsapkExtension() {
-        }
-
-        public boolean hasIsRcsEnabled() {
-            return (this.bitField0_ & 1) != 0;
-        }
-
-        public boolean getIsRcsEnabled() {
-            return this.isRcsEnabled_;
-        }
-
-        /* access modifiers changed from: private */
-        public void setIsRcsEnabled(boolean value) {
-            this.bitField0_ |= 1;
-            this.isRcsEnabled_ = value;
-        }
-
-        /* access modifiers changed from: private */
-        public void clearIsRcsEnabled() {
-            this.bitField0_ &= -2;
-            this.isRcsEnabled_ = false;
-        }
-
-        public boolean hasMcc() {
-            return (this.bitField0_ & 2) != 0;
-        }
-
-        public String getMcc() {
-            return this.mcc_;
-        }
-
-        public ByteString getMccBytes() {
-            return ByteString.copyFromUtf8(this.mcc_);
-        }
-
-        /* access modifiers changed from: private */
-        public void setMcc(String value) {
-            if (value != null) {
-                this.bitField0_ |= 2;
-                this.mcc_ = value;
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        /* access modifiers changed from: private */
-        public void clearMcc() {
-            this.bitField0_ &= -3;
-            this.mcc_ = getDefaultInstance().getMcc();
-        }
-
-        /* access modifiers changed from: private */
-        public void setMccBytes(ByteString value) {
-            if (value != null) {
-                this.bitField0_ |= 2;
-                this.mcc_ = value.toStringUtf8();
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        public boolean hasMnc() {
-            return (this.bitField0_ & 4) != 0;
-        }
-
-        public String getMnc() {
-            return this.mnc_;
-        }
-
-        public ByteString getMncBytes() {
-            return ByteString.copyFromUtf8(this.mnc_);
-        }
-
-        /* access modifiers changed from: private */
-        public void setMnc(String value) {
-            if (value != null) {
-                this.bitField0_ |= 4;
-                this.mnc_ = value;
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        /* access modifiers changed from: private */
-        public void clearMnc() {
-            this.bitField0_ &= -5;
-            this.mnc_ = getDefaultInstance().getMnc();
-        }
-
-        /* access modifiers changed from: private */
-        public void setMncBytes(ByteString value) {
-            if (value != null) {
-                this.bitField0_ |= 4;
-                this.mnc_ = value.toStringUtf8();
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        public boolean hasSimOperatorName() {
-            return (this.bitField0_ & 8) != 0;
-        }
-
-        public String getSimOperatorName() {
-            return this.simOperatorName_;
-        }
-
-        public ByteString getSimOperatorNameBytes() {
-            return ByteString.copyFromUtf8(this.simOperatorName_);
-        }
-
-        /* access modifiers changed from: private */
-        public void setSimOperatorName(String value) {
-            if (value != null) {
-                this.bitField0_ |= 8;
-                this.simOperatorName_ = value;
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        /* access modifiers changed from: private */
-        public void clearSimOperatorName() {
-            this.bitField0_ &= -9;
-            this.simOperatorName_ = getDefaultInstance().getSimOperatorName();
-        }
-
-        /* access modifiers changed from: private */
-        public void setSimOperatorNameBytes(ByteString value) {
-            if (value != null) {
-                this.bitField0_ |= 8;
-                this.simOperatorName_ = value.toStringUtf8();
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        public boolean hasNetworkOperatorName() {
-            return (this.bitField0_ & 16) != 0;
-        }
-
-        public String getNetworkOperatorName() {
-            return this.networkOperatorName_;
-        }
-
-        public ByteString getNetworkOperatorNameBytes() {
-            return ByteString.copyFromUtf8(this.networkOperatorName_);
-        }
-
-        /* access modifiers changed from: private */
-        public void setNetworkOperatorName(String value) {
-            if (value != null) {
-                this.bitField0_ |= 16;
-                this.networkOperatorName_ = value;
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        /* access modifiers changed from: private */
-        public void clearNetworkOperatorName() {
-            this.bitField0_ &= -17;
-            this.networkOperatorName_ = getDefaultInstance().getNetworkOperatorName();
-        }
-
-        /* access modifiers changed from: private */
-        public void setNetworkOperatorNameBytes(ByteString value) {
-            if (value != null) {
-                this.bitField0_ |= 16;
-                this.networkOperatorName_ = value.toStringUtf8();
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        public boolean hasMvno() {
-            return (this.bitField0_ & 32) != 0;
-        }
-
-        public ExtensionBugle.BugleMobileCode.Mvno getMvno() {
-            ExtensionBugle.BugleMobileCode.Mvno result = ExtensionBugle.BugleMobileCode.Mvno.forNumber(this.mvno_);
-            return result == null ? ExtensionBugle.BugleMobileCode.Mvno.UNKNOWN_MVNO : result;
-        }
-
-        /* access modifiers changed from: private */
-        public void setMvno(ExtensionBugle.BugleMobileCode.Mvno value) {
-            if (value != null) {
-                this.bitField0_ |= 32;
-                this.mvno_ = value.getNumber();
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        /* access modifiers changed from: private */
-        public void clearMvno() {
-            this.bitField0_ &= -33;
-            this.mvno_ = 0;
         }
 
         public static CsapkExtension parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
@@ -348,170 +156,209 @@ public final class ExtensionCsapk {
             return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
         }
 
-        public static final class Builder extends GeneratedMessageLite.Builder<CsapkExtension, Builder> implements CsapkExtensionOrBuilder {
-            private Builder() {
-                super(CsapkExtension.DEFAULT_INSTANCE);
-            }
+        public static CsapkExtension getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
 
-            public boolean hasIsRcsEnabled() {
-                return ((CsapkExtension) this.instance).hasIsRcsEnabled();
-            }
+        public static Parser<CsapkExtension> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
+        }
 
-            public boolean getIsRcsEnabled() {
-                return ((CsapkExtension) this.instance).getIsRcsEnabled();
-            }
+        public boolean hasIsRcsEnabled() {
+            return (this.bitField0_ & 1) != 0;
+        }
 
-            public Builder setIsRcsEnabled(boolean value) {
-                copyOnWrite();
-                ((CsapkExtension) this.instance).setIsRcsEnabled(value);
-                return this;
-            }
+        public boolean getIsRcsEnabled() {
+            return this.isRcsEnabled_;
+        }
 
-            public Builder clearIsRcsEnabled() {
-                copyOnWrite();
-                ((CsapkExtension) this.instance).clearIsRcsEnabled();
-                return this;
-            }
+        /* access modifiers changed from: private */
+        public void setIsRcsEnabled(boolean value) {
+            this.bitField0_ |= 1;
+            this.isRcsEnabled_ = value;
+        }
 
-            public boolean hasMcc() {
-                return ((CsapkExtension) this.instance).hasMcc();
-            }
+        /* access modifiers changed from: private */
+        public void clearIsRcsEnabled() {
+            this.bitField0_ &= -2;
+            this.isRcsEnabled_ = false;
+        }
 
-            public String getMcc() {
-                return ((CsapkExtension) this.instance).getMcc();
-            }
+        public boolean hasMcc() {
+            return (this.bitField0_ & 2) != 0;
+        }
 
-            public ByteString getMccBytes() {
-                return ((CsapkExtension) this.instance).getMccBytes();
-            }
+        public String getMcc() {
+            return this.mcc_;
+        }
 
-            public Builder setMcc(String value) {
-                copyOnWrite();
-                ((CsapkExtension) this.instance).setMcc(value);
-                return this;
+        /* access modifiers changed from: private */
+        public void setMcc(String value) {
+            if (value != null) {
+                this.bitField0_ |= 2;
+                this.mcc_ = value;
+                return;
             }
+            throw new NullPointerException();
+        }
 
-            public Builder clearMcc() {
-                copyOnWrite();
-                ((CsapkExtension) this.instance).clearMcc();
-                return this;
-            }
+        public ByteString getMccBytes() {
+            return ByteString.copyFromUtf8(this.mcc_);
+        }
 
-            public Builder setMccBytes(ByteString value) {
-                copyOnWrite();
-                ((CsapkExtension) this.instance).setMccBytes(value);
-                return this;
+        /* access modifiers changed from: private */
+        public void setMccBytes(ByteString value) {
+            if (value != null) {
+                this.bitField0_ |= 2;
+                this.mcc_ = value.toStringUtf8();
+                return;
             }
+            throw new NullPointerException();
+        }
 
-            public boolean hasMnc() {
-                return ((CsapkExtension) this.instance).hasMnc();
-            }
+        /* access modifiers changed from: private */
+        public void clearMcc() {
+            this.bitField0_ &= -3;
+            this.mcc_ = getDefaultInstance().getMcc();
+        }
 
-            public String getMnc() {
-                return ((CsapkExtension) this.instance).getMnc();
-            }
+        public boolean hasMnc() {
+            return (this.bitField0_ & 4) != 0;
+        }
 
-            public ByteString getMncBytes() {
-                return ((CsapkExtension) this.instance).getMncBytes();
-            }
+        public String getMnc() {
+            return this.mnc_;
+        }
 
-            public Builder setMnc(String value) {
-                copyOnWrite();
-                ((CsapkExtension) this.instance).setMnc(value);
-                return this;
+        /* access modifiers changed from: private */
+        public void setMnc(String value) {
+            if (value != null) {
+                this.bitField0_ |= 4;
+                this.mnc_ = value;
+                return;
             }
+            throw new NullPointerException();
+        }
 
-            public Builder clearMnc() {
-                copyOnWrite();
-                ((CsapkExtension) this.instance).clearMnc();
-                return this;
-            }
+        public ByteString getMncBytes() {
+            return ByteString.copyFromUtf8(this.mnc_);
+        }
 
-            public Builder setMncBytes(ByteString value) {
-                copyOnWrite();
-                ((CsapkExtension) this.instance).setMncBytes(value);
-                return this;
+        /* access modifiers changed from: private */
+        public void setMncBytes(ByteString value) {
+            if (value != null) {
+                this.bitField0_ |= 4;
+                this.mnc_ = value.toStringUtf8();
+                return;
             }
+            throw new NullPointerException();
+        }
 
-            public boolean hasSimOperatorName() {
-                return ((CsapkExtension) this.instance).hasSimOperatorName();
-            }
+        /* access modifiers changed from: private */
+        public void clearMnc() {
+            this.bitField0_ &= -5;
+            this.mnc_ = getDefaultInstance().getMnc();
+        }
 
-            public String getSimOperatorName() {
-                return ((CsapkExtension) this.instance).getSimOperatorName();
-            }
+        public boolean hasSimOperatorName() {
+            return (this.bitField0_ & 8) != 0;
+        }
 
-            public ByteString getSimOperatorNameBytes() {
-                return ((CsapkExtension) this.instance).getSimOperatorNameBytes();
-            }
+        public String getSimOperatorName() {
+            return this.simOperatorName_;
+        }
 
-            public Builder setSimOperatorName(String value) {
-                copyOnWrite();
-                ((CsapkExtension) this.instance).setSimOperatorName(value);
-                return this;
+        /* access modifiers changed from: private */
+        public void setSimOperatorName(String value) {
+            if (value != null) {
+                this.bitField0_ |= 8;
+                this.simOperatorName_ = value;
+                return;
             }
+            throw new NullPointerException();
+        }
 
-            public Builder clearSimOperatorName() {
-                copyOnWrite();
-                ((CsapkExtension) this.instance).clearSimOperatorName();
-                return this;
-            }
+        public ByteString getSimOperatorNameBytes() {
+            return ByteString.copyFromUtf8(this.simOperatorName_);
+        }
 
-            public Builder setSimOperatorNameBytes(ByteString value) {
-                copyOnWrite();
-                ((CsapkExtension) this.instance).setSimOperatorNameBytes(value);
-                return this;
+        /* access modifiers changed from: private */
+        public void setSimOperatorNameBytes(ByteString value) {
+            if (value != null) {
+                this.bitField0_ |= 8;
+                this.simOperatorName_ = value.toStringUtf8();
+                return;
             }
+            throw new NullPointerException();
+        }
 
-            public boolean hasNetworkOperatorName() {
-                return ((CsapkExtension) this.instance).hasNetworkOperatorName();
-            }
+        /* access modifiers changed from: private */
+        public void clearSimOperatorName() {
+            this.bitField0_ &= -9;
+            this.simOperatorName_ = getDefaultInstance().getSimOperatorName();
+        }
 
-            public String getNetworkOperatorName() {
-                return ((CsapkExtension) this.instance).getNetworkOperatorName();
-            }
+        public boolean hasNetworkOperatorName() {
+            return (this.bitField0_ & 16) != 0;
+        }
 
-            public ByteString getNetworkOperatorNameBytes() {
-                return ((CsapkExtension) this.instance).getNetworkOperatorNameBytes();
-            }
+        public String getNetworkOperatorName() {
+            return this.networkOperatorName_;
+        }
 
-            public Builder setNetworkOperatorName(String value) {
-                copyOnWrite();
-                ((CsapkExtension) this.instance).setNetworkOperatorName(value);
-                return this;
+        /* access modifiers changed from: private */
+        public void setNetworkOperatorName(String value) {
+            if (value != null) {
+                this.bitField0_ |= 16;
+                this.networkOperatorName_ = value;
+                return;
             }
+            throw new NullPointerException();
+        }
 
-            public Builder clearNetworkOperatorName() {
-                copyOnWrite();
-                ((CsapkExtension) this.instance).clearNetworkOperatorName();
-                return this;
-            }
+        public ByteString getNetworkOperatorNameBytes() {
+            return ByteString.copyFromUtf8(this.networkOperatorName_);
+        }
 
-            public Builder setNetworkOperatorNameBytes(ByteString value) {
-                copyOnWrite();
-                ((CsapkExtension) this.instance).setNetworkOperatorNameBytes(value);
-                return this;
+        /* access modifiers changed from: private */
+        public void setNetworkOperatorNameBytes(ByteString value) {
+            if (value != null) {
+                this.bitField0_ |= 16;
+                this.networkOperatorName_ = value.toStringUtf8();
+                return;
             }
+            throw new NullPointerException();
+        }
 
-            public boolean hasMvno() {
-                return ((CsapkExtension) this.instance).hasMvno();
-            }
+        /* access modifiers changed from: private */
+        public void clearNetworkOperatorName() {
+            this.bitField0_ &= -17;
+            this.networkOperatorName_ = getDefaultInstance().getNetworkOperatorName();
+        }
 
-            public ExtensionBugle.BugleMobileCode.Mvno getMvno() {
-                return ((CsapkExtension) this.instance).getMvno();
-            }
+        public boolean hasMvno() {
+            return (this.bitField0_ & 32) != 0;
+        }
 
-            public Builder setMvno(ExtensionBugle.BugleMobileCode.Mvno value) {
-                copyOnWrite();
-                ((CsapkExtension) this.instance).setMvno(value);
-                return this;
-            }
+        public ExtensionBugle.BugleMobileCode.Mvno getMvno() {
+            ExtensionBugle.BugleMobileCode.Mvno result = ExtensionBugle.BugleMobileCode.Mvno.forNumber(this.mvno_);
+            return result == null ? ExtensionBugle.BugleMobileCode.Mvno.UNKNOWN_MVNO : result;
+        }
 
-            public Builder clearMvno() {
-                copyOnWrite();
-                ((CsapkExtension) this.instance).clearMvno();
-                return this;
+        /* access modifiers changed from: private */
+        public void setMvno(ExtensionBugle.BugleMobileCode.Mvno value) {
+            if (value != null) {
+                this.bitField0_ |= 32;
+                this.mvno_ = value.getNumber();
+                return;
             }
+            throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearMvno() {
+            this.bitField0_ &= -33;
+            this.mvno_ = 0;
         }
 
         /* access modifiers changed from: protected */
@@ -546,16 +393,170 @@ public final class ExtensionCsapk {
             }
         }
 
-        static {
-            GeneratedMessageLite.registerDefaultInstance(CsapkExtension.class, DEFAULT_INSTANCE);
-        }
+        public static final class Builder extends GeneratedMessageLite.Builder<CsapkExtension, Builder> implements CsapkExtensionOrBuilder {
+            private Builder() {
+                super(CsapkExtension.DEFAULT_INSTANCE);
+            }
 
-        public static CsapkExtension getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
+            public boolean hasIsRcsEnabled() {
+                return ((CsapkExtension) this.instance).hasIsRcsEnabled();
+            }
 
-        public static Parser<CsapkExtension> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
+            public boolean getIsRcsEnabled() {
+                return ((CsapkExtension) this.instance).getIsRcsEnabled();
+            }
+
+            public Builder setIsRcsEnabled(boolean value) {
+                copyOnWrite();
+                ((CsapkExtension) this.instance).setIsRcsEnabled(value);
+                return this;
+            }
+
+            public Builder clearIsRcsEnabled() {
+                copyOnWrite();
+                ((CsapkExtension) this.instance).clearIsRcsEnabled();
+                return this;
+            }
+
+            public boolean hasMcc() {
+                return ((CsapkExtension) this.instance).hasMcc();
+            }
+
+            public String getMcc() {
+                return ((CsapkExtension) this.instance).getMcc();
+            }
+
+            public Builder setMcc(String value) {
+                copyOnWrite();
+                ((CsapkExtension) this.instance).setMcc(value);
+                return this;
+            }
+
+            public ByteString getMccBytes() {
+                return ((CsapkExtension) this.instance).getMccBytes();
+            }
+
+            public Builder setMccBytes(ByteString value) {
+                copyOnWrite();
+                ((CsapkExtension) this.instance).setMccBytes(value);
+                return this;
+            }
+
+            public Builder clearMcc() {
+                copyOnWrite();
+                ((CsapkExtension) this.instance).clearMcc();
+                return this;
+            }
+
+            public boolean hasMnc() {
+                return ((CsapkExtension) this.instance).hasMnc();
+            }
+
+            public String getMnc() {
+                return ((CsapkExtension) this.instance).getMnc();
+            }
+
+            public Builder setMnc(String value) {
+                copyOnWrite();
+                ((CsapkExtension) this.instance).setMnc(value);
+                return this;
+            }
+
+            public ByteString getMncBytes() {
+                return ((CsapkExtension) this.instance).getMncBytes();
+            }
+
+            public Builder setMncBytes(ByteString value) {
+                copyOnWrite();
+                ((CsapkExtension) this.instance).setMncBytes(value);
+                return this;
+            }
+
+            public Builder clearMnc() {
+                copyOnWrite();
+                ((CsapkExtension) this.instance).clearMnc();
+                return this;
+            }
+
+            public boolean hasSimOperatorName() {
+                return ((CsapkExtension) this.instance).hasSimOperatorName();
+            }
+
+            public String getSimOperatorName() {
+                return ((CsapkExtension) this.instance).getSimOperatorName();
+            }
+
+            public Builder setSimOperatorName(String value) {
+                copyOnWrite();
+                ((CsapkExtension) this.instance).setSimOperatorName(value);
+                return this;
+            }
+
+            public ByteString getSimOperatorNameBytes() {
+                return ((CsapkExtension) this.instance).getSimOperatorNameBytes();
+            }
+
+            public Builder setSimOperatorNameBytes(ByteString value) {
+                copyOnWrite();
+                ((CsapkExtension) this.instance).setSimOperatorNameBytes(value);
+                return this;
+            }
+
+            public Builder clearSimOperatorName() {
+                copyOnWrite();
+                ((CsapkExtension) this.instance).clearSimOperatorName();
+                return this;
+            }
+
+            public boolean hasNetworkOperatorName() {
+                return ((CsapkExtension) this.instance).hasNetworkOperatorName();
+            }
+
+            public String getNetworkOperatorName() {
+                return ((CsapkExtension) this.instance).getNetworkOperatorName();
+            }
+
+            public Builder setNetworkOperatorName(String value) {
+                copyOnWrite();
+                ((CsapkExtension) this.instance).setNetworkOperatorName(value);
+                return this;
+            }
+
+            public ByteString getNetworkOperatorNameBytes() {
+                return ((CsapkExtension) this.instance).getNetworkOperatorNameBytes();
+            }
+
+            public Builder setNetworkOperatorNameBytes(ByteString value) {
+                copyOnWrite();
+                ((CsapkExtension) this.instance).setNetworkOperatorNameBytes(value);
+                return this;
+            }
+
+            public Builder clearNetworkOperatorName() {
+                copyOnWrite();
+                ((CsapkExtension) this.instance).clearNetworkOperatorName();
+                return this;
+            }
+
+            public boolean hasMvno() {
+                return ((CsapkExtension) this.instance).hasMvno();
+            }
+
+            public ExtensionBugle.BugleMobileCode.Mvno getMvno() {
+                return ((CsapkExtension) this.instance).getMvno();
+            }
+
+            public Builder setMvno(ExtensionBugle.BugleMobileCode.Mvno value) {
+                copyOnWrite();
+                ((CsapkExtension) this.instance).setMvno(value);
+                return this;
+            }
+
+            public Builder clearMvno() {
+                copyOnWrite();
+                ((CsapkExtension) this.instance).clearMvno();
+                return this;
+            }
         }
     }
 }

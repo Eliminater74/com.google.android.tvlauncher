@@ -12,10 +12,9 @@ import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
+
 import androidx.leanback.C0364R;
-import androidx.leanback.widget.MultiActionsProvider;
-import androidx.leanback.widget.Presenter;
-import androidx.leanback.widget.RowPresenter;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,9 +29,6 @@ public abstract class AbstractMediaItemPresenter extends RowPresenter {
     private boolean mMediaRowSeparator;
     private int mThemeId;
 
-    /* access modifiers changed from: protected */
-    public abstract void onBindMediaDetails(ViewHolder viewHolder, Object obj);
-
     public AbstractMediaItemPresenter() {
         this(0);
     }
@@ -44,38 +40,206 @@ public abstract class AbstractMediaItemPresenter extends RowPresenter {
         setHeaderPresenter(null);
     }
 
-    public void setThemeId(int themeId) {
-        this.mThemeId = themeId;
+    static int calculateMediaItemNumberFlipperIndex(ViewHolder vh) {
+        int newPlayState = vh.mRowPresenter.getMediaPlayState(vh.getRowObject());
+        int childIndex = -1;
+        if (newPlayState == 0) {
+            if (vh.mMediaItemNumberView != null) {
+                childIndex = vh.mMediaItemNumberViewFlipper.indexOfChild(vh.mMediaItemNumberView);
+            }
+            return childIndex;
+        } else if (newPlayState == 1) {
+            if (vh.mMediaItemPausedView != null) {
+                childIndex = vh.mMediaItemNumberViewFlipper.indexOfChild(vh.mMediaItemPausedView);
+            }
+            return childIndex;
+        } else if (newPlayState != 2) {
+            return -1;
+        } else {
+            if (vh.mMediaItemPlayingView != null) {
+                childIndex = vh.mMediaItemNumberViewFlipper.indexOfChild(vh.mMediaItemPlayingView);
+            }
+            return childIndex;
+        }
     }
+
+    static ValueAnimator updateSelector(View selectorView, View focusChangedView, ValueAnimator layoutAnimator, boolean isDetails) {
+        ValueAnimator layoutAnimator2;
+        int animationDuration = focusChangedView.getContext().getResources().getInteger(17694720);
+        DecelerateInterpolator interpolator = new DecelerateInterpolator();
+        int layoutDirection = ViewCompat.getLayoutDirection(selectorView);
+        if (!focusChangedView.hasFocus()) {
+            selectorView.animate().cancel();
+            selectorView.animate().alpha(0.0f).setDuration((long) animationDuration).setInterpolator(interpolator).start();
+            return layoutAnimator;
+        }
+        if (layoutAnimator != null) {
+            layoutAnimator.cancel();
+            layoutAnimator2 = null;
+        } else {
+            layoutAnimator2 = layoutAnimator;
+        }
+        float currentAlpha = selectorView.getAlpha();
+        selectorView.animate().alpha(1.0f).setDuration((long) animationDuration).setInterpolator(interpolator).start();
+        ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) selectorView.getLayoutParams();
+        ViewGroup rootView = (ViewGroup) selectorView.getParent();
+        sTempRect.set(0, 0, focusChangedView.getWidth(), focusChangedView.getHeight());
+        rootView.offsetDescendantRectToMyCoords(focusChangedView, sTempRect);
+        if (isDetails) {
+            if (layoutDirection == 1) {
+                sTempRect.right += rootView.getHeight();
+                sTempRect.left -= rootView.getHeight() / 2;
+            } else {
+                sTempRect.left -= rootView.getHeight();
+                sTempRect.right += rootView.getHeight() / 2;
+            }
+        }
+        int targetLeft = sTempRect.left;
+        int targetWidth = sTempRect.width();
+        float deltaWidth = (float) (lp.width - targetWidth);
+        final float deltaLeft = (float) (lp.leftMargin - targetLeft);
+        if (!(deltaLeft == 0.0f && deltaWidth == 0.0f)) {
+            if (currentAlpha == 0.0f) {
+                lp.width = targetWidth;
+                lp.leftMargin = targetLeft;
+                selectorView.requestLayout();
+            } else {
+                ValueAnimator layoutAnimator3 = ValueAnimator.ofFloat(0.0f, 1.0f);
+                layoutAnimator3.setDuration((long) animationDuration);
+                layoutAnimator3.setInterpolator(interpolator);
+                final ViewGroup.MarginLayoutParams marginLayoutParams = lp;
+                final int i = targetLeft;
+                float deltaWidth2 = deltaWidth;
+                final int i2 = targetWidth;
+                final float f = deltaWidth2;
+                final View view = selectorView;
+                layoutAnimator3.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                    public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                        float fractionToEnd = 1.0f - valueAnimator.getAnimatedFraction();
+                        marginLayoutParams.leftMargin = Math.round(((float) i) + (deltaLeft * fractionToEnd));
+                        marginLayoutParams.width = Math.round(((float) i2) + (f * fractionToEnd));
+                        view.requestLayout();
+                    }
+                });
+                layoutAnimator3.start();
+                return layoutAnimator3;
+            }
+        }
+        return layoutAnimator2;
+    }
+
+    /* access modifiers changed from: protected */
+    public abstract void onBindMediaDetails(ViewHolder viewHolder, Object obj);
 
     public int getThemeId() {
         return this.mThemeId;
     }
 
-    public void setActionPresenter(Presenter actionPresenter) {
-        this.mMediaItemActionPresenter = actionPresenter;
+    public void setThemeId(int themeId) {
+        this.mThemeId = themeId;
     }
 
     public Presenter getActionPresenter() {
         return this.mMediaItemActionPresenter;
     }
 
+    public void setActionPresenter(Presenter actionPresenter) {
+        this.mMediaItemActionPresenter = actionPresenter;
+    }
+
+    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+     method: ClspMth{android.view.LayoutInflater.inflate(int, android.view.ViewGroup, boolean):android.view.View}
+     arg types: [int, android.view.ViewGroup, int]
+     candidates:
+      ClspMth{android.view.LayoutInflater.inflate(org.xmlpull.v1.XmlPullParser, android.view.ViewGroup, boolean):android.view.View}
+      ClspMth{android.view.LayoutInflater.inflate(int, android.view.ViewGroup, boolean):android.view.View} */
+    /* access modifiers changed from: protected */
+    public RowPresenter.ViewHolder createRowViewHolder(ViewGroup parent) {
+        Context context = parent.getContext();
+        int i = this.mThemeId;
+        if (i != 0) {
+            context = new ContextThemeWrapper(context, i);
+        }
+        ViewHolder vh = new ViewHolder(LayoutInflater.from(context).inflate(C0364R.layout.lb_row_media_item, parent, false));
+        vh.mRowPresenter = this;
+        if (this.mBackgroundColorSet) {
+            vh.mMediaRowView.setBackgroundColor(this.mBackgroundColor);
+        }
+        return vh;
+    }
+
+    public boolean isUsingDefaultSelectEffect() {
+        return false;
+    }
+
+    /* access modifiers changed from: protected */
+    public boolean isClippingChildren() {
+        return true;
+    }
+
+    /* access modifiers changed from: protected */
+    public void onBindRowViewHolder(RowPresenter.ViewHolder vh, Object item) {
+        super.onBindRowViewHolder(vh, item);
+        ViewHolder mvh = (ViewHolder) vh;
+        onBindRowActions(mvh);
+        mvh.getMediaItemRowSeparator().setVisibility(hasMediaRowSeparator() ? 0 : 8);
+        onBindMediaPlayState(mvh);
+        onBindMediaDetails((ViewHolder) vh, item);
+    }
+
+    /* access modifiers changed from: protected */
+    public void onBindRowActions(ViewHolder vh) {
+        vh.onBindRowActions();
+    }
+
+    public void setBackgroundColor(int color) {
+        this.mBackgroundColorSet = true;
+        this.mBackgroundColor = color;
+    }
+
+    public void setHasMediaRowSeparator(boolean hasSeparator) {
+        this.mMediaRowSeparator = hasSeparator;
+    }
+
+    public boolean hasMediaRowSeparator() {
+        return this.mMediaRowSeparator;
+    }
+
+    /* access modifiers changed from: protected */
+    public void onUnbindMediaDetails(ViewHolder vh) {
+    }
+
+    public void onBindMediaPlayState(ViewHolder vh) {
+        int childIndex = calculateMediaItemNumberFlipperIndex(vh);
+        if (childIndex != -1 && vh.mMediaItemNumberViewFlipper.getDisplayedChild() != childIndex) {
+            vh.mMediaItemNumberViewFlipper.setDisplayedChild(childIndex);
+        }
+    }
+
+    public void onUnbindMediaPlayState(ViewHolder vh) {
+    }
+
+    /* access modifiers changed from: protected */
+    public int getMediaPlayState(Object item) {
+        return 0;
+    }
+
     public static class ViewHolder extends RowPresenter.ViewHolder {
-        private final List<Presenter.ViewHolder> mActionViewHolders = new ArrayList();
-        ValueAnimator mFocusViewAnimator;
-        private final ViewGroup mMediaItemActionsContainer;
-        private final View mMediaItemDetailsView;
-        private final TextView mMediaItemDurationView;
-        private final TextView mMediaItemNameView;
         final TextView mMediaItemNumberView;
         final ViewFlipper mMediaItemNumberViewFlipper;
         final View mMediaItemPausedView;
         final View mMediaItemPlayingView;
-        MultiActionsProvider.MultiAction[] mMediaItemRowActions;
-        private final View mMediaItemRowSeparator;
         final View mMediaRowView;
-        AbstractMediaItemPresenter mRowPresenter;
         final View mSelectorView;
+        private final List<Presenter.ViewHolder> mActionViewHolders = new ArrayList();
+        private final ViewGroup mMediaItemActionsContainer;
+        private final View mMediaItemDetailsView;
+        private final TextView mMediaItemDurationView;
+        private final TextView mMediaItemNameView;
+        private final View mMediaItemRowSeparator;
+        ValueAnimator mFocusViewAnimator;
+        MultiActionsProvider.MultiAction[] mMediaItemRowActions;
+        AbstractMediaItemPresenter mRowPresenter;
 
         /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
          method: ClspMth{android.view.LayoutInflater.inflate(int, android.view.ViewGroup, boolean):android.view.View}
@@ -252,170 +416,5 @@ public abstract class AbstractMediaItemPresenter extends RowPresenter {
         public MultiActionsProvider.MultiAction[] getMediaItemRowActions() {
             return this.mMediaItemRowActions;
         }
-    }
-
-    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-     method: ClspMth{android.view.LayoutInflater.inflate(int, android.view.ViewGroup, boolean):android.view.View}
-     arg types: [int, android.view.ViewGroup, int]
-     candidates:
-      ClspMth{android.view.LayoutInflater.inflate(org.xmlpull.v1.XmlPullParser, android.view.ViewGroup, boolean):android.view.View}
-      ClspMth{android.view.LayoutInflater.inflate(int, android.view.ViewGroup, boolean):android.view.View} */
-    /* access modifiers changed from: protected */
-    public RowPresenter.ViewHolder createRowViewHolder(ViewGroup parent) {
-        Context context = parent.getContext();
-        int i = this.mThemeId;
-        if (i != 0) {
-            context = new ContextThemeWrapper(context, i);
-        }
-        ViewHolder vh = new ViewHolder(LayoutInflater.from(context).inflate(C0364R.layout.lb_row_media_item, parent, false));
-        vh.mRowPresenter = this;
-        if (this.mBackgroundColorSet) {
-            vh.mMediaRowView.setBackgroundColor(this.mBackgroundColor);
-        }
-        return vh;
-    }
-
-    public boolean isUsingDefaultSelectEffect() {
-        return false;
-    }
-
-    /* access modifiers changed from: protected */
-    public boolean isClippingChildren() {
-        return true;
-    }
-
-    /* access modifiers changed from: protected */
-    public void onBindRowViewHolder(RowPresenter.ViewHolder vh, Object item) {
-        super.onBindRowViewHolder(vh, item);
-        ViewHolder mvh = (ViewHolder) vh;
-        onBindRowActions(mvh);
-        mvh.getMediaItemRowSeparator().setVisibility(hasMediaRowSeparator() ? 0 : 8);
-        onBindMediaPlayState(mvh);
-        onBindMediaDetails((ViewHolder) vh, item);
-    }
-
-    /* access modifiers changed from: protected */
-    public void onBindRowActions(ViewHolder vh) {
-        vh.onBindRowActions();
-    }
-
-    public void setBackgroundColor(int color) {
-        this.mBackgroundColorSet = true;
-        this.mBackgroundColor = color;
-    }
-
-    public void setHasMediaRowSeparator(boolean hasSeparator) {
-        this.mMediaRowSeparator = hasSeparator;
-    }
-
-    public boolean hasMediaRowSeparator() {
-        return this.mMediaRowSeparator;
-    }
-
-    /* access modifiers changed from: protected */
-    public void onUnbindMediaDetails(ViewHolder vh) {
-    }
-
-    public void onBindMediaPlayState(ViewHolder vh) {
-        int childIndex = calculateMediaItemNumberFlipperIndex(vh);
-        if (childIndex != -1 && vh.mMediaItemNumberViewFlipper.getDisplayedChild() != childIndex) {
-            vh.mMediaItemNumberViewFlipper.setDisplayedChild(childIndex);
-        }
-    }
-
-    static int calculateMediaItemNumberFlipperIndex(ViewHolder vh) {
-        int newPlayState = vh.mRowPresenter.getMediaPlayState(vh.getRowObject());
-        int childIndex = -1;
-        if (newPlayState == 0) {
-            if (vh.mMediaItemNumberView != null) {
-                childIndex = vh.mMediaItemNumberViewFlipper.indexOfChild(vh.mMediaItemNumberView);
-            }
-            return childIndex;
-        } else if (newPlayState == 1) {
-            if (vh.mMediaItemPausedView != null) {
-                childIndex = vh.mMediaItemNumberViewFlipper.indexOfChild(vh.mMediaItemPausedView);
-            }
-            return childIndex;
-        } else if (newPlayState != 2) {
-            return -1;
-        } else {
-            if (vh.mMediaItemPlayingView != null) {
-                childIndex = vh.mMediaItemNumberViewFlipper.indexOfChild(vh.mMediaItemPlayingView);
-            }
-            return childIndex;
-        }
-    }
-
-    public void onUnbindMediaPlayState(ViewHolder vh) {
-    }
-
-    /* access modifiers changed from: protected */
-    public int getMediaPlayState(Object item) {
-        return 0;
-    }
-
-    static ValueAnimator updateSelector(View selectorView, View focusChangedView, ValueAnimator layoutAnimator, boolean isDetails) {
-        ValueAnimator layoutAnimator2;
-        int animationDuration = focusChangedView.getContext().getResources().getInteger(17694720);
-        DecelerateInterpolator interpolator = new DecelerateInterpolator();
-        int layoutDirection = ViewCompat.getLayoutDirection(selectorView);
-        if (!focusChangedView.hasFocus()) {
-            selectorView.animate().cancel();
-            selectorView.animate().alpha(0.0f).setDuration((long) animationDuration).setInterpolator(interpolator).start();
-            return layoutAnimator;
-        }
-        if (layoutAnimator != null) {
-            layoutAnimator.cancel();
-            layoutAnimator2 = null;
-        } else {
-            layoutAnimator2 = layoutAnimator;
-        }
-        float currentAlpha = selectorView.getAlpha();
-        selectorView.animate().alpha(1.0f).setDuration((long) animationDuration).setInterpolator(interpolator).start();
-        ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) selectorView.getLayoutParams();
-        ViewGroup rootView = (ViewGroup) selectorView.getParent();
-        sTempRect.set(0, 0, focusChangedView.getWidth(), focusChangedView.getHeight());
-        rootView.offsetDescendantRectToMyCoords(focusChangedView, sTempRect);
-        if (isDetails) {
-            if (layoutDirection == 1) {
-                sTempRect.right += rootView.getHeight();
-                sTempRect.left -= rootView.getHeight() / 2;
-            } else {
-                sTempRect.left -= rootView.getHeight();
-                sTempRect.right += rootView.getHeight() / 2;
-            }
-        }
-        int targetLeft = sTempRect.left;
-        int targetWidth = sTempRect.width();
-        float deltaWidth = (float) (lp.width - targetWidth);
-        final float deltaLeft = (float) (lp.leftMargin - targetLeft);
-        if (!(deltaLeft == 0.0f && deltaWidth == 0.0f)) {
-            if (currentAlpha == 0.0f) {
-                lp.width = targetWidth;
-                lp.leftMargin = targetLeft;
-                selectorView.requestLayout();
-            } else {
-                ValueAnimator layoutAnimator3 = ValueAnimator.ofFloat(0.0f, 1.0f);
-                layoutAnimator3.setDuration((long) animationDuration);
-                layoutAnimator3.setInterpolator(interpolator);
-                final ViewGroup.MarginLayoutParams marginLayoutParams = lp;
-                final int i = targetLeft;
-                float deltaWidth2 = deltaWidth;
-                final int i2 = targetWidth;
-                final float f = deltaWidth2;
-                final View view = selectorView;
-                layoutAnimator3.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                    public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                        float fractionToEnd = 1.0f - valueAnimator.getAnimatedFraction();
-                        marginLayoutParams.leftMargin = Math.round(((float) i) + (deltaLeft * fractionToEnd));
-                        marginLayoutParams.width = Math.round(((float) i2) + (f * fractionToEnd));
-                        view.requestLayout();
-                    }
-                });
-                layoutAnimator3.start();
-                return layoutAnimator3;
-            }
-        }
-        return layoutAnimator2;
     }
 }

@@ -5,13 +5,15 @@ import com.google.common.annotations.GwtIncompatible;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible(emulated = true, serializable = true)
 public final class HashMultimap<K, V> extends HashMultimapGwtSerializationDependencies<K, V> {
@@ -20,6 +22,35 @@ public final class HashMultimap<K, V> extends HashMultimapGwtSerializationDepend
     private static final long serialVersionUID = 0;
     @VisibleForTesting
     transient int expectedValuesPerKey;
+
+    private HashMultimap() {
+        this(12, 2);
+    }
+
+    private HashMultimap(int expectedKeys, int expectedValuesPerKey2) {
+        super(Platform.newHashMapWithExpectedSize(expectedKeys));
+        this.expectedValuesPerKey = 2;
+        Preconditions.checkArgument(expectedValuesPerKey2 >= 0);
+        this.expectedValuesPerKey = expectedValuesPerKey2;
+    }
+
+    private HashMultimap(Multimap<? extends K, ? extends V> multimap) {
+        super(Platform.newHashMapWithExpectedSize(multimap.keySet().size()));
+        this.expectedValuesPerKey = 2;
+        putAll(multimap);
+    }
+
+    public static <K, V> HashMultimap<K, V> create() {
+        return new HashMultimap<>();
+    }
+
+    public static <K, V> HashMultimap<K, V> create(int expectedKeys, int expectedValuesPerKey2) {
+        return new HashMultimap<>(expectedKeys, expectedValuesPerKey2);
+    }
+
+    public static <K, V> HashMultimap<K, V> create(Multimap<? extends K, ? extends V> multimap) {
+        return new HashMultimap<>(multimap);
+    }
 
     public /* bridge */ /* synthetic */ Map asMap() {
         return super.asMap();
@@ -119,35 +150,6 @@ public final class HashMultimap<K, V> extends HashMultimapGwtSerializationDepend
 
     public /* bridge */ /* synthetic */ Collection values() {
         return super.values();
-    }
-
-    public static <K, V> HashMultimap<K, V> create() {
-        return new HashMultimap<>();
-    }
-
-    public static <K, V> HashMultimap<K, V> create(int expectedKeys, int expectedValuesPerKey2) {
-        return new HashMultimap<>(expectedKeys, expectedValuesPerKey2);
-    }
-
-    public static <K, V> HashMultimap<K, V> create(Multimap<? extends K, ? extends V> multimap) {
-        return new HashMultimap<>(multimap);
-    }
-
-    private HashMultimap() {
-        this(12, 2);
-    }
-
-    private HashMultimap(int expectedKeys, int expectedValuesPerKey2) {
-        super(Platform.newHashMapWithExpectedSize(expectedKeys));
-        this.expectedValuesPerKey = 2;
-        Preconditions.checkArgument(expectedValuesPerKey2 >= 0);
-        this.expectedValuesPerKey = expectedValuesPerKey2;
-    }
-
-    private HashMultimap(Multimap<? extends K, ? extends V> multimap) {
-        super(Platform.newHashMapWithExpectedSize(multimap.keySet().size()));
-        this.expectedValuesPerKey = 2;
-        putAll(multimap);
     }
 
     /* access modifiers changed from: package-private */

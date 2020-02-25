@@ -2,9 +2,9 @@ package com.google.android.exoplayer2.source;
 
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.SeekParameters;
-import com.google.android.exoplayer2.source.MediaPeriod;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.util.Assertions;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,24 +12,24 @@ import java.util.IdentityHashMap;
 import java.util.List;
 
 final class MergingMediaPeriod implements MediaPeriod, MediaPeriod.Callback {
-    private MediaPeriod.Callback callback;
-    private final ArrayList<MediaPeriod> childrenPendingPreparation = new ArrayList<>();
-    private SequenceableLoader compositeSequenceableLoader;
-    private final CompositeSequenceableLoaderFactory compositeSequenceableLoaderFactory;
-    private MediaPeriod[] enabledPeriods;
     public final MediaPeriod[] periods;
+    private final ArrayList<MediaPeriod> childrenPendingPreparation = new ArrayList<>();
+    private final CompositeSequenceableLoaderFactory compositeSequenceableLoaderFactory;
     private final IdentityHashMap<SampleStream, Integer> streamPeriodIndices;
+    private MediaPeriod.Callback callback;
+    private SequenceableLoader compositeSequenceableLoader;
+    private MediaPeriod[] enabledPeriods;
     private TrackGroupArray trackGroups;
-
-    public List getStreamKeys(List list) {
-        return MediaPeriod$$CC.getStreamKeys$$dflt$$(this, list);
-    }
 
     public MergingMediaPeriod(CompositeSequenceableLoaderFactory compositeSequenceableLoaderFactory2, MediaPeriod... periods2) {
         this.compositeSequenceableLoaderFactory = compositeSequenceableLoaderFactory2;
         this.periods = periods2;
         this.compositeSequenceableLoader = compositeSequenceableLoaderFactory2.createCompositeSequenceableLoader(new SequenceableLoader[0]);
         this.streamPeriodIndices = new IdentityHashMap<>();
+    }
+
+    public List getStreamKeys(List list) {
+        return MediaPeriod$$CC.getStreamKeys$$dflt$$(this, list);
     }
 
     public void prepare(MediaPeriod.Callback callback2, long positionUs) {

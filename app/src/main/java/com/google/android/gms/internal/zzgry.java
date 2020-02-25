@@ -2,6 +2,7 @@ package com.google.android.gms.internal;
 
 import com.google.common.base.Ascii;
 import com.google.common.primitives.UnsignedBytes;
+
 import java.io.IOException;
 
 /* compiled from: CodedInputByteBufferNano */
@@ -18,6 +19,15 @@ public final class zzgry {
     private int zzj = 64;
     private int zzk = 67108864;
     private zzgnk zzl;
+
+    private zzgry(byte[] bArr, int i, int i2) {
+        this.zza = bArr;
+        this.zzb = i;
+        int i3 = i2 + i;
+        this.zzd = i3;
+        this.zzc = i3;
+        this.zzf = i;
+    }
 
     public static zzgry zza(byte[] bArr) {
         return zza(bArr, 0, bArr.length);
@@ -209,15 +219,6 @@ public final class zzgry {
         byte zzp = zzp();
         byte zzp2 = zzp();
         return ((((long) zzp2) & 255) << 8) | (((long) zzp) & 255) | ((((long) zzp()) & 255) << 16) | ((((long) zzp()) & 255) << 24) | ((((long) zzp()) & 255) << 32) | ((((long) zzp()) & 255) << 40) | ((((long) zzp()) & 255) << 48) | ((((long) zzp()) & 255) << 56);
-    }
-
-    private zzgry(byte[] bArr, int i, int i2) {
-        this.zza = bArr;
-        this.zzb = i;
-        int i3 = i2 + i;
-        this.zzd = i3;
-        this.zzc = i3;
-        this.zzf = i;
     }
 
     public final <T extends zzgoj<T, ?>> T zza(zzgqe zzgqe) throws IOException {

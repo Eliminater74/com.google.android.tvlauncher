@@ -2,6 +2,7 @@ package com.google.android.tvlauncher.home;
 
 import android.content.Intent;
 import android.view.View;
+
 import com.google.android.tvlauncher.settings.AppChannelPermissionActivity;
 
 final /* synthetic */ class ConfigureChannelsRowController$$Lambda$0 implements View.OnClickListener {

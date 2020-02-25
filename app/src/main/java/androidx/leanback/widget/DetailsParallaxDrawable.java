@@ -7,11 +7,10 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.RestrictTo;
 import android.util.TypedValue;
+
 import androidx.leanback.C0364R;
 import androidx.leanback.graphics.CompositeDrawable;
 import androidx.leanback.graphics.FitWidthBitmapDrawable;
-import androidx.leanback.widget.Parallax;
-import androidx.leanback.widget.ParallaxTarget;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY})
 public class DetailsParallaxDrawable extends CompositeDrawable {
@@ -33,6 +32,14 @@ public class DetailsParallaxDrawable extends CompositeDrawable {
         init(context2, detailsParallax, fitWidthBitmapDrawable2, new ColorDrawable(), new ParallaxTarget.PropertyValuesHolderTarget(fitWidthBitmapDrawable, PropertyValuesHolder.ofInt("verticalOffset", 0, -context.getResources().getDimensionPixelSize(C0364R.dimen.lb_details_cover_drawable_parallax_movement))));
     }
 
+    private static int getDefaultBackgroundColor(Context context) {
+        TypedValue outValue = new TypedValue();
+        if (context.getTheme().resolveAttribute(C0364R.attr.defaultBrandColorDark, outValue, true)) {
+            return context.getResources().getColor(outValue.resourceId);
+        }
+        return context.getResources().getColor(C0364R.color.lb_default_brand_color_dark);
+    }
+
     /* access modifiers changed from: package-private */
     public void init(Context context, DetailsParallax parallax, Drawable coverDrawable, Drawable bottomDrawable, ParallaxTarget coverDrawableParallaxTarget) {
         if (bottomDrawable instanceof ColorDrawable) {
@@ -47,14 +54,6 @@ public class DetailsParallaxDrawable extends CompositeDrawable {
         connect(context, parallax, coverDrawableParallaxTarget);
     }
 
-    private static int getDefaultBackgroundColor(Context context) {
-        TypedValue outValue = new TypedValue();
-        if (context.getTheme().resolveAttribute(C0364R.attr.defaultBrandColorDark, outValue, true)) {
-            return context.getResources().getColor(outValue.resourceId);
-        }
-        return context.getResources().getColor(C0364R.color.lb_default_brand_color_dark);
-    }
-
     public Drawable getCoverDrawable() {
         return getChildAt(0).getDrawable();
     }
@@ -63,13 +62,13 @@ public class DetailsParallaxDrawable extends CompositeDrawable {
         return this.mBottomDrawable;
     }
 
-    public void setSolidColor(@ColorInt int color) {
-        ((ColorDrawable) this.mBottomDrawable).setColor(color);
-    }
-
     @ColorInt
     public int getSolidColor() {
         return ((ColorDrawable) this.mBottomDrawable).getColor();
+    }
+
+    public void setSolidColor(@ColorInt int color) {
+        ((ColorDrawable) this.mBottomDrawable).setColor(color);
     }
 
     /* access modifiers changed from: package-private */

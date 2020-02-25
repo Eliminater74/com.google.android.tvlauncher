@@ -3,7 +3,7 @@ package com.google.common.collect;
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Supplier;
-import com.google.common.collect.Maps;
+
 import java.util.Comparator;
 import java.util.Map;
 import java.util.SortedMap;

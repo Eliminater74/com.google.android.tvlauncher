@@ -3,11 +3,10 @@ package com.google.android.exoplayer2.source;
 import android.net.Uri;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.MediaSourceEventListener;
 import com.google.android.exoplayer2.source.ads.AdsMediaSource;
 import com.google.android.exoplayer2.upstream.Allocator;
 import com.google.android.exoplayer2.upstream.DataSource;
@@ -15,6 +14,7 @@ import com.google.android.exoplayer2.upstream.DefaultLoadErrorHandlingPolicy;
 import com.google.android.exoplayer2.upstream.LoadErrorHandlingPolicy;
 import com.google.android.exoplayer2.upstream.TransferListener;
 import com.google.android.exoplayer2.util.Assertions;
+
 import java.io.IOException;
 
 @Deprecated
@@ -24,16 +24,67 @@ public final class ExtractorMediaSource extends BaseMediaSource implements Media
     private final ProgressiveMediaSource progressiveMediaSource;
 
     @Deprecated
+    public ExtractorMediaSource(Uri uri, DataSource.Factory dataSourceFactory, ExtractorsFactory extractorsFactory, Handler eventHandler, EventListener eventListener) {
+        this(uri, dataSourceFactory, extractorsFactory, eventHandler, eventListener, null);
+    }
+
+    @Deprecated
+    public ExtractorMediaSource(Uri uri, DataSource.Factory dataSourceFactory, ExtractorsFactory extractorsFactory, Handler eventHandler, EventListener eventListener, String customCacheKey) {
+        this(uri, dataSourceFactory, extractorsFactory, eventHandler, eventListener, customCacheKey, 1048576);
+    }
+
+    @Deprecated
+    public ExtractorMediaSource(Uri uri, DataSource.Factory dataSourceFactory, ExtractorsFactory extractorsFactory, Handler eventHandler, EventListener eventListener, String customCacheKey, int continueLoadingCheckIntervalBytes) {
+        this(uri, dataSourceFactory, extractorsFactory, new DefaultLoadErrorHandlingPolicy(), customCacheKey, continueLoadingCheckIntervalBytes, (Object) null);
+        if (eventListener != null && eventHandler != null) {
+            addEventListener(eventHandler, new EventListenerWrapper(eventListener));
+        }
+    }
+
+    private ExtractorMediaSource(Uri uri, DataSource.Factory dataSourceFactory, ExtractorsFactory extractorsFactory, LoadErrorHandlingPolicy loadableLoadErrorHandlingPolicy, @Nullable String customCacheKey, int continueLoadingCheckIntervalBytes, @Nullable Object tag) {
+        this.progressiveMediaSource = new ProgressiveMediaSource(uri, dataSourceFactory, extractorsFactory, loadableLoadErrorHandlingPolicy, customCacheKey, continueLoadingCheckIntervalBytes, tag);
+    }
+
+    @Nullable
+    public Object getTag() {
+        return this.progressiveMediaSource.getTag();
+    }
+
+    public void prepareSourceInternal(@Nullable TransferListener mediaTransferListener) {
+        this.progressiveMediaSource.prepareSource(this, mediaTransferListener);
+    }
+
+    public void maybeThrowSourceInfoRefreshError() throws IOException {
+        this.progressiveMediaSource.maybeThrowSourceInfoRefreshError();
+    }
+
+    public MediaPeriod createPeriod(MediaSource.MediaPeriodId id, Allocator allocator, long startPositionUs) {
+        return this.progressiveMediaSource.createPeriod(id, allocator, startPositionUs);
+    }
+
+    public void releasePeriod(MediaPeriod mediaPeriod) {
+        this.progressiveMediaSource.releasePeriod(mediaPeriod);
+    }
+
+    public void releaseSourceInternal() {
+        this.progressiveMediaSource.releaseSource(this);
+    }
+
+    public void onSourceInfoRefreshed(MediaSource source, Timeline timeline, @Nullable Object manifest) {
+        refreshSourceInfo(timeline, manifest);
+    }
+
+    @Deprecated
     public interface EventListener {
         void onLoadError(IOException iOException);
     }
 
     @Deprecated
     public static final class Factory implements AdsMediaSource.MediaSourceFactory {
+        private final DataSource.Factory dataSourceFactory;
         private int continueLoadingCheckIntervalBytes = 1048576;
         @Nullable
         private String customCacheKey;
-        private final DataSource.Factory dataSourceFactory;
         @Nullable
         private ExtractorsFactory extractorsFactory;
         private boolean isCreateCalled;
@@ -100,57 +151,6 @@ public final class ExtractorMediaSource extends BaseMediaSource implements Media
         public int[] getSupportedTypes() {
             return new int[]{3};
         }
-    }
-
-    @Deprecated
-    public ExtractorMediaSource(Uri uri, DataSource.Factory dataSourceFactory, ExtractorsFactory extractorsFactory, Handler eventHandler, EventListener eventListener) {
-        this(uri, dataSourceFactory, extractorsFactory, eventHandler, eventListener, null);
-    }
-
-    @Deprecated
-    public ExtractorMediaSource(Uri uri, DataSource.Factory dataSourceFactory, ExtractorsFactory extractorsFactory, Handler eventHandler, EventListener eventListener, String customCacheKey) {
-        this(uri, dataSourceFactory, extractorsFactory, eventHandler, eventListener, customCacheKey, 1048576);
-    }
-
-    @Deprecated
-    public ExtractorMediaSource(Uri uri, DataSource.Factory dataSourceFactory, ExtractorsFactory extractorsFactory, Handler eventHandler, EventListener eventListener, String customCacheKey, int continueLoadingCheckIntervalBytes) {
-        this(uri, dataSourceFactory, extractorsFactory, new DefaultLoadErrorHandlingPolicy(), customCacheKey, continueLoadingCheckIntervalBytes, (Object) null);
-        if (eventListener != null && eventHandler != null) {
-            addEventListener(eventHandler, new EventListenerWrapper(eventListener));
-        }
-    }
-
-    private ExtractorMediaSource(Uri uri, DataSource.Factory dataSourceFactory, ExtractorsFactory extractorsFactory, LoadErrorHandlingPolicy loadableLoadErrorHandlingPolicy, @Nullable String customCacheKey, int continueLoadingCheckIntervalBytes, @Nullable Object tag) {
-        this.progressiveMediaSource = new ProgressiveMediaSource(uri, dataSourceFactory, extractorsFactory, loadableLoadErrorHandlingPolicy, customCacheKey, continueLoadingCheckIntervalBytes, tag);
-    }
-
-    @Nullable
-    public Object getTag() {
-        return this.progressiveMediaSource.getTag();
-    }
-
-    public void prepareSourceInternal(@Nullable TransferListener mediaTransferListener) {
-        this.progressiveMediaSource.prepareSource(this, mediaTransferListener);
-    }
-
-    public void maybeThrowSourceInfoRefreshError() throws IOException {
-        this.progressiveMediaSource.maybeThrowSourceInfoRefreshError();
-    }
-
-    public MediaPeriod createPeriod(MediaSource.MediaPeriodId id, Allocator allocator, long startPositionUs) {
-        return this.progressiveMediaSource.createPeriod(id, allocator, startPositionUs);
-    }
-
-    public void releasePeriod(MediaPeriod mediaPeriod) {
-        this.progressiveMediaSource.releasePeriod(mediaPeriod);
-    }
-
-    public void releaseSourceInternal() {
-        this.progressiveMediaSource.releaseSource(this);
-    }
-
-    public void onSourceInfoRefreshed(MediaSource source, Timeline timeline, @Nullable Object manifest) {
-        refreshSourceInfo(timeline, manifest);
     }
 
     @Deprecated

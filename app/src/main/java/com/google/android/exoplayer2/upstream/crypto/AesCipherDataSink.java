@@ -2,13 +2,14 @@ package com.google.android.exoplayer2.upstream.crypto;
 
 import com.google.android.exoplayer2.upstream.DataSink;
 import com.google.android.exoplayer2.upstream.DataSpec;
+
 import java.io.IOException;
 
 public final class AesCipherDataSink implements DataSink {
-    private AesFlushingCipher cipher;
     private final byte[] scratch;
     private final byte[] secretKey;
     private final DataSink wrappedDataSink;
+    private AesFlushingCipher cipher;
 
     public AesCipherDataSink(byte[] secretKey2, DataSink wrappedDataSink2) {
         this(secretKey2, wrappedDataSink2, null);

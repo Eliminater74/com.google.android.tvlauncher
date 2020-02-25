@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+
 import androidx.leanback.C0364R;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
@@ -16,11 +17,11 @@ public class ThumbsBar extends LinearLayout {
     final SparseArray<Bitmap> mBitmaps;
     int mHeroThumbHeightInPixel;
     int mHeroThumbWidthInPixel;
-    private boolean mIsUserSets;
     int mMeasuredMarginInPixel;
     int mNumOfThumbs;
     int mThumbHeightInPixel;
     int mThumbWidthInPixel;
+    private boolean mIsUserSets;
 
     public ThumbsBar(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -36,6 +37,10 @@ public class ThumbsBar extends LinearLayout {
         this.mHeroThumbHeightInPixel = context.getResources().getDimensionPixelSize(C0364R.dimen.lb_playback_transport_hero_thumbs_width);
         this.mHeroThumbWidthInPixel = context.getResources().getDimensionPixelSize(C0364R.dimen.lb_playback_transport_hero_thumbs_height);
         this.mMeasuredMarginInPixel = context.getResources().getDimensionPixelSize(C0364R.dimen.lb_playback_transport_thumbs_margin);
+    }
+
+    private static int roundUp(int num, int divisor) {
+        return ((num + divisor) - 1) / divisor;
     }
 
     public int getHeroIndex() {
@@ -121,10 +126,6 @@ public class ThumbsBar extends LinearLayout {
             }
             child.setLayoutParams(lp);
         }
-    }
-
-    private static int roundUp(int num, int divisor) {
-        return ((num + divisor) - 1) / divisor;
     }
 
     private int calculateNumOfThumbs(int widthInPixel) {

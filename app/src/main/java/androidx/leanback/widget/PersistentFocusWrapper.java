@@ -8,6 +8,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+
 import java.util.ArrayList;
 
 class PersistentFocusWrapper extends FrameLayout {
@@ -100,6 +101,23 @@ class PersistentFocusWrapper extends FrameLayout {
         return true;
     }
 
+    /* access modifiers changed from: protected */
+    public Parcelable onSaveInstanceState() {
+        SavedState savedState = new SavedState(super.onSaveInstanceState());
+        savedState.mSelectedPosition = this.mSelectedPosition;
+        return savedState;
+    }
+
+    /* access modifiers changed from: protected */
+    public void onRestoreInstanceState(Parcelable state) {
+        if (!(state instanceof SavedState)) {
+            super.onRestoreInstanceState(state);
+            return;
+        }
+        this.mSelectedPosition = ((SavedState) state).mSelectedPosition;
+        super.onRestoreInstanceState(((SavedState) state).getSuperState());
+    }
+
     static class SavedState extends View.BaseSavedState {
         public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.Creator<SavedState>() {
             public SavedState createFromParcel(Parcel in) {
@@ -125,22 +143,5 @@ class PersistentFocusWrapper extends FrameLayout {
             super.writeToParcel(dest, flags);
             dest.writeInt(this.mSelectedPosition);
         }
-    }
-
-    /* access modifiers changed from: protected */
-    public Parcelable onSaveInstanceState() {
-        SavedState savedState = new SavedState(super.onSaveInstanceState());
-        savedState.mSelectedPosition = this.mSelectedPosition;
-        return savedState;
-    }
-
-    /* access modifiers changed from: protected */
-    public void onRestoreInstanceState(Parcelable state) {
-        if (!(state instanceof SavedState)) {
-            super.onRestoreInstanceState(state);
-            return;
-        }
-        this.mSelectedPosition = ((SavedState) state).mSelectedPosition;
-        super.onRestoreInstanceState(((SavedState) state).getSuperState());
     }
 }

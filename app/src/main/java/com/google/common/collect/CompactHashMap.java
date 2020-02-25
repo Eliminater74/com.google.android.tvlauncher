@@ -5,6 +5,10 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
@@ -20,44 +24,34 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtIncompatible
 class CompactHashMap<K, V> extends AbstractMap<K, V> implements Serializable {
     static final int DEFAULT_SIZE = 3;
+    static final int UNSET = -1;
     private static final long HASH_MASK = -4294967296L;
     private static final float LOAD_FACTOR = 1.0f;
     private static final long NEXT_MASK = 4294967295L;
-    static final int UNSET = -1;
+    /* access modifiers changed from: private */
+    public transient int size;
     @MonotonicNonNullDecl
     @VisibleForTesting
     transient long[] entries;
+    @MonotonicNonNullDecl
+    @VisibleForTesting
+    transient Object[] keys;
+    transient int modCount;
+    @MonotonicNonNullDecl
+    @VisibleForTesting
+    transient Object[] values;
     @MonotonicNonNullDecl
     private transient Set<Map.Entry<K, V>> entrySetView;
     @MonotonicNonNullDecl
     private transient Set<K> keySetView;
     @MonotonicNonNullDecl
-    @VisibleForTesting
-    transient Object[] keys;
-    transient int modCount;
-    /* access modifiers changed from: private */
-    public transient int size;
-    @MonotonicNonNullDecl
     private transient int[] table;
     @MonotonicNonNullDecl
-    @VisibleForTesting
-    transient Object[] values;
-    @MonotonicNonNullDecl
     private transient Collection<V> valuesView;
-
-    public static <K, V> CompactHashMap<K, V> create() {
-        return new CompactHashMap<>();
-    }
-
-    public static <K, V> CompactHashMap<K, V> createWithExpectedSize(int expectedSize) {
-        return new CompactHashMap<>(expectedSize);
-    }
 
     CompactHashMap() {
         init(3);
@@ -67,25 +61,12 @@ class CompactHashMap<K, V> extends AbstractMap<K, V> implements Serializable {
         init(expectedSize);
     }
 
-    /* access modifiers changed from: package-private */
-    public void init(int expectedSize) {
-        Preconditions.checkArgument(expectedSize >= 0, "Expected size must be non-negative");
-        this.modCount = Math.max(1, expectedSize);
+    public static <K, V> CompactHashMap<K, V> create() {
+        return new CompactHashMap<>();
     }
 
-    /* access modifiers changed from: package-private */
-    public boolean needsAllocArrays() {
-        return this.table == null;
-    }
-
-    /* access modifiers changed from: package-private */
-    public void allocArrays() {
-        Preconditions.checkState(needsAllocArrays(), "Arrays already allocated");
-        int expectedSize = this.modCount;
-        this.table = newTable(Hashing.closedTableSize(expectedSize, 1.0d));
-        this.entries = newEntries(expectedSize);
-        this.keys = new Object[expectedSize];
-        this.values = new Object[expectedSize];
+    public static <K, V> CompactHashMap<K, V> createWithExpectedSize(int expectedSize) {
+        return new CompactHashMap<>(expectedSize);
     }
 
     private static int[] newTable(int size2) {
@@ -113,10 +94,6 @@ class CompactHashMap<K, V> extends AbstractMap<K, V> implements Serializable {
         return array;
     }
 
-    private int hashTableMask() {
-        return this.table.length - 1;
-    }
-
     private static int getHash(long entry) {
         return (int) (entry >>> 32);
     }
@@ -127,6 +104,31 @@ class CompactHashMap<K, V> extends AbstractMap<K, V> implements Serializable {
 
     private static long swapNext(long entry, int newNext) {
         return (HASH_MASK & entry) | (((long) newNext) & NEXT_MASK);
+    }
+
+    /* access modifiers changed from: package-private */
+    public void init(int expectedSize) {
+        Preconditions.checkArgument(expectedSize >= 0, "Expected size must be non-negative");
+        this.modCount = Math.max(1, expectedSize);
+    }
+
+    /* access modifiers changed from: package-private */
+    public boolean needsAllocArrays() {
+        return this.table == null;
+    }
+
+    /* access modifiers changed from: package-private */
+    public void allocArrays() {
+        Preconditions.checkState(needsAllocArrays(), "Arrays already allocated");
+        int expectedSize = this.modCount;
+        this.table = newTable(Hashing.closedTableSize(expectedSize, 1.0d));
+        this.entries = newEntries(expectedSize);
+        this.keys = new Object[expectedSize];
+        this.values = new Object[expectedSize];
+    }
+
+    private int hashTableMask() {
+        return this.table.length - 1;
     }
 
     /* access modifiers changed from: package-private */
@@ -370,52 +372,6 @@ class CompactHashMap<K, V> extends AbstractMap<K, V> implements Serializable {
         return indexBeforeRemove - 1;
     }
 
-    private abstract class Itr<T> implements Iterator<T> {
-        int currentIndex;
-        int expectedModCount;
-        int indexToRemove;
-
-        /* access modifiers changed from: package-private */
-        public abstract T getOutput(int i);
-
-        private Itr() {
-            this.expectedModCount = CompactHashMap.this.modCount;
-            this.currentIndex = CompactHashMap.this.firstEntryIndex();
-            this.indexToRemove = -1;
-        }
-
-        public boolean hasNext() {
-            return this.currentIndex >= 0;
-        }
-
-        public T next() {
-            checkForConcurrentModification();
-            if (hasNext()) {
-                int i = this.currentIndex;
-                this.indexToRemove = i;
-                T result = getOutput(i);
-                this.currentIndex = CompactHashMap.this.getSuccessor(this.currentIndex);
-                return result;
-            }
-            throw new NoSuchElementException();
-        }
-
-        public void remove() {
-            checkForConcurrentModification();
-            CollectPreconditions.checkRemove(this.indexToRemove >= 0);
-            this.expectedModCount++;
-            Object unused = CompactHashMap.this.removeEntry(this.indexToRemove);
-            this.currentIndex = CompactHashMap.this.adjustAfterRemove(this.currentIndex, this.indexToRemove);
-            this.indexToRemove = -1;
-        }
-
-        private void checkForConcurrentModification() {
-            if (CompactHashMap.this.modCount != this.expectedModCount) {
-                throw new ConcurrentModificationException();
-            }
-        }
-    }
-
     public Set<K> keySet() {
         Set<K> set = this.keySetView;
         if (set != null) {
@@ -429,36 +385,6 @@ class CompactHashMap<K, V> extends AbstractMap<K, V> implements Serializable {
     /* access modifiers changed from: package-private */
     public Set<K> createKeySet() {
         return new KeySetView();
-    }
-
-    class KeySetView extends AbstractSet<K> {
-        KeySetView() {
-        }
-
-        public int size() {
-            return CompactHashMap.this.size;
-        }
-
-        public boolean contains(Object o) {
-            return CompactHashMap.this.containsKey(o);
-        }
-
-        public boolean remove(@NullableDecl Object o) {
-            int index = CompactHashMap.this.indexOf(o);
-            if (index == -1) {
-                return false;
-            }
-            Object unused = CompactHashMap.this.removeEntry(index);
-            return true;
-        }
-
-        public Iterator<K> iterator() {
-            return CompactHashMap.this.keySetIterator();
-        }
-
-        public void clear() {
-            CompactHashMap.this.clear();
-        }
     }
 
     /* access modifiers changed from: package-private */
@@ -486,48 +412,6 @@ class CompactHashMap<K, V> extends AbstractMap<K, V> implements Serializable {
         return new EntrySetView();
     }
 
-    class EntrySetView extends AbstractSet<Map.Entry<K, V>> {
-        EntrySetView() {
-        }
-
-        public int size() {
-            return CompactHashMap.this.size;
-        }
-
-        public void clear() {
-            CompactHashMap.this.clear();
-        }
-
-        public Iterator<Map.Entry<K, V>> iterator() {
-            return CompactHashMap.this.entrySetIterator();
-        }
-
-        public boolean contains(@NullableDecl Object o) {
-            if (!(o instanceof Map.Entry)) {
-                return false;
-            }
-            Map.Entry<?, ?> entry = (Map.Entry) o;
-            int index = CompactHashMap.this.indexOf(entry.getKey());
-            if (index == -1 || !Objects.equal(CompactHashMap.this.values[index], entry.getValue())) {
-                return false;
-            }
-            return true;
-        }
-
-        public boolean remove(@NullableDecl Object o) {
-            if (!(o instanceof Map.Entry)) {
-                return false;
-            }
-            Map.Entry<?, ?> entry = (Map.Entry) o;
-            int index = CompactHashMap.this.indexOf(entry.getKey());
-            if (index == -1 || !Objects.equal(CompactHashMap.this.values[index], entry.getValue())) {
-                return false;
-            }
-            Object unused = CompactHashMap.this.removeEntry(index);
-            return true;
-        }
-    }
-
     /* access modifiers changed from: package-private */
     public Iterator<Map.Entry<K, V>> entrySetIterator() {
         return new CompactHashMap<K, V>.Itr<Map.Entry<K, V>>() {
@@ -536,47 +420,6 @@ class CompactHashMap<K, V> extends AbstractMap<K, V> implements Serializable {
                 return new MapEntry(entry);
             }
         };
-    }
-
-    final class MapEntry extends AbstractMapEntry<K, V> {
-        @NullableDecl
-        private final K key;
-        private int lastKnownIndex;
-
-        MapEntry(int index) {
-            this.key = CompactHashMap.this.keys[index];
-            this.lastKnownIndex = index;
-        }
-
-        public K getKey() {
-            return this.key;
-        }
-
-        private void updateLastKnownIndex() {
-            int i = this.lastKnownIndex;
-            if (i == -1 || i >= CompactHashMap.this.size() || !Objects.equal(this.key, CompactHashMap.this.keys[this.lastKnownIndex])) {
-                this.lastKnownIndex = CompactHashMap.this.indexOf(this.key);
-            }
-        }
-
-        public V getValue() {
-            updateLastKnownIndex();
-            if (this.lastKnownIndex == -1) {
-                return null;
-            }
-            return CompactHashMap.this.values[this.lastKnownIndex];
-        }
-
-        public V setValue(V value) {
-            updateLastKnownIndex();
-            if (this.lastKnownIndex == -1) {
-                CompactHashMap.this.put(this.key, value);
-                return null;
-            }
-            V old = CompactHashMap.this.values[this.lastKnownIndex];
-            CompactHashMap.this.values[this.lastKnownIndex] = value;
-            return old;
-        }
     }
 
     public int size() {
@@ -609,23 +452,6 @@ class CompactHashMap<K, V> extends AbstractMap<K, V> implements Serializable {
     /* access modifiers changed from: package-private */
     public Collection<V> createValues() {
         return new ValuesView();
-    }
-
-    class ValuesView extends AbstractCollection<V> {
-        ValuesView() {
-        }
-
-        public int size() {
-            return CompactHashMap.this.size;
-        }
-
-        public void clear() {
-            CompactHashMap.this.clear();
-        }
-
-        public Iterator<V> iterator() {
-            return CompactHashMap.this.valuesIterator();
-        }
     }
 
     /* access modifiers changed from: package-private */
@@ -700,5 +526,181 @@ class CompactHashMap<K, V> extends AbstractMap<K, V> implements Serializable {
         sb.append("Invalid size: ");
         sb.append(elementCount);
         throw new InvalidObjectException(sb.toString());
+    }
+
+    private abstract class Itr<T> implements Iterator<T> {
+        int currentIndex;
+        int expectedModCount;
+        int indexToRemove;
+
+        private Itr() {
+            this.expectedModCount = CompactHashMap.this.modCount;
+            this.currentIndex = CompactHashMap.this.firstEntryIndex();
+            this.indexToRemove = -1;
+        }
+
+        /* access modifiers changed from: package-private */
+        public abstract T getOutput(int i);
+
+        public boolean hasNext() {
+            return this.currentIndex >= 0;
+        }
+
+        public T next() {
+            checkForConcurrentModification();
+            if (hasNext()) {
+                int i = this.currentIndex;
+                this.indexToRemove = i;
+                T result = getOutput(i);
+                this.currentIndex = CompactHashMap.this.getSuccessor(this.currentIndex);
+                return result;
+            }
+            throw new NoSuchElementException();
+        }
+
+        public void remove() {
+            checkForConcurrentModification();
+            CollectPreconditions.checkRemove(this.indexToRemove >= 0);
+            this.expectedModCount++;
+            Object unused = CompactHashMap.this.removeEntry(this.indexToRemove);
+            this.currentIndex = CompactHashMap.this.adjustAfterRemove(this.currentIndex, this.indexToRemove);
+            this.indexToRemove = -1;
+        }
+
+        private void checkForConcurrentModification() {
+            if (CompactHashMap.this.modCount != this.expectedModCount) {
+                throw new ConcurrentModificationException();
+            }
+        }
+    }
+
+    class KeySetView extends AbstractSet<K> {
+        KeySetView() {
+        }
+
+        public int size() {
+            return CompactHashMap.this.size;
+        }
+
+        public boolean contains(Object o) {
+            return CompactHashMap.this.containsKey(o);
+        }
+
+        public boolean remove(@NullableDecl Object o) {
+            int index = CompactHashMap.this.indexOf(o);
+            if (index == -1) {
+                return false;
+            }
+            Object unused = CompactHashMap.this.removeEntry(index);
+            return true;
+        }
+
+        public Iterator<K> iterator() {
+            return CompactHashMap.this.keySetIterator();
+        }
+
+        public void clear() {
+            CompactHashMap.this.clear();
+        }
+    }
+
+    class EntrySetView extends AbstractSet<Map.Entry<K, V>> {
+        EntrySetView() {
+        }
+
+        public int size() {
+            return CompactHashMap.this.size;
+        }
+
+        public void clear() {
+            CompactHashMap.this.clear();
+        }
+
+        public Iterator<Map.Entry<K, V>> iterator() {
+            return CompactHashMap.this.entrySetIterator();
+        }
+
+        public boolean contains(@NullableDecl Object o) {
+            if (!(o instanceof Map.Entry)) {
+                return false;
+            }
+            Map.Entry<?, ?> entry = (Map.Entry) o;
+            int index = CompactHashMap.this.indexOf(entry.getKey());
+            if (index == -1 || !Objects.equal(CompactHashMap.this.values[index], entry.getValue())) {
+                return false;
+            }
+            return true;
+        }
+
+        public boolean remove(@NullableDecl Object o) {
+            if (!(o instanceof Map.Entry)) {
+                return false;
+            }
+            Map.Entry<?, ?> entry = (Map.Entry) o;
+            int index = CompactHashMap.this.indexOf(entry.getKey());
+            if (index == -1 || !Objects.equal(CompactHashMap.this.values[index], entry.getValue())) {
+                return false;
+            }
+            Object unused = CompactHashMap.this.removeEntry(index);
+            return true;
+        }
+    }
+
+    final class MapEntry extends AbstractMapEntry<K, V> {
+        @NullableDecl
+        private final K key;
+        private int lastKnownIndex;
+
+        MapEntry(int index) {
+            this.key = CompactHashMap.this.keys[index];
+            this.lastKnownIndex = index;
+        }
+
+        public K getKey() {
+            return this.key;
+        }
+
+        private void updateLastKnownIndex() {
+            int i = this.lastKnownIndex;
+            if (i == -1 || i >= CompactHashMap.this.size() || !Objects.equal(this.key, CompactHashMap.this.keys[this.lastKnownIndex])) {
+                this.lastKnownIndex = CompactHashMap.this.indexOf(this.key);
+            }
+        }
+
+        public V getValue() {
+            updateLastKnownIndex();
+            if (this.lastKnownIndex == -1) {
+                return null;
+            }
+            return CompactHashMap.this.values[this.lastKnownIndex];
+        }
+
+        public V setValue(V value) {
+            updateLastKnownIndex();
+            if (this.lastKnownIndex == -1) {
+                CompactHashMap.this.put(this.key, value);
+                return null;
+            }
+            V old = CompactHashMap.this.values[this.lastKnownIndex];
+            CompactHashMap.this.values[this.lastKnownIndex] = value;
+            return old;
+        }
+    }
+
+    class ValuesView extends AbstractCollection<V> {
+        ValuesView() {
+        }
+
+        public int size() {
+            return CompactHashMap.this.size;
+        }
+
+        public void clear() {
+            CompactHashMap.this.clear();
+        }
+
+        public Iterator<V> iterator() {
+            return CompactHashMap.this.valuesIterator();
+        }
     }
 }

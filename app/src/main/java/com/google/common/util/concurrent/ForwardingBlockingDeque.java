@@ -2,17 +2,18 @@ package com.google.common.util.concurrent;
 
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.collect.ForwardingDeque;
+
 import java.util.Collection;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.TimeUnit;
 
 @GwtIncompatible
 public abstract class ForwardingBlockingDeque<E> extends ForwardingDeque<E> implements BlockingDeque<E> {
-    /* access modifiers changed from: protected */
-    public abstract BlockingDeque<E> delegate();
-
     protected ForwardingBlockingDeque() {
     }
+
+    /* access modifiers changed from: protected */
+    public abstract BlockingDeque<E> delegate();
 
     public int remainingCapacity() {
         return delegate().remainingCapacity();

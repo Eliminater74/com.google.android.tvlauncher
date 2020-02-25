@@ -22,6 +22,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
+
 import androidx.leanback.C0364R;
 import androidx.leanback.animation.LogAccelerateInterpolator;
 import androidx.leanback.animation.LogDecelerateInterpolator;
@@ -45,17 +46,31 @@ import androidx.leanback.widget.SparseArrayObjectAdapter;
 import androidx.leanback.widget.VerticalGridView;
 
 public class PlaybackSupportFragment extends Fragment {
-    private static final int ANIMATING = 1;
-    private static final int ANIMATION_MULTIPLIER = 1;
     public static final int BG_DARK = 1;
     public static final int BG_LIGHT = 2;
     public static final int BG_NONE = 0;
     static final String BUNDLE_CONTROL_VISIBLE_ON_CREATEVIEW = "controlvisible_oncreateview";
+    private static final int ANIMATING = 1;
+    private static final int ANIMATION_MULTIPLIER = 1;
     private static final boolean DEBUG = false;
     private static final int IDLE = 0;
     private static final int START_FADE_OUT = 1;
     private static final String TAG = "PlaybackSupportFragment";
+    private final SetSelectionRunnable mSetSelectionRunnable = new SetSelectionRunnable();
     ObjectAdapter mAdapter;
+    int mAnimationTranslateY;
+    int mAutohideTimerAfterPlayingInMs;
+    int mAutohideTimerAfterTickleInMs;
+    int mBackgroundType = 1;
+    View mBackgroundView;
+    int mBgAlpha;
+    int mBgDarkColor;
+    ValueAnimator mBgFadeInAnimator;
+    ValueAnimator mBgFadeOutAnimator;
+    int mBgLightColor;
+    ValueAnimator mControlRowFadeInAnimator;
+    ValueAnimator mControlRowFadeOutAnimator;
+    boolean mControlVisible = true;
     private final ItemBridgeAdapter.AdapterListener mAdapterListener = new ItemBridgeAdapter.AdapterListener() {
         public void onAttachedToWindow(ItemBridgeAdapter.ViewHolder vh) {
             if (!PlaybackSupportFragment.this.mControlVisible) {
@@ -79,16 +94,81 @@ public class PlaybackSupportFragment extends Fragment {
         public void onBind(ItemBridgeAdapter.ViewHolder vh) {
         }
     };
-    int mAnimationTranslateY;
-    int mAutohideTimerAfterPlayingInMs;
-    int mAutohideTimerAfterTickleInMs;
-    int mBackgroundType = 1;
-    View mBackgroundView;
-    int mBgAlpha;
-    int mBgDarkColor;
-    ValueAnimator mBgFadeInAnimator;
-    ValueAnimator mBgFadeOutAnimator;
-    int mBgLightColor;
+    boolean mControlVisibleBeforeOnCreateView = true;
+    BaseOnItemViewClickedListener mExternalItemClickedListener;
+    BaseOnItemViewSelectedListener mExternalItemSelectedListener;
+    private final BaseOnItemViewSelectedListener mOnItemViewSelectedListener = new BaseOnItemViewSelectedListener() {
+        public void onItemSelected(Presenter.ViewHolder itemViewHolder, Object item, RowPresenter.ViewHolder rowViewHolder, Object row) {
+            if (PlaybackSupportFragment.this.mExternalItemSelectedListener != null) {
+                PlaybackSupportFragment.this.mExternalItemSelectedListener.onItemSelected(itemViewHolder, item, rowViewHolder, row);
+            }
+        }
+    };
+    OnFadeCompleteListener mFadeCompleteListener;
+    boolean mFadingEnabled = true;
+    PlaybackGlueHost.HostCallback mHostCallback;
+    boolean mInSeek;
+    View.OnKeyListener mInputEventHandler;
+    int mMajorFadeTranslateY;
+    int mMinorFadeTranslateY;
+    ValueAnimator mOtherRowFadeInAnimator;
+    ValueAnimator mOtherRowFadeOutAnimator;
+    int mOtherRowsCenterToBottom;
+    int mPaddingBottom;
+    BaseOnItemViewClickedListener mPlaybackItemClickedListener;
+    private final BaseOnItemViewClickedListener mOnItemViewClickedListener = new BaseOnItemViewClickedListener() {
+        public void onItemClicked(Presenter.ViewHolder itemViewHolder, Object item, RowPresenter.ViewHolder rowViewHolder, Object row) {
+            if (PlaybackSupportFragment.this.mPlaybackItemClickedListener != null && (rowViewHolder instanceof PlaybackRowPresenter.ViewHolder)) {
+                PlaybackSupportFragment.this.mPlaybackItemClickedListener.onItemClicked(itemViewHolder, item, rowViewHolder, row);
+            }
+            if (PlaybackSupportFragment.this.mExternalItemClickedListener != null) {
+                PlaybackSupportFragment.this.mExternalItemClickedListener.onItemClicked(itemViewHolder, item, rowViewHolder, row);
+            }
+        }
+    };
+    PlaybackRowPresenter mPresenter;
+    ProgressBarManager mProgressBarManager = new ProgressBarManager();
+    View mRootView;
+    Row mRow;
+    RowsSupportFragment mRowsSupportFragment;
+    private final Animator.AnimatorListener mFadeListener = new Animator.AnimatorListener() {
+        public void onAnimationStart(Animator animation) {
+            PlaybackSupportFragment.this.enableVerticalGridAnimations(false);
+        }
+
+        public void onAnimationRepeat(Animator animation) {
+        }
+
+        public void onAnimationCancel(Animator animation) {
+        }
+
+        public void onAnimationEnd(Animator animation) {
+            ItemBridgeAdapter.ViewHolder vh;
+            if (PlaybackSupportFragment.this.mBgAlpha > 0) {
+                PlaybackSupportFragment.this.enableVerticalGridAnimations(true);
+                if (PlaybackSupportFragment.this.mFadeCompleteListener != null) {
+                    PlaybackSupportFragment.this.mFadeCompleteListener.onFadeInComplete();
+                    return;
+                }
+                return;
+            }
+            VerticalGridView verticalView = PlaybackSupportFragment.this.getVerticalGridView();
+            if (verticalView != null && verticalView.getSelectedPosition() == 0 && (vh = (ItemBridgeAdapter.ViewHolder) verticalView.findViewHolderForAdapterPosition(0)) != null && (vh.getPresenter() instanceof PlaybackRowPresenter)) {
+                ((PlaybackRowPresenter) vh.getPresenter()).onReappear((RowPresenter.ViewHolder) vh.getViewHolder());
+            }
+            if (PlaybackSupportFragment.this.mFadeCompleteListener != null) {
+                PlaybackSupportFragment.this.mFadeCompleteListener.onFadeOutComplete();
+            }
+        }
+    };
+    private final Handler mHandler = new Handler() {
+        public void handleMessage(Message message) {
+            if (message.what == 1 && PlaybackSupportFragment.this.mFadingEnabled) {
+                PlaybackSupportFragment.this.hideControlsOverlay(true);
+            }
+        }
+    };
+    PlaybackSeekUi.Client mSeekUiClient;
     final PlaybackSeekUi.Client mChainedClient = new PlaybackSeekUi.Client() {
         public boolean isSeekEnabled() {
             if (PlaybackSupportFragment.this.mSeekUiClient == null) {
@@ -124,75 +204,7 @@ public class PlaybackSupportFragment extends Fragment {
             PlaybackSupportFragment.this.setSeekMode(false);
         }
     };
-    ValueAnimator mControlRowFadeInAnimator;
-    ValueAnimator mControlRowFadeOutAnimator;
-    boolean mControlVisible = true;
-    boolean mControlVisibleBeforeOnCreateView = true;
-    BaseOnItemViewClickedListener mExternalItemClickedListener;
-    BaseOnItemViewSelectedListener mExternalItemSelectedListener;
-    OnFadeCompleteListener mFadeCompleteListener;
-    private final Animator.AnimatorListener mFadeListener = new Animator.AnimatorListener() {
-        public void onAnimationStart(Animator animation) {
-            PlaybackSupportFragment.this.enableVerticalGridAnimations(false);
-        }
-
-        public void onAnimationRepeat(Animator animation) {
-        }
-
-        public void onAnimationCancel(Animator animation) {
-        }
-
-        public void onAnimationEnd(Animator animation) {
-            ItemBridgeAdapter.ViewHolder vh;
-            if (PlaybackSupportFragment.this.mBgAlpha > 0) {
-                PlaybackSupportFragment.this.enableVerticalGridAnimations(true);
-                if (PlaybackSupportFragment.this.mFadeCompleteListener != null) {
-                    PlaybackSupportFragment.this.mFadeCompleteListener.onFadeInComplete();
-                    return;
-                }
-                return;
-            }
-            VerticalGridView verticalView = PlaybackSupportFragment.this.getVerticalGridView();
-            if (verticalView != null && verticalView.getSelectedPosition() == 0 && (vh = (ItemBridgeAdapter.ViewHolder) verticalView.findViewHolderForAdapterPosition(0)) != null && (vh.getPresenter() instanceof PlaybackRowPresenter)) {
-                ((PlaybackRowPresenter) vh.getPresenter()).onReappear((RowPresenter.ViewHolder) vh.getViewHolder());
-            }
-            if (PlaybackSupportFragment.this.mFadeCompleteListener != null) {
-                PlaybackSupportFragment.this.mFadeCompleteListener.onFadeOutComplete();
-            }
-        }
-    };
-    boolean mFadingEnabled = true;
-    private final Handler mHandler = new Handler() {
-        public void handleMessage(Message message) {
-            if (message.what == 1 && PlaybackSupportFragment.this.mFadingEnabled) {
-                PlaybackSupportFragment.this.hideControlsOverlay(true);
-            }
-        }
-    };
-    PlaybackGlueHost.HostCallback mHostCallback;
-    boolean mInSeek;
-    View.OnKeyListener mInputEventHandler;
-    private TimeInterpolator mLogAccelerateInterpolator = new LogAccelerateInterpolator(100, 0);
-    private TimeInterpolator mLogDecelerateInterpolator = new LogDecelerateInterpolator(100, 0);
-    int mMajorFadeTranslateY;
-    int mMinorFadeTranslateY;
-    private final BaseOnItemViewClickedListener mOnItemViewClickedListener = new BaseOnItemViewClickedListener() {
-        public void onItemClicked(Presenter.ViewHolder itemViewHolder, Object item, RowPresenter.ViewHolder rowViewHolder, Object row) {
-            if (PlaybackSupportFragment.this.mPlaybackItemClickedListener != null && (rowViewHolder instanceof PlaybackRowPresenter.ViewHolder)) {
-                PlaybackSupportFragment.this.mPlaybackItemClickedListener.onItemClicked(itemViewHolder, item, rowViewHolder, row);
-            }
-            if (PlaybackSupportFragment.this.mExternalItemClickedListener != null) {
-                PlaybackSupportFragment.this.mExternalItemClickedListener.onItemClicked(itemViewHolder, item, rowViewHolder, row);
-            }
-        }
-    };
-    private final BaseOnItemViewSelectedListener mOnItemViewSelectedListener = new BaseOnItemViewSelectedListener() {
-        public void onItemSelected(Presenter.ViewHolder itemViewHolder, Object item, RowPresenter.ViewHolder rowViewHolder, Object row) {
-            if (PlaybackSupportFragment.this.mExternalItemSelectedListener != null) {
-                PlaybackSupportFragment.this.mExternalItemSelectedListener.onItemSelected(itemViewHolder, item, rowViewHolder, row);
-            }
-        }
-    };
+    boolean mShowOrHideControlsOverlayOnUserInteraction = true;
     private final BaseGridView.OnKeyInterceptListener mOnKeyInterceptListener = new BaseGridView.OnKeyInterceptListener() {
         public boolean onInterceptKeyEvent(KeyEvent event) {
             return PlaybackSupportFragment.this.onInterceptInputEvent(event);
@@ -203,19 +215,41 @@ public class PlaybackSupportFragment extends Fragment {
             return PlaybackSupportFragment.this.onInterceptInputEvent(event);
         }
     };
-    ValueAnimator mOtherRowFadeInAnimator;
-    ValueAnimator mOtherRowFadeOutAnimator;
-    int mOtherRowsCenterToBottom;
-    int mPaddingBottom;
-    BaseOnItemViewClickedListener mPlaybackItemClickedListener;
-    PlaybackRowPresenter mPresenter;
-    ProgressBarManager mProgressBarManager = new ProgressBarManager();
-    View mRootView;
-    Row mRow;
-    RowsSupportFragment mRowsSupportFragment;
-    PlaybackSeekUi.Client mSeekUiClient;
-    private final SetSelectionRunnable mSetSelectionRunnable = new SetSelectionRunnable();
-    boolean mShowOrHideControlsOverlayOnUserInteraction = true;
+    private TimeInterpolator mLogAccelerateInterpolator = new LogAccelerateInterpolator(100, 0);
+    private TimeInterpolator mLogDecelerateInterpolator = new LogDecelerateInterpolator(100, 0);
+
+    public PlaybackSupportFragment() {
+        this.mProgressBarManager.setInitialDelay(500);
+    }
+
+    private static ValueAnimator loadAnimator(Context context, int resId) {
+        ValueAnimator animator = (ValueAnimator) AnimatorInflater.loadAnimator(context, resId);
+        animator.setDuration(animator.getDuration() * 1);
+        return animator;
+    }
+
+    static void reverseFirstOrStartSecond(ValueAnimator first, ValueAnimator second, boolean runAnimation) {
+        if (first.isStarted()) {
+            first.reverse();
+            if (!runAnimation) {
+                first.end();
+                return;
+            }
+            return;
+        }
+        second.start();
+        if (!runAnimation) {
+            second.end();
+        }
+    }
+
+    static void endAll(ValueAnimator first, ValueAnimator second) {
+        if (first.isStarted()) {
+            first.end();
+        } else if (second.isStarted()) {
+            second.end();
+        }
+    }
 
     @RestrictTo({RestrictTo.Scope.LIBRARY})
     public void resetFocus() {
@@ -225,35 +259,19 @@ public class PlaybackSupportFragment extends Fragment {
         }
     }
 
-    private class SetSelectionRunnable implements Runnable {
-        int mPosition;
-        boolean mSmooth = true;
-
-        SetSelectionRunnable() {
-        }
-
-        public void run() {
-            if (PlaybackSupportFragment.this.mRowsSupportFragment != null) {
-                PlaybackSupportFragment.this.mRowsSupportFragment.setSelectedPosition(this.mPosition, this.mSmooth);
-            }
-        }
-    }
-
     public ObjectAdapter getAdapter() {
         return this.mAdapter;
     }
 
-    @RestrictTo({RestrictTo.Scope.LIBRARY})
-    public static class OnFadeCompleteListener {
-        public void onFadeInComplete() {
+    public void setAdapter(ObjectAdapter adapter) {
+        this.mAdapter = adapter;
+        setupRow();
+        setupPresenter();
+        setPlaybackRowPresenterAlignment();
+        RowsSupportFragment rowsSupportFragment = this.mRowsSupportFragment;
+        if (rowsSupportFragment != null) {
+            rowsSupportFragment.setAdapter(adapter);
         }
-
-        public void onFadeOutComplete() {
-        }
-    }
-
-    public PlaybackSupportFragment() {
-        this.mProgressBarManager.setInitialDelay(500);
     }
 
     /* access modifiers changed from: package-private */
@@ -281,12 +299,16 @@ public class PlaybackSupportFragment extends Fragment {
         }
     }
 
+    public boolean isShowOrHideControlsOverlayOnUserInteraction() {
+        return this.mShowOrHideControlsOverlayOnUserInteraction;
+    }
+
     public void setShowOrHideControlsOverlayOnUserInteraction(boolean showOrHideControlsOverlayOnUserInteraction) {
         this.mShowOrHideControlsOverlayOnUserInteraction = showOrHideControlsOverlayOnUserInteraction;
     }
 
-    public boolean isShowOrHideControlsOverlayOnUserInteraction() {
-        return this.mShowOrHideControlsOverlayOnUserInteraction;
+    public boolean isControlsOverlayAutoHideEnabled() {
+        return this.mFadingEnabled;
     }
 
     public void setControlsOverlayAutoHideEnabled(boolean enabled) {
@@ -303,8 +325,9 @@ public class PlaybackSupportFragment extends Fragment {
         }
     }
 
-    public boolean isControlsOverlayAutoHideEnabled() {
-        return this.mFadingEnabled;
+    @Deprecated
+    public boolean isFadingEnabled() {
+        return isControlsOverlayAutoHideEnabled();
     }
 
     @Deprecated
@@ -312,19 +335,14 @@ public class PlaybackSupportFragment extends Fragment {
         setControlsOverlayAutoHideEnabled(enabled);
     }
 
-    @Deprecated
-    public boolean isFadingEnabled() {
-        return isControlsOverlayAutoHideEnabled();
+    @RestrictTo({RestrictTo.Scope.LIBRARY})
+    public OnFadeCompleteListener getFadeCompleteListener() {
+        return this.mFadeCompleteListener;
     }
 
     @RestrictTo({RestrictTo.Scope.LIBRARY})
     public void setFadeCompleteListener(OnFadeCompleteListener listener) {
         this.mFadeCompleteListener = listener;
-    }
-
-    @RestrictTo({RestrictTo.Scope.LIBRARY})
-    public OnFadeCompleteListener getFadeCompleteListener() {
-        return this.mFadeCompleteListener;
     }
 
     public final void setOnKeyInterceptListener(View.OnKeyListener handler) {
@@ -424,12 +442,6 @@ public class PlaybackSupportFragment extends Fragment {
         }
     }
 
-    private static ValueAnimator loadAnimator(Context context, int resId) {
-        ValueAnimator animator = (ValueAnimator) AnimatorInflater.loadAnimator(context, resId);
-        animator.setDuration(animator.getDuration() * 1);
-        return animator;
-    }
-
     private void loadBgAnimator() {
         ValueAnimator.AnimatorUpdateListener listener = new ValueAnimator.AnimatorUpdateListener() {
             public void onAnimationUpdate(ValueAnimator arg0) {
@@ -506,29 +518,6 @@ public class PlaybackSupportFragment extends Fragment {
 
     public void hideControlsOverlay(boolean runAnimation) {
         showControlsOverlay(false, runAnimation);
-    }
-
-    static void reverseFirstOrStartSecond(ValueAnimator first, ValueAnimator second, boolean runAnimation) {
-        if (first.isStarted()) {
-            first.reverse();
-            if (!runAnimation) {
-                first.end();
-                return;
-            }
-            return;
-        }
-        second.start();
-        if (!runAnimation) {
-            second.end();
-        }
-    }
-
-    static void endAll(ValueAnimator first, ValueAnimator second) {
-        if (first.isStarted()) {
-            first.end();
-        } else if (second.isStarted()) {
-            second.end();
-        }
     }
 
     /* access modifiers changed from: package-private */
@@ -612,6 +601,10 @@ public class PlaybackSupportFragment extends Fragment {
         loadOtherRowAnimator();
     }
 
+    public int getBackgroundType() {
+        return this.mBackgroundType;
+    }
+
     public void setBackgroundType(int type) {
         if (type != 0 && type != 1 && type != 2) {
             throw new IllegalArgumentException("Invalid background type");
@@ -619,10 +612,6 @@ public class PlaybackSupportFragment extends Fragment {
             this.mBackgroundType = type;
             updateBackground();
         }
-    }
-
-    public int getBackgroundType() {
-        return this.mBackgroundType;
     }
 
     private void updateBackground() {
@@ -767,17 +756,6 @@ public class PlaybackSupportFragment extends Fragment {
         }
     }
 
-    public void setAdapter(ObjectAdapter adapter) {
-        this.mAdapter = adapter;
-        setupRow();
-        setupPresenter();
-        setPlaybackRowPresenterAlignment();
-        RowsSupportFragment rowsSupportFragment = this.mRowsSupportFragment;
-        if (rowsSupportFragment != null) {
-            rowsSupportFragment.setAdapter(adapter);
-        }
-    }
-
     private void setupRow() {
         Row row;
         ObjectAdapter objectAdapter = this.mAdapter;
@@ -857,5 +835,28 @@ public class PlaybackSupportFragment extends Fragment {
 
     public ProgressBarManager getProgressBarManager() {
         return this.mProgressBarManager;
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY})
+    public static class OnFadeCompleteListener {
+        public void onFadeInComplete() {
+        }
+
+        public void onFadeOutComplete() {
+        }
+    }
+
+    private class SetSelectionRunnable implements Runnable {
+        int mPosition;
+        boolean mSmooth = true;
+
+        SetSelectionRunnable() {
+        }
+
+        public void run() {
+            if (PlaybackSupportFragment.this.mRowsSupportFragment != null) {
+                PlaybackSupportFragment.this.mRowsSupportFragment.setSelectedPosition(this.mPosition, this.mSmooth);
+            }
+        }
     }
 }

@@ -6,6 +6,7 @@ import com.google.android.exoplayer2.metadata.MetadataInputBuffer;
 import com.google.android.exoplayer2.util.ParsableBitArray;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.TimestampAdjuster;
+
 import java.nio.ByteBuffer;
 
 public final class SpliceInfoDecoder implements MetadataDecoder {

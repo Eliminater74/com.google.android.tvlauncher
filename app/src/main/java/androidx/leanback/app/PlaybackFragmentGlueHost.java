@@ -1,6 +1,7 @@
 package androidx.leanback.app;
 
 import android.view.View;
+
 import androidx.leanback.media.PlaybackGlueHost;
 import androidx.leanback.widget.Action;
 import androidx.leanback.widget.OnActionClickedListener;
@@ -32,12 +33,12 @@ public class PlaybackFragmentGlueHost extends PlaybackGlueHost implements Playba
         this.mFragment = fragment;
     }
 
-    public void setControlsOverlayAutoHideEnabled(boolean enabled) {
-        this.mFragment.setControlsOverlayAutoHideEnabled(enabled);
-    }
-
     public boolean isControlsOverlayAutoHideEnabled() {
         return this.mFragment.isControlsOverlayAutoHideEnabled();
+    }
+
+    public void setControlsOverlayAutoHideEnabled(boolean enabled) {
+        this.mFragment.setControlsOverlayAutoHideEnabled(enabled);
     }
 
     public void setOnKeyInterceptListener(View.OnKeyListener onKeyListener) {

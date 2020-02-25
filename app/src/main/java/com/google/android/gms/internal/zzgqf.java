@@ -9,8 +9,28 @@ final class zzgqf {
     private final zzgqm zzb;
     private final ConcurrentMap<Class<?>, zzgql<?>> zzc = new ConcurrentHashMap();
 
+    private zzgqf() {
+        String[] strArr = {"com.google.protobuf.AndroidProto3SchemaFactory"};
+        zzgqm zzgqm = null;
+        for (int i = 0; i <= 0; i++) {
+            zzgqm = zza(strArr[0]);
+            if (zzgqm != null) {
+                break;
+            }
+        }
+        this.zzb = zzgqm == null ? new zzgpi() : zzgqm;
+    }
+
     public static zzgqf zza() {
         return zza;
+    }
+
+    private static zzgqm zza(String str) {
+        try {
+            return (zzgqm) Class.forName(str).getConstructor(new Class[0]).newInstance(new Object[0]);
+        } catch (Throwable th) {
+            return null;
+        }
     }
 
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
@@ -43,25 +63,5 @@ final class zzgqf {
 
     public final <T> zzgql<T> zza(Object obj) {
         return zza((Class) obj.getClass());
-    }
-
-    private zzgqf() {
-        String[] strArr = {"com.google.protobuf.AndroidProto3SchemaFactory"};
-        zzgqm zzgqm = null;
-        for (int i = 0; i <= 0; i++) {
-            zzgqm = zza(strArr[0]);
-            if (zzgqm != null) {
-                break;
-            }
-        }
-        this.zzb = zzgqm == null ? new zzgpi() : zzgqm;
-    }
-
-    private static zzgqm zza(String str) {
-        try {
-            return (zzgqm) Class.forName(str).getConstructor(new Class[0]).newInstance(new Object[0]);
-        } catch (Throwable th) {
-            return null;
-        }
     }
 }

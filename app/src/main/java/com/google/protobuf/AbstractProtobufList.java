@@ -1,6 +1,5 @@
 package com.google.protobuf;
 
-import com.google.protobuf.Internal;
 import java.util.AbstractList;
 import java.util.Collection;
 import java.util.List;

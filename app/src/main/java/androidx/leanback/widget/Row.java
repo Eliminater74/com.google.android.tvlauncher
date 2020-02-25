@@ -28,11 +28,6 @@ public class Row {
         this.mHeaderItem = headerItem;
     }
 
-    public final void setId(long id) {
-        this.mId = id;
-        setFlags(0, 1);
-    }
-
     public final long getId() {
         if ((this.mFlags & 1) != 1) {
             return this.mId;
@@ -42,6 +37,11 @@ public class Row {
             return header.getId();
         }
         return -1;
+    }
+
+    public final void setId(long id) {
+        this.mId = id;
+        setFlags(0, 1);
     }
 
     /* access modifiers changed from: package-private */

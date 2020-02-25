@@ -9,15 +9,16 @@ import android.content.pm.ServiceInfo;
 import android.os.Build;
 import android.os.PersistableBundle;
 import android.support.annotation.VisibleForTesting;
+
 import com.google.android.libraries.performance.primes.PrimesLog;
 
 public final class PrimesJobScheduler {
     public static final String FILE_NAME_PARAM = "file_name";
     public static final String LOGGER_JOB_NAME = "com.google.android.libraries.performance.primes.backgroundjobs.logger.LoggerJob";
     public static final String LOG_SOURCE_PARAM = "log_source";
-    private static final String TAG = "PrimesJobScheduler";
     @VisibleForTesting
     static final int UPLOAD_JOB_ID = 184188964;
+    private static final String TAG = "PrimesJobScheduler";
 
     private PrimesJobScheduler() {
     }

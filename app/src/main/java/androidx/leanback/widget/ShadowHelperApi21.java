@@ -14,13 +14,7 @@ class ShadowHelperApi21 {
         }
     };
 
-    static class ShadowImpl {
-        float mFocusedZ;
-        float mNormalZ;
-        View mShadowContainer;
-
-        ShadowImpl() {
-        }
+    private ShadowHelperApi21() {
     }
 
     public static Object addDynamicShadow(View shadowContainer, float unfocusedZ, float focusedZ, int roundedCornerRadius) {
@@ -42,6 +36,12 @@ class ShadowHelperApi21 {
         impl.mShadowContainer.setZ(impl.mNormalZ + ((impl.mFocusedZ - impl.mNormalZ) * level));
     }
 
-    private ShadowHelperApi21() {
+    static class ShadowImpl {
+        float mFocusedZ;
+        float mNormalZ;
+        View mShadowContainer;
+
+        ShadowImpl() {
+        }
     }
 }

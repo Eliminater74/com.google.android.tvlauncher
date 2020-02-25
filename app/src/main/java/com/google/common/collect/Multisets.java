@@ -7,11 +7,13 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import com.google.common.collect.Multiset;
-import com.google.common.collect.Sets;
 import com.google.common.math.IntMath;
 import com.google.common.primitives.Ints;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
@@ -20,8 +22,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible
 public final class Multisets {
@@ -40,93 +40,6 @@ public final class Multisets {
         return (Multiset) Preconditions.checkNotNull(multiset);
     }
 
-    static class UnmodifiableMultiset<E> extends ForwardingMultiset<E> implements Serializable {
-        private static final long serialVersionUID = 0;
-        final Multiset<? extends E> delegate;
-        @MonotonicNonNullDecl
-        transient Set<E> elementSet;
-        @MonotonicNonNullDecl
-        transient Set<Multiset.Entry<E>> entrySet;
-
-        UnmodifiableMultiset(Multiset<? extends E> delegate2) {
-            this.delegate = delegate2;
-        }
-
-        /* access modifiers changed from: protected */
-        public Multiset<E> delegate() {
-            return this.delegate;
-        }
-
-        /* access modifiers changed from: package-private */
-        public Set<E> createElementSet() {
-            return Collections.unmodifiableSet(this.delegate.elementSet());
-        }
-
-        public Set<E> elementSet() {
-            Set<E> es = this.elementSet;
-            if (es != null) {
-                return es;
-            }
-            Set<E> createElementSet = createElementSet();
-            this.elementSet = createElementSet;
-            return createElementSet;
-        }
-
-        public Set<Multiset.Entry<E>> entrySet() {
-            Set<Multiset.Entry<E>> es = this.entrySet;
-            if (es != null) {
-                return es;
-            }
-            Set<T> unmodifiableSet = Collections.unmodifiableSet(this.delegate.entrySet());
-            this.entrySet = unmodifiableSet;
-            return unmodifiableSet;
-        }
-
-        public Iterator<E> iterator() {
-            return Iterators.unmodifiableIterator(this.delegate.iterator());
-        }
-
-        public boolean add(E e) {
-            throw new UnsupportedOperationException();
-        }
-
-        public int add(E e, int occurences) {
-            throw new UnsupportedOperationException();
-        }
-
-        public boolean addAll(Collection<? extends E> collection) {
-            throw new UnsupportedOperationException();
-        }
-
-        public boolean remove(Object element) {
-            throw new UnsupportedOperationException();
-        }
-
-        public int remove(Object element, int occurrences) {
-            throw new UnsupportedOperationException();
-        }
-
-        public boolean removeAll(Collection<?> collection) {
-            throw new UnsupportedOperationException();
-        }
-
-        public boolean retainAll(Collection<?> collection) {
-            throw new UnsupportedOperationException();
-        }
-
-        public void clear() {
-            throw new UnsupportedOperationException();
-        }
-
-        public int setCount(E e, int count) {
-            throw new UnsupportedOperationException();
-        }
-
-        public boolean setCount(E e, int oldCount, int newCount) {
-            throw new UnsupportedOperationException();
-        }
-    }
-
     @Beta
     public static <E> SortedMultiset<E> unmodifiableSortedMultiset(SortedMultiset<E> sortedMultiset) {
         return new UnmodifiableSortedMultiset((SortedMultiset) Preconditions.checkNotNull(sortedMultiset));
@@ -136,32 +49,6 @@ public final class Multisets {
         return new ImmutableEntry(e, n);
     }
 
-    static class ImmutableEntry<E> extends AbstractEntry<E> implements Serializable {
-        private static final long serialVersionUID = 0;
-        private final int count;
-        @NullableDecl
-        private final E element;
-
-        ImmutableEntry(@NullableDecl E element2, int count2) {
-            this.element = element2;
-            this.count = count2;
-            CollectPreconditions.checkNonnegative(count2, NotificationsContract.COLUMN_COUNT);
-        }
-
-        @NullableDecl
-        public final E getElement() {
-            return this.element;
-        }
-
-        public final int getCount() {
-            return this.count;
-        }
-
-        public ImmutableEntry<E> nextInBucket() {
-            return null;
-        }
-    }
-
     @Beta
     public static <E> Multiset<E> filter(Multiset<E> unfiltered, Predicate<? super E> predicate) {
         if (!(unfiltered instanceof FilteredMultiset)) {
@@ -169,72 +56,6 @@ public final class Multisets {
         }
         FilteredMultiset<E> filtered = (FilteredMultiset) unfiltered;
         return new FilteredMultiset(filtered.unfiltered, Predicates.and(filtered.predicate, predicate));
-    }
-
-    private static final class FilteredMultiset<E> extends ViewMultiset<E> {
-        final Predicate<? super E> predicate;
-        final Multiset<E> unfiltered;
-
-        FilteredMultiset(Multiset<E> unfiltered2, Predicate<? super E> predicate2) {
-            super();
-            this.unfiltered = (Multiset) Preconditions.checkNotNull(unfiltered2);
-            this.predicate = (Predicate) Preconditions.checkNotNull(predicate2);
-        }
-
-        public UnmodifiableIterator<E> iterator() {
-            return Iterators.filter(this.unfiltered.iterator(), this.predicate);
-        }
-
-        /* access modifiers changed from: package-private */
-        public Set<E> createElementSet() {
-            return Sets.filter(this.unfiltered.elementSet(), this.predicate);
-        }
-
-        /* access modifiers changed from: package-private */
-        public Iterator<E> elementIterator() {
-            throw new AssertionError("should never be called");
-        }
-
-        /* access modifiers changed from: package-private */
-        public Set<Multiset.Entry<E>> createEntrySet() {
-            return Sets.filter(this.unfiltered.entrySet(), new Predicate<Multiset.Entry<E>>() {
-                public boolean apply(Multiset.Entry<E> entry) {
-                    return FilteredMultiset.this.predicate.apply(entry.getElement());
-                }
-            });
-        }
-
-        /* access modifiers changed from: package-private */
-        public Iterator<Multiset.Entry<E>> entryIterator() {
-            throw new AssertionError("should never be called");
-        }
-
-        public int count(@NullableDecl Object element) {
-            int count = this.unfiltered.count(element);
-            if (count <= 0) {
-                return 0;
-            }
-            if (this.predicate.apply(element)) {
-                return count;
-            }
-            return 0;
-        }
-
-        public int add(@NullableDecl E element, int occurrences) {
-            Preconditions.checkArgument(this.predicate.apply(element), "Element %s does not match predicate %s", element, this.predicate);
-            return this.unfiltered.add(element, occurrences);
-        }
-
-        public int remove(@NullableDecl Object element, int occurrences) {
-            CollectPreconditions.checkNonnegative(occurrences, "occurrences");
-            if (occurrences == 0) {
-                return count(element);
-            }
-            if (contains(element)) {
-                return this.unfiltered.remove(element, occurrences);
-            }
-            return 0;
-        }
     }
 
     static int inferDistinctElements(Iterable<?> elements) {
@@ -528,40 +349,6 @@ public final class Multisets {
         return changed;
     }
 
-    static abstract class AbstractEntry<E> implements Multiset.Entry<E> {
-        AbstractEntry() {
-        }
-
-        public boolean equals(@NullableDecl Object object) {
-            if (!(object instanceof Multiset.Entry)) {
-                return false;
-            }
-            Multiset.Entry<?> that = (Multiset.Entry) object;
-            if (getCount() != that.getCount() || !Objects.equal(getElement(), that.getElement())) {
-                return false;
-            }
-            return true;
-        }
-
-        public int hashCode() {
-            E e = getElement();
-            return (e == null ? 0 : e.hashCode()) ^ getCount();
-        }
-
-        public String toString() {
-            String text = String.valueOf(getElement());
-            int n = getCount();
-            if (n == 1) {
-                return text;
-            }
-            StringBuilder sb = new StringBuilder(String.valueOf(text).length() + 14);
-            sb.append(text);
-            sb.append(" x ");
-            sb.append(n);
-            return sb.toString();
-        }
-    }
-
     static boolean equalsImpl(Multiset<?> multiset, @NullableDecl Object object) {
         if (object == multiset) {
             return true;
@@ -666,14 +453,250 @@ public final class Multisets {
         };
     }
 
+    static <E> Iterator<E> iteratorImpl(Multiset<E> multiset) {
+        return new MultisetIteratorImpl(multiset, multiset.entrySet().iterator());
+    }
+
+    static int linearTimeSizeImpl(Multiset<?> multiset) {
+        long size = 0;
+        for (Multiset.Entry<?> entry : multiset.entrySet()) {
+            size += (long) entry.getCount();
+        }
+        return Ints.saturatedCast(size);
+    }
+
+    static <T> Multiset<T> cast(Iterable<T> iterable) {
+        return (Multiset) iterable;
+    }
+
+    @Beta
+    public static <E> ImmutableMultiset<E> copyHighestCountFirst(Multiset<E> multiset) {
+        Multiset.Entry<E>[] entries = (Multiset.Entry[]) multiset.entrySet().toArray(new Multiset.Entry[0]);
+        Arrays.sort(entries, DecreasingCount.INSTANCE);
+        return ImmutableMultiset.copyFromEntries(Arrays.asList(entries));
+    }
+
+    static class UnmodifiableMultiset<E> extends ForwardingMultiset<E> implements Serializable {
+        private static final long serialVersionUID = 0;
+        final Multiset<? extends E> delegate;
+        @MonotonicNonNullDecl
+        transient Set<E> elementSet;
+        @MonotonicNonNullDecl
+        transient Set<Multiset.Entry<E>> entrySet;
+
+        UnmodifiableMultiset(Multiset<? extends E> delegate2) {
+            this.delegate = delegate2;
+        }
+
+        /* access modifiers changed from: protected */
+        public Multiset<E> delegate() {
+            return this.delegate;
+        }
+
+        /* access modifiers changed from: package-private */
+        public Set<E> createElementSet() {
+            return Collections.unmodifiableSet(this.delegate.elementSet());
+        }
+
+        public Set<E> elementSet() {
+            Set<E> es = this.elementSet;
+            if (es != null) {
+                return es;
+            }
+            Set<E> createElementSet = createElementSet();
+            this.elementSet = createElementSet;
+            return createElementSet;
+        }
+
+        public Set<Multiset.Entry<E>> entrySet() {
+            Set<Multiset.Entry<E>> es = this.entrySet;
+            if (es != null) {
+                return es;
+            }
+            Set<T> unmodifiableSet = Collections.unmodifiableSet(this.delegate.entrySet());
+            this.entrySet = unmodifiableSet;
+            return unmodifiableSet;
+        }
+
+        public Iterator<E> iterator() {
+            return Iterators.unmodifiableIterator(this.delegate.iterator());
+        }
+
+        public boolean add(E e) {
+            throw new UnsupportedOperationException();
+        }
+
+        public int add(E e, int occurences) {
+            throw new UnsupportedOperationException();
+        }
+
+        public boolean addAll(Collection<? extends E> collection) {
+            throw new UnsupportedOperationException();
+        }
+
+        public boolean remove(Object element) {
+            throw new UnsupportedOperationException();
+        }
+
+        public int remove(Object element, int occurrences) {
+            throw new UnsupportedOperationException();
+        }
+
+        public boolean removeAll(Collection<?> collection) {
+            throw new UnsupportedOperationException();
+        }
+
+        public boolean retainAll(Collection<?> collection) {
+            throw new UnsupportedOperationException();
+        }
+
+        public void clear() {
+            throw new UnsupportedOperationException();
+        }
+
+        public int setCount(E e, int count) {
+            throw new UnsupportedOperationException();
+        }
+
+        public boolean setCount(E e, int oldCount, int newCount) {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    static class ImmutableEntry<E> extends AbstractEntry<E> implements Serializable {
+        private static final long serialVersionUID = 0;
+        private final int count;
+        @NullableDecl
+        private final E element;
+
+        ImmutableEntry(@NullableDecl E element2, int count2) {
+            this.element = element2;
+            this.count = count2;
+            CollectPreconditions.checkNonnegative(count2, NotificationsContract.COLUMN_COUNT);
+        }
+
+        @NullableDecl
+        public final E getElement() {
+            return this.element;
+        }
+
+        public final int getCount() {
+            return this.count;
+        }
+
+        public ImmutableEntry<E> nextInBucket() {
+            return null;
+        }
+    }
+
+    private static final class FilteredMultiset<E> extends ViewMultiset<E> {
+        final Predicate<? super E> predicate;
+        final Multiset<E> unfiltered;
+
+        FilteredMultiset(Multiset<E> unfiltered2, Predicate<? super E> predicate2) {
+            super();
+            this.unfiltered = (Multiset) Preconditions.checkNotNull(unfiltered2);
+            this.predicate = (Predicate) Preconditions.checkNotNull(predicate2);
+        }
+
+        public UnmodifiableIterator<E> iterator() {
+            return Iterators.filter(this.unfiltered.iterator(), this.predicate);
+        }
+
+        /* access modifiers changed from: package-private */
+        public Set<E> createElementSet() {
+            return Sets.filter(this.unfiltered.elementSet(), this.predicate);
+        }
+
+        /* access modifiers changed from: package-private */
+        public Iterator<E> elementIterator() {
+            throw new AssertionError("should never be called");
+        }
+
+        /* access modifiers changed from: package-private */
+        public Set<Multiset.Entry<E>> createEntrySet() {
+            return Sets.filter(this.unfiltered.entrySet(), new Predicate<Multiset.Entry<E>>() {
+                public boolean apply(Multiset.Entry<E> entry) {
+                    return FilteredMultiset.this.predicate.apply(entry.getElement());
+                }
+            });
+        }
+
+        /* access modifiers changed from: package-private */
+        public Iterator<Multiset.Entry<E>> entryIterator() {
+            throw new AssertionError("should never be called");
+        }
+
+        public int count(@NullableDecl Object element) {
+            int count = this.unfiltered.count(element);
+            if (count <= 0) {
+                return 0;
+            }
+            if (this.predicate.apply(element)) {
+                return count;
+            }
+            return 0;
+        }
+
+        public int add(@NullableDecl E element, int occurrences) {
+            Preconditions.checkArgument(this.predicate.apply(element), "Element %s does not match predicate %s", element, this.predicate);
+            return this.unfiltered.add(element, occurrences);
+        }
+
+        public int remove(@NullableDecl Object element, int occurrences) {
+            CollectPreconditions.checkNonnegative(occurrences, "occurrences");
+            if (occurrences == 0) {
+                return count(element);
+            }
+            if (contains(element)) {
+                return this.unfiltered.remove(element, occurrences);
+            }
+            return 0;
+        }
+    }
+
+    static abstract class AbstractEntry<E> implements Multiset.Entry<E> {
+        AbstractEntry() {
+        }
+
+        public boolean equals(@NullableDecl Object object) {
+            if (!(object instanceof Multiset.Entry)) {
+                return false;
+            }
+            Multiset.Entry<?> that = (Multiset.Entry) object;
+            if (getCount() != that.getCount() || !Objects.equal(getElement(), that.getElement())) {
+                return false;
+            }
+            return true;
+        }
+
+        public int hashCode() {
+            E e = getElement();
+            return (e == null ? 0 : e.hashCode()) ^ getCount();
+        }
+
+        public String toString() {
+            String text = String.valueOf(getElement());
+            int n = getCount();
+            if (n == 1) {
+                return text;
+            }
+            StringBuilder sb = new StringBuilder(String.valueOf(text).length() + 14);
+            sb.append(text);
+            sb.append(" x ");
+            sb.append(n);
+            return sb.toString();
+        }
+    }
+
     static abstract class ElementSet<E> extends Sets.ImprovedAbstractSet<E> {
+        ElementSet() {
+        }
+
         public abstract Iterator<E> iterator();
 
         /* access modifiers changed from: package-private */
         public abstract Multiset<E> multiset();
-
-        ElementSet() {
-        }
 
         public void clear() {
             multiset().clear();
@@ -701,11 +724,11 @@ public final class Multisets {
     }
 
     static abstract class EntrySet<E> extends Sets.ImprovedAbstractSet<Multiset.Entry<E>> {
-        /* access modifiers changed from: package-private */
-        public abstract Multiset<E> multiset();
-
         EntrySet() {
         }
+
+        /* access modifiers changed from: package-private */
+        public abstract Multiset<E> multiset();
 
         public boolean contains(@NullableDecl Object o) {
             if (!(o instanceof Multiset.Entry)) {
@@ -735,17 +758,13 @@ public final class Multisets {
         }
     }
 
-    static <E> Iterator<E> iteratorImpl(Multiset<E> multiset) {
-        return new MultisetIteratorImpl(multiset, multiset.entrySet().iterator());
-    }
-
     static final class MultisetIteratorImpl<E> implements Iterator<E> {
+        private final Iterator<Multiset.Entry<E>> entryIterator;
+        private final Multiset<E> multiset;
         private boolean canRemove;
         @MonotonicNonNullDecl
         private Multiset.Entry<E> currentEntry;
-        private final Iterator<Multiset.Entry<E>> entryIterator;
         private int laterCount;
-        private final Multiset<E> multiset;
         private int totalCount;
 
         MultisetIteratorImpl(Multiset<E> multiset2, Iterator<Multiset.Entry<E>> entryIterator2) {
@@ -782,25 +801,6 @@ public final class Multisets {
             this.totalCount--;
             this.canRemove = false;
         }
-    }
-
-    static int linearTimeSizeImpl(Multiset<?> multiset) {
-        long size = 0;
-        for (Multiset.Entry<?> entry : multiset.entrySet()) {
-            size += (long) entry.getCount();
-        }
-        return Ints.saturatedCast(size);
-    }
-
-    static <T> Multiset<T> cast(Iterable<T> iterable) {
-        return (Multiset) iterable;
-    }
-
-    @Beta
-    public static <E> ImmutableMultiset<E> copyHighestCountFirst(Multiset<E> multiset) {
-        Multiset.Entry<E>[] entries = (Multiset.Entry[]) multiset.entrySet().toArray(new Multiset.Entry[0]);
-        Arrays.sort(entries, DecreasingCount.INSTANCE);
-        return ImmutableMultiset.copyFromEntries(Arrays.asList(entries));
     }
 
     private static final class DecreasingCount implements Comparator<Multiset.Entry<?>> {

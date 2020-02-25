@@ -4,9 +4,11 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Util;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -23,40 +25,11 @@ public final class DrmInitData implements Comparator<SchemeData>, Parcelable {
             return new DrmInitData[size];
         }
     };
-    private int hashCode;
     public final int schemeDataCount;
-    private final SchemeData[] schemeDatas;
     @Nullable
     public final String schemeType;
-
-    @Nullable
-    public static DrmInitData createSessionCreationData(@Nullable DrmInitData manifestData, @Nullable DrmInitData mediaData) {
-        ArrayList<SchemeData> result = new ArrayList<>();
-        String schemeType2 = null;
-        if (manifestData != null) {
-            schemeType2 = manifestData.schemeType;
-            for (SchemeData data : manifestData.schemeDatas) {
-                if (data.hasData()) {
-                    result.add(data);
-                }
-            }
-        }
-        if (mediaData != null) {
-            if (schemeType2 == null) {
-                schemeType2 = mediaData.schemeType;
-            }
-            int manifestDatasCount = result.size();
-            for (SchemeData data2 : mediaData.schemeDatas) {
-                if (data2.hasData() && !containsSchemeDataWithUuid(result, manifestDatasCount, data2.uuid)) {
-                    result.add(data2);
-                }
-            }
-        }
-        if (result.isEmpty()) {
-            return null;
-        }
-        return new DrmInitData(schemeType2, result);
-    }
+    private final SchemeData[] schemeDatas;
+    private int hashCode;
 
     public DrmInitData(List<SchemeData> schemeDatas2) {
         this(null, false, (SchemeData[]) schemeDatas2.toArray(new SchemeData[0]));
@@ -102,6 +75,44 @@ public final class DrmInitData implements Comparator<SchemeData>, Parcelable {
         this.schemeType = in.readString();
         this.schemeDatas = (SchemeData[]) Util.castNonNull((SchemeData[]) in.createTypedArray(SchemeData.CREATOR));
         this.schemeDataCount = this.schemeDatas.length;
+    }
+
+    @Nullable
+    public static DrmInitData createSessionCreationData(@Nullable DrmInitData manifestData, @Nullable DrmInitData mediaData) {
+        ArrayList<SchemeData> result = new ArrayList<>();
+        String schemeType2 = null;
+        if (manifestData != null) {
+            schemeType2 = manifestData.schemeType;
+            for (SchemeData data : manifestData.schemeDatas) {
+                if (data.hasData()) {
+                    result.add(data);
+                }
+            }
+        }
+        if (mediaData != null) {
+            if (schemeType2 == null) {
+                schemeType2 = mediaData.schemeType;
+            }
+            int manifestDatasCount = result.size();
+            for (SchemeData data2 : mediaData.schemeDatas) {
+                if (data2.hasData() && !containsSchemeDataWithUuid(result, manifestDatasCount, data2.uuid)) {
+                    result.add(data2);
+                }
+            }
+        }
+        if (result.isEmpty()) {
+            return null;
+        }
+        return new DrmInitData(schemeType2, result);
+    }
+
+    private static boolean containsSchemeDataWithUuid(ArrayList<SchemeData> datas, int limit, UUID uuid) {
+        for (int i = 0; i < limit; i++) {
+            if (datas.get(i).uuid.equals(uuid)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Nullable
@@ -175,15 +186,6 @@ public final class DrmInitData implements Comparator<SchemeData>, Parcelable {
         dest.writeTypedArray(this.schemeDatas, 0);
     }
 
-    private static boolean containsSchemeDataWithUuid(ArrayList<SchemeData> datas, int limit, UUID uuid) {
-        for (int i = 0; i < limit; i++) {
-            if (datas.get(i).uuid.equals(uuid)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public static final class SchemeData implements Parcelable {
         public static final Parcelable.Creator<SchemeData> CREATOR = new Parcelable.Creator<SchemeData>() {
             public SchemeData createFromParcel(Parcel in) {
@@ -196,13 +198,13 @@ public final class DrmInitData implements Comparator<SchemeData>, Parcelable {
         };
         @Nullable
         public final byte[] data;
-        private int hashCode;
         @Nullable
         public final String licenseServerUrl;
         public final String mimeType;
         public final boolean requiresSecureDecryption;
         /* access modifiers changed from: private */
         public final UUID uuid;
+        private int hashCode;
 
         public SchemeData(UUID uuid2, String mimeType2, @Nullable byte[] data2) {
             this(uuid2, mimeType2, data2, false);

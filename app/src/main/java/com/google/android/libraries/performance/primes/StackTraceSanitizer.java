@@ -1,7 +1,9 @@
 package com.google.android.libraries.performance.primes;
 
 import android.support.annotation.NonNull;
+
 import com.google.devtools.build.android.desugar.runtime.ThrowableExtension;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.regex.Matcher;

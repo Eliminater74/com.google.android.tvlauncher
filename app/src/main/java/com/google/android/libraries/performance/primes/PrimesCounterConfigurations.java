@@ -3,16 +3,16 @@ package com.google.android.libraries.performance.primes;
 public final class PrimesCounterConfigurations {
     private final boolean isEnabled;
 
-    public boolean isEnabled() {
-        return this.isEnabled;
-    }
-
     private PrimesCounterConfigurations(boolean isEnabled2) {
         this.isEnabled = isEnabled2;
     }
 
     public static Builder newBuilder() {
         return new Builder();
+    }
+
+    public boolean isEnabled() {
+        return this.isEnabled;
     }
 
     public static final class Builder {

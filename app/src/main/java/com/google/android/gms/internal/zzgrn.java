@@ -2,6 +2,7 @@ package com.google.android.gms.internal;
 
 import com.google.common.base.Ascii;
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.nio.ByteBuffer;
 
 /* compiled from: Utf8 */

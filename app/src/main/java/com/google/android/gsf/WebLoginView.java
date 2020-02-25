@@ -16,38 +16,27 @@ import android.widget.TextView;
 
 public class WebLoginView {
     private static final String TAG = "WebLoginView";
-    private View mBackButton;
     /* access modifiers changed from: private */
     public View mBottomBar;
     /* access modifiers changed from: private */
     public Callback mCallback;
     /* access modifiers changed from: private */
     public View mCancelButton;
-    private String mDomainName;
     /* access modifiers changed from: private */
     public boolean mIsLoading;
     /* access modifiers changed from: private */
     public ProgressBar mProgressBar;
     /* access modifiers changed from: private */
     public View mProgressView;
-    private String mStartUrl;
     /* access modifiers changed from: private */
     public TextView mTitleTextView;
     /* access modifiers changed from: private */
     public View mTitleView;
     /* access modifiers changed from: private */
     public WebView mWebView;
-
-    public interface Callback {
-        void onWebLoginCompleted(String str);
-
-        void onWebLoginError(Error error, int i, String str);
-    }
-
-    public enum Error {
-        HttpError,
-        TooManyRedirects
-    }
+    private View mBackButton;
+    private String mDomainName;
+    private String mStartUrl;
 
     public WebLoginView(WebView webView, View progressView, ProgressBar progressBar, View backButton, View cancelButton, View titleView, TextView titleTextView, View bottomBar, Callback callback) {
         this.mWebView = webView;
@@ -105,6 +94,17 @@ public class WebLoginView {
         this.mWebView.setMapTrackballToArrowKeys(false);
         this.mWebView.setFocusable(true);
         this.mWebView.setFocusableInTouchMode(true);
+    }
+
+    public enum Error {
+        HttpError,
+        TooManyRedirects
+    }
+
+    public interface Callback {
+        void onWebLoginCompleted(String str);
+
+        void onWebLoginError(Error error, int i, String str);
     }
 
     private class MyChromeClient extends WebChromeClient {

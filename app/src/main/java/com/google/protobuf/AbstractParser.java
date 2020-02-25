@@ -1,7 +1,5 @@
 package com.google.protobuf;
 
-import com.google.protobuf.AbstractMessageLite;
-import com.google.protobuf.MessageLite;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;

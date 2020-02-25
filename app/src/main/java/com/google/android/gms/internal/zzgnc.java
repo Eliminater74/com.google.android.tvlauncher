@@ -5,9 +5,9 @@ import java.util.NoSuchElementException;
 
 /* compiled from: ByteString */
 final class zzgnc implements Iterator {
-    private int zza = 0;
-    private final int zzb = this.zzc.zza();
     private final /* synthetic */ zzgnb zzc;
+    private final int zzb = this.zzc.zza();
+    private int zza = 0;
 
     zzgnc(zzgnb zzgnb) {
         this.zzc = zzgnb;

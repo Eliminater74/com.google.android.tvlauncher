@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
+
 import com.google.android.exoplayer2.C0841C;
 
 public class PlayStoreIntentLauncher implements IntentLauncher {

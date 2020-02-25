@@ -1,6 +1,7 @@
 package com.google.android.libraries.performance.primes;
 
 import android.util.SparseArray;
+
 import com.google.apps.tiktok.tracing.SpanExtras;
 import com.google.apps.tiktok.tracing.TraceRecord;
 import com.google.apps.tiktok.tracing.TraceSampler;
@@ -13,6 +14,47 @@ public final class PrimesTikTokTraceConfigurations {
     private final boolean isEnabled;
     private final boolean recordTimerDuration;
     private final int sampleRatePerSecond;
+
+    private PrimesTikTokTraceConfigurations(boolean isEnabled2, int sampleRatePerSecond2, boolean recordTimerDuration2, DynamicSampler dynamicSampler2) {
+        this.isEnabled = isEnabled2;
+        this.sampleRatePerSecond = sampleRatePerSecond2;
+        this.recordTimerDuration = recordTimerDuration2;
+        this.dynamicSampler = dynamicSampler2;
+    }
+
+    @Deprecated
+    public static Builder builder() {
+        return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+        return new Builder().setSampleRatePerSecond(10);
+    }
+
+    public boolean isEnabled() {
+        return this.isEnabled;
+    }
+
+    public int getSampleRatePerSecond() {
+        return this.sampleRatePerSecond;
+    }
+
+    public DynamicSampler getDynamicSampler() {
+        return this.dynamicSampler;
+    }
+
+    public boolean shouldRecordTimerDuration() {
+        return this.recordTimerDuration;
+    }
+
+    public Builder toBuilder() {
+        Builder builder = newBuilder();
+        boolean unused = builder.isEnabled = this.isEnabled;
+        int unused2 = builder.sampleRatePerSecond = this.sampleRatePerSecond;
+        boolean unused3 = builder.recordTimerDuration = this.recordTimerDuration;
+        DynamicSampler unused4 = builder.dynamicSampler = this.dynamicSampler;
+        return builder;
+    }
 
     public interface DynamicSampler {
         Optional<Float> getSamplingRateIfConstant();
@@ -37,47 +79,6 @@ public final class PrimesTikTokTraceConfigurations {
         public Optional<Float> getSamplingRateIfConstant() {
             return Optional.m80of(Float.valueOf(this.probability));
         }
-    }
-
-    public boolean isEnabled() {
-        return this.isEnabled;
-    }
-
-    public int getSampleRatePerSecond() {
-        return this.sampleRatePerSecond;
-    }
-
-    public DynamicSampler getDynamicSampler() {
-        return this.dynamicSampler;
-    }
-
-    public boolean shouldRecordTimerDuration() {
-        return this.recordTimerDuration;
-    }
-
-    private PrimesTikTokTraceConfigurations(boolean isEnabled2, int sampleRatePerSecond2, boolean recordTimerDuration2, DynamicSampler dynamicSampler2) {
-        this.isEnabled = isEnabled2;
-        this.sampleRatePerSecond = sampleRatePerSecond2;
-        this.recordTimerDuration = recordTimerDuration2;
-        this.dynamicSampler = dynamicSampler2;
-    }
-
-    public Builder toBuilder() {
-        Builder builder = newBuilder();
-        boolean unused = builder.isEnabled = this.isEnabled;
-        int unused2 = builder.sampleRatePerSecond = this.sampleRatePerSecond;
-        boolean unused3 = builder.recordTimerDuration = this.recordTimerDuration;
-        DynamicSampler unused4 = builder.dynamicSampler = this.dynamicSampler;
-        return builder;
-    }
-
-    @Deprecated
-    public static Builder builder() {
-        return newBuilder();
-    }
-
-    public static Builder newBuilder() {
-        return new Builder().setSampleRatePerSecond(10);
     }
 
     public static final class Builder {

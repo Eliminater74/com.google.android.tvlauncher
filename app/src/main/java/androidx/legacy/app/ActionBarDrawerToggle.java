@@ -23,6 +23,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
 import java.lang.reflect.Method;
 
 @Deprecated
@@ -34,38 +35,18 @@ public class ActionBarDrawerToggle implements DrawerLayout.DrawerListener {
     final Activity mActivity;
     private final Delegate mActivityImpl;
     private final int mCloseDrawerContentDescRes;
-    private Drawable mDrawerImage;
     private final int mDrawerImageResource;
-    private boolean mDrawerIndicatorEnabled;
     private final DrawerLayout mDrawerLayout;
+    private final int mOpenDrawerContentDescRes;
+    private Drawable mDrawerImage;
+    private boolean mDrawerIndicatorEnabled;
     private boolean mHasCustomUpIndicator;
     private Drawable mHomeAsUpIndicator;
-    private final int mOpenDrawerContentDescRes;
     private SetIndicatorInfo mSetIndicatorInfo;
     private SlideDrawable mSlider;
 
-    @Deprecated
-    public interface Delegate {
-        @Nullable
-        Drawable getThemeUpIndicator();
-
-        void setActionBarDescription(@StringRes int i);
-
-        void setActionBarUpIndicator(Drawable drawable, @StringRes int i);
-    }
-
-    @Deprecated
-    public interface DelegateProvider {
-        @Nullable
-        Delegate getDrawerToggleDelegate();
-    }
-
     public ActionBarDrawerToggle(Activity activity, DrawerLayout drawerLayout, @DrawableRes int drawerImageRes, @StringRes int openDrawerContentDescRes, @StringRes int closeDrawerContentDescRes) {
         this(activity, drawerLayout, !assumeMaterial(activity), drawerImageRes, openDrawerContentDescRes, closeDrawerContentDescRes);
-    }
-
-    private static boolean assumeMaterial(Context context) {
-        return context.getApplicationInfo().targetSdkVersion >= 21 && Build.VERSION.SDK_INT >= 21;
     }
 
     public ActionBarDrawerToggle(Activity activity, DrawerLayout drawerLayout, boolean animate, @DrawableRes int drawerImageRes, @StringRes int openDrawerContentDescRes, @StringRes int closeDrawerContentDescRes) {
@@ -84,6 +65,10 @@ public class ActionBarDrawerToggle implements DrawerLayout.DrawerListener {
         this.mDrawerImage = ContextCompat.getDrawable(activity, drawerImageRes);
         this.mSlider = new SlideDrawable(this.mDrawerImage);
         this.mSlider.setOffset(animate ? TOGGLE_DRAWABLE_OFFSET : 0.0f);
+    }
+
+    private static boolean assumeMaterial(Context context) {
+        return context.getApplicationInfo().targetSdkVersion >= 21 && Build.VERSION.SDK_INT >= 21;
     }
 
     public void syncState() {
@@ -118,6 +103,10 @@ public class ActionBarDrawerToggle implements DrawerLayout.DrawerListener {
         setHomeAsUpIndicator(indicator);
     }
 
+    public boolean isDrawerIndicatorEnabled() {
+        return this.mDrawerIndicatorEnabled;
+    }
+
     public void setDrawerIndicatorEnabled(boolean enable) {
         if (enable != this.mDrawerIndicatorEnabled) {
             if (enable) {
@@ -127,10 +116,6 @@ public class ActionBarDrawerToggle implements DrawerLayout.DrawerListener {
             }
             this.mDrawerIndicatorEnabled = enable;
         }
-    }
-
-    public boolean isDrawerIndicatorEnabled() {
-        return this.mDrawerIndicatorEnabled;
     }
 
     public void onConfigurationChanged(Configuration newConfig) {
@@ -268,6 +253,22 @@ public class ActionBarDrawerToggle implements DrawerLayout.DrawerListener {
         }
     }
 
+    @Deprecated
+    public interface Delegate {
+        @Nullable
+        Drawable getThemeUpIndicator();
+
+        void setActionBarDescription(@StringRes int i);
+
+        void setActionBarUpIndicator(Drawable drawable, @StringRes int i);
+    }
+
+    @Deprecated
+    public interface DelegateProvider {
+        @Nullable
+        Delegate getDrawerToggleDelegate();
+    }
+
     private static class SetIndicatorInfo {
         Method mSetHomeActionContentDescription;
         Method mSetHomeAsUpIndicator;
@@ -295,9 +296,9 @@ public class ActionBarDrawerToggle implements DrawerLayout.DrawerListener {
 
     private class SlideDrawable extends InsetDrawable implements Drawable.Callback {
         private final boolean mHasMirroring;
+        private final Rect mTmpRect;
         private float mOffset;
         private float mPosition;
-        private final Rect mTmpRect;
 
         /* JADX INFO: super call moved to the top of the method (can break code semantics) */
         SlideDrawable(Drawable wrapped) {
@@ -307,13 +308,13 @@ public class ActionBarDrawerToggle implements DrawerLayout.DrawerListener {
             this.mTmpRect = new Rect();
         }
 
+        public float getPosition() {
+            return this.mPosition;
+        }
+
         public void setPosition(float position) {
             this.mPosition = position;
             invalidateSelf();
-        }
-
-        public float getPosition() {
-            return this.mPosition;
         }
 
         public void setOffset(float offset) {

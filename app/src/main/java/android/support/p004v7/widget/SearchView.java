@@ -44,9 +44,11 @@ import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.gms.actions.SearchIntents;
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.lang.reflect.Method;
 import java.util.WeakHashMap;
 
@@ -54,77 +56,58 @@ import java.util.WeakHashMap;
 public class SearchView extends LinearLayoutCompat implements CollapsibleActionView {
     static final boolean DBG = false;
     static final AutoCompleteTextViewReflector HIDDEN_METHOD_INVOKER = new AutoCompleteTextViewReflector();
-    private static final String IME_OPTION_NO_MICROPHONE = "nm";
     static final String LOG_TAG = "SearchView";
-    private Bundle mAppSearchData;
-    private boolean mClearingFocus;
+    private static final String IME_OPTION_NO_MICROPHONE = "nm";
     final ImageView mCloseButton;
+    final ImageView mGoButton;
+    final ImageView mSearchButton;
+    final SearchAutoComplete mSearchSrcTextView;
+    final ImageView mVoiceButton;
     private final ImageView mCollapsedIcon;
-    private int mCollapsedImeOptions;
     private final CharSequence mDefaultQueryHint;
     private final View mDropDownAnchor;
+    private final View.OnClickListener mOnClickListener;
+    private final TextView.OnEditorActionListener mOnEditorActionListener;
+    private final AdapterView.OnItemClickListener mOnItemClickListener;
+    private final AdapterView.OnItemSelectedListener mOnItemSelectedListener;
+    private final WeakHashMap<String, Drawable.ConstantState> mOutsideDrawablesCache;
+    private final View mSearchEditFrame;
+    private final Drawable mSearchHintIcon;
+    private final View mSearchPlate;
+    private final View mSubmitArea;
+    private final int mSuggestionCommitIconResId;
+    private final int mSuggestionRowLayout;
+    private final Runnable mUpdateDrawableStateRunnable;
+    private final Intent mVoiceAppSearchIntent;
+    private final Intent mVoiceWebSearchIntent;
+    View.OnFocusChangeListener mOnQueryTextFocusChangeListener;
+    SearchableInfo mSearchable;
+    CursorAdapter mSuggestionsAdapter;
+    View.OnKeyListener mTextKeyListener;
+    private Bundle mAppSearchData;
+    private boolean mClearingFocus;
+    private int mCollapsedImeOptions;
     private boolean mExpandedInActionView;
-    final ImageView mGoButton;
     private boolean mIconified;
     private boolean mIconifiedByDefault;
     private int mMaxWidth;
     private CharSequence mOldQueryText;
-    private final View.OnClickListener mOnClickListener;
     private OnCloseListener mOnCloseListener;
-    private final TextView.OnEditorActionListener mOnEditorActionListener;
-    private final AdapterView.OnItemClickListener mOnItemClickListener;
-    private final AdapterView.OnItemSelectedListener mOnItemSelectedListener;
     private OnQueryTextListener mOnQueryChangeListener;
-    View.OnFocusChangeListener mOnQueryTextFocusChangeListener;
     private View.OnClickListener mOnSearchClickListener;
     private OnSuggestionListener mOnSuggestionListener;
-    private final WeakHashMap<String, Drawable.ConstantState> mOutsideDrawablesCache;
     private CharSequence mQueryHint;
     private boolean mQueryRefinement;
     private Runnable mReleaseCursorRunnable;
-    final ImageView mSearchButton;
-    private final View mSearchEditFrame;
-    private final Drawable mSearchHintIcon;
-    private final View mSearchPlate;
-    final SearchAutoComplete mSearchSrcTextView;
     private Rect mSearchSrcTextViewBounds;
     private Rect mSearchSrtTextViewBoundsExpanded;
-    SearchableInfo mSearchable;
-    private final View mSubmitArea;
     private boolean mSubmitButtonEnabled;
-    private final int mSuggestionCommitIconResId;
-    private final int mSuggestionRowLayout;
-    CursorAdapter mSuggestionsAdapter;
     private int[] mTemp;
     private int[] mTemp2;
-    View.OnKeyListener mTextKeyListener;
     private TextWatcher mTextWatcher;
     private UpdatableTouchDelegate mTouchDelegate;
-    private final Runnable mUpdateDrawableStateRunnable;
     private CharSequence mUserQuery;
-    private final Intent mVoiceAppSearchIntent;
-    final ImageView mVoiceButton;
     private boolean mVoiceButtonEnabled;
-    private final Intent mVoiceWebSearchIntent;
-
-    /* renamed from: android.support.v7.widget.SearchView$OnCloseListener */
-    public interface OnCloseListener {
-        boolean onClose();
-    }
-
-    /* renamed from: android.support.v7.widget.SearchView$OnQueryTextListener */
-    public interface OnQueryTextListener {
-        boolean onQueryTextChange(String str);
-
-        boolean onQueryTextSubmit(String str);
-    }
-
-    /* renamed from: android.support.v7.widget.SearchView$OnSuggestionListener */
-    public interface OnSuggestionListener {
-        boolean onSuggestionClick(int i);
-
-        boolean onSuggestionSelect(int i);
-    }
 
     public SearchView(Context context) {
         this(context, null);
@@ -296,6 +279,10 @@ public class SearchView extends LinearLayoutCompat implements CollapsibleActionV
         updateQueryHint();
     }
 
+    static boolean isLandscapeMode(Context context) {
+        return context.getResources().getConfiguration().orientation == 2;
+    }
+
     /* access modifiers changed from: package-private */
     public int getSuggestionRowLayout() {
         return this.mSuggestionRowLayout;
@@ -324,20 +311,20 @@ public class SearchView extends LinearLayoutCompat implements CollapsibleActionV
         this.mAppSearchData = appSearchData;
     }
 
-    public void setImeOptions(int imeOptions) {
-        this.mSearchSrcTextView.setImeOptions(imeOptions);
-    }
-
     public int getImeOptions() {
         return this.mSearchSrcTextView.getImeOptions();
     }
 
-    public void setInputType(int inputType) {
-        this.mSearchSrcTextView.setInputType(inputType);
+    public void setImeOptions(int imeOptions) {
+        this.mSearchSrcTextView.setImeOptions(imeOptions);
     }
 
     public int getInputType() {
         return this.mSearchSrcTextView.getInputType();
+    }
+
+    public void setInputType(int inputType) {
+        this.mSearchSrcTextView.setInputType(inputType);
     }
 
     public boolean requestFocus(int direction, Rect previouslyFocusedRect) {
@@ -386,6 +373,11 @@ public class SearchView extends LinearLayoutCompat implements CollapsibleActionV
         return this.mSearchSrcTextView.getText();
     }
 
+    private void setQuery(CharSequence query) {
+        this.mSearchSrcTextView.setText(query);
+        this.mSearchSrcTextView.setSelection(TextUtils.isEmpty(query) ? 0 : query.length());
+    }
+
     public void setQuery(CharSequence query, boolean submit) {
         this.mSearchSrcTextView.setText(query);
         if (query != null) {
@@ -396,11 +388,6 @@ public class SearchView extends LinearLayoutCompat implements CollapsibleActionV
         if (submit && !TextUtils.isEmpty(query)) {
             onSubmitQuery();
         }
-    }
-
-    public void setQueryHint(@Nullable CharSequence hint) {
-        this.mQueryHint = hint;
-        updateQueryHint();
     }
 
     @Nullable
@@ -415,6 +402,11 @@ public class SearchView extends LinearLayoutCompat implements CollapsibleActionV
         return getContext().getText(this.mSearchable.getHintId());
     }
 
+    public void setQueryHint(@Nullable CharSequence hint) {
+        this.mQueryHint = hint;
+        updateQueryHint();
+    }
+
     public void setIconifiedByDefault(boolean iconified) {
         if (this.mIconifiedByDefault != iconified) {
             this.mIconifiedByDefault = iconified;
@@ -427,6 +419,10 @@ public class SearchView extends LinearLayoutCompat implements CollapsibleActionV
         return this.mIconifiedByDefault;
     }
 
+    public boolean isIconified() {
+        return this.mIconified;
+    }
+
     public void setIconified(boolean iconify) {
         if (iconify) {
             onCloseClicked();
@@ -435,8 +431,8 @@ public class SearchView extends LinearLayoutCompat implements CollapsibleActionV
         }
     }
 
-    public boolean isIconified() {
-        return this.mIconified;
+    public boolean isSubmitButtonEnabled() {
+        return this.mSubmitButtonEnabled;
     }
 
     public void setSubmitButtonEnabled(boolean enabled) {
@@ -444,8 +440,8 @@ public class SearchView extends LinearLayoutCompat implements CollapsibleActionV
         updateViewsVisibility(isIconified());
     }
 
-    public boolean isSubmitButtonEnabled() {
-        return this.mSubmitButtonEnabled;
+    public boolean isQueryRefinementEnabled() {
+        return this.mQueryRefinement;
     }
 
     public void setQueryRefinementEnabled(boolean enable) {
@@ -456,8 +452,8 @@ public class SearchView extends LinearLayoutCompat implements CollapsibleActionV
         }
     }
 
-    public boolean isQueryRefinementEnabled() {
-        return this.mQueryRefinement;
+    public CursorAdapter getSuggestionsAdapter() {
+        return this.mSuggestionsAdapter;
     }
 
     public void setSuggestionsAdapter(CursorAdapter adapter) {
@@ -465,17 +461,13 @@ public class SearchView extends LinearLayoutCompat implements CollapsibleActionV
         this.mSearchSrcTextView.setAdapter(this.mSuggestionsAdapter);
     }
 
-    public CursorAdapter getSuggestionsAdapter() {
-        return this.mSuggestionsAdapter;
+    public int getMaxWidth() {
+        return this.mMaxWidth;
     }
 
     public void setMaxWidth(int maxpixels) {
         this.mMaxWidth = maxpixels;
         requestLayout();
-    }
-
-    public int getMaxWidth() {
-        return this.mMaxWidth;
     }
 
     /* access modifiers changed from: protected */
@@ -849,42 +841,6 @@ public class SearchView extends LinearLayoutCompat implements CollapsibleActionV
         }
     }
 
-    /* renamed from: android.support.v7.widget.SearchView$SavedState */
-    static class SavedState extends AbsSavedState {
-        public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.ClassLoaderCreator<SavedState>() {
-            public SavedState createFromParcel(Parcel in, ClassLoader loader) {
-                return new SavedState(in, loader);
-            }
-
-            public SavedState createFromParcel(Parcel in) {
-                return new SavedState(in, null);
-            }
-
-            public SavedState[] newArray(int size) {
-                return new SavedState[size];
-            }
-        };
-        boolean isIconified;
-
-        SavedState(Parcelable superState) {
-            super(superState);
-        }
-
-        public SavedState(Parcel source, ClassLoader loader) {
-            super(source, loader);
-            this.isIconified = ((Boolean) source.readValue(null)).booleanValue();
-        }
-
-        public void writeToParcel(Parcel dest, int flags) {
-            super.writeToParcel(dest, flags);
-            dest.writeValue(Boolean.valueOf(this.isIconified));
-        }
-
-        public String toString() {
-            return "SearchView.SavedState{" + Integer.toHexString(System.identityHashCode(this)) + " isIconified=" + this.isIconified + "}";
-        }
-    }
-
     /* access modifiers changed from: protected */
     public Parcelable onSaveInstanceState() {
         SavedState ss = new SavedState(super.onSaveInstanceState());
@@ -980,11 +936,6 @@ public class SearchView extends LinearLayoutCompat implements CollapsibleActionV
                 Log.e(LOG_TAG, "Failed launch activity: " + intent, ex);
             }
         }
-    }
-
-    private void setQuery(CharSequence query) {
-        this.mSearchSrcTextView.setText(query);
-        this.mSearchSrcTextView.setSelection(TextUtils.isEmpty(query) ? 0 : query.length());
     }
 
     /* access modifiers changed from: package-private */
@@ -1113,18 +1064,69 @@ public class SearchView extends LinearLayoutCompat implements CollapsibleActionV
         HIDDEN_METHOD_INVOKER.doAfterTextChanged(this.mSearchSrcTextView);
     }
 
-    static boolean isLandscapeMode(Context context) {
-        return context.getResources().getConfiguration().orientation == 2;
+    /* renamed from: android.support.v7.widget.SearchView$OnCloseListener */
+    public interface OnCloseListener {
+        boolean onClose();
+    }
+
+    /* renamed from: android.support.v7.widget.SearchView$OnQueryTextListener */
+    public interface OnQueryTextListener {
+        boolean onQueryTextChange(String str);
+
+        boolean onQueryTextSubmit(String str);
+    }
+
+    /* renamed from: android.support.v7.widget.SearchView$OnSuggestionListener */
+    public interface OnSuggestionListener {
+        boolean onSuggestionClick(int i);
+
+        boolean onSuggestionSelect(int i);
+    }
+
+    /* renamed from: android.support.v7.widget.SearchView$SavedState */
+    static class SavedState extends AbsSavedState {
+        public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.ClassLoaderCreator<SavedState>() {
+            public SavedState createFromParcel(Parcel in, ClassLoader loader) {
+                return new SavedState(in, loader);
+            }
+
+            public SavedState createFromParcel(Parcel in) {
+                return new SavedState(in, null);
+            }
+
+            public SavedState[] newArray(int size) {
+                return new SavedState[size];
+            }
+        };
+        boolean isIconified;
+
+        SavedState(Parcelable superState) {
+            super(superState);
+        }
+
+        public SavedState(Parcel source, ClassLoader loader) {
+            super(source, loader);
+            this.isIconified = ((Boolean) source.readValue(null)).booleanValue();
+        }
+
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+            dest.writeValue(Boolean.valueOf(this.isIconified));
+        }
+
+        public String toString() {
+            return "SearchView.SavedState{" + Integer.toHexString(System.identityHashCode(this)) + " isIconified=" + this.isIconified + "}";
+        }
     }
 
     /* renamed from: android.support.v7.widget.SearchView$UpdatableTouchDelegate */
     private static class UpdatableTouchDelegate extends TouchDelegate {
         private final Rect mActualBounds = new Rect();
-        private boolean mDelegateTargeted;
         private final View mDelegateView;
         private final int mSlop;
         private final Rect mSlopBounds = new Rect();
         private final Rect mTargetBounds = new Rect();
+        private boolean mDelegateTargeted;
 
         public UpdatableTouchDelegate(Rect targetBounds, Rect actualBounds, View delegateView) {
             super(targetBounds, delegateView);
@@ -1177,8 +1179,8 @@ public class SearchView extends LinearLayoutCompat implements CollapsibleActionV
     @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
     /* renamed from: android.support.v7.widget.SearchView$SearchAutoComplete */
     public static class SearchAutoComplete extends AppCompatAutoCompleteTextView {
-        private boolean mHasPendingShowSoftInputRequest;
         final Runnable mRunShowSoftInputIfNecessary;
+        private boolean mHasPendingShowSoftInputRequest;
         private SearchView mSearchView;
         private int mThreshold;
 

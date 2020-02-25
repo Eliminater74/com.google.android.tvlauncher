@@ -21,9 +21,6 @@ import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import androidx.preference.DialogPreference;
-import androidx.preference.PreferenceGroup;
-import androidx.preference.PreferenceManager;
 
 @Deprecated
 public abstract class PreferenceFragment extends Fragment implements PreferenceManager.OnPreferenceTreeClickListener, PreferenceManager.OnDisplayPreferenceDialogListener, PreferenceManager.OnNavigateToScreenListener, DialogPreference.TargetFragment {
@@ -33,6 +30,16 @@ public abstract class PreferenceFragment extends Fragment implements PreferenceM
     private static final int MSG_BIND_PREFERENCES = 1;
     private static final String PREFERENCES_TAG = "android:preferences";
     private final DividerDecoration mDividerDecoration = new DividerDecoration();
+    RecyclerView mList;
+    private final Runnable mRequestFocus = new Runnable() {
+        public void run() {
+            PreferenceFragment.this.mList.focusableViewAvailable(PreferenceFragment.this.mList);
+        }
+    };
+    private boolean mHavePrefs;
+    private boolean mInitDone;
+    private int mLayoutResId = C0731R.layout.preference_list_fragment;
+    private PreferenceManager mPreferenceManager;
     private final Handler mHandler = new Handler() {
         public void handleMessage(Message msg) {
             if (msg.what == 1) {
@@ -40,30 +47,8 @@ public abstract class PreferenceFragment extends Fragment implements PreferenceM
             }
         }
     };
-    private boolean mHavePrefs;
-    private boolean mInitDone;
-    private int mLayoutResId = C0731R.layout.preference_list_fragment;
-    RecyclerView mList;
-    private PreferenceManager mPreferenceManager;
-    private final Runnable mRequestFocus = new Runnable() {
-        public void run() {
-            PreferenceFragment.this.mList.focusableViewAvailable(PreferenceFragment.this.mList);
-        }
-    };
     private Runnable mSelectPreferenceRunnable;
     private Context mStyledContext;
-
-    public interface OnPreferenceDisplayDialogCallback {
-        boolean onPreferenceDisplayDialog(@NonNull PreferenceFragment preferenceFragment, Preference preference);
-    }
-
-    public interface OnPreferenceStartFragmentCallback {
-        boolean onPreferenceStartFragment(PreferenceFragment preferenceFragment, Preference preference);
-    }
-
-    public interface OnPreferenceStartScreenCallback {
-        boolean onPreferenceStartScreen(PreferenceFragment preferenceFragment, PreferenceScreen preferenceScreen);
-    }
 
     @Deprecated
     public abstract void onCreatePreferences(Bundle bundle, String str);
@@ -192,6 +177,11 @@ public abstract class PreferenceFragment extends Fragment implements PreferenceM
     }
 
     @Deprecated
+    public PreferenceScreen getPreferenceScreen() {
+        return this.mPreferenceManager.getPreferenceScreen();
+    }
+
+    @Deprecated
     public void setPreferenceScreen(PreferenceScreen preferenceScreen) {
         if (this.mPreferenceManager.setPreferences(preferenceScreen) && preferenceScreen != null) {
             onUnbindPreferences();
@@ -200,11 +190,6 @@ public abstract class PreferenceFragment extends Fragment implements PreferenceM
                 postBindPreferences();
             }
         }
-    }
-
-    @Deprecated
-    public PreferenceScreen getPreferenceScreen() {
-        return this.mPreferenceManager.getPreferenceScreen();
     }
 
     @Deprecated
@@ -429,6 +414,18 @@ public abstract class PreferenceFragment extends Fragment implements PreferenceM
         } else {
             r.run();
         }
+    }
+
+    public interface OnPreferenceDisplayDialogCallback {
+        boolean onPreferenceDisplayDialog(@NonNull PreferenceFragment preferenceFragment, Preference preference);
+    }
+
+    public interface OnPreferenceStartFragmentCallback {
+        boolean onPreferenceStartFragment(PreferenceFragment preferenceFragment, Preference preference);
+    }
+
+    public interface OnPreferenceStartScreenCallback {
+        boolean onPreferenceStartScreen(PreferenceFragment preferenceFragment, PreferenceScreen preferenceScreen);
     }
 
     private static class ScrollToPreferenceObserver extends RecyclerView.AdapterDataObserver {

@@ -4,11 +4,11 @@ import com.google.common.annotations.GwtCompatible;
 
 @GwtCompatible
 public abstract class ForwardingObject {
-    /* access modifiers changed from: protected */
-    public abstract Object delegate();
-
     protected ForwardingObject() {
     }
+
+    /* access modifiers changed from: protected */
+    public abstract Object delegate();
 
     public String toString() {
         return delegate().toString();

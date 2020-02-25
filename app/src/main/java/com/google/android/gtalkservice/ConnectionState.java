@@ -28,6 +28,22 @@ public final class ConnectionState implements Parcelable {
         this.mState = source.readInt();
     }
 
+    public static final String toString(int state) {
+        if (state == 1) {
+            return "RECONNECTION_SCHEDULED";
+        }
+        if (state == 2) {
+            return "CONNECTING";
+        }
+        if (state == 3) {
+            return "AUTHENTICATED";
+        }
+        if (state != 4) {
+            return "IDLE";
+        }
+        return "ONLINE";
+    }
+
     public int getState() {
         return this.mState;
     }
@@ -58,22 +74,6 @@ public final class ConnectionState implements Parcelable {
 
     public final String toString() {
         return toString(this.mState);
-    }
-
-    public static final String toString(int state) {
-        if (state == 1) {
-            return "RECONNECTION_SCHEDULED";
-        }
-        if (state == 2) {
-            return "CONNECTING";
-        }
-        if (state == 3) {
-            return "AUTHENTICATED";
-        }
-        if (state != 4) {
-            return "IDLE";
-        }
-        return "ONLINE";
     }
 
     public void writeToParcel(Parcel dest, int flags) {

@@ -1,6 +1,7 @@
 package com.google.common.base;
 
 import com.google.common.annotations.GwtIncompatible;
+
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtIncompatible
@@ -33,7 +34,7 @@ public enum StandardSystemProperty {
     USER_NAME("user.name"),
     USER_HOME("user.home"),
     USER_DIR("user.dir");
-    
+
     private final String key;
 
     private StandardSystemProperty(String key2) {

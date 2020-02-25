@@ -2,7 +2,7 @@ package com.google.android.libraries.stitch.binder;
 
 import android.content.Context;
 import android.util.Log;
-import com.google.android.libraries.stitch.binder.BinderProvider;
+
 import java.util.Set;
 
 public final class RootBinderInitializer implements BinderProvider.Initializer {

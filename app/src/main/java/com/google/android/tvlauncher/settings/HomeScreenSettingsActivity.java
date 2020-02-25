@@ -2,10 +2,12 @@ package com.google.android.tvlauncher.settings;
 
 import android.app.Fragment;
 import android.os.Bundle;
+
 import androidx.leanback.preference.LeanbackSettingsFragment;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragment;
 import androidx.preference.PreferenceScreen;
+
 import com.google.android.tvlauncher.analytics.LoggingActivity;
 import com.google.android.tvlauncher.util.Util;
 import com.google.logs.tvlauncher.config.TvLauncherConstants;

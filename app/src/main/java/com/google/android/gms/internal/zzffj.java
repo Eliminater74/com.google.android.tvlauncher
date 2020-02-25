@@ -1,6 +1,7 @@
 package com.google.android.gms.internal;
 
 import android.util.Log;
+
 import com.google.android.gms.common.api.Status;
 
 /* compiled from: UsageReportingClientImpl */

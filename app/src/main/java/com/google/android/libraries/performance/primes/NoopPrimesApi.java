@@ -1,11 +1,12 @@
 package com.google.android.libraries.performance.primes;
 
 import android.support.annotation.Nullable;
-import com.google.android.libraries.performance.primes.TimerEvent;
+
 import com.google.android.libraries.performance.primes.scenario.ScenarioEvent;
 import com.google.android.libraries.performance.primes.transmitter.MetricTransmitter;
-import java.lang.Thread;
+
 import java.util.concurrent.ScheduledExecutorService;
+
 import logs.proto.wireless.performance.mobile.ExtensionMetric;
 import logs.proto.wireless.performance.mobile.PrimesTraceOuterClass;
 import logs.proto.wireless.performance.mobile.SystemHealthProto;

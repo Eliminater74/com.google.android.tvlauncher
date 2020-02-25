@@ -2,9 +2,11 @@ package com.google.android.gms.usagereporting;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
 import com.google.android.gms.common.internal.Hide;
 import com.google.android.gms.internal.zzbkv;
 import com.google.android.gms.internal.zzbky;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,8 +17,8 @@ public class UsageReportingOptInOptions extends zzbkv {
     public static final int OPTION_NO_CHANGE = 0;
     public static final int OPTION_OPT_IN = 1;
     public static final int OPTION_OPT_OUT = 2;
-    private int zza;
     private final List<String> zzb = new ArrayList();
+    private int zza;
 
     public UsageReportingOptInOptions(int i) {
         this.zza = i;

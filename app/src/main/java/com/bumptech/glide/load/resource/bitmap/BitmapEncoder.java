@@ -3,12 +3,14 @@ package com.bumptech.glide.load.resource.bitmap;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import com.bumptech.glide.load.EncodeStrategy;
 import com.bumptech.glide.load.Option;
 import com.bumptech.glide.load.Options;
 import com.bumptech.glide.load.ResourceEncoder;
 import com.bumptech.glide.load.engine.Resource;
 import com.bumptech.glide.load.engine.bitmap_recycle.ArrayPool;
+
 import java.io.File;
 
 public class BitmapEncoder implements ResourceEncoder<Bitmap> {
@@ -18,10 +20,6 @@ public class BitmapEncoder implements ResourceEncoder<Bitmap> {
     @Nullable
     private final ArrayPool arrayPool;
 
-    public /* bridge */ /* synthetic */ boolean encode(@NonNull Object obj, @NonNull File file, @NonNull Options options) {
-        return encode((Resource<Bitmap>) ((Resource) obj), file, options);
-    }
-
     public BitmapEncoder(@NonNull ArrayPool arrayPool2) {
         this.arrayPool = arrayPool2;
     }
@@ -29,6 +27,10 @@ public class BitmapEncoder implements ResourceEncoder<Bitmap> {
     @Deprecated
     public BitmapEncoder() {
         this.arrayPool = null;
+    }
+
+    public /* bridge */ /* synthetic */ boolean encode(@NonNull Object obj, @NonNull File file, @NonNull Options options) {
+        return encode((Resource<Bitmap>) ((Resource) obj), file, options);
     }
 
     /* JADX WARNING: Removed duplicated region for block: B:27:0x0072  */

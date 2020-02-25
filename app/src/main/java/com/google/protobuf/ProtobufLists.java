@@ -1,7 +1,5 @@
 package com.google.protobuf;
 
-import com.google.protobuf.Internal;
-
 final class ProtobufLists {
     private ProtobufLists() {
     }

@@ -1,16 +1,16 @@
 package com.google.android.exoplayer2.extractor;
 
-import com.google.android.exoplayer2.extractor.SeekMap;
 import com.google.android.exoplayer2.util.Util;
+
 import java.util.Arrays;
 
 public final class ChunkIndex implements SeekMap {
-    private final long durationUs;
     public final long[] durationsUs;
     public final int length;
     public final long[] offsets;
     public final int[] sizes;
     public final long[] timesUs;
+    private final long durationUs;
 
     public ChunkIndex(int[] sizes2, long[] offsets2, long[] durationsUs2, long[] timesUs2) {
         this.sizes = sizes2;

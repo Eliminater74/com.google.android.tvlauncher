@@ -5,27 +5,23 @@ import android.database.DatabaseUtils;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.VisibleForTesting;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 public final class VersionTable {
-    private static final String COLUMN_FEATURE = "feature";
-    private static final String COLUMN_INSTANCE_UID = "instance_uid";
-    private static final String COLUMN_VERSION = "version";
     public static final int FEATURE_CACHE_CONTENT_METADATA = 1;
     public static final int FEATURE_CACHE_FILE_METADATA = 2;
     public static final int FEATURE_OFFLINE = 0;
+    public static final int VERSION_UNSET = -1;
+    private static final String COLUMN_FEATURE = "feature";
+    private static final String COLUMN_INSTANCE_UID = "instance_uid";
+    private static final String COLUMN_VERSION = "version";
     private static final String PRIMARY_KEY = "PRIMARY KEY (feature, instance_uid)";
     private static final String SQL_CREATE_TABLE_IF_NOT_EXISTS = "CREATE TABLE IF NOT EXISTS ExoPlayerVersions (feature INTEGER NOT NULL,instance_uid TEXT NOT NULL,version INTEGER NOT NULL,PRIMARY KEY (feature, instance_uid))";
     private static final String TABLE_NAME = "ExoPlayerVersions";
-    public static final int VERSION_UNSET = -1;
     private static final String WHERE_FEATURE_AND_INSTANCE_UID_EQUALS = "feature = ? AND instance_uid = ?";
-
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    private @interface Feature {
-    }
 
     private VersionTable() {
     }
@@ -128,5 +124,10 @@ public final class VersionTable {
 
     private static String[] featureAndInstanceUidArguments(int feature, String instance) {
         return new String[]{Integer.toString(feature), instance};
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    private @interface Feature {
     }
 }

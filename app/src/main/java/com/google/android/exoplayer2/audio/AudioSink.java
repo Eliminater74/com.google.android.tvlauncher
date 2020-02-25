@@ -1,19 +1,13 @@
 package com.google.android.exoplayer2.audio;
 
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.PlaybackParameters;
+
 import java.nio.ByteBuffer;
 
 public interface AudioSink {
     public static final long CURRENT_POSITION_NOT_SET = Long.MIN_VALUE;
-
-    public interface Listener {
-        void onAudioSessionId(int i);
-
-        void onPositionDiscontinuity();
-
-        void onUnderrun(int i, long j, long j2);
-    }
 
     void configure(int i, int i2, int i3, int i4, @Nullable int[] iArr, int i5, int i6) throws ConfigurationException;
 
@@ -56,6 +50,14 @@ public interface AudioSink {
     void setVolume(float f);
 
     boolean supportsOutput(int i, int i2);
+
+    public interface Listener {
+        void onAudioSessionId(int i);
+
+        void onPositionDiscontinuity();
+
+        void onUnderrun(int i, long j, long j2);
+    }
 
     public static final class ConfigurationException extends Exception {
         public ConfigurationException(Throwable cause) {

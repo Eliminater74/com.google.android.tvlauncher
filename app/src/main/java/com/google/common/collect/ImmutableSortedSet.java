@@ -3,9 +3,11 @@ package com.google.common.collect;
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableSet;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.concurrent.LazyInit;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
@@ -16,7 +18,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.NavigableSet;
 import java.util.SortedSet;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible(emulated = true, serializable = true)
 public abstract class ImmutableSortedSet<E> extends ImmutableSortedSetFauxverideShim<E> implements NavigableSet<E>, SortedIterable<E> {
@@ -25,26 +26,9 @@ public abstract class ImmutableSortedSet<E> extends ImmutableSortedSetFauxveride
     @LazyInit
     transient ImmutableSortedSet<E> descendingSet;
 
-    /* access modifiers changed from: package-private */
-    @GwtIncompatible
-    public abstract ImmutableSortedSet<E> createDescendingSet();
-
-    @GwtIncompatible
-    public abstract UnmodifiableIterator<E> descendingIterator();
-
-    /* access modifiers changed from: package-private */
-    public abstract ImmutableSortedSet<E> headSetImpl(Object obj, boolean z);
-
-    /* access modifiers changed from: package-private */
-    public abstract int indexOf(@NullableDecl Object obj);
-
-    public abstract UnmodifiableIterator<E> iterator();
-
-    /* access modifiers changed from: package-private */
-    public abstract ImmutableSortedSet<E> subSetImpl(Object obj, boolean z, Object obj2, boolean z2);
-
-    /* access modifiers changed from: package-private */
-    public abstract ImmutableSortedSet<E> tailSetImpl(Object obj, boolean z);
+    ImmutableSortedSet(Comparator<? super E> comparator2) {
+        this.comparator = comparator2;
+    }
 
     static <E> RegularImmutableSortedSet<E> emptySet(Comparator<? super E> comparator2) {
         if (Ordering.natural().equals(comparator2)) {
@@ -189,56 +173,34 @@ public abstract class ImmutableSortedSet<E> extends ImmutableSortedSetFauxveride
         return new Builder<>(Ordering.natural());
     }
 
-    public static final class Builder<E> extends ImmutableSet.Builder<E> {
-        private final Comparator<? super E> comparator;
-
-        public Builder(Comparator<? super E> comparator2) {
-            this.comparator = (Comparator) Preconditions.checkNotNull(comparator2);
-        }
-
-        @CanIgnoreReturnValue
-        public Builder<E> add(E element) {
-            super.add((Object) element);
-            return this;
-        }
-
-        @CanIgnoreReturnValue
-        public Builder<E> add(E... elements) {
-            super.add((Object[]) elements);
-            return this;
-        }
-
-        @CanIgnoreReturnValue
-        public Builder<E> addAll(Iterable<? extends E> elements) {
-            super.addAll((Iterable) elements);
-            return this;
-        }
-
-        @CanIgnoreReturnValue
-        public Builder<E> addAll(Iterator<? extends E> elements) {
-            super.addAll((Iterator) elements);
-            return this;
-        }
-
-        public ImmutableSortedSet<E> build() {
-            ImmutableSortedSet<E> result = ImmutableSortedSet.construct(this.comparator, this.size, this.contents);
-            this.size = result.size();
-            this.forceCopy = true;
-            return result;
-        }
-    }
-
-    /* access modifiers changed from: package-private */
-    public int unsafeCompare(Object a, Object b) {
-        return unsafeCompare(this.comparator, a, b);
-    }
-
     static int unsafeCompare(Comparator<?> comparator2, Object a, Object b) {
         return comparator2.compare(a, b);
     }
 
-    ImmutableSortedSet(Comparator<? super E> comparator2) {
-        this.comparator = comparator2;
+    /* access modifiers changed from: package-private */
+    @GwtIncompatible
+    public abstract ImmutableSortedSet<E> createDescendingSet();
+
+    @GwtIncompatible
+    public abstract UnmodifiableIterator<E> descendingIterator();
+
+    /* access modifiers changed from: package-private */
+    public abstract ImmutableSortedSet<E> headSetImpl(Object obj, boolean z);
+
+    /* access modifiers changed from: package-private */
+    public abstract int indexOf(@NullableDecl Object obj);
+
+    public abstract UnmodifiableIterator<E> iterator();
+
+    /* access modifiers changed from: package-private */
+    public abstract ImmutableSortedSet<E> subSetImpl(Object obj, boolean z, Object obj2, boolean z2);
+
+    /* access modifiers changed from: package-private */
+    public abstract ImmutableSortedSet<E> tailSetImpl(Object obj, boolean z);
+
+    /* access modifiers changed from: package-private */
+    public int unsafeCompare(Object a, Object b) {
+        return unsafeCompare(this.comparator, a, b);
     }
 
     public Comparator<? super E> comparator() {
@@ -379,6 +341,54 @@ public abstract class ImmutableSortedSet<E> extends ImmutableSortedSetFauxveride
         return result2;
     }
 
+    private void readObject(ObjectInputStream unused) throws InvalidObjectException {
+        throw new InvalidObjectException("Use SerializedForm");
+    }
+
+    /* access modifiers changed from: package-private */
+    public Object writeReplace() {
+        return new SerializedForm(this.comparator, toArray());
+    }
+
+    public static final class Builder<E> extends ImmutableSet.Builder<E> {
+        private final Comparator<? super E> comparator;
+
+        public Builder(Comparator<? super E> comparator2) {
+            this.comparator = (Comparator) Preconditions.checkNotNull(comparator2);
+        }
+
+        @CanIgnoreReturnValue
+        public Builder<E> add(E element) {
+            super.add((Object) element);
+            return this;
+        }
+
+        @CanIgnoreReturnValue
+        public Builder<E> add(E... elements) {
+            super.add((Object[]) elements);
+            return this;
+        }
+
+        @CanIgnoreReturnValue
+        public Builder<E> addAll(Iterable<? extends E> elements) {
+            super.addAll((Iterable) elements);
+            return this;
+        }
+
+        @CanIgnoreReturnValue
+        public Builder<E> addAll(Iterator<? extends E> elements) {
+            super.addAll((Iterator) elements);
+            return this;
+        }
+
+        public ImmutableSortedSet<E> build() {
+            ImmutableSortedSet<E> result = ImmutableSortedSet.construct(this.comparator, this.size, this.contents);
+            this.size = result.size();
+            this.forceCopy = true;
+            return result;
+        }
+    }
+
     private static class SerializedForm<E> implements Serializable {
         private static final long serialVersionUID = 0;
         final Comparator<? super E> comparator;
@@ -393,14 +403,5 @@ public abstract class ImmutableSortedSet<E> extends ImmutableSortedSetFauxveride
         public Object readResolve() {
             return new Builder(this.comparator).add(this.elements).build();
         }
-    }
-
-    private void readObject(ObjectInputStream unused) throws InvalidObjectException {
-        throw new InvalidObjectException("Use SerializedForm");
-    }
-
-    /* access modifiers changed from: package-private */
-    public Object writeReplace() {
-        return new SerializedForm(this.comparator, toArray());
     }
 }

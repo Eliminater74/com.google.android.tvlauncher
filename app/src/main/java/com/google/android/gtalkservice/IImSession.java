@@ -6,13 +6,7 @@ import android.os.IBinder;
 import android.os.IInterface;
 import android.os.Parcel;
 import android.os.RemoteException;
-import com.google.android.gtalkservice.IChatListener;
-import com.google.android.gtalkservice.IChatSession;
-import com.google.android.gtalkservice.IConnectionStateListener;
-import com.google.android.gtalkservice.IGroupChatInvitationListener;
-import com.google.android.gtalkservice.IJingleInfoStanzaListener;
-import com.google.android.gtalkservice.IRosterListener;
-import com.google.android.gtalkservice.ISessionStanzaListener;
+
 import java.util.List;
 
 public interface IImSession extends IInterface {
@@ -58,6 +52,8 @@ public interface IImSession extends IInterface {
 
     Presence getPresence() throws RemoteException;
 
+    void setPresence(Presence presence) throws RemoteException;
+
     String getUsername() throws RemoteException;
 
     void goOffRecordInRoom(String str, boolean z) throws RemoteException;
@@ -102,14 +98,11 @@ public interface IImSession extends IInterface {
 
     void sendSessionStanza(String str) throws RemoteException;
 
-    void setPresence(Presence presence) throws RemoteException;
-
     void uploadAvatar(Bitmap bitmap) throws RemoteException;
 
     void uploadAvatarFromDb() throws RemoteException;
 
     public static abstract class Stub extends Binder implements IImSession {
-        private static final String DESCRIPTOR = "com.google.android.gtalkservice.IImSession";
         static final int TRANSACTION_addConnectionStateListener = 7;
         static final int TRANSACTION_addContact = 13;
         static final int TRANSACTION_addGroupChatInvitationListener = 27;
@@ -156,6 +149,7 @@ public interface IImSession extends IInterface {
         static final int TRANSACTION_setPresence = 9;
         static final int TRANSACTION_uploadAvatar = 11;
         static final int TRANSACTION_uploadAvatarFromDb = 12;
+        private static final String DESCRIPTOR = "com.google.android.gtalkservice.IImSession";
 
         public Stub() {
             attachInterface(this, DESCRIPTOR);
@@ -578,25 +572,6 @@ public interface IImSession extends IInterface {
                 }
             }
 
-            public void setPresence(Presence presence) throws RemoteException {
-                Parcel _data = Parcel.obtain();
-                Parcel _reply = Parcel.obtain();
-                try {
-                    _data.writeInterfaceToken(Stub.DESCRIPTOR);
-                    if (presence != null) {
-                        _data.writeInt(1);
-                        presence.writeToParcel(_data, 0);
-                    } else {
-                        _data.writeInt(0);
-                    }
-                    this.mRemote.transact(9, _data, _reply, 0);
-                    _reply.readException();
-                } finally {
-                    _reply.recycle();
-                    _data.recycle();
-                }
-            }
-
             public Presence getPresence() throws RemoteException {
                 Presence _result;
                 Parcel _data = Parcel.obtain();
@@ -611,6 +586,25 @@ public interface IImSession extends IInterface {
                         _result = null;
                     }
                     return _result;
+                } finally {
+                    _reply.recycle();
+                    _data.recycle();
+                }
+            }
+
+            public void setPresence(Presence presence) throws RemoteException {
+                Parcel _data = Parcel.obtain();
+                Parcel _reply = Parcel.obtain();
+                try {
+                    _data.writeInterfaceToken(Stub.DESCRIPTOR);
+                    if (presence != null) {
+                        _data.writeInt(1);
+                        presence.writeToParcel(_data, 0);
+                    } else {
+                        _data.writeInt(0);
+                    }
+                    this.mRemote.transact(9, _data, _reply, 0);
+                    _reply.readException();
                 } finally {
                     _reply.recycle();
                     _data.recycle();

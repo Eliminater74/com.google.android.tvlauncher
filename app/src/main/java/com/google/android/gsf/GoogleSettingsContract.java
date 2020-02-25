@@ -7,6 +7,7 @@ import android.database.SQLException;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import android.util.Log;
+
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 

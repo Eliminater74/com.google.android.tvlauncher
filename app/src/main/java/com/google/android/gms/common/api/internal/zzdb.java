@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 import android.util.Log;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.Api;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -19,8 +20,8 @@ import com.google.android.gms.common.internal.zzax;
 import com.google.android.gms.internal.zzelx;
 import com.google.android.gms.internal.zzemf;
 import com.google.android.gms.signin.SignInOptions;
-import com.google.android.gms.signin.zza;
 import com.google.android.gms.signin.zzd;
+
 import java.util.Set;
 
 /* compiled from: SignInCoordinator */
@@ -29,11 +30,11 @@ public final class zzdb extends zzelx implements GoogleApiClient.ConnectionCallb
     private final Context zzb;
     private final Handler zzc;
     private final Api.zza<? extends zzd, SignInOptions> zzd;
+    /* access modifiers changed from: private */
+    public zzde zzh;
     private Set<Scope> zze;
     private ClientSettings zzf;
     private zzd zzg;
-    /* access modifiers changed from: private */
-    public zzde zzh;
 
     @WorkerThread
     public zzdb(Context context, Handler handler, @NonNull ClientSettings clientSettings) {

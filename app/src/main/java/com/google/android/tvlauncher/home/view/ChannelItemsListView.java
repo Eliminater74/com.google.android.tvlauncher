@@ -3,6 +3,7 @@ package com.google.android.tvlauncher.home.view;
 import android.content.Context;
 import android.support.p004v7.widget.RecyclerView;
 import android.util.AttributeSet;
+
 import androidx.leanback.widget.HorizontalGridView;
 
 public class ChannelItemsListView extends HorizontalGridView {

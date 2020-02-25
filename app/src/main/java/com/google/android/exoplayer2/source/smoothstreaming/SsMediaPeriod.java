@@ -1,6 +1,7 @@
 package com.google.android.exoplayer2.source.smoothstreaming;
 
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.SeekParameters;
@@ -13,37 +14,33 @@ import com.google.android.exoplayer2.source.SequenceableLoader;
 import com.google.android.exoplayer2.source.TrackGroup;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.source.chunk.ChunkSampleStream;
-import com.google.android.exoplayer2.source.smoothstreaming.SsChunkSource;
 import com.google.android.exoplayer2.source.smoothstreaming.manifest.SsManifest;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.upstream.Allocator;
 import com.google.android.exoplayer2.upstream.LoadErrorHandlingPolicy;
 import com.google.android.exoplayer2.upstream.LoaderErrorThrower;
 import com.google.android.exoplayer2.upstream.TransferListener;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 final class SsMediaPeriod implements MediaPeriod, SequenceableLoader.Callback<ChunkSampleStream<SsChunkSource>> {
     private final Allocator allocator;
-    @Nullable
-    private MediaPeriod.Callback callback;
     private final SsChunkSource.Factory chunkSourceFactory;
-    private SequenceableLoader compositeSequenceableLoader;
     private final CompositeSequenceableLoaderFactory compositeSequenceableLoaderFactory;
     private final MediaSourceEventListener.EventDispatcher eventDispatcher;
     private final LoadErrorHandlingPolicy loadErrorHandlingPolicy;
-    private SsManifest manifest;
     private final LoaderErrorThrower manifestLoaderErrorThrower;
-    private boolean notifiedReadingStarted;
-    private ChunkSampleStream<SsChunkSource>[] sampleStreams = newSampleStreamArray(0);
     private final TrackGroupArray trackGroups;
     @Nullable
     private final TransferListener transferListener;
-
-    public /* bridge */ /* synthetic */ void onContinueLoadingRequested(SequenceableLoader sequenceableLoader) {
-        onContinueLoadingRequested((ChunkSampleStream<SsChunkSource>) ((ChunkSampleStream) sequenceableLoader));
-    }
+    @Nullable
+    private MediaPeriod.Callback callback;
+    private SequenceableLoader compositeSequenceableLoader;
+    private SsManifest manifest;
+    private boolean notifiedReadingStarted;
+    private ChunkSampleStream<SsChunkSource>[] sampleStreams = newSampleStreamArray(0);
 
     public SsMediaPeriod(SsManifest manifest2, SsChunkSource.Factory chunkSourceFactory2, @Nullable TransferListener transferListener2, CompositeSequenceableLoaderFactory compositeSequenceableLoaderFactory2, LoadErrorHandlingPolicy loadErrorHandlingPolicy2, MediaSourceEventListener.EventDispatcher eventDispatcher2, LoaderErrorThrower manifestLoaderErrorThrower2, Allocator allocator2) {
         this.manifest = manifest2;
@@ -57,6 +54,22 @@ final class SsMediaPeriod implements MediaPeriod, SequenceableLoader.Callback<Ch
         this.trackGroups = buildTrackGroups(manifest2);
         this.compositeSequenceableLoader = compositeSequenceableLoaderFactory2.createCompositeSequenceableLoader(this.sampleStreams);
         eventDispatcher2.mediaPeriodCreated();
+    }
+
+    private static TrackGroupArray buildTrackGroups(SsManifest manifest2) {
+        TrackGroup[] trackGroups2 = new TrackGroup[manifest2.streamElements.length];
+        for (int i = 0; i < manifest2.streamElements.length; i++) {
+            trackGroups2[i] = new TrackGroup(manifest2.streamElements[i].formats);
+        }
+        return new TrackGroupArray(trackGroups2);
+    }
+
+    private static ChunkSampleStream<SsChunkSource>[] newSampleStreamArray(int length) {
+        return new ChunkSampleStream[length];
+    }
+
+    public /* bridge */ /* synthetic */ void onContinueLoadingRequested(SequenceableLoader sequenceableLoader) {
+        onContinueLoadingRequested((ChunkSampleStream<SsChunkSource>) ((ChunkSampleStream) sequenceableLoader));
     }
 
     public void updateManifest(SsManifest manifest2) {
@@ -179,17 +192,5 @@ final class SsMediaPeriod implements MediaPeriod, SequenceableLoader.Callback<Ch
     private ChunkSampleStream<SsChunkSource> buildSampleStream(TrackSelection selection, long positionUs) {
         int streamElementIndex = this.trackGroups.indexOf(selection.getTrackGroup());
         return new ChunkSampleStream(this.manifest.streamElements[streamElementIndex].type, (int[]) null, (Format[]) null, this.chunkSourceFactory.createChunkSource(this.manifestLoaderErrorThrower, this.manifest, streamElementIndex, selection, this.transferListener), this, this.allocator, positionUs, this.loadErrorHandlingPolicy, this.eventDispatcher);
-    }
-
-    private static TrackGroupArray buildTrackGroups(SsManifest manifest2) {
-        TrackGroup[] trackGroups2 = new TrackGroup[manifest2.streamElements.length];
-        for (int i = 0; i < manifest2.streamElements.length; i++) {
-            trackGroups2[i] = new TrackGroup(manifest2.streamElements[i].formats);
-        }
-        return new TrackGroupArray(trackGroups2);
-    }
-
-    private static ChunkSampleStream<SsChunkSource>[] newSampleStreamArray(int length) {
-        return new ChunkSampleStream[length];
     }
 }

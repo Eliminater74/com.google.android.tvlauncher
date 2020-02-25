@@ -7,6 +7,13 @@ import java.util.RandomAccess;
 /* compiled from: FloatArrayList */
 final class zzgog extends zzgms<Float> implements zzgos<Float>, RandomAccess {
     private static final zzgog zza;
+
+    static {
+        zzgog zzgog = new zzgog();
+        zza = zzgog;
+        zzgog.zzb();
+    }
+
     private float[] zzb;
     private int zzc;
 
@@ -166,11 +173,5 @@ final class zzgog extends zzgms<Float> implements zzgos<Float>, RandomAccess {
     public final /* synthetic */ Object get(int i) {
         zzb(i);
         return Float.valueOf(this.zzb[i]);
-    }
-
-    static {
-        zzgog zzgog = new zzgog();
-        zza = zzgog;
-        zzgog.zzb();
     }
 }

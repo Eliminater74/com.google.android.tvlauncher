@@ -1,9 +1,11 @@
 package com.google.common.util.concurrent;
 
 import com.google.common.annotations.GwtIncompatible;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.atomic.AtomicReferenceArray;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtIncompatible
 public final class Atomics {

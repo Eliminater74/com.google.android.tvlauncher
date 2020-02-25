@@ -2,12 +2,13 @@ package androidx.leanback.widget;
 
 import android.database.Cursor;
 import android.util.LruCache;
+
 import androidx.leanback.database.CursorMapper;
 
 public class CursorObjectAdapter extends ObjectAdapter {
     private static final int CACHE_SIZE = 100;
-    private Cursor mCursor;
     private final LruCache<Integer, Object> mItemCache = new LruCache<>(100);
+    private Cursor mCursor;
     private CursorMapper mMapper;
 
     public CursorObjectAdapter(PresenterSelector presenterSelector) {
@@ -54,20 +55,20 @@ public class CursorObjectAdapter extends ObjectAdapter {
         return this.mCursor;
     }
 
-    public final void setMapper(CursorMapper mapper) {
-        boolean changed = this.mMapper != mapper;
-        this.mMapper = mapper;
-        if (changed) {
-            onMapperChanged();
-        }
-    }
-
     /* access modifiers changed from: protected */
     public void onMapperChanged() {
     }
 
     public final CursorMapper getMapper() {
         return this.mMapper;
+    }
+
+    public final void setMapper(CursorMapper mapper) {
+        boolean changed = this.mMapper != mapper;
+        this.mMapper = mapper;
+        if (changed) {
+            onMapperChanged();
+        }
     }
 
     public int size() {

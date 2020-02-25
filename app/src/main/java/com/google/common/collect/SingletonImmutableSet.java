@@ -6,9 +6,9 @@ import com.google.errorprone.annotations.concurrent.LazyInit;
 
 @GwtCompatible(emulated = true, serializable = true)
 final class SingletonImmutableSet<E> extends ImmutableSet<E> {
+    final transient E element;
     @LazyInit
     private transient int cachedHashCode;
-    final transient E element;
 
     SingletonImmutableSet(E element2) {
         this.element = Preconditions.checkNotNull(element2);

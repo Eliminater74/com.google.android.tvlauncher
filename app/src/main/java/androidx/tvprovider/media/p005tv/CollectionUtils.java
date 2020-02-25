@@ -1,11 +1,15 @@
 package androidx.tvprovider.media.p005tv;
 
 import android.support.annotation.RestrictTo;
+
 import java.util.Arrays;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
 /* renamed from: androidx.tvprovider.media.tv.CollectionUtils */
 public class CollectionUtils {
+    private CollectionUtils() {
+    }
+
     public static <T> T[] concatAll(T[] first, T[]... rest) {
         int totalLength = first.length;
         for (T[] array : rest) {
@@ -19,8 +23,5 @@ public class CollectionUtils {
             offset2 += array2.length;
         }
         return result;
-    }
-
-    private CollectionUtils() {
     }
 }

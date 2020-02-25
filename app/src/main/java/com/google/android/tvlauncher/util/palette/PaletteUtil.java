@@ -3,6 +3,7 @@ package com.google.android.tvlauncher.util.palette;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+
 import com.bumptech.glide.Glide;
 import com.google.android.tvlauncher.C1188R;
 import com.google.android.tvlauncher.appsview.palette.InstallingItemPaletteBitmapContainer;

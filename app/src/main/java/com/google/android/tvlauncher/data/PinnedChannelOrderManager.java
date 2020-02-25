@@ -2,8 +2,10 @@ package com.google.android.tvlauncher.data;
 
 import android.support.annotation.NonNull;
 import android.util.LongSparseArray;
+
 import com.google.android.tvlauncher.model.HomeChannel;
 import com.google.android.tvlauncher.util.ChannelConfigurationInfo;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;

@@ -1,21 +1,18 @@
 package com.bumptech.glide.load.engine;
 
 import android.support.annotation.NonNull;
+
 import com.bumptech.glide.load.Key;
 import com.bumptech.glide.util.Preconditions;
 
 class EngineResource<Z> implements Resource<Z> {
-    private int acquired;
     private final boolean isMemoryCacheable;
     private final boolean isRecyclable;
-    private boolean isRecycled;
     private final Key key;
     private final ResourceListener listener;
     private final Resource<Z> resource;
-
-    interface ResourceListener {
-        void onResourceReleased(Key key, EngineResource<?> engineResource);
-    }
+    private int acquired;
+    private boolean isRecycled;
 
     EngineResource(Resource<Z> toWrap, boolean isMemoryCacheable2, boolean isRecyclable2, Key key2, ResourceListener listener2) {
         this.resource = (Resource) Preconditions.checkNotNull(toWrap);
@@ -111,5 +108,9 @@ class EngineResource<Z> implements Resource<Z> {
         sb.append(valueOf3);
         sb.append('}');
         return sb.toString();
+    }
+
+    interface ResourceListener {
+        void onResourceReleased(Key key, EngineResource<?> engineResource);
     }
 }

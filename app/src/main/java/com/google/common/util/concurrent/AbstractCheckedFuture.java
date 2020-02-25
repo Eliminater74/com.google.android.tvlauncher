@@ -2,9 +2,8 @@ package com.google.common.util.concurrent;
 
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.GwtIncompatible;
-import com.google.common.util.concurrent.ForwardingListenableFuture;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import java.lang.Exception;
+
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -14,12 +13,12 @@ import java.util.concurrent.TimeoutException;
 @Deprecated
 @Beta
 public abstract class AbstractCheckedFuture<V, X extends Exception> extends ForwardingListenableFuture.SimpleForwardingListenableFuture<V> implements CheckedFuture<V, X> {
-    /* access modifiers changed from: protected */
-    public abstract X mapException(Exception exc);
-
     protected AbstractCheckedFuture(ListenableFuture<V> delegate) {
         super(delegate);
     }
+
+    /* access modifiers changed from: protected */
+    public abstract X mapException(Exception exc);
 
     @CanIgnoreReturnValue
     public V checkedGet() throws Exception {

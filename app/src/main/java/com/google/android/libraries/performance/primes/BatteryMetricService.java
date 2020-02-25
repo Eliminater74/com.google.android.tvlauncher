@@ -5,14 +5,14 @@ import android.app.Application;
 import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
-import com.google.android.libraries.performance.primes.AppLifecycleListener;
-import com.google.android.libraries.performance.primes.MetricRecorder;
+
 import com.google.android.libraries.performance.primes.battery.BatteryCapture;
 import com.google.android.libraries.performance.primes.battery.StatsStorage;
 import com.google.android.libraries.performance.primes.battery.SystemHealthCapture;
 import com.google.android.libraries.performance.primes.transmitter.MetricTransmitter;
 import com.google.android.libraries.stitch.util.ThreadUtil;
 import com.google.common.base.Optional;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -20,6 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
+
 import logs.proto.wireless.performance.mobile.BatteryMetric;
 import logs.proto.wireless.performance.mobile.ExtensionMetric;
 import logs.proto.wireless.performance.mobile.SystemHealthProto;
@@ -27,21 +28,16 @@ import logs.proto.wireless.performance.mobile.SystemHealthProto;
 final class BatteryMetricService extends AbstractMetricService implements PrimesStartupListener, AppLifecycleListener.OnAppToForeground, AppLifecycleListener.OnAppToBackground {
     static final int MAX_CONCURRENT_MEASUREMENTS = 10;
     static final String TAG = "BatteryMetricService";
-    private final BatteryCapture batteryCapture;
-    private final List<Future<BatteryCapture.Snapshot>> batteryCaptures;
     @VisibleForTesting
     final AtomicBoolean inForeground = new AtomicBoolean();
-    private final boolean logDeferred;
-    private final Object monitorMutex = new Object();
-    private volatile boolean monitoring = false;
     @VisibleForTesting
     final ConcurrentHashMap<String, PrimesBatterySnapshot> startSnapshots = new ConcurrentHashMap<>();
+    private final BatteryCapture batteryCapture;
+    private final List<Future<BatteryCapture.Snapshot>> batteryCaptures;
+    private final boolean logDeferred;
+    private final Object monitorMutex = new Object();
     private final StatsStorage storage;
-
-    static BatteryMetricService createService(MetricTransmitter transmitter, Application application, Supplier<MetricStamper> metricStamperSupplier, Supplier<ScheduledExecutorService> executorServiceSupplier, SharedPreferences sharedPreferences, Optional<PrimesBatteryConfigurations> optionalConfigs) {
-        PrimesBatteryConfigurations configs = optionalConfigs.mo22987or(PrimesBatteryConfigurations.newBuilder().build());
-        return new BatteryMetricService(transmitter, application, metricStamperSupplier, executorServiceSupplier, sharedPreferences, new BatteryCapture(metricStamperSupplier, new SystemHealthCapture(application), BatteryMetricService$$Lambda$0.$instance, BatteryMetricService$$Lambda$1.$instance, configs.getMetricExtensionProvider()), configs.isDeferredLogging());
-    }
+    private volatile boolean monitoring = false;
 
     @VisibleForTesting
     BatteryMetricService(MetricTransmitter transmitter, Application application, Supplier<MetricStamper> metricStamperSupplier, Supplier<ScheduledExecutorService> executorServiceSupplier, SharedPreferences sharedPreferences, BatteryCapture batteryCapture2, boolean logDeferred2) {
@@ -50,6 +46,11 @@ final class BatteryMetricService extends AbstractMetricService implements Primes
         this.batteryCapture = batteryCapture2;
         this.logDeferred = logDeferred2;
         this.batteryCaptures = logDeferred2 ? new ArrayList() : null;
+    }
+
+    static BatteryMetricService createService(MetricTransmitter transmitter, Application application, Supplier<MetricStamper> metricStamperSupplier, Supplier<ScheduledExecutorService> executorServiceSupplier, SharedPreferences sharedPreferences, Optional<PrimesBatteryConfigurations> optionalConfigs) {
+        PrimesBatteryConfigurations configs = optionalConfigs.mo22987or(PrimesBatteryConfigurations.newBuilder().build());
+        return new BatteryMetricService(transmitter, application, metricStamperSupplier, executorServiceSupplier, sharedPreferences, new BatteryCapture(metricStamperSupplier, new SystemHealthCapture(application), BatteryMetricService$$Lambda$0.$instance, BatteryMetricService$$Lambda$1.$instance, configs.getMetricExtensionProvider()), configs.isDeferredLogging());
     }
 
     public void onPrimesInitialize() {

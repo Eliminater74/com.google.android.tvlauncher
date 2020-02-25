@@ -2,7 +2,9 @@ package com.google.android.exoplayer2.p008ui.spherical;
 
 import android.opengl.GLES20;
 import android.opengl.Matrix;
+
 import com.google.android.exoplayer2.util.GlUtil;
+
 import java.nio.Buffer;
 import java.nio.FloatBuffer;
 
@@ -16,10 +18,10 @@ public final class PointerRenderer {
     private static final String[] VERTEX_SHADER_CODE = {"uniform mat4 uMvpMatrix;", "attribute vec3 aPosition;", "varying vec2 vCoords;", "void main() {", "  gl_Position = uMvpMatrix * vec4(aPosition, 1);", "  vCoords = aPosition.xy / vec2(0.01, 0.01);", "}"};
     private final float[] controllerOrientationMatrix = new float[16];
     private final float[] modelViewProjectionMatrix = new float[16];
+    private final FloatBuffer vertexBuffer = GlUtil.createBuffer(VERTEX_DATA);
     private int mvpMatrixHandle;
     private int positionHandle;
     private int program = 0;
-    private final FloatBuffer vertexBuffer = GlUtil.createBuffer(VERTEX_DATA);
 
     public PointerRenderer() {
         Matrix.setIdentityM(this.controllerOrientationMatrix, 0);

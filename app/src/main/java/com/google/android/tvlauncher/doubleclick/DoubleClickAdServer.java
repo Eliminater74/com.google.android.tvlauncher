@@ -7,8 +7,13 @@ import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.support.annotation.WorkerThread;
 import android.util.Log;
+
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.tvlauncher.util.PackageUtils;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -17,21 +22,19 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class DoubleClickAdServer {
     private static final int CONNECTION_RETRY_WAIT_MILLIS = 2000;
     private static final boolean DEBUG = true;
     private static final int MAX_CONNECTION_RETRIES = 2;
     private static final String TAG = "DoubleClickAdServer";
-    private Clock mConnectionClock;
-    private DoubleClickAdRequestFactory mDoubleClickAdRequestFactory;
-    private UrlConnectionFactory mDoubleClickConnectionFactory;
     private final Object mPingedImpressionsLock;
     @VisibleForTesting
     @GuardedBy("mPingedImpressionsLock")
     Set<String> mRequestedImpressionUrls;
+    private Clock mConnectionClock;
+    private DoubleClickAdRequestFactory mDoubleClickAdRequestFactory;
+    private UrlConnectionFactory mDoubleClickConnectionFactory;
 
     public DoubleClickAdServer(Context context) {
         this(new DoubleClickAdRequestFactory(), new DoubleClickConnectionFactory(getUserAgent(context)), new DoubleClickConnectionClock());
@@ -44,6 +47,29 @@ public class DoubleClickAdServer {
         this.mDoubleClickAdRequestFactory = doubleClickAdRequestFactory;
         this.mDoubleClickConnectionFactory = doubleClickConnectionFactory;
         this.mConnectionClock = connectionClock;
+    }
+
+    private static String getUserAgent(Context context) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(context.getPackageName());
+        builder.append('/');
+        builder.append(PackageUtils.getApplicationVersionName(context, context.getPackageName()));
+        builder.append("(Linux; U; Android ");
+        builder.append(Build.VERSION.RELEASE);
+        builder.append("; ");
+        builder.append(Locale.getDefault().toString());
+        String model = Build.MODEL;
+        if (model.length() > 0) {
+            builder.append("; ");
+            builder.append(model);
+        }
+        String id = Build.ID;
+        if (id.length() > 0) {
+            builder.append(" Build/");
+            builder.append(id);
+        }
+        builder.append(')');
+        return builder.toString();
     }
 
     /* access modifiers changed from: package-private */
@@ -269,29 +295,6 @@ public class DoubleClickAdServer {
         String valueOf = String.valueOf(clickTrackingUrl);
         Log.d(TAG, valueOf.length() != 0 ? "Could not successfully request click URL after retires, url: ".concat(valueOf) : new String("Could not successfully request click URL after retires, url: "));
         return false;
-    }
-
-    private static String getUserAgent(Context context) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(context.getPackageName());
-        builder.append('/');
-        builder.append(PackageUtils.getApplicationVersionName(context, context.getPackageName()));
-        builder.append("(Linux; U; Android ");
-        builder.append(Build.VERSION.RELEASE);
-        builder.append("; ");
-        builder.append(Locale.getDefault().toString());
-        String model = Build.MODEL;
-        if (model.length() > 0) {
-            builder.append("; ");
-            builder.append(model);
-        }
-        String id = Build.ID;
-        if (id.length() > 0) {
-            builder.append(" Build/");
-            builder.append(id);
-        }
-        builder.append(')');
-        return builder.toString();
     }
 
     private JSONObject parseJsonFromStream(InputStream inputStream) throws IOException, JSONException {

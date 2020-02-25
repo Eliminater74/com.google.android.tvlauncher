@@ -62,13 +62,6 @@ public class ContextThemeWrapper extends ContextWrapper {
         return this.mResources;
     }
 
-    public void setTheme(int resid) {
-        if (this.mThemeResource != resid) {
-            this.mThemeResource = resid;
-            initializeTheme();
-        }
-    }
-
     public int getThemeResId() {
         return this.mThemeResource;
     }
@@ -83,6 +76,13 @@ public class ContextThemeWrapper extends ContextWrapper {
         }
         initializeTheme();
         return this.mTheme;
+    }
+
+    public void setTheme(int resid) {
+        if (this.mThemeResource != resid) {
+            this.mThemeResource = resid;
+            initializeTheme();
+        }
     }
 
     public Object getSystemService(String name) {

@@ -20,6 +20,23 @@ public final class zzgsd implements Cloneable {
         this.zze = 0;
     }
 
+    private static int zzd(int i) {
+        int i2 = i << 2;
+        int i3 = 4;
+        while (true) {
+            if (i3 >= 32) {
+                break;
+            }
+            int i4 = (1 << i3) - 12;
+            if (i2 <= i4) {
+                i2 = i4;
+                break;
+            }
+            i3++;
+        }
+        return i2 / 4;
+    }
+
     /* access modifiers changed from: package-private */
     public final zzgse zza(int i) {
         int zze2 = zze(i);
@@ -189,23 +206,6 @@ public final class zzgsd implements Cloneable {
             i = (((i * 31) + this.zzc[i2]) * 31) + this.zzd[i2].hashCode();
         }
         return i;
-    }
-
-    private static int zzd(int i) {
-        int i2 = i << 2;
-        int i3 = 4;
-        while (true) {
-            if (i3 >= 32) {
-                break;
-            }
-            int i4 = (1 << i3) - 12;
-            if (i2 <= i4) {
-                i2 = i4;
-                break;
-            }
-            i3++;
-        }
-        return i2 / 4;
     }
 
     private final int zze(int i) {

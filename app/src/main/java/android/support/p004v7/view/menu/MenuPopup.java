@@ -17,55 +17,7 @@ import android.widget.PopupWindow;
 abstract class MenuPopup implements ShowableListMenu, MenuPresenter, AdapterView.OnItemClickListener {
     private Rect mEpicenterBounds;
 
-    public abstract void addMenu(MenuBuilder menuBuilder);
-
-    public abstract void setAnchorView(View view);
-
-    public abstract void setForceShowIcon(boolean z);
-
-    public abstract void setGravity(int i);
-
-    public abstract void setHorizontalOffset(int i);
-
-    public abstract void setOnDismissListener(PopupWindow.OnDismissListener onDismissListener);
-
-    public abstract void setShowTitle(boolean z);
-
-    public abstract void setVerticalOffset(int i);
-
     MenuPopup() {
-    }
-
-    public void setEpicenterBounds(Rect bounds) {
-        this.mEpicenterBounds = bounds;
-    }
-
-    public Rect getEpicenterBounds() {
-        return this.mEpicenterBounds;
-    }
-
-    public void initForMenu(@NonNull Context context, @Nullable MenuBuilder menu) {
-    }
-
-    public MenuView getMenuView(ViewGroup root) {
-        throw new UnsupportedOperationException("MenuPopups manage their own views");
-    }
-
-    public boolean expandItemActionView(MenuBuilder menu, MenuItemImpl item) {
-        return false;
-    }
-
-    public boolean collapseItemActionView(MenuBuilder menu, MenuItemImpl item) {
-        return false;
-    }
-
-    public int getId() {
-        return 0;
-    }
-
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        ListAdapter outerAdapter = (ListAdapter) parent.getAdapter();
-        toMenuAdapter(outerAdapter).mAdapterMenu.performItemAction((MenuItem) outerAdapter.getItem(position), this, closeMenuOnSubMenuOpened() ? 0 : 4);
     }
 
     protected static int measureIndividualMenuWidth(ListAdapter adapter, ViewGroup parent, Context context, int maxAllowedWidth) {
@@ -113,6 +65,54 @@ abstract class MenuPopup implements ShowableListMenu, MenuPresenter, AdapterView
             }
         }
         return false;
+    }
+
+    public abstract void addMenu(MenuBuilder menuBuilder);
+
+    public abstract void setAnchorView(View view);
+
+    public abstract void setForceShowIcon(boolean z);
+
+    public abstract void setGravity(int i);
+
+    public abstract void setHorizontalOffset(int i);
+
+    public abstract void setOnDismissListener(PopupWindow.OnDismissListener onDismissListener);
+
+    public abstract void setShowTitle(boolean z);
+
+    public abstract void setVerticalOffset(int i);
+
+    public Rect getEpicenterBounds() {
+        return this.mEpicenterBounds;
+    }
+
+    public void setEpicenterBounds(Rect bounds) {
+        this.mEpicenterBounds = bounds;
+    }
+
+    public void initForMenu(@NonNull Context context, @Nullable MenuBuilder menu) {
+    }
+
+    public MenuView getMenuView(ViewGroup root) {
+        throw new UnsupportedOperationException("MenuPopups manage their own views");
+    }
+
+    public boolean expandItemActionView(MenuBuilder menu, MenuItemImpl item) {
+        return false;
+    }
+
+    public boolean collapseItemActionView(MenuBuilder menu, MenuItemImpl item) {
+        return false;
+    }
+
+    public int getId() {
+        return 0;
+    }
+
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        ListAdapter outerAdapter = (ListAdapter) parent.getAdapter();
+        toMenuAdapter(outerAdapter).mAdapterMenu.performItemAction((MenuItem) outerAdapter.getItem(position), this, closeMenuOnSubMenuOpened() ? 0 : 4);
     }
 
     /* access modifiers changed from: protected */

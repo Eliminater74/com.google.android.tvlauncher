@@ -21,7 +21,7 @@ public final class CommonEnums {
         RESULT_ERROR_DELETE_FILE_FAILED(7),
         RESULT_ERROR_OFFLINE_FILE_NOT_FOUND(8),
         RESULT_ERROR_UNSUPPORTED_DECODER_PROCESS_MODE(9);
-        
+
         public static final int RESULT_DEFAULT_VALUE = 0;
         public static final int RESULT_ERROR_CORRUPTED_VALUE = 2;
         public static final int RESULT_ERROR_DELETE_FILE_FAILED_VALUE = 7;
@@ -39,8 +39,8 @@ public final class CommonEnums {
         };
         private final int value;
 
-        public final int getNumber() {
-            return this.value;
+        private Result(int value2) {
+            this.value = value2;
         }
 
         public static Result forNumber(int value2) {
@@ -78,6 +78,10 @@ public final class CommonEnums {
             return ResultVerifier.INSTANCE;
         }
 
+        public final int getNumber() {
+            return this.value;
+        }
+
         private static final class ResultVerifier implements Internal.EnumVerifier {
             static final Internal.EnumVerifier INSTANCE = new ResultVerifier();
 
@@ -88,10 +92,6 @@ public final class CommonEnums {
                 return Result.forNumber(number) != null;
             }
         }
-
-        private Result(int value2) {
-            this.value = value2;
-        }
     }
 
     public enum Source implements Internal.EnumLite {
@@ -101,7 +101,7 @@ public final class CommonEnums {
         SOURCE_PBMT_FALLBACK(3),
         SOURCE_BEE(4),
         SOURCE_MULTIPLE_SENTENCES(5);
-        
+
         public static final int SOURCE_BEE_VALUE = 4;
         public static final int SOURCE_DEFAULT_VALUE = 0;
         public static final int SOURCE_MULTIPLE_SENTENCES_VALUE = 5;
@@ -115,8 +115,8 @@ public final class CommonEnums {
         };
         private final int value;
 
-        public final int getNumber() {
-            return this.value;
+        private Source(int value2) {
+            this.value = value2;
         }
 
         public static Source forNumber(int value2) {
@@ -149,6 +149,10 @@ public final class CommonEnums {
             return SourceVerifier.INSTANCE;
         }
 
+        public final int getNumber() {
+            return this.value;
+        }
+
         private static final class SourceVerifier implements Internal.EnumVerifier {
             static final Internal.EnumVerifier INSTANCE = new SourceVerifier();
 
@@ -158,10 +162,6 @@ public final class CommonEnums {
             public boolean isInRange(int number) {
                 return Source.forNumber(number) != null;
             }
-        }
-
-        private Source(int value2) {
-            this.value = value2;
         }
     }
 }

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+
 import com.google.android.gms.common.internal.Hide;
 import com.google.android.gms.common.internal.zzs;
 import com.google.android.gms.common.util.zzi;
@@ -17,11 +18,43 @@ public class GoogleApiAvailabilityLight {
     public static final int GOOGLE_PLAY_SERVICES_VERSION_CODE = GooglePlayServicesUtilLight.GOOGLE_PLAY_SERVICES_VERSION_CODE;
     private static final GoogleApiAvailabilityLight zza = new GoogleApiAvailabilityLight();
 
+    GoogleApiAvailabilityLight() {
+    }
+
     public static GoogleApiAvailabilityLight getInstance() {
         return zza;
     }
 
-    GoogleApiAvailabilityLight() {
+    @Hide
+    public static void zzb(Context context) throws GooglePlayServicesRepairableException, GooglePlayServicesNotAvailableException {
+        GooglePlayServicesUtilLight.zza(context);
+    }
+
+    @Hide
+    public static void zzc(Context context) {
+        GooglePlayServicesUtilLight.zzb(context);
+    }
+
+    private static String zza(@Nullable Context context, @Nullable String str) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("gcore_");
+        sb.append(GOOGLE_PLAY_SERVICES_VERSION_CODE);
+        sb.append("-");
+        if (!TextUtils.isEmpty(str)) {
+            sb.append(str);
+        }
+        sb.append("-");
+        if (context != null) {
+            sb.append(context.getPackageName());
+        }
+        sb.append("-");
+        if (context != null) {
+            try {
+                sb.append(zzbmk.zza(context).zzb(context.getPackageName(), 0).versionCode);
+            } catch (PackageManager.NameNotFoundException e) {
+            }
+        }
+        return sb.toString();
     }
 
     public int isGooglePlayServicesAvailable(Context context) {
@@ -34,11 +67,6 @@ public class GoogleApiAvailabilityLight {
             return 18;
         }
         return isGooglePlayServicesAvailable;
-    }
-
-    @Hide
-    public static void zzb(Context context) throws GooglePlayServicesRepairableException, GooglePlayServicesNotAvailableException {
-        GooglePlayServicesUtilLight.zza(context);
     }
 
     public boolean isUserResolvableError(int i) {
@@ -83,11 +111,6 @@ public class GoogleApiAvailabilityLight {
     }
 
     @Hide
-    public static void zzc(Context context) {
-        GooglePlayServicesUtilLight.zzb(context);
-    }
-
-    @Hide
     public int getClientVersion(Context context) {
         return GooglePlayServicesUtilLight.getClientVersion(context);
     }
@@ -109,27 +132,5 @@ public class GoogleApiAvailabilityLight {
 
     public String getErrorString(int i) {
         return GooglePlayServicesUtilLight.getErrorString(i);
-    }
-
-    private static String zza(@Nullable Context context, @Nullable String str) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("gcore_");
-        sb.append(GOOGLE_PLAY_SERVICES_VERSION_CODE);
-        sb.append("-");
-        if (!TextUtils.isEmpty(str)) {
-            sb.append(str);
-        }
-        sb.append("-");
-        if (context != null) {
-            sb.append(context.getPackageName());
-        }
-        sb.append("-");
-        if (context != null) {
-            try {
-                sb.append(zzbmk.zza(context).zzb(context.getPackageName(), 0).versionCode);
-            } catch (PackageManager.NameNotFoundException e) {
-            }
-        }
-        return sb.toString();
     }
 }

@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.google.android.tvlauncher.C1188R;
 
 public class WatchNextInfoContentContainerView extends ViewGroup {

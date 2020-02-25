@@ -1,6 +1,7 @@
 package android.support.p001v4.graphics.drawable;
 
 import android.support.annotation.RestrictTo;
+
 import androidx.versionedparcelable.VersionedParcel;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY})

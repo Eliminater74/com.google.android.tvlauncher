@@ -1,8 +1,9 @@
 package com.google.android.exoplayer2.upstream;
 
 import android.support.annotation.Nullable;
-import com.google.android.exoplayer2.upstream.DataSource;
+
 import com.google.android.exoplayer2.util.Predicate;
+
 import java.io.IOException;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -14,6 +15,20 @@ import java.util.Map;
 
 public interface HttpDataSource extends DataSource {
     public static final Predicate<String> REJECT_PAYWALL_TYPES = HttpDataSource$$Lambda$0.$instance;
+
+    void clearAllRequestProperties();
+
+    void clearRequestProperty(String str);
+
+    void close() throws HttpDataSourceException;
+
+    Map<String, List<String>> getResponseHeaders();
+
+    long open(DataSpec dataSpec) throws HttpDataSourceException;
+
+    int read(byte[] bArr, int i, int i2) throws HttpDataSourceException;
+
+    void setRequestProperty(String str, String str2);
 
     public interface Factory extends DataSource.Factory {
         @Deprecated
@@ -29,20 +44,6 @@ public interface HttpDataSource extends DataSource {
         @Deprecated
         void setDefaultRequestProperty(String str, String str2);
     }
-
-    void clearAllRequestProperties();
-
-    void clearRequestProperty(String str);
-
-    void close() throws HttpDataSourceException;
-
-    Map<String, List<String>> getResponseHeaders();
-
-    long open(DataSpec dataSpec) throws HttpDataSourceException;
-
-    int read(byte[] bArr, int i, int i2) throws HttpDataSourceException;
-
-    void setRequestProperty(String str, String str2);
 
     public static final class RequestProperties {
         private final Map<String, String> requestProperties = new HashMap();
@@ -119,11 +120,6 @@ public interface HttpDataSource extends DataSource {
         public final DataSpec dataSpec;
         public final int type;
 
-        @Documented
-        @Retention(RetentionPolicy.SOURCE)
-        public @interface Type {
-        }
-
         public HttpDataSourceException(DataSpec dataSpec2, int type2) {
             this.dataSpec = dataSpec2;
             this.type = type2;
@@ -145,6 +141,11 @@ public interface HttpDataSource extends DataSource {
             super(message, cause);
             this.dataSpec = dataSpec2;
             this.type = type2;
+        }
+
+        @Documented
+        @Retention(RetentionPolicy.SOURCE)
+        public @interface Type {
         }
     }
 

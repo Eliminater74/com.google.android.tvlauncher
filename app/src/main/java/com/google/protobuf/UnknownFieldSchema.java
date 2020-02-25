@@ -3,6 +3,9 @@ package com.google.protobuf;
 import java.io.IOException;
 
 abstract class UnknownFieldSchema<T, B> {
+    UnknownFieldSchema() {
+    }
+
     /* access modifiers changed from: package-private */
     public abstract void addFixed32(B b, int i, int i2);
 
@@ -56,9 +59,6 @@ abstract class UnknownFieldSchema<T, B> {
 
     /* access modifiers changed from: package-private */
     public abstract void writeTo(T t, Writer writer) throws IOException;
-
-    UnknownFieldSchema() {
-    }
 
     /* access modifiers changed from: package-private */
     public final boolean mergeOneFieldFrom(B unknownFields, Reader reader) throws IOException {

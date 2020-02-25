@@ -3,12 +3,13 @@ package com.google.android.exoplayer2.upstream.cache;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.util.Pair;
+
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
-import com.google.android.exoplayer2.upstream.cache.Cache;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.PriorityTaskManager;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.EOFException;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -17,8 +18,7 @@ public final class CacheUtil {
     public static final int DEFAULT_BUFFER_SIZE_BYTES = 131072;
     public static final CacheKeyFactory DEFAULT_CACHE_KEY_FACTORY = CacheUtil$$Lambda$0.$instance;
 
-    public interface ProgressListener {
-        void onProgress(long j, long j2, long j3);
+    private CacheUtil() {
     }
 
     static final /* synthetic */ String lambda$static$0$CacheUtil(DataSpec dataSpec) {
@@ -220,12 +220,13 @@ public final class CacheUtil {
         }
     }
 
-    private CacheUtil() {
+    public interface ProgressListener {
+        void onProgress(long j, long j2, long j3);
     }
 
     private static final class ProgressNotifier {
-        private long bytesCached;
         private final ProgressListener listener;
+        private long bytesCached;
         private long requestLength;
 
         public ProgressNotifier(ProgressListener listener2) {

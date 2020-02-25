@@ -4,11 +4,11 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.p004v7.recyclerview.extensions.AsyncDifferConfig;
 import android.support.p004v7.util.AdapterListUpdateCallback;
 import android.support.p004v7.util.DiffUtil;
 import android.support.p004v7.util.ListUpdateCallback;
 import android.support.p004v7.widget.RecyclerView;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -18,31 +18,14 @@ import java.util.concurrent.Executor;
 public class AsyncListDiffer<T> {
     private static final Executor sMainThreadExecutor = new MainThreadExecutor();
     final AsyncDifferConfig<T> mConfig;
-    @Nullable
-    private List<T> mList;
     private final List<ListListener<T>> mListeners;
+    private final ListUpdateCallback mUpdateCallback;
     Executor mMainThreadExecutor;
     int mMaxScheduledGeneration;
+    @Nullable
+    private List<T> mList;
     @NonNull
     private List<T> mReadOnlyList;
-    private final ListUpdateCallback mUpdateCallback;
-
-    /* renamed from: android.support.v7.recyclerview.extensions.AsyncListDiffer$ListListener */
-    public interface ListListener<T> {
-        void onCurrentListChanged(@NonNull List<T> list, @NonNull List<T> list2);
-    }
-
-    /* renamed from: android.support.v7.recyclerview.extensions.AsyncListDiffer$MainThreadExecutor */
-    private static class MainThreadExecutor implements Executor {
-        final Handler mHandler = new Handler(Looper.getMainLooper());
-
-        MainThreadExecutor() {
-        }
-
-        public void execute(@NonNull Runnable command) {
-            this.mHandler.post(command);
-        }
-    }
 
     public AsyncListDiffer(@NonNull RecyclerView.Adapter adapter, @NonNull DiffUtil.ItemCallback<T> diffCallback) {
         this(new AdapterListUpdateCallback(adapter), new AsyncDifferConfig.Builder(diffCallback).build());
@@ -171,5 +154,22 @@ public class AsyncListDiffer<T> {
 
     public void removeListListener(@NonNull ListListener<T> listener) {
         this.mListeners.remove(listener);
+    }
+
+    /* renamed from: android.support.v7.recyclerview.extensions.AsyncListDiffer$ListListener */
+    public interface ListListener<T> {
+        void onCurrentListChanged(@NonNull List<T> list, @NonNull List<T> list2);
+    }
+
+    /* renamed from: android.support.v7.recyclerview.extensions.AsyncListDiffer$MainThreadExecutor */
+    private static class MainThreadExecutor implements Executor {
+        final Handler mHandler = new Handler(Looper.getMainLooper());
+
+        MainThreadExecutor() {
+        }
+
+        public void execute(@NonNull Runnable command) {
+            this.mHandler.post(command);
+        }
     }
 }

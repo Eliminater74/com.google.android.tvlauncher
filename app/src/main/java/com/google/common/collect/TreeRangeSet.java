@@ -5,8 +5,11 @@ import com.google.common.annotations.GwtIncompatible;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
+
+import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.Serializable;
-import java.lang.Comparable;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -15,20 +18,38 @@ import java.util.NavigableMap;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeMap;
-import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtIncompatible
 @Beta
 public class TreeRangeSet<C extends Comparable<?>> extends AbstractRangeSet<C> implements Serializable {
+    @VisibleForTesting
+    final NavigableMap<Cut<C>, Range<C>> rangesByLowerBound;
     @MonotonicNonNullDecl
     private transient Set<Range<C>> asDescendingSetOfRanges;
     @MonotonicNonNullDecl
     private transient Set<Range<C>> asRanges;
     @MonotonicNonNullDecl
     private transient RangeSet<C> complement;
-    @VisibleForTesting
-    final NavigableMap<Cut<C>, Range<C>> rangesByLowerBound;
+
+    private TreeRangeSet(NavigableMap<Cut<C>, Range<C>> rangesByLowerCut) {
+        this.rangesByLowerBound = rangesByLowerCut;
+    }
+
+    public static <C extends Comparable<?>> TreeRangeSet<C> create() {
+        return new TreeRangeSet<>(new TreeMap());
+    }
+
+    public static <C extends Comparable<?>> TreeRangeSet<C> create(RangeSet rangeSet) {
+        TreeRangeSet<C> result = create();
+        result.addAll(rangeSet);
+        return result;
+    }
+
+    public static <C extends Comparable<?>> TreeRangeSet<C> create(Iterable iterable) {
+        TreeRangeSet<C> result = create();
+        result.addAll(iterable);
+        return result;
+    }
 
     public /* bridge */ /* synthetic */ void addAll(RangeSet rangeSet) {
         super.addAll(rangeSet);
@@ -70,26 +91,6 @@ public class TreeRangeSet<C extends Comparable<?>> extends AbstractRangeSet<C> i
         super.removeAll(iterable);
     }
 
-    public static <C extends Comparable<?>> TreeRangeSet<C> create() {
-        return new TreeRangeSet<>(new TreeMap());
-    }
-
-    public static <C extends Comparable<?>> TreeRangeSet<C> create(RangeSet rangeSet) {
-        TreeRangeSet<C> result = create();
-        result.addAll(rangeSet);
-        return result;
-    }
-
-    public static <C extends Comparable<?>> TreeRangeSet<C> create(Iterable iterable) {
-        TreeRangeSet<C> result = create();
-        result.addAll(iterable);
-        return result;
-    }
-
-    private TreeRangeSet(NavigableMap<Cut<C>, Range<C>> rangesByLowerCut) {
-        this.rangesByLowerBound = rangesByLowerCut;
-    }
-
     public Set<Range<C>> asRanges() {
         Set<Range<C>> result = this.asRanges;
         if (result != null) {
@@ -108,27 +109,6 @@ public class TreeRangeSet<C extends Comparable<?>> extends AbstractRangeSet<C> i
         AsRanges asRanges2 = new AsRanges(this, this.rangesByLowerBound.descendingMap().values());
         this.asDescendingSetOfRanges = asRanges2;
         return asRanges2;
-    }
-
-    final class AsRanges extends ForwardingCollection<Range<C>> implements Set<Range<C>> {
-        final Collection<Range<C>> delegate;
-
-        AsRanges(TreeRangeSet this$0, Collection<Range<C>> delegate2) {
-            this.delegate = delegate2;
-        }
-
-        /* access modifiers changed from: protected */
-        public Collection<Range<C>> delegate() {
-            return this.delegate;
-        }
-
-        public int hashCode() {
-            return Sets.hashCodeImpl(this);
-        }
-
-        public boolean equals(@NullableDecl Object o) {
-            return Sets.equalsImpl(this, o);
-        }
     }
 
     @NullableDecl
@@ -249,11 +229,15 @@ public class TreeRangeSet<C extends Comparable<?>> extends AbstractRangeSet<C> i
         return complement2;
     }
 
+    public RangeSet<C> subRangeSet(Range<C> view) {
+        return view.equals(Range.all()) ? this : new SubRangeSet(view);
+    }
+
     @VisibleForTesting
     static final class RangesByUpperBound<C extends Comparable<?>> extends AbstractNavigableMap<Cut<C>, Range<C>> {
-        private final NavigableMap<Cut<C>, Range<C>> rangesByLowerBound;
         /* access modifiers changed from: private */
         public final Range<Cut<C>> upperBoundWindow;
+        private final NavigableMap<Cut<C>, Range<C>> rangesByLowerBound;
 
         RangesByUpperBound(NavigableMap<Cut<C>, Range<C>> rangesByLowerBound2) {
             this.rangesByLowerBound = rangesByLowerBound2;
@@ -536,35 +520,13 @@ public class TreeRangeSet<C extends Comparable<?>> extends AbstractRangeSet<C> i
         }
     }
 
-    private final class Complement extends TreeRangeSet<C> {
-        Complement() {
-            super(new ComplementRangesByLowerBound(TreeRangeSet.this.rangesByLowerBound));
-        }
-
-        public void add(Range<C> rangeToAdd) {
-            TreeRangeSet.this.remove(rangeToAdd);
-        }
-
-        public void remove(Range<C> rangeToRemove) {
-            TreeRangeSet.this.add(rangeToRemove);
-        }
-
-        public boolean contains(C value) {
-            return !TreeRangeSet.this.contains(value);
-        }
-
-        public RangeSet<C> complement() {
-            return TreeRangeSet.this;
-        }
-    }
-
     private static final class SubRangeSetRangesByLowerBound<C extends Comparable<?>> extends AbstractNavigableMap<Cut<C>, Range<C>> {
         /* access modifiers changed from: private */
         public final Range<Cut<C>> lowerBoundWindow;
-        private final NavigableMap<Cut<C>, Range<C>> rangesByLowerBound;
-        private final NavigableMap<Cut<C>, Range<C>> rangesByUpperBound;
         /* access modifiers changed from: private */
         public final Range<C> restriction;
+        private final NavigableMap<Cut<C>, Range<C>> rangesByLowerBound;
+        private final NavigableMap<Cut<C>, Range<C>> rangesByUpperBound;
 
         private SubRangeSetRangesByLowerBound(Range<Cut<C>> lowerBoundWindow2, Range<C> restriction2, NavigableMap<Cut<C>, Range<C>> rangesByLowerBound2) {
             this.lowerBoundWindow = (Range) Preconditions.checkNotNull(lowerBoundWindow2);
@@ -696,8 +658,47 @@ public class TreeRangeSet<C extends Comparable<?>> extends AbstractRangeSet<C> i
         }
     }
 
-    public RangeSet<C> subRangeSet(Range<C> view) {
-        return view.equals(Range.all()) ? this : new SubRangeSet(view);
+    final class AsRanges extends ForwardingCollection<Range<C>> implements Set<Range<C>> {
+        final Collection<Range<C>> delegate;
+
+        AsRanges(TreeRangeSet this$0, Collection<Range<C>> delegate2) {
+            this.delegate = delegate2;
+        }
+
+        /* access modifiers changed from: protected */
+        public Collection<Range<C>> delegate() {
+            return this.delegate;
+        }
+
+        public int hashCode() {
+            return Sets.hashCodeImpl(this);
+        }
+
+        public boolean equals(@NullableDecl Object o) {
+            return Sets.equalsImpl(this, o);
+        }
+    }
+
+    private final class Complement extends TreeRangeSet<C> {
+        Complement() {
+            super(new ComplementRangesByLowerBound(TreeRangeSet.this.rangesByLowerBound));
+        }
+
+        public void add(Range<C> rangeToAdd) {
+            TreeRangeSet.this.remove(rangeToAdd);
+        }
+
+        public void remove(Range<C> rangeToRemove) {
+            TreeRangeSet.this.add(rangeToRemove);
+        }
+
+        public boolean contains(C value) {
+            return !TreeRangeSet.this.contains(value);
+        }
+
+        public RangeSet<C> complement() {
+            return TreeRangeSet.this;
+        }
     }
 
     private final class SubRangeSet extends TreeRangeSet<C> {

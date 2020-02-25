@@ -2,26 +2,20 @@ package com.google.common.collect;
 
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.annotations.VisibleForTesting;
-import java.util.Arrays;
+
 import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
+
+import java.util.Arrays;
 
 @GwtIncompatible
 class CompactLinkedHashMap<K, V> extends CompactHashMap<K, V> {
     private static final int ENDPOINT = -2;
     private final boolean accessOrder;
-    private transient int firstEntry;
-    private transient int lastEntry;
     @MonotonicNonNullDecl
     @VisibleForTesting
     transient long[] links;
-
-    public static <K, V> CompactLinkedHashMap<K, V> create() {
-        return new CompactLinkedHashMap<>();
-    }
-
-    public static <K, V> CompactLinkedHashMap<K, V> createWithExpectedSize(int expectedSize) {
-        return new CompactLinkedHashMap<>(expectedSize);
-    }
+    private transient int firstEntry;
+    private transient int lastEntry;
 
     CompactLinkedHashMap() {
         this(3);
@@ -34,6 +28,14 @@ class CompactLinkedHashMap<K, V> extends CompactHashMap<K, V> {
     CompactLinkedHashMap(int expectedSize, boolean accessOrder2) {
         super(expectedSize);
         this.accessOrder = accessOrder2;
+    }
+
+    public static <K, V> CompactLinkedHashMap<K, V> create() {
+        return new CompactLinkedHashMap<>();
+    }
+
+    public static <K, V> CompactLinkedHashMap<K, V> createWithExpectedSize(int expectedSize) {
+        return new CompactLinkedHashMap<>(expectedSize);
     }
 
     /* access modifiers changed from: package-private */

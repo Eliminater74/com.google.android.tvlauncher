@@ -11,17 +11,7 @@ class RoundedRectHelperApi21 {
     private static final int MAX_CACHED_PROVIDER = 32;
     private static SparseArray<ViewOutlineProvider> sRoundedRectProvider;
 
-    static final class RoundedRectOutlineProvider extends ViewOutlineProvider {
-        private int mRadius;
-
-        RoundedRectOutlineProvider(int radius) {
-            this.mRadius = radius;
-        }
-
-        public void getOutline(View view, Outline outline) {
-            outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), (float) this.mRadius);
-            outline.setAlpha(1.0f);
-        }
+    private RoundedRectHelperApi21() {
     }
 
     public static void setClipToRoundedOutline(View view, boolean clip, int roundedCornerRadius) {
@@ -43,6 +33,16 @@ class RoundedRectHelperApi21 {
         view.setClipToOutline(clip);
     }
 
-    private RoundedRectHelperApi21() {
+    static final class RoundedRectOutlineProvider extends ViewOutlineProvider {
+        private int mRadius;
+
+        RoundedRectOutlineProvider(int radius) {
+            this.mRadius = radius;
+        }
+
+        public void getOutline(View view, Outline outline) {
+            outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), (float) this.mRadius);
+            outline.setAlpha(1.0f);
+        }
     }
 }

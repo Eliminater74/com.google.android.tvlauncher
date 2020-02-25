@@ -1,7 +1,6 @@
 package com.google.android.exoplayer2.trackselection;
 
 import com.google.android.exoplayer2.Format;
-import com.google.android.exoplayer2.trackselection.BufferSizeAdaptationBuilder;
 
 final /* synthetic */ class BufferSizeAdaptationBuilder$DynamicFormatFilter$$Lambda$0 implements BufferSizeAdaptationBuilder.DynamicFormatFilter {
     static final BufferSizeAdaptationBuilder.DynamicFormatFilter $instance = new BufferSizeAdaptationBuilder$DynamicFormatFilter$$Lambda$0();

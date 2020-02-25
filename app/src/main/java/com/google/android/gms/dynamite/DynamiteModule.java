@@ -5,11 +5,13 @@ import android.database.Cursor;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
+
 import com.google.android.gms.common.internal.Hide;
 import com.google.android.gms.common.internal.zzau;
 import com.google.android.gms.common.util.DynamiteApi;
 import com.google.android.gms.dynamic.IObjectWrapper;
 import com.google.android.gms.dynamic.zzn;
+
 import java.lang.reflect.Field;
 
 @Hide
@@ -19,33 +21,17 @@ public final class DynamiteModule {
     public static final zzd zzc = new zze();
     public static final zzd zzd = new zzf();
     public static final zzd zze = new zzg();
+    private static final ThreadLocal<zza> zzj = new ThreadLocal<>();
+    private static final zzi zzk = new zza();
+    private static final zzd zzl = new zzc();
     private static Boolean zzf;
     private static zzk zzg;
     private static zzm zzh;
     private static String zzi;
-    private static final ThreadLocal<zza> zzj = new ThreadLocal<>();
-    private static final zzi zzk = new zza();
-    private static final zzd zzl = new zzc();
     private final Context zzm;
 
-    @DynamiteApi
-    public static class DynamiteLoaderClassLoader {
-        public static ClassLoader sClassLoader;
-    }
-
-    static class zza {
-        public Cursor zza;
-
-        private zza() {
-        }
-
-        /* synthetic */ zza(zza zza2) {
-            this();
-        }
-    }
-
-    public interface zzd {
-        zzj zza(Context context, String str, zzi zzi) throws zzc;
+    private DynamiteModule(Context context) {
+        this.zzm = (Context) zzau.zza(context);
     }
 
     public static DynamiteModule zza(Context context, zzd zzd2, String str) throws zzc {
@@ -116,41 +102,6 @@ public final class DynamiteModule {
             }
             zzj.set(zza3);
             throw th;
-        }
-    }
-
-    public static class zzc extends Exception {
-        private zzc(String str) {
-            super(str);
-        }
-
-        private zzc(String str, Throwable th) {
-            super(str, th);
-        }
-
-        /* synthetic */ zzc(String str, zza zza) {
-            this(str);
-        }
-
-        /* synthetic */ zzc(String str, Throwable th, zza zza) {
-            this(str, th);
-        }
-    }
-
-    static class zzb implements zzi {
-        private final int zza;
-        private final int zzb = 0;
-
-        public zzb(int i, int i2) {
-            this.zza = i;
-        }
-
-        public final int zza(Context context, String str, boolean z) {
-            return 0;
-        }
-
-        public final int zza(Context context, String str) {
-            return this.zza;
         }
     }
 
@@ -583,10 +534,6 @@ public final class DynamiteModule {
         throw new UnsupportedOperationException("Method not decompiled: com.google.android.gms.dynamite.DynamiteModule.zza(android.content.Context):com.google.android.gms.dynamite.zzk");
     }
 
-    public final Context zza() {
-        return this.zzm;
-    }
-
     private static DynamiteModule zzc(Context context, String str, int i) throws zzc {
         zzm zzm2;
         StringBuilder sb = new StringBuilder(String.valueOf(str).length() + 51);
@@ -678,6 +625,10 @@ public final class DynamiteModule {
         throw new UnsupportedOperationException("Method not decompiled: com.google.android.gms.dynamite.DynamiteModule.zza(java.lang.ClassLoader):void");
     }
 
+    public final Context zza() {
+        return this.zzm;
+    }
+
     public final IBinder zza(String str) throws zzc {
         try {
             return (IBinder) this.zzm.getClassLoader().loadClass(str).newInstance();
@@ -687,7 +638,58 @@ public final class DynamiteModule {
         }
     }
 
-    private DynamiteModule(Context context) {
-        this.zzm = (Context) zzau.zza(context);
+    public interface zzd {
+        zzj zza(Context context, String str, zzi zzi) throws zzc;
+    }
+
+    @DynamiteApi
+    public static class DynamiteLoaderClassLoader {
+        public static ClassLoader sClassLoader;
+    }
+
+    static class zza {
+        public Cursor zza;
+
+        private zza() {
+        }
+
+        /* synthetic */ zza(zza zza2) {
+            this();
+        }
+    }
+
+    public static class zzc extends Exception {
+        private zzc(String str) {
+            super(str);
+        }
+
+        private zzc(String str, Throwable th) {
+            super(str, th);
+        }
+
+        /* synthetic */ zzc(String str, zza zza) {
+            this(str);
+        }
+
+        /* synthetic */ zzc(String str, Throwable th, zza zza) {
+            this(str, th);
+        }
+    }
+
+    static class zzb implements zzi {
+        private final int zza;
+        private final int zzb = 0;
+
+        public zzb(int i, int i2) {
+            this.zza = i;
+        }
+
+        public final int zza(Context context, String str, boolean z) {
+            return 0;
+        }
+
+        public final int zza(Context context, String str) {
+            return this.zza;
+        }
     }
 }

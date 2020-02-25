@@ -2,6 +2,9 @@ package com.google.common.base;
 
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.annotations.VisibleForTesting;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.Closeable;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -13,22 +16,16 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtIncompatible
 public class FinalizableReferenceQueue implements Closeable {
-    private static final String FINALIZER_CLASS_NAME = "com.google.common.base.internal.Finalizer";
     /* access modifiers changed from: private */
     public static final Logger logger = Logger.getLogger(FinalizableReferenceQueue.class.getName());
+    private static final String FINALIZER_CLASS_NAME = "com.google.common.base.internal.Finalizer";
     private static final Method startFinalizer = getStartFinalizer(loadFinalizer(new SystemLoader(), new DecoupledLoader(), new DirectLoader()));
-    final PhantomReference<Object> frqRef = new PhantomReference<>(this, this.queue);
     final ReferenceQueue<Object> queue = new ReferenceQueue<>();
+    final PhantomReference<Object> frqRef = new PhantomReference<>(this, this.queue);
     final boolean threadStarted;
-
-    interface FinalizerLoader {
-        @NullableDecl
-        Class<?> loadFinalizer();
-    }
 
     public FinalizableReferenceQueue() {
         boolean threadStarted2 = false;
@@ -41,6 +38,24 @@ public class FinalizableReferenceQueue implements Closeable {
             logger.logp(Level.INFO, "com.google.common.base.FinalizableReferenceQueue", "<init>", "Failed to start reference finalizer thread. Reference cleanup will only occur when new references are created.", th);
         }
         this.threadStarted = threadStarted2;
+    }
+
+    private static Class<?> loadFinalizer(FinalizerLoader... loaders) {
+        for (FinalizerLoader loader : loaders) {
+            Class<?> finalizer = loader.loadFinalizer();
+            if (finalizer != null) {
+                return finalizer;
+            }
+        }
+        throw new AssertionError();
+    }
+
+    static Method getStartFinalizer(Class<?> finalizer) {
+        try {
+            return finalizer.getMethod("startFinalizer", Class.class, ReferenceQueue.class, PhantomReference.class);
+        } catch (NoSuchMethodException e) {
+            throw new AssertionError(e);
+        }
     }
 
     public void close() {
@@ -68,14 +83,9 @@ public class FinalizableReferenceQueue implements Closeable {
         }
     }
 
-    private static Class<?> loadFinalizer(FinalizerLoader... loaders) {
-        for (FinalizerLoader loader : loaders) {
-            Class<?> finalizer = loader.loadFinalizer();
-            if (finalizer != null) {
-                return finalizer;
-            }
-        }
-        throw new AssertionError();
+    interface FinalizerLoader {
+        @NullableDecl
+        Class<?> loadFinalizer();
     }
 
     static class SystemLoader implements FinalizerLoader {
@@ -168,14 +178,6 @@ public class FinalizableReferenceQueue implements Closeable {
             } catch (ClassNotFoundException e) {
                 throw new AssertionError(e);
             }
-        }
-    }
-
-    static Method getStartFinalizer(Class<?> finalizer) {
-        try {
-            return finalizer.getMethod("startFinalizer", Class.class, ReferenceQueue.class, PhantomReference.class);
-        } catch (NoSuchMethodException e) {
-            throw new AssertionError(e);
         }
     }
 }

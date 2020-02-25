@@ -8,7 +8,9 @@ import android.content.IntentFilter;
 import android.net.Uri;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.util.Util;
+
 import java.util.Arrays;
 
 @TargetApi(21)
@@ -19,6 +21,16 @@ public final class AudioCapabilities {
     private static final String EXTERNAL_SURROUND_SOUND_KEY = "external_surround_sound_enabled";
     private final int maxChannelCount;
     private final int[] supportedEncodings;
+
+    public AudioCapabilities(@Nullable int[] supportedEncodings2, int maxChannelCount2) {
+        if (supportedEncodings2 != null) {
+            this.supportedEncodings = Arrays.copyOf(supportedEncodings2, supportedEncodings2.length);
+            Arrays.sort(this.supportedEncodings);
+        } else {
+            this.supportedEncodings = new int[0];
+        }
+        this.maxChannelCount = maxChannelCount2;
+    }
 
     public static AudioCapabilities getCapabilities(Context context) {
         return getCapabilities(context, context.registerReceiver(null, new IntentFilter("android.media.action.HDMI_AUDIO_PLUG")));
@@ -43,14 +55,8 @@ public final class AudioCapabilities {
         return null;
     }
 
-    public AudioCapabilities(@Nullable int[] supportedEncodings2, int maxChannelCount2) {
-        if (supportedEncodings2 != null) {
-            this.supportedEncodings = Arrays.copyOf(supportedEncodings2, supportedEncodings2.length);
-            Arrays.sort(this.supportedEncodings);
-        } else {
-            this.supportedEncodings = new int[0];
-        }
-        this.maxChannelCount = maxChannelCount2;
+    private static boolean deviceMaySetExternalSurroundSoundGlobalSetting() {
+        return Util.SDK_INT >= 17 && "Amazon".equals(Util.MANUFACTURER);
     }
 
     public boolean supportsEncoding(int encoding) {
@@ -89,9 +95,5 @@ public final class AudioCapabilities {
         sb.append(arrays);
         sb.append("]");
         return sb.toString();
-    }
-
-    private static boolean deviceMaySetExternalSurroundSoundGlobalSetting() {
-        return Util.SDK_INT >= 17 && "Amazon".equals(Util.MANUFACTURER);
     }
 }

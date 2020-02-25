@@ -9,12 +9,11 @@ import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Util;
 
 public final class AudioCapabilitiesReceiver {
-    @Nullable
-    AudioCapabilities audioCapabilities;
     /* access modifiers changed from: private */
     public final Context context;
     @Nullable
@@ -23,11 +22,9 @@ public final class AudioCapabilitiesReceiver {
     private final Listener listener;
     @Nullable
     private final BroadcastReceiver receiver;
+    @Nullable
+    AudioCapabilities audioCapabilities;
     private boolean registered;
-
-    public interface Listener {
-        void onAudioCapabilitiesChanged(AudioCapabilities audioCapabilities);
-    }
 
     public AudioCapabilitiesReceiver(Context context2, Listener listener2) {
         Context context3 = context2.getApplicationContext();
@@ -77,6 +74,10 @@ public final class AudioCapabilitiesReceiver {
             this.audioCapabilities = newAudioCapabilities;
             this.listener.onAudioCapabilitiesChanged(newAudioCapabilities);
         }
+    }
+
+    public interface Listener {
+        void onAudioCapabilitiesChanged(AudioCapabilities audioCapabilities);
     }
 
     private final class HdmiAudioPlugBroadcastReceiver extends BroadcastReceiver {

@@ -1,7 +1,6 @@
 package androidx.leanback.widget;
 
 import android.view.View;
-import androidx.leanback.widget.ItemBridgeAdapter;
 
 public class ItemBridgeAdapterShadowOverlayWrapper extends ItemBridgeAdapter.Wrapper {
     private final ShadowOverlayHelper mHelper;

@@ -2,12 +2,14 @@ package com.google.android.gms.common;
 
 import android.os.RemoteException;
 import android.util.Log;
+
 import com.google.android.gms.common.internal.Hide;
 import com.google.android.gms.common.internal.zzaa;
 import com.google.android.gms.common.internal.zzab;
 import com.google.android.gms.common.internal.zzau;
 import com.google.android.gms.dynamic.IObjectWrapper;
 import com.google.android.gms.dynamic.zzn;
+
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
@@ -19,6 +21,14 @@ abstract class zzf extends zzab {
     protected zzf(byte[] bArr) {
         zzau.zzb(bArr.length == 25);
         this.zza = Arrays.hashCode(bArr);
+    }
+
+    protected static byte[] zza(String str) {
+        try {
+            return str.getBytes("ISO-8859-1");
+        } catch (UnsupportedEncodingException e) {
+            throw new AssertionError(e);
+        }
     }
 
     /* access modifiers changed from: package-private */
@@ -51,13 +61,5 @@ abstract class zzf extends zzab {
 
     public final int zzc() {
         return hashCode();
-    }
-
-    protected static byte[] zza(String str) {
-        try {
-            return str.getBytes("ISO-8859-1");
-        } catch (UnsupportedEncodingException e) {
-            throw new AssertionError(e);
-        }
     }
 }

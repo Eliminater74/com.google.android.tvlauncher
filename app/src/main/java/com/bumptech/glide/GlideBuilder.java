@@ -4,7 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.p001v4.util.ArrayMap;
-import com.bumptech.glide.Glide;
+
 import com.bumptech.glide.load.engine.Engine;
 import com.bumptech.glide.load.engine.bitmap_recycle.ArrayPool;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
@@ -23,12 +23,14 @@ import com.bumptech.glide.manager.RequestManagerRetriever;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.util.Preconditions;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 public final class GlideBuilder {
+    private final Map<Class<?>, TransitionOptions<?, ?>> defaultTransitionOptions = new ArrayMap();
     private GlideExecutor animationExecutor;
     private ArrayPool arrayPool;
     private BitmapPool bitmapPool;
@@ -41,7 +43,6 @@ public final class GlideBuilder {
             return new RequestOptions();
         }
     };
-    private final Map<Class<?>, TransitionOptions<?, ?>> defaultTransitionOptions = new ArrayMap();
     private GlideExecutor diskCacheExecutor;
     private DiskCache.Factory diskCacheFactory;
     private Engine engine;

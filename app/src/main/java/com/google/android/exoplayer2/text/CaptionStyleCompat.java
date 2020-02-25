@@ -4,7 +4,9 @@ import android.annotation.TargetApi;
 import android.graphics.Typeface;
 import android.support.p001v4.view.ViewCompat;
 import android.view.accessibility.CaptioningManager;
+
 import com.google.android.exoplayer2.util.Util;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -24,19 +26,6 @@ public final class CaptionStyleCompat {
     public final Typeface typeface;
     public final int windowColor;
 
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface EdgeType {
-    }
-
-    @TargetApi(19)
-    public static CaptionStyleCompat createFromCaptionStyle(CaptioningManager.CaptionStyle captionStyle) {
-        if (Util.SDK_INT >= 21) {
-            return createFromCaptionStyleV21(captionStyle);
-        }
-        return createFromCaptionStyleV19(captionStyle);
-    }
-
     public CaptionStyleCompat(int foregroundColor2, int backgroundColor2, int windowColor2, int edgeType2, int edgeColor2, Typeface typeface2) {
         this.foregroundColor = foregroundColor2;
         this.backgroundColor = backgroundColor2;
@@ -47,6 +36,14 @@ public final class CaptionStyleCompat {
     }
 
     @TargetApi(19)
+    public static CaptionStyleCompat createFromCaptionStyle(CaptioningManager.CaptionStyle captionStyle) {
+        if (Util.SDK_INT >= 21) {
+            return createFromCaptionStyleV21(captionStyle);
+        }
+        return createFromCaptionStyleV19(captionStyle);
+    }
+
+    @TargetApi(19)
     private static CaptionStyleCompat createFromCaptionStyleV19(CaptioningManager.CaptionStyle captionStyle) {
         return new CaptionStyleCompat(captionStyle.foregroundColor, captionStyle.backgroundColor, 0, captionStyle.edgeType, captionStyle.edgeColor, captionStyle.getTypeface());
     }
@@ -54,5 +51,10 @@ public final class CaptionStyleCompat {
     @TargetApi(21)
     private static CaptionStyleCompat createFromCaptionStyleV21(CaptioningManager.CaptionStyle captionStyle) {
         return new CaptionStyleCompat(captionStyle.hasForegroundColor() ? captionStyle.foregroundColor : DEFAULT.foregroundColor, captionStyle.hasBackgroundColor() ? captionStyle.backgroundColor : DEFAULT.backgroundColor, captionStyle.hasWindowColor() ? captionStyle.windowColor : DEFAULT.windowColor, captionStyle.hasEdgeType() ? captionStyle.edgeType : DEFAULT.edgeType, captionStyle.hasEdgeColor() ? captionStyle.edgeColor : DEFAULT.edgeColor, captionStyle.getTypeface());
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface EdgeType {
     }
 }

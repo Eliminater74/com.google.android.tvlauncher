@@ -1,15 +1,17 @@
 package android.support.p001v4.text;
 
 import android.text.SpannableStringBuilder;
+
 import com.google.common.base.Ascii;
+
 import java.util.Locale;
 
 /* renamed from: android.support.v4.text.BidiFormatter */
 public final class BidiFormatter {
-    private static final int DEFAULT_FLAGS = 2;
+    static final TextDirectionHeuristicCompat DEFAULT_TEXT_DIRECTION_HEURISTIC = TextDirectionHeuristicsCompat.FIRSTSTRONG_LTR;
     static final BidiFormatter DEFAULT_LTR_INSTANCE = new BidiFormatter(false, 2, DEFAULT_TEXT_DIRECTION_HEURISTIC);
     static final BidiFormatter DEFAULT_RTL_INSTANCE = new BidiFormatter(true, 2, DEFAULT_TEXT_DIRECTION_HEURISTIC);
-    static final TextDirectionHeuristicCompat DEFAULT_TEXT_DIRECTION_HEURISTIC = TextDirectionHeuristicsCompat.FIRSTSTRONG_LTR;
+    private static final int DEFAULT_FLAGS = 2;
     private static final int DIR_LTR = -1;
     private static final int DIR_RTL = 1;
     private static final int DIR_UNKNOWN = 0;
@@ -26,54 +28,10 @@ public final class BidiFormatter {
     private final int mFlags;
     private final boolean mIsRtlContext;
 
-    /* renamed from: android.support.v4.text.BidiFormatter$Builder */
-    public static final class Builder {
-        private int mFlags;
-        private boolean mIsRtlContext;
-        private TextDirectionHeuristicCompat mTextDirectionHeuristicCompat;
-
-        public Builder() {
-            initialize(BidiFormatter.isRtlLocale(Locale.getDefault()));
-        }
-
-        public Builder(boolean rtlContext) {
-            initialize(rtlContext);
-        }
-
-        public Builder(Locale locale) {
-            initialize(BidiFormatter.isRtlLocale(locale));
-        }
-
-        private void initialize(boolean isRtlContext) {
-            this.mIsRtlContext = isRtlContext;
-            this.mTextDirectionHeuristicCompat = BidiFormatter.DEFAULT_TEXT_DIRECTION_HEURISTIC;
-            this.mFlags = 2;
-        }
-
-        public Builder stereoReset(boolean stereoReset) {
-            if (stereoReset) {
-                this.mFlags |= 2;
-            } else {
-                this.mFlags &= -3;
-            }
-            return this;
-        }
-
-        public Builder setTextDirectionHeuristic(TextDirectionHeuristicCompat heuristic) {
-            this.mTextDirectionHeuristicCompat = heuristic;
-            return this;
-        }
-
-        private static BidiFormatter getDefaultInstanceFromContext(boolean isRtlContext) {
-            return isRtlContext ? BidiFormatter.DEFAULT_RTL_INSTANCE : BidiFormatter.DEFAULT_LTR_INSTANCE;
-        }
-
-        public BidiFormatter build() {
-            if (this.mFlags == 2 && this.mTextDirectionHeuristicCompat == BidiFormatter.DEFAULT_TEXT_DIRECTION_HEURISTIC) {
-                return getDefaultInstanceFromContext(this.mIsRtlContext);
-            }
-            return new BidiFormatter(this.mIsRtlContext, this.mFlags, this.mTextDirectionHeuristicCompat);
-        }
+    BidiFormatter(boolean isRtlContext, int flags, TextDirectionHeuristicCompat heuristic) {
+        this.mIsRtlContext = isRtlContext;
+        this.mFlags = flags;
+        this.mDefaultTextDirectionHeuristicCompat = heuristic;
     }
 
     public static BidiFormatter getInstance() {
@@ -88,10 +46,16 @@ public final class BidiFormatter {
         return new Builder(locale).build();
     }
 
-    BidiFormatter(boolean isRtlContext, int flags, TextDirectionHeuristicCompat heuristic) {
-        this.mIsRtlContext = isRtlContext;
-        this.mFlags = flags;
-        this.mDefaultTextDirectionHeuristicCompat = heuristic;
+    static boolean isRtlLocale(Locale locale) {
+        return TextUtilsCompat.getLayoutDirectionFromLocale(locale) == 1;
+    }
+
+    private static int getExitDir(CharSequence str) {
+        return new DirectionalityEstimator(str, false).getExitDir();
+    }
+
+    private static int getEntryDir(CharSequence str) {
+        return new DirectionalityEstimator(str, false).getEntryDir();
     }
 
     public boolean isRtlContext() {
@@ -221,27 +185,60 @@ public final class BidiFormatter {
         return unicodeWrap(str, this.mDefaultTextDirectionHeuristicCompat, true);
     }
 
-    static boolean isRtlLocale(Locale locale) {
-        return TextUtilsCompat.getLayoutDirectionFromLocale(locale) == 1;
-    }
+    /* renamed from: android.support.v4.text.BidiFormatter$Builder */
+    public static final class Builder {
+        private int mFlags;
+        private boolean mIsRtlContext;
+        private TextDirectionHeuristicCompat mTextDirectionHeuristicCompat;
 
-    private static int getExitDir(CharSequence str) {
-        return new DirectionalityEstimator(str, false).getExitDir();
-    }
+        public Builder() {
+            initialize(BidiFormatter.isRtlLocale(Locale.getDefault()));
+        }
 
-    private static int getEntryDir(CharSequence str) {
-        return new DirectionalityEstimator(str, false).getEntryDir();
+        public Builder(boolean rtlContext) {
+            initialize(rtlContext);
+        }
+
+        public Builder(Locale locale) {
+            initialize(BidiFormatter.isRtlLocale(locale));
+        }
+
+        private static BidiFormatter getDefaultInstanceFromContext(boolean isRtlContext) {
+            return isRtlContext ? BidiFormatter.DEFAULT_RTL_INSTANCE : BidiFormatter.DEFAULT_LTR_INSTANCE;
+        }
+
+        private void initialize(boolean isRtlContext) {
+            this.mIsRtlContext = isRtlContext;
+            this.mTextDirectionHeuristicCompat = BidiFormatter.DEFAULT_TEXT_DIRECTION_HEURISTIC;
+            this.mFlags = 2;
+        }
+
+        public Builder stereoReset(boolean stereoReset) {
+            if (stereoReset) {
+                this.mFlags |= 2;
+            } else {
+                this.mFlags &= -3;
+            }
+            return this;
+        }
+
+        public Builder setTextDirectionHeuristic(TextDirectionHeuristicCompat heuristic) {
+            this.mTextDirectionHeuristicCompat = heuristic;
+            return this;
+        }
+
+        public BidiFormatter build() {
+            if (this.mFlags == 2 && this.mTextDirectionHeuristicCompat == BidiFormatter.DEFAULT_TEXT_DIRECTION_HEURISTIC) {
+                return getDefaultInstanceFromContext(this.mIsRtlContext);
+            }
+            return new BidiFormatter(this.mIsRtlContext, this.mFlags, this.mTextDirectionHeuristicCompat);
+        }
     }
 
     /* renamed from: android.support.v4.text.BidiFormatter$DirectionalityEstimator */
     private static class DirectionalityEstimator {
-        private static final byte[] DIR_TYPE_CACHE = new byte[DIR_TYPE_CACHE_SIZE];
         private static final int DIR_TYPE_CACHE_SIZE = 1792;
-        private int charIndex;
-        private final boolean isHtml;
-        private char lastChar;
-        private final int length;
-        private final CharSequence text;
+        private static final byte[] DIR_TYPE_CACHE = new byte[DIR_TYPE_CACHE_SIZE];
 
         static {
             for (int i = 0; i < DIR_TYPE_CACHE_SIZE; i++) {
@@ -249,10 +246,20 @@ public final class BidiFormatter {
             }
         }
 
+        private final boolean isHtml;
+        private final int length;
+        private final CharSequence text;
+        private int charIndex;
+        private char lastChar;
+
         DirectionalityEstimator(CharSequence text2, boolean isHtml2) {
             this.text = text2;
             this.isHtml = isHtml2;
             this.length = text2.length();
+        }
+
+        private static byte getCachedDirectionality(char c) {
+            return c < DIR_TYPE_CACHE_SIZE ? DIR_TYPE_CACHE[c] : Character.getDirectionality(c);
         }
 
         /* access modifiers changed from: package-private */
@@ -382,10 +389,6 @@ public final class BidiFormatter {
                 }
             }
             return 0;
-        }
-
-        private static byte getCachedDirectionality(char c) {
-            return c < DIR_TYPE_CACHE_SIZE ? DIR_TYPE_CACHE[c] : Character.getDirectionality(c);
         }
 
         /* access modifiers changed from: package-private */

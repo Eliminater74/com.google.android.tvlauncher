@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.ConditionVariable;
 import android.os.Handler;
+
 import com.google.android.tvlauncher.home.HomeFragment;
 import com.google.android.tvlauncher.home.contentrating.ContentRatingsManager;
 import com.google.android.tvlauncher.notifications.NotificationsUtils;
@@ -11,6 +12,7 @@ import com.google.android.tvlauncher.trace.AppTrace;
 import com.google.android.tvlauncher.util.BootCompletedActivityHelper;
 import com.google.android.tvlauncher.util.LaunchOnBootCompletedHelper;
 import com.google.logs.tvlauncher.config.TvLauncherConstants;
+
 import java.util.Set;
 
 public class MainActivity extends BlockForDataLauncherActivity {

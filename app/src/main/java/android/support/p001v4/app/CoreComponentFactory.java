@@ -15,10 +15,12 @@ import android.support.annotation.RestrictTo;
 /* renamed from: android.support.v4.app.CoreComponentFactory */
 public class CoreComponentFactory extends AppComponentFactory {
 
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    /* renamed from: android.support.v4.app.CoreComponentFactory$CompatWrapped */
-    public interface CompatWrapped {
-        Object getWrapper();
+    static <T> T checkCompatWrapper(T obj) {
+        T wrapper;
+        if (!(obj instanceof CompatWrapped) || (wrapper = ((CompatWrapped) obj).getWrapper()) == null) {
+            return obj;
+        }
+        return wrapper;
     }
 
     public Activity instantiateActivity(ClassLoader cl, String className, Intent intent) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
@@ -41,11 +43,9 @@ public class CoreComponentFactory extends AppComponentFactory {
         return (Service) checkCompatWrapper(super.instantiateService(cl, className, intent));
     }
 
-    static <T> T checkCompatWrapper(T obj) {
-        T wrapper;
-        if (!(obj instanceof CompatWrapped) || (wrapper = ((CompatWrapped) obj).getWrapper()) == null) {
-            return obj;
-        }
-        return wrapper;
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    /* renamed from: android.support.v4.app.CoreComponentFactory$CompatWrapped */
+    public interface CompatWrapped {
+        Object getWrapper();
     }
 }

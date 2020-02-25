@@ -7,10 +7,12 @@ import android.os.strictmode.CustomViolation;
 import android.os.strictmode.DiskReadViolation;
 import android.os.strictmode.DiskWriteViolation;
 import android.os.strictmode.Violation;
-import com.google.android.libraries.performance.primes.MetricRecorder;
+
 import com.google.android.libraries.performance.primes.transmitter.MetricTransmitter;
 import com.google.android.libraries.stitch.util.ThreadUtil;
+
 import java.util.concurrent.ScheduledExecutorService;
+
 import logs.proto.wireless.performance.mobile.SystemHealthProto;
 
 @TargetApi(28)

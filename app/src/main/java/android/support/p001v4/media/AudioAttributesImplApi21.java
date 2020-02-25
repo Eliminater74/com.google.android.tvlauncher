@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.annotation.RestrictTo;
-import android.support.p001v4.media.AudioAttributesImpl;
 
 @RequiresApi(21)
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
@@ -30,6 +29,14 @@ public class AudioAttributesImplApi21 implements AudioAttributesImpl {
         this.mLegacyStreamType = -1;
         this.mAudioAttributes = audioAttributes;
         this.mLegacyStreamType = explicitLegacyStream;
+    }
+
+    public static AudioAttributesImpl fromBundle(Bundle bundle) {
+        AudioAttributes frameworkAttrs;
+        if (bundle == null || (frameworkAttrs = (AudioAttributes) bundle.getParcelable("android.support.v4.media.audio_attrs.FRAMEWORKS")) == null) {
+            return null;
+        }
+        return new AudioAttributesImplApi21(frameworkAttrs, bundle.getInt("android.support.v4.media.audio_attrs.LEGACY_STREAM_TYPE", -1));
     }
 
     public Object getAudioAttributes() {
@@ -89,14 +96,6 @@ public class AudioAttributesImplApi21 implements AudioAttributesImpl {
 
     public String toString() {
         return "AudioAttributesCompat: audioattributes=" + this.mAudioAttributes;
-    }
-
-    public static AudioAttributesImpl fromBundle(Bundle bundle) {
-        AudioAttributes frameworkAttrs;
-        if (bundle == null || (frameworkAttrs = (AudioAttributes) bundle.getParcelable("android.support.v4.media.audio_attrs.FRAMEWORKS")) == null) {
-            return null;
-        }
-        return new AudioAttributesImplApi21(frameworkAttrs, bundle.getInt("android.support.v4.media.audio_attrs.LEGACY_STREAM_TYPE", -1));
     }
 
     /* renamed from: android.support.v4.media.AudioAttributesImplApi21$Builder */

@@ -6,7 +6,7 @@ enum zzgof {
     VECTOR(true),
     PACKED_VECTOR(true),
     MAP(false);
-    
+
     private final boolean zze;
 
     private zzgof(boolean z) {

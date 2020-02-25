@@ -9,8 +9,10 @@ import android.os.WorkSource;
 import android.support.annotation.Nullable;
 import android.support.p001v4.p003os.BuildCompat;
 import android.util.Log;
+
 import com.google.android.gms.internal.zzbmk;
 import com.google.android.gms.people.PeopleConstants;
+
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;

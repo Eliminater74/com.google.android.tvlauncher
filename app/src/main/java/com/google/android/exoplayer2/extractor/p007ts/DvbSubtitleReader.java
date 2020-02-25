@@ -3,19 +3,19 @@ package com.google.android.exoplayer2.extractor.p007ts;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.extractor.ExtractorOutput;
 import com.google.android.exoplayer2.extractor.TrackOutput;
-import com.google.android.exoplayer2.extractor.p007ts.TsPayloadReader;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.ParsableByteArray;
+
 import java.util.Collections;
 import java.util.List;
 
 /* renamed from: com.google.android.exoplayer2.extractor.ts.DvbSubtitleReader */
 public final class DvbSubtitleReader implements ElementaryStreamReader {
-    private int bytesToCheck;
     private final TrackOutput[] outputs;
+    private final List<TsPayloadReader.DvbSubtitleInfo> subtitleInfos;
+    private int bytesToCheck;
     private int sampleBytesWritten;
     private long sampleTimeUs;
-    private final List<TsPayloadReader.DvbSubtitleInfo> subtitleInfos;
     private boolean writingSample;
 
     public DvbSubtitleReader(List<TsPayloadReader.DvbSubtitleInfo> subtitleInfos2) {

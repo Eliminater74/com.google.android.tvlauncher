@@ -2,10 +2,14 @@ package androidx.concurrent.futures;
 
 import android.support.annotation.Nullable;
 import android.support.annotation.RestrictTo;
+
 import com.google.common.util.concurrent.ListenableFuture;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
 public final class ResolvableFuture<V> extends AbstractResolvableFuture<V> {
+    private ResolvableFuture() {
+    }
+
     public static <V> ResolvableFuture<V> create() {
         return new ResolvableFuture<>();
     }
@@ -20,8 +24,5 @@ public final class ResolvableFuture<V> extends AbstractResolvableFuture<V> {
 
     public boolean setFuture(ListenableFuture<? extends V> future) {
         return super.setFuture(future);
-    }
-
-    private ResolvableFuture() {
     }
 }

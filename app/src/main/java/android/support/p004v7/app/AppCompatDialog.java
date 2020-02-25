@@ -18,8 +18,8 @@ import android.view.ViewGroup;
 
 /* renamed from: android.support.v7.app.AppCompatDialog */
 public class AppCompatDialog extends Dialog implements AppCompatCallback {
-    private AppCompatDelegate mDelegate;
     private final KeyEventDispatcher.Component mKeyDispatcher;
+    private AppCompatDelegate mDelegate;
 
     public AppCompatDialog(Context context) {
         this(context, 0);
@@ -44,6 +44,15 @@ public class AppCompatDialog extends Dialog implements AppCompatCallback {
                 return AppCompatDialog.this.superDispatchKeyEvent(event);
             }
         };
+    }
+
+    private static int getThemeResId(Context context, int themeId) {
+        if (themeId != 0) {
+            return themeId;
+        }
+        TypedValue outValue = new TypedValue();
+        context.getTheme().resolveAttribute(C0233R.attr.dialogTheme, outValue, true);
+        return outValue.resourceId;
     }
 
     /* access modifiers changed from: protected */
@@ -108,15 +117,6 @@ public class AppCompatDialog extends Dialog implements AppCompatCallback {
             this.mDelegate = AppCompatDelegate.create(this, this);
         }
         return this.mDelegate;
-    }
-
-    private static int getThemeResId(Context context, int themeId) {
-        if (themeId != 0) {
-            return themeId;
-        }
-        TypedValue outValue = new TypedValue();
-        context.getTheme().resolveAttribute(C0233R.attr.dialogTheme, outValue, true);
-        return outValue.resourceId;
     }
 
     public void onSupportActionModeStarted(ActionMode mode) {

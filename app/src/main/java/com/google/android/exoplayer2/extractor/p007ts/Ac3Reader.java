@@ -4,10 +4,10 @@ import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.audio.Ac3Util;
 import com.google.android.exoplayer2.extractor.ExtractorOutput;
 import com.google.android.exoplayer2.extractor.TrackOutput;
-import com.google.android.exoplayer2.extractor.p007ts.TsPayloadReader;
 import com.google.android.exoplayer2.util.ParsableBitArray;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.common.base.Ascii;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -18,11 +18,11 @@ public final class Ac3Reader implements ElementaryStreamReader {
     private static final int STATE_FINDING_SYNC = 0;
     private static final int STATE_READING_HEADER = 1;
     private static final int STATE_READING_SAMPLE = 2;
-    private int bytesRead;
-    private Format format;
     private final ParsableBitArray headerScratchBits;
     private final ParsableByteArray headerScratchBytes;
     private final String language;
+    private int bytesRead;
+    private Format format;
     private boolean lastByteWas0B;
     private TrackOutput output;
     private long sampleDurationUs;
@@ -30,12 +30,6 @@ public final class Ac3Reader implements ElementaryStreamReader {
     private int state;
     private long timeUs;
     private String trackFormatId;
-
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    /* renamed from: com.google.android.exoplayer2.extractor.ts.Ac3Reader$State */
-    private @interface State {
-    }
 
     public Ac3Reader() {
         this(null);
@@ -140,5 +134,11 @@ public final class Ac3Reader implements ElementaryStreamReader {
         }
         this.sampleSize = frameInfo.frameSize;
         this.sampleDurationUs = (((long) frameInfo.sampleCount) * 1000000) / ((long) this.format.sampleRate);
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    /* renamed from: com.google.android.exoplayer2.extractor.ts.Ac3Reader$State */
+    private @interface State {
     }
 }

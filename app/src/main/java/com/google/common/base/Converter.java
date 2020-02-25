@@ -4,10 +4,12 @@ import com.google.common.annotations.GwtCompatible;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.ForOverride;
 import com.google.errorprone.annotations.concurrent.LazyInit;
-import java.io.Serializable;
-import java.util.Iterator;
+
 import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
+import java.io.Serializable;
+import java.util.Iterator;
 
 @GwtCompatible
 public abstract class Converter<A, B> implements Function<A, B> {
@@ -16,14 +18,6 @@ public abstract class Converter<A, B> implements Function<A, B> {
     @LazyInit
     private transient Converter<B, A> reverse;
 
-    /* access modifiers changed from: protected */
-    @ForOverride
-    public abstract A doBackward(Object obj);
-
-    /* access modifiers changed from: protected */
-    @ForOverride
-    public abstract B doForward(Object obj);
-
     protected Converter() {
         this(true);
     }
@@ -31,6 +25,22 @@ public abstract class Converter<A, B> implements Function<A, B> {
     Converter(boolean handleNullAutomatically2) {
         this.handleNullAutomatically = handleNullAutomatically2;
     }
+
+    public static <A, B> Converter<A, B> from(Function<? super A, ? extends B> forwardFunction, Function<? super B, ? extends A> backwardFunction) {
+        return new FunctionBasedConverter(forwardFunction, backwardFunction);
+    }
+
+    public static <T> Converter<T, T> identity() {
+        return IdentityConverter.INSTANCE;
+    }
+
+    /* access modifiers changed from: protected */
+    @ForOverride
+    public abstract A doBackward(Object obj);
+
+    /* access modifiers changed from: protected */
+    @ForOverride
+    public abstract B doForward(Object obj);
 
     @NullableDecl
     @CanIgnoreReturnValue
@@ -97,6 +107,34 @@ public abstract class Converter<A, B> implements Function<A, B> {
         return reverseConverter;
     }
 
+    /* JADX WARN: Type inference failed for: r2v0, types: [com.google.common.base.Converter<B, C>, com.google.common.base.Converter] */
+    /* JADX WARNING: Unknown variable types count: 1 */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    public final <C> com.google.common.base.Converter<A, C> andThen(com.google.common.base.Converter<B, C> r2) {
+        /*
+            r1 = this;
+            com.google.common.base.Converter r0 = r1.doAndThen(r2)
+            return r0
+        */
+        throw new UnsupportedOperationException("Method not decompiled: com.google.common.base.Converter.andThen(com.google.common.base.Converter):com.google.common.base.Converter");
+    }
+
+    /* access modifiers changed from: package-private */
+    public <C> Converter<A, C> doAndThen(Converter<B, C> secondConverter) {
+        return new ConverterComposition(this, (Converter) Preconditions.checkNotNull(secondConverter));
+    }
+
+    @NullableDecl
+    @CanIgnoreReturnValue
+    @Deprecated
+    public final B apply(@NullableDecl A a) {
+        return convert(a);
+    }
+
+    public boolean equals(@NullableDecl Object object) {
+        return super.equals(object);
+    }
+
     private static final class ReverseConverter<A, B> extends Converter<B, A> implements Serializable {
         private static final long serialVersionUID = 0;
         final Converter<A, B> original;
@@ -149,23 +187,6 @@ public abstract class Converter<A, B> implements Function<A, B> {
             sb.append(".reverse()");
             return sb.toString();
         }
-    }
-
-    /* JADX WARN: Type inference failed for: r2v0, types: [com.google.common.base.Converter<B, C>, com.google.common.base.Converter] */
-    /* JADX WARNING: Unknown variable types count: 1 */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
-    public final <C> com.google.common.base.Converter<A, C> andThen(com.google.common.base.Converter<B, C> r2) {
-        /*
-            r1 = this;
-            com.google.common.base.Converter r0 = r1.doAndThen(r2)
-            return r0
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.google.common.base.Converter.andThen(com.google.common.base.Converter):com.google.common.base.Converter");
-    }
-
-    /* access modifiers changed from: package-private */
-    public <C> Converter<A, C> doAndThen(Converter<B, C> secondConverter) {
-        return new ConverterComposition(this, (Converter) Preconditions.checkNotNull(secondConverter));
     }
 
     private static final class ConverterComposition<A, B, C> extends Converter<A, C> implements Serializable {
@@ -227,21 +248,6 @@ public abstract class Converter<A, B> implements Function<A, B> {
         }
     }
 
-    @NullableDecl
-    @CanIgnoreReturnValue
-    @Deprecated
-    public final B apply(@NullableDecl A a) {
-        return convert(a);
-    }
-
-    public boolean equals(@NullableDecl Object object) {
-        return super.equals(object);
-    }
-
-    public static <A, B> Converter<A, B> from(Function<? super A, ? extends B> forwardFunction, Function<? super B, ? extends A> backwardFunction) {
-        return new FunctionBasedConverter(forwardFunction, backwardFunction);
-    }
-
     private static final class FunctionBasedConverter<A, B> extends Converter<A, B> implements Serializable {
         private final Function<? super B, ? extends A> backwardFunction;
         private final Function<? super A, ? extends B> forwardFunction;
@@ -287,10 +293,6 @@ public abstract class Converter<A, B> implements Function<A, B> {
             sb.append(")");
             return sb.toString();
         }
-    }
-
-    public static <T> Converter<T, T> identity() {
-        return IdentityConverter.INSTANCE;
     }
 
     private static final class IdentityConverter<T> extends Converter<T, T> implements Serializable {

@@ -17,7 +17,6 @@ import android.support.p001v4.app.ActivityCompat;
 import android.support.p001v4.app.FragmentActivity;
 import android.support.p001v4.app.NavUtils;
 import android.support.p001v4.app.TaskStackBuilder;
-import android.support.p004v7.app.ActionBarDrawerToggle;
 import android.support.p004v7.view.ActionMode;
 import android.support.p004v7.widget.Toolbar;
 import android.support.p004v7.widget.VectorEnabledTintResources;

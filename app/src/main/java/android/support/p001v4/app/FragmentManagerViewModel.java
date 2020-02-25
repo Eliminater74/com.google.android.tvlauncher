@@ -6,6 +6,7 @@ import android.arch.lifecycle.ViewModelStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -22,19 +23,19 @@ class FragmentManagerViewModel extends ViewModel {
         }
     };
     private final HashMap<String, FragmentManagerViewModel> mChildNonConfigs = new HashMap<>();
-    private boolean mHasBeenCleared = false;
-    private boolean mHasSavedSnapshot = false;
     private final HashSet<Fragment> mRetainedFragments = new HashSet<>();
     private final boolean mStateAutomaticallySaved;
     private final HashMap<String, ViewModelStore> mViewModelStores = new HashMap<>();
+    private boolean mHasBeenCleared = false;
+    private boolean mHasSavedSnapshot = false;
+
+    FragmentManagerViewModel(boolean stateAutomaticallySaved) {
+        this.mStateAutomaticallySaved = stateAutomaticallySaved;
+    }
 
     @NonNull
     static FragmentManagerViewModel getInstance(ViewModelStore viewModelStore) {
         return (FragmentManagerViewModel) new ViewModelProvider(viewModelStore, FACTORY).get(FragmentManagerViewModel.class);
-    }
-
-    FragmentManagerViewModel(boolean stateAutomaticallySaved) {
-        this.mStateAutomaticallySaved = stateAutomaticallySaved;
     }
 
     /* access modifiers changed from: protected */

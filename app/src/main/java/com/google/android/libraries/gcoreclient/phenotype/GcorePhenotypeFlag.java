@@ -3,6 +3,8 @@ package com.google.android.libraries.gcoreclient.phenotype;
 @Deprecated
 public interface GcorePhenotypeFlag<T> {
 
+    T get();
+
     public interface Builder {
         GcorePhenotypeFlag<Double> buildFlag(String str, double d);
 
@@ -26,6 +28,4 @@ public interface GcorePhenotypeFlag<T> {
     public interface BuilderFactory {
         Builder create(String str, String str2);
     }
-
-    T get();
 }

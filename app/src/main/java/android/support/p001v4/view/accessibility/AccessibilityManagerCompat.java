@@ -5,26 +5,13 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.view.accessibility.AccessibilityManager;
+
 import java.util.List;
 
 /* renamed from: android.support.v4.view.accessibility.AccessibilityManagerCompat */
 public final class AccessibilityManagerCompat {
 
-    @Deprecated
-    /* renamed from: android.support.v4.view.accessibility.AccessibilityManagerCompat$AccessibilityStateChangeListener */
-    public interface AccessibilityStateChangeListener {
-        @Deprecated
-        void onAccessibilityStateChanged(boolean z);
-    }
-
-    @Deprecated
-    /* renamed from: android.support.v4.view.accessibility.AccessibilityManagerCompat$AccessibilityStateChangeListenerCompat */
-    public static abstract class AccessibilityStateChangeListenerCompat implements AccessibilityStateChangeListener {
-    }
-
-    /* renamed from: android.support.v4.view.accessibility.AccessibilityManagerCompat$TouchExplorationStateChangeListener */
-    public interface TouchExplorationStateChangeListener {
-        void onTouchExplorationStateChanged(boolean z);
+    private AccessibilityManagerCompat() {
     }
 
     @Deprecated
@@ -41,33 +28,6 @@ public final class AccessibilityManagerCompat {
             return false;
         }
         return manager.removeAccessibilityStateChangeListener(new AccessibilityStateChangeListenerWrapper(listener));
-    }
-
-    /* renamed from: android.support.v4.view.accessibility.AccessibilityManagerCompat$AccessibilityStateChangeListenerWrapper */
-    private static class AccessibilityStateChangeListenerWrapper implements AccessibilityManager.AccessibilityStateChangeListener {
-        AccessibilityStateChangeListener mListener;
-
-        AccessibilityStateChangeListenerWrapper(@NonNull AccessibilityStateChangeListener listener) {
-            this.mListener = listener;
-        }
-
-        public int hashCode() {
-            return this.mListener.hashCode();
-        }
-
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
-            return this.mListener.equals(((AccessibilityStateChangeListenerWrapper) o).mListener);
-        }
-
-        public void onAccessibilityStateChanged(boolean enabled) {
-            this.mListener.onAccessibilityStateChanged(enabled);
-        }
     }
 
     @Deprecated
@@ -99,6 +59,50 @@ public final class AccessibilityManagerCompat {
         return manager.removeTouchExplorationStateChangeListener(new TouchExplorationStateChangeListenerWrapper(listener));
     }
 
+    @Deprecated
+    /* renamed from: android.support.v4.view.accessibility.AccessibilityManagerCompat$AccessibilityStateChangeListener */
+    public interface AccessibilityStateChangeListener {
+        @Deprecated
+        void onAccessibilityStateChanged(boolean z);
+    }
+
+    /* renamed from: android.support.v4.view.accessibility.AccessibilityManagerCompat$TouchExplorationStateChangeListener */
+    public interface TouchExplorationStateChangeListener {
+        void onTouchExplorationStateChanged(boolean z);
+    }
+
+    @Deprecated
+    /* renamed from: android.support.v4.view.accessibility.AccessibilityManagerCompat$AccessibilityStateChangeListenerCompat */
+    public static abstract class AccessibilityStateChangeListenerCompat implements AccessibilityStateChangeListener {
+    }
+
+    /* renamed from: android.support.v4.view.accessibility.AccessibilityManagerCompat$AccessibilityStateChangeListenerWrapper */
+    private static class AccessibilityStateChangeListenerWrapper implements AccessibilityManager.AccessibilityStateChangeListener {
+        AccessibilityStateChangeListener mListener;
+
+        AccessibilityStateChangeListenerWrapper(@NonNull AccessibilityStateChangeListener listener) {
+            this.mListener = listener;
+        }
+
+        public int hashCode() {
+            return this.mListener.hashCode();
+        }
+
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+            return this.mListener.equals(((AccessibilityStateChangeListenerWrapper) o).mListener);
+        }
+
+        public void onAccessibilityStateChanged(boolean enabled) {
+            this.mListener.onAccessibilityStateChanged(enabled);
+        }
+    }
+
     @RequiresApi(19)
     /* renamed from: android.support.v4.view.accessibility.AccessibilityManagerCompat$TouchExplorationStateChangeListenerWrapper */
     private static class TouchExplorationStateChangeListenerWrapper implements AccessibilityManager.TouchExplorationStateChangeListener {
@@ -125,8 +129,5 @@ public final class AccessibilityManagerCompat {
         public void onTouchExplorationStateChanged(boolean enabled) {
             this.mListener.onTouchExplorationStateChanged(enabled);
         }
-    }
-
-    private AccessibilityManagerCompat() {
     }
 }

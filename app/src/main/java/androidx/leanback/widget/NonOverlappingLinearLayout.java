@@ -5,13 +5,14 @@ import android.support.annotation.RestrictTo;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
+
 import java.util.ArrayList;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
 public class NonOverlappingLinearLayout extends LinearLayout {
+    final ArrayList<ArrayList<View>> mSortedAvailableViews;
     boolean mDeferFocusableViewAvailableInLayout;
     boolean mFocusableViewAvailableFixEnabled;
-    final ArrayList<ArrayList<View>> mSortedAvailableViews;
 
     public NonOverlappingLinearLayout(Context context) {
         this(context, null);

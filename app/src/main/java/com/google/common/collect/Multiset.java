@@ -3,25 +3,15 @@ package com.google.common.collect;
 import com.google.common.annotations.GwtCompatible;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.CompatibleWith;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible
 public interface Multiset<E> extends Collection<E> {
-
-    public interface Entry<E> {
-        boolean equals(Object obj);
-
-        int getCount();
-
-        E getElement();
-
-        int hashCode();
-
-        String toString();
-    }
 
     @CanIgnoreReturnValue
     int add(@NullableDecl E e, int i);
@@ -66,4 +56,16 @@ public interface Multiset<E> extends Collection<E> {
     int size();
 
     String toString();
+
+    public interface Entry<E> {
+        boolean equals(Object obj);
+
+        int getCount();
+
+        E getElement();
+
+        int hashCode();
+
+        String toString();
+    }
 }

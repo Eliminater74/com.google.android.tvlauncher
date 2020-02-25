@@ -2,13 +2,14 @@ package com.google.common.util.concurrent;
 
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.base.Preconditions;
-import com.google.common.util.concurrent.FluentFuture;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtIncompatible
 final class TimeoutFuture<V> extends FluentFuture.TrustedFuture<V> {
@@ -19,6 +20,10 @@ final class TimeoutFuture<V> extends FluentFuture.TrustedFuture<V> {
     @NullableDecl
     public ScheduledFuture<?> timer;
 
+    private TimeoutFuture(ListenableFuture<V> delegate) {
+        this.delegateRef = (ListenableFuture) Preconditions.checkNotNull(delegate);
+    }
+
     static <V> ListenableFuture<V> create(ListenableFuture<V> delegate, long time, TimeUnit unit, ScheduledExecutorService scheduledExecutor) {
         TimeoutFuture<V> result = new TimeoutFuture<>(delegate);
         Fire<V> fire = new Fire<>(result);
@@ -27,8 +32,44 @@ final class TimeoutFuture<V> extends FluentFuture.TrustedFuture<V> {
         return result;
     }
 
-    private TimeoutFuture(ListenableFuture<V> delegate) {
-        this.delegateRef = (ListenableFuture) Preconditions.checkNotNull(delegate);
+    /* access modifiers changed from: protected */
+    public String pendingToString() {
+        ListenableFuture<? extends V> localInputFuture = this.delegateRef;
+        ScheduledFuture<?> localTimer = this.timer;
+        if (localInputFuture == null) {
+            return null;
+        }
+        String valueOf = String.valueOf(localInputFuture);
+        StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 14);
+        sb.append("inputFuture=[");
+        sb.append(valueOf);
+        sb.append("]");
+        String message = sb.toString();
+        if (localTimer == null) {
+            return message;
+        }
+        long delay = localTimer.getDelay(TimeUnit.MILLISECONDS);
+        if (delay <= 0) {
+            return message;
+        }
+        String valueOf2 = String.valueOf(message);
+        StringBuilder sb2 = new StringBuilder(String.valueOf(valueOf2).length() + 43);
+        sb2.append(valueOf2);
+        sb2.append(", remaining delay=[");
+        sb2.append(delay);
+        sb2.append(" ms]");
+        return sb2.toString();
+    }
+
+    /* access modifiers changed from: protected */
+    public void afterDone() {
+        maybePropagateCancellationTo(this.delegateRef);
+        Future<?> localTimer = this.timer;
+        if (localTimer != null) {
+            localTimer.cancel(false);
+        }
+        this.delegateRef = null;
+        this.timer = null;
     }
 
     private static final class Fire<V> implements Runnable {
@@ -86,45 +127,5 @@ final class TimeoutFuture<V> extends FluentFuture.TrustedFuture<V> {
             setStackTrace(new StackTraceElement[0]);
             return this;
         }
-    }
-
-    /* access modifiers changed from: protected */
-    public String pendingToString() {
-        ListenableFuture<? extends V> localInputFuture = this.delegateRef;
-        ScheduledFuture<?> localTimer = this.timer;
-        if (localInputFuture == null) {
-            return null;
-        }
-        String valueOf = String.valueOf(localInputFuture);
-        StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 14);
-        sb.append("inputFuture=[");
-        sb.append(valueOf);
-        sb.append("]");
-        String message = sb.toString();
-        if (localTimer == null) {
-            return message;
-        }
-        long delay = localTimer.getDelay(TimeUnit.MILLISECONDS);
-        if (delay <= 0) {
-            return message;
-        }
-        String valueOf2 = String.valueOf(message);
-        StringBuilder sb2 = new StringBuilder(String.valueOf(valueOf2).length() + 43);
-        sb2.append(valueOf2);
-        sb2.append(", remaining delay=[");
-        sb2.append(delay);
-        sb2.append(" ms]");
-        return sb2.toString();
-    }
-
-    /* access modifiers changed from: protected */
-    public void afterDone() {
-        maybePropagateCancellationTo(this.delegateRef);
-        Future<?> localTimer = this.timer;
-        if (localTimer != null) {
-            localTimer.cancel(false);
-        }
-        this.delegateRef = null;
-        this.timer = null;
     }
 }

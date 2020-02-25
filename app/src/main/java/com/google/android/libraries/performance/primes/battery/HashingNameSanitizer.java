@@ -1,12 +1,15 @@
 package com.google.android.libraries.performance.primes.battery;
 
 import android.support.annotation.VisibleForTesting;
+
 import com.google.android.libraries.performance.primes.Hashing;
 import com.google.android.libraries.performance.primes.PrimesLog;
 import com.google.android.libraries.stitch.util.Preconditions;
+
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import logs.proto.wireless.performance.mobile.BatteryMetric;
 
 final class HashingNameSanitizer {
@@ -18,47 +21,12 @@ final class HashingNameSanitizer {
     @VisibleForTesting
     final ConcurrentHashMap<Long, Long> hashHashMap = new ConcurrentHashMap<>();
 
-    enum NameType {
-        WAKELOCK,
-        SYNC,
-        JOB,
-        PROCESS,
-        SENSOR
+    HashingNameSanitizer() {
     }
 
     @VisibleForTesting(otherwise = 5)
     static void disablePrimesLogging() {
         disabledForTestOnly = true;
-    }
-
-    /* renamed from: com.google.android.libraries.performance.primes.battery.HashingNameSanitizer$1 */
-    static /* synthetic */ class C11271 {
-
-        /* renamed from: $SwitchMap$com$google$android$libraries$performance$primes$battery$HashingNameSanitizer$NameType */
-        static final /* synthetic */ int[] f120x7ad60374 = new int[NameType.values().length];
-
-        static {
-            try {
-                f120x7ad60374[NameType.WAKELOCK.ordinal()] = 1;
-            } catch (NoSuchFieldError e) {
-            }
-            try {
-                f120x7ad60374[NameType.SYNC.ordinal()] = 2;
-            } catch (NoSuchFieldError e2) {
-            }
-            try {
-                f120x7ad60374[NameType.JOB.ordinal()] = 3;
-            } catch (NoSuchFieldError e3) {
-            }
-            try {
-                f120x7ad60374[NameType.PROCESS.ordinal()] = 4;
-            } catch (NoSuchFieldError e4) {
-            }
-            try {
-                f120x7ad60374[NameType.SENSOR.ordinal()] = 5;
-            } catch (NoSuchFieldError e5) {
-            }
-        }
     }
 
     @VisibleForTesting
@@ -110,9 +78,6 @@ final class HashingNameSanitizer {
         }
     }
 
-    HashingNameSanitizer() {
-    }
-
     /* access modifiers changed from: package-private */
     public BatteryMetric.Timer hashRawTimerName(NameType type, BatteryMetric.Timer timer) {
         if (!timer.getName().hasUnhashedName()) {
@@ -153,5 +118,43 @@ final class HashingNameSanitizer {
     @VisibleForTesting
     public long sanitizedHashFor(String name, NameType type) {
         return ((Long) Preconditions.checkNotNull(this.hashHashMap.get(Long.valueOf(rawHashFor(name, type))))).longValue();
+    }
+
+    enum NameType {
+        WAKELOCK,
+        SYNC,
+        JOB,
+        PROCESS,
+        SENSOR
+    }
+
+    /* renamed from: com.google.android.libraries.performance.primes.battery.HashingNameSanitizer$1 */
+    static /* synthetic */ class C11271 {
+
+        /* renamed from: $SwitchMap$com$google$android$libraries$performance$primes$battery$HashingNameSanitizer$NameType */
+        static final /* synthetic */ int[] f120x7ad60374 = new int[NameType.values().length];
+
+        static {
+            try {
+                f120x7ad60374[NameType.WAKELOCK.ordinal()] = 1;
+            } catch (NoSuchFieldError e) {
+            }
+            try {
+                f120x7ad60374[NameType.SYNC.ordinal()] = 2;
+            } catch (NoSuchFieldError e2) {
+            }
+            try {
+                f120x7ad60374[NameType.JOB.ordinal()] = 3;
+            } catch (NoSuchFieldError e3) {
+            }
+            try {
+                f120x7ad60374[NameType.PROCESS.ordinal()] = 4;
+            } catch (NoSuchFieldError e4) {
+            }
+            try {
+                f120x7ad60374[NameType.SENSOR.ordinal()] = 5;
+            } catch (NoSuchFieldError e5) {
+            }
+        }
     }
 }

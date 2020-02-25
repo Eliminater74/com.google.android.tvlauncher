@@ -6,25 +6,16 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.view.PixelCopy;
 import android.view.Surface;
+
 import com.google.android.exoplayer2.util.EGLSurfaceTexture;
-import com.google.android.exoplayer2.video.surfacecapturer.SurfaceCapturer;
 
 @TargetApi(24)
 final class PixelCopySurfaceCapturerV24 extends SurfaceCapturer implements EGLSurfaceTexture.TextureImageListener, PixelCopy.OnPixelCopyFinishedListener {
+    private final EGLSurfaceTexture eglSurfaceTexture;
+    private final Surface decoderSurface = new Surface(this.eglSurfaceTexture.getSurfaceTexture());
+    private final Handler handler;
     @Nullable
     private Bitmap bitmap;
-    private final Surface decoderSurface = new Surface(this.eglSurfaceTexture.getSurfaceTexture());
-    private final EGLSurfaceTexture eglSurfaceTexture;
-    private final Handler handler;
-
-    public static final class SurfaceCapturerException extends Exception {
-        public final int errorCode;
-
-        public SurfaceCapturerException(String message, int errorCode2) {
-            super(message);
-            this.errorCode = errorCode2;
-        }
-    }
 
     PixelCopySurfaceCapturerV24(SurfaceCapturer.Callback callback, int outputWidth, int outputHeight, Handler imageRenderingHandler) {
         super(callback, outputWidth, outputHeight);
@@ -58,6 +49,15 @@ final class PixelCopySurfaceCapturerV24 extends SurfaceCapturer implements EGLSu
             callback.onSurfaceCaptureError(new SurfaceCapturerException("Couldn't copy image from surface", copyResult));
         } else {
             callback.onSurfaceCaptured(bitmap2);
+        }
+    }
+
+    public static final class SurfaceCapturerException extends Exception {
+        public final int errorCode;
+
+        public SurfaceCapturerException(String message, int errorCode2) {
+            super(message);
+            this.errorCode = errorCode2;
         }
     }
 }

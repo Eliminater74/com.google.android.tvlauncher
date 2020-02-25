@@ -5,8 +5,7 @@ import android.content.Context;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.p001v4.app.FragmentActivity;
-import com.google.android.gms.common.api.Api;
-import com.google.android.gms.common.api.Api.ApiOptions;
+
 import com.google.android.gms.common.api.internal.zzdg;
 import com.google.android.gms.common.api.internal.zzh;
 import com.google.android.gms.common.internal.Hide;

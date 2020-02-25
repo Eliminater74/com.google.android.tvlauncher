@@ -2,12 +2,43 @@ package androidx.leanback.widget;
 
 class WindowAlignment {
     public final Axis horizontal = new Axis("horizontal");
+    public final Axis vertical = new Axis("vertical");
     private Axis mMainAxis = this.horizontal;
     private int mOrientation = 0;
     private Axis mSecondAxis = this.vertical;
-    public final Axis vertical = new Axis("vertical");
 
     WindowAlignment() {
+    }
+
+    public final Axis mainAxis() {
+        return this.mMainAxis;
+    }
+
+    public final Axis secondAxis() {
+        return this.mSecondAxis;
+    }
+
+    public final int getOrientation() {
+        return this.mOrientation;
+    }
+
+    public final void setOrientation(int orientation) {
+        this.mOrientation = orientation;
+        if (this.mOrientation == 0) {
+            this.mMainAxis = this.horizontal;
+            this.mSecondAxis = this.vertical;
+            return;
+        }
+        this.mMainAxis = this.vertical;
+        this.mSecondAxis = this.horizontal;
+    }
+
+    public final void reset() {
+        mainAxis().reset();
+    }
+
+    public String toString() {
+        return "horizontal=" + this.horizontal + "; vertical=" + this.vertical;
     }
 
     public static class Axis {
@@ -41,9 +72,8 @@ class WindowAlignment {
         }
 
         /* access modifiers changed from: package-private */
-        public final void setPreferKeylineOverLowEdge(boolean keylineOverLowEdge) {
-            int i = this.mPreferredKeyLine;
-            this.mPreferredKeyLine = keylineOverLowEdge ? i | 1 : i & -2;
+        public final boolean isPreferKeylineOverHighEdge() {
+            return (this.mPreferredKeyLine & 2) != 0;
         }
 
         /* access modifiers changed from: package-private */
@@ -53,13 +83,14 @@ class WindowAlignment {
         }
 
         /* access modifiers changed from: package-private */
-        public final boolean isPreferKeylineOverHighEdge() {
-            return (this.mPreferredKeyLine & 2) != 0;
+        public final boolean isPreferKeylineOverLowEdge() {
+            return (this.mPreferredKeyLine & 1) != 0;
         }
 
         /* access modifiers changed from: package-private */
-        public final boolean isPreferKeylineOverLowEdge() {
-            return (this.mPreferredKeyLine & 1) != 0;
+        public final void setPreferKeylineOverLowEdge(boolean keylineOverLowEdge) {
+            int i = this.mPreferredKeyLine;
+            this.mPreferredKeyLine = keylineOverLowEdge ? i | 1 : i & -2;
         }
 
         public final int getWindowAlignmentOffset() {
@@ -70,15 +101,15 @@ class WindowAlignment {
             this.mWindowAlignmentOffset = offset;
         }
 
+        public final float getWindowAlignmentOffsetPercent() {
+            return this.mWindowAlignmentOffsetPercent;
+        }
+
         public final void setWindowAlignmentOffsetPercent(float percent) {
             if ((percent < 0.0f || percent > 100.0f) && percent != -1.0f) {
                 throw new IllegalArgumentException();
             }
             this.mWindowAlignmentOffsetPercent = percent;
-        }
-
-        public final float getWindowAlignmentOffsetPercent() {
-            return this.mWindowAlignmentOffsetPercent;
         }
 
         public final int getMinScroll() {
@@ -113,12 +144,12 @@ class WindowAlignment {
             return this.mMaxEdge == Integer.MAX_VALUE;
         }
 
-        public final void setSize(int size) {
-            this.mSize = size;
-        }
-
         public final int getSize() {
             return this.mSize;
+        }
+
+        public final void setSize(int size) {
+            this.mSize = size;
         }
 
         public final void setPadding(int paddingMin, int paddingMax) {
@@ -268,36 +299,5 @@ class WindowAlignment {
         public String toString() {
             return " min:" + this.mMinEdge + " " + this.mMinScroll + " max:" + this.mMaxEdge + " " + this.mMaxScroll;
         }
-    }
-
-    public final Axis mainAxis() {
-        return this.mMainAxis;
-    }
-
-    public final Axis secondAxis() {
-        return this.mSecondAxis;
-    }
-
-    public final void setOrientation(int orientation) {
-        this.mOrientation = orientation;
-        if (this.mOrientation == 0) {
-            this.mMainAxis = this.horizontal;
-            this.mSecondAxis = this.vertical;
-            return;
-        }
-        this.mMainAxis = this.vertical;
-        this.mSecondAxis = this.horizontal;
-    }
-
-    public final int getOrientation() {
-        return this.mOrientation;
-    }
-
-    public final void reset() {
-        mainAxis().reset();
-    }
-
-    public String toString() {
-        return "horizontal=" + this.horizontal + "; vertical=" + this.vertical;
     }
 }

@@ -5,19 +5,21 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
+
 import com.google.android.libraries.performance.primes.flags.PrimesShutdown;
 import com.google.android.libraries.stitch.util.Preconditions;
+
 import java.util.concurrent.Executor;
 
 public final class PrimesApiProviderBuilder {
     private static final String DEFAULT_SHARED_PREFS = "primes";
-    @VisibleForTesting
-    volatile ApiProviderFactory apiProviderFactory;
     /* access modifiers changed from: private */
     public final Application application;
-    private volatile PrimesConfigurationsProvider configurationsProvider;
+    @VisibleForTesting
+    volatile ApiProviderFactory apiProviderFactory;
     @VisibleForTesting
     volatile Supplier<PrimesFlags> flagsSupplier;
+    private volatile PrimesConfigurationsProvider configurationsProvider;
     @Nullable
     private volatile Supplier<SharedPreferences> sharedPrefsSupplier;
     @Nullable
@@ -25,13 +27,13 @@ public final class PrimesApiProviderBuilder {
     @Nullable
     private volatile PrimesThreadsConfigurations threadsConfigurations;
 
+    PrimesApiProviderBuilder(Application application2) {
+        this.application = application2;
+    }
+
     /* access modifiers changed from: private */
     public static SharedPreferences defaultSharedPreferences(Context context) {
         return context.getSharedPreferences(DEFAULT_SHARED_PREFS, 0);
-    }
-
-    PrimesApiProviderBuilder(Application application2) {
-        this.application = application2;
     }
 
     /* access modifiers changed from: package-private */

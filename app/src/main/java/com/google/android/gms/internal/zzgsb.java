@@ -1,6 +1,5 @@
 package com.google.android.gms.internal;
 
-import com.google.android.gms.internal.zzgsb;
 import java.io.IOException;
 
 /* compiled from: ExtendableMessageNano */

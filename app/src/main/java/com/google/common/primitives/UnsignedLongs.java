@@ -4,6 +4,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -64,24 +65,6 @@ public final class UnsignedLongs {
 
     public static Comparator<long[]> lexicographicalComparator() {
         return LexicographicalComparator.INSTANCE;
-    }
-
-    enum LexicographicalComparator implements Comparator<long[]> {
-        INSTANCE;
-
-        public int compare(long[] left, long[] right) {
-            int minLength = Math.min(left.length, right.length);
-            for (int i = 0; i < minLength; i++) {
-                if (left[i] != right[i]) {
-                    return UnsignedLongs.compare(left[i], right[i]);
-                }
-            }
-            return left.length - right.length;
-        }
-
-        public String toString() {
-            return "UnsignedLongs.lexicographicalComparator()";
-        }
     }
 
     public static void sort(long[] array) {
@@ -202,38 +185,6 @@ public final class UnsignedLongs {
         }
     }
 
-    private static final class ParseOverflowDetection {
-        static final int[] maxSafeDigits = new int[37];
-        static final long[] maxValueDivs = new long[37];
-        static final int[] maxValueMods = new int[37];
-
-        private ParseOverflowDetection() {
-        }
-
-        static {
-            BigInteger overflow = new BigInteger("10000000000000000", 16);
-            for (int i = 2; i <= 36; i++) {
-                maxValueDivs[i] = UnsignedLongs.divide(-1, (long) i);
-                maxValueMods[i] = (int) UnsignedLongs.remainder(-1, (long) i);
-                maxSafeDigits[i] = overflow.toString(i).length() - 1;
-            }
-        }
-
-        static boolean overflowInParse(long current, int digit, int radix) {
-            if (current < 0) {
-                return true;
-            }
-            long[] jArr = maxValueDivs;
-            if (current < jArr[radix]) {
-                return false;
-            }
-            if (current <= jArr[radix] && digit <= maxValueMods[radix]) {
-                return false;
-            }
-            return true;
-        }
-    }
-
     public static String toString(long x) {
         return toString(x, 10);
     }
@@ -273,5 +224,55 @@ public final class UnsignedLongs {
             }
         }
         return new String(buf, i, buf.length - i);
+    }
+
+    enum LexicographicalComparator implements Comparator<long[]> {
+        INSTANCE;
+
+        public int compare(long[] left, long[] right) {
+            int minLength = Math.min(left.length, right.length);
+            for (int i = 0; i < minLength; i++) {
+                if (left[i] != right[i]) {
+                    return UnsignedLongs.compare(left[i], right[i]);
+                }
+            }
+            return left.length - right.length;
+        }
+
+        public String toString() {
+            return "UnsignedLongs.lexicographicalComparator()";
+        }
+    }
+
+    private static final class ParseOverflowDetection {
+        static final int[] maxSafeDigits = new int[37];
+        static final long[] maxValueDivs = new long[37];
+        static final int[] maxValueMods = new int[37];
+
+        static {
+            BigInteger overflow = new BigInteger("10000000000000000", 16);
+            for (int i = 2; i <= 36; i++) {
+                maxValueDivs[i] = UnsignedLongs.divide(-1, (long) i);
+                maxValueMods[i] = (int) UnsignedLongs.remainder(-1, (long) i);
+                maxSafeDigits[i] = overflow.toString(i).length() - 1;
+            }
+        }
+
+        private ParseOverflowDetection() {
+        }
+
+        static boolean overflowInParse(long current, int digit, int radix) {
+            if (current < 0) {
+                return true;
+            }
+            long[] jArr = maxValueDivs;
+            if (current < jArr[radix]) {
+                return false;
+            }
+            if (current <= jArr[radix] && digit <= maxValueMods[radix]) {
+                return false;
+            }
+            return true;
+        }
     }
 }

@@ -5,9 +5,7 @@ import android.os.IBinder;
 import android.os.IInterface;
 import android.os.Parcel;
 import android.os.RemoteException;
-import com.google.android.gtalkservice.IGTalkConnection;
-import com.google.android.gtalkservice.IGTalkConnectionListener;
-import com.google.android.gtalkservice.IImSession;
+
 import java.util.List;
 
 public interface IGTalkService extends IInterface {
@@ -34,7 +32,6 @@ public interface IGTalkService extends IInterface {
     void setTalkForegroundState() throws RemoteException;
 
     public static abstract class Stub extends Binder implements IGTalkService {
-        private static final String DESCRIPTOR = "com.google.android.gtalkservice.IGTalkService";
         static final int TRANSACTION_createGTalkConnection = 1;
         static final int TRANSACTION_dismissAllNotifications = 6;
         static final int TRANSACTION_dismissNotificationFor = 8;
@@ -46,6 +43,7 @@ public interface IGTalkService extends IInterface {
         static final int TRANSACTION_getImSessionForAccountId = 5;
         static final int TRANSACTION_printDiagnostics = 10;
         static final int TRANSACTION_setTalkForegroundState = 11;
+        private static final String DESCRIPTOR = "com.google.android.gtalkservice.IGTalkService";
 
         public Stub() {
             attachInterface(this, DESCRIPTOR);

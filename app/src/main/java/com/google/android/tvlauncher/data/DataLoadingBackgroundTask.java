@@ -14,6 +14,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.support.annotation.WorkerThread;
+
 import java.util.Arrays;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
@@ -24,22 +25,22 @@ import java.util.concurrent.TimeUnit;
 
 @VisibleForTesting(otherwise = 3)
 public class DataLoadingBackgroundTask implements Runnable {
-    private static final int CORE_THREAD_POOL_SIZE = Math.min(CPU_COUNT - 1, 2);
-    private static final int CPU_COUNT = Runtime.getRuntime().availableProcessors();
-    private static final boolean DEBUG = false;
     @VisibleForTesting
     static final int MAX_POOL_SIZE = 15;
+    private static final int CPU_COUNT = Runtime.getRuntime().availableProcessors();
+    private static final int CORE_THREAD_POOL_SIZE = Math.min(CPU_COUNT - 1, 2);
+    private static final boolean DEBUG = false;
     private static final int MAX_THREAD_POOL_SIZE = Math.max(CPU_COUNT - 1, 1);
     private static final Object POOL_SYNC = new Object();
     private static final String TAG = "DLBackgroundTask";
     private static final int THREAD_KEEP_ALIVE_SECONDS = 5;
     private static final int WORK_QUEUE_CAPACITY = 256;
-    private static final Executor sDefaultExecutor = new ThreadPoolExecutor(CORE_THREAD_POOL_SIZE, MAX_THREAD_POOL_SIZE, 5, TimeUnit.SECONDS, sWorkQueue);
     private static Executor sExecutor = sDefaultExecutor;
     private static InternalHandler sHandler = new InternalHandler();
     private static DataLoadingBackgroundTask sPool;
     private static int sPoolSize = 0;
     private static BlockingQueue<Runnable> sWorkQueue = new LinkedBlockingQueue(256);
+    private static final Executor sDefaultExecutor = new ThreadPoolExecutor(CORE_THREAD_POOL_SIZE, MAX_THREAD_POOL_SIZE, 5, TimeUnit.SECONDS, sWorkQueue);
     private volatile Callbacks mCallbacks;
     private volatile boolean mCanceled;
     private volatile ContentResolver mContentResolver;
@@ -56,18 +57,8 @@ public class DataLoadingBackgroundTask implements Runnable {
     private volatile long mTag;
     private volatile Uri mUri;
 
-    interface Callbacks {
-        @MainThread
-        void onTaskCanceled(DataLoadingBackgroundTask dataLoadingBackgroundTask);
-
-        @MainThread
-        void onTaskCompleted(DataLoadingBackgroundTask dataLoadingBackgroundTask);
-
-        @MainThread
-        void onTaskFailed(DataLoadingBackgroundTask dataLoadingBackgroundTask, Throwable th);
-
-        @WorkerThread
-        void onTaskPostProcess(DataLoadingBackgroundTask dataLoadingBackgroundTask);
+    private DataLoadingBackgroundTask(Context context) {
+        this.mContentResolver = context.getContentResolver();
     }
 
     @VisibleForTesting
@@ -109,10 +100,6 @@ public class DataLoadingBackgroundTask implements Runnable {
             sPoolSize--;
             return t;
         }
-    }
-
-    private DataLoadingBackgroundTask(Context context) {
-        this.mContentResolver = context.getContentResolver();
     }
 
     /* access modifiers changed from: package-private */
@@ -368,6 +355,20 @@ public class DataLoadingBackgroundTask implements Runnable {
         sb.append('\'');
         sb.append('}');
         return sb.toString();
+    }
+
+    interface Callbacks {
+        @MainThread
+        void onTaskCanceled(DataLoadingBackgroundTask dataLoadingBackgroundTask);
+
+        @MainThread
+        void onTaskCompleted(DataLoadingBackgroundTask dataLoadingBackgroundTask);
+
+        @MainThread
+        void onTaskFailed(DataLoadingBackgroundTask dataLoadingBackgroundTask, Throwable th);
+
+        @WorkerThread
+        void onTaskPostProcess(DataLoadingBackgroundTask dataLoadingBackgroundTask);
     }
 
     private static class InternalHandler extends Handler {

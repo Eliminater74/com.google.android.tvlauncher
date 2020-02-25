@@ -7,6 +7,13 @@ import java.util.RandomAccess;
 /* compiled from: DoubleArrayList */
 final class zzgns extends zzgms<Double> implements zzgos<Double>, RandomAccess {
     private static final zzgns zza;
+
+    static {
+        zzgns zzgns = new zzgns();
+        zza = zzgns;
+        zzgns.zzb();
+    }
+
     private double[] zzb;
     private int zzc;
 
@@ -166,11 +173,5 @@ final class zzgns extends zzgms<Double> implements zzgos<Double>, RandomAccess {
     public final /* synthetic */ Object get(int i) {
         zzb(i);
         return Double.valueOf(this.zzb[i]);
-    }
-
-    static {
-        zzgns zzgns = new zzgns();
-        zza = zzgns;
-        zzgns.zzb();
     }
 }

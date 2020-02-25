@@ -3,6 +3,7 @@ package com.google.common.base;
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.GwtIncompatible;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -17,13 +18,9 @@ public final class Splitter {
     public final int limit;
     /* access modifiers changed from: private */
     public final boolean omitEmptyStrings;
-    private final Strategy strategy;
     /* access modifiers changed from: private */
     public final CharMatcher trimmer;
-
-    private interface Strategy {
-        Iterator<String> iterator(Splitter splitter, CharSequence charSequence);
-    }
+    private final Strategy strategy;
 
     private Splitter(Strategy strategy2) {
         this(strategy2, false, CharMatcher.none(), Integer.MAX_VALUE);
@@ -216,6 +213,10 @@ public final class Splitter {
         return new MapSplitter(keyValueSplitter);
     }
 
+    private interface Strategy {
+        Iterator<String> iterator(Splitter splitter, CharSequence charSequence);
+    }
+
     @Beta
     public static final class MapSplitter {
         private static final String INVALID_ENTRY_MESSAGE = "Chunk [%s] is not a valid entry";
@@ -243,17 +244,11 @@ public final class Splitter {
     }
 
     private static abstract class SplittingIterator extends AbstractIterator<String> {
-        int limit;
-        int offset = 0;
         final boolean omitEmptyStrings;
         final CharSequence toSplit;
         final CharMatcher trimmer;
-
-        /* access modifiers changed from: package-private */
-        public abstract int separatorEnd(int i);
-
-        /* access modifiers changed from: package-private */
-        public abstract int separatorStart(int i);
+        int limit;
+        int offset = 0;
 
         protected SplittingIterator(Splitter splitter, CharSequence toSplit2) {
             this.trimmer = splitter.trimmer;
@@ -261,6 +256,12 @@ public final class Splitter {
             this.limit = splitter.limit;
             this.toSplit = toSplit2;
         }
+
+        /* access modifiers changed from: package-private */
+        public abstract int separatorEnd(int i);
+
+        /* access modifiers changed from: package-private */
+        public abstract int separatorStart(int i);
 
         /* access modifiers changed from: protected */
         public String computeNext() {

@@ -1,6 +1,11 @@
 package org.checkerframework.checker.i18nformatter;
 
 import com.google.android.gsf.TalkContract;
+
+import org.checkerframework.checker.i18nformatter.qual.I18nChecksFormat;
+import org.checkerframework.checker.i18nformatter.qual.I18nConversionCategory;
+import org.checkerframework.checker.i18nformatter.qual.I18nValidFormat;
+
 import java.text.ChoiceFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -12,9 +17,6 @@ import java.util.IllegalFormatException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import org.checkerframework.checker.i18nformatter.qual.I18nChecksFormat;
-import org.checkerframework.checker.i18nformatter.qual.I18nConversionCategory;
-import org.checkerframework.checker.i18nformatter.qual.I18nValidFormat;
 
 public class I18nFormatUtil {
     public static void tryFormatSatisfiability(String format) throws IllegalFormatException {
@@ -93,10 +95,10 @@ public class I18nFormatUtil {
         private static final int TYPE_NULL = 0;
         private static final int TYPE_NUMBER = 1;
         private static final int TYPE_TIME = 3;
+        public static int maxOffset;
         private static List<Integer> argumentIndices;
         private static List<I18nConversionCategory> categories;
         private static Locale locale;
-        public static int maxOffset;
         private static int numFormat;
 
         private MessageFormatParser() {

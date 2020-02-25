@@ -1,8 +1,10 @@
 package com.google.common.collect;
 
 import com.google.common.annotations.GwtCompatible;
-import java.io.Serializable;
+
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
+import java.io.Serializable;
 
 @GwtCompatible
 final class Count implements Serializable {

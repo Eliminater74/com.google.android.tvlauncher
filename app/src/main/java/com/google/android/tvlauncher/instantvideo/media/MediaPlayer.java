@@ -9,14 +9,6 @@ public interface MediaPlayer {
     public static final int STATE_IDLE = 1;
     public static final int STATE_READY = 3;
 
-    public interface VideoCallback {
-        void onVideoAvailable();
-
-        void onVideoEnded();
-
-        void onVideoError();
-    }
-
     int getCurrentPosition();
 
     int getPlaybackState();
@@ -24,6 +16,8 @@ public interface MediaPlayer {
     View getPlayerView();
 
     Uri getVideoUri();
+
+    void setVideoUri(Uri uri);
 
     void prepare();
 
@@ -35,9 +29,15 @@ public interface MediaPlayer {
 
     void setVideoCallback(VideoCallback videoCallback);
 
-    void setVideoUri(Uri uri);
-
     void setVolume(float f);
 
     void stop();
+
+    public interface VideoCallback {
+        void onVideoAvailable();
+
+        void onVideoEnded();
+
+        void onVideoError();
+    }
 }

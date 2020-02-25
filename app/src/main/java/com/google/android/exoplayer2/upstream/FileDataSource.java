@@ -2,6 +2,7 @@ package com.google.android.exoplayer2.upstream;
 
 import android.net.Uri;
 import android.support.annotation.Nullable;
+
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -13,12 +14,6 @@ public final class FileDataSource extends BaseDataSource {
     private boolean opened;
     @Nullable
     private Uri uri;
-
-    public static class FileDataSourceException extends IOException {
-        public FileDataSourceException(IOException cause) {
-            super(cause);
-        }
-    }
 
     public FileDataSource() {
         super(false);
@@ -101,6 +96,12 @@ public final class FileDataSource extends BaseDataSource {
                 transferEnded();
             }
             throw th;
+        }
+    }
+
+    public static class FileDataSourceException extends IOException {
+        public FileDataSourceException(IOException cause) {
+            super(cause);
         }
     }
 }

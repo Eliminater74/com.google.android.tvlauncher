@@ -1,6 +1,7 @@
 package com.google.android.exoplayer2.source.hls.offline;
 
 import android.net.Uri;
+
 import com.google.android.exoplayer2.offline.DownloaderConstructorHelper;
 import com.google.android.exoplayer2.offline.SegmentDownloader;
 import com.google.android.exoplayer2.offline.StreamKey;
@@ -12,6 +13,7 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.ParsingLoadable;
 import com.google.android.exoplayer2.util.UriUtil;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -21,6 +23,10 @@ import java.util.List;
 public final class HlsDownloader extends SegmentDownloader<HlsPlaylist> {
     public HlsDownloader(Uri playlistUri, List<StreamKey> streamKeys, DownloaderConstructorHelper constructorHelper) {
         super(playlistUri, streamKeys, constructorHelper);
+    }
+
+    private static HlsPlaylist loadManifest(DataSource dataSource, DataSpec dataSpec) throws IOException {
+        return (HlsPlaylist) ParsingLoadable.load(dataSource, new HlsPlaylistParser(), dataSpec, 4);
     }
 
     /* access modifiers changed from: protected */
@@ -68,10 +74,6 @@ public final class HlsDownloader extends SegmentDownloader<HlsPlaylist> {
         for (int i = 0; i < mediaPlaylistUrls.size(); i++) {
             out.add(SegmentDownloader.getCompressibleDataSpec(mediaPlaylistUrls.get(i)));
         }
-    }
-
-    private static HlsPlaylist loadManifest(DataSource dataSource, DataSpec dataSpec) throws IOException {
-        return (HlsPlaylist) ParsingLoadable.load(dataSource, new HlsPlaylistParser(), dataSpec, 4);
     }
 
     private void addSegment(HlsMediaPlaylist mediaPlaylist, HlsMediaPlaylist.Segment segment, HashSet<Uri> seenEncryptionKeyUris, ArrayList<SegmentDownloader.Segment> out) {

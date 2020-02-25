@@ -3,7 +3,6 @@ package android.arch.lifecycle;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.arch.lifecycle.Lifecycle;
 import android.os.Bundle;
 import android.support.annotation.RestrictTo;
 
@@ -11,14 +10,6 @@ import android.support.annotation.RestrictTo;
 public class ReportFragment extends Fragment {
     private static final String REPORT_FRAGMENT_TAG = "android.arch.lifecycle.LifecycleDispatcher.report_fragment_tag";
     private ActivityInitializationListener mProcessListener;
-
-    interface ActivityInitializationListener {
-        void onCreate();
-
-        void onResume();
-
-        void onStart();
-    }
 
     public static void injectIfNeededIn(Activity activity) {
         FragmentManager manager = activity.getFragmentManager();
@@ -99,5 +90,13 @@ public class ReportFragment extends Fragment {
     /* access modifiers changed from: package-private */
     public void setProcessListener(ActivityInitializationListener processListener) {
         this.mProcessListener = processListener;
+    }
+
+    interface ActivityInitializationListener {
+        void onCreate();
+
+        void onResume();
+
+        void onStart();
     }
 }

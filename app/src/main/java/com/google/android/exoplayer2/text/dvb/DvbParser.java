@@ -7,12 +7,14 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Region;
 import android.util.SparseArray;
+
 import com.google.android.exoplayer2.text.Cue;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.ParsableBitArray;
 import com.google.android.exoplayer2.util.Util;
 import com.google.common.base.Ascii;
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -39,13 +41,13 @@ final class DvbParser {
     private static final byte[] defaultMap2To4 = {0, 7, 8, Ascii.f156SI};
     private static final byte[] defaultMap2To8 = {0, 119, -120, -1};
     private static final byte[] defaultMap4To8 = {0, 17, 34, 51, 68, 85, 102, 119, -120, -103, -86, -69, -52, -35, -18, -1};
-    private Bitmap bitmap;
     private final Canvas canvas;
     private final ClutDefinition defaultClutDefinition;
     private final DisplayDefinition defaultDisplayDefinition;
     private final Paint defaultPaint = new Paint();
     private final Paint fillRegionPaint;
     private final SubtitleService subtitleService;
+    private Bitmap bitmap;
 
     public DvbParser(int subtitlePageId, int ancillaryPageId) {
         this.defaultPaint.setStyle(Paint.Style.FILL_AND_STROKE);
@@ -59,80 +61,6 @@ final class DvbParser {
         this.defaultDisplayDefinition = new DisplayDefinition(ClientAnalytics.LogRequest.LogSource.WING_OPENSKY_ANDROID_PRIMES_VALUE, ClientAnalytics.LogRequest.LogSource.BASELINE_IOS_PRIMES_VALUE, 0, ClientAnalytics.LogRequest.LogSource.WING_OPENSKY_ANDROID_PRIMES_VALUE, 0, ClientAnalytics.LogRequest.LogSource.BASELINE_IOS_PRIMES_VALUE);
         this.defaultClutDefinition = new ClutDefinition(0, generateDefault2BitClutEntries(), generateDefault4BitClutEntries(), generateDefault8BitClutEntries());
         this.subtitleService = new SubtitleService(subtitlePageId, ancillaryPageId);
-    }
-
-    public void reset() {
-        this.subtitleService.reset();
-    }
-
-    public List<Cue> decode(byte[] data, int limit) {
-        int color;
-        PageRegion pageRegion;
-        ParsableBitArray dataBitArray = new ParsableBitArray(data, limit);
-        while (dataBitArray.bitsLeft() >= 48 && dataBitArray.readBits(8) == 15) {
-            parseSubtitlingSegment(dataBitArray, this.subtitleService);
-        }
-        if (this.subtitleService.pageComposition == null) {
-            return Collections.emptyList();
-        }
-        DisplayDefinition displayDefinition = this.subtitleService.displayDefinition != null ? this.subtitleService.displayDefinition : this.defaultDisplayDefinition;
-        if (!(this.bitmap != null && displayDefinition.width + 1 == this.bitmap.getWidth() && displayDefinition.height + 1 == this.bitmap.getHeight())) {
-            this.bitmap = Bitmap.createBitmap(displayDefinition.width + 1, displayDefinition.height + 1, Bitmap.Config.ARGB_8888);
-            this.canvas.setBitmap(this.bitmap);
-        }
-        List<Cue> cues = new ArrayList<>();
-        SparseArray<PageRegion> pageRegions = this.subtitleService.pageComposition.regions;
-        int i = 0;
-        while (i < pageRegions.size()) {
-            PageRegion pageRegion2 = pageRegions.valueAt(i);
-            RegionComposition regionComposition = this.subtitleService.regions.get(pageRegions.keyAt(i));
-            int baseHorizontalAddress = pageRegion2.horizontalAddress + displayDefinition.horizontalPositionMinimum;
-            int baseVerticalAddress = pageRegion2.verticalAddress + displayDefinition.verticalPositionMinimum;
-            ParsableBitArray dataBitArray2 = dataBitArray;
-            SparseArray<PageRegion> pageRegions2 = pageRegions;
-            this.canvas.clipRect((float) baseHorizontalAddress, (float) baseVerticalAddress, (float) Math.min(regionComposition.width + baseHorizontalAddress, displayDefinition.horizontalPositionMaximum), (float) Math.min(regionComposition.height + baseVerticalAddress, displayDefinition.verticalPositionMaximum), Region.Op.REPLACE);
-            ClutDefinition clutDefinition = this.subtitleService.cluts.get(regionComposition.clutId);
-            if (clutDefinition == null && (clutDefinition = this.subtitleService.ancillaryCluts.get(regionComposition.clutId)) == null) {
-                clutDefinition = this.defaultClutDefinition;
-            }
-            SparseArray<RegionObject> regionObjects = regionComposition.regionObjects;
-            int j = 0;
-            while (j < regionObjects.size()) {
-                int objectId = regionObjects.keyAt(j);
-                RegionObject regionObject = regionObjects.valueAt(j);
-                SparseArray<RegionObject> regionObjects2 = regionObjects;
-                ObjectData objectData = this.subtitleService.objects.get(objectId);
-                if (objectData == null) {
-                    objectData = this.subtitleService.ancillaryObjects.get(objectId);
-                }
-                if (objectData != null) {
-                    pageRegion = pageRegion2;
-                    paintPixelDataSubBlocks(objectData, clutDefinition, regionComposition.depth, baseHorizontalAddress + regionObject.horizontalPosition, baseVerticalAddress + regionObject.verticalPosition, objectData.nonModifyingColorFlag != 0 ? null : this.defaultPaint, this.canvas);
-                } else {
-                    pageRegion = pageRegion2;
-                }
-                j++;
-                regionObjects = regionObjects2;
-                pageRegion2 = pageRegion;
-            }
-            if (regionComposition.fillFlag) {
-                if (regionComposition.depth == 3) {
-                    color = clutDefinition.clutEntries8Bit[regionComposition.pixelCode8Bit];
-                } else if (regionComposition.depth == 2) {
-                    color = clutDefinition.clutEntries4Bit[regionComposition.pixelCode4Bit];
-                } else {
-                    color = clutDefinition.clutEntries2Bit[regionComposition.pixelCode2Bit];
-                }
-                this.fillRegionPaint.setColor(color);
-                this.canvas.drawRect((float) baseHorizontalAddress, (float) baseVerticalAddress, (float) (regionComposition.width + baseHorizontalAddress), (float) (regionComposition.height + baseVerticalAddress), this.fillRegionPaint);
-            }
-            cues.add(new Cue(Bitmap.createBitmap(this.bitmap, baseHorizontalAddress, baseVerticalAddress, regionComposition.width, regionComposition.height), ((float) baseHorizontalAddress) / ((float) displayDefinition.width), 0, ((float) baseVerticalAddress) / ((float) displayDefinition.height), 0, ((float) regionComposition.width) / ((float) displayDefinition.width), ((float) regionComposition.height) / ((float) displayDefinition.height)));
-            this.canvas.drawColor(0, PorterDuff.Mode.CLEAR);
-            i++;
-            dataBitArray = dataBitArray2;
-            pageRegions = pageRegions2;
-        }
-        return cues;
     }
 
     private static void parseSubtitlingSegment(ParsableBitArray data, SubtitleService service) {
@@ -910,16 +838,90 @@ final class DvbParser {
         return clutMapTable;
     }
 
+    public void reset() {
+        this.subtitleService.reset();
+    }
+
+    public List<Cue> decode(byte[] data, int limit) {
+        int color;
+        PageRegion pageRegion;
+        ParsableBitArray dataBitArray = new ParsableBitArray(data, limit);
+        while (dataBitArray.bitsLeft() >= 48 && dataBitArray.readBits(8) == 15) {
+            parseSubtitlingSegment(dataBitArray, this.subtitleService);
+        }
+        if (this.subtitleService.pageComposition == null) {
+            return Collections.emptyList();
+        }
+        DisplayDefinition displayDefinition = this.subtitleService.displayDefinition != null ? this.subtitleService.displayDefinition : this.defaultDisplayDefinition;
+        if (!(this.bitmap != null && displayDefinition.width + 1 == this.bitmap.getWidth() && displayDefinition.height + 1 == this.bitmap.getHeight())) {
+            this.bitmap = Bitmap.createBitmap(displayDefinition.width + 1, displayDefinition.height + 1, Bitmap.Config.ARGB_8888);
+            this.canvas.setBitmap(this.bitmap);
+        }
+        List<Cue> cues = new ArrayList<>();
+        SparseArray<PageRegion> pageRegions = this.subtitleService.pageComposition.regions;
+        int i = 0;
+        while (i < pageRegions.size()) {
+            PageRegion pageRegion2 = pageRegions.valueAt(i);
+            RegionComposition regionComposition = this.subtitleService.regions.get(pageRegions.keyAt(i));
+            int baseHorizontalAddress = pageRegion2.horizontalAddress + displayDefinition.horizontalPositionMinimum;
+            int baseVerticalAddress = pageRegion2.verticalAddress + displayDefinition.verticalPositionMinimum;
+            ParsableBitArray dataBitArray2 = dataBitArray;
+            SparseArray<PageRegion> pageRegions2 = pageRegions;
+            this.canvas.clipRect((float) baseHorizontalAddress, (float) baseVerticalAddress, (float) Math.min(regionComposition.width + baseHorizontalAddress, displayDefinition.horizontalPositionMaximum), (float) Math.min(regionComposition.height + baseVerticalAddress, displayDefinition.verticalPositionMaximum), Region.Op.REPLACE);
+            ClutDefinition clutDefinition = this.subtitleService.cluts.get(regionComposition.clutId);
+            if (clutDefinition == null && (clutDefinition = this.subtitleService.ancillaryCluts.get(regionComposition.clutId)) == null) {
+                clutDefinition = this.defaultClutDefinition;
+            }
+            SparseArray<RegionObject> regionObjects = regionComposition.regionObjects;
+            int j = 0;
+            while (j < regionObjects.size()) {
+                int objectId = regionObjects.keyAt(j);
+                RegionObject regionObject = regionObjects.valueAt(j);
+                SparseArray<RegionObject> regionObjects2 = regionObjects;
+                ObjectData objectData = this.subtitleService.objects.get(objectId);
+                if (objectData == null) {
+                    objectData = this.subtitleService.ancillaryObjects.get(objectId);
+                }
+                if (objectData != null) {
+                    pageRegion = pageRegion2;
+                    paintPixelDataSubBlocks(objectData, clutDefinition, regionComposition.depth, baseHorizontalAddress + regionObject.horizontalPosition, baseVerticalAddress + regionObject.verticalPosition, objectData.nonModifyingColorFlag != 0 ? null : this.defaultPaint, this.canvas);
+                } else {
+                    pageRegion = pageRegion2;
+                }
+                j++;
+                regionObjects = regionObjects2;
+                pageRegion2 = pageRegion;
+            }
+            if (regionComposition.fillFlag) {
+                if (regionComposition.depth == 3) {
+                    color = clutDefinition.clutEntries8Bit[regionComposition.pixelCode8Bit];
+                } else if (regionComposition.depth == 2) {
+                    color = clutDefinition.clutEntries4Bit[regionComposition.pixelCode4Bit];
+                } else {
+                    color = clutDefinition.clutEntries2Bit[regionComposition.pixelCode2Bit];
+                }
+                this.fillRegionPaint.setColor(color);
+                this.canvas.drawRect((float) baseHorizontalAddress, (float) baseVerticalAddress, (float) (regionComposition.width + baseHorizontalAddress), (float) (regionComposition.height + baseVerticalAddress), this.fillRegionPaint);
+            }
+            cues.add(new Cue(Bitmap.createBitmap(this.bitmap, baseHorizontalAddress, baseVerticalAddress, regionComposition.width, regionComposition.height), ((float) baseHorizontalAddress) / ((float) displayDefinition.width), 0, ((float) baseVerticalAddress) / ((float) displayDefinition.height), 0, ((float) regionComposition.width) / ((float) displayDefinition.width), ((float) regionComposition.height) / ((float) displayDefinition.height)));
+            this.canvas.drawColor(0, PorterDuff.Mode.CLEAR);
+            i++;
+            dataBitArray = dataBitArray2;
+            pageRegions = pageRegions2;
+        }
+        return cues;
+    }
+
     private static final class SubtitleService {
         public final SparseArray<ClutDefinition> ancillaryCluts = new SparseArray<>();
         public final SparseArray<ObjectData> ancillaryObjects = new SparseArray<>();
         public final int ancillaryPageId;
         public final SparseArray<ClutDefinition> cluts = new SparseArray<>();
-        public DisplayDefinition displayDefinition;
         public final SparseArray<ObjectData> objects = new SparseArray<>();
-        public PageComposition pageComposition;
         public final SparseArray<RegionComposition> regions = new SparseArray<>();
         public final int subtitlePageId;
+        public DisplayDefinition displayDefinition;
+        public PageComposition pageComposition;
 
         public SubtitleService(int subtitlePageId2, int ancillaryPageId2) {
             this.subtitlePageId = subtitlePageId2;

@@ -4,11 +4,12 @@ import com.google.common.annotations.GwtCompatible;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.Serializable;
-import java.lang.Comparable;
 import java.util.Comparator;
 import java.util.SortedSet;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible
 public final class Range<C extends Comparable> extends RangeGwtSerializationDependencies implements Predicate<C>, Serializable {
@@ -17,25 +18,12 @@ public final class Range<C extends Comparable> extends RangeGwtSerializationDepe
     final Cut<C> lowerBound;
     final Cut<C> upperBound;
 
-    static class LowerBoundFn implements Function<Range, Cut> {
-        static final LowerBoundFn INSTANCE = new LowerBoundFn();
-
-        LowerBoundFn() {
-        }
-
-        public Cut apply(Range range) {
-            return range.lowerBound;
-        }
-    }
-
-    static class UpperBoundFn implements Function<Range, Cut> {
-        static final UpperBoundFn INSTANCE = new UpperBoundFn();
-
-        UpperBoundFn() {
-        }
-
-        public Cut apply(Range range) {
-            return range.upperBound;
+    private Range(Cut<C> lowerBound2, Cut<C> upperBound2) {
+        this.lowerBound = (Cut) Preconditions.checkNotNull(lowerBound2);
+        this.upperBound = (Cut) Preconditions.checkNotNull(upperBound2);
+        if (lowerBound2.compareTo((Cut) upperBound2) > 0 || lowerBound2 == Cut.aboveAll() || upperBound2 == Cut.belowAll()) {
+            String valueOf = String.valueOf(toString(lowerBound2, upperBound2));
+            throw new IllegalArgumentException(valueOf.length() != 0 ? "Invalid range: ".concat(valueOf) : new String("Invalid range: "));
         }
     }
 
@@ -83,22 +71,6 @@ public final class Range<C extends Comparable> extends RangeGwtSerializationDepe
 
     public static <C extends Comparable<?>> Range<C> atMost(C endpoint) {
         return create(Cut.belowAll(), Cut.aboveValue(endpoint));
-    }
-
-    /* renamed from: com.google.common.collect.Range$1 */
-    static /* synthetic */ class C16591 {
-        static final /* synthetic */ int[] $SwitchMap$com$google$common$collect$BoundType = new int[BoundType.values().length];
-
-        static {
-            try {
-                $SwitchMap$com$google$common$collect$BoundType[BoundType.OPEN.ordinal()] = 1;
-            } catch (NoSuchFieldError e) {
-            }
-            try {
-                $SwitchMap$com$google$common$collect$BoundType[BoundType.CLOSED.ordinal()] = 2;
-            } catch (NoSuchFieldError e2) {
-            }
-        }
     }
 
     public static <C extends Comparable<?>> Range<C> upTo(C endpoint, BoundType boundType) {
@@ -194,13 +166,20 @@ public final class Range<C extends Comparable> extends RangeGwtSerializationDepe
         throw new UnsupportedOperationException("Method not decompiled: com.google.common.collect.Range.encloseAll(java.lang.Iterable):com.google.common.collect.Range");
     }
 
-    private Range(Cut<C> lowerBound2, Cut<C> upperBound2) {
-        this.lowerBound = (Cut) Preconditions.checkNotNull(lowerBound2);
-        this.upperBound = (Cut) Preconditions.checkNotNull(upperBound2);
-        if (lowerBound2.compareTo((Cut) upperBound2) > 0 || lowerBound2 == Cut.aboveAll() || upperBound2 == Cut.belowAll()) {
-            String valueOf = String.valueOf(toString(lowerBound2, upperBound2));
-            throw new IllegalArgumentException(valueOf.length() != 0 ? "Invalid range: ".concat(valueOf) : new String("Invalid range: "));
-        }
+    private static String toString(Cut<?> lowerBound2, Cut<?> upperBound2) {
+        StringBuilder sb = new StringBuilder(16);
+        lowerBound2.describeAsLowerBound(sb);
+        sb.append("..");
+        upperBound2.describeAsUpperBound(sb);
+        return sb.toString();
+    }
+
+    private static <T> SortedSet<T> cast(Iterable<T> iterable) {
+        return (SortedSet) iterable;
+    }
+
+    static int compareOrThrow(Comparable left, Comparable right) {
+        return left.compareTo(right);
     }
 
     public boolean hasLowerBound() {
@@ -326,18 +305,6 @@ public final class Range<C extends Comparable> extends RangeGwtSerializationDepe
         return toString(this.lowerBound, this.upperBound);
     }
 
-    private static String toString(Cut<?> lowerBound2, Cut<?> upperBound2) {
-        StringBuilder sb = new StringBuilder(16);
-        lowerBound2.describeAsLowerBound(sb);
-        sb.append("..");
-        upperBound2.describeAsUpperBound(sb);
-        return sb.toString();
-    }
-
-    private static <T> SortedSet<T> cast(Iterable<T> iterable) {
-        return (SortedSet) iterable;
-    }
-
     /* access modifiers changed from: package-private */
     public Object readResolve() {
         if (equals(ALL)) {
@@ -346,8 +313,42 @@ public final class Range<C extends Comparable> extends RangeGwtSerializationDepe
         return this;
     }
 
-    static int compareOrThrow(Comparable left, Comparable right) {
-        return left.compareTo(right);
+    static class LowerBoundFn implements Function<Range, Cut> {
+        static final LowerBoundFn INSTANCE = new LowerBoundFn();
+
+        LowerBoundFn() {
+        }
+
+        public Cut apply(Range range) {
+            return range.lowerBound;
+        }
+    }
+
+    static class UpperBoundFn implements Function<Range, Cut> {
+        static final UpperBoundFn INSTANCE = new UpperBoundFn();
+
+        UpperBoundFn() {
+        }
+
+        public Cut apply(Range range) {
+            return range.upperBound;
+        }
+    }
+
+    /* renamed from: com.google.common.collect.Range$1 */
+    static /* synthetic */ class C16591 {
+        static final /* synthetic */ int[] $SwitchMap$com$google$common$collect$BoundType = new int[BoundType.values().length];
+
+        static {
+            try {
+                $SwitchMap$com$google$common$collect$BoundType[BoundType.OPEN.ordinal()] = 1;
+            } catch (NoSuchFieldError e) {
+            }
+            try {
+                $SwitchMap$com$google$common$collect$BoundType[BoundType.CLOSED.ordinal()] = 2;
+            } catch (NoSuchFieldError e2) {
+            }
+        }
     }
 
     private static class RangeLexOrdering extends Ordering<Range<?>> implements Serializable {

@@ -20,8 +20,13 @@ import android.util.TypedValue;
 /* renamed from: android.support.v7.widget.TintTypedArray */
 public class TintTypedArray {
     private final Context mContext;
-    private TypedValue mTypedValue;
     private final TypedArray mWrapped;
+    private TypedValue mTypedValue;
+
+    private TintTypedArray(Context context, TypedArray array) {
+        this.mContext = context;
+        this.mWrapped = array;
+    }
 
     public static TintTypedArray obtainStyledAttributes(Context context, AttributeSet set, int[] attrs) {
         return new TintTypedArray(context, context.obtainStyledAttributes(set, attrs));
@@ -33,11 +38,6 @@ public class TintTypedArray {
 
     public static TintTypedArray obtainStyledAttributes(Context context, int resid, int[] attrs) {
         return new TintTypedArray(context, context.obtainStyledAttributes(resid, attrs));
-    }
-
-    private TintTypedArray(Context context, TypedArray array) {
-        this.mContext = context;
-        this.mWrapped = array;
     }
 
     public Drawable getDrawable(int index) {

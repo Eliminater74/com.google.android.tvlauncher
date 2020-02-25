@@ -2,6 +2,7 @@ package com.google.android.libraries.performance.primes.hprof;
 
 import com.google.android.libraries.performance.primes.hprof.collect.IntIntMap;
 import com.google.android.libraries.stitch.util.Preconditions;
+
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -28,11 +29,6 @@ public final class ParseContext {
         this.typeSizes = Hprofs.getTypesSizes(this.idSize);
         this.rootTagSizes = new IntIntMap();
         Hprofs.addRootTagSizes(this.idSize, new ParseContext$$Lambda$0(this));
-    }
-
-    /* access modifiers changed from: package-private */
-    public final /* synthetic */ void lambda$new$0$ParseContext(int tag, int size) {
-        this.rootTagSizes.putIfAbsent(tag, size);
     }
 
     /* JADX WARNING: Removed duplicated region for block: B:11:0x002e  */
@@ -73,6 +69,11 @@ public final class ParseContext {
             throw r1
         */
         throw new UnsupportedOperationException("Method not decompiled: com.google.android.libraries.performance.primes.hprof.ParseContext.prepareContext(java.io.File):com.google.android.libraries.performance.primes.hprof.ParseContext");
+    }
+
+    /* access modifiers changed from: package-private */
+    public final /* synthetic */ void lambda$new$0$ParseContext(int tag, int size) {
+        this.rootTagSizes.putIfAbsent(tag, size);
     }
 
     public ByteBuffer getBuffer() {

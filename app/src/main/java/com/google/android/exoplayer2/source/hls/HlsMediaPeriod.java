@@ -3,6 +3,7 @@ package com.google.android.exoplayer2.source.hls;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.SeekParameters;
@@ -15,7 +16,6 @@ import com.google.android.exoplayer2.source.SampleStream;
 import com.google.android.exoplayer2.source.SequenceableLoader;
 import com.google.android.exoplayer2.source.TrackGroup;
 import com.google.android.exoplayer2.source.TrackGroupArray;
-import com.google.android.exoplayer2.source.hls.HlsSampleStreamWrapper;
 import com.google.android.exoplayer2.source.hls.playlist.HlsMasterPlaylist;
 import com.google.android.exoplayer2.source.hls.playlist.HlsPlaylistTracker;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
@@ -25,6 +25,7 @@ import com.google.android.exoplayer2.upstream.TransferListener;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,26 +39,26 @@ import java.util.Map;
 public final class HlsMediaPeriod implements MediaPeriod, HlsSampleStreamWrapper.Callback, HlsPlaylistTracker.PlaylistEventListener {
     private final Allocator allocator;
     private final boolean allowChunklessPreparation;
-    @Nullable
-    private MediaPeriod.Callback callback;
-    private SequenceableLoader compositeSequenceableLoader;
     private final CompositeSequenceableLoaderFactory compositeSequenceableLoaderFactory;
     private final HlsDataSourceFactory dataSourceFactory;
-    private HlsSampleStreamWrapper[] enabledSampleStreamWrappers = new HlsSampleStreamWrapper[0];
     private final MediaSourceEventListener.EventDispatcher eventDispatcher;
     private final HlsExtractorFactory extractorFactory;
     private final LoadErrorHandlingPolicy loadErrorHandlingPolicy;
-    private int[][] manifestUrlIndicesPerWrapper = new int[0][];
     @Nullable
     private final TransferListener mediaTransferListener;
-    private boolean notifiedReadingStarted;
-    private int pendingPrepareCount;
     private final HlsPlaylistTracker playlistTracker;
-    private HlsSampleStreamWrapper[] sampleStreamWrappers = new HlsSampleStreamWrapper[0];
     private final IdentityHashMap<SampleStream, Integer> streamWrapperIndices = new IdentityHashMap<>();
     private final TimestampAdjusterProvider timestampAdjusterProvider = new TimestampAdjusterProvider();
-    private TrackGroupArray trackGroups;
     private final boolean useSessionKeys;
+    @Nullable
+    private MediaPeriod.Callback callback;
+    private SequenceableLoader compositeSequenceableLoader;
+    private HlsSampleStreamWrapper[] enabledSampleStreamWrappers = new HlsSampleStreamWrapper[0];
+    private int[][] manifestUrlIndicesPerWrapper = new int[0][];
+    private boolean notifiedReadingStarted;
+    private int pendingPrepareCount;
+    private HlsSampleStreamWrapper[] sampleStreamWrappers = new HlsSampleStreamWrapper[0];
+    private TrackGroupArray trackGroups;
 
     public HlsMediaPeriod(HlsExtractorFactory extractorFactory2, HlsPlaylistTracker playlistTracker2, HlsDataSourceFactory dataSourceFactory2, @Nullable TransferListener mediaTransferListener2, LoadErrorHandlingPolicy loadErrorHandlingPolicy2, MediaSourceEventListener.EventDispatcher eventDispatcher2, Allocator allocator2, CompositeSequenceableLoaderFactory compositeSequenceableLoaderFactory2, boolean allowChunklessPreparation2, boolean useSessionKeys2) {
         this.extractorFactory = extractorFactory2;
@@ -72,6 +73,61 @@ public final class HlsMediaPeriod implements MediaPeriod, HlsSampleStreamWrapper
         this.useSessionKeys = useSessionKeys2;
         this.compositeSequenceableLoader = compositeSequenceableLoaderFactory2.createCompositeSequenceableLoader(new SequenceableLoader[0]);
         eventDispatcher2.mediaPeriodCreated();
+    }
+
+    private static Map<String, DrmInitData> deriveOverridingDrmInitData(List<DrmInitData> sessionKeyDrmInitData) {
+        ArrayList<DrmInitData> mutableSessionKeyDrmInitData = new ArrayList<>(sessionKeyDrmInitData);
+        HashMap<String, DrmInitData> drmInitDataBySchemeType = new HashMap<>();
+        for (int i = 0; i < mutableSessionKeyDrmInitData.size(); i++) {
+            DrmInitData drmInitData = sessionKeyDrmInitData.get(i);
+            String scheme = drmInitData.schemeType;
+            int j = i + 1;
+            while (j < mutableSessionKeyDrmInitData.size()) {
+                DrmInitData nextDrmInitData = (DrmInitData) mutableSessionKeyDrmInitData.get(j);
+                if (TextUtils.equals(nextDrmInitData.schemeType, scheme)) {
+                    drmInitData = drmInitData.merge(nextDrmInitData);
+                    mutableSessionKeyDrmInitData.remove(j);
+                } else {
+                    j++;
+                }
+            }
+            drmInitDataBySchemeType.put(scheme, drmInitData);
+        }
+        return drmInitDataBySchemeType;
+    }
+
+    private static Format deriveVideoFormat(Format variantFormat) {
+        String codecs = Util.getCodecsOfType(variantFormat.codecs, 2);
+        return Format.createVideoContainerFormat(variantFormat.f72id, variantFormat.label, variantFormat.containerMimeType, MimeTypes.getMediaMimeType(codecs), codecs, variantFormat.bitrate, variantFormat.width, variantFormat.height, variantFormat.frameRate, null, variantFormat.selectionFlags, variantFormat.roleFlags);
+    }
+
+    private static Format deriveAudioFormat(Format variantFormat, Format mediaTagFormat, boolean isPrimaryTrackInVariant) {
+        String codecs;
+        Format format = variantFormat;
+        Format format2 = mediaTagFormat;
+        int channelCount = -1;
+        int selectionFlags = 0;
+        int roleFlags = 0;
+        String language = null;
+        String label = null;
+        if (format2 != null) {
+            codecs = format2.codecs;
+            channelCount = format2.channelCount;
+            selectionFlags = format2.selectionFlags;
+            roleFlags = format2.roleFlags;
+            language = format2.language;
+            label = format2.label;
+        } else {
+            codecs = Util.getCodecsOfType(format.codecs, 1);
+            if (isPrimaryTrackInVariant) {
+                channelCount = format.channelCount;
+                selectionFlags = format.selectionFlags;
+                roleFlags = format2.roleFlags;
+                language = format.language;
+                label = format.label;
+            }
+        }
+        return Format.createAudioContainerFormat(format.f72id, label, format.containerMimeType, MimeTypes.getMediaMimeType(codecs), codecs, isPrimaryTrackInVariant ? format.bitrate : -1, channelCount, -1, null, selectionFlags, roleFlags, language);
     }
 
     public void release() {
@@ -591,60 +647,5 @@ public final class HlsMediaPeriod implements MediaPeriod, HlsSampleStreamWrapper
 
     private HlsSampleStreamWrapper buildSampleStreamWrapper(int trackType, Uri[] playlistUrls, Format[] playlistFormats, Format muxedAudioFormat, List<Format> muxedCaptionFormats, Map<String, DrmInitData> overridingDrmInitData, long positionUs) {
         return new HlsSampleStreamWrapper(trackType, this, new HlsChunkSource(this.extractorFactory, this.playlistTracker, playlistUrls, playlistFormats, this.dataSourceFactory, this.mediaTransferListener, this.timestampAdjusterProvider, muxedCaptionFormats), overridingDrmInitData, this.allocator, positionUs, muxedAudioFormat, this.loadErrorHandlingPolicy, this.eventDispatcher);
-    }
-
-    private static Map<String, DrmInitData> deriveOverridingDrmInitData(List<DrmInitData> sessionKeyDrmInitData) {
-        ArrayList<DrmInitData> mutableSessionKeyDrmInitData = new ArrayList<>(sessionKeyDrmInitData);
-        HashMap<String, DrmInitData> drmInitDataBySchemeType = new HashMap<>();
-        for (int i = 0; i < mutableSessionKeyDrmInitData.size(); i++) {
-            DrmInitData drmInitData = sessionKeyDrmInitData.get(i);
-            String scheme = drmInitData.schemeType;
-            int j = i + 1;
-            while (j < mutableSessionKeyDrmInitData.size()) {
-                DrmInitData nextDrmInitData = (DrmInitData) mutableSessionKeyDrmInitData.get(j);
-                if (TextUtils.equals(nextDrmInitData.schemeType, scheme)) {
-                    drmInitData = drmInitData.merge(nextDrmInitData);
-                    mutableSessionKeyDrmInitData.remove(j);
-                } else {
-                    j++;
-                }
-            }
-            drmInitDataBySchemeType.put(scheme, drmInitData);
-        }
-        return drmInitDataBySchemeType;
-    }
-
-    private static Format deriveVideoFormat(Format variantFormat) {
-        String codecs = Util.getCodecsOfType(variantFormat.codecs, 2);
-        return Format.createVideoContainerFormat(variantFormat.f72id, variantFormat.label, variantFormat.containerMimeType, MimeTypes.getMediaMimeType(codecs), codecs, variantFormat.bitrate, variantFormat.width, variantFormat.height, variantFormat.frameRate, null, variantFormat.selectionFlags, variantFormat.roleFlags);
-    }
-
-    private static Format deriveAudioFormat(Format variantFormat, Format mediaTagFormat, boolean isPrimaryTrackInVariant) {
-        String codecs;
-        Format format = variantFormat;
-        Format format2 = mediaTagFormat;
-        int channelCount = -1;
-        int selectionFlags = 0;
-        int roleFlags = 0;
-        String language = null;
-        String label = null;
-        if (format2 != null) {
-            codecs = format2.codecs;
-            channelCount = format2.channelCount;
-            selectionFlags = format2.selectionFlags;
-            roleFlags = format2.roleFlags;
-            language = format2.language;
-            label = format2.label;
-        } else {
-            codecs = Util.getCodecsOfType(format.codecs, 1);
-            if (isPrimaryTrackInVariant) {
-                channelCount = format.channelCount;
-                selectionFlags = format.selectionFlags;
-                roleFlags = format2.roleFlags;
-                language = format.language;
-                label = format.label;
-            }
-        }
-        return Format.createAudioContainerFormat(format.f72id, label, format.containerMimeType, MimeTypes.getMediaMimeType(codecs), codecs, isPrimaryTrackInVariant ? format.bitrate : -1, channelCount, -1, null, selectionFlags, roleFlags, language);
     }
 }

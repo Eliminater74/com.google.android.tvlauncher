@@ -1,6 +1,7 @@
 package com.google.android.exoplayer2.source.hls;
 
 import android.text.TextUtils;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.ParserException;
@@ -15,6 +16,7 @@ import com.google.android.exoplayer2.text.webvtt.WebvttParserUtil;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.TimestampAdjuster;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.regex.Matcher;
@@ -26,11 +28,11 @@ public final class WebvttExtractor implements Extractor {
     private static final Pattern LOCAL_TIMESTAMP = Pattern.compile("LOCAL:([^,]+)");
     private static final Pattern MEDIA_TIMESTAMP = Pattern.compile("MPEGTS:(\\d+)");
     private final String language;
+    private final ParsableByteArray sampleDataWrapper = new ParsableByteArray();
+    private final TimestampAdjuster timestampAdjuster;
     private ExtractorOutput output;
     private byte[] sampleData = new byte[1024];
-    private final ParsableByteArray sampleDataWrapper = new ParsableByteArray();
     private int sampleSize;
-    private final TimestampAdjuster timestampAdjuster;
 
     public WebvttExtractor(String language2, TimestampAdjuster timestampAdjuster2) {
         this.language = language2;

@@ -5,11 +5,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 
 abstract class ForwardingCondition implements Condition {
-    /* access modifiers changed from: package-private */
-    public abstract Condition delegate();
-
     ForwardingCondition() {
     }
+
+    /* access modifiers changed from: package-private */
+    public abstract Condition delegate();
 
     public void await() throws InterruptedException {
         delegate().await();

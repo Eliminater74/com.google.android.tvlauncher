@@ -2,6 +2,7 @@ package com.bumptech.glide.util;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Queue;
@@ -10,6 +11,9 @@ public class ExceptionCatchingInputStream extends InputStream {
     private static final Queue<ExceptionCatchingInputStream> QUEUE = Util.createQueue(0);
     private IOException exception;
     private InputStream wrapped;
+
+    ExceptionCatchingInputStream() {
+    }
 
     @NonNull
     public static ExceptionCatchingInputStream obtain(@NonNull InputStream toWrap) {
@@ -28,9 +32,6 @@ public class ExceptionCatchingInputStream extends InputStream {
         while (!QUEUE.isEmpty()) {
             QUEUE.remove();
         }
-    }
-
-    ExceptionCatchingInputStream() {
     }
 
     /* access modifiers changed from: package-private */

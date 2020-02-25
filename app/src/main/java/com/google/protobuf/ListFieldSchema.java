@@ -1,6 +1,5 @@
 package com.google.protobuf;
 
-import com.google.protobuf.Internal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -8,15 +7,6 @@ import java.util.List;
 abstract class ListFieldSchema {
     private static final ListFieldSchema FULL_INSTANCE = new ListFieldSchemaFull();
     private static final ListFieldSchema LITE_INSTANCE = new ListFieldSchemaLite();
-
-    /* access modifiers changed from: package-private */
-    public abstract void makeImmutableListAt(Object obj, long j);
-
-    /* access modifiers changed from: package-private */
-    public abstract <L> void mergeListsAt(Object obj, Object obj2, long j);
-
-    /* access modifiers changed from: package-private */
-    public abstract <L> List<L> mutableListAt(Object obj, long j);
 
     private ListFieldSchema() {
     }
@@ -29,37 +19,20 @@ abstract class ListFieldSchema {
         return LITE_INSTANCE;
     }
 
+    /* access modifiers changed from: package-private */
+    public abstract void makeImmutableListAt(Object obj, long j);
+
+    /* access modifiers changed from: package-private */
+    public abstract <L> void mergeListsAt(Object obj, Object obj2, long j);
+
+    /* access modifiers changed from: package-private */
+    public abstract <L> List<L> mutableListAt(Object obj, long j);
+
     private static final class ListFieldSchemaFull extends ListFieldSchema {
         private static final Class<?> UNMODIFIABLE_LIST_CLASS = Collections.unmodifiableList(Collections.emptyList()).getClass();
 
         private ListFieldSchemaFull() {
             super();
-        }
-
-        /* access modifiers changed from: package-private */
-        public <L> List<L> mutableListAt(Object message, long offset) {
-            return mutableListAt(message, offset, 10);
-        }
-
-        /* access modifiers changed from: package-private */
-        public void makeImmutableListAt(Object message, long offset) {
-            Object immutable;
-            List<?> list = (List) UnsafeUtil.getObject(message, offset);
-            if (list instanceof LazyStringList) {
-                immutable = ((LazyStringList) list).getUnmodifiableView();
-            } else if (!UNMODIFIABLE_LIST_CLASS.isAssignableFrom(list.getClass())) {
-                if (!(list instanceof PrimitiveNonBoxingCollection) || !(list instanceof Internal.ProtobufList)) {
-                    immutable = Collections.unmodifiableList(list);
-                } else if (((Internal.ProtobufList) list).isModifiable()) {
-                    ((Internal.ProtobufList) list).makeImmutable();
-                    return;
-                } else {
-                    return;
-                }
-            } else {
-                return;
-            }
-            UnsafeUtil.putObject(message, offset, immutable);
         }
 
         private static <L> List<L> mutableListAt(Object message, long offset, int additionalCapacity) {
@@ -96,6 +69,36 @@ abstract class ListFieldSchema {
             }
         }
 
+        static <E> List<E> getList(Object message, long offset) {
+            return (List) UnsafeUtil.getObject(message, offset);
+        }
+
+        /* access modifiers changed from: package-private */
+        public <L> List<L> mutableListAt(Object message, long offset) {
+            return mutableListAt(message, offset, 10);
+        }
+
+        /* access modifiers changed from: package-private */
+        public void makeImmutableListAt(Object message, long offset) {
+            Object immutable;
+            List<?> list = (List) UnsafeUtil.getObject(message, offset);
+            if (list instanceof LazyStringList) {
+                immutable = ((LazyStringList) list).getUnmodifiableView();
+            } else if (!UNMODIFIABLE_LIST_CLASS.isAssignableFrom(list.getClass())) {
+                if (!(list instanceof PrimitiveNonBoxingCollection) || !(list instanceof Internal.ProtobufList)) {
+                    immutable = Collections.unmodifiableList(list);
+                } else if (((Internal.ProtobufList) list).isModifiable()) {
+                    ((Internal.ProtobufList) list).makeImmutable();
+                    return;
+                } else {
+                    return;
+                }
+            } else {
+                return;
+            }
+            UnsafeUtil.putObject(message, offset, immutable);
+        }
+
         /* access modifiers changed from: package-private */
         public <E> void mergeListsAt(Object msg, Object otherMsg, long offset) {
             List<E> other = getList(otherMsg, offset);
@@ -107,15 +110,15 @@ abstract class ListFieldSchema {
             }
             UnsafeUtil.putObject(msg, offset, size > 0 ? mine : other);
         }
-
-        static <E> List<E> getList(Object message, long offset) {
-            return (List) UnsafeUtil.getObject(message, offset);
-        }
     }
 
     private static final class ListFieldSchemaLite extends ListFieldSchema {
         private ListFieldSchemaLite() {
             super();
+        }
+
+        static <E> Internal.ProtobufList<E> getProtobufList(Object message, long offset) {
+            return (Internal.ProtobufList) UnsafeUtil.getObject(message, offset);
         }
 
         /* access modifiers changed from: package-private */
@@ -148,10 +151,6 @@ abstract class ListFieldSchema {
                 mine.addAll(other);
             }
             UnsafeUtil.putObject(msg, offset, size > 0 ? mine : other);
-        }
-
-        static <E> Internal.ProtobufList<E> getProtobufList(Object message, long offset) {
-            return (Internal.ProtobufList) UnsafeUtil.getObject(message, offset);
         }
     }
 }

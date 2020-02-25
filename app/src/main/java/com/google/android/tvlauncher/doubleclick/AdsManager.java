@@ -6,8 +6,11 @@ import android.os.Process;
 import android.support.annotation.VisibleForTesting;
 import android.text.TextUtils;
 import android.util.Log;
+
 import androidx.tvprovider.media.p005tv.TvContractCompat;
+
 import com.google.android.tvlauncher.application.TvLauncherApplication;
+
 import java.io.InputStream;
 import java.util.List;
 import java.util.Objects;

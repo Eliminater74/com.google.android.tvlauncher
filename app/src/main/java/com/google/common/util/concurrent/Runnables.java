@@ -11,10 +11,10 @@ public final class Runnables {
         }
     };
 
-    public static Runnable doNothing() {
-        return EMPTY_RUNNABLE;
+    private Runnables() {
     }
 
-    private Runnables() {
+    public static Runnable doNothing() {
+        return EMPTY_RUNNABLE;
     }
 }

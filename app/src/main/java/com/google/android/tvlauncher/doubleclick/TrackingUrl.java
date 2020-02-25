@@ -1,6 +1,7 @@
 package com.google.android.tvlauncher.doubleclick;
 
 import android.text.TextUtils;
+
 import java.util.Objects;
 
 public class TrackingUrl {

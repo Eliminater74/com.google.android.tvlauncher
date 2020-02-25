@@ -1,6 +1,7 @@
 package com.google.android.exoplayer2.metadata.emsg;
 
 import android.support.annotation.Nullable;
+
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -8,6 +9,18 @@ import java.io.IOException;
 public final class EventMessageEncoder {
     private final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(512);
     private final DataOutputStream dataOutputStream = new DataOutputStream(this.byteArrayOutputStream);
+
+    private static void writeNullTerminatedString(DataOutputStream dataOutputStream2, String value) throws IOException {
+        dataOutputStream2.writeBytes(value);
+        dataOutputStream2.writeByte(0);
+    }
+
+    private static void writeUnsignedInt(DataOutputStream outputStream, long value) throws IOException {
+        outputStream.writeByte(((int) (value >>> 24)) & 255);
+        outputStream.writeByte(((int) (value >>> 16)) & 255);
+        outputStream.writeByte(((int) (value >>> 8)) & 255);
+        outputStream.writeByte(((int) value) & 255);
+    }
 
     @Nullable
     public byte[] encode(EventMessage eventMessage) {
@@ -25,17 +38,5 @@ public final class EventMessageEncoder {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private static void writeNullTerminatedString(DataOutputStream dataOutputStream2, String value) throws IOException {
-        dataOutputStream2.writeBytes(value);
-        dataOutputStream2.writeByte(0);
-    }
-
-    private static void writeUnsignedInt(DataOutputStream outputStream, long value) throws IOException {
-        outputStream.writeByte(((int) (value >>> 24)) & 255);
-        outputStream.writeByte(((int) (value >>> 16)) & 255);
-        outputStream.writeByte(((int) (value >>> 8)) & 255);
-        outputStream.writeByte(((int) value) & 255);
     }
 }

@@ -3,8 +3,10 @@ package com.google.android.gms.phenotype;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Base64;
+
 import com.google.android.gms.internal.zzbkv;
 import com.google.android.gms.internal.zzbky;
+
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -103,6 +105,13 @@ public class Flag extends zzbkv implements Comparable<Flag> {
 
     public Flag(String str, byte[] bArr, int i) {
         this(str, 0, false, 0.0d, "", bArr, 5, i);
+    }
+
+    private static int zza(int i, int i2) {
+        if (i < i2) {
+            return -1;
+        }
+        return i == i2 ? 0 : 1;
     }
 
     public long getLong() {
@@ -309,13 +318,6 @@ public class Flag extends zzbkv implements Comparable<Flag> {
                 throw new AssertionError(sb.toString());
             }
         }
-    }
-
-    private static int zza(int i, int i2) {
-        if (i < i2) {
-            return -1;
-        }
-        return i == i2 ? 0 : 1;
     }
 
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead

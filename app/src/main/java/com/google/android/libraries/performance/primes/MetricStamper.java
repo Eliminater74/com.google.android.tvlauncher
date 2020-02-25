@@ -8,10 +8,12 @@ import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.support.p001v4.media.session.PlaybackStateCompat;
 import android.text.TextUtils;
+
 import com.google.android.libraries.flashmanagement.storagestats.DataPartitionSize;
 import com.google.android.libraries.performance.primes.metriccapture.ProcessStats;
 import com.google.android.libraries.performance.primes.version.PrimesVersion;
 import com.google.android.libraries.stitch.util.Preconditions;
+
 import logs.proto.wireless.performance.mobile.SystemHealthProto;
 
 public final class MetricStamper {
@@ -64,6 +66,10 @@ public final class MetricStamper {
         }
         hardwareVariant2 = hardwareVariant3;
         return new MetricStamper(applicationPackage2, shortProcessName2, versionName2, hardwareVariant2, PrimesVersion.getPrimesVersion(applicationContext), new DataPartitionSize(applicationContext), componentNameSupplier2);
+    }
+
+    public static Builder newBuilder() {
+        return new Builder();
     }
 
     @Nullable
@@ -125,10 +131,6 @@ public final class MetricStamper {
 
     public Long getPrimesVersion() {
         return this.primesVersion;
-    }
-
-    public static Builder newBuilder() {
-        return new Builder();
     }
 
     public static final class Builder {

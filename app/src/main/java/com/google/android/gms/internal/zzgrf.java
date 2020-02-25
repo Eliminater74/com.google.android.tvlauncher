@@ -5,13 +5,13 @@ final class zzgrf extends zzgrd<zzgre, zzgre> {
     zzgrf() {
     }
 
+    private static void zza(Object obj, zzgre zzgre) {
+        ((zzgoj) obj).zzb = zzgre;
+    }
+
     /* access modifiers changed from: package-private */
     public final boolean zza(zzgqk zzgqk) {
         return false;
-    }
-
-    private static void zza(Object obj, zzgre zzgre) {
-        ((zzgoj) obj).zzb = zzgre;
     }
 
     /* access modifiers changed from: package-private */

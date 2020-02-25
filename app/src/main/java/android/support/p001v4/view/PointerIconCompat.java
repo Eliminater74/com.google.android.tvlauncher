@@ -68,11 +68,6 @@ public final class PointerIconCompat {
         throw new UnsupportedOperationException("Method not decompiled: android.support.p001v4.view.PointerIconCompat.<init>(java.lang.Object):void");
     }
 
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    public Object getPointerIcon() {
-        return this.mPointerIcon;
-    }
-
     public static PointerIconCompat getSystemIcon(Context context, int style) {
         if (Build.VERSION.SDK_INT >= 24) {
             return new PointerIconCompat(PointerIcon.getSystemIcon(context, style));
@@ -92,5 +87,10 @@ public final class PointerIconCompat {
             return new PointerIconCompat(PointerIcon.load(resources, resourceId));
         }
         return new PointerIconCompat(null);
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    public Object getPointerIcon() {
+        return this.mPointerIcon;
     }
 }

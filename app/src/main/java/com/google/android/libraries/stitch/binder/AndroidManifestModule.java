@@ -5,6 +5,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -19,10 +20,6 @@ public final class AndroidManifestModule implements Module {
     private static final int MODULE_META_DATA_PREFIX_LENGTH = MODULE_META_DATA_PREFIX.length();
     private static final String TAG = "Binder";
     private final Module[] mModules;
-
-    public void configure(Context context, Class cls, Object obj, Binder binder) {
-        Module$$CC.configure$$dflt$$(this, context, cls, obj, binder);
-    }
 
     public AndroidManifestModule(Context context) {
         this(context, null);
@@ -68,6 +65,10 @@ public final class AndroidManifestModule implements Module {
             }
         }
         this.mModules = (Module[]) moduleList.toArray(new Module[moduleList.size()]);
+    }
+
+    public void configure(Context context, Class cls, Object obj, Binder binder) {
+        Module$$CC.configure$$dflt$$(this, context, cls, obj, binder);
     }
 
     private Module instantiateModule(String className) {

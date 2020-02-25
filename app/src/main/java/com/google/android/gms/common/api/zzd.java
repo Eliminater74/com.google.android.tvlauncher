@@ -1,7 +1,7 @@
 package com.google.android.gms.common.api;
 
 import android.os.Looper;
-import com.google.android.gms.common.api.GoogleApi;
+
 import com.google.android.gms.common.api.internal.zzdg;
 import com.google.android.gms.common.api.internal.zzh;
 import com.google.android.gms.common.internal.zzau;

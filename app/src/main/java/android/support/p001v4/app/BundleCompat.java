@@ -6,11 +6,31 @@ import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /* renamed from: android.support.v4.app.BundleCompat */
 public final class BundleCompat {
+
+    private BundleCompat() {
+    }
+
+    @Nullable
+    public static IBinder getBinder(@NonNull Bundle bundle, @Nullable String key) {
+        if (Build.VERSION.SDK_INT >= 18) {
+            return bundle.getBinder(key);
+        }
+        return BundleCompatBaseImpl.getBinder(bundle, key);
+    }
+
+    public static void putBinder(@NonNull Bundle bundle, @Nullable String key, @Nullable IBinder binder) {
+        if (Build.VERSION.SDK_INT >= 18) {
+            bundle.putBinder(key, binder);
+        } else {
+            BundleCompatBaseImpl.putBinder(bundle, key, binder);
+        }
+    }
 
     /* renamed from: android.support.v4.app.BundleCompat$BundleCompatBaseImpl */
     static class BundleCompatBaseImpl {
@@ -64,25 +84,6 @@ public final class BundleCompat {
                     sPutIBinderMethod = null;
                 }
             }
-        }
-    }
-
-    private BundleCompat() {
-    }
-
-    @Nullable
-    public static IBinder getBinder(@NonNull Bundle bundle, @Nullable String key) {
-        if (Build.VERSION.SDK_INT >= 18) {
-            return bundle.getBinder(key);
-        }
-        return BundleCompatBaseImpl.getBinder(bundle, key);
-    }
-
-    public static void putBinder(@NonNull Bundle bundle, @Nullable String key, @Nullable IBinder binder) {
-        if (Build.VERSION.SDK_INT >= 18) {
-            bundle.putBinder(key, binder);
-        } else {
-            BundleCompatBaseImpl.putBinder(bundle, key, binder);
         }
     }
 }

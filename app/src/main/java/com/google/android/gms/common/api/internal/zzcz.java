@@ -2,6 +2,7 @@ package com.google.android.gms.common.api.internal;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.Result;
 import com.google.android.gms.common.api.ResultCallback;
@@ -11,6 +12,7 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.common.api.TransformedResult;
 import com.google.android.gms.common.internal.Hide;
 import com.google.android.gms.common.internal.zzau;
+
 import java.util.concurrent.TimeUnit;
 
 /* compiled from: SentinelPendingResult */

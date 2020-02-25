@@ -11,17 +11,19 @@ import android.support.annotation.RestrictTo;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.Xml;
-import java.io.IOException;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.IOException;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
 /* renamed from: android.support.v4.content.res.ComplexColorCompat */
 public final class ComplexColorCompat {
     private static final String LOG_TAG = "ComplexColorCompat";
-    private int mColor;
     private final ColorStateList mColorStateList;
     private final Shader mShader;
+    private int mColor;
 
     private ComplexColorCompat(Shader shader, ColorStateList colorStateList, @ColorInt int color) {
         this.mShader = shader;
@@ -39,46 +41,6 @@ public final class ComplexColorCompat {
 
     static ComplexColorCompat from(@ColorInt int color) {
         return new ComplexColorCompat(null, null, color);
-    }
-
-    @Nullable
-    public Shader getShader() {
-        return this.mShader;
-    }
-
-    @ColorInt
-    public int getColor() {
-        return this.mColor;
-    }
-
-    public void setColor(@ColorInt int color) {
-        this.mColor = color;
-    }
-
-    public boolean isGradient() {
-        return this.mShader != null;
-    }
-
-    public boolean isStateful() {
-        ColorStateList colorStateList;
-        return this.mShader == null && (colorStateList = this.mColorStateList) != null && colorStateList.isStateful();
-    }
-
-    public boolean onStateChanged(int[] stateSet) {
-        if (!isStateful()) {
-            return false;
-        }
-        ColorStateList colorStateList = this.mColorStateList;
-        int colorForState = colorStateList.getColorForState(stateSet, colorStateList.getDefaultColor());
-        if (colorForState == this.mColor) {
-            return false;
-        }
-        this.mColor = colorForState;
-        return true;
-    }
-
-    public boolean willDraw() {
-        return isGradient() || this.mColor != 0;
     }
 
     @Nullable
@@ -123,5 +85,45 @@ public final class ComplexColorCompat {
             throw new XmlPullParserException(parser.getPositionDescription() + ": unsupported complex color tag " + name);
         }
         throw new XmlPullParserException("No start tag found");
+    }
+
+    @Nullable
+    public Shader getShader() {
+        return this.mShader;
+    }
+
+    @ColorInt
+    public int getColor() {
+        return this.mColor;
+    }
+
+    public void setColor(@ColorInt int color) {
+        this.mColor = color;
+    }
+
+    public boolean isGradient() {
+        return this.mShader != null;
+    }
+
+    public boolean isStateful() {
+        ColorStateList colorStateList;
+        return this.mShader == null && (colorStateList = this.mColorStateList) != null && colorStateList.isStateful();
+    }
+
+    public boolean onStateChanged(int[] stateSet) {
+        if (!isStateful()) {
+            return false;
+        }
+        ColorStateList colorStateList = this.mColorStateList;
+        int colorForState = colorStateList.getColorForState(stateSet, colorStateList.getDefaultColor());
+        if (colorForState == this.mColor) {
+            return false;
+        }
+        this.mColor = colorForState;
+        return true;
+    }
+
+    public boolean willDraw() {
+        return isGradient() || this.mColor != 0;
     }
 }

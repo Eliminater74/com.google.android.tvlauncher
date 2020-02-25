@@ -26,6 +26,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.google.android.exoplayer2.ControlDispatcher;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.PlaybackParameters;
@@ -35,8 +36,6 @@ import com.google.android.exoplayer2.Player$EventListener$$CC;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.metadata.Metadata;
 import com.google.android.exoplayer2.metadata.id3.ApicFrame;
-import com.google.android.exoplayer2.p008ui.AspectRatioFrameLayout;
-import com.google.android.exoplayer2.p008ui.PlayerControlView;
 import com.google.android.exoplayer2.p008ui.spherical.SingleTapListener;
 import com.google.android.exoplayer2.p008ui.spherical.SphericalSurfaceView;
 import com.google.android.exoplayer2.source.TrackGroupArray;
@@ -50,6 +49,7 @@ import com.google.android.exoplayer2.util.ErrorMessageProvider;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoListener;
 import com.google.android.exoplayer2.video.VideoListener$$CC;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -65,20 +65,35 @@ public class PlayerView extends FrameLayout implements AdsLoader.AdViewProvider 
     private static final int SURFACE_TYPE_NONE = 0;
     private static final int SURFACE_TYPE_SURFACE_VIEW = 1;
     private static final int SURFACE_TYPE_TEXTURE_VIEW = 2;
+    /* access modifiers changed from: private */
+    @Nullable
+    public final AspectRatioFrameLayout contentFrame;
+    /* access modifiers changed from: private */
+    public final View shutterView;
+    /* access modifiers changed from: private */
+    public final SubtitleView subtitleView;
+    /* access modifiers changed from: private */
+    @Nullable
+    public final View surfaceView;
     @Nullable
     private final FrameLayout adOverlayFrameLayout;
     private final ImageView artworkView;
     @Nullable
     private final View bufferingView;
     private final ComponentListener componentListener;
-    /* access modifiers changed from: private */
-    @Nullable
-    public final AspectRatioFrameLayout contentFrame;
     @Nullable
     private final PlayerControlView controller;
-    private boolean controllerAutoShow;
+    @Nullable
+    private final TextView errorMessageView;
+    @Nullable
+    private final FrameLayout overlayFrameLayout;
     /* access modifiers changed from: private */
     public boolean controllerHideDuringAds;
+    /* access modifiers changed from: private */
+    public Player player;
+    /* access modifiers changed from: private */
+    public int textureViewRotation;
+    private boolean controllerAutoShow;
     private boolean controllerHideOnTouch;
     private int controllerShowTimeoutMs;
     @Nullable
@@ -87,31 +102,10 @@ public class PlayerView extends FrameLayout implements AdsLoader.AdViewProvider 
     private Drawable defaultArtwork;
     @Nullable
     private ErrorMessageProvider<? super ExoPlaybackException> errorMessageProvider;
-    @Nullable
-    private final TextView errorMessageView;
     private boolean keepContentOnPlayerReset;
-    @Nullable
-    private final FrameLayout overlayFrameLayout;
-    /* access modifiers changed from: private */
-    public Player player;
     private int showBuffering;
-    /* access modifiers changed from: private */
-    public final View shutterView;
-    /* access modifiers changed from: private */
-    public final SubtitleView subtitleView;
-    /* access modifiers changed from: private */
-    @Nullable
-    public final View surfaceView;
-    /* access modifiers changed from: private */
-    public int textureViewRotation;
     private boolean useArtwork;
     private boolean useController;
-
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    /* renamed from: com.google.android.exoplayer2.ui.PlayerView$ShowBuffering */
-    public @interface ShowBuffering {
-    }
 
     public PlayerView(Context context) {
         this(context, null);
@@ -297,6 +291,40 @@ public class PlayerView extends FrameLayout implements AdsLoader.AdViewProvider 
         }
     }
 
+    @TargetApi(23)
+    private static void configureEditModeLogoV23(Resources resources, ImageView logo) {
+        logo.setImageDrawable(resources.getDrawable(C0931R.C0932drawable.exo_edit_mode_logo, null));
+        logo.setBackgroundColor(resources.getColor(C0931R.color.exo_edit_mode_background_color, null));
+    }
+
+    private static void configureEditModeLogo(Resources resources, ImageView logo) {
+        logo.setImageDrawable(resources.getDrawable(C0931R.C0932drawable.exo_edit_mode_logo));
+        logo.setBackgroundColor(resources.getColor(C0931R.color.exo_edit_mode_background_color));
+    }
+
+    private static void setResizeModeRaw(AspectRatioFrameLayout aspectRatioFrame, int resizeMode) {
+        aspectRatioFrame.setResizeMode(resizeMode);
+    }
+
+    /* access modifiers changed from: private */
+    public static void applyTextureViewRotation(TextureView textureView, int textureViewRotation2) {
+        float textureViewWidth = (float) textureView.getWidth();
+        float textureViewHeight = (float) textureView.getHeight();
+        if (textureViewWidth == 0.0f || textureViewHeight == 0.0f || textureViewRotation2 == 0) {
+            textureView.setTransform(null);
+            return;
+        }
+        Matrix transformMatrix = new Matrix();
+        float pivotX = textureViewWidth / 2.0f;
+        float pivotY = textureViewHeight / 2.0f;
+        transformMatrix.postRotate((float) textureViewRotation2, pivotX, pivotY);
+        RectF originalTextureRect = new RectF(0.0f, 0.0f, textureViewWidth, textureViewHeight);
+        RectF rotatedTextureRect = new RectF();
+        transformMatrix.mapRect(rotatedTextureRect, originalTextureRect);
+        transformMatrix.postScale(textureViewWidth / rotatedTextureRect.width(), textureViewHeight / rotatedTextureRect.height(), pivotX, pivotY);
+        textureView.setTransform(transformMatrix);
+    }
+
     public Player getPlayer() {
         return this.player;
     }
@@ -369,14 +397,14 @@ public class PlayerView extends FrameLayout implements AdsLoader.AdViewProvider 
         }
     }
 
-    public void setResizeMode(int resizeMode) {
-        Assertions.checkState(this.contentFrame != null);
-        this.contentFrame.setResizeMode(resizeMode);
-    }
-
     public int getResizeMode() {
         Assertions.checkState(this.contentFrame != null);
         return this.contentFrame.getResizeMode();
+    }
+
+    public void setResizeMode(int resizeMode) {
+        Assertions.checkState(this.contentFrame != null);
+        this.contentFrame.setResizeMode(resizeMode);
     }
 
     public boolean getUseArtwork() {
@@ -833,47 +861,22 @@ public class PlayerView extends FrameLayout implements AdsLoader.AdViewProvider 
         }
     }
 
-    @TargetApi(23)
-    private static void configureEditModeLogoV23(Resources resources, ImageView logo) {
-        logo.setImageDrawable(resources.getDrawable(C0931R.C0932drawable.exo_edit_mode_logo, null));
-        logo.setBackgroundColor(resources.getColor(C0931R.color.exo_edit_mode_background_color, null));
-    }
-
-    private static void configureEditModeLogo(Resources resources, ImageView logo) {
-        logo.setImageDrawable(resources.getDrawable(C0931R.C0932drawable.exo_edit_mode_logo));
-        logo.setBackgroundColor(resources.getColor(C0931R.color.exo_edit_mode_background_color));
-    }
-
-    private static void setResizeModeRaw(AspectRatioFrameLayout aspectRatioFrame, int resizeMode) {
-        aspectRatioFrame.setResizeMode(resizeMode);
-    }
-
-    /* access modifiers changed from: private */
-    public static void applyTextureViewRotation(TextureView textureView, int textureViewRotation2) {
-        float textureViewWidth = (float) textureView.getWidth();
-        float textureViewHeight = (float) textureView.getHeight();
-        if (textureViewWidth == 0.0f || textureViewHeight == 0.0f || textureViewRotation2 == 0) {
-            textureView.setTransform(null);
-            return;
-        }
-        Matrix transformMatrix = new Matrix();
-        float pivotX = textureViewWidth / 2.0f;
-        float pivotY = textureViewHeight / 2.0f;
-        transformMatrix.postRotate((float) textureViewRotation2, pivotX, pivotY);
-        RectF originalTextureRect = new RectF(0.0f, 0.0f, textureViewWidth, textureViewHeight);
-        RectF rotatedTextureRect = new RectF();
-        transformMatrix.mapRect(rotatedTextureRect, originalTextureRect);
-        transformMatrix.postScale(textureViewWidth / rotatedTextureRect.width(), textureViewHeight / rotatedTextureRect.height(), pivotX, pivotY);
-        textureView.setTransform(transformMatrix);
-    }
-
     @SuppressLint({"InlinedApi"})
     private boolean isDpadKey(int keyCode) {
         return keyCode == 19 || keyCode == 270 || keyCode == 22 || keyCode == 271 || keyCode == 20 || keyCode == 269 || keyCode == 21 || keyCode == 268 || keyCode == 23;
     }
 
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    /* renamed from: com.google.android.exoplayer2.ui.PlayerView$ShowBuffering */
+    public @interface ShowBuffering {
+    }
+
     /* renamed from: com.google.android.exoplayer2.ui.PlayerView$ComponentListener */
     private final class ComponentListener implements Player.EventListener, TextOutput, VideoListener, View.OnLayoutChangeListener, SphericalSurfaceView.SurfaceListener, SingleTapListener {
+        private ComponentListener() {
+        }
+
         public void onLoadingChanged(boolean z) {
             Player$EventListener$$CC.onLoadingChanged$$dflt$$(this, z);
         }
@@ -904,9 +907,6 @@ public class PlayerView extends FrameLayout implements AdsLoader.AdViewProvider 
 
         public void onTimelineChanged(Timeline timeline, Object obj, int i) {
             Player$EventListener$$CC.onTimelineChanged$$dflt$$(this, timeline, obj, i);
-        }
-
-        private ComponentListener() {
         }
 
         public void onCues(List<Cue> cues) {

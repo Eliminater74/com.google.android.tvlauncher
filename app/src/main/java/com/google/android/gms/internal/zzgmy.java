@@ -2,6 +2,7 @@ package com.google.android.gms.internal;
 
 import com.google.common.base.Ascii;
 import com.google.common.primitives.UnsignedBytes;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.List;
@@ -11,8 +12,8 @@ import java.util.Map;
 final class zzgmy extends zzgmw {
     private final boolean zza = true;
     private final byte[] zzb;
-    private int zzc;
     private final int zzd;
+    private int zzc;
     private int zze;
     private int zzf;
     private int zzg;

@@ -6,12 +6,49 @@ import android.os.Build;
 import android.provider.DocumentsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import java.io.File;
 
 public abstract class DocumentFile {
     static final String TAG = "DocumentFile";
     @Nullable
     private final DocumentFile mParent;
+
+    DocumentFile(@Nullable DocumentFile parent) {
+        this.mParent = parent;
+    }
+
+    @NonNull
+    public static DocumentFile fromFile(@NonNull File file) {
+        return new RawDocumentFile(null, file);
+    }
+
+    @Nullable
+    public static DocumentFile fromSingleUri(@NonNull Context context, @NonNull Uri singleUri) {
+        if (Build.VERSION.SDK_INT >= 19) {
+            return new SingleDocumentFile(null, context, singleUri);
+        }
+        return null;
+    }
+
+    @Nullable
+    public static DocumentFile fromTreeUri(@NonNull Context context, @NonNull Uri treeUri) {
+        if (Build.VERSION.SDK_INT < 21) {
+            return null;
+        }
+        String documentId = DocumentsContract.getTreeDocumentId(treeUri);
+        if (DocumentsContract.isDocumentUri(context, treeUri)) {
+            documentId = DocumentsContract.getDocumentId(treeUri);
+        }
+        return new TreeDocumentFile(null, context, DocumentsContract.buildDocumentUriUsingTree(treeUri, documentId));
+    }
+
+    public static boolean isDocumentUri(@NonNull Context context, @Nullable Uri uri) {
+        if (Build.VERSION.SDK_INT >= 19) {
+            return DocumentsContract.isDocumentUri(context, uri);
+        }
+        return false;
+    }
 
     public abstract boolean canRead();
 
@@ -50,42 +87,6 @@ public abstract class DocumentFile {
     public abstract DocumentFile[] listFiles();
 
     public abstract boolean renameTo(@NonNull String str);
-
-    DocumentFile(@Nullable DocumentFile parent) {
-        this.mParent = parent;
-    }
-
-    @NonNull
-    public static DocumentFile fromFile(@NonNull File file) {
-        return new RawDocumentFile(null, file);
-    }
-
-    @Nullable
-    public static DocumentFile fromSingleUri(@NonNull Context context, @NonNull Uri singleUri) {
-        if (Build.VERSION.SDK_INT >= 19) {
-            return new SingleDocumentFile(null, context, singleUri);
-        }
-        return null;
-    }
-
-    @Nullable
-    public static DocumentFile fromTreeUri(@NonNull Context context, @NonNull Uri treeUri) {
-        if (Build.VERSION.SDK_INT < 21) {
-            return null;
-        }
-        String documentId = DocumentsContract.getTreeDocumentId(treeUri);
-        if (DocumentsContract.isDocumentUri(context, treeUri)) {
-            documentId = DocumentsContract.getDocumentId(treeUri);
-        }
-        return new TreeDocumentFile(null, context, DocumentsContract.buildDocumentUriUsingTree(treeUri, documentId));
-    }
-
-    public static boolean isDocumentUri(@NonNull Context context, @Nullable Uri uri) {
-        if (Build.VERSION.SDK_INT >= 19) {
-            return DocumentsContract.isDocumentUri(context, uri);
-        }
-        return false;
-    }
 
     @Nullable
     public DocumentFile getParentFile() {

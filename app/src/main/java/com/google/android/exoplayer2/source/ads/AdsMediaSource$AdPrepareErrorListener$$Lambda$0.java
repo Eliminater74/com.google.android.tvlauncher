@@ -1,6 +1,5 @@
 package com.google.android.exoplayer2.source.ads;
 
-import com.google.android.exoplayer2.source.ads.AdsMediaSource;
 import java.io.IOException;
 
 final /* synthetic */ class AdsMediaSource$AdPrepareErrorListener$$Lambda$0 implements Runnable {

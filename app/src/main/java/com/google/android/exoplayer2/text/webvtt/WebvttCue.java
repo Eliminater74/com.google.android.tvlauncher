@@ -2,6 +2,7 @@ package com.google.android.exoplayer2.text.webvtt;
 
 import android.text.Layout;
 import android.text.SpannableStringBuilder;
+
 import com.google.android.exoplayer2.text.Cue;
 import com.google.android.exoplayer2.util.Log;
 

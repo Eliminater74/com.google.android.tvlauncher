@@ -6,7 +6,9 @@ import android.support.p004v7.widget.DefaultItemAnimator;
 import android.support.p004v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
+
 import androidx.leanback.widget.HorizontalGridView;
+
 import com.google.android.tvlauncher.BackHomeControllerListeners;
 import com.google.android.tvlauncher.C1188R;
 import com.google.android.tvlauncher.analytics.EventLogger;
@@ -22,16 +24,16 @@ class FavoriteLaunchItemsRowController implements HomeRow, ChannelView.OnPerform
     private static final String TAG = "FavLaunchItemController";
     /* access modifiers changed from: private */
     public final ChannelView mChannelView;
+    /* access modifiers changed from: private */
+    public final HorizontalGridView mItemsListView = this.mChannelView.getItemsListView();
     private final EventLogger mEventLogger;
+    private final int mItemsListDefaultPaddingEnd;
+    private final int mItemsListDefaultWindowAlignmentOffset;
     private RecyclerViewFastScrollingManager mFastScrollingManager;
     private FavoriteLaunchItemsRowEditModeActionCallbacks mFavoriteLaunchItemsRowEditModeActionCallbacks;
     private boolean mHomeIsFastScrolling;
     private RecyclerViewStateProvider mHomeListStateProvider;
     private FavoriteLaunchItemsAdapter mItemsAdapter;
-    private final int mItemsListDefaultPaddingEnd;
-    private final int mItemsListDefaultWindowAlignmentOffset;
-    /* access modifiers changed from: private */
-    public final HorizontalGridView mItemsListView = this.mChannelView.getItemsListView();
     private BackHomeControllerListeners.OnBackNotHandledListener mOnBackNotHandledListener;
     private BackHomeControllerListeners.OnHomeNotHandledListener mOnHomeNotHandledListener;
     private OnHomeRowSelectedListener mOnHomeRowSelectedListener;

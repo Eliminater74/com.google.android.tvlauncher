@@ -5,8 +5,6 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.RestrictTo;
 import android.support.p004v7.appcompat.C0233R;
-import android.support.p004v7.view.menu.MenuPresenter;
-import android.support.p004v7.view.menu.MenuView;
 import android.util.SparseArray;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
@@ -15,23 +13,24 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListAdapter;
+
 import java.util.ArrayList;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
 /* renamed from: android.support.v7.view.menu.ListMenuPresenter */
 public class ListMenuPresenter implements MenuPresenter, AdapterView.OnItemClickListener {
-    private static final String TAG = "ListMenuPresenter";
     public static final String VIEWS_TAG = "android:menu:list";
+    private static final String TAG = "ListMenuPresenter";
     MenuAdapter mAdapter;
-    private MenuPresenter.Callback mCallback;
     Context mContext;
-    private int mId;
     LayoutInflater mInflater;
     int mItemIndexOffset;
     int mItemLayoutRes;
     MenuBuilder mMenu;
     ExpandedMenuView mMenuView;
     int mThemeRes;
+    private MenuPresenter.Callback mCallback;
+    private int mId;
 
     public ListMenuPresenter(Context context, int itemLayoutRes) {
         this(itemLayoutRes, 0);
@@ -162,12 +161,12 @@ public class ListMenuPresenter implements MenuPresenter, AdapterView.OnItemClick
         }
     }
 
-    public void setId(int id) {
-        this.mId = id;
-    }
-
     public int getId() {
         return this.mId;
+    }
+
+    public void setId(int id) {
+        this.mId = id;
     }
 
     public Parcelable onSaveInstanceState() {

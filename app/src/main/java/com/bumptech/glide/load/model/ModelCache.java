@@ -3,8 +3,10 @@ package com.bumptech.glide.load.model;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
+
 import com.bumptech.glide.util.LruCache;
 import com.bumptech.glide.util.Util;
+
 import java.util.Queue;
 
 public class ModelCache<A, B> {
@@ -47,6 +49,9 @@ public class ModelCache<A, B> {
         private A model;
         private int width;
 
+        private ModelKey() {
+        }
+
         static <A> ModelKey<A> get(A model2, int width2, int height2) {
             ModelKey<A> modelKey;
             synchronized (KEY_QUEUE) {
@@ -57,9 +62,6 @@ public class ModelCache<A, B> {
             }
             modelKey.init(model2, width2, height2);
             return modelKey;
-        }
-
-        private ModelKey() {
         }
 
         private void init(A model2, int width2, int height2) {

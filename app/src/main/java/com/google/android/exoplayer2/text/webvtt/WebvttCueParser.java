@@ -13,10 +13,11 @@ import android.text.style.StrikethroughSpan;
 import android.text.style.StyleSpan;
 import android.text.style.TypefaceSpan;
 import android.text.style.UnderlineSpan;
-import com.google.android.exoplayer2.text.webvtt.WebvttCue;
+
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.Util;
+
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,13 +27,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class WebvttCueParser {
+    public static final Pattern CUE_HEADER_PATTERN = Pattern.compile("^(\\S+)\\s+-->\\s+(\\S+)(.*)?$");
     private static final char CHAR_AMPERSAND = '&';
     private static final char CHAR_GREATER_THAN = '>';
     private static final char CHAR_LESS_THAN = '<';
     private static final char CHAR_SEMI_COLON = ';';
     private static final char CHAR_SLASH = '/';
     private static final char CHAR_SPACE = ' ';
-    public static final Pattern CUE_HEADER_PATTERN = Pattern.compile("^(\\S+)\\s+-->\\s+(\\S+)(.*)?$");
     private static final Pattern CUE_SETTING_PATTERN = Pattern.compile("(\\S+?):(\\S+)");
     private static final String ENTITY_AMPERSAND = "amp";
     private static final String ENTITY_GREATER_THAN = "gt";
@@ -48,26 +49,6 @@ public final class WebvttCueParser {
     private static final String TAG_UNDERLINE = "u";
     private static final String TAG_VOICE = "v";
     private final StringBuilder textBuilder = new StringBuilder();
-
-    public boolean parseCue(ParsableByteArray webvttData, WebvttCue.Builder builder, List<WebvttCssStyle> styles) {
-        String firstLine = webvttData.readLine();
-        if (firstLine == null) {
-            return false;
-        }
-        Matcher cueHeaderMatcher = CUE_HEADER_PATTERN.matcher(firstLine);
-        if (cueHeaderMatcher.matches()) {
-            return parseCue(null, cueHeaderMatcher, webvttData, builder, this.textBuilder, styles);
-        }
-        String secondLine = webvttData.readLine();
-        if (secondLine == null) {
-            return false;
-        }
-        Matcher cueHeaderMatcher2 = CUE_HEADER_PATTERN.matcher(secondLine);
-        if (!cueHeaderMatcher2.matches()) {
-            return false;
-        }
-        return parseCue(firstLine.trim(), cueHeaderMatcher2, webvttData, builder, this.textBuilder, styles);
-    }
 
     static void parseCueSettingsList(String cueSettingsList, WebvttCue.Builder builder) {
         Matcher cueSettingMatcher = CUE_SETTING_PATTERN.matcher(cueSettingsList);
@@ -677,6 +658,26 @@ public final class WebvttCueParser {
             }
         }
         Collections.sort(output);
+    }
+
+    public boolean parseCue(ParsableByteArray webvttData, WebvttCue.Builder builder, List<WebvttCssStyle> styles) {
+        String firstLine = webvttData.readLine();
+        if (firstLine == null) {
+            return false;
+        }
+        Matcher cueHeaderMatcher = CUE_HEADER_PATTERN.matcher(firstLine);
+        if (cueHeaderMatcher.matches()) {
+            return parseCue(null, cueHeaderMatcher, webvttData, builder, this.textBuilder, styles);
+        }
+        String secondLine = webvttData.readLine();
+        if (secondLine == null) {
+            return false;
+        }
+        Matcher cueHeaderMatcher2 = CUE_HEADER_PATTERN.matcher(secondLine);
+        if (!cueHeaderMatcher2.matches()) {
+            return false;
+        }
+        return parseCue(firstLine.trim(), cueHeaderMatcher2, webvttData, builder, this.textBuilder, styles);
     }
 
     private static final class StyleMatch implements Comparable<StyleMatch> {

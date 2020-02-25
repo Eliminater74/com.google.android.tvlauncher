@@ -8,20 +8,28 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 import android.util.Log;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.data.DataFetcher;
 import com.bumptech.glide.load.data.ExifOrientationStream;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
 public class ThumbFetcher implements DataFetcher<InputStream> {
     private static final String TAG = "MediaStoreThumbFetcher";
-    private InputStream inputStream;
     private final Uri mediaStoreImageUri;
     private final ThumbnailStreamOpener opener;
+    private InputStream inputStream;
+
+    @VisibleForTesting
+    ThumbFetcher(Uri mediaStoreImageUri2, ThumbnailStreamOpener opener2) {
+        this.mediaStoreImageUri = mediaStoreImageUri2;
+        this.opener = opener2;
+    }
 
     public static ThumbFetcher buildImageFetcher(Context context, Uri uri) {
         return build(context, uri, new ImageThumbnailQuery(context.getContentResolver()));
@@ -33,12 +41,6 @@ public class ThumbFetcher implements DataFetcher<InputStream> {
 
     private static ThumbFetcher build(Context context, Uri uri, ThumbnailQuery query) {
         return new ThumbFetcher(uri, new ThumbnailStreamOpener(Glide.get(context).getRegistry().getImageHeaderParsers(), query, Glide.get(context).getArrayPool(), context.getContentResolver()));
-    }
-
-    @VisibleForTesting
-    ThumbFetcher(Uri mediaStoreImageUri2, ThumbnailStreamOpener opener2) {
-        this.mediaStoreImageUri = mediaStoreImageUri2;
-        this.opener = opener2;
     }
 
     public void loadData(@NonNull Priority priority, @NonNull DataFetcher.DataCallback<? super InputStream> callback) {

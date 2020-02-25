@@ -3,6 +3,7 @@ package com.google.android.gtalkservice;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,14 +35,6 @@ public final class Presence implements Parcelable {
     private int mStatusListContentsMax;
     private int mStatusListMax;
     private int mStatusMax;
-
-    public enum Show {
-        NONE,
-        AWAY,
-        EXTENDED_AWAY,
-        DND,
-        AVAILABLE
-    }
 
     public Presence() {
         this(false, Show.NONE, null, 8);
@@ -170,22 +163,6 @@ public final class Presence implements Parcelable {
                 addToList(this.mDndStatusList, status);
             } else if (i == 2) {
                 addToList(this.mDefaultStatusList, status);
-            }
-        }
-    }
-
-    /* renamed from: com.google.android.gtalkservice.Presence$2 */
-    static /* synthetic */ class C09872 {
-        static final /* synthetic */ int[] $SwitchMap$com$google$android$gtalkservice$Presence$Show = new int[Show.values().length];
-
-        static {
-            try {
-                $SwitchMap$com$google$android$gtalkservice$Presence$Show[Show.DND.ordinal()] = 1;
-            } catch (NoSuchFieldError e) {
-            }
-            try {
-                $SwitchMap$com$google$android$gtalkservice$Presence$Show[Show.AVAILABLE.ordinal()] = 2;
-            } catch (NoSuchFieldError e2) {
             }
         }
     }
@@ -374,5 +351,29 @@ public final class Presence implements Parcelable {
         sb.append("}");
         sb.append("}");
         return sb.toString();
+    }
+
+    public enum Show {
+        NONE,
+        AWAY,
+        EXTENDED_AWAY,
+        DND,
+        AVAILABLE
+    }
+
+    /* renamed from: com.google.android.gtalkservice.Presence$2 */
+    static /* synthetic */ class C09872 {
+        static final /* synthetic */ int[] $SwitchMap$com$google$android$gtalkservice$Presence$Show = new int[Show.values().length];
+
+        static {
+            try {
+                $SwitchMap$com$google$android$gtalkservice$Presence$Show[Show.DND.ordinal()] = 1;
+            } catch (NoSuchFieldError e) {
+            }
+            try {
+                $SwitchMap$com$google$android$gtalkservice$Presence$Show[Show.AVAILABLE.ordinal()] = 2;
+            } catch (NoSuchFieldError e2) {
+            }
+        }
     }
 }

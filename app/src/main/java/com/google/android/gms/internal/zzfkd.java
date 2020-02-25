@@ -9,6 +9,23 @@ public final class zzfkd {
     private static final Method zzb;
     private static final Method zzc;
 
+    static {
+        Method method;
+        Object zza2 = zza();
+        zza = zza2;
+        Method method2 = null;
+        if (zza2 == null) {
+            method = null;
+        } else {
+            method = zza("getStackTraceElement", Throwable.class, Integer.TYPE);
+        }
+        zzb = method;
+        if (zza != null) {
+            method2 = zzb();
+        }
+        zzc = method2;
+    }
+
     public static void zza(Throwable th) {
         zzfkb.zza(th);
         if (th instanceof RuntimeException) {
@@ -55,22 +72,5 @@ public final class zzfkd {
         } catch (Throwable th) {
             return null;
         }
-    }
-
-    static {
-        Method method;
-        Object zza2 = zza();
-        zza = zza2;
-        Method method2 = null;
-        if (zza2 == null) {
-            method = null;
-        } else {
-            method = zza("getStackTraceElement", Throwable.class, Integer.TYPE);
-        }
-        zzb = method;
-        if (zza != null) {
-            method2 = zzb();
-        }
-        zzc = method2;
     }
 }

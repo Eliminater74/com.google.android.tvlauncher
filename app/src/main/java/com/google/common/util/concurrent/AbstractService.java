@@ -3,16 +3,15 @@ package com.google.common.util.concurrent;
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.base.Preconditions;
-import com.google.common.util.concurrent.ListenerCallQueue;
-import com.google.common.util.concurrent.Monitor;
-import com.google.common.util.concurrent.Service;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.ForOverride;
 import com.google.errorprone.annotations.concurrent.GuardedBy;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtIncompatible
 @Beta
@@ -41,22 +40,17 @@ public abstract class AbstractService implements Service {
     private static final ListenerCallQueue.Event<Service.Listener> TERMINATED_FROM_RUNNING_EVENT = terminatedEvent(Service.State.RUNNING);
     private static final ListenerCallQueue.Event<Service.Listener> TERMINATED_FROM_STARTING_EVENT = terminatedEvent(Service.State.STARTING);
     private static final ListenerCallQueue.Event<Service.Listener> TERMINATED_FROM_STOPPING_EVENT = terminatedEvent(Service.State.STOPPING);
+    /* access modifiers changed from: private */
+    public final Monitor monitor = new Monitor();
     private final Monitor.Guard hasReachedRunning = new HasReachedRunningGuard();
     private final Monitor.Guard isStartable = new IsStartableGuard();
     private final Monitor.Guard isStoppable = new IsStoppableGuard();
     private final Monitor.Guard isStopped = new IsStoppedGuard();
     private final ListenerCallQueue<Service.Listener> listeners = new ListenerCallQueue<>();
-    /* access modifiers changed from: private */
-    public final Monitor monitor = new Monitor();
     private volatile StateSnapshot snapshot = new StateSnapshot(Service.State.NEW);
 
-    /* access modifiers changed from: protected */
-    @ForOverride
-    public abstract void doStart();
-
-    /* access modifiers changed from: protected */
-    @ForOverride
-    public abstract void doStop();
+    protected AbstractService() {
+    }
 
     private static ListenerCallQueue.Event<Service.Listener> terminatedEvent(final Service.State from) {
         return new ListenerCallQueue.Event<Service.Listener>() {
@@ -92,48 +86,13 @@ public abstract class AbstractService implements Service {
         };
     }
 
-    private final class IsStartableGuard extends Monitor.Guard {
-        IsStartableGuard() {
-            super(AbstractService.this.monitor);
-        }
+    /* access modifiers changed from: protected */
+    @ForOverride
+    public abstract void doStart();
 
-        public boolean isSatisfied() {
-            return AbstractService.this.state() == Service.State.NEW;
-        }
-    }
-
-    private final class IsStoppableGuard extends Monitor.Guard {
-        IsStoppableGuard() {
-            super(AbstractService.this.monitor);
-        }
-
-        public boolean isSatisfied() {
-            return AbstractService.this.state().compareTo(Service.State.RUNNING) <= 0;
-        }
-    }
-
-    private final class HasReachedRunningGuard extends Monitor.Guard {
-        HasReachedRunningGuard() {
-            super(AbstractService.this.monitor);
-        }
-
-        public boolean isSatisfied() {
-            return AbstractService.this.state().compareTo(Service.State.RUNNING) >= 0;
-        }
-    }
-
-    private final class IsStoppedGuard extends Monitor.Guard {
-        IsStoppedGuard() {
-            super(AbstractService.this.monitor);
-        }
-
-        public boolean isSatisfied() {
-            return AbstractService.this.state().isTerminal();
-        }
-    }
-
-    protected AbstractService() {
-    }
+    /* access modifiers changed from: protected */
+    @ForOverride
+    public abstract void doStop();
 
     /* access modifiers changed from: protected */
     @ForOverride
@@ -492,6 +451,46 @@ public abstract class AbstractService implements Service {
         public Throwable failureCause() {
             Preconditions.checkState(this.state == Service.State.FAILED, "failureCause() is only valid if the service has failed, service is %s", this.state);
             return this.failure;
+        }
+    }
+
+    private final class IsStartableGuard extends Monitor.Guard {
+        IsStartableGuard() {
+            super(AbstractService.this.monitor);
+        }
+
+        public boolean isSatisfied() {
+            return AbstractService.this.state() == Service.State.NEW;
+        }
+    }
+
+    private final class IsStoppableGuard extends Monitor.Guard {
+        IsStoppableGuard() {
+            super(AbstractService.this.monitor);
+        }
+
+        public boolean isSatisfied() {
+            return AbstractService.this.state().compareTo(Service.State.RUNNING) <= 0;
+        }
+    }
+
+    private final class HasReachedRunningGuard extends Monitor.Guard {
+        HasReachedRunningGuard() {
+            super(AbstractService.this.monitor);
+        }
+
+        public boolean isSatisfied() {
+            return AbstractService.this.state().compareTo(Service.State.RUNNING) >= 0;
+        }
+    }
+
+    private final class IsStoppedGuard extends Monitor.Guard {
+        IsStoppedGuard() {
+            super(AbstractService.this.monitor);
+        }
+
+        public boolean isSatisfied() {
+            return AbstractService.this.state().isTerminal();
         }
     }
 }

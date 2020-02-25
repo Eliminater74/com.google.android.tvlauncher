@@ -2,15 +2,13 @@ package com.google.common.collect;
 
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.base.Preconditions;
+
 import java.util.NoSuchElementException;
 
 @GwtCompatible
 abstract class AbstractIndexedListIterator<E> extends UnmodifiableListIterator<E> {
-    private int position;
     private final int size;
-
-    /* access modifiers changed from: protected */
-    public abstract E get(int i);
+    private int position;
 
     protected AbstractIndexedListIterator(int size2) {
         this(size2, 0);
@@ -21,6 +19,9 @@ abstract class AbstractIndexedListIterator<E> extends UnmodifiableListIterator<E
         this.size = size2;
         this.position = position2;
     }
+
+    /* access modifiers changed from: protected */
+    public abstract E get(int i);
 
     public final boolean hasNext() {
         return this.position < this.size;

@@ -3,6 +3,7 @@ package com.google.android.exoplayer2.source.hls;
 import android.net.Uri;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.source.BehindLiveWindowException;
@@ -22,6 +23,7 @@ import com.google.android.exoplayer2.upstream.TransferListener;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.UriUtil;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -31,39 +33,23 @@ import java.util.Map;
 class HlsChunkSource {
     private static final int KEY_CACHE_SIZE = 4;
     private final DataSource encryptionDataSource;
-    private Uri expectedPlaylistUrl;
     private final HlsExtractorFactory extractorFactory;
-    private IOException fatalError;
-    private boolean independentSegments;
-    private boolean isTimestampMaster;
     private final FullSegmentEncryptionKeyCache keyCache = new FullSegmentEncryptionKeyCache();
-    private long liveEdgeInPeriodTimeUs = C0841C.TIME_UNSET;
     private final DataSource mediaDataSource;
     private final List<Format> muxedCaptionFormats;
     private final Format[] playlistFormats;
     private final HlsPlaylistTracker playlistTracker;
     private final Uri[] playlistUrls;
-    private byte[] scratchSpace;
-    private boolean seenExpectedPlaylistError;
     private final TimestampAdjusterProvider timestampAdjusterProvider;
     private final TrackGroup trackGroup;
+    private Uri expectedPlaylistUrl;
+    private IOException fatalError;
+    private boolean independentSegments;
+    private boolean isTimestampMaster;
+    private long liveEdgeInPeriodTimeUs = C0841C.TIME_UNSET;
+    private byte[] scratchSpace;
+    private boolean seenExpectedPlaylistError;
     private TrackSelection trackSelection;
-
-    public static final class HlsChunkHolder {
-        public Chunk chunk;
-        public boolean endOfStream;
-        public Uri playlistUrl;
-
-        public HlsChunkHolder() {
-            clear();
-        }
-
-        public void clear() {
-            this.chunk = null;
-            this.endOfStream = false;
-            this.playlistUrl = null;
-        }
-    }
 
     public HlsChunkSource(HlsExtractorFactory extractorFactory2, HlsPlaylistTracker playlistTracker2, Uri[] playlistUrls2, Format[] playlistFormats2, HlsDataSourceFactory dataSourceFactory, @Nullable TransferListener mediaTransferListener, TimestampAdjusterProvider timestampAdjusterProvider2, List<Format> muxedCaptionFormats2) {
         this.extractorFactory = extractorFactory2;
@@ -83,6 +69,14 @@ class HlsChunkSource {
             initialTrackSelection[i] = i;
         }
         this.trackSelection = new InitializationTrackSelection(this.trackGroup, initialTrackSelection);
+    }
+
+    @Nullable
+    private static Uri getFullEncryptionKeyUri(HlsMediaPlaylist playlist, @Nullable HlsMediaPlaylist.Segment segment) {
+        if (segment == null || segment.fullSegmentEncryptionKeyUri == null) {
+            return null;
+        }
+        return UriUtil.resolveToUri(playlist.baseUri, segment.fullSegmentEncryptionKeyUri);
     }
 
     public void maybeThrowError() throws IOException {
@@ -327,12 +321,20 @@ class HlsChunkSource {
         return new EncryptionKeyChunk(this.encryptionDataSource, new DataSpec(keyUri, 0, -1, null, 1), this.playlistFormats[selectedTrackIndex], this.trackSelection.getSelectionReason(), this.trackSelection.getSelectionData(), this.scratchSpace);
     }
 
-    @Nullable
-    private static Uri getFullEncryptionKeyUri(HlsMediaPlaylist playlist, @Nullable HlsMediaPlaylist.Segment segment) {
-        if (segment == null || segment.fullSegmentEncryptionKeyUri == null) {
-            return null;
+    public static final class HlsChunkHolder {
+        public Chunk chunk;
+        public boolean endOfStream;
+        public Uri playlistUrl;
+
+        public HlsChunkHolder() {
+            clear();
         }
-        return UriUtil.resolveToUri(playlist.baseUri, segment.fullSegmentEncryptionKeyUri);
+
+        public void clear() {
+            this.chunk = null;
+            this.endOfStream = false;
+            this.playlistUrl = null;
+        }
     }
 
     private static final class InitializationTrackSelection extends BaseTrackSelection {

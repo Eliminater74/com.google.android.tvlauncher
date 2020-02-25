@@ -1,6 +1,7 @@
 package com.google.android.gms.common.api;
 
 import android.support.annotation.NonNull;
+
 import com.google.android.gms.common.internal.Hide;
 
 public class CommonStatusCodes {
@@ -23,6 +24,10 @@ public class CommonStatusCodes {
     public static final int SUCCESS = 0;
     public static final int SUCCESS_CACHE = -1;
     public static final int TIMEOUT = 15;
+
+    @Hide
+    protected CommonStatusCodes() {
+    }
 
     @NonNull
     public static String getStatusCodeString(int i) {
@@ -69,9 +74,5 @@ public class CommonStatusCodes {
             case 18:
                 return "DEAD_CLIENT";
         }
-    }
-
-    @Hide
-    protected CommonStatusCodes() {
     }
 }

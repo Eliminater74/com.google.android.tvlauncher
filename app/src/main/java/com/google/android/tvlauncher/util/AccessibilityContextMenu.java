@@ -14,30 +14,32 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+
 import com.google.android.tvlauncher.C1188R;
-import com.google.android.tvlauncher.util.ContextMenu;
-import com.google.android.tvlauncher.util.ContextMenuItem;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class AccessibilityContextMenu {
-    private final Activity mActivity;
     /* access modifiers changed from: private */
     public final SparseArray<View> mContextItemViews = new SparseArray<>();
     /* access modifiers changed from: private */
     public final LinkedHashMap<Integer, ContextMenuItem> mContextItems = new LinkedHashMap<>();
-    /* access modifiers changed from: private */
-    public boolean mIsShowing;
-    private final LinearLayout mMenuContainer;
     /* access modifiers changed from: private */
     public final int mMenuItemCornerRadius;
     /* access modifiers changed from: private */
     public final int mMenuItemDisabledColor;
     /* access modifiers changed from: private */
     public final int mMenuItemEnabledColor;
+    private final Activity mActivity;
+    private final LinearLayout mMenuContainer;
     private final int mMenuItemHeight;
     private final int mMenuItemMarginEnd;
     private final int mMenuItemWidth;
+    private final PopupWindow mPopupWindow;
+    private final ViewOutlineProvider mViewOutlineProvider;
+    /* access modifiers changed from: private */
+    public boolean mIsShowing;
     /* access modifiers changed from: private */
     public ContextMenu.OnDismissListener mOnDismissListener;
     /* access modifiers changed from: private */
@@ -52,8 +54,6 @@ public class AccessibilityContextMenu {
         }
     };
     private ContextMenuItem.OnMenuItemChangedListener mOnMenuItemChangedListener;
-    private final PopupWindow mPopupWindow;
-    private final ViewOutlineProvider mViewOutlineProvider;
 
     public AccessibilityContextMenu(Activity activity) {
         this.mActivity = activity;

@@ -3,7 +3,9 @@ package com.google.android.exoplayer2.video;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.util.Util;
+
 import java.util.Arrays;
 
 public final class ColorInfo implements Parcelable {
@@ -19,9 +21,9 @@ public final class ColorInfo implements Parcelable {
     public final int colorRange;
     public final int colorSpace;
     public final int colorTransfer;
-    private int hashCode;
     @Nullable
     public final byte[] hdrStaticInfo;
+    private int hashCode;
 
     public ColorInfo(int colorSpace2, int colorRange2, int colorTransfer2, @Nullable byte[] hdrStaticInfo2) {
         this.colorSpace = colorSpace2;

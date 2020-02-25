@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
+
 import javax.annotation.Nullable;
 
 public interface GcoreGoogleApiAvailability {

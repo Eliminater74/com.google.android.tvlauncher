@@ -1,5 +1,7 @@
 package org.checkerframework.checker.formatter.qual;
 
+import org.checkerframework.dataflow.qual.Pure;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -7,7 +9,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-import org.checkerframework.dataflow.qual.Pure;
 
 public enum ConversionCategory {
     GENERAL(null, "bBhHsS"),
@@ -19,7 +20,7 @@ public enum ConversionCategory {
     INT_AND_TIME(new Class[]{Long.class}, null),
     NULL(new Class[0], null),
     UNUSED(null, null);
-    
+
     public final String chars;
     public final Class<? extends Object>[] types;
 

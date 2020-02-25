@@ -2,16 +2,17 @@ package android.support.p001v4.util;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 
 /* renamed from: android.support.v4.util.LruCache */
 public class LruCache<K, V> {
+    private final LinkedHashMap<K, V> map;
     private int createCount;
     private int evictionCount;
     private int hitCount;
-    private final LinkedHashMap<K, V> map;
     private int maxSize;
     private int missCount;
     private int putCount;

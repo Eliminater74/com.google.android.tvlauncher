@@ -3,21 +3,23 @@ package com.google.android.libraries.performance.primes.tracing;
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 import android.text.TextUtils;
+
 import com.google.android.libraries.performance.primes.NoPiiString;
 import com.google.android.libraries.performance.primes.PrimesLog;
 import com.google.android.libraries.performance.primes.PrimesToken;
-import com.google.android.libraries.performance.primes.tracing.SpanEvent;
 import com.google.android.libraries.stitch.util.Preconditions;
 import com.google.android.libraries.stitch.util.ThreadUtil;
 import com.google.errorprone.annotations.CompileTimeConstant;
+
 import java.util.concurrent.atomic.AtomicReference;
+
 import logs.proto.wireless.performance.mobile.PrimesTraceOuterClass;
 
 public final class Tracer {
     private static final String TAG = "Tracer";
+    private static final AtomicReference<TraceData> traceData = new AtomicReference<>(null);
     private static int maxBufferSize = 0;
     private static int minSpanDurationMs = 5;
-    private static final AtomicReference<TraceData> traceData = new AtomicReference<>(null);
 
     public static boolean start(PrimesToken token, String rootSpanName, int minSpanDurationMs2, int maxBufferSize2) {
         Preconditions.checkNotNull(token);

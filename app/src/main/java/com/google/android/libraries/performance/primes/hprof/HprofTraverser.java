@@ -1,15 +1,12 @@
 package com.google.android.libraries.performance.primes.hprof;
 
 import com.google.android.libraries.performance.primes.hprof.collect.IntObjectMap;
+
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
 
 public final class HprofTraverser {
-
-    private interface BfsCallback {
-        void edgeExplored(HprofObject hprofObject, HprofObject hprofObject2);
-    }
 
     private HprofTraverser() {
     }
@@ -71,5 +68,9 @@ public final class HprofTraverser {
             }
         }
         return queue;
+    }
+
+    private interface BfsCallback {
+        void edgeExplored(HprofObject hprofObject, HprofObject hprofObject2);
     }
 }

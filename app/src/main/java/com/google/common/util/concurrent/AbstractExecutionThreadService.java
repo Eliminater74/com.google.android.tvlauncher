@@ -3,8 +3,8 @@ package com.google.common.util.concurrent;
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.base.Supplier;
-import com.google.common.util.concurrent.Service;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -57,11 +57,11 @@ public abstract class AbstractExecutionThreadService implements Service {
         }
     };
 
-    /* access modifiers changed from: protected */
-    public abstract void run() throws Exception;
-
     protected AbstractExecutionThreadService() {
     }
+
+    /* access modifiers changed from: protected */
+    public abstract void run() throws Exception;
 
     /* access modifiers changed from: protected */
     public void startUp() throws Exception {

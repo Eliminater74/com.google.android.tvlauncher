@@ -2,7 +2,9 @@ package com.google.android.exoplayer2.upstream;
 
 import android.net.Uri;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.util.Assertions;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -29,16 +31,6 @@ public final class DataSpec {
     @Deprecated
     public final byte[] postBody;
     public final Uri uri;
-
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface Flags {
-    }
-
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface HttpMethod {
-    }
 
     public DataSpec(Uri uri2) {
         this(uri2, 0);
@@ -88,6 +80,19 @@ public final class DataSpec {
         this.flags = flags2;
     }
 
+    public static String getStringForHttpMethod(int httpMethod2) {
+        if (httpMethod2 == 1) {
+            return "GET";
+        }
+        if (httpMethod2 == 2) {
+            return "POST";
+        }
+        if (httpMethod2 == 3) {
+            return "HEAD";
+        }
+        throw new AssertionError(httpMethod2);
+    }
+
     public boolean isFlagSet(int flag) {
         return (this.flags & flag) == flag;
     }
@@ -126,19 +131,6 @@ public final class DataSpec {
         return getStringForHttpMethod(this.httpMethod);
     }
 
-    public static String getStringForHttpMethod(int httpMethod2) {
-        if (httpMethod2 == 1) {
-            return "GET";
-        }
-        if (httpMethod2 == 2) {
-            return "POST";
-        }
-        if (httpMethod2 == 3) {
-            return "HEAD";
-        }
-        throw new AssertionError(httpMethod2);
-    }
-
     public DataSpec subrange(long offset) {
         long j = this.length;
         long j2 = -1;
@@ -157,5 +149,15 @@ public final class DataSpec {
 
     public DataSpec withUri(Uri uri2) {
         return new DataSpec(uri2, this.httpMethod, this.httpBody, this.absoluteStreamPosition, this.position, this.length, this.key, this.flags);
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface Flags {
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface HttpMethod {
     }
 }

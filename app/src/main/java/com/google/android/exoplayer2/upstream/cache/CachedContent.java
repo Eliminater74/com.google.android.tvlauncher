@@ -1,18 +1,19 @@
 package com.google.android.exoplayer2.upstream.cache;
 
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Log;
+
 import java.io.File;
 import java.util.TreeSet;
 
 final class CachedContent {
     private static final String TAG = "CachedContent";
-    private final TreeSet<SimpleCacheSpan> cachedSpans;
-
     /* renamed from: id */
     public final int f105id;
     public final String key;
+    private final TreeSet<SimpleCacheSpan> cachedSpans;
     private boolean locked;
     private DefaultContentMetadata metadata;
 

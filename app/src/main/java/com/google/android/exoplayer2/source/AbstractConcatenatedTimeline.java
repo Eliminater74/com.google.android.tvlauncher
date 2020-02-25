@@ -1,12 +1,31 @@
 package com.google.android.exoplayer2.source;
 
 import android.util.Pair;
+
 import com.google.android.exoplayer2.Timeline;
 
 abstract class AbstractConcatenatedTimeline extends Timeline {
     private final int childCount;
     private final boolean isAtomic;
     private final ShuffleOrder shuffleOrder;
+
+    public AbstractConcatenatedTimeline(boolean isAtomic2, ShuffleOrder shuffleOrder2) {
+        this.isAtomic = isAtomic2;
+        this.shuffleOrder = shuffleOrder2;
+        this.childCount = shuffleOrder2.getLength();
+    }
+
+    public static Object getChildTimelineUidFromConcatenatedUid(Object concatenatedUid) {
+        return ((Pair) concatenatedUid).first;
+    }
+
+    public static Object getChildPeriodUidFromConcatenatedUid(Object concatenatedUid) {
+        return ((Pair) concatenatedUid).second;
+    }
+
+    public static Object getConcatenatedUid(Object childTimelineUid, Object childPeriodUid) {
+        return Pair.create(childTimelineUid, childPeriodUid);
+    }
 
     /* access modifiers changed from: protected */
     public abstract int getChildIndexByChildUid(Object obj);
@@ -28,24 +47,6 @@ abstract class AbstractConcatenatedTimeline extends Timeline {
 
     /* access modifiers changed from: protected */
     public abstract Timeline getTimelineByChildIndex(int i);
-
-    public static Object getChildTimelineUidFromConcatenatedUid(Object concatenatedUid) {
-        return ((Pair) concatenatedUid).first;
-    }
-
-    public static Object getChildPeriodUidFromConcatenatedUid(Object concatenatedUid) {
-        return ((Pair) concatenatedUid).second;
-    }
-
-    public static Object getConcatenatedUid(Object childTimelineUid, Object childPeriodUid) {
-        return Pair.create(childTimelineUid, childPeriodUid);
-    }
-
-    public AbstractConcatenatedTimeline(boolean isAtomic2, ShuffleOrder shuffleOrder2) {
-        this.isAtomic = isAtomic2;
-        this.shuffleOrder = shuffleOrder2;
-        this.childCount = shuffleOrder2.getLength();
-    }
 
     public int getNextWindowIndex(int windowIndex, int repeatMode, boolean shuffleModeEnabled) {
         if (this.isAtomic) {

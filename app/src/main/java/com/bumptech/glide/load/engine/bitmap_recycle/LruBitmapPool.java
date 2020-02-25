@@ -7,7 +7,9 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
+
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -17,21 +19,15 @@ public class LruBitmapPool implements BitmapPool {
     private static final Bitmap.Config DEFAULT_CONFIG = Bitmap.Config.ARGB_8888;
     private static final String TAG = "LruBitmapPool";
     private final Set<Bitmap.Config> allowedConfigs;
+    private final long initialMaxSize;
+    private final LruPoolStrategy strategy;
+    private final BitmapTracker tracker;
     private long currentSize;
     private int evictions;
     private int hits;
-    private final long initialMaxSize;
     private long maxSize;
     private int misses;
     private int puts;
-    private final LruPoolStrategy strategy;
-    private final BitmapTracker tracker;
-
-    private interface BitmapTracker {
-        void add(Bitmap bitmap);
-
-        void remove(Bitmap bitmap);
-    }
 
     LruBitmapPool(long maxSize2, LruPoolStrategy strategy2, Set<Bitmap.Config> allowedConfigs2) {
         this.initialMaxSize = maxSize2;
@@ -47,6 +43,54 @@ public class LruBitmapPool implements BitmapPool {
 
     public LruBitmapPool(long maxSize2, Set<Bitmap.Config> allowedConfigs2) {
         this(maxSize2, getDefaultStrategy(), allowedConfigs2);
+    }
+
+    @NonNull
+    private static Bitmap createBitmap(int width, int height, @Nullable Bitmap.Config config) {
+        return Bitmap.createBitmap(width, height, config != null ? config : DEFAULT_CONFIG);
+    }
+
+    @TargetApi(26)
+    private static void assertNotHardwareConfig(Bitmap.Config config) {
+        if (Build.VERSION.SDK_INT >= 26 && config == Bitmap.Config.HARDWARE) {
+            String valueOf = String.valueOf(config);
+            StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + ClientAnalytics.LogRequest.LogSource.ANDROID_DIALER_VALUE);
+            sb.append("Cannot create a mutable Bitmap with config: ");
+            sb.append(valueOf);
+            sb.append(". Consider setting Downsampler#ALLOW_HARDWARE_CONFIG to false in your RequestOptions and/or in GlideBuilder.setDefaultRequestOptions");
+            throw new IllegalArgumentException(sb.toString());
+        }
+    }
+
+    private static void normalize(Bitmap bitmap) {
+        bitmap.setHasAlpha(true);
+        maybeSetPreMultiplied(bitmap);
+    }
+
+    @TargetApi(19)
+    private static void maybeSetPreMultiplied(Bitmap bitmap) {
+        if (Build.VERSION.SDK_INT >= 19) {
+            bitmap.setPremultiplied(true);
+        }
+    }
+
+    private static LruPoolStrategy getDefaultStrategy() {
+        if (Build.VERSION.SDK_INT >= 19) {
+            return new SizeConfigStrategy();
+        }
+        return new AttributeStrategy();
+    }
+
+    @TargetApi(26)
+    private static Set<Bitmap.Config> getDefaultAllowedConfigs() {
+        Set<Bitmap.Config> configs = new HashSet<>(Arrays.asList(Bitmap.Config.values()));
+        if (Build.VERSION.SDK_INT >= 19) {
+            configs.add(null);
+        }
+        if (Build.VERSION.SDK_INT >= 26) {
+            configs.remove(Bitmap.Config.HARDWARE);
+        }
+        return Collections.unmodifiableSet(configs);
     }
 
     public long getMaxSize() {
@@ -126,23 +170,6 @@ public class LruBitmapPool implements BitmapPool {
         return result;
     }
 
-    @NonNull
-    private static Bitmap createBitmap(int width, int height, @Nullable Bitmap.Config config) {
-        return Bitmap.createBitmap(width, height, config != null ? config : DEFAULT_CONFIG);
-    }
-
-    @TargetApi(26)
-    private static void assertNotHardwareConfig(Bitmap.Config config) {
-        if (Build.VERSION.SDK_INT >= 26 && config == Bitmap.Config.HARDWARE) {
-            String valueOf = String.valueOf(config);
-            StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + ClientAnalytics.LogRequest.LogSource.ANDROID_DIALER_VALUE);
-            sb.append("Cannot create a mutable Bitmap with config: ");
-            sb.append(valueOf);
-            sb.append(". Consider setting Downsampler#ALLOW_HARDWARE_CONFIG to false in your RequestOptions and/or in GlideBuilder.setDefaultRequestOptions");
-            throw new IllegalArgumentException(sb.toString());
-        }
-    }
-
     @Nullable
     private synchronized Bitmap getDirtyOrNull(int width, int height, @Nullable Bitmap.Config config) {
         Bitmap result;
@@ -166,18 +193,6 @@ public class LruBitmapPool implements BitmapPool {
         }
         dump();
         return result;
-    }
-
-    private static void normalize(Bitmap bitmap) {
-        bitmap.setHasAlpha(true);
-        maybeSetPreMultiplied(bitmap);
-    }
-
-    @TargetApi(19)
-    private static void maybeSetPreMultiplied(Bitmap bitmap) {
-        if (Build.VERSION.SDK_INT >= 19) {
-            bitmap.setPremultiplied(true);
-        }
     }
 
     public void clearMemory() {
@@ -257,23 +272,10 @@ public class LruBitmapPool implements BitmapPool {
         Log.v(TAG, sb.toString());
     }
 
-    private static LruPoolStrategy getDefaultStrategy() {
-        if (Build.VERSION.SDK_INT >= 19) {
-            return new SizeConfigStrategy();
-        }
-        return new AttributeStrategy();
-    }
+    private interface BitmapTracker {
+        void add(Bitmap bitmap);
 
-    @TargetApi(26)
-    private static Set<Bitmap.Config> getDefaultAllowedConfigs() {
-        Set<Bitmap.Config> configs = new HashSet<>(Arrays.asList(Bitmap.Config.values()));
-        if (Build.VERSION.SDK_INT >= 19) {
-            configs.add(null);
-        }
-        if (Build.VERSION.SDK_INT >= 26) {
-            configs.remove(Bitmap.Config.HARDWARE);
-        }
-        return Collections.unmodifiableSet(configs);
+        void remove(Bitmap bitmap);
     }
 
     private static class ThrowingBitmapTracker implements BitmapTracker {

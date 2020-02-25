@@ -3,6 +3,7 @@ package com.google.android.gms.tasks;
 import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import java.util.concurrent.Executor;
 
 public abstract class Task<TResult> {

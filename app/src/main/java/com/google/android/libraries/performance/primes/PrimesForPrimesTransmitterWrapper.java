@@ -1,10 +1,12 @@
 package com.google.android.libraries.performance.primes;
 
 import android.support.annotation.VisibleForTesting;
-import com.google.android.libraries.performance.primes.PrimesForPrimesLogger;
+
 import com.google.android.libraries.performance.primes.transmitter.MetricTransmitter;
+
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+
 import logs.proto.wireless.performance.mobile.SystemHealthProto;
 
 final class PrimesForPrimesTransmitterWrapper implements MetricTransmitter, PrimesForPrimesLogger.Queue {

@@ -1,7 +1,7 @@
 package com.google.android.gms.clearcut;
 
 import android.os.RemoteException;
-import com.google.android.gms.clearcut.ClearcutLoggerDebugClient;
+
 import com.google.android.gms.clearcut.internal.zzi;
 import com.google.android.gms.clearcut.internal.zzq;
 import com.google.android.gms.common.api.Api;

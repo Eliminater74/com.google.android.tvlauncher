@@ -11,15 +11,15 @@ import android.media.UnsupportedSchemeException;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+
 import com.google.android.exoplayer2.C0841C;
-import com.google.android.exoplayer2.drm.DrmInitData;
-import com.google.android.exoplayer2.drm.ExoMediaDrm;
 import com.google.android.exoplayer2.extractor.mp4.PsshAtomUtil;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.Util;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.Charset;
@@ -40,16 +40,6 @@ public final class FrameworkMediaDrm implements ExoMediaDrm<FrameworkMediaCrypto
     private final MediaDrm mediaDrm;
     private final UUID uuid;
 
-    public static FrameworkMediaDrm newInstance(UUID uuid2) throws UnsupportedDrmException {
-        try {
-            return new FrameworkMediaDrm(uuid2);
-        } catch (UnsupportedSchemeException e) {
-            throw new UnsupportedDrmException(1, e);
-        } catch (Exception e2) {
-            throw new UnsupportedDrmException(2, e2);
-        }
-    }
-
     private FrameworkMediaDrm(UUID uuid2) throws UnsupportedSchemeException {
         Assertions.checkNotNull(uuid2);
         Assertions.checkArgument(!C0841C.COMMON_PSSH_UUID.equals(uuid2), "Use C.CLEARKEY_UUID instead");
@@ -60,123 +50,14 @@ public final class FrameworkMediaDrm implements ExoMediaDrm<FrameworkMediaCrypto
         }
     }
 
-    public void setOnEventListener(ExoMediaDrm.OnEventListener<? super FrameworkMediaCrypto> listener) {
-        FrameworkMediaDrm$$Lambda$0 frameworkMediaDrm$$Lambda$0;
-        MediaDrm mediaDrm2 = this.mediaDrm;
-        if (listener == null) {
-            frameworkMediaDrm$$Lambda$0 = null;
-        } else {
-            frameworkMediaDrm$$Lambda$0 = new FrameworkMediaDrm$$Lambda$0(this, listener);
+    public static FrameworkMediaDrm newInstance(UUID uuid2) throws UnsupportedDrmException {
+        try {
+            return new FrameworkMediaDrm(uuid2);
+        } catch (UnsupportedSchemeException e) {
+            throw new UnsupportedDrmException(1, e);
+        } catch (Exception e2) {
+            throw new UnsupportedDrmException(2, e2);
         }
-        mediaDrm2.setOnEventListener(frameworkMediaDrm$$Lambda$0);
-    }
-
-    /* access modifiers changed from: package-private */
-    public final /* synthetic */ void lambda$setOnEventListener$0$FrameworkMediaDrm(ExoMediaDrm.OnEventListener listener, MediaDrm mediaDrm2, byte[] sessionId, int event, int extra, byte[] data) {
-        listener.onEvent(this, sessionId, event, extra, data);
-    }
-
-    public void setOnKeyStatusChangeListener(ExoMediaDrm.OnKeyStatusChangeListener<? super FrameworkMediaCrypto> listener) {
-        FrameworkMediaDrm$$Lambda$1 frameworkMediaDrm$$Lambda$1;
-        if (Util.SDK_INT >= 23) {
-            MediaDrm mediaDrm2 = this.mediaDrm;
-            if (listener == null) {
-                frameworkMediaDrm$$Lambda$1 = null;
-            } else {
-                frameworkMediaDrm$$Lambda$1 = new FrameworkMediaDrm$$Lambda$1(this, listener);
-            }
-            mediaDrm2.setOnKeyStatusChangeListener(frameworkMediaDrm$$Lambda$1, (Handler) null);
-            return;
-        }
-        throw new UnsupportedOperationException();
-    }
-
-    /* access modifiers changed from: package-private */
-    public final /* synthetic */ void lambda$setOnKeyStatusChangeListener$1$FrameworkMediaDrm(ExoMediaDrm.OnKeyStatusChangeListener listener, MediaDrm mediaDrm2, byte[] sessionId, List keyInfo, boolean hasNewUsableKey) {
-        List<ExoMediaDrm.KeyStatus> exoKeyInfo = new ArrayList<>();
-        Iterator it = keyInfo.iterator();
-        while (it.hasNext()) {
-            MediaDrm.KeyStatus keyStatus = (MediaDrm.KeyStatus) it.next();
-            exoKeyInfo.add(new ExoMediaDrm.KeyStatus(keyStatus.getStatusCode(), keyStatus.getKeyId()));
-        }
-        listener.onKeyStatusChange(this, sessionId, exoKeyInfo, hasNewUsableKey);
-    }
-
-    public byte[] openSession() throws MediaDrmException {
-        return this.mediaDrm.openSession();
-    }
-
-    public void closeSession(byte[] sessionId) {
-        this.mediaDrm.closeSession(sessionId);
-    }
-
-    public ExoMediaDrm.KeyRequest getKeyRequest(byte[] scope, @Nullable List<DrmInitData.SchemeData> schemeDatas, int keyType, @Nullable HashMap<String, String> optionalParameters) throws NotProvisionedException {
-        DrmInitData.SchemeData schemeData = null;
-        byte[] initData = null;
-        String mimeType = null;
-        if (schemeDatas != null) {
-            schemeData = getSchemeData(this.uuid, schemeDatas);
-            initData = adjustRequestInitData(this.uuid, (byte[]) Assertions.checkNotNull(schemeData.data));
-            mimeType = adjustRequestMimeType(this.uuid, schemeData.mimeType);
-        }
-        MediaDrm.KeyRequest request = this.mediaDrm.getKeyRequest(scope, initData, mimeType, keyType, optionalParameters);
-        byte[] requestData = adjustRequestData(this.uuid, request.getData());
-        String licenseServerUrl = request.getDefaultUrl();
-        if (MOCK_LA_URL_VALUE.equals(licenseServerUrl)) {
-            licenseServerUrl = "";
-        }
-        if (TextUtils.isEmpty(licenseServerUrl) && schemeData != null && !TextUtils.isEmpty(schemeData.licenseServerUrl)) {
-            licenseServerUrl = schemeData.licenseServerUrl;
-        }
-        return new ExoMediaDrm.KeyRequest(requestData, licenseServerUrl);
-    }
-
-    public byte[] provideKeyResponse(byte[] scope, byte[] response) throws NotProvisionedException, DeniedByServerException {
-        if (C0841C.CLEARKEY_UUID.equals(this.uuid)) {
-            response = ClearKeyUtil.adjustResponseData(response);
-        }
-        return this.mediaDrm.provideKeyResponse(scope, response);
-    }
-
-    public ExoMediaDrm.ProvisionRequest getProvisionRequest() {
-        MediaDrm.ProvisionRequest request = this.mediaDrm.getProvisionRequest();
-        return new ExoMediaDrm.ProvisionRequest(request.getData(), request.getDefaultUrl());
-    }
-
-    public void provideProvisionResponse(byte[] response) throws DeniedByServerException {
-        this.mediaDrm.provideProvisionResponse(response);
-    }
-
-    public Map<String, String> queryKeyStatus(byte[] sessionId) {
-        return this.mediaDrm.queryKeyStatus(sessionId);
-    }
-
-    public void release() {
-        this.mediaDrm.release();
-    }
-
-    public void restoreKeys(byte[] sessionId, byte[] keySetId) {
-        this.mediaDrm.restoreKeys(sessionId, keySetId);
-    }
-
-    public String getPropertyString(String propertyName) {
-        return this.mediaDrm.getPropertyString(propertyName);
-    }
-
-    public byte[] getPropertyByteArray(String propertyName) {
-        return this.mediaDrm.getPropertyByteArray(propertyName);
-    }
-
-    public void setPropertyString(String propertyName, String value) {
-        this.mediaDrm.setPropertyString(propertyName, value);
-    }
-
-    public void setPropertyByteArray(String propertyName, byte[] value) {
-        this.mediaDrm.setPropertyByteArray(propertyName, value);
-    }
-
-    public FrameworkMediaCrypto createMediaCrypto(byte[] initData) throws MediaCryptoException {
-        return new FrameworkMediaCrypto(adjustUuid(this.uuid), initData, Util.SDK_INT < 21 && C0841C.WIDEVINE_UUID.equals(this.uuid) && "L3".equals(getPropertyString("securityLevel")));
     }
 
     private static DrmInitData.SchemeData getSchemeData(UUID uuid2, List<DrmInitData.SchemeData> schemeDatas) {
@@ -302,5 +183,124 @@ public final class FrameworkMediaDrm implements ExoMediaDrm<FrameworkMediaCrypto
         }
         Log.m28i(TAG, "Unexpected record count or type. Skipping LA_URL workaround.");
         return data;
+    }
+
+    public void setOnEventListener(ExoMediaDrm.OnEventListener<? super FrameworkMediaCrypto> listener) {
+        FrameworkMediaDrm$$Lambda$0 frameworkMediaDrm$$Lambda$0;
+        MediaDrm mediaDrm2 = this.mediaDrm;
+        if (listener == null) {
+            frameworkMediaDrm$$Lambda$0 = null;
+        } else {
+            frameworkMediaDrm$$Lambda$0 = new FrameworkMediaDrm$$Lambda$0(this, listener);
+        }
+        mediaDrm2.setOnEventListener(frameworkMediaDrm$$Lambda$0);
+    }
+
+    /* access modifiers changed from: package-private */
+    public final /* synthetic */ void lambda$setOnEventListener$0$FrameworkMediaDrm(ExoMediaDrm.OnEventListener listener, MediaDrm mediaDrm2, byte[] sessionId, int event, int extra, byte[] data) {
+        listener.onEvent(this, sessionId, event, extra, data);
+    }
+
+    public void setOnKeyStatusChangeListener(ExoMediaDrm.OnKeyStatusChangeListener<? super FrameworkMediaCrypto> listener) {
+        FrameworkMediaDrm$$Lambda$1 frameworkMediaDrm$$Lambda$1;
+        if (Util.SDK_INT >= 23) {
+            MediaDrm mediaDrm2 = this.mediaDrm;
+            if (listener == null) {
+                frameworkMediaDrm$$Lambda$1 = null;
+            } else {
+                frameworkMediaDrm$$Lambda$1 = new FrameworkMediaDrm$$Lambda$1(this, listener);
+            }
+            mediaDrm2.setOnKeyStatusChangeListener(frameworkMediaDrm$$Lambda$1, (Handler) null);
+            return;
+        }
+        throw new UnsupportedOperationException();
+    }
+
+    /* access modifiers changed from: package-private */
+    public final /* synthetic */ void lambda$setOnKeyStatusChangeListener$1$FrameworkMediaDrm(ExoMediaDrm.OnKeyStatusChangeListener listener, MediaDrm mediaDrm2, byte[] sessionId, List keyInfo, boolean hasNewUsableKey) {
+        List<ExoMediaDrm.KeyStatus> exoKeyInfo = new ArrayList<>();
+        Iterator it = keyInfo.iterator();
+        while (it.hasNext()) {
+            MediaDrm.KeyStatus keyStatus = (MediaDrm.KeyStatus) it.next();
+            exoKeyInfo.add(new ExoMediaDrm.KeyStatus(keyStatus.getStatusCode(), keyStatus.getKeyId()));
+        }
+        listener.onKeyStatusChange(this, sessionId, exoKeyInfo, hasNewUsableKey);
+    }
+
+    public byte[] openSession() throws MediaDrmException {
+        return this.mediaDrm.openSession();
+    }
+
+    public void closeSession(byte[] sessionId) {
+        this.mediaDrm.closeSession(sessionId);
+    }
+
+    public ExoMediaDrm.KeyRequest getKeyRequest(byte[] scope, @Nullable List<DrmInitData.SchemeData> schemeDatas, int keyType, @Nullable HashMap<String, String> optionalParameters) throws NotProvisionedException {
+        DrmInitData.SchemeData schemeData = null;
+        byte[] initData = null;
+        String mimeType = null;
+        if (schemeDatas != null) {
+            schemeData = getSchemeData(this.uuid, schemeDatas);
+            initData = adjustRequestInitData(this.uuid, (byte[]) Assertions.checkNotNull(schemeData.data));
+            mimeType = adjustRequestMimeType(this.uuid, schemeData.mimeType);
+        }
+        MediaDrm.KeyRequest request = this.mediaDrm.getKeyRequest(scope, initData, mimeType, keyType, optionalParameters);
+        byte[] requestData = adjustRequestData(this.uuid, request.getData());
+        String licenseServerUrl = request.getDefaultUrl();
+        if (MOCK_LA_URL_VALUE.equals(licenseServerUrl)) {
+            licenseServerUrl = "";
+        }
+        if (TextUtils.isEmpty(licenseServerUrl) && schemeData != null && !TextUtils.isEmpty(schemeData.licenseServerUrl)) {
+            licenseServerUrl = schemeData.licenseServerUrl;
+        }
+        return new ExoMediaDrm.KeyRequest(requestData, licenseServerUrl);
+    }
+
+    public byte[] provideKeyResponse(byte[] scope, byte[] response) throws NotProvisionedException, DeniedByServerException {
+        if (C0841C.CLEARKEY_UUID.equals(this.uuid)) {
+            response = ClearKeyUtil.adjustResponseData(response);
+        }
+        return this.mediaDrm.provideKeyResponse(scope, response);
+    }
+
+    public ExoMediaDrm.ProvisionRequest getProvisionRequest() {
+        MediaDrm.ProvisionRequest request = this.mediaDrm.getProvisionRequest();
+        return new ExoMediaDrm.ProvisionRequest(request.getData(), request.getDefaultUrl());
+    }
+
+    public void provideProvisionResponse(byte[] response) throws DeniedByServerException {
+        this.mediaDrm.provideProvisionResponse(response);
+    }
+
+    public Map<String, String> queryKeyStatus(byte[] sessionId) {
+        return this.mediaDrm.queryKeyStatus(sessionId);
+    }
+
+    public void release() {
+        this.mediaDrm.release();
+    }
+
+    public void restoreKeys(byte[] sessionId, byte[] keySetId) {
+        this.mediaDrm.restoreKeys(sessionId, keySetId);
+    }
+
+    public String getPropertyString(String propertyName) {
+        return this.mediaDrm.getPropertyString(propertyName);
+    }
+
+    public byte[] getPropertyByteArray(String propertyName) {
+        return this.mediaDrm.getPropertyByteArray(propertyName);
+    }
+
+    public void setPropertyString(String propertyName, String value) {
+        this.mediaDrm.setPropertyString(propertyName, value);
+    }
+
+    public void setPropertyByteArray(String propertyName, byte[] value) {
+        this.mediaDrm.setPropertyByteArray(propertyName, value);
+    }
+
+    public FrameworkMediaCrypto createMediaCrypto(byte[] initData) throws MediaCryptoException {
+        return new FrameworkMediaCrypto(adjustUuid(this.uuid), initData, Util.SDK_INT < 21 && C0841C.WIDEVINE_UUID.equals(this.uuid) && "L3".equals(getPropertyString("securityLevel")));
     }
 }

@@ -4,7 +4,9 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+
 import com.google.android.exoplayer2.metadata.Metadata;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -24,6 +26,62 @@ public final class HlsTrackMetadataEntry implements Metadata.Entry {
     @Nullable
     public final String name;
     public final List<VariantInfo> variantInfos;
+
+    public HlsTrackMetadataEntry(@Nullable String groupId2, @Nullable String name2, List<VariantInfo> variantInfos2) {
+        this.groupId = groupId2;
+        this.name = name2;
+        this.variantInfos = Collections.unmodifiableList(new ArrayList(variantInfos2));
+    }
+
+    HlsTrackMetadataEntry(Parcel in) {
+        this.groupId = in.readString();
+        this.name = in.readString();
+        int variantInfoSize = in.readInt();
+        ArrayList<VariantInfo> variantInfos2 = new ArrayList<>(variantInfoSize);
+        for (int i = 0; i < variantInfoSize; i++) {
+            variantInfos2.add((VariantInfo) in.readParcelable(VariantInfo.class.getClassLoader()));
+        }
+        this.variantInfos = Collections.unmodifiableList(variantInfos2);
+    }
+
+    public boolean equals(@Nullable Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (other == null || getClass() != other.getClass()) {
+            return false;
+        }
+        HlsTrackMetadataEntry that = (HlsTrackMetadataEntry) other;
+        if (!TextUtils.equals(this.groupId, that.groupId) || !TextUtils.equals(this.name, that.name) || !this.variantInfos.equals(that.variantInfos)) {
+            return false;
+        }
+        return true;
+    }
+
+    public int hashCode() {
+        String str = this.groupId;
+        int i = 0;
+        int hashCode = (str != null ? str.hashCode() : 0) * 31;
+        String str2 = this.name;
+        if (str2 != null) {
+            i = str2.hashCode();
+        }
+        return ((hashCode + i) * 31) + this.variantInfos.hashCode();
+    }
+
+    public int describeContents() {
+        return 0;
+    }
+
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.groupId);
+        dest.writeString(this.name);
+        int variantInfosSize = this.variantInfos.size();
+        dest.writeInt(variantInfosSize);
+        for (int i = 0; i < variantInfosSize; i++) {
+            dest.writeParcelable(this.variantInfos.get(i), 0);
+        }
+    }
 
     public static final class VariantInfo implements Parcelable {
         public static final Parcelable.Creator<VariantInfo> CREATOR = new Parcelable.Creator<VariantInfo>() {
@@ -102,62 +160,6 @@ public final class HlsTrackMetadataEntry implements Metadata.Entry {
             dest.writeString(this.audioGroupId);
             dest.writeString(this.subtitleGroupId);
             dest.writeString(this.captionGroupId);
-        }
-    }
-
-    public HlsTrackMetadataEntry(@Nullable String groupId2, @Nullable String name2, List<VariantInfo> variantInfos2) {
-        this.groupId = groupId2;
-        this.name = name2;
-        this.variantInfos = Collections.unmodifiableList(new ArrayList(variantInfos2));
-    }
-
-    HlsTrackMetadataEntry(Parcel in) {
-        this.groupId = in.readString();
-        this.name = in.readString();
-        int variantInfoSize = in.readInt();
-        ArrayList<VariantInfo> variantInfos2 = new ArrayList<>(variantInfoSize);
-        for (int i = 0; i < variantInfoSize; i++) {
-            variantInfos2.add((VariantInfo) in.readParcelable(VariantInfo.class.getClassLoader()));
-        }
-        this.variantInfos = Collections.unmodifiableList(variantInfos2);
-    }
-
-    public boolean equals(@Nullable Object other) {
-        if (this == other) {
-            return true;
-        }
-        if (other == null || getClass() != other.getClass()) {
-            return false;
-        }
-        HlsTrackMetadataEntry that = (HlsTrackMetadataEntry) other;
-        if (!TextUtils.equals(this.groupId, that.groupId) || !TextUtils.equals(this.name, that.name) || !this.variantInfos.equals(that.variantInfos)) {
-            return false;
-        }
-        return true;
-    }
-
-    public int hashCode() {
-        String str = this.groupId;
-        int i = 0;
-        int hashCode = (str != null ? str.hashCode() : 0) * 31;
-        String str2 = this.name;
-        if (str2 != null) {
-            i = str2.hashCode();
-        }
-        return ((hashCode + i) * 31) + this.variantInfos.hashCode();
-    }
-
-    public int describeContents() {
-        return 0;
-    }
-
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.groupId);
-        dest.writeString(this.name);
-        int variantInfosSize = this.variantInfos.size();
-        dest.writeInt(variantInfosSize);
-        for (int i = 0; i < variantInfosSize; i++) {
-            dest.writeParcelable(this.variantInfos.get(i), 0);
         }
     }
 }

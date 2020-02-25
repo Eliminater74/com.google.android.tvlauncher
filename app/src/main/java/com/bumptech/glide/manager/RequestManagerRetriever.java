@@ -19,15 +19,19 @@ import android.support.p001v4.app.FragmentActivity;
 import android.support.p001v4.util.ArrayMap;
 import android.util.Log;
 import android.view.View;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.util.Preconditions;
 import com.bumptech.glide.util.Util;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 public class RequestManagerRetriever implements Handler.Callback {
+    @VisibleForTesting
+    static final String FRAGMENT_TAG = "com.bumptech.glide.manager";
     private static final RequestManagerFactory DEFAULT_FACTORY = new RequestManagerFactory() {
         @NonNull
         public RequestManager build(@NonNull Glide glide, @NonNull Lifecycle lifecycle, @NonNull RequestManagerTreeNode requestManagerTreeNode, @NonNull Context context) {
@@ -35,30 +39,45 @@ public class RequestManagerRetriever implements Handler.Callback {
         }
     };
     private static final String FRAGMENT_INDEX_KEY = "key";
-    @VisibleForTesting
-    static final String FRAGMENT_TAG = "com.bumptech.glide.manager";
     private static final int ID_REMOVE_FRAGMENT_MANAGER = 1;
     private static final int ID_REMOVE_SUPPORT_FRAGMENT_MANAGER = 2;
     private static final String TAG = "RMRetriever";
-    private volatile RequestManager applicationManager;
-    private final RequestManagerFactory factory;
-    private final Handler handler;
     @VisibleForTesting
     final Map<FragmentManager, RequestManagerFragment> pendingRequestManagerFragments = new HashMap();
     @VisibleForTesting
     final Map<android.support.p001v4.app.FragmentManager, SupportRequestManagerFragment> pendingSupportRequestManagerFragments = new HashMap();
+    private final RequestManagerFactory factory;
+    private final Handler handler;
     private final Bundle tempBundle = new Bundle();
     private final ArrayMap<View, Fragment> tempViewToFragment = new ArrayMap<>();
     private final ArrayMap<View, android.support.p001v4.app.Fragment> tempViewToSupportFragment = new ArrayMap<>();
-
-    public interface RequestManagerFactory {
-        @NonNull
-        RequestManager build(@NonNull Glide glide, @NonNull Lifecycle lifecycle, @NonNull RequestManagerTreeNode requestManagerTreeNode, @NonNull Context context);
-    }
+    private volatile RequestManager applicationManager;
 
     public RequestManagerRetriever(@Nullable RequestManagerFactory factory2) {
         this.factory = factory2 != null ? factory2 : DEFAULT_FACTORY;
         this.handler = new Handler(Looper.getMainLooper(), this);
+    }
+
+    private static void findAllSupportFragmentsWithViews(@Nullable Collection<android.support.p001v4.app.Fragment> topLevelFragments, @NonNull Map<View, android.support.p001v4.app.Fragment> result) {
+        if (topLevelFragments != null) {
+            for (android.support.p001v4.app.Fragment fragment : topLevelFragments) {
+                if (!(fragment == null || fragment.getView() == null)) {
+                    result.put(fragment.getView(), fragment);
+                    findAllSupportFragmentsWithViews(fragment.getChildFragmentManager().getFragments(), result);
+                }
+            }
+        }
+    }
+
+    @TargetApi(17)
+    private static void assertNotDestroyed(@NonNull Activity activity) {
+        if (Build.VERSION.SDK_INT >= 17 && activity.isDestroyed()) {
+            throw new IllegalArgumentException("You cannot start a load for a destroyed activity");
+        }
+    }
+
+    private static boolean isActivityVisible(Activity activity) {
+        return !activity.isFinishing();
     }
 
     @NonNull
@@ -140,17 +159,6 @@ public class RequestManagerRetriever implements Handler.Callback {
             return get(activity);
         }
         return get(fragment2);
-    }
-
-    private static void findAllSupportFragmentsWithViews(@Nullable Collection<android.support.p001v4.app.Fragment> topLevelFragments, @NonNull Map<View, android.support.p001v4.app.Fragment> result) {
-        if (topLevelFragments != null) {
-            for (android.support.p001v4.app.Fragment fragment : topLevelFragments) {
-                if (!(fragment == null || fragment.getView() == null)) {
-                    result.put(fragment.getView(), fragment);
-                    findAllSupportFragmentsWithViews(fragment.getChildFragmentManager().getFragments(), result);
-                }
-            }
-        }
     }
 
     /* JADX WARN: Type inference failed for: r3v6, types: [android.view.ViewParent] */
@@ -289,13 +297,6 @@ public class RequestManagerRetriever implements Handler.Callback {
     }
 
     @TargetApi(17)
-    private static void assertNotDestroyed(@NonNull Activity activity) {
-        if (Build.VERSION.SDK_INT >= 17 && activity.isDestroyed()) {
-            throw new IllegalArgumentException("You cannot start a load for a destroyed activity");
-        }
-    }
-
-    @TargetApi(17)
     @Deprecated
     @NonNull
     public RequestManager get(@NonNull Fragment fragment) {
@@ -350,10 +351,6 @@ public class RequestManagerRetriever implements Handler.Callback {
         return getSupportRequestManagerFragment(activity.getSupportFragmentManager(), null, isActivityVisible(activity));
     }
 
-    private static boolean isActivityVisible(Activity activity) {
-        return !activity.isFinishing();
-    }
-
     @NonNull
     private SupportRequestManagerFragment getSupportRequestManagerFragment(@NonNull android.support.p001v4.app.FragmentManager fm, @Nullable android.support.p001v4.app.Fragment parentHint, boolean isParentVisible) {
         SupportRequestManagerFragment current = (SupportRequestManagerFragment) fm.findFragmentByTag(FRAGMENT_TAG);
@@ -406,5 +403,10 @@ public class RequestManagerRetriever implements Handler.Callback {
             Log.w(TAG, sb.toString());
         }
         return handled;
+    }
+
+    public interface RequestManagerFactory {
+        @NonNull
+        RequestManager build(@NonNull Glide glide, @NonNull Lifecycle lifecycle, @NonNull RequestManagerTreeNode requestManagerTreeNode, @NonNull Context context);
     }
 }

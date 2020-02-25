@@ -3,17 +3,19 @@ package com.google.android.libraries.performance.primes.miniheapdump;
 import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
+
 import com.google.android.libraries.performance.primes.PrimesLog;
 import com.google.android.libraries.performance.primes.persistent.PersistentStorage;
 import com.google.android.libraries.performance.proto.primes.persistent.PersistentFormat;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Random;
 
 public class MiniHeapDumpMemorySampler {
-    private static final double DEFAULT_MIN_SAMPLE_DISTRIBUTION_FACTOR = 1.2d;
     static final int MAX_NUMBER_STORED_SAMPLES = 100;
+    private static final double DEFAULT_MIN_SAMPLE_DISTRIBUTION_FACTOR = 1.2d;
     private static final String STORAGE_KEY = "primes.miniheapdump.memorySamples";
     private static final String TAG = "MhdMemorySampler";
     private final double minSampleDistributionFactor;
@@ -21,6 +23,15 @@ public class MiniHeapDumpMemorySampler {
     private final ArrayList<Integer> samples = new ArrayList<>();
     private final PersistentStorage storage;
     private final int versionNameHash;
+
+    @VisibleForTesting
+    MiniHeapDumpMemorySampler(PersistentStorage storage2, PersistentFormat.PersistentMemorySamples samples2, double minSampleDistributionFactor2, int versionNameHash2, Random random2) {
+        this.storage = storage2;
+        this.minSampleDistributionFactor = minSampleDistributionFactor2;
+        this.versionNameHash = versionNameHash2;
+        this.random = random2;
+        addAllMemorySamples(samples2);
+    }
 
     private static PersistentFormat.PersistentMemorySamples loadMemorySamples(PersistentStorage storage2, int versionNameHash2) {
         PersistentFormat.PersistentMemorySamples persistentMemorySamples = (PersistentFormat.PersistentMemorySamples) storage2.readProto(STORAGE_KEY, PersistentFormat.PersistentMemorySamples.parser());
@@ -33,15 +44,6 @@ public class MiniHeapDumpMemorySampler {
     public static MiniHeapDumpMemorySampler newInstance(SharedPreferences sharedPreferences, int versionNameHash2) {
         PersistentStorage storage2 = new PersistentStorage(sharedPreferences);
         return new MiniHeapDumpMemorySampler(storage2, loadMemorySamples(storage2, versionNameHash2), DEFAULT_MIN_SAMPLE_DISTRIBUTION_FACTOR, versionNameHash2, new Random());
-    }
-
-    @VisibleForTesting
-    MiniHeapDumpMemorySampler(PersistentStorage storage2, PersistentFormat.PersistentMemorySamples samples2, double minSampleDistributionFactor2, int versionNameHash2, Random random2) {
-        this.storage = storage2;
-        this.minSampleDistributionFactor = minSampleDistributionFactor2;
-        this.versionNameHash = versionNameHash2;
-        this.random = random2;
-        addAllMemorySamples(samples2);
     }
 
     private void addAllMemorySamples(@Nullable PersistentFormat.PersistentMemorySamples samples2) {

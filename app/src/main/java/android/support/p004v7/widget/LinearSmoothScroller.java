@@ -2,7 +2,6 @@ package android.support.p004v7.widget;
 
 import android.content.Context;
 import android.graphics.PointF;
-import android.support.p004v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
@@ -10,21 +9,21 @@ import android.view.animation.LinearInterpolator;
 
 /* renamed from: android.support.v7.widget.LinearSmoothScroller */
 public class LinearSmoothScroller extends RecyclerView.SmoothScroller {
-    private static final boolean DEBUG = false;
-    private static final float MILLISECONDS_PER_INCH = 25.0f;
     public static final int SNAP_TO_ANY = 0;
     public static final int SNAP_TO_END = 1;
     public static final int SNAP_TO_START = -1;
+    private static final boolean DEBUG = false;
+    private static final float MILLISECONDS_PER_INCH = 25.0f;
     private static final float TARGET_SEEK_EXTRA_SCROLL_RATIO = 1.2f;
     private static final int TARGET_SEEK_SCROLL_DISTANCE_PX = 10000;
     protected final DecelerateInterpolator mDecelerateInterpolator = new DecelerateInterpolator();
+    protected final LinearInterpolator mLinearInterpolator = new LinearInterpolator();
     private final DisplayMetrics mDisplayMetrics;
-    private boolean mHasCalculatedMillisPerPixel = false;
     protected int mInterimTargetDx = 0;
     protected int mInterimTargetDy = 0;
-    protected final LinearInterpolator mLinearInterpolator = new LinearInterpolator();
-    private float mMillisPerPixel;
     protected PointF mTargetVector;
+    private boolean mHasCalculatedMillisPerPixel = false;
+    private float mMillisPerPixel;
 
     public LinearSmoothScroller(Context context) {
         this.mDisplayMetrics = context.getResources().getDisplayMetrics();

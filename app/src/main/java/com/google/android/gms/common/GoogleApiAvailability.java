@@ -27,6 +27,7 @@ import android.support.p001v4.app.NotificationCompat;
 import android.util.Log;
 import android.util.TypedValue;
 import android.widget.ProgressBar;
+
 import com.google.android.gms.base.C0946R;
 import com.google.android.gms.common.api.GoogleApi;
 import com.google.android.gms.common.api.GoogleApiActivity;
@@ -43,6 +44,7 @@ import com.google.android.gms.common.util.zzi;
 import com.google.android.gms.common.util.zzp;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -54,11 +56,77 @@ public class GoogleApiAvailability extends GoogleApiAvailabilityLight {
     @GuardedBy("mLock")
     private String zzc;
 
+    GoogleApiAvailability() {
+    }
+
     public static GoogleApiAvailability getInstance() {
         return zzb;
     }
 
-    GoogleApiAvailability() {
+    @Hide
+    public static Dialog zza(Activity activity, DialogInterface.OnCancelListener onCancelListener) {
+        ProgressBar progressBar = new ProgressBar(activity, null, 16842874);
+        progressBar.setIndeterminate(true);
+        progressBar.setVisibility(0);
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setView(progressBar);
+        builder.setMessage(zzf.zzc(activity, 18));
+        builder.setPositiveButton("", (DialogInterface.OnClickListener) null);
+        AlertDialog create = builder.create();
+        zza(activity, create, "GooglePlayServicesUpdatingDialog", onCancelListener);
+        return create;
+    }
+
+    @Nullable
+    @Hide
+    public static zzby zza(Context context, zzbz zzbz) {
+        IntentFilter intentFilter = new IntentFilter("android.intent.action.PACKAGE_ADDED");
+        intentFilter.addDataScheme("package");
+        zzby zzby = new zzby(zzbz);
+        context.registerReceiver(zzby, intentFilter);
+        zzby.zza(context);
+        if (GooglePlayServicesUtilLight.zza(context, "com.google.android.gms")) {
+            return zzby;
+        }
+        zzbz.zza();
+        zzby.zza();
+        return null;
+    }
+
+    static Dialog zza(Context context, int i, zzg zzg, DialogInterface.OnCancelListener onCancelListener) {
+        AlertDialog.Builder builder = null;
+        if (i == 0) {
+            return null;
+        }
+        TypedValue typedValue = new TypedValue();
+        context.getTheme().resolveAttribute(16843529, typedValue, true);
+        if ("Theme.Dialog.Alert".equals(context.getResources().getResourceEntryName(typedValue.resourceId))) {
+            builder = new AlertDialog.Builder(context, 5);
+        }
+        if (builder == null) {
+            builder = new AlertDialog.Builder(context);
+        }
+        builder.setMessage(zzf.zzc(context, i));
+        if (onCancelListener != null) {
+            builder.setOnCancelListener(onCancelListener);
+        }
+        String zze = zzf.zze(context, i);
+        if (zze != null) {
+            builder.setPositiveButton(zze, zzg);
+        }
+        String zza2 = zzf.zza(context, i);
+        if (zza2 != null) {
+            builder.setTitle(zza2);
+        }
+        return builder.create();
+    }
+
+    static void zza(Activity activity, Dialog dialog, String str, DialogInterface.OnCancelListener onCancelListener) {
+        if (activity instanceof FragmentActivity) {
+            SupportErrorDialogFragment.newInstance(dialog, onCancelListener).show(((FragmentActivity) activity).getSupportFragmentManager(), str);
+            return;
+        }
+        ErrorDialogFragment.newInstance(dialog, onCancelListener).show(activity.getFragmentManager(), str);
     }
 
     @MainThread
@@ -71,32 +139,6 @@ public class GoogleApiAvailability extends GoogleApiAvailabilityLight {
         zzco zza2 = zzco.zza(activity);
         zza2.zzb(new ConnectionResult(isGooglePlayServicesAvailable, null), 0);
         return zza2.zzf();
-    }
-
-    @SuppressLint({"HandlerLeak"})
-    class zza extends Handler {
-        private final Context zza;
-
-        /* JADX INFO: super call moved to the top of the method (can break code semantics) */
-        public zza(Context context) {
-            super(Looper.myLooper() == null ? Looper.getMainLooper() : Looper.myLooper());
-            this.zza = context.getApplicationContext();
-        }
-
-        public final void handleMessage(Message message) {
-            if (message.what != 1) {
-                int i = message.what;
-                StringBuilder sb = new StringBuilder(50);
-                sb.append("Don't know how to handle this message: ");
-                sb.append(i);
-                Log.w("GoogleApiAvailability", sb.toString());
-                return;
-            }
-            int isGooglePlayServicesAvailable = GoogleApiAvailability.this.isGooglePlayServicesAvailable(this.zza);
-            if (GoogleApiAvailability.this.isUserResolvableError(isGooglePlayServicesAvailable)) {
-                GoogleApiAvailability.this.showErrorNotification(this.zza, isGooglePlayServicesAvailable);
-            }
-        }
     }
 
     public Dialog getErrorDialog(Activity activity, int i, int i2) {
@@ -146,36 +188,6 @@ public class GoogleApiAvailability extends GoogleApiAvailabilityLight {
         }
         zza(context, connectionResult.getErrorCode(), (String) null, GoogleApiActivity.zza(context, errorResolutionPendingIntent, i));
         return true;
-    }
-
-    @Hide
-    public static Dialog zza(Activity activity, DialogInterface.OnCancelListener onCancelListener) {
-        ProgressBar progressBar = new ProgressBar(activity, null, 16842874);
-        progressBar.setIndeterminate(true);
-        progressBar.setVisibility(0);
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setView(progressBar);
-        builder.setMessage(zzf.zzc(activity, 18));
-        builder.setPositiveButton("", (DialogInterface.OnClickListener) null);
-        AlertDialog create = builder.create();
-        zza(activity, create, "GooglePlayServicesUpdatingDialog", onCancelListener);
-        return create;
-    }
-
-    @Nullable
-    @Hide
-    public static zzby zza(Context context, zzbz zzbz) {
-        IntentFilter intentFilter = new IntentFilter("android.intent.action.PACKAGE_ADDED");
-        intentFilter.addDataScheme("package");
-        zzby zzby = new zzby(zzbz);
-        context.registerReceiver(zzby, intentFilter);
-        zzby.zza(context);
-        if (GooglePlayServicesUtilLight.zza(context, "com.google.android.gms")) {
-            return zzby;
-        }
-        zzbz.zza();
-        zzby.zza();
-        return null;
     }
 
     public Task<Void> checkApiAvailability(GoogleApi<?> googleApi, GoogleApi<?>... googleApiArr) {
@@ -272,42 +284,6 @@ public class GoogleApiAvailability extends GoogleApiAvailabilityLight {
         return super.getErrorString(i);
     }
 
-    static Dialog zza(Context context, int i, zzg zzg, DialogInterface.OnCancelListener onCancelListener) {
-        AlertDialog.Builder builder = null;
-        if (i == 0) {
-            return null;
-        }
-        TypedValue typedValue = new TypedValue();
-        context.getTheme().resolveAttribute(16843529, typedValue, true);
-        if ("Theme.Dialog.Alert".equals(context.getResources().getResourceEntryName(typedValue.resourceId))) {
-            builder = new AlertDialog.Builder(context, 5);
-        }
-        if (builder == null) {
-            builder = new AlertDialog.Builder(context);
-        }
-        builder.setMessage(zzf.zzc(context, i));
-        if (onCancelListener != null) {
-            builder.setOnCancelListener(onCancelListener);
-        }
-        String zze = zzf.zze(context, i);
-        if (zze != null) {
-            builder.setPositiveButton(zze, zzg);
-        }
-        String zza2 = zzf.zza(context, i);
-        if (zza2 != null) {
-            builder.setTitle(zza2);
-        }
-        return builder.create();
-    }
-
-    static void zza(Activity activity, Dialog dialog, String str, DialogInterface.OnCancelListener onCancelListener) {
-        if (activity instanceof FragmentActivity) {
-            SupportErrorDialogFragment.newInstance(dialog, onCancelListener).show(((FragmentActivity) activity).getSupportFragmentManager(), str);
-            return;
-        }
-        ErrorDialogFragment.newInstance(dialog, onCancelListener).show(activity.getFragmentManager(), str);
-    }
-
     @TargetApi(20)
     private final void zza(Context context, int i, String str, PendingIntent pendingIntent) {
         Notification notification;
@@ -366,5 +342,31 @@ public class GoogleApiAvailability extends GoogleApiAvailabilityLight {
     /* access modifiers changed from: package-private */
     public final void zza(Context context) {
         new zza(context).sendEmptyMessageDelayed(1, 120000);
+    }
+
+    @SuppressLint({"HandlerLeak"})
+    class zza extends Handler {
+        private final Context zza;
+
+        /* JADX INFO: super call moved to the top of the method (can break code semantics) */
+        public zza(Context context) {
+            super(Looper.myLooper() == null ? Looper.getMainLooper() : Looper.myLooper());
+            this.zza = context.getApplicationContext();
+        }
+
+        public final void handleMessage(Message message) {
+            if (message.what != 1) {
+                int i = message.what;
+                StringBuilder sb = new StringBuilder(50);
+                sb.append("Don't know how to handle this message: ");
+                sb.append(i);
+                Log.w("GoogleApiAvailability", sb.toString());
+                return;
+            }
+            int isGooglePlayServicesAvailable = GoogleApiAvailability.this.isGooglePlayServicesAvailable(this.zza);
+            if (GoogleApiAvailability.this.isUserResolvableError(isGooglePlayServicesAvailable)) {
+                GoogleApiAvailability.this.showErrorNotification(this.zza, isGooglePlayServicesAvailable);
+            }
+        }
     }
 }

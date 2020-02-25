@@ -8,12 +8,16 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
 import android.util.Log;
+
 import com.google.android.tvlauncher.notifications.NotificationsContract;
 
 @RequiresApi(19)
 class DocumentsContractApi19 {
     private static final int FLAG_VIRTUAL_DOCUMENT = 512;
     private static final String TAG = "DocumentFile";
+
+    private DocumentsContractApi19() {
+    }
 
     public static boolean isVirtual(Context context, Uri self) {
         if (DocumentsContract.isDocumentUri(context, self) && (getFlags(context, self) & 512) != 0) {
@@ -155,8 +159,5 @@ class DocumentsContractApi19 {
             } catch (Exception e) {
             }
         }
-    }
-
-    private DocumentsContractApi19() {
     }
 }

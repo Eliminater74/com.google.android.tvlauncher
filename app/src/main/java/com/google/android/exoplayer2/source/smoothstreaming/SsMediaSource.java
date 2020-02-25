@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerLibraryInfo;
@@ -17,8 +18,6 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.MediaSourceEventListener;
 import com.google.android.exoplayer2.source.SinglePeriodTimeline;
 import com.google.android.exoplayer2.source.ads.AdsMediaSource;
-import com.google.android.exoplayer2.source.smoothstreaming.DefaultSsChunkSource;
-import com.google.android.exoplayer2.source.smoothstreaming.SsChunkSource;
 import com.google.android.exoplayer2.source.smoothstreaming.manifest.SsManifest;
 import com.google.android.exoplayer2.source.smoothstreaming.manifest.SsManifestParser;
 import com.google.android.exoplayer2.source.smoothstreaming.manifest.SsUtil;
@@ -31,6 +30,7 @@ import com.google.android.exoplayer2.upstream.LoaderErrorThrower;
 import com.google.android.exoplayer2.upstream.ParsingLoadable;
 import com.google.android.exoplayer2.upstream.TransferListener;
 import com.google.android.exoplayer2.util.Assertions;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,155 +39,31 @@ public final class SsMediaSource extends BaseMediaSource implements Loader.Callb
     public static final long DEFAULT_LIVE_PRESENTATION_DELAY_MS = 30000;
     private static final int MINIMUM_MANIFEST_REFRESH_PERIOD_MS = 5000;
     private static final long MIN_LIVE_DEFAULT_START_POSITION_US = 5000000;
-    private final SsChunkSource.Factory chunkSourceFactory;
-    private final CompositeSequenceableLoaderFactory compositeSequenceableLoaderFactory;
-    private final long livePresentationDelayMs;
-    private final LoadErrorHandlingPolicy loadErrorHandlingPolicy;
-    private SsManifest manifest;
-    private DataSource manifestDataSource;
-    private final DataSource.Factory manifestDataSourceFactory;
-    private final MediaSourceEventListener.EventDispatcher manifestEventDispatcher;
-    private long manifestLoadStartTimestamp;
-    private Loader manifestLoader;
-    private LoaderErrorThrower manifestLoaderErrorThrower;
-    private final ParsingLoadable.Parser<? extends SsManifest> manifestParser;
-    private Handler manifestRefreshHandler;
-    private final Uri manifestUri;
-    private final ArrayList<SsMediaPeriod> mediaPeriods;
-    @Nullable
-    private TransferListener mediaTransferListener;
-    private final boolean sideloadedManifest;
-    @Nullable
-    private final Object tag;
-
-    public /* bridge */ /* synthetic */ void onLoadCanceled(Loader.Loadable loadable, long j, long j2, boolean z) {
-        onLoadCanceled((ParsingLoadable<SsManifest>) ((ParsingLoadable) loadable), j, j2, z);
-    }
-
-    public /* bridge */ /* synthetic */ void onLoadCompleted(Loader.Loadable loadable, long j, long j2) {
-        onLoadCompleted((ParsingLoadable<SsManifest>) ((ParsingLoadable) loadable), j, j2);
-    }
-
-    public /* bridge */ /* synthetic */ Loader.LoadErrorAction onLoadError(Loader.Loadable loadable, long j, long j2, IOException iOException, int i) {
-        return onLoadError((ParsingLoadable<SsManifest>) ((ParsingLoadable) loadable), j, j2, iOException, i);
-    }
 
     static {
         ExoPlayerLibraryInfo.registerModule("goog.exo.smoothstreaming");
     }
 
-    public static final class Factory implements AdsMediaSource.MediaSourceFactory {
-        private final SsChunkSource.Factory chunkSourceFactory;
-        private CompositeSequenceableLoaderFactory compositeSequenceableLoaderFactory;
-        private boolean isCreateCalled;
-        private long livePresentationDelayMs;
-        private LoadErrorHandlingPolicy loadErrorHandlingPolicy;
-        @Nullable
-        private final DataSource.Factory manifestDataSourceFactory;
-        @Nullable
-        private ParsingLoadable.Parser<? extends SsManifest> manifestParser;
-        @Nullable
-        private List<StreamKey> streamKeys;
-        @Nullable
-        private Object tag;
-
-        public Factory(DataSource.Factory dataSourceFactory) {
-            this(new DefaultSsChunkSource.Factory(dataSourceFactory), dataSourceFactory);
-        }
-
-        public Factory(SsChunkSource.Factory chunkSourceFactory2, @Nullable DataSource.Factory manifestDataSourceFactory2) {
-            this.chunkSourceFactory = (SsChunkSource.Factory) Assertions.checkNotNull(chunkSourceFactory2);
-            this.manifestDataSourceFactory = manifestDataSourceFactory2;
-            this.loadErrorHandlingPolicy = new DefaultLoadErrorHandlingPolicy();
-            this.livePresentationDelayMs = 30000;
-            this.compositeSequenceableLoaderFactory = new DefaultCompositeSequenceableLoaderFactory();
-        }
-
-        public Factory setTag(Object tag2) {
-            Assertions.checkState(!this.isCreateCalled);
-            this.tag = tag2;
-            return this;
-        }
-
-        @Deprecated
-        public Factory setMinLoadableRetryCount(int minLoadableRetryCount) {
-            return setLoadErrorHandlingPolicy(new DefaultLoadErrorHandlingPolicy(minLoadableRetryCount));
-        }
-
-        public Factory setLoadErrorHandlingPolicy(LoadErrorHandlingPolicy loadErrorHandlingPolicy2) {
-            Assertions.checkState(!this.isCreateCalled);
-            this.loadErrorHandlingPolicy = loadErrorHandlingPolicy2;
-            return this;
-        }
-
-        public Factory setLivePresentationDelayMs(long livePresentationDelayMs2) {
-            Assertions.checkState(!this.isCreateCalled);
-            this.livePresentationDelayMs = livePresentationDelayMs2;
-            return this;
-        }
-
-        public Factory setManifestParser(ParsingLoadable.Parser<? extends SsManifest> manifestParser2) {
-            Assertions.checkState(!this.isCreateCalled);
-            this.manifestParser = (ParsingLoadable.Parser) Assertions.checkNotNull(manifestParser2);
-            return this;
-        }
-
-        public Factory setStreamKeys(List<StreamKey> streamKeys2) {
-            Assertions.checkState(!this.isCreateCalled);
-            this.streamKeys = streamKeys2;
-            return this;
-        }
-
-        public Factory setCompositeSequenceableLoaderFactory(CompositeSequenceableLoaderFactory compositeSequenceableLoaderFactory2) {
-            Assertions.checkState(!this.isCreateCalled);
-            this.compositeSequenceableLoaderFactory = (CompositeSequenceableLoaderFactory) Assertions.checkNotNull(compositeSequenceableLoaderFactory2);
-            return this;
-        }
-
-        public SsMediaSource createMediaSource(SsManifest manifest) {
-            Assertions.checkArgument(!manifest.isLive);
-            this.isCreateCalled = true;
-            List<StreamKey> list = this.streamKeys;
-            if (list != null && !list.isEmpty()) {
-                manifest = manifest.copy(this.streamKeys);
-            }
-            return new SsMediaSource(manifest, null, null, null, this.chunkSourceFactory, this.compositeSequenceableLoaderFactory, this.loadErrorHandlingPolicy, this.livePresentationDelayMs, this.tag);
-        }
-
-        @Deprecated
-        public SsMediaSource createMediaSource(SsManifest manifest, @Nullable Handler eventHandler, @Nullable MediaSourceEventListener eventListener) {
-            SsMediaSource mediaSource = createMediaSource(manifest);
-            if (!(eventHandler == null || eventListener == null)) {
-                mediaSource.addEventListener(eventHandler, eventListener);
-            }
-            return mediaSource;
-        }
-
-        public SsMediaSource createMediaSource(Uri manifestUri) {
-            this.isCreateCalled = true;
-            if (this.manifestParser == null) {
-                this.manifestParser = new SsManifestParser();
-            }
-            List<StreamKey> list = this.streamKeys;
-            if (list != null) {
-                this.manifestParser = new FilteringManifestParser(this.manifestParser, list);
-            }
-            return new SsMediaSource(null, (Uri) Assertions.checkNotNull(manifestUri), this.manifestDataSourceFactory, this.manifestParser, this.chunkSourceFactory, this.compositeSequenceableLoaderFactory, this.loadErrorHandlingPolicy, this.livePresentationDelayMs, this.tag);
-        }
-
-        @Deprecated
-        public SsMediaSource createMediaSource(Uri manifestUri, @Nullable Handler eventHandler, @Nullable MediaSourceEventListener eventListener) {
-            SsMediaSource mediaSource = createMediaSource(manifestUri);
-            if (!(eventHandler == null || eventListener == null)) {
-                mediaSource.addEventListener(eventHandler, eventListener);
-            }
-            return mediaSource;
-        }
-
-        public int[] getSupportedTypes() {
-            return new int[]{1};
-        }
-    }
+    private final SsChunkSource.Factory chunkSourceFactory;
+    private final CompositeSequenceableLoaderFactory compositeSequenceableLoaderFactory;
+    private final long livePresentationDelayMs;
+    private final LoadErrorHandlingPolicy loadErrorHandlingPolicy;
+    private final DataSource.Factory manifestDataSourceFactory;
+    private final MediaSourceEventListener.EventDispatcher manifestEventDispatcher;
+    private final ParsingLoadable.Parser<? extends SsManifest> manifestParser;
+    private final Uri manifestUri;
+    private final ArrayList<SsMediaPeriod> mediaPeriods;
+    private final boolean sideloadedManifest;
+    @Nullable
+    private final Object tag;
+    private SsManifest manifest;
+    private DataSource manifestDataSource;
+    private long manifestLoadStartTimestamp;
+    private Loader manifestLoader;
+    private LoaderErrorThrower manifestLoaderErrorThrower;
+    private Handler manifestRefreshHandler;
+    @Nullable
+    private TransferListener mediaTransferListener;
 
     @Deprecated
     public SsMediaSource(SsManifest manifest2, SsChunkSource.Factory chunkSourceFactory2, Handler eventHandler, MediaSourceEventListener eventListener) {
@@ -241,6 +117,18 @@ public final class SsMediaSource extends BaseMediaSource implements Loader.Callb
         this.tag = tag2;
         this.sideloadedManifest = manifest2 != null ? true : z;
         this.mediaPeriods = new ArrayList<>();
+    }
+
+    public /* bridge */ /* synthetic */ void onLoadCanceled(Loader.Loadable loadable, long j, long j2, boolean z) {
+        onLoadCanceled((ParsingLoadable<SsManifest>) ((ParsingLoadable) loadable), j, j2, z);
+    }
+
+    public /* bridge */ /* synthetic */ void onLoadCompleted(Loader.Loadable loadable, long j, long j2) {
+        onLoadCompleted((ParsingLoadable<SsManifest>) ((ParsingLoadable) loadable), j, j2);
+    }
+
+    public /* bridge */ /* synthetic */ Loader.LoadErrorAction onLoadError(Loader.Loadable loadable, long j, long j2, IOException iOException, int i) {
+        return onLoadError((ParsingLoadable<SsManifest>) ((ParsingLoadable) loadable), j, j2, iOException, i);
     }
 
     @Nullable
@@ -376,5 +264,118 @@ public final class SsMediaSource extends BaseMediaSource implements Loader.Callb
     public void bridge$lambda$0$SsMediaSource() {
         ParsingLoadable<SsManifest> loadable = new ParsingLoadable<>(this.manifestDataSource, this.manifestUri, 4, this.manifestParser);
         this.manifestEventDispatcher.loadStarted(loadable.dataSpec, loadable.type, this.manifestLoader.startLoading(loadable, this, this.loadErrorHandlingPolicy.getMinimumLoadableRetryCount(loadable.type)));
+    }
+
+    public static final class Factory implements AdsMediaSource.MediaSourceFactory {
+        private final SsChunkSource.Factory chunkSourceFactory;
+        @Nullable
+        private final DataSource.Factory manifestDataSourceFactory;
+        private CompositeSequenceableLoaderFactory compositeSequenceableLoaderFactory;
+        private boolean isCreateCalled;
+        private long livePresentationDelayMs;
+        private LoadErrorHandlingPolicy loadErrorHandlingPolicy;
+        @Nullable
+        private ParsingLoadable.Parser<? extends SsManifest> manifestParser;
+        @Nullable
+        private List<StreamKey> streamKeys;
+        @Nullable
+        private Object tag;
+
+        public Factory(DataSource.Factory dataSourceFactory) {
+            this(new DefaultSsChunkSource.Factory(dataSourceFactory), dataSourceFactory);
+        }
+
+        public Factory(SsChunkSource.Factory chunkSourceFactory2, @Nullable DataSource.Factory manifestDataSourceFactory2) {
+            this.chunkSourceFactory = (SsChunkSource.Factory) Assertions.checkNotNull(chunkSourceFactory2);
+            this.manifestDataSourceFactory = manifestDataSourceFactory2;
+            this.loadErrorHandlingPolicy = new DefaultLoadErrorHandlingPolicy();
+            this.livePresentationDelayMs = 30000;
+            this.compositeSequenceableLoaderFactory = new DefaultCompositeSequenceableLoaderFactory();
+        }
+
+        public Factory setTag(Object tag2) {
+            Assertions.checkState(!this.isCreateCalled);
+            this.tag = tag2;
+            return this;
+        }
+
+        @Deprecated
+        public Factory setMinLoadableRetryCount(int minLoadableRetryCount) {
+            return setLoadErrorHandlingPolicy(new DefaultLoadErrorHandlingPolicy(minLoadableRetryCount));
+        }
+
+        public Factory setLoadErrorHandlingPolicy(LoadErrorHandlingPolicy loadErrorHandlingPolicy2) {
+            Assertions.checkState(!this.isCreateCalled);
+            this.loadErrorHandlingPolicy = loadErrorHandlingPolicy2;
+            return this;
+        }
+
+        public Factory setLivePresentationDelayMs(long livePresentationDelayMs2) {
+            Assertions.checkState(!this.isCreateCalled);
+            this.livePresentationDelayMs = livePresentationDelayMs2;
+            return this;
+        }
+
+        public Factory setManifestParser(ParsingLoadable.Parser<? extends SsManifest> manifestParser2) {
+            Assertions.checkState(!this.isCreateCalled);
+            this.manifestParser = (ParsingLoadable.Parser) Assertions.checkNotNull(manifestParser2);
+            return this;
+        }
+
+        public Factory setStreamKeys(List<StreamKey> streamKeys2) {
+            Assertions.checkState(!this.isCreateCalled);
+            this.streamKeys = streamKeys2;
+            return this;
+        }
+
+        public Factory setCompositeSequenceableLoaderFactory(CompositeSequenceableLoaderFactory compositeSequenceableLoaderFactory2) {
+            Assertions.checkState(!this.isCreateCalled);
+            this.compositeSequenceableLoaderFactory = (CompositeSequenceableLoaderFactory) Assertions.checkNotNull(compositeSequenceableLoaderFactory2);
+            return this;
+        }
+
+        public SsMediaSource createMediaSource(SsManifest manifest) {
+            Assertions.checkArgument(!manifest.isLive);
+            this.isCreateCalled = true;
+            List<StreamKey> list = this.streamKeys;
+            if (list != null && !list.isEmpty()) {
+                manifest = manifest.copy(this.streamKeys);
+            }
+            return new SsMediaSource(manifest, null, null, null, this.chunkSourceFactory, this.compositeSequenceableLoaderFactory, this.loadErrorHandlingPolicy, this.livePresentationDelayMs, this.tag);
+        }
+
+        @Deprecated
+        public SsMediaSource createMediaSource(SsManifest manifest, @Nullable Handler eventHandler, @Nullable MediaSourceEventListener eventListener) {
+            SsMediaSource mediaSource = createMediaSource(manifest);
+            if (!(eventHandler == null || eventListener == null)) {
+                mediaSource.addEventListener(eventHandler, eventListener);
+            }
+            return mediaSource;
+        }
+
+        public SsMediaSource createMediaSource(Uri manifestUri) {
+            this.isCreateCalled = true;
+            if (this.manifestParser == null) {
+                this.manifestParser = new SsManifestParser();
+            }
+            List<StreamKey> list = this.streamKeys;
+            if (list != null) {
+                this.manifestParser = new FilteringManifestParser(this.manifestParser, list);
+            }
+            return new SsMediaSource(null, (Uri) Assertions.checkNotNull(manifestUri), this.manifestDataSourceFactory, this.manifestParser, this.chunkSourceFactory, this.compositeSequenceableLoaderFactory, this.loadErrorHandlingPolicy, this.livePresentationDelayMs, this.tag);
+        }
+
+        @Deprecated
+        public SsMediaSource createMediaSource(Uri manifestUri, @Nullable Handler eventHandler, @Nullable MediaSourceEventListener eventListener) {
+            SsMediaSource mediaSource = createMediaSource(manifestUri);
+            if (!(eventHandler == null || eventListener == null)) {
+                mediaSource.addEventListener(eventHandler, eventListener);
+            }
+            return mediaSource;
+        }
+
+        public int[] getSupportedTypes() {
+            return new int[]{1};
+        }
     }
 }

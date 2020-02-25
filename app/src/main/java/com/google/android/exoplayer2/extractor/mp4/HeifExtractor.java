@@ -1,6 +1,7 @@
 package com.google.android.exoplayer2.extractor.mp4;
 
 import android.util.LongSparseArray;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.ParserException;
@@ -13,8 +14,6 @@ import com.google.android.exoplayer2.extractor.PositionHolder;
 import com.google.android.exoplayer2.extractor.SeekMap;
 import com.google.android.exoplayer2.extractor.SeekPoint;
 import com.google.android.exoplayer2.extractor.TrackOutput;
-import com.google.android.exoplayer2.extractor.mp4.Atom;
-import com.google.android.exoplayer2.extractor.mp4.HeifMetaItem;
 import com.google.android.exoplayer2.metadata.Metadata;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Log;
@@ -23,6 +22,7 @@ import com.google.android.exoplayer2.util.NalUnitUtil;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.HevcConfig;
+
 import java.io.IOException;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -33,8 +33,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public final class HeifExtractor implements Extractor, SeekMap {
-    private static final int BRAND_QUICKTIME = Util.getIntegerCodeForString("qt  ");
     public static final ExtractorsFactory FACTORY = HeifExtractor$$Lambda$0.$instance;
+    private static final int BRAND_QUICKTIME = Util.getIntegerCodeForString("qt  ");
     private static final long RELOAD_MINIMUM_SEEK_DISTANCE = 262144;
     private static final int STATE_READING_ATOM_HEADER = 0;
     private static final int STATE_READING_ATOM_PAYLOAD = 1;
@@ -43,32 +43,108 @@ public final class HeifExtractor implements Extractor, SeekMap {
     private static final int TYPE_Exif = Util.getIntegerCodeForString("Exif");
     private static final int TYPE_irot = Util.getIntegerCodeForString("irot");
     private static final int TYPE_ispe = Util.getIntegerCodeForString("ispe");
-    private ParsableByteArray atomData;
     private final ParsableByteArray atomHeader = new ParsableByteArray(16);
+    private final ArrayDeque<Atom.ContainerAtom> containerAtoms = new ArrayDeque<>();
+    private final ParsableByteArray nalLength = new ParsableByteArray(4);
+    private final ParsableByteArray nalStartCode = new ParsableByteArray(NalUnitUtil.NAL_START_CODE);
+    private ParsableByteArray atomData;
     private int atomHeaderBytesRead;
     private long atomSize;
     private int atomType;
-    private final ArrayDeque<Atom.ContainerAtom> containerAtoms = new ArrayDeque<>();
     private long durationUs;
     private ExtractorOutput extractorOutput;
     private int firstVideoTrackIndex;
     private boolean isQuickTime;
     private LongSparseArray<HeifMetaItem> items;
-    private final ParsableByteArray nalLength = new ParsableByteArray(4);
-    private final ParsableByteArray nalStartCode = new ParsableByteArray(NalUnitUtil.NAL_START_CODE);
     private int parserState;
     private long primaryItemId;
     private int sampleBytesWritten;
     private int sampleCurrentNalBytesRemaining;
     private Mp4Track[] tracks;
 
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    private @interface State {
-    }
-
     static final /* synthetic */ Extractor[] lambda$static$0$HeifExtractor() {
         return new Extractor[]{new HeifExtractor()};
+    }
+
+    private static long maybeAdjustSeekOffset(TrackSampleTable sampleTable, long seekTimeUs, long offset) {
+        int sampleIndex = getSynchronizationSampleIndex(sampleTable, seekTimeUs);
+        if (sampleIndex == -1) {
+            return offset;
+        }
+        return Math.min(sampleTable.offsets[sampleIndex], offset);
+    }
+
+    private static int getSynchronizationSampleIndex(TrackSampleTable sampleTable, long timeUs) {
+        int sampleIndex = sampleTable.getIndexOfEarlierOrEqualSynchronizationSample(timeUs);
+        if (sampleIndex == -1) {
+            return sampleTable.getIndexOfLaterOrEqualSynchronizationSample(timeUs);
+        }
+        return sampleIndex;
+    }
+
+    private static boolean processFtypAtom(ParsableByteArray atomData2) {
+        atomData2.setPosition(8);
+        if (atomData2.readInt() == BRAND_QUICKTIME) {
+            return true;
+        }
+        atomData2.skipBytes(4);
+        while (atomData2.bytesLeft() > 0) {
+            if (atomData2.readInt() == BRAND_QUICKTIME) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static Track getMetaItemTrack(int trackId, HeifMetaItem item) throws ParserException {
+        int trackType;
+        Format format;
+        HeifMetaItem heifMetaItem = item;
+        byte[] initializationData = null;
+        float pixelAspectRatio = -1.0f;
+        int rotationDegrees = -1;
+        int height = -1;
+        int width = -1;
+        for (HeifMetaItem.Property property : heifMetaItem.properties) {
+            if (property.type == TYPE_ispe) {
+                ParsableByteArray data = new ParsableByteArray(property.data);
+                data.setPosition(4);
+                width = data.readUnsignedIntToInt();
+                height = data.readUnsignedIntToInt();
+            } else if (property.type == Atom.TYPE_hvcC) {
+                initializationData = property.data;
+            } else if (property.type == TYPE_irot) {
+                rotationDegrees = (property.data[0] & 3) * 90;
+            } else if (property.type == Atom.TYPE_pasp) {
+                ParsableByteArray data2 = new ParsableByteArray(property.data);
+                pixelAspectRatio = ((float) data2.readUnsignedIntToInt()) / ((float) data2.readUnsignedIntToInt());
+            }
+        }
+        int nalUnitLengthFieldLength = 0;
+        if (heifMetaItem.type == Atom.TYPE_hvc1) {
+            HevcConfig hevcConfig = HevcConfig.parse(new ParsableByteArray(initializationData));
+            format = Format.createVideoSampleFormat(null, MimeTypes.VIDEO_H265, null, -1, -1, width, height, -1.0f, hevcConfig.initializationData, rotationDegrees, pixelAspectRatio, null);
+            trackType = 2;
+            nalUnitLengthFieldLength = hevcConfig.nalUnitLengthFieldLength;
+        } else if (heifMetaItem.type != TYPE_Exif) {
+            return null;
+        } else {
+            format = Format.createSampleFormat(null, MimeTypes.APPLICATION_EXIF, null, -1, null);
+            trackType = 4;
+        }
+        return new Track(trackId, trackType, 0, 0, 0, format, 0, null, nalUnitLengthFieldLength, new long[0], new long[0]);
+    }
+
+    private static boolean shouldParseLeafAtom(int atom) {
+        return atom == Atom.TYPE_mdhd || atom == Atom.TYPE_mvhd || atom == Atom.TYPE_hdlr || atom == Atom.TYPE_stsd || atom == Atom.TYPE_stts || atom == Atom.TYPE_stss || atom == Atom.TYPE_ctts || atom == Atom.TYPE_elst || atom == Atom.TYPE_stsc || atom == Atom.TYPE_stsz || atom == Atom.TYPE_stz2 || atom == Atom.TYPE_stco || atom == Atom.TYPE_co64 || atom == Atom.TYPE_tkhd || atom == Atom.TYPE_ftyp || atom == Atom.TYPE_udta || atom == Atom.TYPE_meta || atom == HeifAtomParsers.TYPE_pitm || atom == HeifAtomParsers.TYPE_iinf || atom == HeifAtomParsers.TYPE_iref || atom == HeifAtomParsers.TYPE_iprp || atom == HeifAtomParsers.TYPE_idat || atom == HeifAtomParsers.TYPE_iloc;
+    }
+
+    private static boolean shouldParseContainerAtom(int atom) {
+        return atom == Atom.TYPE_moov || atom == Atom.TYPE_trak || atom == Atom.TYPE_mdia || atom == Atom.TYPE_minf || atom == Atom.TYPE_stbl || atom == Atom.TYPE_edts || atom == Atom.TYPE_meta;
+    }
+
+    private static boolean isFullAtom(int atom) {
+        return atom == Atom.TYPE_meta;
     }
 
     public boolean sniff(ExtractorInput input) throws IOException, InterruptedException {
@@ -523,92 +599,16 @@ public final class HeifExtractor implements Extractor, SeekMap {
         }
     }
 
-    private static long maybeAdjustSeekOffset(TrackSampleTable sampleTable, long seekTimeUs, long offset) {
-        int sampleIndex = getSynchronizationSampleIndex(sampleTable, seekTimeUs);
-        if (sampleIndex == -1) {
-            return offset;
-        }
-        return Math.min(sampleTable.offsets[sampleIndex], offset);
-    }
-
-    private static int getSynchronizationSampleIndex(TrackSampleTable sampleTable, long timeUs) {
-        int sampleIndex = sampleTable.getIndexOfEarlierOrEqualSynchronizationSample(timeUs);
-        if (sampleIndex == -1) {
-            return sampleTable.getIndexOfLaterOrEqualSynchronizationSample(timeUs);
-        }
-        return sampleIndex;
-    }
-
-    private static boolean processFtypAtom(ParsableByteArray atomData2) {
-        atomData2.setPosition(8);
-        if (atomData2.readInt() == BRAND_QUICKTIME) {
-            return true;
-        }
-        atomData2.skipBytes(4);
-        while (atomData2.bytesLeft() > 0) {
-            if (atomData2.readInt() == BRAND_QUICKTIME) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static Track getMetaItemTrack(int trackId, HeifMetaItem item) throws ParserException {
-        int trackType;
-        Format format;
-        HeifMetaItem heifMetaItem = item;
-        byte[] initializationData = null;
-        float pixelAspectRatio = -1.0f;
-        int rotationDegrees = -1;
-        int height = -1;
-        int width = -1;
-        for (HeifMetaItem.Property property : heifMetaItem.properties) {
-            if (property.type == TYPE_ispe) {
-                ParsableByteArray data = new ParsableByteArray(property.data);
-                data.setPosition(4);
-                width = data.readUnsignedIntToInt();
-                height = data.readUnsignedIntToInt();
-            } else if (property.type == Atom.TYPE_hvcC) {
-                initializationData = property.data;
-            } else if (property.type == TYPE_irot) {
-                rotationDegrees = (property.data[0] & 3) * 90;
-            } else if (property.type == Atom.TYPE_pasp) {
-                ParsableByteArray data2 = new ParsableByteArray(property.data);
-                pixelAspectRatio = ((float) data2.readUnsignedIntToInt()) / ((float) data2.readUnsignedIntToInt());
-            }
-        }
-        int nalUnitLengthFieldLength = 0;
-        if (heifMetaItem.type == Atom.TYPE_hvc1) {
-            HevcConfig hevcConfig = HevcConfig.parse(new ParsableByteArray(initializationData));
-            format = Format.createVideoSampleFormat(null, MimeTypes.VIDEO_H265, null, -1, -1, width, height, -1.0f, hevcConfig.initializationData, rotationDegrees, pixelAspectRatio, null);
-            trackType = 2;
-            nalUnitLengthFieldLength = hevcConfig.nalUnitLengthFieldLength;
-        } else if (heifMetaItem.type != TYPE_Exif) {
-            return null;
-        } else {
-            format = Format.createSampleFormat(null, MimeTypes.APPLICATION_EXIF, null, -1, null);
-            trackType = 4;
-        }
-        return new Track(trackId, trackType, 0, 0, 0, format, 0, null, nalUnitLengthFieldLength, new long[0], new long[0]);
-    }
-
-    private static boolean shouldParseLeafAtom(int atom) {
-        return atom == Atom.TYPE_mdhd || atom == Atom.TYPE_mvhd || atom == Atom.TYPE_hdlr || atom == Atom.TYPE_stsd || atom == Atom.TYPE_stts || atom == Atom.TYPE_stss || atom == Atom.TYPE_ctts || atom == Atom.TYPE_elst || atom == Atom.TYPE_stsc || atom == Atom.TYPE_stsz || atom == Atom.TYPE_stz2 || atom == Atom.TYPE_stco || atom == Atom.TYPE_co64 || atom == Atom.TYPE_tkhd || atom == Atom.TYPE_ftyp || atom == Atom.TYPE_udta || atom == Atom.TYPE_meta || atom == HeifAtomParsers.TYPE_pitm || atom == HeifAtomParsers.TYPE_iinf || atom == HeifAtomParsers.TYPE_iref || atom == HeifAtomParsers.TYPE_iprp || atom == HeifAtomParsers.TYPE_idat || atom == HeifAtomParsers.TYPE_iloc;
-    }
-
-    private static boolean shouldParseContainerAtom(int atom) {
-        return atom == Atom.TYPE_moov || atom == Atom.TYPE_trak || atom == Atom.TYPE_mdia || atom == Atom.TYPE_minf || atom == Atom.TYPE_stbl || atom == Atom.TYPE_edts || atom == Atom.TYPE_meta;
-    }
-
-    private static boolean isFullAtom(int atom) {
-        return atom == Atom.TYPE_meta;
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    private @interface State {
     }
 
     private static final class Mp4Track {
-        public int sampleIndex;
         public final TrackSampleTable sampleTable;
         public final Track track;
         public final TrackOutput trackOutput;
+        public int sampleIndex;
 
         public Mp4Track(Track track2, TrackSampleTable sampleTable2, TrackOutput trackOutput2) {
             this.track = track2;

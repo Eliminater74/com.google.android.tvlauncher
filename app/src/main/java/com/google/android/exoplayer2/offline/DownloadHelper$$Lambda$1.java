@@ -1,7 +1,5 @@
 package com.google.android.exoplayer2.offline;
 
-import com.google.android.exoplayer2.offline.DownloadHelper;
-
 final /* synthetic */ class DownloadHelper$$Lambda$1 implements Runnable {
     private final DownloadHelper arg$1;
     private final DownloadHelper.Callback arg$2;

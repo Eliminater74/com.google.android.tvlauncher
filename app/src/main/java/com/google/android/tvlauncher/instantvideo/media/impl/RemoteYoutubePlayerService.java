@@ -14,17 +14,18 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Surface;
 import android.view.WindowManager;
+
 import com.google.android.tvlauncher.instantvideo.media.MediaPlayer;
-import com.google.android.tvlauncher.instantvideo.media.impl.IRemoteYoutubePlayerService;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class RemoteYoutubePlayerService extends Service {
     private static final String TAG = "RemoteYTPlayerService";
+    private final Map<String, Session> mSessions = new HashMap();
     /* access modifiers changed from: private */
     public Handler mHandler = new Handler(Looper.getMainLooper());
     private int mNextSessionToken;
-    private final Map<String, Session> mSessions = new HashMap();
     private IRemoteYoutubePlayerService.Stub mStub = new IRemoteYoutubePlayerService.Stub() {
         public void createSession(Surface surface, int width, int height, IRemoteYoutubePlayerClient client) {
             final Surface surface2 = surface;
@@ -133,10 +134,10 @@ public class RemoteYoutubePlayerService extends Service {
         /* access modifiers changed from: private */
         public final IRemoteYoutubePlayerClient mClient;
         private final int mHeight;
-        private YoutubePlayerImpl mPlayer;
         private final Surface mSurface;
-        private VirtualDisplay mVirtualDisplay;
         private final int mWidth;
+        private YoutubePlayerImpl mPlayer;
+        private VirtualDisplay mVirtualDisplay;
         private WindowManager mWindowManager;
 
         Session(Surface surface, int width, int height, IRemoteYoutubePlayerClient client) {

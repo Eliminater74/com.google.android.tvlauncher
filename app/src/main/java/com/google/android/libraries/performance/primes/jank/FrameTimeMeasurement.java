@@ -1,6 +1,7 @@
 package com.google.android.libraries.performance.primes.jank;
 
 import android.support.annotation.Nullable;
+
 import logs.proto.wireless.performance.mobile.SystemHealthProto;
 
 public interface FrameTimeMeasurement {

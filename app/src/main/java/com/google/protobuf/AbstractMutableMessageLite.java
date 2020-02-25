@@ -1,8 +1,5 @@
 package com.google.protobuf;
 
-import com.google.protobuf.AbstractMessageLite;
-import com.google.protobuf.ByteString;
-import com.google.protobuf.MessageLite;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -12,6 +9,48 @@ import java.util.Collection;
 public abstract class AbstractMutableMessageLite implements MutableMessageLite {
     protected int cachedSize = -1;
     private boolean isMutable = true;
+
+    protected static UninitializedMessageException newUninitializedMessageException(MessageLite message) {
+        return new UninitializedMessageException(message);
+    }
+
+    protected static <T extends MutableMessageLite> Parser<T> internalNewParserForType(final T defaultInstance) {
+        return new AbstractParser<T>() {
+            /*  JADX ERROR: JadxRuntimeException in pass: MethodInvokeVisitor
+                jadx.core.utils.exceptions.JadxRuntimeException: Not class type: T
+                	at jadx.core.dex.info.ClassInfo.checkClassType(ClassInfo.java:60)
+                	at jadx.core.dex.info.ClassInfo.fromType(ClassInfo.java:31)
+                	at jadx.core.dex.nodes.DexNode.resolveClass(DexNode.java:143)
+                	at jadx.core.dex.nodes.RootNode.resolveClass(RootNode.java:183)
+                	at jadx.core.dex.nodes.utils.MethodUtils.processMethodArgsOverloaded(MethodUtils.java:75)
+                	at jadx.core.dex.nodes.utils.MethodUtils.collectOverloadedMethods(MethodUtils.java:54)
+                	at jadx.core.dex.visitors.MethodInvokeVisitor.processOverloaded(MethodInvokeVisitor.java:106)
+                	at jadx.core.dex.visitors.MethodInvokeVisitor.processInvoke(MethodInvokeVisitor.java:99)
+                	at jadx.core.dex.visitors.MethodInvokeVisitor.processInsn(MethodInvokeVisitor.java:70)
+                	at jadx.core.dex.visitors.MethodInvokeVisitor.processInsn(MethodInvokeVisitor.java:75)
+                	at jadx.core.dex.visitors.MethodInvokeVisitor.visit(MethodInvokeVisitor.java:63)
+                */
+            public T parsePartialFrom(com.google.protobuf.CodedInputStream r3, com.google.protobuf.ExtensionRegistryLite r4) throws com.google.protobuf.InvalidProtocolBufferException {
+                /*
+                    r2 = this;
+                    com.google.protobuf.MutableMessageLite r0 = com.google.protobuf.MutableMessageLite.this
+                    com.google.protobuf.MutableMessageLite r0 = r0.newMessageForType()
+                    boolean r1 = r0.mergeFrom(r3, r4)
+                    if (r1 == 0) goto L_0x000d
+                    return r0
+                L_0x000d:
+                    com.google.protobuf.InvalidProtocolBufferException r1 = com.google.protobuf.InvalidProtocolBufferException.parseFailure()
+                    com.google.protobuf.InvalidProtocolBufferException r1 = r1.setUnfinishedMessage(r0)
+                    throw r1
+                */
+                throw new UnsupportedOperationException("Method not decompiled: com.google.protobuf.AbstractMutableMessageLite.C18301.parsePartialFrom(com.google.protobuf.CodedInputStream, com.google.protobuf.ExtensionRegistryLite):com.google.protobuf.MutableMessageLite");
+            }
+        };
+    }
+
+    protected static <T> void addAll(Iterable<T> values, Collection<? super T> list) {
+        AbstractMessageLite.Builder.addAll(values, list);
+    }
 
     /* access modifiers changed from: protected */
     public void makeImmutable() {
@@ -231,48 +270,6 @@ public abstract class AbstractMutableMessageLite implements MutableMessageLite {
     public boolean parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) {
         clear();
         return mergeDelimitedFrom(input, extensionRegistry);
-    }
-
-    protected static UninitializedMessageException newUninitializedMessageException(MessageLite message) {
-        return new UninitializedMessageException(message);
-    }
-
-    protected static <T extends MutableMessageLite> Parser<T> internalNewParserForType(final T defaultInstance) {
-        return new AbstractParser<T>() {
-            /*  JADX ERROR: JadxRuntimeException in pass: MethodInvokeVisitor
-                jadx.core.utils.exceptions.JadxRuntimeException: Not class type: T
-                	at jadx.core.dex.info.ClassInfo.checkClassType(ClassInfo.java:60)
-                	at jadx.core.dex.info.ClassInfo.fromType(ClassInfo.java:31)
-                	at jadx.core.dex.nodes.DexNode.resolveClass(DexNode.java:143)
-                	at jadx.core.dex.nodes.RootNode.resolveClass(RootNode.java:183)
-                	at jadx.core.dex.nodes.utils.MethodUtils.processMethodArgsOverloaded(MethodUtils.java:75)
-                	at jadx.core.dex.nodes.utils.MethodUtils.collectOverloadedMethods(MethodUtils.java:54)
-                	at jadx.core.dex.visitors.MethodInvokeVisitor.processOverloaded(MethodInvokeVisitor.java:106)
-                	at jadx.core.dex.visitors.MethodInvokeVisitor.processInvoke(MethodInvokeVisitor.java:99)
-                	at jadx.core.dex.visitors.MethodInvokeVisitor.processInsn(MethodInvokeVisitor.java:70)
-                	at jadx.core.dex.visitors.MethodInvokeVisitor.processInsn(MethodInvokeVisitor.java:75)
-                	at jadx.core.dex.visitors.MethodInvokeVisitor.visit(MethodInvokeVisitor.java:63)
-                */
-            public T parsePartialFrom(com.google.protobuf.CodedInputStream r3, com.google.protobuf.ExtensionRegistryLite r4) throws com.google.protobuf.InvalidProtocolBufferException {
-                /*
-                    r2 = this;
-                    com.google.protobuf.MutableMessageLite r0 = com.google.protobuf.MutableMessageLite.this
-                    com.google.protobuf.MutableMessageLite r0 = r0.newMessageForType()
-                    boolean r1 = r0.mergeFrom(r3, r4)
-                    if (r1 == 0) goto L_0x000d
-                    return r0
-                L_0x000d:
-                    com.google.protobuf.InvalidProtocolBufferException r1 = com.google.protobuf.InvalidProtocolBufferException.parseFailure()
-                    com.google.protobuf.InvalidProtocolBufferException r1 = r1.setUnfinishedMessage(r0)
-                    throw r1
-                */
-                throw new UnsupportedOperationException("Method not decompiled: com.google.protobuf.AbstractMutableMessageLite.C18301.parsePartialFrom(com.google.protobuf.CodedInputStream, com.google.protobuf.ExtensionRegistryLite):com.google.protobuf.MutableMessageLite");
-            }
-        };
-    }
-
-    protected static <T> void addAll(Iterable<T> values, Collection<? super T> list) {
-        AbstractMessageLite.Builder.addAll(values, list);
     }
 
     /* access modifiers changed from: protected */

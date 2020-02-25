@@ -1,6 +1,7 @@
 package com.google.android.gms.common.api.internal;
 
 import android.support.annotation.MainThread;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiActivity;

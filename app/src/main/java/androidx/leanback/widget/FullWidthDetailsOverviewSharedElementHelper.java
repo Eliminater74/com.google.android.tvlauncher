@@ -5,35 +5,21 @@ import android.os.Handler;
 import android.support.p001v4.app.ActivityCompat;
 import android.support.p001v4.view.ViewCompat;
 import android.text.TextUtils;
+
 import androidx.leanback.transition.TransitionHelper;
 import androidx.leanback.transition.TransitionListener;
-import androidx.leanback.widget.FullWidthDetailsOverviewRowPresenter;
+
 import java.lang.ref.WeakReference;
 
 public class FullWidthDetailsOverviewSharedElementHelper extends FullWidthDetailsOverviewRowPresenter.Listener {
     static final boolean DEBUG = false;
-    private static final long DEFAULT_TIMEOUT = 5000;
     static final String TAG = "DetailsTransitionHelper";
+    private static final long DEFAULT_TIMEOUT = 5000;
     Activity mActivityToRunTransition;
-    private boolean mAutoStartSharedElementTransition = true;
     String mSharedElementName;
-    private boolean mStartedPostpone;
     FullWidthDetailsOverviewRowPresenter.ViewHolder mViewHolder;
-
-    static class TransitionTimeOutRunnable implements Runnable {
-        WeakReference<FullWidthDetailsOverviewSharedElementHelper> mHelperRef;
-
-        TransitionTimeOutRunnable(FullWidthDetailsOverviewSharedElementHelper helper) {
-            this.mHelperRef = new WeakReference<>(helper);
-        }
-
-        public void run() {
-            FullWidthDetailsOverviewSharedElementHelper helper = this.mHelperRef.get();
-            if (helper != null) {
-                helper.startPostponedEnterTransition();
-            }
-        }
-    }
+    private boolean mAutoStartSharedElementTransition = true;
+    private boolean mStartedPostpone;
 
     public void setSharedElementEnterTransition(Activity activity, String sharedElementName) {
         setSharedElementEnterTransition(activity, sharedElementName, 5000);
@@ -53,12 +39,12 @@ public class FullWidthDetailsOverviewSharedElementHelper extends FullWidthDetail
         }
     }
 
-    public void setAutoStartSharedElementTransition(boolean enabled) {
-        this.mAutoStartSharedElementTransition = enabled;
-    }
-
     public boolean getAutoStartSharedElementTransition() {
         return this.mAutoStartSharedElementTransition;
+    }
+
+    public void setAutoStartSharedElementTransition(boolean enabled) {
+        this.mAutoStartSharedElementTransition = enabled;
     }
 
     public void onBindLogo(FullWidthDetailsOverviewRowPresenter.ViewHolder vh) {
@@ -101,6 +87,21 @@ public class FullWidthDetailsOverviewSharedElementHelper extends FullWidthDetail
         if (!this.mStartedPostpone && this.mViewHolder != null) {
             ActivityCompat.startPostponedEnterTransition(this.mActivityToRunTransition);
             this.mStartedPostpone = true;
+        }
+    }
+
+    static class TransitionTimeOutRunnable implements Runnable {
+        WeakReference<FullWidthDetailsOverviewSharedElementHelper> mHelperRef;
+
+        TransitionTimeOutRunnable(FullWidthDetailsOverviewSharedElementHelper helper) {
+            this.mHelperRef = new WeakReference<>(helper);
+        }
+
+        public void run() {
+            FullWidthDetailsOverviewSharedElementHelper helper = this.mHelperRef.get();
+            if (helper != null) {
+                helper.startPostponedEnterTransition();
+            }
         }
     }
 }

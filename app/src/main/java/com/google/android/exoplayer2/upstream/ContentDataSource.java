@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.net.Uri;
 import android.support.annotation.Nullable;
+
 import java.io.EOFException;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -12,21 +13,15 @@ import java.io.IOException;
 import java.nio.channels.FileChannel;
 
 public final class ContentDataSource extends BaseDataSource {
+    private final ContentResolver resolver;
     @Nullable
     private AssetFileDescriptor assetFileDescriptor;
     private long bytesRemaining;
     @Nullable
     private FileInputStream inputStream;
     private boolean opened;
-    private final ContentResolver resolver;
     @Nullable
     private Uri uri;
-
-    public static class ContentDataSourceException extends IOException {
-        public ContentDataSourceException(IOException cause) {
-            super(cause);
-        }
-    }
 
     public ContentDataSource(Context context) {
         super(false);
@@ -172,6 +167,12 @@ public final class ContentDataSource extends BaseDataSource {
                 }
                 throw th3;
             }
+        }
+    }
+
+    public static class ContentDataSourceException extends IOException {
+        public ContentDataSourceException(IOException cause) {
+            super(cause);
         }
     }
 }

@@ -18,34 +18,38 @@ public class GoogleLoginCredentialsResult implements Parcelable {
     private Intent mCredentialsIntent;
     private String mCredentialsString;
 
-    public String getAccount() {
-        return this.mAccount;
-    }
-
-    public String getCredentialsString() {
-        return this.mCredentialsString;
-    }
-
-    public Intent getCredentialsIntent() {
-        return this.mCredentialsIntent;
-    }
-
     public GoogleLoginCredentialsResult() {
         this.mCredentialsString = null;
         this.mCredentialsIntent = null;
         this.mAccount = null;
     }
 
-    public void setCredentialsString(String s) {
-        this.mCredentialsString = s;
+    private GoogleLoginCredentialsResult(Parcel in) {
+        readFromParcel(in);
     }
 
-    public void setCredentialsIntent(Intent intent) {
-        this.mCredentialsIntent = intent;
+    public String getAccount() {
+        return this.mAccount;
     }
 
     public void setAccount(String account) {
         this.mAccount = account;
+    }
+
+    public String getCredentialsString() {
+        return this.mCredentialsString;
+    }
+
+    public void setCredentialsString(String s) {
+        this.mCredentialsString = s;
+    }
+
+    public Intent getCredentialsIntent() {
+        return this.mCredentialsIntent;
+    }
+
+    public void setCredentialsIntent(Intent intent) {
+        this.mCredentialsIntent = intent;
     }
 
     public int describeContents() {
@@ -65,10 +69,6 @@ public class GoogleLoginCredentialsResult implements Parcelable {
             return;
         }
         out.writeInt(0);
-    }
-
-    private GoogleLoginCredentialsResult(Parcel in) {
-        readFromParcel(in);
     }
 
     public void readFromParcel(Parcel in) {

@@ -12,9 +12,9 @@ public interface IJingleInfoStanzaListener extends IInterface {
     void onStanzaReceived(String str) throws RemoteException;
 
     public static abstract class Stub extends Binder implements IJingleInfoStanzaListener {
-        private static final String DESCRIPTOR = "com.google.android.gtalkservice.IJingleInfoStanzaListener";
         static final int TRANSACTION_getAccountId = 2;
         static final int TRANSACTION_onStanzaReceived = 1;
+        private static final String DESCRIPTOR = "com.google.android.gtalkservice.IJingleInfoStanzaListener";
 
         public Stub() {
             attachInterface(this, DESCRIPTOR);

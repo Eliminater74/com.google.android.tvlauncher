@@ -2,25 +2,14 @@ package androidx.leanback.media;
 
 import android.content.Context;
 import android.support.annotation.CallSuper;
-import androidx.leanback.media.PlaybackGlueHost;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class PlaybackGlue {
     private final Context mContext;
-    private PlaybackGlueHost mPlaybackGlueHost;
     ArrayList<PlayerCallback> mPlayerCallbacks;
-
-    public static abstract class PlayerCallback {
-        public void onPreparedStateChanged(PlaybackGlue glue) {
-        }
-
-        public void onPlayStateChanged(PlaybackGlue glue) {
-        }
-
-        public void onPlayCompleted(PlaybackGlue glue) {
-        }
-    }
+    private PlaybackGlueHost mPlaybackGlueHost;
 
     public PlaybackGlue(Context context) {
         this.mContext = context;
@@ -88,20 +77,6 @@ public abstract class PlaybackGlue {
     public void previous() {
     }
 
-    public final void setHost(PlaybackGlueHost host) {
-        PlaybackGlueHost playbackGlueHost = this.mPlaybackGlueHost;
-        if (playbackGlueHost != host) {
-            if (playbackGlueHost != null) {
-                playbackGlueHost.attachToGlue(null);
-            }
-            this.mPlaybackGlueHost = host;
-            PlaybackGlueHost playbackGlueHost2 = this.mPlaybackGlueHost;
-            if (playbackGlueHost2 != null) {
-                playbackGlueHost2.attachToGlue(this);
-            }
-        }
-    }
-
     /* access modifiers changed from: protected */
     public void onHostStart() {
     }
@@ -157,5 +132,30 @@ public abstract class PlaybackGlue {
 
     public PlaybackGlueHost getHost() {
         return this.mPlaybackGlueHost;
+    }
+
+    public final void setHost(PlaybackGlueHost host) {
+        PlaybackGlueHost playbackGlueHost = this.mPlaybackGlueHost;
+        if (playbackGlueHost != host) {
+            if (playbackGlueHost != null) {
+                playbackGlueHost.attachToGlue(null);
+            }
+            this.mPlaybackGlueHost = host;
+            PlaybackGlueHost playbackGlueHost2 = this.mPlaybackGlueHost;
+            if (playbackGlueHost2 != null) {
+                playbackGlueHost2.attachToGlue(this);
+            }
+        }
+    }
+
+    public static abstract class PlayerCallback {
+        public void onPreparedStateChanged(PlaybackGlue glue) {
+        }
+
+        public void onPlayStateChanged(PlaybackGlue glue) {
+        }
+
+        public void onPlayCompleted(PlaybackGlue glue) {
+        }
     }
 }

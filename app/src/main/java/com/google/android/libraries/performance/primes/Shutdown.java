@@ -3,8 +3,10 @@ package com.google.android.libraries.performance.primes;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.VisibleForTesting;
+
 import com.google.android.libraries.performance.primes.trace.PrimesTrace;
 import com.google.android.libraries.stitch.util.Preconditions;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;

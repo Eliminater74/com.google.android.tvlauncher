@@ -4,10 +4,10 @@ import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 
 public class ThumbnailRequestCoordinator implements RequestCoordinator, Request {
-    private Request full;
-    private boolean isRunning;
     @Nullable
     private final RequestCoordinator parent;
+    private Request full;
+    private boolean isRunning;
     private Request thumb;
 
     @VisibleForTesting

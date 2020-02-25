@@ -6,15 +6,19 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Looper;
 import android.util.Log;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 public final class BitmapUtils {
     public static final int NO_COLOR = 0;
     private static final String TAG = "BitmapUtils";
-    private static volatile Thread sMainThread;
     private static final Paint sResizePaintBg = new Paint(2);
     private static final Paint sResizePaintUi = new Paint(2);
+    private static volatile Thread sMainThread;
+
+    private BitmapUtils() {
+    }
 
     public static Bitmap resizeAndCropBitmap(Bitmap inputBitmap, int width, int height, Bitmap toReuse) {
         Bitmap bitmap;
@@ -109,9 +113,6 @@ public final class BitmapUtils {
 
     public static Bitmap resizeToSquareBitmap(Bitmap inputBitmap, int size) {
         return resizeToSquareBitmap(inputBitmap, size, 0);
-    }
-
-    private BitmapUtils() {
     }
 
     public static byte[] compressBitmap(Bitmap bitmap, int quality, boolean recycle) {

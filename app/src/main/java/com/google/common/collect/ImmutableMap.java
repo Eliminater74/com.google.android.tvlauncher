@@ -3,10 +3,13 @@ package com.google.common.collect;
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableCollection;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.concurrent.LazyInit;
 import com.google.j2objc.annotations.RetainedWith;
+
+import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.Serializable;
 import java.util.AbstractMap;
 import java.util.Arrays;
@@ -15,8 +18,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.SortedMap;
-import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible(emulated = true, serializable = true)
 public abstract class ImmutableMap<K, V> implements Map<K, V>, Serializable {
@@ -33,19 +34,8 @@ public abstract class ImmutableMap<K, V> implements Map<K, V>, Serializable {
     @LazyInit
     private transient ImmutableCollection<V> values;
 
-    /* access modifiers changed from: package-private */
-    public abstract ImmutableSet<Map.Entry<K, V>> createEntrySet();
-
-    /* access modifiers changed from: package-private */
-    public abstract ImmutableSet<K> createKeySet();
-
-    /* access modifiers changed from: package-private */
-    public abstract ImmutableCollection<V> createValues();
-
-    public abstract V get(@NullableDecl Object obj);
-
-    /* access modifiers changed from: package-private */
-    public abstract boolean isPartialView();
+    ImmutableMap() {
+    }
 
     /* renamed from: of */
     public static <K, V> ImmutableMap<K, V> m126of() {
@@ -124,6 +114,161 @@ public abstract class ImmutableMap<K, V> implements Map<K, V>, Serializable {
         sb.append(" and ");
         sb.append(valueOf2);
         return new IllegalArgumentException(sb.toString());
+    }
+
+    public static <K, V> ImmutableMap<K, V> copyOf(Map map) {
+        if ((map instanceof ImmutableMap) && !(map instanceof SortedMap)) {
+            ImmutableMap<K, V> kvMap = (ImmutableMap) map;
+            if (!kvMap.isPartialView()) {
+                return kvMap;
+            }
+        }
+        return copyOf(map.entrySet());
+    }
+
+    @Beta
+    public static <K, V> ImmutableMap<K, V> copyOf(Iterable iterable) {
+        int initialCapacity;
+        if (iterable instanceof Collection) {
+            initialCapacity = ((Collection) iterable).size();
+        } else {
+            initialCapacity = 4;
+        }
+        Builder<K, V> builder = new Builder<>(initialCapacity);
+        builder.putAll(iterable);
+        return builder.build();
+    }
+
+    /* access modifiers changed from: package-private */
+    public abstract ImmutableSet<Map.Entry<K, V>> createEntrySet();
+
+    /* access modifiers changed from: package-private */
+    public abstract ImmutableSet<K> createKeySet();
+
+    /* access modifiers changed from: package-private */
+    public abstract ImmutableCollection<V> createValues();
+
+    public abstract V get(@NullableDecl Object obj);
+
+    /* access modifiers changed from: package-private */
+    public abstract boolean isPartialView();
+
+    @CanIgnoreReturnValue
+    @Deprecated
+    public final V put(K k, V v) {
+        throw new UnsupportedOperationException();
+    }
+
+    @CanIgnoreReturnValue
+    @Deprecated
+    public final V remove(Object o) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Deprecated
+    public final void putAll(Map<? extends K, ? extends V> map) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Deprecated
+    public final void clear() {
+        throw new UnsupportedOperationException();
+    }
+
+    public boolean isEmpty() {
+        return size() == 0;
+    }
+
+    public boolean containsKey(@NullableDecl Object key) {
+        return get(key) != null;
+    }
+
+    public boolean containsValue(@NullableDecl Object value) {
+        return values().contains(value);
+    }
+
+    public final V getOrDefault(@NullableDecl Object key, @NullableDecl V defaultValue) {
+        V result = get(key);
+        return result != null ? result : defaultValue;
+    }
+
+    public ImmutableSet<Map.Entry<K, V>> entrySet() {
+        ImmutableSet<Map.Entry<K, V>> result = this.entrySet;
+        if (result != null) {
+            return result;
+        }
+        ImmutableSet<Map.Entry<K, V>> createEntrySet = createEntrySet();
+        this.entrySet = createEntrySet;
+        return createEntrySet;
+    }
+
+    public ImmutableSet<K> keySet() {
+        ImmutableSet<K> result = this.keySet;
+        if (result != null) {
+            return result;
+        }
+        ImmutableSet<K> createKeySet = createKeySet();
+        this.keySet = createKeySet;
+        return createKeySet;
+    }
+
+    /* access modifiers changed from: package-private */
+    public UnmodifiableIterator<K> keyIterator() {
+        final UnmodifiableIterator<Map.Entry<K, V>> entryIterator = entrySet().iterator();
+        return new UnmodifiableIterator<K>(this) {
+            public boolean hasNext() {
+                return entryIterator.hasNext();
+            }
+
+            public K next() {
+                return ((Map.Entry) entryIterator.next()).getKey();
+            }
+        };
+    }
+
+    public ImmutableCollection<V> values() {
+        ImmutableCollection<V> result = this.values;
+        if (result != null) {
+            return result;
+        }
+        ImmutableCollection<V> createValues = createValues();
+        this.values = createValues;
+        return createValues;
+    }
+
+    public ImmutableSetMultimap<K, V> asMultimap() {
+        if (isEmpty()) {
+            return ImmutableSetMultimap.m156of();
+        }
+        ImmutableSetMultimap<K, V> result = this.multimapView;
+        if (result != null) {
+            return result;
+        }
+        ImmutableSetMultimap<K, V> immutableSetMultimap = new ImmutableSetMultimap<>(new MapViewOfValuesAsSingletonSets(), size(), null);
+        this.multimapView = immutableSetMultimap;
+        return immutableSetMultimap;
+    }
+
+    public boolean equals(@NullableDecl Object object) {
+        return Maps.equalsImpl(this, object);
+    }
+
+    public int hashCode() {
+        return Sets.hashCodeImpl(entrySet());
+    }
+
+    /* access modifiers changed from: package-private */
+    public boolean isHashCodeFast() {
+        return false;
+    }
+
+    public String toString() {
+        return Maps.toStringImpl(this);
+    }
+
+    /* access modifiers changed from: package-private */
+    public Object writeReplace() {
+        return new SerializedForm(this);
     }
 
     public static class Builder<K, V> {
@@ -227,35 +372,12 @@ public abstract class ImmutableMap<K, V> implements Map<K, V>, Serializable {
         }
     }
 
-    public static <K, V> ImmutableMap<K, V> copyOf(Map map) {
-        if ((map instanceof ImmutableMap) && !(map instanceof SortedMap)) {
-            ImmutableMap<K, V> kvMap = (ImmutableMap) map;
-            if (!kvMap.isPartialView()) {
-                return kvMap;
-            }
-        }
-        return copyOf(map.entrySet());
-    }
-
-    @Beta
-    public static <K, V> ImmutableMap<K, V> copyOf(Iterable iterable) {
-        int initialCapacity;
-        if (iterable instanceof Collection) {
-            initialCapacity = ((Collection) iterable).size();
-        } else {
-            initialCapacity = 4;
-        }
-        Builder<K, V> builder = new Builder<>(initialCapacity);
-        builder.putAll(iterable);
-        return builder.build();
-    }
-
     static abstract class IteratorBasedImmutableMap<K, V> extends ImmutableMap<K, V> {
-        /* access modifiers changed from: package-private */
-        public abstract UnmodifiableIterator<Map.Entry<K, V>> entryIterator();
-
         IteratorBasedImmutableMap() {
         }
+
+        /* access modifiers changed from: package-private */
+        public abstract UnmodifiableIterator<Map.Entry<K, V>> entryIterator();
 
         /* access modifiers changed from: package-private */
         public ImmutableSet<K> createKeySet() {
@@ -282,103 +404,41 @@ public abstract class ImmutableMap<K, V> implements Map<K, V>, Serializable {
         }
     }
 
-    ImmutableMap() {
-    }
+    static class SerializedForm implements Serializable {
+        private static final long serialVersionUID = 0;
+        private final Object[] keys;
+        private final Object[] values;
 
-    @CanIgnoreReturnValue
-    @Deprecated
-    public final V put(K k, V v) {
-        throw new UnsupportedOperationException();
-    }
-
-    @CanIgnoreReturnValue
-    @Deprecated
-    public final V remove(Object o) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Deprecated
-    public final void putAll(Map<? extends K, ? extends V> map) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Deprecated
-    public final void clear() {
-        throw new UnsupportedOperationException();
-    }
-
-    public boolean isEmpty() {
-        return size() == 0;
-    }
-
-    public boolean containsKey(@NullableDecl Object key) {
-        return get(key) != null;
-    }
-
-    public boolean containsValue(@NullableDecl Object value) {
-        return values().contains(value);
-    }
-
-    public final V getOrDefault(@NullableDecl Object key, @NullableDecl V defaultValue) {
-        V result = get(key);
-        return result != null ? result : defaultValue;
-    }
-
-    public ImmutableSet<Map.Entry<K, V>> entrySet() {
-        ImmutableSet<Map.Entry<K, V>> result = this.entrySet;
-        if (result != null) {
-            return result;
-        }
-        ImmutableSet<Map.Entry<K, V>> createEntrySet = createEntrySet();
-        this.entrySet = createEntrySet;
-        return createEntrySet;
-    }
-
-    public ImmutableSet<K> keySet() {
-        ImmutableSet<K> result = this.keySet;
-        if (result != null) {
-            return result;
-        }
-        ImmutableSet<K> createKeySet = createKeySet();
-        this.keySet = createKeySet;
-        return createKeySet;
-    }
-
-    /* access modifiers changed from: package-private */
-    public UnmodifiableIterator<K> keyIterator() {
-        final UnmodifiableIterator<Map.Entry<K, V>> entryIterator = entrySet().iterator();
-        return new UnmodifiableIterator<K>(this) {
-            public boolean hasNext() {
-                return entryIterator.hasNext();
+        SerializedForm(ImmutableMap<?, ?> map) {
+            this.keys = new Object[map.size()];
+            this.values = new Object[map.size()];
+            int i = 0;
+            UnmodifiableIterator<Map.Entry<?, ?>> it = map.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<?, ?> entry = it.next();
+                this.keys[i] = entry.getKey();
+                this.values[i] = entry.getValue();
+                i++;
             }
+        }
 
-            public K next() {
-                return ((Map.Entry) entryIterator.next()).getKey();
+        /* access modifiers changed from: package-private */
+        public Object readResolve() {
+            return createMap(new Builder<>(this.keys.length));
+        }
+
+        /* access modifiers changed from: package-private */
+        public Object createMap(Builder<Object, Object> builder) {
+            int i = 0;
+            while (true) {
+                Object[] objArr = this.keys;
+                if (i >= objArr.length) {
+                    return builder.build();
+                }
+                builder.put(objArr[i], this.values[i]);
+                i++;
             }
-        };
-    }
-
-    public ImmutableCollection<V> values() {
-        ImmutableCollection<V> result = this.values;
-        if (result != null) {
-            return result;
         }
-        ImmutableCollection<V> createValues = createValues();
-        this.values = createValues;
-        return createValues;
-    }
-
-    public ImmutableSetMultimap<K, V> asMultimap() {
-        if (isEmpty()) {
-            return ImmutableSetMultimap.m156of();
-        }
-        ImmutableSetMultimap<K, V> result = this.multimapView;
-        if (result != null) {
-            return result;
-        }
-        ImmutableSetMultimap<K, V> immutableSetMultimap = new ImmutableSetMultimap<>(new MapViewOfValuesAsSingletonSets(), size(), null);
-        this.multimapView = immutableSetMultimap;
-        return immutableSetMultimap;
     }
 
     private final class MapViewOfValuesAsSingletonSets extends IteratorBasedImmutableMap<K, ImmutableSet<V>> {
@@ -442,64 +502,5 @@ public abstract class ImmutableMap<K, V> implements Map<K, V>, Serializable {
                 }
             };
         }
-    }
-
-    public boolean equals(@NullableDecl Object object) {
-        return Maps.equalsImpl(this, object);
-    }
-
-    public int hashCode() {
-        return Sets.hashCodeImpl(entrySet());
-    }
-
-    /* access modifiers changed from: package-private */
-    public boolean isHashCodeFast() {
-        return false;
-    }
-
-    public String toString() {
-        return Maps.toStringImpl(this);
-    }
-
-    static class SerializedForm implements Serializable {
-        private static final long serialVersionUID = 0;
-        private final Object[] keys;
-        private final Object[] values;
-
-        SerializedForm(ImmutableMap<?, ?> map) {
-            this.keys = new Object[map.size()];
-            this.values = new Object[map.size()];
-            int i = 0;
-            UnmodifiableIterator<Map.Entry<?, ?>> it = map.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry<?, ?> entry = it.next();
-                this.keys[i] = entry.getKey();
-                this.values[i] = entry.getValue();
-                i++;
-            }
-        }
-
-        /* access modifiers changed from: package-private */
-        public Object readResolve() {
-            return createMap(new Builder<>(this.keys.length));
-        }
-
-        /* access modifiers changed from: package-private */
-        public Object createMap(Builder<Object, Object> builder) {
-            int i = 0;
-            while (true) {
-                Object[] objArr = this.keys;
-                if (i >= objArr.length) {
-                    return builder.build();
-                }
-                builder.put(objArr[i], this.values[i]);
-                i++;
-            }
-        }
-    }
-
-    /* access modifiers changed from: package-private */
-    public Object writeReplace() {
-        return new SerializedForm(this);
     }
 }

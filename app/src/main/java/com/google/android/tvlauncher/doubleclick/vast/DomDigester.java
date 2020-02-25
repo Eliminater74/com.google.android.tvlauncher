@@ -1,6 +1,12 @@
 package com.google.android.tvlauncher.doubleclick.vast;
 
 import com.google.android.libraries.stitch.util.Preconditions;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -14,32 +20,15 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 public class DomDigester {
-    private final Map<String, List<Rule>> rules = new HashMap();
     /* access modifiers changed from: private */
     public final List<Object> stack = new ArrayList();
-
-    class BadXmlException extends Exception {
-        BadXmlException(DomDigester this$0, Exception e) {
-            super(e);
-        }
-    }
-
-    public static abstract class Rule {
-        public void executeBeforeChildren(Element element) {
-        }
-
-        public void executeAfterChildren(Element element) {
-        }
-    }
+    private final Map<String, List<Rule>> rules = new HashMap();
 
     public void parse(InputStream inputStream) throws IOException, BadXmlException {
         parseFrom(inputStream, null);
@@ -339,6 +328,20 @@ public class DomDigester {
                 String valueOf2 = String.valueOf(path.substring(1));
                 map.put(valueOf2.length() != 0 ? valueOf.concat(valueOf2) : new String(valueOf), rulesForPath);
             }
+        }
+    }
+
+    public static abstract class Rule {
+        public void executeBeforeChildren(Element element) {
+        }
+
+        public void executeAfterChildren(Element element) {
+        }
+    }
+
+    class BadXmlException extends Exception {
+        BadXmlException(DomDigester this$0, Exception e) {
+            super(e);
         }
     }
 }

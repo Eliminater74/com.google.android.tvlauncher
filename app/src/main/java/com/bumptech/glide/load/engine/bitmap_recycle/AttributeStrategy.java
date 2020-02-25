@@ -2,6 +2,7 @@ package com.bumptech.glide.load.engine.bitmap_recycle;
 
 import android.graphics.Bitmap;
 import android.support.annotation.VisibleForTesting;
+
 import com.bumptech.glide.util.Util;
 
 class AttributeStrategy implements LruPoolStrategy {
@@ -9,6 +10,22 @@ class AttributeStrategy implements LruPoolStrategy {
     private final KeyPool keyPool = new KeyPool();
 
     AttributeStrategy() {
+    }
+
+    private static String getBitmapString(Bitmap bitmap) {
+        return getBitmapString(bitmap.getWidth(), bitmap.getHeight(), bitmap.getConfig());
+    }
+
+    static String getBitmapString(int width, int height, Bitmap.Config config) {
+        String valueOf = String.valueOf(config);
+        StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 27);
+        sb.append("[");
+        sb.append(width);
+        sb.append("x");
+        sb.append(height);
+        sb.append("], ");
+        sb.append(valueOf);
+        return sb.toString();
     }
 
     public void put(Bitmap bitmap) {
@@ -43,22 +60,6 @@ class AttributeStrategy implements LruPoolStrategy {
         return sb.toString();
     }
 
-    private static String getBitmapString(Bitmap bitmap) {
-        return getBitmapString(bitmap.getWidth(), bitmap.getHeight(), bitmap.getConfig());
-    }
-
-    static String getBitmapString(int width, int height, Bitmap.Config config) {
-        String valueOf = String.valueOf(config);
-        StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 27);
-        sb.append("[");
-        sb.append(width);
-        sb.append("x");
-        sb.append(height);
-        sb.append("], ");
-        sb.append(valueOf);
-        return sb.toString();
-    }
-
     @VisibleForTesting
     static class KeyPool extends BaseKeyPool<Key> {
         KeyPool() {
@@ -79,9 +80,9 @@ class AttributeStrategy implements LruPoolStrategy {
 
     @VisibleForTesting
     static class Key implements Poolable {
+        private final KeyPool pool;
         private Bitmap.Config config;
         private int height;
-        private final KeyPool pool;
         private int width;
 
         public Key(KeyPool pool2) {

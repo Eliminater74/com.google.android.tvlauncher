@@ -6,6 +6,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Ascii;
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
 import java.lang.reflect.Field;
 import java.nio.ByteOrder;
 import java.security.AccessController;
@@ -13,6 +14,7 @@ import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.Arrays;
 import java.util.Comparator;
+
 import sun.misc.Unsafe;
 
 @GwtIncompatible
@@ -125,21 +127,67 @@ public final class UnsignedBytes {
         return LexicographicalComparatorHolder.PureJavaComparator.INSTANCE;
     }
 
+    private static byte flip(byte b) {
+        return (byte) (b ^ MAX_POWER_OF_TWO);
+    }
+
+    public static void sort(byte[] array) {
+        Preconditions.checkNotNull(array);
+        sort(array, 0, array.length);
+    }
+
+    public static void sort(byte[] array, int fromIndex, int toIndex) {
+        Preconditions.checkNotNull(array);
+        Preconditions.checkPositionIndexes(fromIndex, toIndex, array.length);
+        for (int i = fromIndex; i < toIndex; i++) {
+            array[i] = flip(array[i]);
+        }
+        Arrays.sort(array, fromIndex, toIndex);
+        for (int i2 = fromIndex; i2 < toIndex; i2++) {
+            array[i2] = flip(array[i2]);
+        }
+    }
+
+    public static void sortDescending(byte[] array) {
+        Preconditions.checkNotNull(array);
+        sortDescending(array, 0, array.length);
+    }
+
+    public static void sortDescending(byte[] array, int fromIndex, int toIndex) {
+        Preconditions.checkNotNull(array);
+        Preconditions.checkPositionIndexes(fromIndex, toIndex, array.length);
+        for (int i = fromIndex; i < toIndex; i++) {
+            array[i] = (byte) (array[i] ^ Ascii.DEL);
+        }
+        Arrays.sort(array, fromIndex, toIndex);
+        for (int i2 = fromIndex; i2 < toIndex; i2++) {
+            array[i2] = (byte) (array[i2] ^ Ascii.DEL);
+        }
+    }
+
     @VisibleForTesting
     static class LexicographicalComparatorHolder {
-        static final Comparator<byte[]> BEST_COMPARATOR = getBestComparator();
         static final String UNSAFE_COMPARATOR_NAME = String.valueOf(LexicographicalComparatorHolder.class.getName()).concat("$UnsafeComparator");
+        static final Comparator<byte[]> BEST_COMPARATOR = getBestComparator();
 
         LexicographicalComparatorHolder() {
+        }
+
+        static Comparator<byte[]> getBestComparator() {
+            try {
+                return (Comparator) Class.forName(UNSAFE_COMPARATOR_NAME).getEnumConstants()[0];
+            } catch (Throwable th) {
+                return UnsignedBytes.lexicographicalComparatorJavaImpl();
+            }
         }
 
         @VisibleForTesting
         enum UnsafeComparator implements Comparator<byte[]> {
             INSTANCE;
-            
+
             static final boolean BIG_ENDIAN = ByteOrder.nativeOrder().equals(ByteOrder.BIG_ENDIAN);
-            static final int BYTE_ARRAY_BASE_OFFSET = theUnsafe.arrayBaseOffset(byte[].class);
             static final Unsafe theUnsafe = getUnsafe();
+            static final int BYTE_ARRAY_BASE_OFFSET = theUnsafe.arrayBaseOffset(byte[].class);
 
             static {
                 if (!"64".equals(System.getProperty("sun.arch.data.model")) || BYTE_ARRAY_BASE_OFFSET % 8 != 0 || theUnsafe.arrayIndexScale(byte[].class) != 1) {
@@ -221,52 +269,6 @@ public final class UnsignedBytes {
             public String toString() {
                 return "UnsignedBytes.lexicographicalComparator() (pure Java version)";
             }
-        }
-
-        static Comparator<byte[]> getBestComparator() {
-            try {
-                return (Comparator) Class.forName(UNSAFE_COMPARATOR_NAME).getEnumConstants()[0];
-            } catch (Throwable th) {
-                return UnsignedBytes.lexicographicalComparatorJavaImpl();
-            }
-        }
-    }
-
-    private static byte flip(byte b) {
-        return (byte) (b ^ MAX_POWER_OF_TWO);
-    }
-
-    public static void sort(byte[] array) {
-        Preconditions.checkNotNull(array);
-        sort(array, 0, array.length);
-    }
-
-    public static void sort(byte[] array, int fromIndex, int toIndex) {
-        Preconditions.checkNotNull(array);
-        Preconditions.checkPositionIndexes(fromIndex, toIndex, array.length);
-        for (int i = fromIndex; i < toIndex; i++) {
-            array[i] = flip(array[i]);
-        }
-        Arrays.sort(array, fromIndex, toIndex);
-        for (int i2 = fromIndex; i2 < toIndex; i2++) {
-            array[i2] = flip(array[i2]);
-        }
-    }
-
-    public static void sortDescending(byte[] array) {
-        Preconditions.checkNotNull(array);
-        sortDescending(array, 0, array.length);
-    }
-
-    public static void sortDescending(byte[] array, int fromIndex, int toIndex) {
-        Preconditions.checkNotNull(array);
-        Preconditions.checkPositionIndexes(fromIndex, toIndex, array.length);
-        for (int i = fromIndex; i < toIndex; i++) {
-            array[i] = (byte) (array[i] ^ Ascii.DEL);
-        }
-        Arrays.sort(array, fromIndex, toIndex);
-        for (int i2 = fromIndex; i2 < toIndex; i2++) {
-            array[i2] = (byte) (array[i2] ^ Ascii.DEL);
         }
     }
 }

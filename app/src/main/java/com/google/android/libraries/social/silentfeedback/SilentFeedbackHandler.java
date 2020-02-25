@@ -3,8 +3,9 @@ package com.google.android.libraries.social.silentfeedback;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
+
 import com.google.android.libraries.stitch.util.Preconditions;
-import java.lang.Thread;
+
 import java.util.concurrent.atomic.AtomicReference;
 
 public final class SilentFeedbackHandler {
@@ -68,12 +69,6 @@ public final class SilentFeedbackHandler {
         private final SilentFeedbackOptions options;
         private final UsageReportingOptIn usageReportingOptIn;
 
-        /* access modifiers changed from: protected */
-        public abstract boolean isForeground();
-
-        /* access modifiers changed from: protected */
-        public abstract void reportIfNeeded(Throwable th, String str, boolean z, Bundle bundle);
-
         BaseSilentFeedbackHandler(Context context2, Thread.UncaughtExceptionHandler nextHandler2, AtomicReference<Throwable> handledThrowable2, SilentFeedbackOptions options2, UsageReportingOptIn usageReportingOptIn2) {
             this.context = context2;
             this.nextHandler = nextHandler2;
@@ -81,6 +76,12 @@ public final class SilentFeedbackHandler {
             this.options = options2;
             this.usageReportingOptIn = usageReportingOptIn2;
         }
+
+        /* access modifiers changed from: protected */
+        public abstract boolean isForeground();
+
+        /* access modifiers changed from: protected */
+        public abstract void reportIfNeeded(Throwable th, String str, boolean z, Bundle bundle);
 
         public void uncaughtException(Thread thread, Throwable ex) {
             String str;

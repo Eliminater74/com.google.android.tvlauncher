@@ -4,13 +4,16 @@ import com.google.common.annotations.GwtIncompatible;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Equivalence;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.MapMaker;
 import com.google.common.collect.MapMakerInternalMap.InternalEntry;
 import com.google.common.collect.MapMakerInternalMap.Segment;
 import com.google.common.primitives.Ints;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.concurrent.GuardedBy;
 import com.google.j2objc.annotations.Weak;
+
+import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -32,8 +35,6 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 import java.util.concurrent.locks.ReentrantLock;
-import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtIncompatible
 class MapMakerInternalMap<K, V, E extends InternalEntry<K, V, E>, S extends Segment<K, V, E, S>> extends AbstractMap<K, V> implements ConcurrentMap<K, V>, Serializable {
@@ -66,78 +67,16 @@ class MapMakerInternalMap<K, V, E extends InternalEntry<K, V, E>, S extends Segm
     private static final long serialVersionUID = 5;
     final int concurrencyLevel;
     final transient InternalEntryHelper<K, V, E, S> entryHelper;
-    @MonotonicNonNullDecl
-    transient Set<Map.Entry<K, V>> entrySet;
     final Equivalence<Object> keyEquivalence;
-    @MonotonicNonNullDecl
-    transient Set<K> keySet;
     final transient int segmentMask;
     final transient int segmentShift;
     final transient Segment<K, V, E, S>[] segments;
     @MonotonicNonNullDecl
+    transient Set<Map.Entry<K, V>> entrySet;
+    @MonotonicNonNullDecl
+    transient Set<K> keySet;
+    @MonotonicNonNullDecl
     transient Collection<V> values;
-
-    interface InternalEntry<K, V, E extends InternalEntry<K, V, E>> {
-        int getHash();
-
-        K getKey();
-
-        E getNext();
-
-        V getValue();
-    }
-
-    interface InternalEntryHelper<K, V, E extends InternalEntry<K, V, E>, S extends Segment<K, V, E, S>> {
-        E copy(S s, E e, @NullableDecl E e2);
-
-        Strength keyStrength();
-
-        E newEntry(S s, K k, int i, @NullableDecl E e);
-
-        S newSegment(MapMakerInternalMap<K, V, E, S> mapMakerInternalMap, int i, int i2);
-
-        void setValue(S s, E e, V v);
-
-        Strength valueStrength();
-    }
-
-    enum Strength {
-        STRONG {
-            /* access modifiers changed from: package-private */
-            public Equivalence<Object> defaultEquivalence() {
-                return Equivalence.equals();
-            }
-        },
-        WEAK {
-            /* access modifiers changed from: package-private */
-            public Equivalence<Object> defaultEquivalence() {
-                return Equivalence.identity();
-            }
-        };
-
-        /* access modifiers changed from: package-private */
-        public abstract Equivalence<Object> defaultEquivalence();
-    }
-
-    interface StrongValueEntry<K, V, E extends InternalEntry<K, V, E>> extends InternalEntry<K, V, E> {
-    }
-
-    interface WeakValueEntry<K, V, E extends InternalEntry<K, V, E>> extends InternalEntry<K, V, E> {
-        void clearValue();
-
-        WeakValueReference<K, V, E> getValueReference();
-    }
-
-    interface WeakValueReference<K, V, E extends InternalEntry<K, V, E>> {
-        void clear();
-
-        WeakValueReference<K, V, E> copyFor(ReferenceQueue<V> referenceQueue, E e);
-
-        @NullableDecl
-        V get();
-
-        E getEntry();
-    }
 
     private MapMakerInternalMap(MapMaker builder, InternalEntryHelper<K, V, E, S> entryHelper2) {
         this.concurrencyLevel = Math.min(builder.getConcurrencyLevel(), 65536);
@@ -199,6 +138,348 @@ class MapMakerInternalMap<K, V, E extends InternalEntry<K, V, E>, S extends Segm
         throw new AssertionError();
     }
 
+    static <K, V, E extends InternalEntry<K, V, E>> WeakValueReference<K, V, E> unsetWeakValueReference() {
+        return UNSET_WEAK_VALUE_REFERENCE;
+    }
+
+    static int rehash(int h) {
+        int h2 = h + ((h << 15) ^ -12931);
+        int h3 = h2 ^ (h2 >>> 10);
+        int h4 = h3 + (h3 << 3);
+        int h5 = h4 ^ (h4 >>> 6);
+        int h6 = h5 + (h5 << 2) + (h5 << 14);
+        return (h6 >>> 16) ^ h6;
+    }
+
+    /* access modifiers changed from: private */
+    public static <E> ArrayList<E> toArrayList(Collection<E> c) {
+        ArrayList<E> result = new ArrayList<>(c.size());
+        Iterators.addAll(result, c.iterator());
+        return result;
+    }
+
+    /* access modifiers changed from: package-private */
+    @VisibleForTesting
+    public E copyEntry(E original, E newNext) {
+        return segmentFor(original.getHash()).copyEntry(original, newNext);
+    }
+
+    /* access modifiers changed from: package-private */
+    public int hash(Object key) {
+        return rehash(this.keyEquivalence.hash(key));
+    }
+
+    /* access modifiers changed from: package-private */
+    public void reclaimValue(WeakValueReference<K, V, E> valueReference) {
+        E entry = valueReference.getEntry();
+        int hash = entry.getHash();
+        segmentFor(hash).reclaimValue(entry.getKey(), hash, valueReference);
+    }
+
+    /* access modifiers changed from: package-private */
+    public void reclaimKey(E entry) {
+        int hash = entry.getHash();
+        segmentFor(hash).reclaimKey(entry, hash);
+    }
+
+    /* access modifiers changed from: package-private */
+    @VisibleForTesting
+    public boolean isLiveForTesting(InternalEntry<K, V, ?> entry) {
+        return segmentFor(entry.getHash()).getLiveValueForTesting(entry) != null;
+    }
+
+    /* access modifiers changed from: package-private */
+    public Segment<K, V, E, S> segmentFor(int hash) {
+        return this.segments[(hash >>> this.segmentShift) & this.segmentMask];
+    }
+
+    /* access modifiers changed from: package-private */
+    public Segment<K, V, E, S> createSegment(int initialCapacity, int maxSegmentSize) {
+        return this.entryHelper.newSegment(this, initialCapacity, maxSegmentSize);
+    }
+
+    /* access modifiers changed from: package-private */
+    public V getLiveValue(E entry) {
+        V value;
+        if (entry.getKey() == null || (value = entry.getValue()) == null) {
+            return null;
+        }
+        return value;
+    }
+
+    /* access modifiers changed from: package-private */
+    public final Segment<K, V, E, S>[] newSegmentArray(int ssize) {
+        return new Segment[ssize];
+    }
+
+    /* access modifiers changed from: package-private */
+    @VisibleForTesting
+    public Strength keyStrength() {
+        return this.entryHelper.keyStrength();
+    }
+
+    /* access modifiers changed from: package-private */
+    @VisibleForTesting
+    public Strength valueStrength() {
+        return this.entryHelper.valueStrength();
+    }
+
+    /* access modifiers changed from: package-private */
+    @VisibleForTesting
+    public Equivalence<Object> valueEquivalence() {
+        return this.entryHelper.valueStrength().defaultEquivalence();
+    }
+
+    public boolean isEmpty() {
+        long sum = 0;
+        Segment<K, V, E, S>[] segments2 = this.segments;
+        for (int i = 0; i < segments2.length; i++) {
+            if (segments2[i].count != 0) {
+                return false;
+            }
+            sum += (long) segments2[i].modCount;
+        }
+        if (sum == 0) {
+            return true;
+        }
+        for (int i2 = 0; i2 < segments2.length; i2++) {
+            if (segments2[i2].count != 0) {
+                return false;
+            }
+            sum -= (long) segments2[i2].modCount;
+        }
+        if (sum != 0) {
+            return false;
+        }
+        return true;
+    }
+
+    public int size() {
+        Segment<K, V, E, S>[] segments2 = this.segments;
+        long sum = 0;
+        for (Segment<K, V, E, S> segment : segments2) {
+            sum += (long) segment.count;
+        }
+        return Ints.saturatedCast(sum);
+    }
+
+    public V get(@NullableDecl Object key) {
+        if (key == null) {
+            return null;
+        }
+        int hash = hash(key);
+        return segmentFor(hash).get(key, hash);
+    }
+
+    /* access modifiers changed from: package-private */
+    public E getEntry(@NullableDecl Object key) {
+        if (key == null) {
+            return null;
+        }
+        int hash = hash(key);
+        return segmentFor(hash).getEntry(key, hash);
+    }
+
+    public boolean containsKey(@NullableDecl Object key) {
+        if (key == null) {
+            return false;
+        }
+        int hash = hash(key);
+        return segmentFor(hash).containsKey(key, hash);
+    }
+
+    public boolean containsValue(@NullableDecl Object value) {
+        Object obj = value;
+        if (obj == null) {
+            return false;
+        }
+        Segment<K, V, E, S>[] segments2 = this.segments;
+        long last = -1;
+        for (int i = 0; i < 3; i++) {
+            long sum = 0;
+            for (Segment<K, V, E, S> segment : segments2) {
+                int i2 = segment.count;
+                AtomicReferenceArray<E> table = segment.table;
+                for (int j = 0; j < table.length(); j++) {
+                    for (E e = (InternalEntry) table.get(j); e != null; e = e.getNext()) {
+                        V v = segment.getLiveValue(e);
+                        if (v != null && valueEquivalence().equivalent(obj, v)) {
+                            return true;
+                        }
+                    }
+                }
+                sum += (long) segment.modCount;
+            }
+            if (sum == last) {
+                return false;
+            }
+            last = sum;
+        }
+        return false;
+    }
+
+    @CanIgnoreReturnValue
+    public V put(K key, V value) {
+        Preconditions.checkNotNull(key);
+        Preconditions.checkNotNull(value);
+        int hash = hash(key);
+        return segmentFor(hash).put(key, hash, value, false);
+    }
+
+    @CanIgnoreReturnValue
+    public V putIfAbsent(K key, V value) {
+        Preconditions.checkNotNull(key);
+        Preconditions.checkNotNull(value);
+        int hash = hash(key);
+        return segmentFor(hash).put(key, hash, value, true);
+    }
+
+    public void putAll(Map<? extends K, ? extends V> m) {
+        for (Map.Entry<? extends K, ? extends V> e : m.entrySet()) {
+            put(e.getKey(), e.getValue());
+        }
+    }
+
+    @CanIgnoreReturnValue
+    public V remove(@NullableDecl Object key) {
+        if (key == null) {
+            return null;
+        }
+        int hash = hash(key);
+        return segmentFor(hash).remove(key, hash);
+    }
+
+    @CanIgnoreReturnValue
+    public boolean remove(@NullableDecl Object key, @NullableDecl Object value) {
+        if (key == null || value == null) {
+            return false;
+        }
+        int hash = hash(key);
+        return segmentFor(hash).remove(key, hash, value);
+    }
+
+    @CanIgnoreReturnValue
+    public boolean replace(K key, @NullableDecl V oldValue, V newValue) {
+        Preconditions.checkNotNull(key);
+        Preconditions.checkNotNull(newValue);
+        if (oldValue == null) {
+            return false;
+        }
+        int hash = hash(key);
+        return segmentFor(hash).replace(key, hash, oldValue, newValue);
+    }
+
+    @CanIgnoreReturnValue
+    public V replace(K key, V value) {
+        Preconditions.checkNotNull(key);
+        Preconditions.checkNotNull(value);
+        int hash = hash(key);
+        return segmentFor(hash).replace(key, hash, value);
+    }
+
+    public void clear() {
+        for (Segment<K, V, E, S> segment : this.segments) {
+            segment.clear();
+        }
+    }
+
+    public Set<K> keySet() {
+        Set<K> ks = this.keySet;
+        if (ks != null) {
+            return ks;
+        }
+        KeySet keySet2 = new KeySet();
+        this.keySet = keySet2;
+        return keySet2;
+    }
+
+    public Collection<V> values() {
+        Collection<V> vs = this.values;
+        if (vs != null) {
+            return vs;
+        }
+        Values values2 = new Values();
+        this.values = values2;
+        return values2;
+    }
+
+    public Set<Map.Entry<K, V>> entrySet() {
+        Set<Map.Entry<K, V>> es = this.entrySet;
+        if (es != null) {
+            return es;
+        }
+        EntrySet entrySet2 = new EntrySet();
+        this.entrySet = entrySet2;
+        return entrySet2;
+    }
+
+    /* access modifiers changed from: package-private */
+    public Object writeReplace() {
+        return new SerializationProxy(this.entryHelper.keyStrength(), this.entryHelper.valueStrength(), this.keyEquivalence, this.entryHelper.valueStrength().defaultEquivalence(), this.concurrencyLevel, this);
+    }
+
+    enum Strength {
+        STRONG {
+            /* access modifiers changed from: package-private */
+            public Equivalence<Object> defaultEquivalence() {
+                return Equivalence.equals();
+            }
+        },
+        WEAK {
+            /* access modifiers changed from: package-private */
+            public Equivalence<Object> defaultEquivalence() {
+                return Equivalence.identity();
+            }
+        };
+
+        /* access modifiers changed from: package-private */
+        public abstract Equivalence<Object> defaultEquivalence();
+    }
+
+    interface InternalEntry<K, V, E extends InternalEntry<K, V, E>> {
+        int getHash();
+
+        K getKey();
+
+        E getNext();
+
+        V getValue();
+    }
+
+    interface InternalEntryHelper<K, V, E extends InternalEntry<K, V, E>, S extends Segment<K, V, E, S>> {
+        E copy(S s, E e, @NullableDecl E e2);
+
+        Strength keyStrength();
+
+        E newEntry(S s, K k, int i, @NullableDecl E e);
+
+        S newSegment(MapMakerInternalMap<K, V, E, S> mapMakerInternalMap, int i, int i2);
+
+        void setValue(S s, E e, V v);
+
+        Strength valueStrength();
+    }
+
+    interface StrongValueEntry<K, V, E extends InternalEntry<K, V, E>> extends InternalEntry<K, V, E> {
+    }
+
+    interface WeakValueEntry<K, V, E extends InternalEntry<K, V, E>> extends InternalEntry<K, V, E> {
+        void clearValue();
+
+        WeakValueReference<K, V, E> getValueReference();
+    }
+
+    interface WeakValueReference<K, V, E extends InternalEntry<K, V, E>> {
+        void clear();
+
+        WeakValueReference<K, V, E> copyFor(ReferenceQueue<V> referenceQueue, E e);
+
+        @NullableDecl
+        V get();
+
+        E getEntry();
+    }
+
     static abstract class AbstractStrongKeyEntry<K, V, E extends InternalEntry<K, V, E>> implements InternalEntry<K, V, E> {
         final int hash;
         final K key;
@@ -222,10 +503,6 @@ class MapMakerInternalMap<K, V, E extends InternalEntry<K, V, E>, S extends Segm
         public E getNext() {
             return this.next;
         }
-    }
-
-    static <K, V, E extends InternalEntry<K, V, E>> WeakValueReference<K, V, E> unsetWeakValueReference() {
-        return UNSET_WEAK_VALUE_REFERENCE;
     }
 
     static final class StrongKeyStrongValueEntry<K, V> extends AbstractStrongKeyEntry<K, V, StrongKeyStrongValueEntry<K, V>> implements StrongValueEntry<K, V, StrongKeyStrongValueEntry<K, V>> {
@@ -672,91 +949,32 @@ class MapMakerInternalMap<K, V, E extends InternalEntry<K, V, E>, S extends Segm
         }
     }
 
-    static int rehash(int h) {
-        int h2 = h + ((h << 15) ^ -12931);
-        int h3 = h2 ^ (h2 >>> 10);
-        int h4 = h3 + (h3 << 3);
-        int h5 = h4 ^ (h4 >>> 6);
-        int h6 = h5 + (h5 << 2) + (h5 << 14);
-        return (h6 >>> 16) ^ h6;
-    }
-
-    /* access modifiers changed from: package-private */
-    @VisibleForTesting
-    public E copyEntry(E original, E newNext) {
-        return segmentFor(original.getHash()).copyEntry(original, newNext);
-    }
-
-    /* access modifiers changed from: package-private */
-    public int hash(Object key) {
-        return rehash(this.keyEquivalence.hash(key));
-    }
-
-    /* access modifiers changed from: package-private */
-    public void reclaimValue(WeakValueReference<K, V, E> valueReference) {
-        E entry = valueReference.getEntry();
-        int hash = entry.getHash();
-        segmentFor(hash).reclaimValue(entry.getKey(), hash, valueReference);
-    }
-
-    /* access modifiers changed from: package-private */
-    public void reclaimKey(E entry) {
-        int hash = entry.getHash();
-        segmentFor(hash).reclaimKey(entry, hash);
-    }
-
-    /* access modifiers changed from: package-private */
-    @VisibleForTesting
-    public boolean isLiveForTesting(InternalEntry<K, V, ?> entry) {
-        return segmentFor(entry.getHash()).getLiveValueForTesting(entry) != null;
-    }
-
-    /* access modifiers changed from: package-private */
-    public Segment<K, V, E, S> segmentFor(int hash) {
-        return this.segments[(hash >>> this.segmentShift) & this.segmentMask];
-    }
-
-    /* access modifiers changed from: package-private */
-    public Segment<K, V, E, S> createSegment(int initialCapacity, int maxSegmentSize) {
-        return this.entryHelper.newSegment(this, initialCapacity, maxSegmentSize);
-    }
-
-    /* access modifiers changed from: package-private */
-    public V getLiveValue(E entry) {
-        V value;
-        if (entry.getKey() == null || (value = entry.getValue()) == null) {
-            return null;
-        }
-        return value;
-    }
-
-    /* access modifiers changed from: package-private */
-    public final Segment<K, V, E, S>[] newSegmentArray(int ssize) {
-        return new Segment[ssize];
-    }
-
     static abstract class Segment<K, V, E extends InternalEntry<K, V, E>, S extends Segment<K, V, E, S>> extends ReentrantLock {
-        volatile int count;
         @Weak
         final MapMakerInternalMap<K, V, E, S> map;
         final int maxSegmentSize;
-        int modCount;
         final AtomicInteger readCount = new AtomicInteger();
+        volatile int count;
+        int modCount;
         @MonotonicNonNullDecl
         volatile AtomicReferenceArray<E> table;
         int threshold;
-
-        /* access modifiers changed from: package-private */
-        public abstract E castForTesting(InternalEntry<K, V, ?> internalEntry);
-
-        /* access modifiers changed from: package-private */
-        public abstract S self();
 
         Segment(MapMakerInternalMap<K, V, E, S> map2, int initialCapacity, int maxSegmentSize2) {
             this.map = map2;
             this.maxSegmentSize = maxSegmentSize2;
             initTable(newEntryArray(initialCapacity));
         }
+
+        static <K, V, E extends InternalEntry<K, V, E>> boolean isCollected(E entry) {
+            return entry.getValue() == null;
+        }
+
+        /* access modifiers changed from: package-private */
+        public abstract E castForTesting(InternalEntry<K, V, ?> internalEntry);
+
+        /* access modifiers changed from: package-private */
+        public abstract S self();
 
         /* access modifiers changed from: package-private */
         @GuardedBy("this")
@@ -1376,10 +1594,6 @@ class MapMakerInternalMap<K, V, E extends InternalEntry<K, V, E>, S extends Segm
             return false;
         }
 
-        static <K, V, E extends InternalEntry<K, V, E>> boolean isCollected(E entry) {
-            return entry.getValue() == null;
-        }
-
         /* access modifiers changed from: package-private */
         @NullableDecl
         public V getLiveValue(E entry) {
@@ -1645,205 +1859,91 @@ class MapMakerInternalMap<K, V, E extends InternalEntry<K, V, E>, S extends Segm
         }
     }
 
-    /* access modifiers changed from: package-private */
-    @VisibleForTesting
-    public Strength keyStrength() {
-        return this.entryHelper.keyStrength();
+    private static abstract class SafeToArraySet<E> extends AbstractSet<E> {
+        private SafeToArraySet() {
+        }
+
+        public Object[] toArray() {
+            return MapMakerInternalMap.toArrayList(this).toArray();
+        }
+
+        public <T> T[] toArray(T[] a) {
+            return MapMakerInternalMap.toArrayList(this).toArray(a);
+        }
     }
 
-    /* access modifiers changed from: package-private */
-    @VisibleForTesting
-    public Strength valueStrength() {
-        return this.entryHelper.valueStrength();
-    }
+    static abstract class AbstractSerializationProxy<K, V> extends ForwardingConcurrentMap<K, V> implements Serializable {
+        private static final long serialVersionUID = 3;
+        final int concurrencyLevel;
+        final Equivalence<Object> keyEquivalence;
+        final Strength keyStrength;
+        final Equivalence<Object> valueEquivalence;
+        final Strength valueStrength;
+        transient ConcurrentMap<K, V> delegate;
 
-    /* access modifiers changed from: package-private */
-    @VisibleForTesting
-    public Equivalence<Object> valueEquivalence() {
-        return this.entryHelper.valueStrength().defaultEquivalence();
-    }
+        AbstractSerializationProxy(Strength keyStrength2, Strength valueStrength2, Equivalence<Object> keyEquivalence2, Equivalence<Object> valueEquivalence2, int concurrencyLevel2, ConcurrentMap<K, V> delegate2) {
+            this.keyStrength = keyStrength2;
+            this.valueStrength = valueStrength2;
+            this.keyEquivalence = keyEquivalence2;
+            this.valueEquivalence = valueEquivalence2;
+            this.concurrencyLevel = concurrencyLevel2;
+            this.delegate = delegate2;
+        }
 
-    public boolean isEmpty() {
-        long sum = 0;
-        Segment<K, V, E, S>[] segments2 = this.segments;
-        for (int i = 0; i < segments2.length; i++) {
-            if (segments2[i].count != 0) {
-                return false;
+        /* access modifiers changed from: protected */
+        public ConcurrentMap<K, V> delegate() {
+            return this.delegate;
+        }
+
+        /* access modifiers changed from: package-private */
+        public void writeMapTo(ObjectOutputStream out) throws IOException {
+            out.writeInt(this.delegate.size());
+            for (Map.Entry<K, V> entry : this.delegate.entrySet()) {
+                out.writeObject(entry.getKey());
+                out.writeObject(entry.getValue());
             }
-            sum += (long) segments2[i].modCount;
+            out.writeObject(null);
         }
-        if (sum == 0) {
-            return true;
-        }
-        for (int i2 = 0; i2 < segments2.length; i2++) {
-            if (segments2[i2].count != 0) {
-                return false;
-            }
-            sum -= (long) segments2[i2].modCount;
-        }
-        if (sum != 0) {
-            return false;
-        }
-        return true;
-    }
 
-    public int size() {
-        Segment<K, V, E, S>[] segments2 = this.segments;
-        long sum = 0;
-        for (Segment<K, V, E, S> segment : segments2) {
-            sum += (long) segment.count;
+        /* access modifiers changed from: package-private */
+        public MapMaker readMapMaker(ObjectInputStream in) throws IOException {
+            return new MapMaker().initialCapacity(in.readInt()).setKeyStrength(this.keyStrength).setValueStrength(this.valueStrength).keyEquivalence(this.keyEquivalence).concurrencyLevel(this.concurrencyLevel);
         }
-        return Ints.saturatedCast(sum);
-    }
 
-    public V get(@NullableDecl Object key) {
-        if (key == null) {
-            return null;
-        }
-        int hash = hash(key);
-        return segmentFor(hash).get(key, hash);
-    }
-
-    /* access modifiers changed from: package-private */
-    public E getEntry(@NullableDecl Object key) {
-        if (key == null) {
-            return null;
-        }
-        int hash = hash(key);
-        return segmentFor(hash).getEntry(key, hash);
-    }
-
-    public boolean containsKey(@NullableDecl Object key) {
-        if (key == null) {
-            return false;
-        }
-        int hash = hash(key);
-        return segmentFor(hash).containsKey(key, hash);
-    }
-
-    public boolean containsValue(@NullableDecl Object value) {
-        Object obj = value;
-        if (obj == null) {
-            return false;
-        }
-        Segment<K, V, E, S>[] segments2 = this.segments;
-        long last = -1;
-        for (int i = 0; i < 3; i++) {
-            long sum = 0;
-            for (Segment<K, V, E, S> segment : segments2) {
-                int i2 = segment.count;
-                AtomicReferenceArray<E> table = segment.table;
-                for (int j = 0; j < table.length(); j++) {
-                    for (E e = (InternalEntry) table.get(j); e != null; e = e.getNext()) {
-                        V v = segment.getLiveValue(e);
-                        if (v != null && valueEquivalence().equivalent(obj, v)) {
-                            return true;
-                        }
-                    }
+        /* access modifiers changed from: package-private */
+        public void readEntries(ObjectInputStream in) throws IOException, ClassNotFoundException {
+            while (true) {
+                K key = in.readObject();
+                if (key != null) {
+                    this.delegate.put(key, in.readObject());
+                } else {
+                    return;
                 }
-                sum += (long) segment.modCount;
             }
-            if (sum == last) {
-                return false;
-            }
-            last = sum;
-        }
-        return false;
-    }
-
-    @CanIgnoreReturnValue
-    public V put(K key, V value) {
-        Preconditions.checkNotNull(key);
-        Preconditions.checkNotNull(value);
-        int hash = hash(key);
-        return segmentFor(hash).put(key, hash, value, false);
-    }
-
-    @CanIgnoreReturnValue
-    public V putIfAbsent(K key, V value) {
-        Preconditions.checkNotNull(key);
-        Preconditions.checkNotNull(value);
-        int hash = hash(key);
-        return segmentFor(hash).put(key, hash, value, true);
-    }
-
-    public void putAll(Map<? extends K, ? extends V> m) {
-        for (Map.Entry<? extends K, ? extends V> e : m.entrySet()) {
-            put(e.getKey(), e.getValue());
         }
     }
 
-    @CanIgnoreReturnValue
-    public V remove(@NullableDecl Object key) {
-        if (key == null) {
-            return null;
-        }
-        int hash = hash(key);
-        return segmentFor(hash).remove(key, hash);
-    }
+    private static final class SerializationProxy<K, V> extends AbstractSerializationProxy<K, V> {
+        private static final long serialVersionUID = 3;
 
-    @CanIgnoreReturnValue
-    public boolean remove(@NullableDecl Object key, @NullableDecl Object value) {
-        if (key == null || value == null) {
-            return false;
+        SerializationProxy(Strength keyStrength, Strength valueStrength, Equivalence<Object> keyEquivalence, Equivalence<Object> valueEquivalence, int concurrencyLevel, ConcurrentMap<K, V> delegate) {
+            super(keyStrength, valueStrength, keyEquivalence, valueEquivalence, concurrencyLevel, delegate);
         }
-        int hash = hash(key);
-        return segmentFor(hash).remove(key, hash, value);
-    }
 
-    @CanIgnoreReturnValue
-    public boolean replace(K key, @NullableDecl V oldValue, V newValue) {
-        Preconditions.checkNotNull(key);
-        Preconditions.checkNotNull(newValue);
-        if (oldValue == null) {
-            return false;
+        private void writeObject(ObjectOutputStream out) throws IOException {
+            out.defaultWriteObject();
+            writeMapTo(out);
         }
-        int hash = hash(key);
-        return segmentFor(hash).replace(key, hash, oldValue, newValue);
-    }
 
-    @CanIgnoreReturnValue
-    public V replace(K key, V value) {
-        Preconditions.checkNotNull(key);
-        Preconditions.checkNotNull(value);
-        int hash = hash(key);
-        return segmentFor(hash).replace(key, hash, value);
-    }
-
-    public void clear() {
-        for (Segment<K, V, E, S> segment : this.segments) {
-            segment.clear();
+        private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+            in.defaultReadObject();
+            this.delegate = readMapMaker(in).makeMap();
+            readEntries(in);
         }
-    }
 
-    public Set<K> keySet() {
-        Set<K> ks = this.keySet;
-        if (ks != null) {
-            return ks;
+        private Object readResolve() {
+            return this.delegate;
         }
-        KeySet keySet2 = new KeySet();
-        this.keySet = keySet2;
-        return keySet2;
-    }
-
-    public Collection<V> values() {
-        Collection<V> vs = this.values;
-        if (vs != null) {
-            return vs;
-        }
-        Values values2 = new Values();
-        this.values = values2;
-        return values2;
-    }
-
-    public Set<Map.Entry<K, V>> entrySet() {
-        Set<Map.Entry<K, V>> es = this.entrySet;
-        if (es != null) {
-            return es;
-        }
-        EntrySet entrySet2 = new EntrySet();
-        this.entrySet = entrySet2;
-        return entrySet2;
     }
 
     abstract class HashIterator<T> implements Iterator<T> {
@@ -1860,12 +1960,12 @@ class MapMakerInternalMap<K, V, E extends InternalEntry<K, V, E>, S extends Segm
         int nextSegmentIndex;
         int nextTableIndex = -1;
 
-        public abstract T next();
-
         HashIterator() {
             this.nextSegmentIndex = MapMakerInternalMap.this.segments.length - 1;
             advance();
         }
+
+        public abstract T next();
 
         /* access modifiers changed from: package-private */
         public final void advance() {
@@ -2159,105 +2259,6 @@ class MapMakerInternalMap<K, V, E extends InternalEntry<K, V, E>, S extends Segm
 
         public void clear() {
             MapMakerInternalMap.this.clear();
-        }
-    }
-
-    private static abstract class SafeToArraySet<E> extends AbstractSet<E> {
-        private SafeToArraySet() {
-        }
-
-        public Object[] toArray() {
-            return MapMakerInternalMap.toArrayList(this).toArray();
-        }
-
-        public <T> T[] toArray(T[] a) {
-            return MapMakerInternalMap.toArrayList(this).toArray(a);
-        }
-    }
-
-    /* access modifiers changed from: private */
-    public static <E> ArrayList<E> toArrayList(Collection<E> c) {
-        ArrayList<E> result = new ArrayList<>(c.size());
-        Iterators.addAll(result, c.iterator());
-        return result;
-    }
-
-    /* access modifiers changed from: package-private */
-    public Object writeReplace() {
-        return new SerializationProxy(this.entryHelper.keyStrength(), this.entryHelper.valueStrength(), this.keyEquivalence, this.entryHelper.valueStrength().defaultEquivalence(), this.concurrencyLevel, this);
-    }
-
-    static abstract class AbstractSerializationProxy<K, V> extends ForwardingConcurrentMap<K, V> implements Serializable {
-        private static final long serialVersionUID = 3;
-        final int concurrencyLevel;
-        transient ConcurrentMap<K, V> delegate;
-        final Equivalence<Object> keyEquivalence;
-        final Strength keyStrength;
-        final Equivalence<Object> valueEquivalence;
-        final Strength valueStrength;
-
-        AbstractSerializationProxy(Strength keyStrength2, Strength valueStrength2, Equivalence<Object> keyEquivalence2, Equivalence<Object> valueEquivalence2, int concurrencyLevel2, ConcurrentMap<K, V> delegate2) {
-            this.keyStrength = keyStrength2;
-            this.valueStrength = valueStrength2;
-            this.keyEquivalence = keyEquivalence2;
-            this.valueEquivalence = valueEquivalence2;
-            this.concurrencyLevel = concurrencyLevel2;
-            this.delegate = delegate2;
-        }
-
-        /* access modifiers changed from: protected */
-        public ConcurrentMap<K, V> delegate() {
-            return this.delegate;
-        }
-
-        /* access modifiers changed from: package-private */
-        public void writeMapTo(ObjectOutputStream out) throws IOException {
-            out.writeInt(this.delegate.size());
-            for (Map.Entry<K, V> entry : this.delegate.entrySet()) {
-                out.writeObject(entry.getKey());
-                out.writeObject(entry.getValue());
-            }
-            out.writeObject(null);
-        }
-
-        /* access modifiers changed from: package-private */
-        public MapMaker readMapMaker(ObjectInputStream in) throws IOException {
-            return new MapMaker().initialCapacity(in.readInt()).setKeyStrength(this.keyStrength).setValueStrength(this.valueStrength).keyEquivalence(this.keyEquivalence).concurrencyLevel(this.concurrencyLevel);
-        }
-
-        /* access modifiers changed from: package-private */
-        public void readEntries(ObjectInputStream in) throws IOException, ClassNotFoundException {
-            while (true) {
-                K key = in.readObject();
-                if (key != null) {
-                    this.delegate.put(key, in.readObject());
-                } else {
-                    return;
-                }
-            }
-        }
-    }
-
-    private static final class SerializationProxy<K, V> extends AbstractSerializationProxy<K, V> {
-        private static final long serialVersionUID = 3;
-
-        SerializationProxy(Strength keyStrength, Strength valueStrength, Equivalence<Object> keyEquivalence, Equivalence<Object> valueEquivalence, int concurrencyLevel, ConcurrentMap<K, V> delegate) {
-            super(keyStrength, valueStrength, keyEquivalence, valueEquivalence, concurrencyLevel, delegate);
-        }
-
-        private void writeObject(ObjectOutputStream out) throws IOException {
-            out.defaultWriteObject();
-            writeMapTo(out);
-        }
-
-        private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-            in.defaultReadObject();
-            this.delegate = readMapMaker(in).makeMap();
-            readEntries(in);
-        }
-
-        private Object readResolve() {
-            return this.delegate;
         }
     }
 }

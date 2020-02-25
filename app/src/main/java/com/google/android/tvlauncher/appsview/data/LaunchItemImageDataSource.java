@@ -1,7 +1,7 @@
 package com.google.android.tvlauncher.appsview.data;
 
 import com.google.android.tvlauncher.appsview.LaunchItem;
-import com.google.android.tvlauncher.appsview.data.PackageImageDataSource;
+
 import java.util.Locale;
 import java.util.Objects;
 

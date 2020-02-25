@@ -3,6 +3,7 @@ package androidx.core.graphics.drawable;
 import android.content.res.ColorStateList;
 import android.support.annotation.RestrictTo;
 import android.support.p001v4.graphics.drawable.IconCompat;
+
 import androidx.versionedparcelable.VersionedParcel;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY})

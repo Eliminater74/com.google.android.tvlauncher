@@ -3,8 +3,7 @@ package androidx.leanback.widget;
 import android.animation.PropertyValuesHolder;
 import android.support.annotation.RestrictTo;
 import android.util.Property;
-import androidx.leanback.widget.Parallax;
-import androidx.leanback.widget.ParallaxTarget;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,22 +13,17 @@ public abstract class ParallaxEffect {
     final List<Float> mTotalWeights = new ArrayList(2);
     final List<Float> mWeights = new ArrayList(2);
 
+    ParallaxEffect() {
+    }
+
     /* access modifiers changed from: package-private */
     public abstract Number calculateDirectValue(Parallax parallax);
 
     /* access modifiers changed from: package-private */
     public abstract float calculateFraction(Parallax parallax);
 
-    ParallaxEffect() {
-    }
-
     public final List<Parallax.PropertyMarkerValue> getPropertyRanges() {
         return this.mMarkerValues;
-    }
-
-    @RestrictTo({RestrictTo.Scope.LIBRARY})
-    public final List<Float> getWeights() {
-        return this.mWeights;
     }
 
     public final void setPropertyRanges(Parallax.PropertyMarkerValue... markerValues) {
@@ -37,6 +31,11 @@ public abstract class ParallaxEffect {
         for (Parallax.PropertyMarkerValue markerValue : markerValues) {
             this.mMarkerValues.add(markerValue);
         }
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY})
+    public final List<Float> getWeights() {
+        return this.mWeights;
     }
 
     @RestrictTo({RestrictTo.Scope.LIBRARY})

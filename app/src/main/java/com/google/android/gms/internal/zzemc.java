@@ -8,6 +8,7 @@ import android.os.IInterface;
 import android.os.Looper;
 import android.os.RemoteException;
 import android.util.Log;
+
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.internal.zzaa;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -43,6 +44,32 @@ public final class zzemc extends zzl<zzema> implements zzd {
       com.google.android.gms.internal.zzemc.<init>(android.content.Context, android.os.Looper, boolean, com.google.android.gms.common.internal.ClientSettings, android.os.Bundle, com.google.android.gms.common.api.GoogleApiClient$ConnectionCallbacks, com.google.android.gms.common.api.GoogleApiClient$OnConnectionFailedListener):void */
     public zzemc(Context context, Looper looper, boolean z, ClientSettings clientSettings, SignInOptions signInOptions, GoogleApiClient.ConnectionCallbacks connectionCallbacks, GoogleApiClient.OnConnectionFailedListener onConnectionFailedListener) {
         this(context, looper, true, clientSettings, zza(clientSettings), connectionCallbacks, onConnectionFailedListener);
+    }
+
+    public static Bundle zza(ClientSettings clientSettings) {
+        SignInOptions signInOptions = clientSettings.getSignInOptions();
+        Integer clientSessionId = clientSettings.getClientSessionId();
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("com.google.android.gms.signin.internal.clientRequestedAccount", clientSettings.getAccount());
+        if (clientSessionId != null) {
+            bundle.putInt(ClientSettings.KEY_CLIENT_SESSION_ID, clientSessionId.intValue());
+        }
+        if (signInOptions != null) {
+            bundle.putBoolean("com.google.android.gms.signin.internal.offlineAccessRequested", signInOptions.isOfflineAccessRequested());
+            bundle.putBoolean("com.google.android.gms.signin.internal.idTokenRequested", signInOptions.isIdTokenRequested());
+            bundle.putString("com.google.android.gms.signin.internal.serverClientId", signInOptions.getServerClientId());
+            bundle.putBoolean("com.google.android.gms.signin.internal.usePromptModeForAuthCode", true);
+            bundle.putBoolean("com.google.android.gms.signin.internal.forceCodeForRefreshToken", signInOptions.isForceCodeForRefreshToken());
+            bundle.putString("com.google.android.gms.signin.internal.hostedDomain", signInOptions.getHostedDomain());
+            bundle.putBoolean("com.google.android.gms.signin.internal.waitForAccessTokenRefresh", signInOptions.waitForAccessTokenRefresh());
+            if (signInOptions.getAuthApiSignInModuleVersion() != null) {
+                bundle.putLong("com.google.android.gms.signin.internal.authApiSignInModuleVersion", signInOptions.getAuthApiSignInModuleVersion().longValue());
+            }
+            if (signInOptions.getRealClientLibraryVersion() != null) {
+                bundle.putLong("com.google.android.gms.signin.internal.realClientLibraryVersion", signInOptions.getRealClientLibraryVersion().longValue());
+            }
+        }
+        return bundle;
     }
 
     public final boolean requiresSignIn() {
@@ -104,32 +131,6 @@ public final class zzemc extends zzl<zzema> implements zzd {
 
     public final void zzd() {
         connect(new BaseGmsClient.zzf());
-    }
-
-    public static Bundle zza(ClientSettings clientSettings) {
-        SignInOptions signInOptions = clientSettings.getSignInOptions();
-        Integer clientSessionId = clientSettings.getClientSessionId();
-        Bundle bundle = new Bundle();
-        bundle.putParcelable("com.google.android.gms.signin.internal.clientRequestedAccount", clientSettings.getAccount());
-        if (clientSessionId != null) {
-            bundle.putInt(ClientSettings.KEY_CLIENT_SESSION_ID, clientSessionId.intValue());
-        }
-        if (signInOptions != null) {
-            bundle.putBoolean("com.google.android.gms.signin.internal.offlineAccessRequested", signInOptions.isOfflineAccessRequested());
-            bundle.putBoolean("com.google.android.gms.signin.internal.idTokenRequested", signInOptions.isIdTokenRequested());
-            bundle.putString("com.google.android.gms.signin.internal.serverClientId", signInOptions.getServerClientId());
-            bundle.putBoolean("com.google.android.gms.signin.internal.usePromptModeForAuthCode", true);
-            bundle.putBoolean("com.google.android.gms.signin.internal.forceCodeForRefreshToken", signInOptions.isForceCodeForRefreshToken());
-            bundle.putString("com.google.android.gms.signin.internal.hostedDomain", signInOptions.getHostedDomain());
-            bundle.putBoolean("com.google.android.gms.signin.internal.waitForAccessTokenRefresh", signInOptions.waitForAccessTokenRefresh());
-            if (signInOptions.getAuthApiSignInModuleVersion() != null) {
-                bundle.putLong("com.google.android.gms.signin.internal.authApiSignInModuleVersion", signInOptions.getAuthApiSignInModuleVersion().longValue());
-            }
-            if (signInOptions.getRealClientLibraryVersion() != null) {
-                bundle.putLong("com.google.android.gms.signin.internal.realClientLibraryVersion", signInOptions.getRealClientLibraryVersion().longValue());
-            }
-        }
-        return bundle;
     }
 
     public final int zza() {

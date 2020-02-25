@@ -1,6 +1,7 @@
 package com.bumptech.glide.load.resource.transcode;
 
 import android.support.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,9 +48,9 @@ public class TranscoderRegistry {
     }
 
     private static final class Entry<Z, R> {
+        final ResourceTranscoder<Z, R> transcoder;
         private final Class<Z> fromClass;
         private final Class<R> toClass;
-        final ResourceTranscoder<Z, R> transcoder;
 
         Entry(@NonNull Class<Z> fromClass2, @NonNull Class<R> toClass2, @NonNull ResourceTranscoder<Z, R> transcoder2) {
             this.fromClass = fromClass2;

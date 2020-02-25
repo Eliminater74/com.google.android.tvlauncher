@@ -20,7 +20,7 @@ public enum zzgrr {
     SFIXED64(zzgrw.LONG, 1),
     SINT32(zzgrw.INT, 0),
     SINT64(zzgrw.LONG, 0);
-    
+
     private final zzgrw zzs;
     private final int zzt;
 

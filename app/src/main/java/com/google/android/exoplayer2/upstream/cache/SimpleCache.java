@@ -3,12 +3,13 @@ package com.google.android.exoplayer2.upstream.cache;
 import android.os.ConditionVariable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.database.DatabaseIOException;
 import com.google.android.exoplayer2.database.DatabaseProvider;
-import com.google.android.exoplayer2.upstream.cache.Cache;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.File;
 import java.io.IOException;
 import java.security.SecureRandom;
@@ -27,75 +28,22 @@ public final class SimpleCache implements Cache {
     private static final int SUBDIRECTORY_COUNT = 10;
     private static final String TAG = "SimpleCache";
     private static final String UID_FILE_SUFFIX = ".uid";
+    private static final HashSet<File> lockedCacheDirs = new HashSet<>();
     private static boolean cacheFolderLockingDisabled;
     private static boolean cacheInitializationExceptionsDisabled;
-    private static final HashSet<File> lockedCacheDirs = new HashSet<>();
-    private final File cacheDir;
-    private final CachedContentIndex contentIndex;
     /* access modifiers changed from: private */
     public final CacheEvictor evictor;
+    private final File cacheDir;
+    private final CachedContentIndex contentIndex;
     @Nullable
     private final CacheFileMetadataIndex fileIndex;
-    private Cache.CacheException initializationException;
     private final HashMap<String, ArrayList<Cache.Listener>> listeners;
     private final Random random;
+    private final boolean touchCacheSpans;
+    private Cache.CacheException initializationException;
     private boolean released;
     private long totalSpace;
-    private final boolean touchCacheSpans;
     private long uid;
-
-    public static synchronized boolean isCacheFolderLocked(File cacheFolder) {
-        boolean contains;
-        synchronized (SimpleCache.class) {
-            contains = lockedCacheDirs.contains(cacheFolder.getAbsoluteFile());
-        }
-        return contains;
-    }
-
-    @Deprecated
-    public static synchronized void disableCacheFolderLocking() {
-        synchronized (SimpleCache.class) {
-            cacheFolderLockingDisabled = true;
-            lockedCacheDirs.clear();
-        }
-    }
-
-    @Deprecated
-    public static void disableCacheInitializationExceptions() {
-        cacheInitializationExceptionsDisabled = true;
-    }
-
-    public static void delete(File cacheDir2, @Nullable DatabaseProvider databaseProvider) {
-        if (cacheDir2.exists()) {
-            File[] files = cacheDir2.listFiles();
-            if (files == null) {
-                cacheDir2.delete();
-                return;
-            }
-            if (databaseProvider != null) {
-                long uid2 = loadUid(files);
-                if (uid2 != -1) {
-                    try {
-                        CacheFileMetadataIndex.delete(databaseProvider, uid2);
-                    } catch (DatabaseIOException e) {
-                        StringBuilder sb = new StringBuilder(52);
-                        sb.append("Failed to delete file metadata: ");
-                        sb.append(uid2);
-                        Log.m30w(TAG, sb.toString());
-                    }
-                    try {
-                        CachedContentIndex.delete(databaseProvider, uid2);
-                    } catch (DatabaseIOException e2) {
-                        StringBuilder sb2 = new StringBuilder(52);
-                        sb2.append("Failed to delete file metadata: ");
-                        sb2.append(uid2);
-                        Log.m30w(TAG, sb2.toString());
-                    }
-                }
-            }
-            Util.recursiveDelete(cacheDir2);
-        }
-    }
 
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
      method: com.google.android.exoplayer2.upstream.cache.SimpleCache.<init>(java.io.File, com.google.android.exoplayer2.upstream.cache.CacheEvictor, byte[], boolean):void
@@ -178,6 +126,121 @@ public final class SimpleCache implements Cache {
         sb.append("Another SimpleCache instance uses the folder: ");
         sb.append(valueOf);
         throw new IllegalStateException(sb.toString());
+    }
+
+    public static synchronized boolean isCacheFolderLocked(File cacheFolder) {
+        boolean contains;
+        synchronized (SimpleCache.class) {
+            contains = lockedCacheDirs.contains(cacheFolder.getAbsoluteFile());
+        }
+        return contains;
+    }
+
+    @Deprecated
+    public static synchronized void disableCacheFolderLocking() {
+        synchronized (SimpleCache.class) {
+            cacheFolderLockingDisabled = true;
+            lockedCacheDirs.clear();
+        }
+    }
+
+    @Deprecated
+    public static void disableCacheInitializationExceptions() {
+        cacheInitializationExceptionsDisabled = true;
+    }
+
+    public static void delete(File cacheDir2, @Nullable DatabaseProvider databaseProvider) {
+        if (cacheDir2.exists()) {
+            File[] files = cacheDir2.listFiles();
+            if (files == null) {
+                cacheDir2.delete();
+                return;
+            }
+            if (databaseProvider != null) {
+                long uid2 = loadUid(files);
+                if (uid2 != -1) {
+                    try {
+                        CacheFileMetadataIndex.delete(databaseProvider, uid2);
+                    } catch (DatabaseIOException e) {
+                        StringBuilder sb = new StringBuilder(52);
+                        sb.append("Failed to delete file metadata: ");
+                        sb.append(uid2);
+                        Log.m30w(TAG, sb.toString());
+                    }
+                    try {
+                        CachedContentIndex.delete(databaseProvider, uid2);
+                    } catch (DatabaseIOException e2) {
+                        StringBuilder sb2 = new StringBuilder(52);
+                        sb2.append("Failed to delete file metadata: ");
+                        sb2.append(uid2);
+                        Log.m30w(TAG, sb2.toString());
+                    }
+                }
+            }
+            Util.recursiveDelete(cacheDir2);
+        }
+    }
+
+    private static long loadUid(File[] files) {
+        int length = files.length;
+        int i = 0;
+        while (i < length) {
+            File file = files[i];
+            String fileName = file.getName();
+            if (fileName.endsWith(UID_FILE_SUFFIX)) {
+                try {
+                    return parseUid(fileName);
+                } catch (NumberFormatException e) {
+                    String valueOf = String.valueOf(file);
+                    StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 20);
+                    sb.append("Malformed UID file: ");
+                    sb.append(valueOf);
+                    Log.m26e(TAG, sb.toString());
+                    file.delete();
+                }
+            } else {
+                i++;
+            }
+        }
+        return -1;
+    }
+
+    private static long createUid(File directory) throws IOException {
+        long uid2 = new SecureRandom().nextLong();
+        long uid3 = uid2 == Long.MIN_VALUE ? 0 : Math.abs(uid2);
+        String valueOf = String.valueOf(Long.toString(uid3, 16));
+        String valueOf2 = String.valueOf(UID_FILE_SUFFIX);
+        File hexUidFile = new File(directory, valueOf2.length() != 0 ? valueOf.concat(valueOf2) : new String(valueOf));
+        if (hexUidFile.createNewFile()) {
+            return uid3;
+        }
+        String valueOf3 = String.valueOf(hexUidFile);
+        StringBuilder sb = new StringBuilder(String.valueOf(valueOf3).length() + 27);
+        sb.append("Failed to create UID file: ");
+        sb.append(valueOf3);
+        throw new IOException(sb.toString());
+    }
+
+    private static long parseUid(String fileName) {
+        return Long.parseLong(fileName.substring(0, fileName.indexOf(46)), 16);
+    }
+
+    private static synchronized boolean lockFolder(File cacheDir2) {
+        synchronized (SimpleCache.class) {
+            if (cacheFolderLockingDisabled) {
+                return true;
+            }
+            boolean add = lockedCacheDirs.add(cacheDir2.getAbsoluteFile());
+            return add;
+        }
+    }
+
+    private static synchronized void unlockFolder(File cacheDir2) {
+        synchronized (SimpleCache.class) {
+            if (!cacheFolderLockingDisabled) {
+                lockedCacheDirs.remove(cacheDir2.getAbsoluteFile());
+            }
+        }
     }
 
     public synchronized void checkInitialization() throws Cache.CacheException {
@@ -616,67 +679,5 @@ public final class SimpleCache implements Cache {
             }
         }
         this.evictor.onSpanTouched(this, oldSpan, newSpan);
-    }
-
-    private static long loadUid(File[] files) {
-        int length = files.length;
-        int i = 0;
-        while (i < length) {
-            File file = files[i];
-            String fileName = file.getName();
-            if (fileName.endsWith(UID_FILE_SUFFIX)) {
-                try {
-                    return parseUid(fileName);
-                } catch (NumberFormatException e) {
-                    String valueOf = String.valueOf(file);
-                    StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 20);
-                    sb.append("Malformed UID file: ");
-                    sb.append(valueOf);
-                    Log.m26e(TAG, sb.toString());
-                    file.delete();
-                }
-            } else {
-                i++;
-            }
-        }
-        return -1;
-    }
-
-    private static long createUid(File directory) throws IOException {
-        long uid2 = new SecureRandom().nextLong();
-        long uid3 = uid2 == Long.MIN_VALUE ? 0 : Math.abs(uid2);
-        String valueOf = String.valueOf(Long.toString(uid3, 16));
-        String valueOf2 = String.valueOf(UID_FILE_SUFFIX);
-        File hexUidFile = new File(directory, valueOf2.length() != 0 ? valueOf.concat(valueOf2) : new String(valueOf));
-        if (hexUidFile.createNewFile()) {
-            return uid3;
-        }
-        String valueOf3 = String.valueOf(hexUidFile);
-        StringBuilder sb = new StringBuilder(String.valueOf(valueOf3).length() + 27);
-        sb.append("Failed to create UID file: ");
-        sb.append(valueOf3);
-        throw new IOException(sb.toString());
-    }
-
-    private static long parseUid(String fileName) {
-        return Long.parseLong(fileName.substring(0, fileName.indexOf(46)), 16);
-    }
-
-    private static synchronized boolean lockFolder(File cacheDir2) {
-        synchronized (SimpleCache.class) {
-            if (cacheFolderLockingDisabled) {
-                return true;
-            }
-            boolean add = lockedCacheDirs.add(cacheDir2.getAbsoluteFile());
-            return add;
-        }
-    }
-
-    private static synchronized void unlockFolder(File cacheDir2) {
-        synchronized (SimpleCache.class) {
-            if (!cacheFolderLockingDisabled) {
-                lockedCacheDirs.remove(cacheDir2.getAbsoluteFile());
-            }
-        }
     }
 }

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.PowerManager;
 import android.util.Log;
 import android.util.SparseArray;
+
 import com.google.android.exoplayer2.upstream.DefaultLoadErrorHandlingPolicy;
 
 @Deprecated
@@ -14,8 +15,8 @@ import com.google.android.exoplayer2.upstream.DefaultLoadErrorHandlingPolicy;
 public abstract class WakefulBroadcastReceiver extends BroadcastReceiver {
     private static final String EXTRA_WAKE_LOCK_ID = "androidx.contentpager.content.wakelockid";
     private static final String EXTRA_WAKE_LOCK_ID_INTEROP = "android.support.content.wakelockid";
-    private static int mNextId = 1;
     private static final SparseArray<PowerManager.WakeLock> sActiveWakeLocks = new SparseArray<>();
+    private static int mNextId = 1;
 
     public static ComponentName startWakefulService(Context context, Intent intent) {
         synchronized (sActiveWakeLocks) {

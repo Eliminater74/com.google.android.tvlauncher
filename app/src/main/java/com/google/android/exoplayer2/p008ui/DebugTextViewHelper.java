@@ -3,6 +3,7 @@ package com.google.android.exoplayer2.p008ui;
 import android.annotation.SuppressLint;
 import android.os.Looper;
 import android.widget.TextView;
+
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.PlaybackParameters;
@@ -14,14 +15,56 @@ import com.google.android.exoplayer2.decoder.DecoderCounters;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.util.Assertions;
+
 import java.util.Locale;
 
 /* renamed from: com.google.android.exoplayer2.ui.DebugTextViewHelper */
 public class DebugTextViewHelper implements Player.EventListener, Runnable {
     private static final int REFRESH_INTERVAL_MS = 1000;
     private final SimpleExoPlayer player;
-    private boolean started;
     private final TextView textView;
+    private boolean started;
+
+    public DebugTextViewHelper(SimpleExoPlayer player2, TextView textView2) {
+        Assertions.checkArgument(player2.getApplicationLooper() == Looper.getMainLooper());
+        this.player = player2;
+        this.textView = textView2;
+    }
+
+    private static String getDecoderCountersBufferCountString(DecoderCounters counters) {
+        if (counters == null) {
+            return "";
+        }
+        counters.ensureUpdated();
+        int i = counters.skippedInputBufferCount;
+        int i2 = counters.skippedOutputBufferCount;
+        int i3 = counters.renderedOutputBufferCount;
+        int i4 = counters.droppedBufferCount;
+        int i5 = counters.maxConsecutiveDroppedBufferCount;
+        int i6 = counters.droppedToKeyframeCount;
+        StringBuilder sb = new StringBuilder(93);
+        sb.append(" sib:");
+        sb.append(i);
+        sb.append(" sb:");
+        sb.append(i2);
+        sb.append(" rb:");
+        sb.append(i3);
+        sb.append(" db:");
+        sb.append(i4);
+        sb.append(" mcdb:");
+        sb.append(i5);
+        sb.append(" dk:");
+        sb.append(i6);
+        return sb.toString();
+    }
+
+    private static String getPixelAspectRatioString(float pixelAspectRatio) {
+        if (pixelAspectRatio == -1.0f || pixelAspectRatio == 1.0f) {
+            return "";
+        }
+        String valueOf = String.valueOf(String.format(Locale.US, "%.02f", Float.valueOf(pixelAspectRatio)));
+        return valueOf.length() != 0 ? " par:".concat(valueOf) : new String(" par:");
+    }
 
     public void onLoadingChanged(boolean z) {
         Player$EventListener$$CC.onLoadingChanged$$dflt$$(this, z);
@@ -53,12 +96,6 @@ public class DebugTextViewHelper implements Player.EventListener, Runnable {
 
     public void onTracksChanged(TrackGroupArray trackGroupArray, TrackSelectionArray trackSelectionArray) {
         Player$EventListener$$CC.onTracksChanged$$dflt$$(this, trackGroupArray, trackSelectionArray);
-    }
-
-    public DebugTextViewHelper(SimpleExoPlayer player2, TextView textView2) {
-        Assertions.checkArgument(player2.getApplicationLooper() == Looper.getMainLooper());
-        this.player = player2;
-        this.textView = textView2;
     }
 
     public final void start() {
@@ -179,40 +216,5 @@ public class DebugTextViewHelper implements Player.EventListener, Runnable {
         sb.append(decoderCountersBufferCountString);
         sb.append(")");
         return sb.toString();
-    }
-
-    private static String getDecoderCountersBufferCountString(DecoderCounters counters) {
-        if (counters == null) {
-            return "";
-        }
-        counters.ensureUpdated();
-        int i = counters.skippedInputBufferCount;
-        int i2 = counters.skippedOutputBufferCount;
-        int i3 = counters.renderedOutputBufferCount;
-        int i4 = counters.droppedBufferCount;
-        int i5 = counters.maxConsecutiveDroppedBufferCount;
-        int i6 = counters.droppedToKeyframeCount;
-        StringBuilder sb = new StringBuilder(93);
-        sb.append(" sib:");
-        sb.append(i);
-        sb.append(" sb:");
-        sb.append(i2);
-        sb.append(" rb:");
-        sb.append(i3);
-        sb.append(" db:");
-        sb.append(i4);
-        sb.append(" mcdb:");
-        sb.append(i5);
-        sb.append(" dk:");
-        sb.append(i6);
-        return sb.toString();
-    }
-
-    private static String getPixelAspectRatioString(float pixelAspectRatio) {
-        if (pixelAspectRatio == -1.0f || pixelAspectRatio == 1.0f) {
-            return "";
-        }
-        String valueOf = String.valueOf(String.format(Locale.US, "%.02f", Float.valueOf(pixelAspectRatio)));
-        return valueOf.length() != 0 ? " par:".concat(valueOf) : new String(" par:");
     }
 }

@@ -1,6 +1,7 @@
 package com.google.android.tvlauncher.appsview.data;
 
 import android.support.annotation.Nullable;
+
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.Options;

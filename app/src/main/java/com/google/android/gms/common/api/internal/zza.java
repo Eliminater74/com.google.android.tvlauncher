@@ -3,6 +3,7 @@ package com.google.android.gms.common.api.internal;
 import android.app.Activity;
 import android.support.annotation.MainThread;
 import android.support.annotation.VisibleForTesting;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +36,11 @@ public final class zza extends ActivityLifecycleObserver {
     static class C2021zza extends LifecycleCallback {
         private List<Runnable> zza = new ArrayList();
 
+        private C2021zza(zzcf zzcf) {
+            super(zzcf);
+            this.zzd.zza("LifecycleObserverOnStop", this);
+        }
+
         /* access modifiers changed from: private */
         public static C2021zza zzc(Activity activity) {
             C2021zza zza2;
@@ -46,11 +52,6 @@ public final class zza extends ActivityLifecycleObserver {
                 }
             }
             return zza2;
-        }
-
-        private C2021zza(zzcf zzcf) {
-            super(zzcf);
-            this.zzd.zza("LifecycleObserverOnStop", this);
         }
 
         /* access modifiers changed from: private */

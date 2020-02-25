@@ -2,16 +2,15 @@ package com.google.android.exoplayer2.upstream;
 
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.ParserException;
-import com.google.android.exoplayer2.upstream.HttpDataSource;
-import com.google.android.exoplayer2.upstream.Loader;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class DefaultLoadErrorHandlingPolicy implements LoadErrorHandlingPolicy {
-    private static final int DEFAULT_BEHAVIOR_MIN_LOADABLE_RETRY_COUNT = -1;
     public static final int DEFAULT_MIN_LOADABLE_RETRY_COUNT = 3;
     public static final int DEFAULT_MIN_LOADABLE_RETRY_COUNT_PROGRESSIVE_LIVE = 6;
     public static final long DEFAULT_TRACK_BLACKLIST_MS = 60000;
+    private static final int DEFAULT_BEHAVIOR_MIN_LOADABLE_RETRY_COUNT = -1;
     private final int minimumLoadableRetryCount;
 
     public DefaultLoadErrorHandlingPolicy() {

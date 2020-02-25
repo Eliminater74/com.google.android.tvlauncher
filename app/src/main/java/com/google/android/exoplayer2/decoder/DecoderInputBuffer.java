@@ -9,22 +9,17 @@ public class DecoderInputBuffer extends Buffer {
     public static final int BUFFER_REPLACEMENT_MODE_DIRECT = 2;
     public static final int BUFFER_REPLACEMENT_MODE_DISABLED = 0;
     public static final int BUFFER_REPLACEMENT_MODE_NORMAL = 1;
-    private final int bufferReplacementMode;
     public final CryptoInfo cryptoInfo = new CryptoInfo();
+    private final int bufferReplacementMode;
     public ByteBuffer data;
     public long timeUs;
 
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface BufferReplacementMode {
+    public DecoderInputBuffer(int bufferReplacementMode2) {
+        this.bufferReplacementMode = bufferReplacementMode2;
     }
 
     public static DecoderInputBuffer newFlagsOnlyInstance() {
         return new DecoderInputBuffer(0);
-    }
-
-    public DecoderInputBuffer(int bufferReplacementMode2) {
-        this.bufferReplacementMode = bufferReplacementMode2;
     }
 
     public void ensureSpaceForWrite(int length) {
@@ -84,5 +79,10 @@ public class DecoderInputBuffer extends Buffer {
         sb.append(requiredCapacity);
         sb.append(")");
         throw new IllegalStateException(sb.toString());
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface BufferReplacementMode {
     }
 }

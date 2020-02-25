@@ -1,16 +1,17 @@
 package com.google.android.exoplayer2.extractor.p007ts;
 
 import android.util.Pair;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.extractor.ExtractorOutput;
 import com.google.android.exoplayer2.extractor.TrackOutput;
-import com.google.android.exoplayer2.extractor.p007ts.TsPayloadReader;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.NalUnitUtil;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.common.base.Ascii;
 import com.google.common.primitives.UnsignedBytes;
+
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -23,21 +24,21 @@ public final class H262Reader implements ElementaryStreamReader {
     private static final int START_SEQUENCE_HEADER = 179;
     private static final int START_USER_DATA = 178;
     private final CsdBuffer csdBuffer;
+    private final boolean[] prefixFlags;
+    private final NalUnitTargetBuffer userData;
+    private final ParsableByteArray userDataParsable;
+    private final UserDataReader userDataReader;
     private String formatId;
     private long frameDurationUs;
     private boolean hasOutputFormat;
     private TrackOutput output;
     private long pesTimeUs;
-    private final boolean[] prefixFlags;
     private boolean sampleHasPicture;
     private boolean sampleIsKeyframe;
     private long samplePosition;
     private long sampleTimeUs;
     private boolean startedFirstSample;
     private long totalBytesWritten;
-    private final NalUnitTargetBuffer userData;
-    private final ParsableByteArray userDataParsable;
-    private final UserDataReader userDataReader;
 
     public H262Reader() {
         this(null);
@@ -54,6 +55,48 @@ public final class H262Reader implements ElementaryStreamReader {
         }
         this.userData = null;
         this.userDataParsable = null;
+    }
+
+    private static Pair<Format, Long> parseCsdBuffer(CsdBuffer csdBuffer2, String formatId2) {
+        float pixelWidthHeightRatio;
+        CsdBuffer csdBuffer3 = csdBuffer2;
+        byte[] csdData = Arrays.copyOf(csdBuffer3.data, csdBuffer3.length);
+        byte b = csdData[4] & UnsignedBytes.MAX_VALUE;
+        int secondByte = csdData[5] & 255;
+        int width = (b << 4) | (secondByte >> 4);
+        int height = ((secondByte & 15) << 8) | (csdData[6] & 255);
+        int aspectRatioCode = (csdData[7] & 240) >> 4;
+        if (aspectRatioCode == 2) {
+            pixelWidthHeightRatio = ((float) (height * 4)) / ((float) (width * 3));
+        } else if (aspectRatioCode == 3) {
+            pixelWidthHeightRatio = ((float) (height * 16)) / ((float) (width * 9));
+        } else if (aspectRatioCode != 4) {
+            pixelWidthHeightRatio = 1.0f;
+        } else {
+            pixelWidthHeightRatio = ((float) (height * 121)) / ((float) (width * 100));
+        }
+        Format format = Format.createVideoSampleFormat(formatId2, MimeTypes.VIDEO_MPEG2, null, -1, -1, width, height, -1.0f, Collections.singletonList(csdData), -1, pixelWidthHeightRatio, null);
+        long frameDurationUs2 = 0;
+        int frameRateCodeMinusOne = (csdData[7] & Ascii.f156SI) - 1;
+        if (frameRateCodeMinusOne >= 0) {
+            double[] dArr = FRAME_RATE_VALUES;
+            if (frameRateCodeMinusOne < dArr.length) {
+                double frameRate = dArr[frameRateCodeMinusOne];
+                int sequenceExtensionPosition = csdBuffer3.sequenceExtensionPosition;
+                int frameRateExtensionN = (csdData[sequenceExtensionPosition + 9] & 96) >> 5;
+                int frameRateExtensionD = csdData[sequenceExtensionPosition + 9] & 31;
+                if (frameRateExtensionN != frameRateExtensionD) {
+                    double d = (double) frameRateExtensionN;
+                    Double.isNaN(d);
+                    double d2 = (double) (frameRateExtensionD + 1);
+                    Double.isNaN(d2);
+                    frameRate *= (d + 1.0d) / d2;
+                }
+                frameDurationUs2 = (long) (1000000.0d / frameRate);
+                return Pair.create(format, Long.valueOf(frameDurationUs2));
+            }
+        }
+        return Pair.create(format, Long.valueOf(frameDurationUs2));
     }
 
     public void seek() {
@@ -160,55 +203,13 @@ public final class H262Reader implements ElementaryStreamReader {
     public void packetFinished() {
     }
 
-    private static Pair<Format, Long> parseCsdBuffer(CsdBuffer csdBuffer2, String formatId2) {
-        float pixelWidthHeightRatio;
-        CsdBuffer csdBuffer3 = csdBuffer2;
-        byte[] csdData = Arrays.copyOf(csdBuffer3.data, csdBuffer3.length);
-        byte b = csdData[4] & UnsignedBytes.MAX_VALUE;
-        int secondByte = csdData[5] & 255;
-        int width = (b << 4) | (secondByte >> 4);
-        int height = ((secondByte & 15) << 8) | (csdData[6] & 255);
-        int aspectRatioCode = (csdData[7] & 240) >> 4;
-        if (aspectRatioCode == 2) {
-            pixelWidthHeightRatio = ((float) (height * 4)) / ((float) (width * 3));
-        } else if (aspectRatioCode == 3) {
-            pixelWidthHeightRatio = ((float) (height * 16)) / ((float) (width * 9));
-        } else if (aspectRatioCode != 4) {
-            pixelWidthHeightRatio = 1.0f;
-        } else {
-            pixelWidthHeightRatio = ((float) (height * 121)) / ((float) (width * 100));
-        }
-        Format format = Format.createVideoSampleFormat(formatId2, MimeTypes.VIDEO_MPEG2, null, -1, -1, width, height, -1.0f, Collections.singletonList(csdData), -1, pixelWidthHeightRatio, null);
-        long frameDurationUs2 = 0;
-        int frameRateCodeMinusOne = (csdData[7] & Ascii.f156SI) - 1;
-        if (frameRateCodeMinusOne >= 0) {
-            double[] dArr = FRAME_RATE_VALUES;
-            if (frameRateCodeMinusOne < dArr.length) {
-                double frameRate = dArr[frameRateCodeMinusOne];
-                int sequenceExtensionPosition = csdBuffer3.sequenceExtensionPosition;
-                int frameRateExtensionN = (csdData[sequenceExtensionPosition + 9] & 96) >> 5;
-                int frameRateExtensionD = csdData[sequenceExtensionPosition + 9] & 31;
-                if (frameRateExtensionN != frameRateExtensionD) {
-                    double d = (double) frameRateExtensionN;
-                    Double.isNaN(d);
-                    double d2 = (double) (frameRateExtensionD + 1);
-                    Double.isNaN(d2);
-                    frameRate *= (d + 1.0d) / d2;
-                }
-                frameDurationUs2 = (long) (1000000.0d / frameRate);
-                return Pair.create(format, Long.valueOf(frameDurationUs2));
-            }
-        }
-        return Pair.create(format, Long.valueOf(frameDurationUs2));
-    }
-
     /* renamed from: com.google.android.exoplayer2.extractor.ts.H262Reader$CsdBuffer */
     private static final class CsdBuffer {
         private static final byte[] START_CODE = {0, 0, 1};
         public byte[] data;
-        private boolean isFilling;
         public int length;
         public int sequenceExtensionPosition;
+        private boolean isFilling;
 
         public CsdBuffer(int initialCapacity) {
             this.data = new byte[initialCapacity];

@@ -4,6 +4,9 @@ import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -12,7 +15,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible(emulated = true, serializable = true)
 public final class ArrayListMultimap<K, V> extends ArrayListMultimapGwtSerializationDependencies<K, V> {
@@ -21,6 +23,51 @@ public final class ArrayListMultimap<K, V> extends ArrayListMultimapGwtSerializa
     private static final long serialVersionUID = 0;
     @VisibleForTesting
     transient int expectedValuesPerKey;
+
+    private ArrayListMultimap() {
+        this(12, 3);
+    }
+
+    private ArrayListMultimap(int expectedKeys, int expectedValuesPerKey2) {
+        super(Platform.newHashMapWithExpectedSize(expectedKeys));
+        CollectPreconditions.checkNonnegative(expectedValuesPerKey2, "expectedValuesPerKey");
+        this.expectedValuesPerKey = expectedValuesPerKey2;
+    }
+
+    /* JADX WARNING: Illegal instructions before constructor call */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    private ArrayListMultimap(com.google.common.collect.Multimap<? extends K, ? extends V> r3) {
+        /*
+            r2 = this;
+            java.util.Set r0 = r3.keySet()
+            int r0 = r0.size()
+            boolean r1 = r3 instanceof com.google.common.collect.ArrayListMultimap
+            if (r1 == 0) goto L_0x0013
+            r1 = r3
+            com.google.common.collect.ArrayListMultimap r1 = (com.google.common.collect.ArrayListMultimap) r1
+            int r1 = r1.expectedValuesPerKey
+            goto L_0x0014
+        L_0x0013:
+            r1 = 3
+        L_0x0014:
+            r2.<init>(r0, r1)
+            r2.putAll(r3)
+            return
+        */
+        throw new UnsupportedOperationException("Method not decompiled: com.google.common.collect.ArrayListMultimap.<init>(com.google.common.collect.Multimap):void");
+    }
+
+    public static <K, V> ArrayListMultimap<K, V> create() {
+        return new ArrayListMultimap<>();
+    }
+
+    public static <K, V> ArrayListMultimap<K, V> create(int expectedKeys, int expectedValuesPerKey2) {
+        return new ArrayListMultimap<>(expectedKeys, expectedValuesPerKey2);
+    }
+
+    public static <K, V> ArrayListMultimap<K, V> create(Multimap<? extends K, ? extends V> multimap) {
+        return new ArrayListMultimap<>(multimap);
+    }
 
     public /* bridge */ /* synthetic */ Map asMap() {
         return super.asMap();
@@ -120,51 +167,6 @@ public final class ArrayListMultimap<K, V> extends ArrayListMultimapGwtSerializa
 
     public /* bridge */ /* synthetic */ Collection values() {
         return super.values();
-    }
-
-    public static <K, V> ArrayListMultimap<K, V> create() {
-        return new ArrayListMultimap<>();
-    }
-
-    public static <K, V> ArrayListMultimap<K, V> create(int expectedKeys, int expectedValuesPerKey2) {
-        return new ArrayListMultimap<>(expectedKeys, expectedValuesPerKey2);
-    }
-
-    public static <K, V> ArrayListMultimap<K, V> create(Multimap<? extends K, ? extends V> multimap) {
-        return new ArrayListMultimap<>(multimap);
-    }
-
-    private ArrayListMultimap() {
-        this(12, 3);
-    }
-
-    private ArrayListMultimap(int expectedKeys, int expectedValuesPerKey2) {
-        super(Platform.newHashMapWithExpectedSize(expectedKeys));
-        CollectPreconditions.checkNonnegative(expectedValuesPerKey2, "expectedValuesPerKey");
-        this.expectedValuesPerKey = expectedValuesPerKey2;
-    }
-
-    /* JADX WARNING: Illegal instructions before constructor call */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
-    private ArrayListMultimap(com.google.common.collect.Multimap<? extends K, ? extends V> r3) {
-        /*
-            r2 = this;
-            java.util.Set r0 = r3.keySet()
-            int r0 = r0.size()
-            boolean r1 = r3 instanceof com.google.common.collect.ArrayListMultimap
-            if (r1 == 0) goto L_0x0013
-            r1 = r3
-            com.google.common.collect.ArrayListMultimap r1 = (com.google.common.collect.ArrayListMultimap) r1
-            int r1 = r1.expectedValuesPerKey
-            goto L_0x0014
-        L_0x0013:
-            r1 = 3
-        L_0x0014:
-            r2.<init>(r0, r1)
-            r2.putAll(r3)
-            return
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.google.common.collect.ArrayListMultimap.<init>(com.google.common.collect.Multimap):void");
     }
 
     /* access modifiers changed from: package-private */

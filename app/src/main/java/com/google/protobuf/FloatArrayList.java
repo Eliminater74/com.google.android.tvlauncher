@@ -1,22 +1,18 @@
 package com.google.protobuf;
 
-import com.google.protobuf.Internal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.RandomAccess;
 
 final class FloatArrayList extends AbstractProtobufList<Float> implements Internal.FloatList, RandomAccess, PrimitiveNonBoxingCollection {
     private static final FloatArrayList EMPTY_LIST = new FloatArrayList(new float[0], 0);
-    private float[] array;
-    private int size;
 
     static {
         EMPTY_LIST.makeImmutable();
     }
 
-    public static FloatArrayList emptyList() {
-        return EMPTY_LIST;
-    }
+    private float[] array;
+    private int size;
 
     FloatArrayList() {
         this(new float[10], 0);
@@ -25,6 +21,10 @@ final class FloatArrayList extends AbstractProtobufList<Float> implements Intern
     private FloatArrayList(float[] other, int size2) {
         this.array = other;
         this.size = size2;
+    }
+
+    public static FloatArrayList emptyList() {
+        return EMPTY_LIST;
     }
 
     /* access modifiers changed from: protected */

@@ -32,24 +32,6 @@ public class PreferenceManager {
     private String mSharedPreferencesName;
     private int mStorage = 0;
 
-    public interface OnDisplayPreferenceDialogListener {
-        void onDisplayPreferenceDialog(Preference preference);
-    }
-
-    public interface OnNavigateToScreenListener {
-        void onNavigateToScreen(PreferenceScreen preferenceScreen);
-    }
-
-    public interface OnPreferenceTreeClickListener {
-        boolean onPreferenceTreeClick(Preference preference);
-    }
-
-    public static abstract class PreferenceComparisonCallback {
-        public abstract boolean arePreferenceContentsTheSame(Preference preference, Preference preference2);
-
-        public abstract boolean arePreferenceItemsTheSame(Preference preference, Preference preference2);
-    }
-
     @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
     public PreferenceManager(Context context) {
         this.mContext = context;
@@ -154,13 +136,13 @@ public class PreferenceManager {
         return true;
     }
 
-    public void setPreferenceDataStore(PreferenceDataStore dataStore) {
-        this.mPreferenceDataStore = dataStore;
-    }
-
     @Nullable
     public PreferenceDataStore getPreferenceDataStore() {
         return this.mPreferenceDataStore;
+    }
+
+    public void setPreferenceDataStore(PreferenceDataStore dataStore) {
+        this.mPreferenceDataStore = dataStore;
     }
 
     public SharedPreferences getSharedPreferences() {
@@ -258,20 +240,38 @@ public class PreferenceManager {
         }
     }
 
+    public OnPreferenceTreeClickListener getOnPreferenceTreeClickListener() {
+        return this.mOnPreferenceTreeClickListener;
+    }
+
     public void setOnPreferenceTreeClickListener(OnPreferenceTreeClickListener listener) {
         this.mOnPreferenceTreeClickListener = listener;
     }
 
-    public OnPreferenceTreeClickListener getOnPreferenceTreeClickListener() {
-        return this.mOnPreferenceTreeClickListener;
+    public OnNavigateToScreenListener getOnNavigateToScreenListener() {
+        return this.mOnNavigateToScreenListener;
     }
 
     public void setOnNavigateToScreenListener(OnNavigateToScreenListener listener) {
         this.mOnNavigateToScreenListener = listener;
     }
 
-    public OnNavigateToScreenListener getOnNavigateToScreenListener() {
-        return this.mOnNavigateToScreenListener;
+    public interface OnDisplayPreferenceDialogListener {
+        void onDisplayPreferenceDialog(Preference preference);
+    }
+
+    public interface OnNavigateToScreenListener {
+        void onNavigateToScreen(PreferenceScreen preferenceScreen);
+    }
+
+    public interface OnPreferenceTreeClickListener {
+        boolean onPreferenceTreeClick(Preference preference);
+    }
+
+    public static abstract class PreferenceComparisonCallback {
+        public abstract boolean arePreferenceContentsTheSame(Preference preference, Preference preference2);
+
+        public abstract boolean arePreferenceItemsTheSame(Preference preference, Preference preference2);
     }
 
     public static class SimplePreferenceComparisonCallback extends PreferenceComparisonCallback {

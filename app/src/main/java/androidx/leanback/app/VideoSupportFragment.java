@@ -6,6 +6,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.leanback.C0364R;
 
 public class VideoSupportFragment extends PlaybackSupportFragment {

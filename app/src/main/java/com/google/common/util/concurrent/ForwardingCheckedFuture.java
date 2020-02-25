@@ -4,7 +4,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import java.lang.Exception;
+
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 

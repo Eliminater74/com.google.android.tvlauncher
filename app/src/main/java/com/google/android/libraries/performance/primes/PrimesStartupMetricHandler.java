@@ -2,25 +2,23 @@ package com.google.android.libraries.performance.primes;
 
 import android.app.Activity;
 import android.support.annotation.VisibleForTesting;
-import com.google.android.libraries.performance.primes.AppLifecycleListener;
+
 import com.google.android.libraries.performance.primes.tracing.SpanEvent;
 import com.google.android.libraries.performance.primes.tracing.TraceData;
 import com.google.common.base.Optional;
+
 import java.util.Arrays;
 import java.util.UUID;
+
 import logs.proto.wireless.performance.mobile.PrimesTraceOuterClass;
 
 final class PrimesStartupMetricHandler implements AppLifecycleListener.OnAppToBackground, ShutdownListener {
     private static final String TAG = "PrimesStartupHandler";
-    private final AppLifecycleMonitor appLifecycleMonitor;
     @VisibleForTesting
     final PrimesStartupTracer startupTracer;
+    private final AppLifecycleMonitor appLifecycleMonitor;
     private final Supplier<TimerMetricService> timerServiceSupplier;
     private final Supplier<Optional<TraceMetricRecordingService>> traceServiceSupplier;
-
-    private static PrimesTraceOuterClass.PrimesTrace createTraceMetric(PrimesTraceOuterClass.Span[] spans) {
-        return (PrimesTraceOuterClass.PrimesTrace) PrimesTraceOuterClass.PrimesTrace.newBuilder().setTraceId(UUID.randomUUID().getLeastSignificantBits()).addAllSpans(Arrays.asList(spans)).setTraceType(PrimesTraceOuterClass.PrimesTrace.TraceType.MINI_TRACE).build();
-    }
 
     PrimesStartupMetricHandler(AppLifecycleMonitor appLifecycleMonitor2, Supplier<TimerMetricService> timerServiceSupplier2, Supplier<Optional<TraceMetricRecordingService>> traceServiceSupplier2, Optional<PrimesTraceConfigurations> traceConfigs) {
         this.appLifecycleMonitor = appLifecycleMonitor2;
@@ -36,6 +34,17 @@ final class PrimesStartupMetricHandler implements AppLifecycleListener.OnAppToBa
         PrimesStartupMeasure.get().registerOrRunOnDrawListener(this.startupTracer);
     }
 
+    private static PrimesTraceOuterClass.PrimesTrace createTraceMetric(PrimesTraceOuterClass.Span[] spans) {
+        return (PrimesTraceOuterClass.PrimesTrace) PrimesTraceOuterClass.PrimesTrace.newBuilder().setTraceId(UUID.randomUUID().getLeastSignificantBits()).addAllSpans(Arrays.asList(spans)).setTraceType(PrimesTraceOuterClass.PrimesTrace.TraceType.MINI_TRACE).build();
+    }
+
+    private static long getStartTimeMs(PrimesStartupMeasure startupMeasure) {
+        if (startupMeasure.isColdStartup()) {
+            return startupMeasure.getAppClassLoadedAt();
+        }
+        return startupMeasure.getFirstOnActivityInitAt();
+    }
+
     public void onAppToBackground(Activity activity) {
         this.appLifecycleMonitor.unregister(this);
         PrimesStartupMeasure startupMeasure = PrimesStartupMeasure.get();
@@ -45,13 +54,6 @@ final class PrimesStartupMetricHandler implements AppLifecycleListener.OnAppToBa
             return;
         }
         PrimesLog.m50i(TAG, "missing firstDraw timestamp", new Object[0]);
-    }
-
-    private static long getStartTimeMs(PrimesStartupMeasure startupMeasure) {
-        if (startupMeasure.isColdStartup()) {
-            return startupMeasure.getAppClassLoadedAt();
-        }
-        return startupMeasure.getFirstOnActivityInitAt();
     }
 
     private void recordTimer(PrimesStartupMeasure startupMeasure, long startTimeMs, long endTimeMs, String eventName) {

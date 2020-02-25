@@ -26,11 +26,11 @@ final class FragmentState implements Parcelable {
     final int mFragmentId;
     final boolean mFromLayout;
     final boolean mHidden;
-    Fragment mInstance;
     final boolean mRetainInstance;
-    Bundle mSavedFragmentState;
     final String mTag;
     final String mWho;
+    Fragment mInstance;
+    Bundle mSavedFragmentState;
 
     FragmentState(Fragment frag) {
         this.mClassName = frag.getClass().getName();

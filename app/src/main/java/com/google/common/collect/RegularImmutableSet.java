@@ -2,6 +2,7 @@ package com.google.common.collect;
 
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.VisibleForTesting;
+
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible(emulated = true, serializable = true)
@@ -9,11 +10,11 @@ final class RegularImmutableSet<E> extends ImmutableSet<E> {
     static final RegularImmutableSet<Object> EMPTY = new RegularImmutableSet(new Object[0], 0, null, 0, 0);
     @VisibleForTesting
     final transient Object[] elements;
+    @VisibleForTesting
+    final transient Object[] table;
     private final transient int hashCode;
     private final transient int mask;
     private final transient int size;
-    @VisibleForTesting
-    final transient Object[] table;
 
     RegularImmutableSet(Object[] elements2, int hashCode2, Object[] table2, int mask2, int size2) {
         this.elements = elements2;

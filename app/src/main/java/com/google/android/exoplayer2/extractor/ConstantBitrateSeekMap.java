@@ -1,7 +1,6 @@
 package com.google.android.exoplayer2.extractor;
 
 import com.google.android.exoplayer2.C0841C;
-import com.google.android.exoplayer2.extractor.SeekMap;
 import com.google.android.exoplayer2.util.Util;
 
 public class ConstantBitrateSeekMap implements SeekMap {
@@ -24,6 +23,18 @@ public class ConstantBitrateSeekMap implements SeekMap {
         }
         this.dataSize = inputLength2 - firstFrameBytePosition2;
         this.durationUs = getTimeUsAtPosition(inputLength2, firstFrameBytePosition2, bitrate2);
+    }
+
+    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+     method: ClspMth{java.lang.Math.max(long, long):long}
+     arg types: [int, long]
+     candidates:
+      ClspMth{java.lang.Math.max(double, double):double}
+      ClspMth{java.lang.Math.max(int, int):int}
+      ClspMth{java.lang.Math.max(float, float):float}
+      ClspMth{java.lang.Math.max(long, long):long} */
+    private static long getTimeUsAtPosition(long position, long firstFrameBytePosition2, int bitrate2) {
+        return ((Math.max(0L, position - firstFrameBytePosition2) * 8) * 1000000) / ((long) bitrate2);
     }
 
     public boolean isSeekable() {
@@ -53,18 +64,6 @@ public class ConstantBitrateSeekMap implements SeekMap {
 
     public long getTimeUsAtPosition(long position) {
         return getTimeUsAtPosition(position, this.firstFrameBytePosition, this.bitrate);
-    }
-
-    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-     method: ClspMth{java.lang.Math.max(long, long):long}
-     arg types: [int, long]
-     candidates:
-      ClspMth{java.lang.Math.max(double, double):double}
-      ClspMth{java.lang.Math.max(int, int):int}
-      ClspMth{java.lang.Math.max(float, float):float}
-      ClspMth{java.lang.Math.max(long, long):long} */
-    private static long getTimeUsAtPosition(long position, long firstFrameBytePosition2, int bitrate2) {
-        return ((Math.max(0L, position - firstFrameBytePosition2) * 8) * 1000000) / ((long) bitrate2);
     }
 
     private long getFramePositionForTimeUs(long timeUs) {

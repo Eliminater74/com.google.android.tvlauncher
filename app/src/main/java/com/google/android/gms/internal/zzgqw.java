@@ -5,14 +5,18 @@ import java.util.Map;
 
 /* compiled from: SmallSortedMap */
 final class zzgqw implements Iterator<Map.Entry<K, V>> {
+    private final /* synthetic */ zzgqo zzd;
     private int zza;
     private boolean zzb;
     private Iterator<Map.Entry<K, V>> zzc;
-    private final /* synthetic */ zzgqo zzd;
 
     private zzgqw(zzgqo zzgqo) {
         this.zzd = zzgqo;
         this.zza = -1;
+    }
+
+    /* synthetic */ zzgqw(zzgqo zzgqo, zzgqp zzgqp) {
+        this(zzgqo);
     }
 
     public final boolean hasNext() {
@@ -54,9 +58,5 @@ final class zzgqw implements Iterator<Map.Entry<K, V>> {
             return (Map.Entry) this.zzd.zzb.get(this.zza);
         }
         return (Map.Entry) zza().next();
-    }
-
-    /* synthetic */ zzgqw(zzgqo zzgqo, zzgqp zzgqp) {
-        this(zzgqo);
     }
 }

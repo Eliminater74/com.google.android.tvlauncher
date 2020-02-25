@@ -1,7 +1,6 @@
 package com.google.android.gms.common;
 
 import com.google.android.gms.common.util.Hex;
-import com.google.android.gms.common.util.zza;
 
 /* compiled from: GoogleCertificatesResult */
 final class zzp extends zzn {

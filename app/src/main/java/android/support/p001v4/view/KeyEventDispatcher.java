@@ -11,6 +11,7 @@ import android.support.annotation.RestrictTo;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -22,11 +23,6 @@ public class KeyEventDispatcher {
     private static Method sActionBarOnMenuKeyMethod = null;
     private static boolean sDialogFieldsFetched = false;
     private static Field sDialogKeyListenerField = null;
-
-    /* renamed from: android.support.v4.view.KeyEventDispatcher$Component */
-    public interface Component {
-        boolean superDispatchKeyEvent(KeyEvent keyEvent);
-    }
 
     private KeyEventDispatcher() {
     }
@@ -125,5 +121,10 @@ public class KeyEventDispatcher {
             return true;
         }
         return event.dispatch(dialog, decor != null ? decor.getKeyDispatcherState() : null, dialog);
+    }
+
+    /* renamed from: android.support.v4.view.KeyEventDispatcher$Component */
+    public interface Component {
+        boolean superDispatchKeyEvent(KeyEvent keyEvent);
     }
 }

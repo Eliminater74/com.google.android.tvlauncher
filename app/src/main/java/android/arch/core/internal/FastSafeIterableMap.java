@@ -1,8 +1,8 @@
 package android.arch.core.internal;
 
-import android.arch.core.internal.SafeIterableMap;
 import android.support.annotation.NonNull;
 import android.support.annotation.RestrictTo;
+
 import java.util.HashMap;
 import java.util.Map;
 

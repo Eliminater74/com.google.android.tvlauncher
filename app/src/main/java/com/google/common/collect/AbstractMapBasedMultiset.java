@@ -4,9 +4,11 @@ import com.google.android.tvlauncher.notifications.NotificationsContract;
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Multiset;
 import com.google.common.primitives.Ints;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -14,7 +16,6 @@ import java.io.Serializable;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible(emulated = true)
 abstract class AbstractMapBasedMultiset<E> extends AbstractMultiset<E> implements Serializable {
@@ -23,12 +24,12 @@ abstract class AbstractMapBasedMultiset<E> extends AbstractMultiset<E> implement
     transient ObjectCountHashMap<E> backingMap;
     transient long size;
 
-    /* access modifiers changed from: package-private */
-    public abstract void init(int i);
-
     AbstractMapBasedMultiset(int distinctElements) {
         init(distinctElements);
     }
+
+    /* access modifiers changed from: package-private */
+    public abstract void init(int i);
 
     public final int count(@NullableDecl Object element) {
         return this.backingMap.get(element);
@@ -122,48 +123,6 @@ abstract class AbstractMapBasedMultiset<E> extends AbstractMultiset<E> implement
         this.size = 0;
     }
 
-    abstract class Itr<T> implements Iterator<T> {
-        int entryIndex = AbstractMapBasedMultiset.this.backingMap.firstIndex();
-        int expectedModCount = AbstractMapBasedMultiset.this.backingMap.modCount;
-        int toRemove = -1;
-
-        /* access modifiers changed from: package-private */
-        public abstract T result(int i);
-
-        Itr() {
-        }
-
-        private void checkForConcurrentModification() {
-            if (AbstractMapBasedMultiset.this.backingMap.modCount != this.expectedModCount) {
-                throw new ConcurrentModificationException();
-            }
-        }
-
-        public boolean hasNext() {
-            checkForConcurrentModification();
-            return this.entryIndex >= 0;
-        }
-
-        public T next() {
-            if (hasNext()) {
-                T result = result(this.entryIndex);
-                this.toRemove = this.entryIndex;
-                this.entryIndex = AbstractMapBasedMultiset.this.backingMap.nextIndex(this.entryIndex);
-                return result;
-            }
-            throw new NoSuchElementException();
-        }
-
-        public void remove() {
-            checkForConcurrentModification();
-            CollectPreconditions.checkRemove(this.toRemove != -1);
-            AbstractMapBasedMultiset.this.size -= (long) AbstractMapBasedMultiset.this.backingMap.removeEntry(this.toRemove);
-            this.entryIndex = AbstractMapBasedMultiset.this.backingMap.nextIndexAfterRemove(this.entryIndex, this.toRemove);
-            this.toRemove = -1;
-            this.expectedModCount = AbstractMapBasedMultiset.this.backingMap.modCount;
-        }
-    }
-
     /* access modifiers changed from: package-private */
     public final Iterator<E> elementIterator() {
         return new AbstractMapBasedMultiset<E>.Itr<E>() {
@@ -219,5 +178,47 @@ abstract class AbstractMapBasedMultiset<E> extends AbstractMultiset<E> implement
         int distinctElements = Serialization.readCount(stream);
         init(3);
         Serialization.populateMultiset(this, stream, distinctElements);
+    }
+
+    abstract class Itr<T> implements Iterator<T> {
+        int entryIndex = AbstractMapBasedMultiset.this.backingMap.firstIndex();
+        int expectedModCount = AbstractMapBasedMultiset.this.backingMap.modCount;
+        int toRemove = -1;
+
+        Itr() {
+        }
+
+        /* access modifiers changed from: package-private */
+        public abstract T result(int i);
+
+        private void checkForConcurrentModification() {
+            if (AbstractMapBasedMultiset.this.backingMap.modCount != this.expectedModCount) {
+                throw new ConcurrentModificationException();
+            }
+        }
+
+        public boolean hasNext() {
+            checkForConcurrentModification();
+            return this.entryIndex >= 0;
+        }
+
+        public T next() {
+            if (hasNext()) {
+                T result = result(this.entryIndex);
+                this.toRemove = this.entryIndex;
+                this.entryIndex = AbstractMapBasedMultiset.this.backingMap.nextIndex(this.entryIndex);
+                return result;
+            }
+            throw new NoSuchElementException();
+        }
+
+        public void remove() {
+            checkForConcurrentModification();
+            CollectPreconditions.checkRemove(this.toRemove != -1);
+            AbstractMapBasedMultiset.this.size -= (long) AbstractMapBasedMultiset.this.backingMap.removeEntry(this.toRemove);
+            this.entryIndex = AbstractMapBasedMultiset.this.backingMap.nextIndexAfterRemove(this.entryIndex, this.toRemove);
+            this.toRemove = -1;
+            this.expectedModCount = AbstractMapBasedMultiset.this.backingMap.modCount;
+        }
     }
 }

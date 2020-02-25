@@ -3,6 +3,7 @@ package com.google.common.primitives;
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.base.Ascii;
 import com.google.common.base.Preconditions;
+
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -73,6 +74,18 @@ public final class SignedBytes {
         return LexicographicalComparator.INSTANCE;
     }
 
+    public static void sortDescending(byte[] array) {
+        Preconditions.checkNotNull(array);
+        sortDescending(array, 0, array.length);
+    }
+
+    public static void sortDescending(byte[] array, int fromIndex, int toIndex) {
+        Preconditions.checkNotNull(array);
+        Preconditions.checkPositionIndexes(fromIndex, toIndex, array.length);
+        Arrays.sort(array, fromIndex, toIndex);
+        Bytes.reverse(array, fromIndex, toIndex);
+    }
+
     private enum LexicographicalComparator implements Comparator<byte[]> {
         INSTANCE;
 
@@ -90,17 +103,5 @@ public final class SignedBytes {
         public String toString() {
             return "SignedBytes.lexicographicalComparator()";
         }
-    }
-
-    public static void sortDescending(byte[] array) {
-        Preconditions.checkNotNull(array);
-        sortDescending(array, 0, array.length);
-    }
-
-    public static void sortDescending(byte[] array, int fromIndex, int toIndex) {
-        Preconditions.checkNotNull(array);
-        Preconditions.checkPositionIndexes(fromIndex, toIndex, array.length);
-        Arrays.sort(array, fromIndex, toIndex);
-        Bytes.reverse(array, fromIndex, toIndex);
     }
 }

@@ -2,6 +2,7 @@ package com.google.android.tvlauncher.appsview.data;
 
 import android.content.pm.ResolveInfo;
 import android.text.TextUtils;
+
 import java.util.Locale;
 import java.util.Objects;
 
@@ -10,11 +11,6 @@ public class PackageImageDataSource {
     private final Locale mLocale;
     private final String mPackageName;
     private final ResolveInfo mResolveInfo;
-
-    public enum ImageType {
-        ICON,
-        BANNER
-    }
 
     public PackageImageDataSource(String packageName, ResolveInfo resolveInfo, ImageType imageType, Locale locale) {
         this.mPackageName = packageName;
@@ -65,5 +61,10 @@ public class PackageImageDataSource {
         sb.append(", Locale : ");
         sb.append(valueOf2);
         return sb.toString();
+    }
+
+    public enum ImageType {
+        ICON,
+        BANNER
     }
 }

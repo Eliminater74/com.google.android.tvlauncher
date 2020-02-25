@@ -4,8 +4,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 import android.support.annotation.WorkerThread;
-import android.support.p004v7.util.ThreadUtil;
-import android.support.p004v7.util.TileList;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.util.SparseIntArray;
@@ -14,13 +12,23 @@ import android.util.SparseIntArray;
 public class AsyncListUtil<T> {
     static final boolean DEBUG = false;
     static final String TAG = "AsyncListUtil";
-    boolean mAllowScrollHints;
+    final ThreadUtil.BackgroundCallback<T> mBackgroundProxy;
+    final DataCallback<T> mDataCallback;
+    final ThreadUtil.MainThreadCallback<T> mMainThreadProxy;
+    final SparseIntArray mMissingPositions = new SparseIntArray();
+    final int[] mPrevRange = new int[2];
+    final Class<T> mTClass;
+    final TileList<T> mTileList;
+    final int mTileSize;
+    final int[] mTmpRange = new int[2];
+    final int[] mTmpRangeExtended = new int[2];
+    final ViewCallback mViewCallback;
     private final ThreadUtil.BackgroundCallback<T> mBackgroundCallback = new ThreadUtil.BackgroundCallback<T>() {
+        final SparseBooleanArray mLoadedTiles = new SparseBooleanArray();
         private int mFirstRequiredTileStart;
         private int mGeneration;
         private int mItemCount;
         private int mLastRequiredTileStart;
-        final SparseBooleanArray mLoadedTiles = new SparseBooleanArray();
         private TileList.Tile<T> mRecycledRoot;
 
         public void refresh(int generation) {
@@ -125,10 +133,11 @@ public class AsyncListUtil<T> {
             Log.d(AsyncListUtil.TAG, "[BKGR] " + String.format(s, args));
         }
     };
-    final ThreadUtil.BackgroundCallback<T> mBackgroundProxy;
-    final DataCallback<T> mDataCallback;
+    boolean mAllowScrollHints;
     int mDisplayedGeneration = 0;
     int mItemCount = 0;
+    int mRequestedGeneration = this.mDisplayedGeneration;
+    private int mScrollHint = 0;
     private final ThreadUtil.MainThreadCallback<T> mMainThreadCallback = new ThreadUtil.MainThreadCallback<T>() {
         public void updateItemCount(int generation, int itemCount) {
             if (isRequestedGeneration(generation)) {
@@ -189,22 +198,6 @@ public class AsyncListUtil<T> {
             return generation == AsyncListUtil.this.mRequestedGeneration;
         }
     };
-    final ThreadUtil.MainThreadCallback<T> mMainThreadProxy;
-    final SparseIntArray mMissingPositions = new SparseIntArray();
-    final int[] mPrevRange = new int[2];
-    int mRequestedGeneration = this.mDisplayedGeneration;
-    private int mScrollHint = 0;
-    final Class<T> mTClass;
-    final TileList<T> mTileList;
-    final int mTileSize;
-    final int[] mTmpRange = new int[2];
-    final int[] mTmpRangeExtended = new int[2];
-    final ViewCallback mViewCallback;
-
-    /* access modifiers changed from: package-private */
-    public void log(String s, Object... args) {
-        Log.d(TAG, "[MAIN] " + String.format(s, args));
-    }
 
     public AsyncListUtil(@NonNull Class<T> klass, int tileSize, @NonNull DataCallback<T> dataCallback, @NonNull ViewCallback viewCallback) {
         this.mTClass = klass;
@@ -216,6 +209,11 @@ public class AsyncListUtil<T> {
         this.mMainThreadProxy = threadUtil.getMainThreadProxy(this.mMainThreadCallback);
         this.mBackgroundProxy = threadUtil.getBackgroundProxy(this.mBackgroundCallback);
         refresh();
+    }
+
+    /* access modifiers changed from: package-private */
+    public void log(String s, Object... args) {
+        Log.d(TAG, "[MAIN] " + String.format(s, args));
     }
 
     private boolean isRefreshPending() {

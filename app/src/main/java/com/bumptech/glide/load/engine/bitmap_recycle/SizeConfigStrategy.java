@@ -5,7 +5,9 @@ import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.annotation.VisibleForTesting;
+
 import com.bumptech.glide.util.Util;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NavigableMap;
@@ -19,9 +21,6 @@ public class SizeConfigStrategy implements LruPoolStrategy {
     private static final int MAX_SIZE_MULTIPLE = 8;
     private static final Bitmap.Config[] RGBA_F16_IN_CONFIGS = ARGB_8888_IN_CONFIGS;
     private static final Bitmap.Config[] RGB_565_IN_CONFIGS = {Bitmap.Config.RGB_565};
-    private final GroupedLinkedMap<Key, Bitmap> groupedMap = new GroupedLinkedMap<>();
-    private final KeyPool keyPool = new KeyPool();
-    private final Map<Bitmap.Config, NavigableMap<Integer, Integer>> sortedSizes = new HashMap();
 
     /* JADX WARN: Type inference failed for: r3v6, types: [java.lang.Object[]] */
     /* JADX WARNING: Multi-variable type inference failed */
@@ -66,6 +65,41 @@ public class SizeConfigStrategy implements LruPoolStrategy {
             return
         */
         throw new UnsupportedOperationException("Method not decompiled: com.bumptech.glide.load.engine.bitmap_recycle.SizeConfigStrategy.<clinit>():void");
+    }
+
+    private final GroupedLinkedMap<Key, Bitmap> groupedMap = new GroupedLinkedMap<>();
+    private final KeyPool keyPool = new KeyPool();
+    private final Map<Bitmap.Config, NavigableMap<Integer, Integer>> sortedSizes = new HashMap();
+
+    static String getBitmapString(int size, Bitmap.Config config) {
+        String valueOf = String.valueOf(config);
+        StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 15);
+        sb.append("[");
+        sb.append(size);
+        sb.append("](");
+        sb.append(valueOf);
+        sb.append(")");
+        return sb.toString();
+    }
+
+    private static Bitmap.Config[] getInConfigs(Bitmap.Config requested) {
+        if (Build.VERSION.SDK_INT >= 26 && Bitmap.Config.RGBA_F16.equals(requested)) {
+            return RGBA_F16_IN_CONFIGS;
+        }
+        int i = C07981.$SwitchMap$android$graphics$Bitmap$Config[requested.ordinal()];
+        if (i == 1) {
+            return ARGB_8888_IN_CONFIGS;
+        }
+        if (i == 2) {
+            return RGB_565_IN_CONFIGS;
+        }
+        if (i == 3) {
+            return ARGB_4444_IN_CONFIGS;
+        }
+        if (i == 4) {
+            return ALPHA_8_IN_CONFIGS;
+        }
+        return new Bitmap.Config[]{requested};
     }
 
     public void put(Bitmap bitmap) {
@@ -209,9 +243,9 @@ public class SizeConfigStrategy implements LruPoolStrategy {
 
     @VisibleForTesting
     static final class Key implements Poolable {
-        private Bitmap.Config config;
         private final KeyPool pool;
         int size;
+        private Bitmap.Config config;
 
         public Key(KeyPool pool2) {
             this.pool = pool2;
@@ -252,37 +286,6 @@ public class SizeConfigStrategy implements LruPoolStrategy {
             Bitmap.Config config2 = this.config;
             return i + (config2 != null ? config2.hashCode() : 0);
         }
-    }
-
-    static String getBitmapString(int size, Bitmap.Config config) {
-        String valueOf = String.valueOf(config);
-        StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 15);
-        sb.append("[");
-        sb.append(size);
-        sb.append("](");
-        sb.append(valueOf);
-        sb.append(")");
-        return sb.toString();
-    }
-
-    private static Bitmap.Config[] getInConfigs(Bitmap.Config requested) {
-        if (Build.VERSION.SDK_INT >= 26 && Bitmap.Config.RGBA_F16.equals(requested)) {
-            return RGBA_F16_IN_CONFIGS;
-        }
-        int i = C07981.$SwitchMap$android$graphics$Bitmap$Config[requested.ordinal()];
-        if (i == 1) {
-            return ARGB_8888_IN_CONFIGS;
-        }
-        if (i == 2) {
-            return RGB_565_IN_CONFIGS;
-        }
-        if (i == 3) {
-            return ARGB_4444_IN_CONFIGS;
-        }
-        if (i == 4) {
-            return ALPHA_8_IN_CONFIGS;
-        }
-        return new Bitmap.Config[]{requested};
     }
 
     /* renamed from: com.bumptech.glide.load.engine.bitmap_recycle.SizeConfigStrategy$1 */

@@ -1,8 +1,10 @@
 package com.bumptech.glide.manager;
 
 import android.support.annotation.NonNull;
+
 import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.util.Util;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;

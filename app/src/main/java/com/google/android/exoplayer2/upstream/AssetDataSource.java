@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.net.Uri;
 import android.support.annotation.Nullable;
+
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,12 +17,6 @@ public final class AssetDataSource extends BaseDataSource {
     private boolean opened;
     @Nullable
     private Uri uri;
-
-    public static final class AssetDataSourceException extends IOException {
-        public AssetDataSourceException(IOException cause) {
-            super(cause);
-        }
-    }
 
     public AssetDataSource(Context context) {
         super(false);
@@ -125,6 +120,12 @@ public final class AssetDataSource extends BaseDataSource {
                 transferEnded();
             }
             throw th;
+        }
+    }
+
+    public static final class AssetDataSourceException extends IOException {
+        public AssetDataSourceException(IOException cause) {
+            super(cause);
         }
     }
 }

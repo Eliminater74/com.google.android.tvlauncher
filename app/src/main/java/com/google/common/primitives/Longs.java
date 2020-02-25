@@ -4,6 +4,9 @@ import com.google.common.annotations.Beta;
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.base.Converter;
 import com.google.common.base.Preconditions;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.Serializable;
 import java.util.AbstractList;
 import java.util.Arrays;
@@ -12,7 +15,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.RandomAccess;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible
 public final class Longs {
@@ -151,33 +153,6 @@ public final class Longs {
         return ((((long) b1) & 255) << 56) | ((((long) b2) & 255) << 48) | ((((long) b3) & 255) << 40) | ((((long) b4) & 255) << 32) | ((((long) b5) & 255) << 24) | ((((long) b6) & 255) << 16) | ((((long) b7) & 255) << 8) | (255 & ((long) b8));
     }
 
-    static final class AsciiDigits {
-        private static final byte[] asciiDigits;
-
-        private AsciiDigits() {
-        }
-
-        static {
-            byte[] result = new byte[128];
-            Arrays.fill(result, (byte) -1);
-            for (int i = 0; i <= 9; i++) {
-                result[i + 48] = (byte) i;
-            }
-            for (int i2 = 0; i2 <= 26; i2++) {
-                result[i2 + 65] = (byte) (i2 + 10);
-                result[i2 + 97] = (byte) (i2 + 10);
-            }
-            asciiDigits = result;
-        }
-
-        static int digit(char c) {
-            if (c < 128) {
-                return asciiDigits[c];
-            }
-            return -1;
-        }
-    }
-
     @NullableDecl
     @Beta
     public static Long tryParse(String string) {
@@ -233,32 +208,6 @@ public final class Longs {
         return Long.valueOf(-accum);
     }
 
-    private static final class LongConverter extends Converter<String, Long> implements Serializable {
-        static final LongConverter INSTANCE = new LongConverter();
-        private static final long serialVersionUID = 1;
-
-        private LongConverter() {
-        }
-
-        /* access modifiers changed from: protected */
-        public Long doForward(String value) {
-            return Long.decode(value);
-        }
-
-        /* access modifiers changed from: protected */
-        public String doBackward(Long value) {
-            return value.toString();
-        }
-
-        public String toString() {
-            return "Longs.stringConverter()";
-        }
-
-        private Object readResolve() {
-            return INSTANCE;
-        }
-    }
-
     @Beta
     public static Converter<String, Long> stringConverter() {
         return LongConverter.INSTANCE;
@@ -290,25 +239,6 @@ public final class Longs {
 
     public static Comparator<long[]> lexicographicalComparator() {
         return LexicographicalComparator.INSTANCE;
-    }
-
-    private enum LexicographicalComparator implements Comparator<long[]> {
-        INSTANCE;
-
-        public int compare(long[] left, long[] right) {
-            int minLength = Math.min(left.length, right.length);
-            for (int i = 0; i < minLength; i++) {
-                int result = Longs.compare(left[i], right[i]);
-                if (result != 0) {
-                    return result;
-                }
-            }
-            return left.length - right.length;
-        }
-
-        public String toString() {
-            return "Longs.lexicographicalComparator()";
-        }
     }
 
     public static void sortDescending(long[] array) {
@@ -358,6 +288,78 @@ public final class Longs {
             return Collections.emptyList();
         }
         return new LongArrayAsList(backingArray);
+    }
+
+    private enum LexicographicalComparator implements Comparator<long[]> {
+        INSTANCE;
+
+        public int compare(long[] left, long[] right) {
+            int minLength = Math.min(left.length, right.length);
+            for (int i = 0; i < minLength; i++) {
+                int result = Longs.compare(left[i], right[i]);
+                if (result != 0) {
+                    return result;
+                }
+            }
+            return left.length - right.length;
+        }
+
+        public String toString() {
+            return "Longs.lexicographicalComparator()";
+        }
+    }
+
+    static final class AsciiDigits {
+        private static final byte[] asciiDigits;
+
+        static {
+            byte[] result = new byte[128];
+            Arrays.fill(result, (byte) -1);
+            for (int i = 0; i <= 9; i++) {
+                result[i + 48] = (byte) i;
+            }
+            for (int i2 = 0; i2 <= 26; i2++) {
+                result[i2 + 65] = (byte) (i2 + 10);
+                result[i2 + 97] = (byte) (i2 + 10);
+            }
+            asciiDigits = result;
+        }
+
+        private AsciiDigits() {
+        }
+
+        static int digit(char c) {
+            if (c < 128) {
+                return asciiDigits[c];
+            }
+            return -1;
+        }
+    }
+
+    private static final class LongConverter extends Converter<String, Long> implements Serializable {
+        static final LongConverter INSTANCE = new LongConverter();
+        private static final long serialVersionUID = 1;
+
+        private LongConverter() {
+        }
+
+        /* access modifiers changed from: protected */
+        public Long doForward(String value) {
+            return Long.decode(value);
+        }
+
+        /* access modifiers changed from: protected */
+        public String doBackward(Long value) {
+            return value.toString();
+        }
+
+        public String toString() {
+            return "Longs.stringConverter()";
+        }
+
+        private Object readResolve() {
+            return INSTANCE;
+        }
     }
 
     @GwtCompatible

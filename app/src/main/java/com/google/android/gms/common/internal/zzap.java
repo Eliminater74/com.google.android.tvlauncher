@@ -3,6 +3,7 @@ package com.google.android.gms.common.internal;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.TaskCompletionSource;
+
 import java.util.concurrent.TimeUnit;
 
 /* compiled from: PendingResultUtil */

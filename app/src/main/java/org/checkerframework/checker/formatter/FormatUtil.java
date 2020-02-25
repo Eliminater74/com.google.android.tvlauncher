@@ -1,5 +1,8 @@
 package org.checkerframework.checker.formatter;
 
+import org.checkerframework.checker.formatter.qual.ConversionCategory;
+import org.checkerframework.checker.formatter.qual.ReturnsFormat;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.IllegalFormatConversionException;
@@ -8,32 +11,10 @@ import java.util.Map;
 import java.util.MissingFormatArgumentException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.checkerframework.checker.formatter.qual.ConversionCategory;
-import org.checkerframework.checker.formatter.qual.ReturnsFormat;
 
 public class FormatUtil {
     private static final String formatSpecifier = "%(\\d+\\$)?([-#+ 0,(\\<]*)?(\\d+)?(\\.\\d+)?([tT])?([a-zA-Z%])";
     private static Pattern fsPattern = Pattern.compile(formatSpecifier);
-
-    private static class Conversion {
-        private final ConversionCategory cath;
-        private final int index;
-
-        public Conversion(char c, int index2) {
-            this.index = index2;
-            this.cath = ConversionCategory.fromConversionChar(c);
-        }
-
-        /* access modifiers changed from: package-private */
-        public int index() {
-            return this.index;
-        }
-
-        /* access modifiers changed from: package-private */
-        public ConversionCategory category() {
-            return this.cath;
-        }
-    }
 
     @ReturnsFormat
     public static String asFormat(String format, ConversionCategory... cc) throws IllegalFormatException {
@@ -112,6 +93,26 @@ public class FormatUtil {
             }
         }
         return (Conversion[]) cs.toArray(new Conversion[cs.size()]);
+    }
+
+    private static class Conversion {
+        private final ConversionCategory cath;
+        private final int index;
+
+        public Conversion(char c, int index2) {
+            this.index = index2;
+            this.cath = ConversionCategory.fromConversionChar(c);
+        }
+
+        /* access modifiers changed from: package-private */
+        public int index() {
+            return this.index;
+        }
+
+        /* access modifiers changed from: package-private */
+        public ConversionCategory category() {
+            return this.cath;
+        }
     }
 
     public static class ExcessiveOrMissingFormatArgumentException extends MissingFormatArgumentException {

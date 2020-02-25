@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
+
 import com.google.android.tvlauncher.C1188R;
 
 public class NowPlayingIndicatorView extends View {
@@ -53,6 +54,13 @@ public class NowPlayingIndicatorView extends View {
             customAttrs.recycle();
             throw th;
         }
+    }
+
+    private static float linearlyInterpolateWithWrapping(float position, int[] array) {
+        int positionRoundedDown = (int) position;
+        int beforeIndex = positionRoundedDown % array.length;
+        float weight = position - ((float) positionRoundedDown);
+        return (((float) array[beforeIndex]) * (1.0f - weight)) + (((float) array[(beforeIndex + 1) % array.length]) * weight);
     }
 
     /* access modifiers changed from: protected */
@@ -111,12 +119,5 @@ public class NowPlayingIndicatorView extends View {
             this.mDrawRect.top = (int) (((float) getPaddingTop()) + (((float) barMaxHeight) * (1.0f - (value / 15.0f))));
             canvas.drawRect(this.mDrawRect, this.mPaint);
         }
-    }
-
-    private static float linearlyInterpolateWithWrapping(float position, int[] array) {
-        int positionRoundedDown = (int) position;
-        int beforeIndex = positionRoundedDown % array.length;
-        float weight = position - ((float) positionRoundedDown);
-        return (((float) array[beforeIndex]) * (1.0f - weight)) + (((float) array[(beforeIndex + 1) % array.length]) * weight);
     }
 }

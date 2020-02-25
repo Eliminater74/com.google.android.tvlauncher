@@ -8,56 +8,26 @@ import android.content.pm.ResolveInfo;
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 import android.support.p001v4.content.IntentCompat;
+
 import com.google.android.tvlauncher.C1188R;
 import com.google.android.tvlauncher.data.PackagesWithChannelsObserver;
 import com.google.android.tvlauncher.data.TvDataManager;
 import com.google.android.tvlauncher.model.ChannelPackage;
 import com.google.android.tvrecommendations.shared.util.Constants;
+
 import java.util.ArrayList;
 import java.util.List;
 
 class AppModel {
     private Context mContext;
     private LoadAppsCallback mLoadAppsCallback;
+    private TvDataManager mTvDataManager;
     @VisibleForTesting
     final PackagesWithChannelsObserver mPackagesObserver = new PackagesWithChannelsObserver() {
         public void onPackagesChange() {
             AppModel.this.onPackagesDataLoaded();
         }
     };
-    private TvDataManager mTvDataManager;
-
-    interface LoadAppsCallback {
-        void onAppsChanged();
-
-        void onAppsLoaded(List<AppInfo> list);
-    }
-
-    static class AppInfo implements Comparable<AppInfo> {
-        ChannelPackage mChannelPackage;
-        final String mPackageName;
-        ResolveInfo mResolveInfo;
-        CharSequence mTitle;
-
-        AppInfo(String packageName, ChannelPackage channelPackage, ApplicationInfo applicationInfo, PackageManager packageManager) {
-            this(packageName, channelPackage, packageManager.getApplicationLabel(applicationInfo), AppModel.getResolveInfo(packageName, packageManager));
-        }
-
-        AppInfo(String packageName, ChannelPackage channelPackage, CharSequence title, ResolveInfo resolveInfo) {
-            this.mPackageName = packageName;
-            this.mChannelPackage = channelPackage;
-            this.mTitle = title;
-            this.mResolveInfo = resolveInfo;
-        }
-
-        public int compareTo(@NonNull AppInfo o) {
-            CharSequence charSequence = this.mTitle;
-            if (charSequence == null) {
-                return o.mTitle != null ? 1 : 0;
-            }
-            return charSequence.toString().compareToIgnoreCase(o.mTitle.toString());
-        }
-    }
 
     AppModel(Context context) {
         this.mContext = context;
@@ -69,6 +39,17 @@ class AppModel {
     AppModel(Context context, TvDataManager tvDataManager) {
         this.mContext = context;
         this.mTvDataManager = tvDataManager;
+    }
+
+    /* access modifiers changed from: private */
+    public static ResolveInfo getResolveInfo(String packageName, PackageManager packageManager) {
+        Intent mainIntent = new Intent("android.intent.action.MAIN");
+        mainIntent.setPackage(packageName).addCategory(IntentCompat.CATEGORY_LEANBACK_LAUNCHER);
+        List<ResolveInfo> infos = packageManager.queryIntentActivities(mainIntent, 1);
+        if (infos == null || infos.size() <= 0) {
+            return null;
+        }
+        return infos.get(0);
     }
 
     /* access modifiers changed from: package-private */
@@ -117,14 +98,35 @@ class AppModel {
         }
     }
 
-    /* access modifiers changed from: private */
-    public static ResolveInfo getResolveInfo(String packageName, PackageManager packageManager) {
-        Intent mainIntent = new Intent("android.intent.action.MAIN");
-        mainIntent.setPackage(packageName).addCategory(IntentCompat.CATEGORY_LEANBACK_LAUNCHER);
-        List<ResolveInfo> infos = packageManager.queryIntentActivities(mainIntent, 1);
-        if (infos == null || infos.size() <= 0) {
-            return null;
+    interface LoadAppsCallback {
+        void onAppsChanged();
+
+        void onAppsLoaded(List<AppInfo> list);
+    }
+
+    static class AppInfo implements Comparable<AppInfo> {
+        final String mPackageName;
+        ChannelPackage mChannelPackage;
+        ResolveInfo mResolveInfo;
+        CharSequence mTitle;
+
+        AppInfo(String packageName, ChannelPackage channelPackage, ApplicationInfo applicationInfo, PackageManager packageManager) {
+            this(packageName, channelPackage, packageManager.getApplicationLabel(applicationInfo), AppModel.getResolveInfo(packageName, packageManager));
         }
-        return infos.get(0);
+
+        AppInfo(String packageName, ChannelPackage channelPackage, CharSequence title, ResolveInfo resolveInfo) {
+            this.mPackageName = packageName;
+            this.mChannelPackage = channelPackage;
+            this.mTitle = title;
+            this.mResolveInfo = resolveInfo;
+        }
+
+        public int compareTo(@NonNull AppInfo o) {
+            CharSequence charSequence = this.mTitle;
+            if (charSequence == null) {
+                return o.mTitle != null ? 1 : 0;
+            }
+            return charSequence.toString().compareToIgnoreCase(o.mTitle.toString());
+        }
     }
 }

@@ -2,17 +2,19 @@ package com.google.common.collect;
 
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.base.Objects;
-import java.util.Map;
+
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
+import java.util.Map;
 
 @GwtCompatible
 abstract class AbstractMapEntry<K, V> implements Map.Entry<K, V> {
+    AbstractMapEntry() {
+    }
+
     public abstract K getKey();
 
     public abstract V getValue();
-
-    AbstractMapEntry() {
-    }
 
     public V setValue(V v) {
         throw new UnsupportedOperationException();

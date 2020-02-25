@@ -2,6 +2,7 @@ package com.google.android.libraries.gcoreclient.common.api.support;
 
 import android.os.Bundle;
 import android.support.p001v4.util.ArrayMap;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.Api;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -16,8 +17,9 @@ import com.google.android.libraries.gcoreclient.common.api.GcorePendingResult;
 import com.google.android.libraries.gcoreclient.common.api.GcoreResult;
 import com.google.android.libraries.gcoreclient.common.api.GcoreScope;
 import com.google.android.libraries.gcoreclient.common.api.GcoreStatus;
-import com.google.android.libraries.gcoreclient.common.api.support.BaseGcoreApi;
+
 import java.util.Map;
+
 import javax.annotation.concurrent.GuardedBy;
 
 abstract class BaseGcoreWrapper {

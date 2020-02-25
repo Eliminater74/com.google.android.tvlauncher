@@ -8,11 +8,11 @@ final class WavHeader implements SeekMap {
     private final int averageBytesPerSecond;
     private final int bitsPerSample;
     private final int blockAlignment;
-    private long dataSize;
-    private long dataStartPosition;
     private final int encoding;
     private final int numChannels;
     private final int sampleRateHz;
+    private long dataSize;
+    private long dataStartPosition;
 
     public WavHeader(int numChannels2, int sampleRateHz2, int averageBytesPerSecond2, int blockAlignment2, int bitsPerSample2, int encoding2) {
         this.numChannels = numChannels2;

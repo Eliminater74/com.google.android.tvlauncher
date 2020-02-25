@@ -14,7 +14,9 @@ import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Transformation;
 import android.widget.FrameLayout;
+
 import androidx.leanback.C0364R;
+
 import java.util.ArrayList;
 
 public class BaseCardView extends FrameLayout {
@@ -24,27 +26,27 @@ public class BaseCardView extends FrameLayout {
     public static final int CARD_TYPE_INFO_OVER = 1;
     public static final int CARD_TYPE_INFO_UNDER = 2;
     public static final int CARD_TYPE_INFO_UNDER_WITH_EXTRA = 3;
-    private static final int CARD_TYPE_INVALID = 4;
     public static final int CARD_TYPE_MAIN_ONLY = 0;
+    private static final int CARD_TYPE_INVALID = 4;
     private static final boolean DEBUG = false;
     private static final int[] LB_PRESSED_STATE_SET = {16842919};
     private static final String TAG = "BaseCardView";
     private final int mActivatedAnimDuration;
-    private Animation mAnim;
     private final Runnable mAnimationTrigger;
-    private int mCardType;
-    private boolean mDelaySelectedAnim;
+    private final int mSelectedAnimDuration;
     ArrayList<View> mExtraViewList;
-    private int mExtraVisibility;
     float mInfoAlpha;
     float mInfoOffset;
     ArrayList<View> mInfoViewList;
     float mInfoVisFraction;
+    private Animation mAnim;
+    private int mCardType;
+    private boolean mDelaySelectedAnim;
+    private int mExtraVisibility;
     private int mInfoVisibility;
     private ArrayList<View> mMainViewList;
     private int mMeasuredHeight;
     private int mMeasuredWidth;
-    private final int mSelectedAnimDuration;
     private int mSelectedAnimationDelay;
 
     public BaseCardView(Context context) {
@@ -96,12 +98,16 @@ public class BaseCardView extends FrameLayout {
         }
     }
 
+    public boolean isSelectedAnimationDelayed() {
+        return this.mDelaySelectedAnim;
+    }
+
     public void setSelectedAnimationDelayed(boolean delay) {
         this.mDelaySelectedAnim = delay;
     }
 
-    public boolean isSelectedAnimationDelayed() {
-        return this.mDelaySelectedAnim;
+    public int getCardType() {
+        return this.mCardType;
     }
 
     public void setCardType(int type) {
@@ -116,8 +122,18 @@ public class BaseCardView extends FrameLayout {
         }
     }
 
-    public int getCardType() {
-        return this.mCardType;
+    /* access modifiers changed from: package-private */
+    public final float getFinalInfoVisFraction() {
+        return (this.mCardType == 2 && this.mInfoVisibility == 2 && !isSelected()) ? 0.0f : 1.0f;
+    }
+
+    /* access modifiers changed from: package-private */
+    public final float getFinalInfoAlpha() {
+        return (this.mCardType == 1 && this.mInfoVisibility == 2 && !isSelected()) ? 0.0f : 1.0f;
+    }
+
+    public int getInfoVisibility() {
+        return this.mInfoVisibility;
     }
 
     public void setInfoVisibility(int visibility) {
@@ -136,18 +152,9 @@ public class BaseCardView extends FrameLayout {
         }
     }
 
-    /* access modifiers changed from: package-private */
-    public final float getFinalInfoVisFraction() {
-        return (this.mCardType == 2 && this.mInfoVisibility == 2 && !isSelected()) ? 0.0f : 1.0f;
-    }
-
-    /* access modifiers changed from: package-private */
-    public final float getFinalInfoAlpha() {
-        return (this.mCardType == 1 && this.mInfoVisibility == 2 && !isSelected()) ? 0.0f : 1.0f;
-    }
-
-    public int getInfoVisibility() {
-        return this.mInfoVisibility;
+    @Deprecated
+    public int getExtraVisibility() {
+        return this.mExtraVisibility;
     }
 
     @Deprecated
@@ -155,11 +162,6 @@ public class BaseCardView extends FrameLayout {
         if (this.mExtraVisibility != visibility) {
             this.mExtraVisibility = visibility;
         }
-    }
-
-    @Deprecated
-    public int getExtraVisibility() {
-        return this.mExtraVisibility;
     }
 
     public void setActivated(boolean activated) {
@@ -584,6 +586,10 @@ public class BaseCardView extends FrameLayout {
         return p instanceof LayoutParams;
     }
 
+    public String toString() {
+        return super.toString();
+    }
+
     public static class LayoutParams extends FrameLayout.LayoutParams {
         public static final int VIEW_TYPE_EXTRA = 2;
         public static final int VIEW_TYPE_INFO = 1;
@@ -683,9 +689,5 @@ public class BaseCardView extends FrameLayout {
                 BaseCardView.this.mInfoViewList.get(i).setAlpha(BaseCardView.this.mInfoAlpha);
             }
         }
-    }
-
-    public String toString() {
-        return super.toString();
     }
 }

@@ -2,6 +2,7 @@ package com.google.common.util.concurrent;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
+
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicReference;
@@ -9,12 +10,6 @@ import java.util.concurrent.atomic.AtomicReference;
 @Beta
 public final class ExecutionSequencer {
     private final AtomicReference<ListenableFuture<Object>> ref = new AtomicReference<>(Futures.immediateFuture(null));
-
-    enum RunningState {
-        NOT_RUN,
-        CANCELLED,
-        STARTED
-    }
 
     private ExecutionSequencer() {
     }
@@ -76,5 +71,11 @@ public final class ExecutionSequencer {
         outputFuture.addListener(listener, MoreExecutors.directExecutor());
         taskFuture.addListener(listener, MoreExecutors.directExecutor());
         return outputFuture;
+    }
+
+    enum RunningState {
+        NOT_RUN,
+        CANCELLED,
+        STARTED
     }
 }

@@ -26,6 +26,8 @@ public interface SupportMenuItem extends MenuItem {
 
     CharSequence getContentDescription();
 
+    SupportMenuItem setContentDescription(CharSequence charSequence);
+
     ColorStateList getIconTintList();
 
     PorterDuff.Mode getIconTintMode();
@@ -34,7 +36,11 @@ public interface SupportMenuItem extends MenuItem {
 
     ActionProvider getSupportActionProvider();
 
+    SupportMenuItem setSupportActionProvider(ActionProvider actionProvider);
+
     CharSequence getTooltipText();
+
+    SupportMenuItem setTooltipText(CharSequence charSequence);
 
     boolean isActionViewExpanded();
 
@@ -48,8 +54,6 @@ public interface SupportMenuItem extends MenuItem {
 
     MenuItem setAlphabeticShortcut(char c, int i);
 
-    SupportMenuItem setContentDescription(CharSequence charSequence);
-
     MenuItem setIconTintList(ColorStateList colorStateList);
 
     MenuItem setIconTintMode(PorterDuff.Mode mode);
@@ -61,8 +65,4 @@ public interface SupportMenuItem extends MenuItem {
     void setShowAsAction(int i);
 
     MenuItem setShowAsActionFlags(int i);
-
-    SupportMenuItem setSupportActionProvider(ActionProvider actionProvider);
-
-    SupportMenuItem setTooltipText(CharSequence charSequence);
 }

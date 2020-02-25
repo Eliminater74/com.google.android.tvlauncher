@@ -1,7 +1,5 @@
 package com.google.android.gms.internal;
 
-import com.google.android.gms.internal.zzgmp;
-import com.google.android.gms.internal.zzgmq;
 import java.io.IOException;
 
 /* compiled from: AbstractMessageLite */

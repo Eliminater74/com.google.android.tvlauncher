@@ -3,6 +3,7 @@ package com.google.android.libraries.stitch.util;
 import android.os.SystemClock;
 import android.text.format.DateFormat;
 import android.util.Log;
+
 import java.util.Date;
 
 public final class LogUtil {

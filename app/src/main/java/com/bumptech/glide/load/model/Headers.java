@@ -1,6 +1,5 @@
 package com.bumptech.glide.load.model;
 
-import com.bumptech.glide.load.model.LazyHeaders;
 import java.util.Collections;
 import java.util.Map;
 

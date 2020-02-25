@@ -10,27 +10,27 @@ import android.net.Uri;
 import android.support.annotation.VisibleForTesting;
 import android.support.p001v4.content.ContextCompat;
 import android.text.TextUtils;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.BaseRequestOptions;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.tvlauncher.C1188R;
+
 import java.util.Comparator;
 import java.util.Objects;
 
 @VisibleForTesting(otherwise = 3)
 public class TvInputEntry {
-    private final HdmiDeviceInfo mHdmiInfo;
-    private Drawable mIcon;
-    private int mIconState;
-    private final Uri mIconUri;
-    private final String mId;
     /* access modifiers changed from: private */
     public final TvInputInfo mInfo;
     /* access modifiers changed from: private */
-    public String mLabel;
-    private int mNumChildren;
+    public final int mType;
+    private final HdmiDeviceInfo mHdmiInfo;
+    private final Uri mIconUri;
+    private final String mId;
     private final TvInputEntry mParentEntry;
-    private String mParentLabel;
+    /* access modifiers changed from: private */
+    public String mLabel;
     /* access modifiers changed from: private */
     public int mPriority;
     /* access modifiers changed from: private */
@@ -39,8 +39,10 @@ public class TvInputEntry {
     public String mSortingParentLabel;
     /* access modifiers changed from: private */
     public int mState;
-    /* access modifiers changed from: private */
-    public final int mType;
+    private Drawable mIcon;
+    private int mIconState;
+    private int mNumChildren;
+    private String mParentLabel;
 
     TvInputEntry(String id, int type, String label, Uri iconUri) {
         this.mId = id;

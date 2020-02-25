@@ -3,6 +3,7 @@ package androidx.leanback.app;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.graphics.drawable.Drawable;
+
 import androidx.leanback.media.PlaybackGlue;
 import androidx.leanback.widget.DetailsParallax;
 import androidx.leanback.widget.Parallax;
@@ -10,17 +11,17 @@ import androidx.leanback.widget.ParallaxEffect;
 import androidx.leanback.widget.ParallaxTarget;
 
 final class DetailsBackgroundVideoHelper {
-    private static final long BACKGROUND_CROSS_FADE_DURATION = 500;
-    private static final long CROSSFADE_DELAY = 1000;
     static final int INITIAL = 0;
     static final int NO_VIDEO = 2;
     static final int PLAY_VIDEO = 1;
+    private static final long BACKGROUND_CROSS_FADE_DURATION = 500;
+    private static final long CROSSFADE_DELAY = 1000;
+    private final DetailsParallax mDetailsParallax;
     ValueAnimator mBackgroundAnimator;
     Drawable mBackgroundDrawable;
-    private boolean mBackgroundDrawableVisible;
     PlaybackControlStateCallback mControlStateCallback = new PlaybackControlStateCallback();
+    private boolean mBackgroundDrawableVisible;
     private int mCurrentState = 0;
-    private final DetailsParallax mDetailsParallax;
     private ParallaxEffect mParallaxEffect;
     private PlaybackGlue mPlaybackGlue;
 

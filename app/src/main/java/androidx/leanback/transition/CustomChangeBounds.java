@@ -7,14 +7,15 @@ import android.transition.TransitionValues;
 import android.util.SparseIntArray;
 import android.view.View;
 import android.view.ViewGroup;
+
 import java.util.HashMap;
 
 @RequiresApi(19)
 class CustomChangeBounds extends ChangeBounds {
     final HashMap<String, Integer> mClassStartDelays = new HashMap<>();
-    int mDefaultStartDelay;
     final SparseIntArray mIdStartDelays = new SparseIntArray();
     final HashMap<View, Integer> mViewStartDelays = new HashMap<>();
+    int mDefaultStartDelay;
 
     CustomChangeBounds() {
     }

@@ -1,12 +1,13 @@
 package com.google.android.exoplayer2.trackselection;
 
 import android.support.annotation.Nullable;
+
 import java.util.Arrays;
 
 public final class TrackSelectionArray {
-    private int hashCode;
     public final int length;
     private final TrackSelection[] trackSelections;
+    private int hashCode;
 
     public TrackSelectionArray(TrackSelection... trackSelections2) {
         this.trackSelections = trackSelections2;

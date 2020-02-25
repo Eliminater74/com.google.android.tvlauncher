@@ -6,6 +6,8 @@ import android.view.View;
 
 public interface Transition<R> {
 
+    boolean transition(R r, ViewAdapter viewAdapter);
+
     public interface ViewAdapter {
         @Nullable
         Drawable getCurrentDrawable();
@@ -14,6 +16,4 @@ public interface Transition<R> {
 
         void setDrawable(Drawable drawable);
     }
-
-    boolean transition(R r, ViewAdapter viewAdapter);
 }

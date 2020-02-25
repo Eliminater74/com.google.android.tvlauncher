@@ -1,12 +1,9 @@
 package com.google.protobuf;
 
 import android.support.p001v4.media.session.PlaybackStateCompat;
-import com.google.protobuf.Internal;
-import com.google.protobuf.MapEntryLite;
-import com.google.protobuf.Utf8;
-import com.google.protobuf.WireFormat;
-import com.google.protobuf.Writer;
+
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -19,48 +16,20 @@ abstract class BinaryWriter extends ByteOutput implements Writer {
     public static final int DEFAULT_CHUNK_SIZE = 4096;
     private static final int MAP_KEY_NUMBER = 1;
     private static final int MAP_VALUE_NUMBER = 2;
-    private final BufferAllocator alloc;
     final ArrayDeque<AllocatedBuffer> buffers;
+    private final BufferAllocator alloc;
     private final int chunkSize;
     int totalDoneBytes;
 
-    /* access modifiers changed from: package-private */
-    public abstract void finishCurrentBuffer();
-
-    public abstract int getTotalBytesWritten();
-
-    /* access modifiers changed from: package-private */
-    public abstract void requireSpace(int i);
-
-    /* access modifiers changed from: package-private */
-    public abstract void writeBool(boolean z);
-
-    /* access modifiers changed from: package-private */
-    public abstract void writeFixed32(int i);
-
-    /* access modifiers changed from: package-private */
-    public abstract void writeFixed64(long j);
-
-    /* access modifiers changed from: package-private */
-    public abstract void writeInt32(int i);
-
-    /* access modifiers changed from: package-private */
-    public abstract void writeSInt32(int i);
-
-    /* access modifiers changed from: package-private */
-    public abstract void writeSInt64(long j);
-
-    /* access modifiers changed from: package-private */
-    public abstract void writeString(String str);
-
-    /* access modifiers changed from: package-private */
-    public abstract void writeTag(int i, int i2);
-
-    /* access modifiers changed from: package-private */
-    public abstract void writeVarint32(int i);
-
-    /* access modifiers changed from: package-private */
-    public abstract void writeVarint64(long j);
+    private BinaryWriter(BufferAllocator alloc2, int chunkSize2) {
+        this.buffers = new ArrayDeque<>(4);
+        if (chunkSize2 > 0) {
+            this.alloc = (BufferAllocator) Internal.checkNotNull(alloc2, "alloc");
+            this.chunkSize = chunkSize2;
+            return;
+        }
+        throw new IllegalArgumentException("chunkSize must be > 0");
+    }
 
     public static BinaryWriter newHeapInstance(BufferAllocator alloc2) {
         return newHeapInstance(alloc2, 4096);
@@ -114,15 +83,135 @@ abstract class BinaryWriter extends ByteOutput implements Writer {
         throw new UnsupportedOperationException("Unsafe operations not supported");
     }
 
-    private BinaryWriter(BufferAllocator alloc2, int chunkSize2) {
-        this.buffers = new ArrayDeque<>(4);
-        if (chunkSize2 > 0) {
-            this.alloc = (BufferAllocator) Internal.checkNotNull(alloc2, "alloc");
-            this.chunkSize = chunkSize2;
-            return;
+    static final void writeMapEntryField(Writer writer, int fieldNumber, WireFormat.FieldType fieldType, Object object) throws IOException {
+        switch (fieldType) {
+            case BOOL:
+                writer.writeBool(fieldNumber, ((Boolean) object).booleanValue());
+                return;
+            case FIXED32:
+                writer.writeFixed32(fieldNumber, ((Integer) object).intValue());
+                return;
+            case FIXED64:
+                writer.writeFixed64(fieldNumber, ((Long) object).longValue());
+                return;
+            case INT32:
+                writer.writeInt32(fieldNumber, ((Integer) object).intValue());
+                return;
+            case INT64:
+                writer.writeInt64(fieldNumber, ((Long) object).longValue());
+                return;
+            case SFIXED32:
+                writer.writeSFixed32(fieldNumber, ((Integer) object).intValue());
+                return;
+            case SFIXED64:
+                writer.writeSFixed64(fieldNumber, ((Long) object).longValue());
+                return;
+            case SINT32:
+                writer.writeSInt32(fieldNumber, ((Integer) object).intValue());
+                return;
+            case SINT64:
+                writer.writeSInt64(fieldNumber, ((Long) object).longValue());
+                return;
+            case STRING:
+                writer.writeString(fieldNumber, (String) object);
+                return;
+            case UINT32:
+                writer.writeUInt32(fieldNumber, ((Integer) object).intValue());
+                return;
+            case UINT64:
+                writer.writeUInt64(fieldNumber, ((Long) object).longValue());
+                return;
+            case FLOAT:
+                writer.writeFloat(fieldNumber, ((Float) object).floatValue());
+                return;
+            case DOUBLE:
+                writer.writeDouble(fieldNumber, ((Double) object).doubleValue());
+                return;
+            case MESSAGE:
+                writer.writeMessage(fieldNumber, object);
+                return;
+            case BYTES:
+                writer.writeBytes(fieldNumber, (ByteString) object);
+                return;
+            case ENUM:
+                if (object instanceof Internal.EnumLite) {
+                    writer.writeEnum(fieldNumber, ((Internal.EnumLite) object).getNumber());
+                    return;
+                } else if (object instanceof Integer) {
+                    writer.writeEnum(fieldNumber, ((Integer) object).intValue());
+                    return;
+                } else {
+                    throw new IllegalArgumentException("Unexpected type for enum in map.");
+                }
+            default:
+                String valueOf = String.valueOf(fieldType);
+                StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 32);
+                sb.append("Unsupported map value type for: ");
+                sb.append(valueOf);
+                throw new IllegalArgumentException(sb.toString());
         }
-        throw new IllegalArgumentException("chunkSize must be > 0");
     }
+
+    /* access modifiers changed from: private */
+    public static byte computeUInt64SizeNoTag(long value) {
+        if ((-128 & value) == 0) {
+            return 1;
+        }
+        if (value < 0) {
+            return 10;
+        }
+        byte n = 2;
+        if ((-34359738368L & value) != 0) {
+            n = (byte) (2 + 4);
+            value >>>= 28;
+        }
+        if ((-2097152 & value) != 0) {
+            n = (byte) (n + 2);
+            value >>>= 14;
+        }
+        if ((-16384 & value) != 0) {
+            return (byte) (n + 1);
+        }
+        return n;
+    }
+
+    /* access modifiers changed from: package-private */
+    public abstract void finishCurrentBuffer();
+
+    public abstract int getTotalBytesWritten();
+
+    /* access modifiers changed from: package-private */
+    public abstract void requireSpace(int i);
+
+    /* access modifiers changed from: package-private */
+    public abstract void writeBool(boolean z);
+
+    /* access modifiers changed from: package-private */
+    public abstract void writeFixed32(int i);
+
+    /* access modifiers changed from: package-private */
+    public abstract void writeFixed64(long j);
+
+    /* access modifiers changed from: package-private */
+    public abstract void writeInt32(int i);
+
+    /* access modifiers changed from: package-private */
+    public abstract void writeSInt32(int i);
+
+    /* access modifiers changed from: package-private */
+    public abstract void writeSInt64(long j);
+
+    /* access modifiers changed from: package-private */
+    public abstract void writeString(String str);
+
+    /* access modifiers changed from: package-private */
+    public abstract void writeTag(int i, int i2);
+
+    /* access modifiers changed from: package-private */
+    public abstract void writeVarint32(int i);
+
+    /* access modifiers changed from: package-private */
+    public abstract void writeVarint64(long j);
 
     public final Writer.FieldOrder fieldOrder() {
         return Writer.FieldOrder.DESCENDING;
@@ -578,75 +667,6 @@ abstract class BinaryWriter extends ByteOutput implements Writer {
         }
     }
 
-    static final void writeMapEntryField(Writer writer, int fieldNumber, WireFormat.FieldType fieldType, Object object) throws IOException {
-        switch (fieldType) {
-            case BOOL:
-                writer.writeBool(fieldNumber, ((Boolean) object).booleanValue());
-                return;
-            case FIXED32:
-                writer.writeFixed32(fieldNumber, ((Integer) object).intValue());
-                return;
-            case FIXED64:
-                writer.writeFixed64(fieldNumber, ((Long) object).longValue());
-                return;
-            case INT32:
-                writer.writeInt32(fieldNumber, ((Integer) object).intValue());
-                return;
-            case INT64:
-                writer.writeInt64(fieldNumber, ((Long) object).longValue());
-                return;
-            case SFIXED32:
-                writer.writeSFixed32(fieldNumber, ((Integer) object).intValue());
-                return;
-            case SFIXED64:
-                writer.writeSFixed64(fieldNumber, ((Long) object).longValue());
-                return;
-            case SINT32:
-                writer.writeSInt32(fieldNumber, ((Integer) object).intValue());
-                return;
-            case SINT64:
-                writer.writeSInt64(fieldNumber, ((Long) object).longValue());
-                return;
-            case STRING:
-                writer.writeString(fieldNumber, (String) object);
-                return;
-            case UINT32:
-                writer.writeUInt32(fieldNumber, ((Integer) object).intValue());
-                return;
-            case UINT64:
-                writer.writeUInt64(fieldNumber, ((Long) object).longValue());
-                return;
-            case FLOAT:
-                writer.writeFloat(fieldNumber, ((Float) object).floatValue());
-                return;
-            case DOUBLE:
-                writer.writeDouble(fieldNumber, ((Double) object).doubleValue());
-                return;
-            case MESSAGE:
-                writer.writeMessage(fieldNumber, object);
-                return;
-            case BYTES:
-                writer.writeBytes(fieldNumber, (ByteString) object);
-                return;
-            case ENUM:
-                if (object instanceof Internal.EnumLite) {
-                    writer.writeEnum(fieldNumber, ((Internal.EnumLite) object).getNumber());
-                    return;
-                } else if (object instanceof Integer) {
-                    writer.writeEnum(fieldNumber, ((Integer) object).intValue());
-                    return;
-                } else {
-                    throw new IllegalArgumentException("Unexpected type for enum in map.");
-                }
-            default:
-                String valueOf = String.valueOf(fieldType);
-                StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 32);
-                sb.append("Unsupported map value type for: ");
-                sb.append(valueOf);
-                throw new IllegalArgumentException(sb.toString());
-        }
-    }
-
     private final void writeSInt64List_Internal(int fieldNumber, List<Long> list, boolean packed) throws IOException {
         if (packed) {
             requireSpace((list.size() * 10) + 10);
@@ -732,29 +752,6 @@ abstract class BinaryWriter extends ByteOutput implements Writer {
     /* access modifiers changed from: package-private */
     public final AllocatedBuffer newDirectBuffer(int capacity) {
         return this.alloc.allocateDirectBuffer(Math.max(capacity, this.chunkSize));
-    }
-
-    /* access modifiers changed from: private */
-    public static byte computeUInt64SizeNoTag(long value) {
-        if ((-128 & value) == 0) {
-            return 1;
-        }
-        if (value < 0) {
-            return 10;
-        }
-        byte n = 2;
-        if ((-34359738368L & value) != 0) {
-            n = (byte) (2 + 4);
-            value >>>= 28;
-        }
-        if ((-2097152 & value) != 0) {
-            n = (byte) (n + 2);
-            value >>>= 14;
-        }
-        if ((-16384 & value) != 0) {
-            return (byte) (n + 1);
-        }
-        return n;
     }
 
     private static final class SafeHeapWriter extends BinaryWriter {

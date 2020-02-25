@@ -4,16 +4,15 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.leanback.C0364R;
 import androidx.leanback.system.Settings;
 import androidx.leanback.transition.TransitionHelper;
-import androidx.leanback.widget.ItemBridgeAdapter;
-import androidx.leanback.widget.Presenter;
-import androidx.leanback.widget.ShadowOverlayHelper;
 
 public class VerticalGridPresenter extends Presenter {
     private static final boolean DEBUG = false;
     private static final String TAG = "GridPresenter";
+    ShadowOverlayHelper mShadowOverlayHelper;
     private int mFocusZoomFactor;
     private boolean mKeepChildForeground;
     private int mNumColumns;
@@ -21,61 +20,8 @@ public class VerticalGridPresenter extends Presenter {
     private OnItemViewSelectedListener mOnItemViewSelectedListener;
     private boolean mRoundedCornersEnabled;
     private boolean mShadowEnabled;
-    ShadowOverlayHelper mShadowOverlayHelper;
     private ItemBridgeAdapter.Wrapper mShadowOverlayWrapper;
     private boolean mUseFocusDimmer;
-
-    class VerticalGridItemBridgeAdapter extends ItemBridgeAdapter {
-        VerticalGridItemBridgeAdapter() {
-        }
-
-        /* access modifiers changed from: protected */
-        public void onCreate(ItemBridgeAdapter.ViewHolder viewHolder) {
-            if (viewHolder.itemView instanceof ViewGroup) {
-                TransitionHelper.setTransitionGroup((ViewGroup) viewHolder.itemView, true);
-            }
-            if (VerticalGridPresenter.this.mShadowOverlayHelper != null) {
-                VerticalGridPresenter.this.mShadowOverlayHelper.onViewCreated(viewHolder.itemView);
-            }
-        }
-
-        public void onBind(final ItemBridgeAdapter.ViewHolder itemViewHolder) {
-            if (VerticalGridPresenter.this.getOnItemViewClickedListener() != null) {
-                itemViewHolder.mHolder.view.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View view) {
-                        if (VerticalGridPresenter.this.getOnItemViewClickedListener() != null) {
-                            VerticalGridPresenter.this.getOnItemViewClickedListener().onItemClicked(itemViewHolder.mHolder, itemViewHolder.mItem, null, null);
-                        }
-                    }
-                });
-            }
-        }
-
-        public void onUnbind(ItemBridgeAdapter.ViewHolder viewHolder) {
-            if (VerticalGridPresenter.this.getOnItemViewClickedListener() != null) {
-                viewHolder.mHolder.view.setOnClickListener(null);
-            }
-        }
-
-        public void onAttachedToWindow(ItemBridgeAdapter.ViewHolder viewHolder) {
-            viewHolder.itemView.setActivated(true);
-        }
-    }
-
-    public static class ViewHolder extends Presenter.ViewHolder {
-        final VerticalGridView mGridView;
-        boolean mInitialized;
-        ItemBridgeAdapter mItemBridgeAdapter;
-
-        public ViewHolder(VerticalGridView view) {
-            super(view);
-            this.mGridView = view;
-        }
-
-        public VerticalGridView getGridView() {
-            return this.mGridView;
-        }
-    }
 
     public VerticalGridPresenter() {
         this(3);
@@ -94,6 +40,10 @@ public class VerticalGridPresenter extends Presenter {
         this.mUseFocusDimmer = useFocusDimmer;
     }
 
+    public int getNumberOfColumns() {
+        return this.mNumColumns;
+    }
+
     public void setNumberOfColumns(int numColumns) {
         if (numColumns < 0) {
             throw new IllegalArgumentException("Invalid number of columns");
@@ -102,16 +52,12 @@ public class VerticalGridPresenter extends Presenter {
         }
     }
 
-    public int getNumberOfColumns() {
-        return this.mNumColumns;
+    public final boolean getShadowEnabled() {
+        return this.mShadowEnabled;
     }
 
     public final void setShadowEnabled(boolean enabled) {
         this.mShadowEnabled = enabled;
-    }
-
-    public final boolean getShadowEnabled() {
-        return this.mShadowEnabled;
     }
 
     public boolean isUsingDefaultShadow() {
@@ -197,12 +143,12 @@ public class VerticalGridPresenter extends Presenter {
         throw new IllegalStateException("Number of columns must be set");
     }
 
-    public final void setKeepChildForeground(boolean keep) {
-        this.mKeepChildForeground = keep;
-    }
-
     public final boolean getKeepChildForeground() {
         return this.mKeepChildForeground;
+    }
+
+    public final void setKeepChildForeground(boolean keep) {
+        this.mKeepChildForeground = keep;
     }
 
     /* access modifiers changed from: protected */
@@ -222,20 +168,20 @@ public class VerticalGridPresenter extends Presenter {
         vh.getGridView().setAdapter(null);
     }
 
-    public final void setOnItemViewSelectedListener(OnItemViewSelectedListener listener) {
-        this.mOnItemViewSelectedListener = listener;
-    }
-
     public final OnItemViewSelectedListener getOnItemViewSelectedListener() {
         return this.mOnItemViewSelectedListener;
     }
 
-    public final void setOnItemViewClickedListener(OnItemViewClickedListener listener) {
-        this.mOnItemViewClickedListener = listener;
+    public final void setOnItemViewSelectedListener(OnItemViewSelectedListener listener) {
+        this.mOnItemViewSelectedListener = listener;
     }
 
     public final OnItemViewClickedListener getOnItemViewClickedListener() {
         return this.mOnItemViewClickedListener;
+    }
+
+    public final void setOnItemViewClickedListener(OnItemViewClickedListener listener) {
+        this.mOnItemViewClickedListener = listener;
     }
 
     /* access modifiers changed from: package-private */
@@ -257,5 +203,57 @@ public class VerticalGridPresenter extends Presenter {
 
     public void setEntranceTransitionState(ViewHolder holder, boolean afterEntrance) {
         holder.mGridView.setChildrenVisibility(afterEntrance ? 0 : 4);
+    }
+
+    public static class ViewHolder extends Presenter.ViewHolder {
+        final VerticalGridView mGridView;
+        boolean mInitialized;
+        ItemBridgeAdapter mItemBridgeAdapter;
+
+        public ViewHolder(VerticalGridView view) {
+            super(view);
+            this.mGridView = view;
+        }
+
+        public VerticalGridView getGridView() {
+            return this.mGridView;
+        }
+    }
+
+    class VerticalGridItemBridgeAdapter extends ItemBridgeAdapter {
+        VerticalGridItemBridgeAdapter() {
+        }
+
+        /* access modifiers changed from: protected */
+        public void onCreate(ItemBridgeAdapter.ViewHolder viewHolder) {
+            if (viewHolder.itemView instanceof ViewGroup) {
+                TransitionHelper.setTransitionGroup((ViewGroup) viewHolder.itemView, true);
+            }
+            if (VerticalGridPresenter.this.mShadowOverlayHelper != null) {
+                VerticalGridPresenter.this.mShadowOverlayHelper.onViewCreated(viewHolder.itemView);
+            }
+        }
+
+        public void onBind(final ItemBridgeAdapter.ViewHolder itemViewHolder) {
+            if (VerticalGridPresenter.this.getOnItemViewClickedListener() != null) {
+                itemViewHolder.mHolder.view.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View view) {
+                        if (VerticalGridPresenter.this.getOnItemViewClickedListener() != null) {
+                            VerticalGridPresenter.this.getOnItemViewClickedListener().onItemClicked(itemViewHolder.mHolder, itemViewHolder.mItem, null, null);
+                        }
+                    }
+                });
+            }
+        }
+
+        public void onUnbind(ItemBridgeAdapter.ViewHolder viewHolder) {
+            if (VerticalGridPresenter.this.getOnItemViewClickedListener() != null) {
+                viewHolder.mHolder.view.setOnClickListener(null);
+            }
+        }
+
+        public void onAttachedToWindow(ItemBridgeAdapter.ViewHolder viewHolder) {
+            viewHolder.itemView.setActivated(true);
+        }
     }
 }

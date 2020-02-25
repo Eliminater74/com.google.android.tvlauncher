@@ -4,17 +4,19 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.support.annotation.NonNull;
+
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
+
 import java.security.MessageDigest;
 import java.util.Arrays;
 
 public final class AddBackgroundColorTransformation extends BitmapTransformation {
     private static final byte[] sKeyBytes = "com.google.android.tvLauncher.util.AddBackgroundColorTransformation".getBytes(CHARSET);
     private final int mBackgroundColor;
+    private final byte[] mKeyBytes;
     private int mHashCode;
     private boolean mHashCodeInitialized = false;
-    private final byte[] mKeyBytes;
     private boolean mUseTargetDimensions;
 
     public AddBackgroundColorTransformation(int color, boolean useTargetDimensions) {

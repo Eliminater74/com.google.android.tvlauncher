@@ -4,25 +4,30 @@ import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.VisibleForTesting;
+
 import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.engine.cache.MemoryCache;
-import com.bumptech.glide.load.engine.prefill.PreFillType;
 import com.bumptech.glide.util.Util;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public final class BitmapPreFiller {
     private final BitmapPool bitmapPool;
-    private BitmapPreFillRunner current;
     private final DecodeFormat defaultFormat;
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final MemoryCache memoryCache;
+    private BitmapPreFillRunner current;
 
     public BitmapPreFiller(MemoryCache memoryCache2, BitmapPool bitmapPool2, DecodeFormat defaultFormat2) {
         this.memoryCache = memoryCache2;
         this.bitmapPool = bitmapPool2;
         this.defaultFormat = defaultFormat2;
+    }
+
+    private static int getSizeInBytes(PreFillType size) {
+        return Util.getBitmapByteSize(size.getWidth(), size.getHeight(), size.getConfig());
     }
 
     /* JADX INFO: Multiple debug info for r1v2 com.bumptech.glide.load.engine.prefill.PreFillQueue: [D('i' int), D('allocationOrder' com.bumptech.glide.load.engine.prefill.PreFillQueue)] */
@@ -57,9 +62,5 @@ public final class BitmapPreFiller {
             attributeToCount.put(size2, Integer.valueOf(Math.round(((float) size2.getWeight()) * bytesPerWeight) / getSizeInBytes(size2)));
         }
         return new PreFillQueue(attributeToCount);
-    }
-
-    private static int getSizeInBytes(PreFillType size) {
-        return Util.getBitmapByteSize(size.getWidth(), size.getHeight(), size.getConfig());
     }
 }

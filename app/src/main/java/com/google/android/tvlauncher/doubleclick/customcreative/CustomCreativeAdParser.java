@@ -2,12 +2,15 @@ package com.google.android.tvlauncher.doubleclick.customcreative;
 
 import android.support.annotation.VisibleForTesting;
 import android.util.Log;
+
 import com.google.android.tvlauncher.doubleclick.Clock;
 import com.google.android.tvlauncher.doubleclick.proto.nano.AdConfig;
-import java.io.IOException;
-import java.io.InputStream;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 public class CustomCreativeAdParser {
     static final long AD_VALIDITY_TTL_MS = 3600000;

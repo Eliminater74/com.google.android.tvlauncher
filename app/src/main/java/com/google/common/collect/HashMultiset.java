@@ -2,28 +2,18 @@ package com.google.common.collect;
 
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.GwtIncompatible;
-import java.util.Set;
+
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
+import java.util.Set;
 
 @GwtCompatible(emulated = true, serializable = true)
 public class HashMultiset<E> extends AbstractMapBasedMultiset<E> {
     @GwtIncompatible
     private static final long serialVersionUID = 0;
 
-    public /* bridge */ /* synthetic */ boolean contains(@NullableDecl Object obj) {
-        return super.contains(obj);
-    }
-
-    public /* bridge */ /* synthetic */ Set elementSet() {
-        return super.elementSet();
-    }
-
-    public /* bridge */ /* synthetic */ Set entrySet() {
-        return super.entrySet();
-    }
-
-    public /* bridge */ /* synthetic */ boolean isEmpty() {
-        return super.isEmpty();
+    HashMultiset(int distinctElements) {
+        super(distinctElements);
     }
 
     public static <E> HashMultiset<E> create() {
@@ -40,8 +30,20 @@ public class HashMultiset<E> extends AbstractMapBasedMultiset<E> {
         return multiset;
     }
 
-    HashMultiset(int distinctElements) {
-        super(distinctElements);
+    public /* bridge */ /* synthetic */ boolean contains(@NullableDecl Object obj) {
+        return super.contains(obj);
+    }
+
+    public /* bridge */ /* synthetic */ Set elementSet() {
+        return super.elementSet();
+    }
+
+    public /* bridge */ /* synthetic */ Set entrySet() {
+        return super.entrySet();
+    }
+
+    public /* bridge */ /* synthetic */ boolean isEmpty() {
+        return super.isEmpty();
     }
 
     /* access modifiers changed from: package-private */

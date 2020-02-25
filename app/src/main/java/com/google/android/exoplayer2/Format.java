@@ -3,10 +3,12 @@ package com.google.android.exoplayer2;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.drm.DrmInitData;
 import com.google.android.exoplayer2.metadata.Metadata;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.ColorInfo;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -38,7 +40,6 @@ public final class Format implements Parcelable {
     public final int encoderDelay;
     public final int encoderPadding;
     public final float frameRate;
-    private int hashCode;
     public final int height;
     @Nullable
 
@@ -65,6 +66,76 @@ public final class Format implements Parcelable {
     public final int stereoMode;
     public final long subsampleOffsetUs;
     public final int width;
+    private int hashCode;
+
+    Format(@Nullable String id, @Nullable String label2, int selectionFlags2, int roleFlags2, int bitrate2, @Nullable String codecs2, @Nullable Metadata metadata2, @Nullable String containerMimeType2, @Nullable String sampleMimeType2, int maxInputSize2, @Nullable List<byte[]> initializationData2, @Nullable DrmInitData drmInitData2, long subsampleOffsetUs2, int width2, int height2, float frameRate2, int rotationDegrees2, float pixelWidthHeightRatio2, @Nullable byte[] projectionData2, int stereoMode2, @Nullable ColorInfo colorInfo2, int channelCount2, int sampleRate2, int pcmEncoding2, int encoderDelay2, int encoderPadding2, @Nullable String language2, int accessibilityChannel2) {
+        this.f72id = id;
+        this.label = label2;
+        this.selectionFlags = selectionFlags2;
+        this.roleFlags = roleFlags2;
+        this.bitrate = bitrate2;
+        this.codecs = codecs2;
+        this.metadata = metadata2;
+        this.containerMimeType = containerMimeType2;
+        this.sampleMimeType = sampleMimeType2;
+        this.maxInputSize = maxInputSize2;
+        this.initializationData = initializationData2 == null ? Collections.emptyList() : initializationData2;
+        this.drmInitData = drmInitData2;
+        this.subsampleOffsetUs = subsampleOffsetUs2;
+        this.width = width2;
+        this.height = height2;
+        this.frameRate = frameRate2;
+        int i = rotationDegrees2;
+        this.rotationDegrees = i == -1 ? 0 : i;
+        this.pixelWidthHeightRatio = pixelWidthHeightRatio2 == -1.0f ? 1.0f : pixelWidthHeightRatio2;
+        this.projectionData = projectionData2;
+        this.stereoMode = stereoMode2;
+        this.colorInfo = colorInfo2;
+        this.channelCount = channelCount2;
+        this.sampleRate = sampleRate2;
+        this.pcmEncoding = pcmEncoding2;
+        int i2 = encoderDelay2;
+        this.encoderDelay = i2 == -1 ? 0 : i2;
+        int i3 = encoderPadding2;
+        this.encoderPadding = i3 == -1 ? 0 : i3;
+        this.language = Util.normalizeLanguageCode(language2);
+        this.accessibilityChannel = accessibilityChannel2;
+    }
+
+    Format(Parcel in) {
+        this.f72id = in.readString();
+        this.label = in.readString();
+        this.selectionFlags = in.readInt();
+        this.roleFlags = in.readInt();
+        this.bitrate = in.readInt();
+        this.codecs = in.readString();
+        this.metadata = (Metadata) in.readParcelable(Metadata.class.getClassLoader());
+        this.containerMimeType = in.readString();
+        this.sampleMimeType = in.readString();
+        this.maxInputSize = in.readInt();
+        int initializationDataSize = in.readInt();
+        this.initializationData = new ArrayList(initializationDataSize);
+        for (int i = 0; i < initializationDataSize; i++) {
+            this.initializationData.add(in.createByteArray());
+        }
+        this.drmInitData = (DrmInitData) in.readParcelable(DrmInitData.class.getClassLoader());
+        this.subsampleOffsetUs = in.readLong();
+        this.width = in.readInt();
+        this.height = in.readInt();
+        this.frameRate = in.readFloat();
+        this.rotationDegrees = in.readInt();
+        this.pixelWidthHeightRatio = in.readFloat();
+        this.projectionData = Util.readBoolean(in) ? in.createByteArray() : null;
+        this.stereoMode = in.readInt();
+        this.colorInfo = (ColorInfo) in.readParcelable(ColorInfo.class.getClassLoader());
+        this.channelCount = in.readInt();
+        this.sampleRate = in.readInt();
+        this.pcmEncoding = in.readInt();
+        this.encoderDelay = in.readInt();
+        this.encoderPadding = in.readInt();
+        this.language = in.readString();
+        this.accessibilityChannel = in.readInt();
+    }
 
     @Deprecated
     public static Format createVideoContainerFormat(@Nullable String id, @Nullable String containerMimeType2, String sampleMimeType2, String codecs2, int bitrate2, int width2, int height2, float frameRate2, @Nullable List<byte[]> initializationData2, int selectionFlags2) {
@@ -157,73 +228,50 @@ public final class Format implements Parcelable {
         return new Format(id, null, 0, 0, bitrate2, codecs2, null, null, sampleMimeType2, -1, null, drmInitData2, Long.MAX_VALUE, -1, -1, -1.0f, -1, -1.0f, null, -1, null, -1, -1, -1, -1, -1, null, -1);
     }
 
-    Format(@Nullable String id, @Nullable String label2, int selectionFlags2, int roleFlags2, int bitrate2, @Nullable String codecs2, @Nullable Metadata metadata2, @Nullable String containerMimeType2, @Nullable String sampleMimeType2, int maxInputSize2, @Nullable List<byte[]> initializationData2, @Nullable DrmInitData drmInitData2, long subsampleOffsetUs2, int width2, int height2, float frameRate2, int rotationDegrees2, float pixelWidthHeightRatio2, @Nullable byte[] projectionData2, int stereoMode2, @Nullable ColorInfo colorInfo2, int channelCount2, int sampleRate2, int pcmEncoding2, int encoderDelay2, int encoderPadding2, @Nullable String language2, int accessibilityChannel2) {
-        this.f72id = id;
-        this.label = label2;
-        this.selectionFlags = selectionFlags2;
-        this.roleFlags = roleFlags2;
-        this.bitrate = bitrate2;
-        this.codecs = codecs2;
-        this.metadata = metadata2;
-        this.containerMimeType = containerMimeType2;
-        this.sampleMimeType = sampleMimeType2;
-        this.maxInputSize = maxInputSize2;
-        this.initializationData = initializationData2 == null ? Collections.emptyList() : initializationData2;
-        this.drmInitData = drmInitData2;
-        this.subsampleOffsetUs = subsampleOffsetUs2;
-        this.width = width2;
-        this.height = height2;
-        this.frameRate = frameRate2;
-        int i = rotationDegrees2;
-        this.rotationDegrees = i == -1 ? 0 : i;
-        this.pixelWidthHeightRatio = pixelWidthHeightRatio2 == -1.0f ? 1.0f : pixelWidthHeightRatio2;
-        this.projectionData = projectionData2;
-        this.stereoMode = stereoMode2;
-        this.colorInfo = colorInfo2;
-        this.channelCount = channelCount2;
-        this.sampleRate = sampleRate2;
-        this.pcmEncoding = pcmEncoding2;
-        int i2 = encoderDelay2;
-        this.encoderDelay = i2 == -1 ? 0 : i2;
-        int i3 = encoderPadding2;
-        this.encoderPadding = i3 == -1 ? 0 : i3;
-        this.language = Util.normalizeLanguageCode(language2);
-        this.accessibilityChannel = accessibilityChannel2;
-    }
-
-    Format(Parcel in) {
-        this.f72id = in.readString();
-        this.label = in.readString();
-        this.selectionFlags = in.readInt();
-        this.roleFlags = in.readInt();
-        this.bitrate = in.readInt();
-        this.codecs = in.readString();
-        this.metadata = (Metadata) in.readParcelable(Metadata.class.getClassLoader());
-        this.containerMimeType = in.readString();
-        this.sampleMimeType = in.readString();
-        this.maxInputSize = in.readInt();
-        int initializationDataSize = in.readInt();
-        this.initializationData = new ArrayList(initializationDataSize);
-        for (int i = 0; i < initializationDataSize; i++) {
-            this.initializationData.add(in.createByteArray());
+    public static String toLogString(@Nullable Format format) {
+        if (format == null) {
+            return "null";
         }
-        this.drmInitData = (DrmInitData) in.readParcelable(DrmInitData.class.getClassLoader());
-        this.subsampleOffsetUs = in.readLong();
-        this.width = in.readInt();
-        this.height = in.readInt();
-        this.frameRate = in.readFloat();
-        this.rotationDegrees = in.readInt();
-        this.pixelWidthHeightRatio = in.readFloat();
-        this.projectionData = Util.readBoolean(in) ? in.createByteArray() : null;
-        this.stereoMode = in.readInt();
-        this.colorInfo = (ColorInfo) in.readParcelable(ColorInfo.class.getClassLoader());
-        this.channelCount = in.readInt();
-        this.sampleRate = in.readInt();
-        this.pcmEncoding = in.readInt();
-        this.encoderDelay = in.readInt();
-        this.encoderPadding = in.readInt();
-        this.language = in.readString();
-        this.accessibilityChannel = in.readInt();
+        StringBuilder builder = new StringBuilder();
+        builder.append("id=");
+        builder.append(format.f72id);
+        builder.append(", mimeType=");
+        builder.append(format.sampleMimeType);
+        if (format.bitrate != -1) {
+            builder.append(", bitrate=");
+            builder.append(format.bitrate);
+        }
+        if (format.codecs != null) {
+            builder.append(", codecs=");
+            builder.append(format.codecs);
+        }
+        if (!(format.width == -1 || format.height == -1)) {
+            builder.append(", res=");
+            builder.append(format.width);
+            builder.append("x");
+            builder.append(format.height);
+        }
+        if (format.frameRate != -1.0f) {
+            builder.append(", fps=");
+            builder.append(format.frameRate);
+        }
+        if (format.channelCount != -1) {
+            builder.append(", channels=");
+            builder.append(format.channelCount);
+        }
+        if (format.sampleRate != -1) {
+            builder.append(", sample_rate=");
+            builder.append(format.sampleRate);
+        }
+        if (format.language != null) {
+            builder.append(", language=");
+            builder.append(format.language);
+        }
+        if (format.label != null) {
+            builder.append(", label=");
+            builder.append(format.label);
+        }
+        return builder.toString();
     }
 
     public Format copyWithMaxInputSize(int maxInputSize2) {
@@ -505,52 +553,6 @@ public final class Format implements Parcelable {
             }
         }
         return true;
-    }
-
-    public static String toLogString(@Nullable Format format) {
-        if (format == null) {
-            return "null";
-        }
-        StringBuilder builder = new StringBuilder();
-        builder.append("id=");
-        builder.append(format.f72id);
-        builder.append(", mimeType=");
-        builder.append(format.sampleMimeType);
-        if (format.bitrate != -1) {
-            builder.append(", bitrate=");
-            builder.append(format.bitrate);
-        }
-        if (format.codecs != null) {
-            builder.append(", codecs=");
-            builder.append(format.codecs);
-        }
-        if (!(format.width == -1 || format.height == -1)) {
-            builder.append(", res=");
-            builder.append(format.width);
-            builder.append("x");
-            builder.append(format.height);
-        }
-        if (format.frameRate != -1.0f) {
-            builder.append(", fps=");
-            builder.append(format.frameRate);
-        }
-        if (format.channelCount != -1) {
-            builder.append(", channels=");
-            builder.append(format.channelCount);
-        }
-        if (format.sampleRate != -1) {
-            builder.append(", sample_rate=");
-            builder.append(format.sampleRate);
-        }
-        if (format.language != null) {
-            builder.append(", language=");
-            builder.append(format.language);
-        }
-        if (format.label != null) {
-            builder.append(", label=");
-            builder.append(format.label);
-        }
-        return builder.toString();
     }
 
     public int describeContents() {

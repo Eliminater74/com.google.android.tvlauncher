@@ -16,10 +16,10 @@ import android.widget.ImageView;
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
 /* renamed from: android.support.v7.widget.AppCompatImageHelper */
 public class AppCompatImageHelper {
+    private final ImageView mView;
     private TintInfo mImageTint;
     private TintInfo mInternalImageTint;
     private TintInfo mTmpInfo;
-    private final ImageView mView;
 
     public AppCompatImageHelper(ImageView view) {
         this.mView = view;
@@ -70,6 +70,15 @@ public class AppCompatImageHelper {
     }
 
     /* access modifiers changed from: package-private */
+    public ColorStateList getSupportImageTintList() {
+        TintInfo tintInfo = this.mImageTint;
+        if (tintInfo != null) {
+            return tintInfo.mTintList;
+        }
+        return null;
+    }
+
+    /* access modifiers changed from: package-private */
     public void setSupportImageTintList(ColorStateList tint) {
         if (this.mImageTint == null) {
             this.mImageTint = new TintInfo();
@@ -81,10 +90,10 @@ public class AppCompatImageHelper {
     }
 
     /* access modifiers changed from: package-private */
-    public ColorStateList getSupportImageTintList() {
+    public PorterDuff.Mode getSupportImageTintMode() {
         TintInfo tintInfo = this.mImageTint;
         if (tintInfo != null) {
-            return tintInfo.mTintList;
+            return tintInfo.mTintMode;
         }
         return null;
     }
@@ -98,15 +107,6 @@ public class AppCompatImageHelper {
         tintInfo.mTintMode = tintMode;
         tintInfo.mHasTintMode = true;
         applySupportImageTint();
-    }
-
-    /* access modifiers changed from: package-private */
-    public PorterDuff.Mode getSupportImageTintMode() {
-        TintInfo tintInfo = this.mImageTint;
-        if (tintInfo != null) {
-            return tintInfo.mTintMode;
-        }
-        return null;
     }
 
     /* access modifiers changed from: package-private */

@@ -1,8 +1,8 @@
 package android.support.p004v7.widget;
 
-import android.support.p004v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,31 +13,6 @@ class ChildHelper {
     final Bucket mBucket = new Bucket();
     final Callback mCallback;
     final List<View> mHiddenViews = new ArrayList();
-
-    /* renamed from: android.support.v7.widget.ChildHelper$Callback */
-    interface Callback {
-        void addView(View view, int i);
-
-        void attachViewToParent(View view, int i, ViewGroup.LayoutParams layoutParams);
-
-        void detachViewFromParent(int i);
-
-        View getChildAt(int i);
-
-        int getChildCount();
-
-        RecyclerView.ViewHolder getChildViewHolder(View view);
-
-        int indexOfChild(View view);
-
-        void onEnteredHiddenState(View view);
-
-        void onLeftHiddenState(View view);
-
-        void removeAllViews();
-
-        void removeViewAt(int i);
-    }
 
     ChildHelper(Callback callback) {
         this.mCallback = callback;
@@ -239,6 +214,31 @@ class ChildHelper {
             this.mCallback.removeViewAt(index);
             return true;
         }
+    }
+
+    /* renamed from: android.support.v7.widget.ChildHelper$Callback */
+    interface Callback {
+        void addView(View view, int i);
+
+        void attachViewToParent(View view, int i, ViewGroup.LayoutParams layoutParams);
+
+        void detachViewFromParent(int i);
+
+        View getChildAt(int i);
+
+        int getChildCount();
+
+        RecyclerView.ViewHolder getChildViewHolder(View view);
+
+        int indexOfChild(View view);
+
+        void onEnteredHiddenState(View view);
+
+        void onLeftHiddenState(View view);
+
+        void removeAllViews();
+
+        void removeViewAt(int i);
     }
 
     /* renamed from: android.support.v7.widget.ChildHelper$Bucket */

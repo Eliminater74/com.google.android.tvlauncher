@@ -2,6 +2,7 @@ package com.google.android.gms.clearcut.internal;
 
 import com.google.common.base.Ascii;
 import com.google.common.primitives.UnsignedBytes;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 

@@ -8,11 +8,11 @@ public class BatchingListUpdateCallback implements ListUpdateCallback {
     private static final int TYPE_CHANGE = 3;
     private static final int TYPE_NONE = 0;
     private static final int TYPE_REMOVE = 2;
+    final ListUpdateCallback mWrapped;
     int mLastEventCount = -1;
     Object mLastEventPayload = null;
     int mLastEventPosition = -1;
     int mLastEventType = 0;
-    final ListUpdateCallback mWrapped;
 
     public BatchingListUpdateCallback(@NonNull ListUpdateCallback callback) {
         this.mWrapped = callback;

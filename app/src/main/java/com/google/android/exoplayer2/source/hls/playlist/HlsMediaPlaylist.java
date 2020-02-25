@@ -2,9 +2,11 @@ package com.google.android.exoplayer2.source.hls.playlist;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.drm.DrmInitData;
 import com.google.android.exoplayer2.offline.StreamKey;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -29,56 +31,6 @@ public final class HlsMediaPlaylist extends HlsPlaylist {
     public final long startTimeUs;
     public final long targetDurationUs;
     public final int version;
-
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface PlaylistType {
-    }
-
-    public static final class Segment implements Comparable<Long> {
-        public final long byterangeLength;
-        public final long byterangeOffset;
-        @Nullable
-        public final DrmInitData drmInitData;
-        public final long durationUs;
-        @Nullable
-        public final String encryptionIV;
-        @Nullable
-        public final String fullSegmentEncryptionKeyUri;
-        public final boolean hasGapTag;
-        @Nullable
-        public final Segment initializationSegment;
-        public final int relativeDiscontinuitySequence;
-        public final long relativeStartTimeUs;
-        public final String title;
-        public final String url;
-
-        public Segment(String uri, long byterangeOffset2, long byterangeLength2, String fullSegmentEncryptionKeyUri2, String encryptionIV2) {
-            this(uri, null, "", 0, -1, C0841C.TIME_UNSET, null, fullSegmentEncryptionKeyUri2, encryptionIV2, byterangeOffset2, byterangeLength2, false);
-        }
-
-        public Segment(String url2, @Nullable Segment initializationSegment2, String title2, long durationUs2, int relativeDiscontinuitySequence2, long relativeStartTimeUs2, @Nullable DrmInitData drmInitData2, @Nullable String fullSegmentEncryptionKeyUri2, @Nullable String encryptionIV2, long byterangeOffset2, long byterangeLength2, boolean hasGapTag2) {
-            this.url = url2;
-            this.initializationSegment = initializationSegment2;
-            this.title = title2;
-            this.durationUs = durationUs2;
-            this.relativeDiscontinuitySequence = relativeDiscontinuitySequence2;
-            this.relativeStartTimeUs = relativeStartTimeUs2;
-            this.drmInitData = drmInitData2;
-            this.fullSegmentEncryptionKeyUri = fullSegmentEncryptionKeyUri2;
-            this.encryptionIV = encryptionIV2;
-            this.byterangeOffset = byterangeOffset2;
-            this.byterangeLength = byterangeLength2;
-            this.hasGapTag = hasGapTag2;
-        }
-
-        public int compareTo(@NonNull Long relativeStartTimeUs2) {
-            if (this.relativeStartTimeUs > relativeStartTimeUs2.longValue()) {
-                return 1;
-            }
-            return this.relativeStartTimeUs < relativeStartTimeUs2.longValue() ? -1 : 0;
-        }
-    }
 
     public HlsMediaPlaylist(int playlistType2, String baseUri, List<String> tags, long startOffsetUs2, long startTimeUs2, boolean hasDiscontinuitySequence2, int discontinuitySequence2, long mediaSequence2, int version2, long targetDurationUs2, boolean hasIndependentSegments, boolean hasEndTag2, boolean hasProgramDateTime2, @Nullable DrmInitData protectionSchemes2, List<Segment> segments2) {
         super(baseUri, tags, hasIndependentSegments);
@@ -152,5 +104,55 @@ public final class HlsMediaPlaylist extends HlsPlaylist {
         HlsMediaPlaylist hlsMediaPlaylist = r2;
         HlsMediaPlaylist hlsMediaPlaylist2 = new HlsMediaPlaylist(this.playlistType, this.baseUri, this.tags, this.startOffsetUs, this.startTimeUs, this.hasDiscontinuitySequence, this.discontinuitySequence, this.mediaSequence, this.version, this.targetDurationUs, this.hasIndependentSegments, true, this.hasProgramDateTime, this.protectionSchemes, this.segments);
         return hlsMediaPlaylist;
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface PlaylistType {
+    }
+
+    public static final class Segment implements Comparable<Long> {
+        public final long byterangeLength;
+        public final long byterangeOffset;
+        @Nullable
+        public final DrmInitData drmInitData;
+        public final long durationUs;
+        @Nullable
+        public final String encryptionIV;
+        @Nullable
+        public final String fullSegmentEncryptionKeyUri;
+        public final boolean hasGapTag;
+        @Nullable
+        public final Segment initializationSegment;
+        public final int relativeDiscontinuitySequence;
+        public final long relativeStartTimeUs;
+        public final String title;
+        public final String url;
+
+        public Segment(String uri, long byterangeOffset2, long byterangeLength2, String fullSegmentEncryptionKeyUri2, String encryptionIV2) {
+            this(uri, null, "", 0, -1, C0841C.TIME_UNSET, null, fullSegmentEncryptionKeyUri2, encryptionIV2, byterangeOffset2, byterangeLength2, false);
+        }
+
+        public Segment(String url2, @Nullable Segment initializationSegment2, String title2, long durationUs2, int relativeDiscontinuitySequence2, long relativeStartTimeUs2, @Nullable DrmInitData drmInitData2, @Nullable String fullSegmentEncryptionKeyUri2, @Nullable String encryptionIV2, long byterangeOffset2, long byterangeLength2, boolean hasGapTag2) {
+            this.url = url2;
+            this.initializationSegment = initializationSegment2;
+            this.title = title2;
+            this.durationUs = durationUs2;
+            this.relativeDiscontinuitySequence = relativeDiscontinuitySequence2;
+            this.relativeStartTimeUs = relativeStartTimeUs2;
+            this.drmInitData = drmInitData2;
+            this.fullSegmentEncryptionKeyUri = fullSegmentEncryptionKeyUri2;
+            this.encryptionIV = encryptionIV2;
+            this.byterangeOffset = byterangeOffset2;
+            this.byterangeLength = byterangeLength2;
+            this.hasGapTag = hasGapTag2;
+        }
+
+        public int compareTo(@NonNull Long relativeStartTimeUs2) {
+            if (this.relativeStartTimeUs > relativeStartTimeUs2.longValue()) {
+                return 1;
+            }
+            return this.relativeStartTimeUs < relativeStartTimeUs2.longValue() ? -1 : 0;
+        }
     }
 }

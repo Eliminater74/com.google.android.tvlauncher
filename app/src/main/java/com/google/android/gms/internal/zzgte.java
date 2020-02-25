@@ -1,6 +1,7 @@
 package com.google.android.gms.internal;
 
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.io.IOException;
 
 /* compiled from: ClientAnalytics */
@@ -8,6 +9,11 @@ public final class zzgte extends zzgsb<zzgte> implements Cloneable {
     private static volatile zzgte[] zza;
     private String zzb = "";
     private String zzc = "";
+
+    public zzgte() {
+        this.zzay = null;
+        this.zzaz = -1;
+    }
 
     public static zzgte[] zza() {
         if (zza == null) {
@@ -18,11 +24,6 @@ public final class zzgte extends zzgsb<zzgte> implements Cloneable {
             }
         }
         return zza;
-    }
-
-    public zzgte() {
-        this.zzay = null;
-        this.zzaz = -1;
     }
 
     /* access modifiers changed from: private */

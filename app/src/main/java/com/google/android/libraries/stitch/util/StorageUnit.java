@@ -28,14 +28,14 @@ public enum StorageUnit {
             return sourceUnit.toBytes(quantity);
         }
     };
-    
-    long numBytes;
 
-    public abstract long convert(long j, StorageUnit storageUnit);
+    long numBytes;
 
     private StorageUnit(long numBytes2) {
         this.numBytes = numBytes2;
     }
+
+    public abstract long convert(long j, StorageUnit storageUnit);
 
     public long toBytes(long quantity) {
         return this.numBytes * quantity;

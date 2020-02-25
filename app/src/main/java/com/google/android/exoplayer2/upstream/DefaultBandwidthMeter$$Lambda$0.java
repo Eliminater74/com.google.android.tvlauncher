@@ -1,6 +1,5 @@
 package com.google.android.exoplayer2.upstream;
 
-import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.util.EventDispatcher;
 
 final /* synthetic */ class DefaultBandwidthMeter$$Lambda$0 implements EventDispatcher.Event {

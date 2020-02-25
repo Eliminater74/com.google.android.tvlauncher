@@ -1,9 +1,7 @@
 package com.google.protobuf;
 
 import androidx.tvprovider.media.p005tv.TvContractCompat;
-import com.google.protobuf.InvalidProtocolBufferException;
-import com.google.protobuf.MapEntryLite;
-import com.google.protobuf.WireFormat;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -12,21 +10,21 @@ final class CodedInputStreamReader implements Reader {
     private static final int FIXED32_MULTIPLE_MASK = 3;
     private static final int FIXED64_MULTIPLE_MASK = 7;
     private static final int NEXT_TAG_UNSET = 0;
-    private int endGroupTag;
     private final CodedInputStream input;
+    private int endGroupTag;
     private int nextTag = 0;
     private int tag;
+
+    private CodedInputStreamReader(CodedInputStream input2) {
+        this.input = (CodedInputStream) Internal.checkNotNull(input2, TvContractCompat.PARAM_INPUT);
+        this.input.wrapper = this;
+    }
 
     public static CodedInputStreamReader forCodedInput(CodedInputStream input2) {
         if (input2.wrapper != null) {
             return input2.wrapper;
         }
         return new CodedInputStreamReader(input2);
-    }
-
-    private CodedInputStreamReader(CodedInputStream input2) {
-        this.input = (CodedInputStream) Internal.checkNotNull(input2, TvContractCompat.PARAM_INPUT);
-        this.input.wrapper = this;
     }
 
     public boolean shouldDiscardUnknownFields() {

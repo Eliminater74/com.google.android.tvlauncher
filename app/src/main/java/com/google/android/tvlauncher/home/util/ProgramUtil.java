@@ -4,16 +4,17 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.google.android.tvlauncher.C1188R;
 
 public class ProgramUtil {
     public static final double ASPECT_RATIO_16_9 = 1.7777777777777777d;
-    private static final double ASPECT_RATIO_1_1 = 1.0d;
     public static final double ASPECT_RATIO_2_3 = 0.6666666666666666d;
-    private static final double ASPECT_RATIO_3_2 = 1.5d;
     public static final double ASPECT_RATIO_4_1 = 4.0d;
-    private static final double ASPECT_RATIO_4_3 = 1.3333333333333333d;
     public static final double ASPECT_RATIO_9_16 = 0.5625d;
+    private static final double ASPECT_RATIO_1_1 = 1.0d;
+    private static final double ASPECT_RATIO_3_2 = 1.5d;
+    private static final double ASPECT_RATIO_4_3 = 1.3333333333333333d;
     private static final double ASPECT_RATIO_MOVIE_POSTER = 0.6939625260235947d;
 
     public static ProgramSettings getProgramSettings(Context context) {

@@ -3,20 +3,55 @@ package com.google.common.collect;
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Table;
-import com.google.common.collect.Tables;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible
 public abstract class ImmutableTable<R, C, V> extends AbstractTable<R, C, V> implements Serializable {
+    ImmutableTable() {
+    }
+
+    /* renamed from: of */
+    public static <R, C, V> ImmutableTable<R, C, V> m200of() {
+        return SparseImmutableTable.EMPTY;
+    }
+
+    /* renamed from: of */
+    public static <R, C, V> ImmutableTable<R, C, V> m201of(R rowKey, C columnKey, V value) {
+        return new SingletonImmutableTable(rowKey, columnKey, value);
+    }
+
+    public static <R, C, V> ImmutableTable<R, C, V> copyOf(Table<? extends R, ? extends C, ? extends V> table) {
+        if (table instanceof ImmutableTable) {
+            return (ImmutableTable) table;
+        }
+        return copyOf(table.cellSet());
+    }
+
+    private static <R, C, V> ImmutableTable<R, C, V> copyOf(Iterable<? extends Table.Cell<? extends R, ? extends C, ? extends V>> cells) {
+        Builder<R, C, V> builder = builder();
+        for (Table.Cell<? extends R, ? extends C, ? extends V> cell : cells) {
+            builder.put(cell);
+        }
+        return builder.build();
+    }
+
+    public static <R, C, V> Builder<R, C, V> builder() {
+        return new Builder<>();
+    }
+
+    static <R, C, V> Table.Cell<R, C, V> cellOf(R rowKey, C columnKey, V value) {
+        return Tables.immutableCell(Preconditions.checkNotNull(rowKey, "rowKey"), Preconditions.checkNotNull(columnKey, "columnKey"), Preconditions.checkNotNull(value, "value"));
+    }
+
     public abstract ImmutableMap<C, Map<R, V>> columnMap();
 
     /* access modifiers changed from: package-private */
@@ -56,100 +91,6 @@ public abstract class ImmutableTable<R, C, V> extends AbstractTable<R, C, V> imp
 
     public /* bridge */ /* synthetic */ String toString() {
         return super.toString();
-    }
-
-    /* renamed from: of */
-    public static <R, C, V> ImmutableTable<R, C, V> m200of() {
-        return SparseImmutableTable.EMPTY;
-    }
-
-    /* renamed from: of */
-    public static <R, C, V> ImmutableTable<R, C, V> m201of(R rowKey, C columnKey, V value) {
-        return new SingletonImmutableTable(rowKey, columnKey, value);
-    }
-
-    public static <R, C, V> ImmutableTable<R, C, V> copyOf(Table<? extends R, ? extends C, ? extends V> table) {
-        if (table instanceof ImmutableTable) {
-            return (ImmutableTable) table;
-        }
-        return copyOf(table.cellSet());
-    }
-
-    private static <R, C, V> ImmutableTable<R, C, V> copyOf(Iterable<? extends Table.Cell<? extends R, ? extends C, ? extends V>> cells) {
-        Builder<R, C, V> builder = builder();
-        for (Table.Cell<? extends R, ? extends C, ? extends V> cell : cells) {
-            builder.put(cell);
-        }
-        return builder.build();
-    }
-
-    public static <R, C, V> Builder<R, C, V> builder() {
-        return new Builder<>();
-    }
-
-    static <R, C, V> Table.Cell<R, C, V> cellOf(R rowKey, C columnKey, V value) {
-        return Tables.immutableCell(Preconditions.checkNotNull(rowKey, "rowKey"), Preconditions.checkNotNull(columnKey, "columnKey"), Preconditions.checkNotNull(value, "value"));
-    }
-
-    public static final class Builder<R, C, V> {
-        private final List<Table.Cell<R, C, V>> cells = Lists.newArrayList();
-        @MonotonicNonNullDecl
-        private Comparator<? super C> columnComparator;
-        @MonotonicNonNullDecl
-        private Comparator<? super R> rowComparator;
-
-        @CanIgnoreReturnValue
-        public Builder<R, C, V> orderRowsBy(Comparator<? super R> rowComparator2) {
-            this.rowComparator = (Comparator) Preconditions.checkNotNull(rowComparator2, "rowComparator");
-            return this;
-        }
-
-        @CanIgnoreReturnValue
-        public Builder<R, C, V> orderColumnsBy(Comparator<? super C> columnComparator2) {
-            this.columnComparator = (Comparator) Preconditions.checkNotNull(columnComparator2, "columnComparator");
-            return this;
-        }
-
-        @CanIgnoreReturnValue
-        public Builder<R, C, V> put(R rowKey, C columnKey, V value) {
-            this.cells.add(ImmutableTable.cellOf(rowKey, columnKey, value));
-            return this;
-        }
-
-        @CanIgnoreReturnValue
-        public Builder<R, C, V> put(Table.Cell<? extends R, ? extends C, ? extends V> cell) {
-            if (cell instanceof Tables.ImmutableCell) {
-                Preconditions.checkNotNull(cell.getRowKey(), "row");
-                Preconditions.checkNotNull(cell.getColumnKey(), "column");
-                Preconditions.checkNotNull(cell.getValue(), "value");
-                this.cells.add(cell);
-            } else {
-                put(cell.getRowKey(), cell.getColumnKey(), cell.getValue());
-            }
-            return this;
-        }
-
-        @CanIgnoreReturnValue
-        public Builder<R, C, V> putAll(Table<? extends R, ? extends C, ? extends V> table) {
-            for (Table.Cell<? extends R, ? extends C, ? extends V> cell : table.cellSet()) {
-                put(cell);
-            }
-            return this;
-        }
-
-        public ImmutableTable<R, C, V> build() {
-            int size = this.cells.size();
-            if (size == 0) {
-                return ImmutableTable.m200of();
-            }
-            if (size != 1) {
-                return RegularImmutableTable.forCells(this.cells, this.rowComparator, this.columnComparator);
-            }
-            return new SingletonImmutableTable((Table.Cell) Iterables.getOnlyElement(this.cells));
-        }
-    }
-
-    ImmutableTable() {
     }
 
     public ImmutableSet<Table.Cell<R, C, V>> cellSet() {
@@ -218,6 +159,69 @@ public abstract class ImmutableTable<R, C, V> extends AbstractTable<R, C, V> imp
         throw new UnsupportedOperationException();
     }
 
+    /* access modifiers changed from: package-private */
+    public final Object writeReplace() {
+        return createSerializedForm();
+    }
+
+    public static final class Builder<R, C, V> {
+        private final List<Table.Cell<R, C, V>> cells = Lists.newArrayList();
+        @MonotonicNonNullDecl
+        private Comparator<? super C> columnComparator;
+        @MonotonicNonNullDecl
+        private Comparator<? super R> rowComparator;
+
+        @CanIgnoreReturnValue
+        public Builder<R, C, V> orderRowsBy(Comparator<? super R> rowComparator2) {
+            this.rowComparator = (Comparator) Preconditions.checkNotNull(rowComparator2, "rowComparator");
+            return this;
+        }
+
+        @CanIgnoreReturnValue
+        public Builder<R, C, V> orderColumnsBy(Comparator<? super C> columnComparator2) {
+            this.columnComparator = (Comparator) Preconditions.checkNotNull(columnComparator2, "columnComparator");
+            return this;
+        }
+
+        @CanIgnoreReturnValue
+        public Builder<R, C, V> put(R rowKey, C columnKey, V value) {
+            this.cells.add(ImmutableTable.cellOf(rowKey, columnKey, value));
+            return this;
+        }
+
+        @CanIgnoreReturnValue
+        public Builder<R, C, V> put(Table.Cell<? extends R, ? extends C, ? extends V> cell) {
+            if (cell instanceof Tables.ImmutableCell) {
+                Preconditions.checkNotNull(cell.getRowKey(), "row");
+                Preconditions.checkNotNull(cell.getColumnKey(), "column");
+                Preconditions.checkNotNull(cell.getValue(), "value");
+                this.cells.add(cell);
+            } else {
+                put(cell.getRowKey(), cell.getColumnKey(), cell.getValue());
+            }
+            return this;
+        }
+
+        @CanIgnoreReturnValue
+        public Builder<R, C, V> putAll(Table<? extends R, ? extends C, ? extends V> table) {
+            for (Table.Cell<? extends R, ? extends C, ? extends V> cell : table.cellSet()) {
+                put(cell);
+            }
+            return this;
+        }
+
+        public ImmutableTable<R, C, V> build() {
+            int size = this.cells.size();
+            if (size == 0) {
+                return ImmutableTable.m200of();
+            }
+            if (size != 1) {
+                return RegularImmutableTable.forCells(this.cells, this.rowComparator, this.columnComparator);
+            }
+            return new SingletonImmutableTable((Table.Cell) Iterables.getOnlyElement(this.cells));
+        }
+    }
+
     static final class SerializedForm implements Serializable {
         private static final long serialVersionUID = 0;
         private final int[] cellColumnIndices;
@@ -258,10 +262,5 @@ public abstract class ImmutableTable<R, C, V> extends AbstractTable<R, C, V> imp
                 i++;
             }
         }
-    }
-
-    /* access modifiers changed from: package-private */
-    public final Object writeReplace() {
-        return createSerializedForm();
     }
 }

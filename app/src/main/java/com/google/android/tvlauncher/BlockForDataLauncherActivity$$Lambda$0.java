@@ -1,6 +1,7 @@
 package com.google.android.tvlauncher;
 
 import android.os.Bundle;
+
 import com.google.android.tvlauncher.util.OemConfiguration;
 
 final /* synthetic */ class BlockForDataLauncherActivity$$Lambda$0 implements OemConfiguration.OnDataLoadedListener {

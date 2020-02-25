@@ -1,6 +1,7 @@
 package com.google.android.libraries.gcoreclient.tasks.impl;
 
 import android.support.annotation.Nullable;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -13,15 +14,22 @@ import com.google.android.libraries.gcoreclient.tasks.GcoreOnSuccessListener;
 import com.google.android.libraries.gcoreclient.tasks.GcoreRuntimeExecutionException;
 import com.google.android.libraries.gcoreclient.tasks.GcoreTask;
 import com.google.common.base.Function;
+
 import java.util.concurrent.Executor;
 
 public final class GcoreTaskImpl<TInput, TResult> implements GcoreTask<TResult> {
     /* access modifiers changed from: private */
     @Nullable
     public final GcoreExceptionMapper gcoreExceptionMapper;
-    private final Task<TInput> task;
     /* access modifiers changed from: private */
     public final Function<TInput, TResult> wrapperFunction;
+    private final Task<TInput> task;
+
+    private GcoreTaskImpl(Task<TInput> task2, Function<TInput, TResult> wrapperFunction2, @Nullable GcoreExceptionMapper gcoreExceptionMapper2) {
+        this.wrapperFunction = wrapperFunction2;
+        this.task = task2;
+        this.gcoreExceptionMapper = gcoreExceptionMapper2;
+    }
 
     /* JADX WARN: Type inference failed for: r1v0, types: [com.google.android.gms.tasks.Task<T>, com.google.android.gms.tasks.Task] */
     /* JADX WARNING: Unknown variable types count: 1 */
@@ -53,12 +61,6 @@ public final class GcoreTaskImpl<TInput, TResult> implements GcoreTask<TResult> 
 
     public static <T, V> GcoreTask<V> wrap(Task<T> task2, Function<T, V> wrapperFunction2, @Nullable GcoreExceptionMapper gcoreExceptionMapper2) {
         return new GcoreTaskImpl(task2, wrapperFunction2, gcoreExceptionMapper2);
-    }
-
-    private GcoreTaskImpl(Task<TInput> task2, Function<TInput, TResult> wrapperFunction2, @Nullable GcoreExceptionMapper gcoreExceptionMapper2) {
-        this.wrapperFunction = wrapperFunction2;
-        this.task = task2;
-        this.gcoreExceptionMapper = gcoreExceptionMapper2;
     }
 
     public boolean isComplete() {

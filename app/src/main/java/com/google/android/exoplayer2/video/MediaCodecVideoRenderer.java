@@ -14,6 +14,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Pair;
 import android.view.Surface;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.Format;
@@ -32,10 +33,10 @@ import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.TraceUtil;
 import com.google.android.exoplayer2.util.Util;
-import com.google.android.exoplayer2.video.VideoRendererEventListener;
 import com.google.android.gsf.TalkContract;
 import com.google.protos.datapol.SemanticAnnotations;
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.nio.ByteBuffer;
 import java.util.Collections;
 import java.util.List;
@@ -52,32 +53,33 @@ public class MediaCodecVideoRenderer extends MediaCodecRenderer {
     private static boolean deviceNeedsSetOutputSurfaceWorkaround;
     private static boolean evaluatedDeviceNeedsSetOutputSurfaceWorkaround;
     private final long allowedJoiningTimeMs;
+    private final Context context;
+    private final boolean deviceNeedsNoPostProcessWorkaround;
+    private final VideoRendererEventListener.EventDispatcher eventDispatcher;
+    private final VideoFrameReleaseTimeHelper frameReleaseTimeHelper;
+    private final int maxDroppedFramesToNotify;
+    private final long[] pendingOutputStreamOffsetsUs;
+    private final long[] pendingOutputStreamSwitchTimesUs;
+    OnFrameRenderedListenerV23 tunnelingOnFrameRenderedListener;
     private int buffersInCodecCount;
     private CodecMaxValues codecMaxValues;
     private boolean codecNeedsSetOutputSurfaceWorkaround;
     private int consecutiveDroppedFrameCount;
-    private final Context context;
     private int currentHeight;
     private float currentPixelWidthHeightRatio;
     private int currentUnappliedRotationDegrees;
     private int currentWidth;
-    private final boolean deviceNeedsNoPostProcessWorkaround;
     private long droppedFrameAccumulationStartTimeMs;
     private int droppedFrames;
     private Surface dummySurface;
-    private final VideoRendererEventListener.EventDispatcher eventDispatcher;
     @Nullable
     private VideoFrameMetadataListener frameMetadataListener;
-    private final VideoFrameReleaseTimeHelper frameReleaseTimeHelper;
     private long initialPositionUs;
     private long joiningDeadlineMs;
     private long lastInputTimeUs;
     private long lastRenderTimeUs;
-    private final int maxDroppedFramesToNotify;
     private long outputStreamOffsetUs;
     private int pendingOutputStreamOffsetCount;
-    private final long[] pendingOutputStreamOffsetsUs;
-    private final long[] pendingOutputStreamSwitchTimesUs;
     private float pendingPixelWidthHeightRatio;
     private int pendingRotationDegrees;
     private boolean renderedFirstFrame;
@@ -89,7 +91,6 @@ public class MediaCodecVideoRenderer extends MediaCodecRenderer {
     private Surface surface;
     private boolean tunneling;
     private int tunnelingAudioSessionId;
-    OnFrameRenderedListenerV23 tunnelingOnFrameRenderedListener;
 
     public MediaCodecVideoRenderer(Context context2, MediaCodecSelector mediaCodecSelector) {
         this(context2, mediaCodecSelector, 0);
@@ -126,6 +127,175 @@ public class MediaCodecVideoRenderer extends MediaCodecRenderer {
         this.pendingPixelWidthHeightRatio = -1.0f;
         this.scalingMode = 1;
         clearReportedVideoSize();
+    }
+
+    private static List<MediaCodecInfo> getDecoderInfos(MediaCodecSelector mediaCodecSelector, Format format, boolean requiresSecureDecoder, boolean requiresTunnelingDecoder) throws MediaCodecUtil.DecoderQueryException {
+        Pair<Integer, Integer> codecProfileAndLevel;
+        List<MediaCodecInfo> decoderInfos = MediaCodecUtil.getDecoderInfosSortedByFormatSupport(mediaCodecSelector.getDecoderInfos(format.sampleMimeType, requiresSecureDecoder, requiresTunnelingDecoder), format);
+        if (MimeTypes.VIDEO_DOLBY_VISION.equals(format.sampleMimeType) && (codecProfileAndLevel = MediaCodecUtil.getCodecProfileAndLevel(format.codecs)) != null) {
+            int profile = ((Integer) codecProfileAndLevel.first).intValue();
+            if (profile == 4 || profile == 8) {
+                decoderInfos.addAll(mediaCodecSelector.getDecoderInfos(MimeTypes.VIDEO_H265, requiresSecureDecoder, requiresTunnelingDecoder));
+            } else if (profile == 9) {
+                decoderInfos.addAll(mediaCodecSelector.getDecoderInfos(MimeTypes.VIDEO_H264, requiresSecureDecoder, requiresTunnelingDecoder));
+            }
+        }
+        return Collections.unmodifiableList(decoderInfos);
+    }
+
+    private static boolean isBufferLate(long earlyUs) {
+        return earlyUs < -30000;
+    }
+
+    private static boolean isBufferVeryLate(long earlyUs) {
+        return earlyUs < -500000;
+    }
+
+    @TargetApi(23)
+    private static void setOutputSurfaceV23(MediaCodec codec, Surface surface2) {
+        codec.setOutputSurface(surface2);
+    }
+
+    @TargetApi(21)
+    private static void configureTunnelingV21(MediaFormat mediaFormat, int tunnelingAudioSessionId2) {
+        mediaFormat.setFeatureEnabled("tunneled-playback", true);
+        mediaFormat.setInteger("audio-session-id", tunnelingAudioSessionId2);
+    }
+
+    private static Point getCodecMaxSize(MediaCodecInfo codecInfo, Format format) throws MediaCodecUtil.DecoderQueryException {
+        float aspectRatio;
+        int formatShortEdgePx;
+        MediaCodecInfo mediaCodecInfo = codecInfo;
+        Format format2 = format;
+        int i = 0;
+        boolean isVerticalVideo = format2.height > format2.width;
+        int formatLongEdgePx = isVerticalVideo ? format2.height : format2.width;
+        int formatShortEdgePx2 = isVerticalVideo ? format2.width : format2.height;
+        float aspectRatio2 = ((float) formatShortEdgePx2) / ((float) formatLongEdgePx);
+        int[] iArr = STANDARD_LONG_EDGE_VIDEO_PX;
+        int length = iArr.length;
+        while (i < length) {
+            int longEdgePx = iArr[i];
+            int shortEdgePx = (int) (((float) longEdgePx) * aspectRatio2);
+            if (longEdgePx > formatLongEdgePx) {
+                if (shortEdgePx > formatShortEdgePx2) {
+                    if (Util.SDK_INT >= 21) {
+                        Point alignedSize = mediaCodecInfo.alignVideoSizeV21(isVerticalVideo ? shortEdgePx : longEdgePx, isVerticalVideo ? longEdgePx : shortEdgePx);
+                        formatShortEdgePx = formatShortEdgePx2;
+                        aspectRatio = aspectRatio2;
+                        if (mediaCodecInfo.isVideoSizeAndRateSupportedV21(alignedSize.x, alignedSize.y, (double) format2.frameRate)) {
+                            return alignedSize;
+                        }
+                    } else {
+                        formatShortEdgePx = formatShortEdgePx2;
+                        aspectRatio = aspectRatio2;
+                        int longEdgePx2 = Util.ceilDivide(longEdgePx, 16) * 16;
+                        int shortEdgePx2 = Util.ceilDivide(shortEdgePx, 16) * 16;
+                        if (longEdgePx2 * shortEdgePx2 <= MediaCodecUtil.maxH264DecodableFrameSize()) {
+                            return new Point(isVerticalVideo ? shortEdgePx2 : longEdgePx2, isVerticalVideo ? longEdgePx2 : shortEdgePx2);
+                        }
+                    }
+                    i++;
+                    formatShortEdgePx2 = formatShortEdgePx;
+                    aspectRatio2 = aspectRatio;
+                }
+            }
+            return null;
+        }
+        return null;
+    }
+
+    private static int getMaxInputSize(MediaCodecInfo codecInfo, Format format) {
+        if (format.maxInputSize == -1) {
+            return getCodecMaxInputSize(codecInfo, format.sampleMimeType, format.width, format.height);
+        }
+        int totalInitializationDataSize = 0;
+        int initializationDataCount = format.initializationData.size();
+        for (int i = 0; i < initializationDataCount; i++) {
+            totalInitializationDataSize += format.initializationData.get(i).length;
+        }
+        return format.maxInputSize + totalInitializationDataSize;
+    }
+
+    /* JADX INFO: Can't fix incorrect switch cases order, some code will duplicate */
+    private static int getCodecMaxInputSize(MediaCodecInfo codecInfo, String sampleMimeType, int width, int height) {
+        char c;
+        int minCompressionRatio;
+        int maxPixels;
+        if (width == -1 || height == -1) {
+            return -1;
+        }
+        switch (sampleMimeType.hashCode()) {
+            case -1664118616:
+                if (sampleMimeType.equals(MimeTypes.VIDEO_H263)) {
+                    c = 0;
+                    break;
+                }
+                c = 65535;
+                break;
+            case -1662541442:
+                if (sampleMimeType.equals(MimeTypes.VIDEO_H265)) {
+                    c = 4;
+                    break;
+                }
+                c = 65535;
+                break;
+            case 1187890754:
+                if (sampleMimeType.equals(MimeTypes.VIDEO_MP4V)) {
+                    c = 1;
+                    break;
+                }
+                c = 65535;
+                break;
+            case 1331836730:
+                if (sampleMimeType.equals(MimeTypes.VIDEO_H264)) {
+                    c = 2;
+                    break;
+                }
+                c = 65535;
+                break;
+            case 1599127256:
+                if (sampleMimeType.equals(MimeTypes.VIDEO_VP8)) {
+                    c = 3;
+                    break;
+                }
+                c = 65535;
+                break;
+            case 1599127257:
+                if (sampleMimeType.equals(MimeTypes.VIDEO_VP9)) {
+                    c = 5;
+                    break;
+                }
+                c = 65535;
+                break;
+            default:
+                c = 65535;
+                break;
+        }
+        if (c == 0 || c == 1) {
+            maxPixels = width * height;
+            minCompressionRatio = 2;
+        } else if (c != 2) {
+            if (c == 3) {
+                maxPixels = width * height;
+                minCompressionRatio = 2;
+            } else if (c != 4 && c != 5) {
+                return -1;
+            } else {
+                maxPixels = width * height;
+                minCompressionRatio = 4;
+            }
+        } else if ("BRAVIA 4K 2015".equals(Util.MODEL) || ("Amazon".equals(Util.MANUFACTURER) && ("KFSOWI".equals(Util.MODEL) || ("AFTS".equals(Util.MODEL) && codecInfo.secure)))) {
+            return -1;
+        } else {
+            maxPixels = Util.ceilDivide(width, 16) * Util.ceilDivide(height, 16) * 16 * 16;
+            minCompressionRatio = 2;
+        }
+        return (maxPixels * 3) / (minCompressionRatio * 2);
+    }
+
+    private static boolean deviceNeedsNoPostProcessWorkaround() {
+        return "NVIDIA".equals(Util.MANUFACTURER);
     }
 
     /* access modifiers changed from: protected */
@@ -174,20 +344,6 @@ public class MediaCodecVideoRenderer extends MediaCodecRenderer {
     /* access modifiers changed from: protected */
     public List<MediaCodecInfo> getDecoderInfos(MediaCodecSelector mediaCodecSelector, Format format, boolean requiresSecureDecoder) throws MediaCodecUtil.DecoderQueryException {
         return getDecoderInfos(mediaCodecSelector, format, requiresSecureDecoder, this.tunneling);
-    }
-
-    private static List<MediaCodecInfo> getDecoderInfos(MediaCodecSelector mediaCodecSelector, Format format, boolean requiresSecureDecoder, boolean requiresTunnelingDecoder) throws MediaCodecUtil.DecoderQueryException {
-        Pair<Integer, Integer> codecProfileAndLevel;
-        List<MediaCodecInfo> decoderInfos = MediaCodecUtil.getDecoderInfosSortedByFormatSupport(mediaCodecSelector.getDecoderInfos(format.sampleMimeType, requiresSecureDecoder, requiresTunnelingDecoder), format);
-        if (MimeTypes.VIDEO_DOLBY_VISION.equals(format.sampleMimeType) && (codecProfileAndLevel = MediaCodecUtil.getCodecProfileAndLevel(format.codecs)) != null) {
-            int profile = ((Integer) codecProfileAndLevel.first).intValue();
-            if (profile == 4 || profile == 8) {
-                decoderInfos.addAll(mediaCodecSelector.getDecoderInfos(MimeTypes.VIDEO_H265, requiresSecureDecoder, requiresTunnelingDecoder));
-            } else if (profile == 9) {
-                decoderInfos.addAll(mediaCodecSelector.getDecoderInfos(MimeTypes.VIDEO_H264, requiresSecureDecoder, requiresTunnelingDecoder));
-            }
-        }
-        return Collections.unmodifiableList(decoderInfos);
     }
 
     /* access modifiers changed from: protected */
@@ -792,25 +948,6 @@ public class MediaCodecVideoRenderer extends MediaCodecRenderer {
         }
     }
 
-    private static boolean isBufferLate(long earlyUs) {
-        return earlyUs < -30000;
-    }
-
-    private static boolean isBufferVeryLate(long earlyUs) {
-        return earlyUs < -500000;
-    }
-
-    @TargetApi(23)
-    private static void setOutputSurfaceV23(MediaCodec codec, Surface surface2) {
-        codec.setOutputSurface(surface2);
-    }
-
-    @TargetApi(21)
-    private static void configureTunnelingV21(MediaFormat mediaFormat, int tunnelingAudioSessionId2) {
-        mediaFormat.setFeatureEnabled("tunneled-playback", true);
-        mediaFormat.setInteger("audio-session-id", tunnelingAudioSessionId2);
-    }
-
     /* access modifiers changed from: protected */
     @SuppressLint({"InlinedApi"})
     public MediaFormat getMediaFormat(Format format, CodecMaxValues codecMaxValues2, float codecOperatingRate, boolean deviceNeedsNoPostProcessWorkaround2, int tunnelingAudioSessionId2) {
@@ -890,142 +1027,6 @@ public class MediaCodecVideoRenderer extends MediaCodecRenderer {
             }
         }
         return new CodecMaxValues(maxWidth2, maxHeight2, maxInputSize2);
-    }
-
-    private static Point getCodecMaxSize(MediaCodecInfo codecInfo, Format format) throws MediaCodecUtil.DecoderQueryException {
-        float aspectRatio;
-        int formatShortEdgePx;
-        MediaCodecInfo mediaCodecInfo = codecInfo;
-        Format format2 = format;
-        int i = 0;
-        boolean isVerticalVideo = format2.height > format2.width;
-        int formatLongEdgePx = isVerticalVideo ? format2.height : format2.width;
-        int formatShortEdgePx2 = isVerticalVideo ? format2.width : format2.height;
-        float aspectRatio2 = ((float) formatShortEdgePx2) / ((float) formatLongEdgePx);
-        int[] iArr = STANDARD_LONG_EDGE_VIDEO_PX;
-        int length = iArr.length;
-        while (i < length) {
-            int longEdgePx = iArr[i];
-            int shortEdgePx = (int) (((float) longEdgePx) * aspectRatio2);
-            if (longEdgePx > formatLongEdgePx) {
-                if (shortEdgePx > formatShortEdgePx2) {
-                    if (Util.SDK_INT >= 21) {
-                        Point alignedSize = mediaCodecInfo.alignVideoSizeV21(isVerticalVideo ? shortEdgePx : longEdgePx, isVerticalVideo ? longEdgePx : shortEdgePx);
-                        formatShortEdgePx = formatShortEdgePx2;
-                        aspectRatio = aspectRatio2;
-                        if (mediaCodecInfo.isVideoSizeAndRateSupportedV21(alignedSize.x, alignedSize.y, (double) format2.frameRate)) {
-                            return alignedSize;
-                        }
-                    } else {
-                        formatShortEdgePx = formatShortEdgePx2;
-                        aspectRatio = aspectRatio2;
-                        int longEdgePx2 = Util.ceilDivide(longEdgePx, 16) * 16;
-                        int shortEdgePx2 = Util.ceilDivide(shortEdgePx, 16) * 16;
-                        if (longEdgePx2 * shortEdgePx2 <= MediaCodecUtil.maxH264DecodableFrameSize()) {
-                            return new Point(isVerticalVideo ? shortEdgePx2 : longEdgePx2, isVerticalVideo ? longEdgePx2 : shortEdgePx2);
-                        }
-                    }
-                    i++;
-                    formatShortEdgePx2 = formatShortEdgePx;
-                    aspectRatio2 = aspectRatio;
-                }
-            }
-            return null;
-        }
-        return null;
-    }
-
-    private static int getMaxInputSize(MediaCodecInfo codecInfo, Format format) {
-        if (format.maxInputSize == -1) {
-            return getCodecMaxInputSize(codecInfo, format.sampleMimeType, format.width, format.height);
-        }
-        int totalInitializationDataSize = 0;
-        int initializationDataCount = format.initializationData.size();
-        for (int i = 0; i < initializationDataCount; i++) {
-            totalInitializationDataSize += format.initializationData.get(i).length;
-        }
-        return format.maxInputSize + totalInitializationDataSize;
-    }
-
-    /* JADX INFO: Can't fix incorrect switch cases order, some code will duplicate */
-    private static int getCodecMaxInputSize(MediaCodecInfo codecInfo, String sampleMimeType, int width, int height) {
-        char c;
-        int minCompressionRatio;
-        int maxPixels;
-        if (width == -1 || height == -1) {
-            return -1;
-        }
-        switch (sampleMimeType.hashCode()) {
-            case -1664118616:
-                if (sampleMimeType.equals(MimeTypes.VIDEO_H263)) {
-                    c = 0;
-                    break;
-                }
-                c = 65535;
-                break;
-            case -1662541442:
-                if (sampleMimeType.equals(MimeTypes.VIDEO_H265)) {
-                    c = 4;
-                    break;
-                }
-                c = 65535;
-                break;
-            case 1187890754:
-                if (sampleMimeType.equals(MimeTypes.VIDEO_MP4V)) {
-                    c = 1;
-                    break;
-                }
-                c = 65535;
-                break;
-            case 1331836730:
-                if (sampleMimeType.equals(MimeTypes.VIDEO_H264)) {
-                    c = 2;
-                    break;
-                }
-                c = 65535;
-                break;
-            case 1599127256:
-                if (sampleMimeType.equals(MimeTypes.VIDEO_VP8)) {
-                    c = 3;
-                    break;
-                }
-                c = 65535;
-                break;
-            case 1599127257:
-                if (sampleMimeType.equals(MimeTypes.VIDEO_VP9)) {
-                    c = 5;
-                    break;
-                }
-                c = 65535;
-                break;
-            default:
-                c = 65535;
-                break;
-        }
-        if (c == 0 || c == 1) {
-            maxPixels = width * height;
-            minCompressionRatio = 2;
-        } else if (c != 2) {
-            if (c == 3) {
-                maxPixels = width * height;
-                minCompressionRatio = 2;
-            } else if (c != 4 && c != 5) {
-                return -1;
-            } else {
-                maxPixels = width * height;
-                minCompressionRatio = 4;
-            }
-        } else if ("BRAVIA 4K 2015".equals(Util.MODEL) || ("Amazon".equals(Util.MANUFACTURER) && ("KFSOWI".equals(Util.MODEL) || ("AFTS".equals(Util.MODEL) && codecInfo.secure)))) {
-            return -1;
-        } else {
-            maxPixels = Util.ceilDivide(width, 16) * Util.ceilDivide(height, 16) * 16 * 16;
-            minCompressionRatio = 2;
-        }
-        return (maxPixels * 3) / (minCompressionRatio * 2);
-    }
-
-    private static boolean deviceNeedsNoPostProcessWorkaround() {
-        return "NVIDIA".equals(Util.MANUFACTURER);
     }
 
     /* JADX INFO: Can't fix incorrect switch cases order, some code will duplicate */

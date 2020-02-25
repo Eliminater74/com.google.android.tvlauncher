@@ -1,6 +1,5 @@
 package com.google.protobuf;
 
-import com.google.protobuf.ExtensionRegistryLite;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,11 +10,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 abstract class GeneratedExtensionRegistryLoader<T extends ExtensionRegistryLite> {
-    private static String LITE_CLASS_NAME = "com.google.protobuf.BlazeGeneratedExtensionRegistryLiteLoader";
     private static final Logger logger = Logger.getLogger(CodedOutputStream.class.getName());
-
-    /* access modifiers changed from: protected */
-    public abstract T getInstance();
+    private static String LITE_CLASS_NAME = "com.google.protobuf.BlazeGeneratedExtensionRegistryLiteLoader";
 
     GeneratedExtensionRegistryLoader() {
     }
@@ -79,4 +75,7 @@ abstract class GeneratedExtensionRegistryLoader<T extends ExtensionRegistryLite>
             }
         }
     }
+
+    /* access modifiers changed from: protected */
+    public abstract T getInstance();
 }

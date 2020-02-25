@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
+
 import java.lang.ref.WeakReference;
 
 /* renamed from: android.support.v7.widget.TintResources */

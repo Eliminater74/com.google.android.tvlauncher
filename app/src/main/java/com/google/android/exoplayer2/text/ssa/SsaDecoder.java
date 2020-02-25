@@ -8,6 +8,7 @@ import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.LongArray;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.Util;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -18,11 +19,11 @@ public final class SsaDecoder extends SimpleSubtitleDecoder {
     private static final String FORMAT_LINE_PREFIX = "Format: ";
     private static final Pattern SSA_TIMECODE_PATTERN = Pattern.compile("(?:(\\d+):)?(\\d+):(\\d+)(?::|\\.)(\\d+)");
     private static final String TAG = "SsaDecoder";
+    private final boolean haveInitializationData;
     private int formatEndIndex;
     private int formatKeyCount;
     private int formatStartIndex;
     private int formatTextIndex;
-    private final boolean haveInitializationData;
 
     public SsaDecoder() {
         this(null);
@@ -39,6 +40,14 @@ public final class SsaDecoder extends SimpleSubtitleDecoder {
         Assertions.checkArgument(formatLine.startsWith(FORMAT_LINE_PREFIX));
         parseFormatLine(formatLine);
         parseHeader(new ParsableByteArray(initializationData.get(1)));
+    }
+
+    public static long parseTimecodeUs(String timeString) {
+        Matcher matcher = SSA_TIMECODE_PATTERN.matcher(timeString);
+        if (!matcher.matches()) {
+            return C0841C.TIME_UNSET;
+        }
+        return (Long.parseLong(matcher.group(1)) * 60 * 60 * 1000000) + (Long.parseLong(matcher.group(2)) * 60 * 1000000) + (Long.parseLong(matcher.group(3)) * 1000000) + (Long.parseLong(matcher.group(4)) * 10000);
     }
 
     /* access modifiers changed from: protected */
@@ -204,13 +213,5 @@ public final class SsaDecoder extends SimpleSubtitleDecoder {
             cues.add(null);
             cueTimesUs.add(endTimeUs);
         }
-    }
-
-    public static long parseTimecodeUs(String timeString) {
-        Matcher matcher = SSA_TIMECODE_PATTERN.matcher(timeString);
-        if (!matcher.matches()) {
-            return C0841C.TIME_UNSET;
-        }
-        return (Long.parseLong(matcher.group(1)) * 60 * 60 * 1000000) + (Long.parseLong(matcher.group(2)) * 60 * 1000000) + (Long.parseLong(matcher.group(3)) * 1000000) + (Long.parseLong(matcher.group(4)) * 10000);
     }
 }

@@ -5,38 +5,56 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Handler;
 import android.view.SurfaceHolder;
+
 import androidx.leanback.C0364R;
-import androidx.leanback.media.PlayerAdapter;
+
 import com.google.devtools.build.android.desugar.runtime.ThrowableExtension;
+
 import java.io.IOException;
 
 public class MediaPlayerAdapter extends PlayerAdapter {
-    long mBufferedProgress;
-    boolean mBufferingStart;
-    Context mContext;
     final Handler mHandler = new Handler();
-    boolean mHasDisplay;
-    boolean mInitialized = false;
-    Uri mMediaSourceUri = null;
-    final MediaPlayer.OnBufferingUpdateListener mOnBufferingUpdateListener = new MediaPlayer.OnBufferingUpdateListener() {
-        public void onBufferingUpdate(MediaPlayer mp, int percent) {
-            MediaPlayerAdapter mediaPlayerAdapter = MediaPlayerAdapter.this;
-            mediaPlayerAdapter.mBufferedProgress = (mediaPlayerAdapter.getDuration() * ((long) percent)) / 100;
-            MediaPlayerAdapter.this.getCallback().onBufferedPositionChanged(MediaPlayerAdapter.this);
-        }
-    };
     final MediaPlayer.OnCompletionListener mOnCompletionListener = new MediaPlayer.OnCompletionListener() {
         public void onCompletion(MediaPlayer mediaPlayer) {
             MediaPlayerAdapter.this.getCallback().onPlayStateChanged(MediaPlayerAdapter.this);
             MediaPlayerAdapter.this.getCallback().onPlayCompleted(MediaPlayerAdapter.this);
         }
     };
+    final MediaPlayer.OnSeekCompleteListener mOnSeekCompleteListener = new MediaPlayer.OnSeekCompleteListener() {
+        public void onSeekComplete(MediaPlayer mp) {
+            MediaPlayerAdapter.this.onSeekComplete();
+        }
+    };
+    final MediaPlayer.OnVideoSizeChangedListener mOnVideoSizeChangedListener = new MediaPlayer.OnVideoSizeChangedListener() {
+        public void onVideoSizeChanged(MediaPlayer mediaPlayer, int width, int height) {
+            MediaPlayerAdapter.this.getCallback().onVideoSizeChanged(MediaPlayerAdapter.this, width, height);
+        }
+    };
+    final MediaPlayer mPlayer = new MediaPlayer();
+    final Runnable mRunnable = new Runnable() {
+        public void run() {
+            MediaPlayerAdapter.this.getCallback().onCurrentPositionChanged(MediaPlayerAdapter.this);
+            MediaPlayerAdapter.this.mHandler.postDelayed(this, (long) MediaPlayerAdapter.this.getProgressUpdatingInterval());
+        }
+    };
+    long mBufferedProgress;
+    boolean mBufferingStart;
+    Context mContext;
     final MediaPlayer.OnErrorListener mOnErrorListener = new MediaPlayer.OnErrorListener() {
         public boolean onError(MediaPlayer mp, int what, int extra) {
             PlayerAdapter.Callback callback = MediaPlayerAdapter.this.getCallback();
             MediaPlayerAdapter mediaPlayerAdapter = MediaPlayerAdapter.this;
             callback.onError(mediaPlayerAdapter, what, mediaPlayerAdapter.mContext.getString(C0364R.string.lb_media_player_error, Integer.valueOf(what), Integer.valueOf(extra)));
             return MediaPlayerAdapter.this.onError(what, extra);
+        }
+    };
+    boolean mHasDisplay;
+    boolean mInitialized = false;
+    final MediaPlayer.OnBufferingUpdateListener mOnBufferingUpdateListener = new MediaPlayer.OnBufferingUpdateListener() {
+        public void onBufferingUpdate(MediaPlayer mp, int percent) {
+            MediaPlayerAdapter mediaPlayerAdapter = MediaPlayerAdapter.this;
+            mediaPlayerAdapter.mBufferedProgress = (mediaPlayerAdapter.getDuration() * ((long) percent)) / 100;
+            MediaPlayerAdapter.this.getCallback().onBufferedPositionChanged(MediaPlayerAdapter.this);
         }
     };
     final MediaPlayer.OnInfoListener mOnInfoListener = new MediaPlayer.OnInfoListener() {
@@ -60,6 +78,8 @@ public class MediaPlayerAdapter extends PlayerAdapter {
             return false;
         }
     };
+    Uri mMediaSourceUri = null;
+    SurfaceHolderGlueHost mSurfaceHolderGlueHost;
     MediaPlayer.OnPreparedListener mOnPreparedListener = new MediaPlayer.OnPreparedListener() {
         public void onPrepared(MediaPlayer mp) {
             MediaPlayerAdapter mediaPlayerAdapter = MediaPlayerAdapter.this;
@@ -70,32 +90,14 @@ public class MediaPlayerAdapter extends PlayerAdapter {
             }
         }
     };
-    final MediaPlayer.OnSeekCompleteListener mOnSeekCompleteListener = new MediaPlayer.OnSeekCompleteListener() {
-        public void onSeekComplete(MediaPlayer mp) {
-            MediaPlayerAdapter.this.onSeekComplete();
-        }
-    };
-    final MediaPlayer.OnVideoSizeChangedListener mOnVideoSizeChangedListener = new MediaPlayer.OnVideoSizeChangedListener() {
-        public void onVideoSizeChanged(MediaPlayer mediaPlayer, int width, int height) {
-            MediaPlayerAdapter.this.getCallback().onVideoSizeChanged(MediaPlayerAdapter.this, width, height);
-        }
-    };
-    final MediaPlayer mPlayer = new MediaPlayer();
-    final Runnable mRunnable = new Runnable() {
-        public void run() {
-            MediaPlayerAdapter.this.getCallback().onCurrentPositionChanged(MediaPlayerAdapter.this);
-            MediaPlayerAdapter.this.mHandler.postDelayed(this, (long) MediaPlayerAdapter.this.getProgressUpdatingInterval());
-        }
-    };
-    SurfaceHolderGlueHost mSurfaceHolderGlueHost;
+
+    public MediaPlayerAdapter(Context context) {
+        this.mContext = context;
+    }
 
     /* access modifiers changed from: package-private */
     public void notifyBufferingStartEnd() {
         getCallback().onBufferingStateChanged(this, this.mBufferingStart || !this.mInitialized);
-    }
-
-    public MediaPlayerAdapter(Context context) {
-        this.mContext = context;
     }
 
     public void onAttachedToHost(PlaybackGlueHost host) {

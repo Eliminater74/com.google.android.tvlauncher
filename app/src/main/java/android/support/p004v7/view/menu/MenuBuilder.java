@@ -23,6 +23,7 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewConfiguration;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -37,17 +38,18 @@ public class MenuBuilder implements SupportMenu {
     private static final String PRESENTER_KEY = "android:menu:presenters";
     private static final String TAG = "MenuBuilder";
     private static final int[] sCategoryToOrder = {1, 4, 5, 3, 2, 0};
+    private final Context mContext;
+    private final Resources mResources;
+    Drawable mHeaderIcon;
+    CharSequence mHeaderTitle;
+    View mHeaderView;
     private ArrayList<MenuItemImpl> mActionItems;
     private Callback mCallback;
-    private final Context mContext;
     private ContextMenu.ContextMenuInfo mCurrentMenuInfo;
     private int mDefaultShowAsAction = 0;
     private MenuItemImpl mExpandedItem;
     private SparseArray<Parcelable> mFrozenViewStates;
     private boolean mGroupDividerEnabled = false;
-    Drawable mHeaderIcon;
-    CharSequence mHeaderTitle;
-    View mHeaderView;
     private boolean mIsActionItemsStale;
     private boolean mIsClosing = false;
     private boolean mIsVisibleItemsStale;
@@ -59,25 +61,10 @@ public class MenuBuilder implements SupportMenu {
     private CopyOnWriteArrayList<WeakReference<MenuPresenter>> mPresenters = new CopyOnWriteArrayList<>();
     private boolean mPreventDispatchingItemsChanged = false;
     private boolean mQwertyMode;
-    private final Resources mResources;
     private boolean mShortcutsVisible;
     private boolean mStructureChangedWhileDispatchPrevented = false;
     private ArrayList<MenuItemImpl> mTempShortcutItemList = new ArrayList<>();
     private ArrayList<MenuItemImpl> mVisibleItems;
-
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    /* renamed from: android.support.v7.view.menu.MenuBuilder$Callback */
-    public interface Callback {
-        boolean onMenuItemSelected(MenuBuilder menuBuilder, MenuItem menuItem);
-
-        void onMenuModeChange(MenuBuilder menuBuilder);
-    }
-
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    /* renamed from: android.support.v7.view.menu.MenuBuilder$ItemInvoker */
-    public interface ItemInvoker {
-        boolean invokeItem(MenuItemImpl menuItemImpl);
-    }
 
     public MenuBuilder(Context context) {
         this.mContext = context;
@@ -89,6 +76,26 @@ public class MenuBuilder implements SupportMenu {
         this.mNonActionItems = new ArrayList<>();
         this.mIsActionItemsStale = true;
         setShortcutsVisibleInner(true);
+    }
+
+    private static int getOrdering(int categoryOrder) {
+        int index = (-65536 & categoryOrder) >> 16;
+        if (index >= 0) {
+            int[] iArr = sCategoryToOrder;
+            if (index < iArr.length) {
+                return (iArr[index] << 16) | (65535 & categoryOrder);
+            }
+        }
+        throw new IllegalArgumentException("order does not contain a valid category.");
+    }
+
+    private static int findInsertIndex(ArrayList<MenuItemImpl> items, int ordering) {
+        for (int i = items.size() - 1; i >= 0; i--) {
+            if (items.get(i).getOrdering() <= ordering) {
+                return i + 1;
+            }
+        }
+        return 0;
     }
 
     public MenuBuilder setDefaultShowAsAction(int defaultShowAsAction) {
@@ -312,12 +319,12 @@ public class MenuBuilder implements SupportMenu {
         return addSubMenu(group, id, categoryOrder, this.mResources.getString(title));
     }
 
-    public void setGroupDividerEnabled(boolean enabled) {
-        this.mGroupDividerEnabled = enabled;
-    }
-
     public boolean isGroupDividerEnabled() {
         return this.mGroupDividerEnabled;
+    }
+
+    public void setGroupDividerEnabled(boolean enabled) {
+        this.mGroupDividerEnabled = enabled;
     }
 
     public int addIntentOptions(int group, int id, int categoryOrder, ComponentName caller, Intent[] specifics, Intent intent, int flags, MenuItem[] outSpecificItems) {
@@ -515,32 +522,14 @@ public class MenuBuilder implements SupportMenu {
         return findItemWithShortcutForKey(keyCode, event) != null;
     }
 
-    public void setQwertyMode(boolean isQwerty) {
-        this.mQwertyMode = isQwerty;
-        onItemsChanged(false);
-    }
-
-    private static int getOrdering(int categoryOrder) {
-        int index = (-65536 & categoryOrder) >> 16;
-        if (index >= 0) {
-            int[] iArr = sCategoryToOrder;
-            if (index < iArr.length) {
-                return (iArr[index] << 16) | (65535 & categoryOrder);
-            }
-        }
-        throw new IllegalArgumentException("order does not contain a valid category.");
-    }
-
     /* access modifiers changed from: package-private */
     public boolean isQwertyMode() {
         return this.mQwertyMode;
     }
 
-    public void setShortcutsVisible(boolean shortcutsVisible) {
-        if (this.mShortcutsVisible != shortcutsVisible) {
-            setShortcutsVisibleInner(shortcutsVisible);
-            onItemsChanged(false);
-        }
+    public void setQwertyMode(boolean isQwerty) {
+        this.mQwertyMode = isQwerty;
+        onItemsChanged(false);
     }
 
     private void setShortcutsVisibleInner(boolean shortcutsVisible) {
@@ -553,6 +542,13 @@ public class MenuBuilder implements SupportMenu {
 
     public boolean isShortcutsVisible() {
         return this.mShortcutsVisible;
+    }
+
+    public void setShortcutsVisible(boolean shortcutsVisible) {
+        if (this.mShortcutsVisible != shortcutsVisible) {
+            setShortcutsVisibleInner(shortcutsVisible);
+            onItemsChanged(false);
+        }
     }
 
     /* access modifiers changed from: package-private */
@@ -575,15 +571,6 @@ public class MenuBuilder implements SupportMenu {
         if (callback != null) {
             callback.onMenuModeChange(this);
         }
-    }
-
-    private static int findInsertIndex(ArrayList<MenuItemImpl> items, int ordering) {
-        for (int i = items.size() - 1; i >= 0; i--) {
-            if (items.get(i).getOrdering() <= ordering) {
-                return i + 1;
-            }
-        }
-        return 0;
     }
 
     public boolean performShortcut(int keyCode, KeyEvent event, int flags) {
@@ -900,13 +887,13 @@ public class MenuBuilder implements SupportMenu {
         this.mCurrentMenuInfo = menuInfo;
     }
 
-    public void setOptionalIconsVisible(boolean visible) {
-        this.mOptionalIconsVisible = visible;
-    }
-
     /* access modifiers changed from: package-private */
     public boolean getOptionalIconsVisible() {
         return this.mOptionalIconsVisible;
+    }
+
+    public void setOptionalIconsVisible(boolean visible) {
+        this.mOptionalIconsVisible = visible;
     }
 
     public boolean expandItemActionView(MenuItemImpl item) {
@@ -969,5 +956,19 @@ public class MenuBuilder implements SupportMenu {
 
     public void setOverrideVisibleItems(boolean override) {
         this.mOverrideVisibleItems = override;
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    /* renamed from: android.support.v7.view.menu.MenuBuilder$Callback */
+    public interface Callback {
+        boolean onMenuItemSelected(MenuBuilder menuBuilder, MenuItem menuItem);
+
+        void onMenuModeChange(MenuBuilder menuBuilder);
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    /* renamed from: android.support.v7.view.menu.MenuBuilder$ItemInvoker */
+    public interface ItemInvoker {
+        boolean invokeItem(MenuItemImpl menuItemImpl);
     }
 }

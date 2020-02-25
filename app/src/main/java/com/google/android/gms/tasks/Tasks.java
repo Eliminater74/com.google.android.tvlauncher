@@ -1,7 +1,9 @@
 package com.google.android.gms.tasks;
 
 import android.support.annotation.NonNull;
+
 import com.google.android.gms.common.internal.zzau;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -15,7 +17,7 @@ import java.util.concurrent.TimeoutException;
 
 public final class Tasks {
 
-    interface zzb extends OnCanceledListener, OnFailureListener, OnSuccessListener<Object> {
+    private Tasks() {
     }
 
     public static <TResult> Task<TResult> forResult(TResult tresult) {
@@ -24,104 +26,10 @@ public final class Tasks {
         return zzu;
     }
 
-    static final class zza implements zzb {
-        private final CountDownLatch zza;
-
-        private zza() {
-            this.zza = new CountDownLatch(1);
-        }
-
-        public final void onSuccess(Object obj) {
-            this.zza.countDown();
-        }
-
-        public final void onFailure(@NonNull Exception exc) {
-            this.zza.countDown();
-        }
-
-        public final void onCanceled() {
-            this.zza.countDown();
-        }
-
-        public final void zza() throws InterruptedException {
-            this.zza.await();
-        }
-
-        public final boolean zza(long j, TimeUnit timeUnit) throws InterruptedException {
-            return this.zza.await(j, timeUnit);
-        }
-
-        /* synthetic */ zza(zzv zzv) {
-            this();
-        }
-    }
-
     public static <TResult> Task<TResult> forException(@NonNull Exception exc) {
         zzu zzu = new zzu();
         zzu.zza(exc);
         return zzu;
-    }
-
-    static final class zzc implements zzb {
-        private final Object zza = new Object();
-        private final int zzb;
-        private final zzu<Void> zzc;
-        private int zzd;
-        private int zze;
-        private int zzf;
-        private Exception zzg;
-        private boolean zzh;
-
-        public zzc(int i, zzu<Void> zzu) {
-            this.zzb = i;
-            this.zzc = zzu;
-        }
-
-        public final void onFailure(@NonNull Exception exc) {
-            synchronized (this.zza) {
-                this.zze++;
-                this.zzg = exc;
-                zza();
-            }
-        }
-
-        public final void onSuccess(Object obj) {
-            synchronized (this.zza) {
-                this.zzd++;
-                zza();
-            }
-        }
-
-        public final void onCanceled() {
-            synchronized (this.zza) {
-                this.zzf++;
-                this.zzh = true;
-                zza();
-            }
-        }
-
-        private final void zza() {
-            int i = this.zzd;
-            int i2 = this.zze;
-            int i3 = i + i2 + this.zzf;
-            int i4 = this.zzb;
-            if (i3 != i4) {
-                return;
-            }
-            if (this.zzg != null) {
-                zzu<Void> zzu = this.zzc;
-                StringBuilder sb = new StringBuilder(54);
-                sb.append(i2);
-                sb.append(" out of ");
-                sb.append(i4);
-                sb.append(" underlying tasks failed");
-                zzu.zza((Exception) new ExecutionException(sb.toString(), this.zzg));
-            } else if (this.zzh) {
-                this.zzc.zza();
-            } else {
-                this.zzc.zza((Object) null);
-            }
-        }
     }
 
     public static <TResult> Task<TResult> forCanceled() {
@@ -225,6 +133,100 @@ public final class Tasks {
         task.addOnCanceledListener(TaskExecutors.zza, zzb2);
     }
 
-    private Tasks() {
+    interface zzb extends OnCanceledListener, OnFailureListener, OnSuccessListener<Object> {
+    }
+
+    static final class zza implements zzb {
+        private final CountDownLatch zza;
+
+        private zza() {
+            this.zza = new CountDownLatch(1);
+        }
+
+        /* synthetic */ zza(zzv zzv) {
+            this();
+        }
+
+        public final void onSuccess(Object obj) {
+            this.zza.countDown();
+        }
+
+        public final void onFailure(@NonNull Exception exc) {
+            this.zza.countDown();
+        }
+
+        public final void onCanceled() {
+            this.zza.countDown();
+        }
+
+        public final void zza() throws InterruptedException {
+            this.zza.await();
+        }
+
+        public final boolean zza(long j, TimeUnit timeUnit) throws InterruptedException {
+            return this.zza.await(j, timeUnit);
+        }
+    }
+
+    static final class zzc implements zzb {
+        private final Object zza = new Object();
+        private final int zzb;
+        private final zzu<Void> zzc;
+        private int zzd;
+        private int zze;
+        private int zzf;
+        private Exception zzg;
+        private boolean zzh;
+
+        public zzc(int i, zzu<Void> zzu) {
+            this.zzb = i;
+            this.zzc = zzu;
+        }
+
+        public final void onFailure(@NonNull Exception exc) {
+            synchronized (this.zza) {
+                this.zze++;
+                this.zzg = exc;
+                zza();
+            }
+        }
+
+        public final void onSuccess(Object obj) {
+            synchronized (this.zza) {
+                this.zzd++;
+                zza();
+            }
+        }
+
+        public final void onCanceled() {
+            synchronized (this.zza) {
+                this.zzf++;
+                this.zzh = true;
+                zza();
+            }
+        }
+
+        private final void zza() {
+            int i = this.zzd;
+            int i2 = this.zze;
+            int i3 = i + i2 + this.zzf;
+            int i4 = this.zzb;
+            if (i3 != i4) {
+                return;
+            }
+            if (this.zzg != null) {
+                zzu<Void> zzu = this.zzc;
+                StringBuilder sb = new StringBuilder(54);
+                sb.append(i2);
+                sb.append(" out of ");
+                sb.append(i4);
+                sb.append(" underlying tasks failed");
+                zzu.zza((Exception) new ExecutionException(sb.toString(), this.zzg));
+            } else if (this.zzh) {
+                this.zzc.zza();
+            } else {
+                this.zzc.zza((Object) null);
+            }
+        }
     }
 }

@@ -2,6 +2,7 @@ package com.google.android.gms.ads.identifier;
 
 import android.net.Uri;
 import android.util.Log;
+
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;

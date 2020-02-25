@@ -4,8 +4,10 @@ import com.google.common.annotations.GwtCompatible;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
-import java.io.Serializable;
+
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
+import java.io.Serializable;
 
 @GwtCompatible(serializable = true)
 final class ByFunctionOrdering<F, T> extends Ordering<F> implements Serializable {

@@ -12,10 +12,10 @@ import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class ThrowableExtension {
-    private static final String ANDROID_OS_BUILD_VERSION = "android.os.Build$VERSION";
+    public static final String SYSTEM_PROPERTY_TWR_DISABLE_MIMIC = "com.google.devtools.build.android.desugar.runtime.twr_disable_mimic";
     static final int API_LEVEL;
     static final AbstractDesugaringStrategy STRATEGY;
-    public static final String SYSTEM_PROPERTY_TWR_DISABLE_MIMIC = "com.google.devtools.build.android.desugar.runtime.twr_disable_mimic";
+    private static final String ANDROID_OS_BUILD_VERSION = "android.os.Build$VERSION";
 
     /* JADX WARNING: Removed duplicated region for block: B:15:0x0063  */
     /* JADX WARNING: Removed duplicated region for block: B:16:0x0065  */
@@ -176,6 +176,9 @@ public final class ThrowableExtension {
     static abstract class AbstractDesugaringStrategy {
         protected static final Throwable[] EMPTY_THROWABLE_ARRAY = new Throwable[0];
 
+        AbstractDesugaringStrategy() {
+        }
+
         public abstract void addSuppressed(Throwable th, Throwable th2);
 
         public abstract Throwable[] getSuppressed(Throwable th);
@@ -185,9 +188,6 @@ public final class ThrowableExtension {
         public abstract void printStackTrace(Throwable th, PrintStream printStream);
 
         public abstract void printStackTrace(Throwable th, PrintWriter printWriter);
-
-        AbstractDesugaringStrategy() {
-        }
     }
 
     static final class ReuseDesugaringStrategy extends AbstractDesugaringStrategy {

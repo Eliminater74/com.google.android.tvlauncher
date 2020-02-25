@@ -1,10 +1,11 @@
 package com.google.protobuf;
 
 import androidx.tvprovider.media.p005tv.TvContractCompat;
+
 import com.google.common.base.Ascii;
 import com.google.common.primitives.UnsignedBytes;
-import com.google.protobuf.MessageLite;
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,9 +21,150 @@ public abstract class CodedInputStream {
     private static final int DEFAULT_SIZE_LIMIT = Integer.MAX_VALUE;
     int recursionDepth;
     int recursionLimit;
-    private boolean shouldDiscardUnknownFields;
     int sizeLimit;
     CodedInputStreamReader wrapper;
+    private boolean shouldDiscardUnknownFields;
+
+    private CodedInputStream() {
+        this.recursionLimit = 100;
+        this.sizeLimit = Integer.MAX_VALUE;
+        this.shouldDiscardUnknownFields = false;
+    }
+
+    public static CodedInputStream newInstance(InputStream input) {
+        return newInstance(input, 4096);
+    }
+
+    public static CodedInputStream newInstance(InputStream input, int bufferSize) {
+        if (bufferSize <= 0) {
+            throw new IllegalArgumentException("bufferSize must be > 0");
+        } else if (input == null) {
+            return newInstance(Internal.EMPTY_BYTE_ARRAY);
+        } else {
+            return new StreamDecoder(input, bufferSize);
+        }
+    }
+
+    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+     method: com.google.protobuf.CodedInputStream.newInstance(java.lang.Iterable<java.nio.ByteBuffer>, boolean):com.google.protobuf.CodedInputStream
+     arg types: [java.lang.Iterable<java.nio.ByteBuffer>, int]
+     candidates:
+      com.google.protobuf.CodedInputStream.newInstance(java.io.InputStream, int):com.google.protobuf.CodedInputStream
+      com.google.protobuf.CodedInputStream.newInstance(java.nio.ByteBuffer, boolean):com.google.protobuf.CodedInputStream
+      com.google.protobuf.CodedInputStream.newInstance(java.lang.Iterable<java.nio.ByteBuffer>, boolean):com.google.protobuf.CodedInputStream */
+    public static CodedInputStream newInstance(Iterable<ByteBuffer> input) {
+        if (!UnsafeDirectNioDecoder.isSupported()) {
+            return newInstance(new IterableByteBufferInputStream(input));
+        }
+        return newInstance(input, false);
+    }
+
+    static CodedInputStream newInstance(Iterable<ByteBuffer> bufs, boolean bufferIsImmutable) {
+        int flag = 0;
+        int totalSize = 0;
+        for (ByteBuffer buf : bufs) {
+            totalSize += buf.remaining();
+            if (buf.hasArray()) {
+                flag |= 1;
+            } else if (buf.isDirect()) {
+                flag |= 2;
+            } else {
+                flag |= 4;
+            }
+        }
+        if (flag == 2) {
+            return new IterableDirectByteBufferDecoder(bufs, totalSize, bufferIsImmutable);
+        }
+        return newInstance(new IterableByteBufferInputStream(bufs));
+    }
+
+    public static CodedInputStream newInstance(byte[] buf) {
+        return newInstance(buf, 0, buf.length);
+    }
+
+    public static CodedInputStream newInstance(byte[] buf, int off, int len) {
+        return newInstance(buf, off, len, false);
+    }
+
+    static CodedInputStream newInstance(byte[] buf, int off, int len, boolean bufferIsImmutable) {
+        ArrayDecoder result = new ArrayDecoder(buf, off, len, bufferIsImmutable);
+        try {
+            result.pushLimit(len);
+            return result;
+        } catch (InvalidProtocolBufferException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+    }
+
+    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+     method: com.google.protobuf.CodedInputStream.newInstance(java.nio.ByteBuffer, boolean):com.google.protobuf.CodedInputStream
+     arg types: [java.nio.ByteBuffer, int]
+     candidates:
+      com.google.protobuf.CodedInputStream.newInstance(java.io.InputStream, int):com.google.protobuf.CodedInputStream
+      com.google.protobuf.CodedInputStream.newInstance(java.lang.Iterable<java.nio.ByteBuffer>, boolean):com.google.protobuf.CodedInputStream
+      com.google.protobuf.CodedInputStream.newInstance(java.nio.ByteBuffer, boolean):com.google.protobuf.CodedInputStream */
+    public static CodedInputStream newInstance(ByteBuffer buf) {
+        return newInstance(buf, false);
+    }
+
+    static CodedInputStream newInstance(ByteBuffer buf, boolean bufferIsImmutable) {
+        if (buf.hasArray()) {
+            return newInstance(buf.array(), buf.arrayOffset() + buf.position(), buf.remaining(), bufferIsImmutable);
+        }
+        if (buf.isDirect() && UnsafeDirectNioDecoder.isSupported()) {
+            return new UnsafeDirectNioDecoder(buf, bufferIsImmutable);
+        }
+        byte[] buffer = new byte[buf.remaining()];
+        buf.duplicate().get(buffer);
+        return newInstance(buffer, 0, buffer.length, true);
+    }
+
+    public static int decodeZigZag32(int n) {
+        return (n >>> 1) ^ (-(n & 1));
+    }
+
+    public static long decodeZigZag64(long n) {
+        return (n >>> 1) ^ (-(1 & n));
+    }
+
+    public static int readRawVarint32(int firstByte, InputStream input) throws IOException {
+        if ((firstByte & 128) == 0) {
+            return firstByte;
+        }
+        int result = firstByte & ClientAnalytics.LogRequest.LogSource.TAILORMADE_VALUE;
+        int offset = 7;
+        while (offset < 32) {
+            int b = input.read();
+            if (b != -1) {
+                result |= (b & ClientAnalytics.LogRequest.LogSource.TAILORMADE_VALUE) << offset;
+                if ((b & 128) == 0) {
+                    return result;
+                }
+                offset += 7;
+            } else {
+                throw InvalidProtocolBufferException.truncatedMessage();
+            }
+        }
+        while (offset < 64) {
+            int b2 = input.read();
+            if (b2 == -1) {
+                throw InvalidProtocolBufferException.truncatedMessage();
+            } else if ((b2 & 128) == 0) {
+                return result;
+            } else {
+                offset += 7;
+            }
+        }
+        throw InvalidProtocolBufferException.malformedVarint();
+    }
+
+    static int readRawVarint32(InputStream input) throws IOException {
+        int firstByte = input.read();
+        if (firstByte != -1) {
+            return readRawVarint32(firstByte, input);
+        }
+        throw InvalidProtocolBufferException.truncatedMessage();
+    }
 
     public abstract void checkLastTagWas(int i) throws InvalidProtocolBufferException;
 
@@ -129,100 +271,6 @@ public abstract class CodedInputStream {
 
     public abstract void skipRawBytes(int i) throws IOException;
 
-    public static CodedInputStream newInstance(InputStream input) {
-        return newInstance(input, 4096);
-    }
-
-    public static CodedInputStream newInstance(InputStream input, int bufferSize) {
-        if (bufferSize <= 0) {
-            throw new IllegalArgumentException("bufferSize must be > 0");
-        } else if (input == null) {
-            return newInstance(Internal.EMPTY_BYTE_ARRAY);
-        } else {
-            return new StreamDecoder(input, bufferSize);
-        }
-    }
-
-    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-     method: com.google.protobuf.CodedInputStream.newInstance(java.lang.Iterable<java.nio.ByteBuffer>, boolean):com.google.protobuf.CodedInputStream
-     arg types: [java.lang.Iterable<java.nio.ByteBuffer>, int]
-     candidates:
-      com.google.protobuf.CodedInputStream.newInstance(java.io.InputStream, int):com.google.protobuf.CodedInputStream
-      com.google.protobuf.CodedInputStream.newInstance(java.nio.ByteBuffer, boolean):com.google.protobuf.CodedInputStream
-      com.google.protobuf.CodedInputStream.newInstance(java.lang.Iterable<java.nio.ByteBuffer>, boolean):com.google.protobuf.CodedInputStream */
-    public static CodedInputStream newInstance(Iterable<ByteBuffer> input) {
-        if (!UnsafeDirectNioDecoder.isSupported()) {
-            return newInstance(new IterableByteBufferInputStream(input));
-        }
-        return newInstance(input, false);
-    }
-
-    static CodedInputStream newInstance(Iterable<ByteBuffer> bufs, boolean bufferIsImmutable) {
-        int flag = 0;
-        int totalSize = 0;
-        for (ByteBuffer buf : bufs) {
-            totalSize += buf.remaining();
-            if (buf.hasArray()) {
-                flag |= 1;
-            } else if (buf.isDirect()) {
-                flag |= 2;
-            } else {
-                flag |= 4;
-            }
-        }
-        if (flag == 2) {
-            return new IterableDirectByteBufferDecoder(bufs, totalSize, bufferIsImmutable);
-        }
-        return newInstance(new IterableByteBufferInputStream(bufs));
-    }
-
-    public static CodedInputStream newInstance(byte[] buf) {
-        return newInstance(buf, 0, buf.length);
-    }
-
-    public static CodedInputStream newInstance(byte[] buf, int off, int len) {
-        return newInstance(buf, off, len, false);
-    }
-
-    static CodedInputStream newInstance(byte[] buf, int off, int len, boolean bufferIsImmutable) {
-        ArrayDecoder result = new ArrayDecoder(buf, off, len, bufferIsImmutable);
-        try {
-            result.pushLimit(len);
-            return result;
-        } catch (InvalidProtocolBufferException ex) {
-            throw new IllegalArgumentException(ex);
-        }
-    }
-
-    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-     method: com.google.protobuf.CodedInputStream.newInstance(java.nio.ByteBuffer, boolean):com.google.protobuf.CodedInputStream
-     arg types: [java.nio.ByteBuffer, int]
-     candidates:
-      com.google.protobuf.CodedInputStream.newInstance(java.io.InputStream, int):com.google.protobuf.CodedInputStream
-      com.google.protobuf.CodedInputStream.newInstance(java.lang.Iterable<java.nio.ByteBuffer>, boolean):com.google.protobuf.CodedInputStream
-      com.google.protobuf.CodedInputStream.newInstance(java.nio.ByteBuffer, boolean):com.google.protobuf.CodedInputStream */
-    public static CodedInputStream newInstance(ByteBuffer buf) {
-        return newInstance(buf, false);
-    }
-
-    static CodedInputStream newInstance(ByteBuffer buf, boolean bufferIsImmutable) {
-        if (buf.hasArray()) {
-            return newInstance(buf.array(), buf.arrayOffset() + buf.position(), buf.remaining(), bufferIsImmutable);
-        }
-        if (buf.isDirect() && UnsafeDirectNioDecoder.isSupported()) {
-            return new UnsafeDirectNioDecoder(buf, bufferIsImmutable);
-        }
-        byte[] buffer = new byte[buf.remaining()];
-        buf.duplicate().get(buffer);
-        return newInstance(buffer, 0, buffer.length, true);
-    }
-
-    private CodedInputStream() {
-        this.recursionLimit = 100;
-        this.sizeLimit = Integer.MAX_VALUE;
-        this.shouldDiscardUnknownFields = false;
-    }
-
     public final int setRecursionLimit(int limit) {
         if (limit >= 0) {
             int oldLimit = this.recursionLimit;
@@ -262,59 +310,12 @@ public abstract class CodedInputStream {
         return this.shouldDiscardUnknownFields;
     }
 
-    public static int decodeZigZag32(int n) {
-        return (n >>> 1) ^ (-(n & 1));
-    }
-
-    public static long decodeZigZag64(long n) {
-        return (n >>> 1) ^ (-(1 & n));
-    }
-
-    public static int readRawVarint32(int firstByte, InputStream input) throws IOException {
-        if ((firstByte & 128) == 0) {
-            return firstByte;
-        }
-        int result = firstByte & ClientAnalytics.LogRequest.LogSource.TAILORMADE_VALUE;
-        int offset = 7;
-        while (offset < 32) {
-            int b = input.read();
-            if (b != -1) {
-                result |= (b & ClientAnalytics.LogRequest.LogSource.TAILORMADE_VALUE) << offset;
-                if ((b & 128) == 0) {
-                    return result;
-                }
-                offset += 7;
-            } else {
-                throw InvalidProtocolBufferException.truncatedMessage();
-            }
-        }
-        while (offset < 64) {
-            int b2 = input.read();
-            if (b2 == -1) {
-                throw InvalidProtocolBufferException.truncatedMessage();
-            } else if ((b2 & 128) == 0) {
-                return result;
-            } else {
-                offset += 7;
-            }
-        }
-        throw InvalidProtocolBufferException.malformedVarint();
-    }
-
-    static int readRawVarint32(InputStream input) throws IOException {
-        int firstByte = input.read();
-        if (firstByte != -1) {
-            return readRawVarint32(firstByte, input);
-        }
-        throw InvalidProtocolBufferException.truncatedMessage();
-    }
-
     private static final class ArrayDecoder extends CodedInputStream {
         private final byte[] buffer;
+        private final boolean immutable;
         private int bufferSizeAfterLimit;
         private int currentLimit;
         private boolean enableAliasing;
-        private final boolean immutable;
         private int lastTag;
         private int limit;
         private int pos;
@@ -1109,18 +1110,14 @@ public abstract class CodedInputStream {
     private static final class UnsafeDirectNioDecoder extends CodedInputStream {
         private final long address;
         private final ByteBuffer buffer;
+        private final boolean immutable;
         private int bufferSizeAfterLimit;
         private int currentLimit;
         private boolean enableAliasing;
-        private final boolean immutable;
         private int lastTag;
         private long limit;
         private long pos;
         private long startPos;
-
-        static boolean isSupported() {
-            return UnsafeUtil.hasUnsafeByteBufferOperations();
-        }
 
         private UnsafeDirectNioDecoder(ByteBuffer buffer2, boolean immutable2) {
             super();
@@ -1131,6 +1128,10 @@ public abstract class CodedInputStream {
             this.pos = this.address + ((long) buffer2.position());
             this.startPos = this.pos;
             this.immutable = immutable2;
+        }
+
+        static boolean isSupported() {
+            return UnsafeUtil.hasUnsafeByteBufferOperations();
         }
 
         public int readTag() throws IOException {
@@ -1866,19 +1867,15 @@ public abstract class CodedInputStream {
     private static final class StreamDecoder extends CodedInputStream {
         /* access modifiers changed from: private */
         public final byte[] buffer;
+        private final InputStream input;
+        /* access modifiers changed from: private */
+        public int pos;
         private int bufferSize;
         private int bufferSizeAfterLimit;
         private int currentLimit;
-        private final InputStream input;
         private int lastTag;
-        /* access modifiers changed from: private */
-        public int pos;
         private RefillCallback refillCallback;
         private int totalBytesRetired;
-
-        private interface RefillCallback {
-            void onRefill();
-        }
 
         private StreamDecoder(InputStream input2, int bufferSize2) {
             super();
@@ -1996,33 +1993,6 @@ public abstract class CodedInputStream {
                     return;
                 }
             } while (skipField(tag, output));
-        }
-
-        private class SkippedDataSink implements RefillCallback {
-            private ByteArrayOutputStream byteArrayStream;
-            private int lastPos;
-
-            private SkippedDataSink() {
-                this.lastPos = StreamDecoder.this.pos;
-            }
-
-            public void onRefill() {
-                if (this.byteArrayStream == null) {
-                    this.byteArrayStream = new ByteArrayOutputStream();
-                }
-                this.byteArrayStream.write(StreamDecoder.this.buffer, this.lastPos, StreamDecoder.this.pos - this.lastPos);
-                this.lastPos = 0;
-            }
-
-            /* access modifiers changed from: package-private */
-            public ByteBuffer getSkippedData() {
-                ByteArrayOutputStream byteArrayOutputStream = this.byteArrayStream;
-                if (byteArrayOutputStream == null) {
-                    return ByteBuffer.wrap(StreamDecoder.this.buffer, this.lastPos, StreamDecoder.this.pos - this.lastPos);
-                }
-                byteArrayOutputStream.write(StreamDecoder.this.buffer, this.lastPos, StreamDecoder.this.pos);
-                return ByteBuffer.wrap(this.byteArrayStream.toByteArray());
-            }
         }
 
         public void mergeToMessage(MutableMessageLite message) throws IOException {
@@ -2955,6 +2925,37 @@ public abstract class CodedInputStream {
                 return
             */
             throw new UnsupportedOperationException("Method not decompiled: com.google.protobuf.CodedInputStream.StreamDecoder.skipRawBytesSlowPath(int):void");
+        }
+
+        private interface RefillCallback {
+            void onRefill();
+        }
+
+        private class SkippedDataSink implements RefillCallback {
+            private ByteArrayOutputStream byteArrayStream;
+            private int lastPos;
+
+            private SkippedDataSink() {
+                this.lastPos = StreamDecoder.this.pos;
+            }
+
+            public void onRefill() {
+                if (this.byteArrayStream == null) {
+                    this.byteArrayStream = new ByteArrayOutputStream();
+                }
+                this.byteArrayStream.write(StreamDecoder.this.buffer, this.lastPos, StreamDecoder.this.pos - this.lastPos);
+                this.lastPos = 0;
+            }
+
+            /* access modifiers changed from: package-private */
+            public ByteBuffer getSkippedData() {
+                ByteArrayOutputStream byteArrayOutputStream = this.byteArrayStream;
+                if (byteArrayOutputStream == null) {
+                    return ByteBuffer.wrap(StreamDecoder.this.buffer, this.lastPos, StreamDecoder.this.pos - this.lastPos);
+                }
+                byteArrayOutputStream.write(StreamDecoder.this.buffer, this.lastPos, StreamDecoder.this.pos);
+                return ByteBuffer.wrap(this.byteArrayStream.toByteArray());
+            }
         }
     }
 

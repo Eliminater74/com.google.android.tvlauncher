@@ -10,15 +10,15 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
-import android.support.p001v4.content.p002pm.ShortcutInfoCompat;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /* renamed from: android.support.v4.content.pm.ShortcutManagerCompat */
 public class ShortcutManagerCompat {
+    public static final String EXTRA_SHORTCUT_ID = "android.intent.extra.shortcut.ID";
     @VisibleForTesting
     static final String ACTION_INSTALL_SHORTCUT = "com.android.launcher.action.INSTALL_SHORTCUT";
-    public static final String EXTRA_SHORTCUT_ID = "android.intent.extra.shortcut.ID";
     @VisibleForTesting
     static final String INSTALL_SHORTCUT_PERMISSION = "com.android.launcher.permission.INSTALL_SHORTCUT";
     private static volatile ShortcutInfoCompatSaver sShortcutInfoCompatSaver = null;
@@ -161,13 +161,6 @@ public class ShortcutManagerCompat {
         return true;
     }
 
-    public void removeDynamicShortcuts(@NonNull Context context, @NonNull List<String> shortcutIds) {
-        if (Build.VERSION.SDK_INT >= 25) {
-            ((ShortcutManager) context.getSystemService(ShortcutManager.class)).removeDynamicShortcuts(shortcutIds);
-        }
-        getShortcutInfoSaverInstance(context).removeShortcuts(shortcutIds);
-    }
-
     public static void removeAllDynamicShortcuts(@NonNull Context context) {
         if (Build.VERSION.SDK_INT >= 25) {
             ((ShortcutManager) context.getSystemService(ShortcutManager.class)).removeAllDynamicShortcuts();
@@ -188,5 +181,12 @@ public class ShortcutManagerCompat {
             }
         }
         return sShortcutInfoCompatSaver;
+    }
+
+    public void removeDynamicShortcuts(@NonNull Context context, @NonNull List<String> shortcutIds) {
+        if (Build.VERSION.SDK_INT >= 25) {
+            ((ShortcutManager) context.getSystemService(ShortcutManager.class)).removeDynamicShortcuts(shortcutIds);
+        }
+        getShortcutInfoSaverInstance(context).removeShortcuts(shortcutIds);
     }
 }

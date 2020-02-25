@@ -3,10 +3,9 @@ package com.google.android.exoplayer2.source;
 import android.net.Uri;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.Timeline;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.MediaSourceEventListener;
 import com.google.android.exoplayer2.upstream.Allocator;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
@@ -14,6 +13,7 @@ import com.google.android.exoplayer2.upstream.DefaultLoadErrorHandlingPolicy;
 import com.google.android.exoplayer2.upstream.LoadErrorHandlingPolicy;
 import com.google.android.exoplayer2.upstream.TransferListener;
 import com.google.android.exoplayer2.util.Assertions;
+
 import java.io.IOException;
 
 public final class SingleSampleMediaSource extends BaseMediaSource {
@@ -25,64 +25,9 @@ public final class SingleSampleMediaSource extends BaseMediaSource {
     @Nullable
     private final Object tag;
     private final Timeline timeline;
+    private final boolean treatLoadErrorsAsEndOfStream;
     @Nullable
     private TransferListener transferListener;
-    private final boolean treatLoadErrorsAsEndOfStream;
-
-    @Deprecated
-    public interface EventListener {
-        void onLoadError(int i, IOException iOException);
-    }
-
-    public static final class Factory {
-        private final DataSource.Factory dataSourceFactory;
-        private boolean isCreateCalled;
-        private LoadErrorHandlingPolicy loadErrorHandlingPolicy = new DefaultLoadErrorHandlingPolicy();
-        @Nullable
-        private Object tag;
-        private boolean treatLoadErrorsAsEndOfStream;
-
-        public Factory(DataSource.Factory dataSourceFactory2) {
-            this.dataSourceFactory = (DataSource.Factory) Assertions.checkNotNull(dataSourceFactory2);
-        }
-
-        public Factory setTag(Object tag2) {
-            Assertions.checkState(!this.isCreateCalled);
-            this.tag = tag2;
-            return this;
-        }
-
-        @Deprecated
-        public Factory setMinLoadableRetryCount(int minLoadableRetryCount) {
-            return setLoadErrorHandlingPolicy(new DefaultLoadErrorHandlingPolicy(minLoadableRetryCount));
-        }
-
-        public Factory setLoadErrorHandlingPolicy(LoadErrorHandlingPolicy loadErrorHandlingPolicy2) {
-            Assertions.checkState(!this.isCreateCalled);
-            this.loadErrorHandlingPolicy = loadErrorHandlingPolicy2;
-            return this;
-        }
-
-        public Factory setTreatLoadErrorsAsEndOfStream(boolean treatLoadErrorsAsEndOfStream2) {
-            Assertions.checkState(!this.isCreateCalled);
-            this.treatLoadErrorsAsEndOfStream = treatLoadErrorsAsEndOfStream2;
-            return this;
-        }
-
-        public SingleSampleMediaSource createMediaSource(Uri uri, Format format, long durationUs) {
-            this.isCreateCalled = true;
-            return new SingleSampleMediaSource(uri, this.dataSourceFactory, format, durationUs, this.loadErrorHandlingPolicy, this.treatLoadErrorsAsEndOfStream, this.tag);
-        }
-
-        @Deprecated
-        public SingleSampleMediaSource createMediaSource(Uri uri, Format format, long durationUs, @Nullable Handler eventHandler, @Nullable MediaSourceEventListener eventListener) {
-            SingleSampleMediaSource mediaSource = createMediaSource(uri, format, durationUs);
-            if (!(eventHandler == null || eventListener == null)) {
-                mediaSource.addEventListener(eventHandler, eventListener);
-            }
-            return mediaSource;
-        }
-    }
 
     @Deprecated
     public SingleSampleMediaSource(Uri uri, DataSource.Factory dataSourceFactory2, Format format2, long durationUs2) {
@@ -138,6 +83,61 @@ public final class SingleSampleMediaSource extends BaseMediaSource {
     }
 
     public void releaseSourceInternal() {
+    }
+
+    @Deprecated
+    public interface EventListener {
+        void onLoadError(int i, IOException iOException);
+    }
+
+    public static final class Factory {
+        private final DataSource.Factory dataSourceFactory;
+        private boolean isCreateCalled;
+        private LoadErrorHandlingPolicy loadErrorHandlingPolicy = new DefaultLoadErrorHandlingPolicy();
+        @Nullable
+        private Object tag;
+        private boolean treatLoadErrorsAsEndOfStream;
+
+        public Factory(DataSource.Factory dataSourceFactory2) {
+            this.dataSourceFactory = (DataSource.Factory) Assertions.checkNotNull(dataSourceFactory2);
+        }
+
+        public Factory setTag(Object tag2) {
+            Assertions.checkState(!this.isCreateCalled);
+            this.tag = tag2;
+            return this;
+        }
+
+        @Deprecated
+        public Factory setMinLoadableRetryCount(int minLoadableRetryCount) {
+            return setLoadErrorHandlingPolicy(new DefaultLoadErrorHandlingPolicy(minLoadableRetryCount));
+        }
+
+        public Factory setLoadErrorHandlingPolicy(LoadErrorHandlingPolicy loadErrorHandlingPolicy2) {
+            Assertions.checkState(!this.isCreateCalled);
+            this.loadErrorHandlingPolicy = loadErrorHandlingPolicy2;
+            return this;
+        }
+
+        public Factory setTreatLoadErrorsAsEndOfStream(boolean treatLoadErrorsAsEndOfStream2) {
+            Assertions.checkState(!this.isCreateCalled);
+            this.treatLoadErrorsAsEndOfStream = treatLoadErrorsAsEndOfStream2;
+            return this;
+        }
+
+        public SingleSampleMediaSource createMediaSource(Uri uri, Format format, long durationUs) {
+            this.isCreateCalled = true;
+            return new SingleSampleMediaSource(uri, this.dataSourceFactory, format, durationUs, this.loadErrorHandlingPolicy, this.treatLoadErrorsAsEndOfStream, this.tag);
+        }
+
+        @Deprecated
+        public SingleSampleMediaSource createMediaSource(Uri uri, Format format, long durationUs, @Nullable Handler eventHandler, @Nullable MediaSourceEventListener eventListener) {
+            SingleSampleMediaSource mediaSource = createMediaSource(uri, format, durationUs);
+            if (!(eventHandler == null || eventListener == null)) {
+                mediaSource.addEventListener(eventHandler, eventListener);
+            }
+            return mediaSource;
+        }
     }
 
     @Deprecated

@@ -42,9 +42,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
+
 import androidx.savedstate.SavedStateRegistry;
 import androidx.savedstate.SavedStateRegistryController;
 import androidx.savedstate.SavedStateRegistryOwner;
+
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
@@ -66,8 +68,6 @@ public class Fragment implements ComponentCallbacks, View.OnCreateContextMenuLis
     FragmentManagerImpl mChildFragmentManager;
     ViewGroup mContainer;
     int mContainerId;
-    @LayoutRes
-    private int mContentLayoutId;
     boolean mDeferStart;
     boolean mDetached;
     int mFragmentId;
@@ -109,12 +109,51 @@ public class Fragment implements ComponentCallbacks, View.OnCreateContextMenuLis
     MutableLiveData<LifecycleOwner> mViewLifecycleOwnerLiveData;
     @NonNull
     String mWho;
+    @LayoutRes
+    private int mContentLayoutId;
 
-    /* renamed from: android.support.v4.app.Fragment$OnStartEnterTransitionListener */
-    interface OnStartEnterTransitionListener {
-        void onStartEnterTransition();
+    public Fragment() {
+        this.mState = 0;
+        this.mWho = UUID.randomUUID().toString();
+        this.mTargetWho = null;
+        this.mMenuVisible = true;
+        this.mUserVisibleHint = true;
+        this.mMaxState = Lifecycle.State.RESUMED;
+        this.mViewLifecycleOwnerLiveData = new MutableLiveData<>();
+        initLifecycle();
+    }
 
-        void startListening();
+    @ContentView
+    public Fragment(@LayoutRes int contentLayoutId) {
+        this();
+        this.mContentLayoutId = contentLayoutId;
+    }
+
+    @Deprecated
+    @NonNull
+    public static Fragment instantiate(@NonNull Context context, @NonNull String fname) {
+        return instantiate(context, fname, null);
+    }
+
+    @Deprecated
+    @NonNull
+    public static Fragment instantiate(@NonNull Context context, @NonNull String fname, @Nullable Bundle args) {
+        try {
+            Fragment f = (Fragment) FragmentFactory.loadFragmentClass(context.getClassLoader(), fname).getConstructor(new Class[0]).newInstance(new Object[0]);
+            if (args != null) {
+                args.setClassLoader(f.getClass().getClassLoader());
+                f.setArguments(args);
+            }
+            return f;
+        } catch (InstantiationException e) {
+            throw new InstantiationException("Unable to instantiate fragment " + fname + ": make sure class name exists, is public, and has an empty constructor that is public", e);
+        } catch (IllegalAccessException e2) {
+            throw new InstantiationException("Unable to instantiate fragment " + fname + ": make sure class name exists, is public, and has an empty constructor that is public", e2);
+        } catch (NoSuchMethodException e3) {
+            throw new InstantiationException("Unable to instantiate fragment " + fname + ": could not find Fragment constructor", e3);
+        } catch (InvocationTargetException e4) {
+            throw new InstantiationException("Unable to instantiate fragment " + fname + ": calling Fragment constructor caused an exception", e4);
+        }
     }
 
     @NonNull
@@ -151,70 +190,6 @@ public class Fragment implements ComponentCallbacks, View.OnCreateContextMenuLis
         return this.mSavedStateRegistryController.getSavedStateRegistry();
     }
 
-    @SuppressLint({"BanParcelableUsage"})
-    /* renamed from: android.support.v4.app.Fragment$SavedState */
-    public static class SavedState implements Parcelable {
-        @NonNull
-        public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.ClassLoaderCreator<SavedState>() {
-            public SavedState createFromParcel(Parcel in) {
-                return new SavedState(in, null);
-            }
-
-            public SavedState createFromParcel(Parcel in, ClassLoader loader) {
-                return new SavedState(in, loader);
-            }
-
-            public SavedState[] newArray(int size) {
-                return new SavedState[size];
-            }
-        };
-        final Bundle mState;
-
-        SavedState(Bundle state) {
-            this.mState = state;
-        }
-
-        SavedState(@NonNull Parcel in, @Nullable ClassLoader loader) {
-            Bundle bundle;
-            this.mState = in.readBundle();
-            if (loader != null && (bundle = this.mState) != null) {
-                bundle.setClassLoader(loader);
-            }
-        }
-
-        public int describeContents() {
-            return 0;
-        }
-
-        public void writeToParcel(@NonNull Parcel dest, int flags) {
-            dest.writeBundle(this.mState);
-        }
-    }
-
-    /* renamed from: android.support.v4.app.Fragment$InstantiationException */
-    public static class InstantiationException extends RuntimeException {
-        public InstantiationException(@NonNull String msg, @Nullable Exception cause) {
-            super(msg, cause);
-        }
-    }
-
-    public Fragment() {
-        this.mState = 0;
-        this.mWho = UUID.randomUUID().toString();
-        this.mTargetWho = null;
-        this.mMenuVisible = true;
-        this.mUserVisibleHint = true;
-        this.mMaxState = Lifecycle.State.RESUMED;
-        this.mViewLifecycleOwnerLiveData = new MutableLiveData<>();
-        initLifecycle();
-    }
-
-    @ContentView
-    public Fragment(@LayoutRes int contentLayoutId) {
-        this();
-        this.mContentLayoutId = contentLayoutId;
-    }
-
     private void initLifecycle() {
         this.mLifecycleRegistry = new LifecycleRegistry(this);
         this.mSavedStateRegistryController = SavedStateRegistryController.create(this);
@@ -226,33 +201,6 @@ public class Fragment implements ComponentCallbacks, View.OnCreateContextMenuLis
                     }
                 }
             });
-        }
-    }
-
-    @Deprecated
-    @NonNull
-    public static Fragment instantiate(@NonNull Context context, @NonNull String fname) {
-        return instantiate(context, fname, null);
-    }
-
-    @Deprecated
-    @NonNull
-    public static Fragment instantiate(@NonNull Context context, @NonNull String fname, @Nullable Bundle args) {
-        try {
-            Fragment f = (Fragment) FragmentFactory.loadFragmentClass(context.getClassLoader(), fname).getConstructor(new Class[0]).newInstance(new Object[0]);
-            if (args != null) {
-                args.setClassLoader(f.getClass().getClassLoader());
-                f.setArguments(args);
-            }
-            return f;
-        } catch (InstantiationException e) {
-            throw new InstantiationException("Unable to instantiate fragment " + fname + ": make sure class name exists, is public, and has an empty constructor that is public", e);
-        } catch (IllegalAccessException e2) {
-            throw new InstantiationException("Unable to instantiate fragment " + fname + ": make sure class name exists, is public, and has an empty constructor that is public", e2);
-        } catch (NoSuchMethodException e3) {
-            throw new InstantiationException("Unable to instantiate fragment " + fname + ": could not find Fragment constructor", e3);
-        } catch (InvocationTargetException e4) {
-            throw new InstantiationException("Unable to instantiate fragment " + fname + ": calling Fragment constructor caused an exception", e4);
         }
     }
 
@@ -312,17 +260,17 @@ public class Fragment implements ComponentCallbacks, View.OnCreateContextMenuLis
         return this.mTag;
     }
 
+    @Nullable
+    public final Bundle getArguments() {
+        return this.mArguments;
+    }
+
     public void setArguments(@Nullable Bundle args) {
         if (this.mFragmentManager == null || !isStateSaved()) {
             this.mArguments = args;
             return;
         }
         throw new IllegalStateException("Fragment already added and state has been saved");
-    }
-
-    @Nullable
-    public final Bundle getArguments() {
-        return this.mArguments;
     }
 
     @NonNull
@@ -566,6 +514,10 @@ public class Fragment implements ComponentCallbacks, View.OnCreateContextMenuLis
     public void onHiddenChanged(boolean hidden) {
     }
 
+    public final boolean getRetainInstance() {
+        return this.mRetainInstance;
+    }
+
     public void setRetainInstance(boolean retain) {
         this.mRetainInstance = retain;
         FragmentManagerImpl fragmentManagerImpl = this.mFragmentManager;
@@ -576,10 +528,6 @@ public class Fragment implements ComponentCallbacks, View.OnCreateContextMenuLis
         } else {
             fragmentManagerImpl.removeRetainedFragment(this);
         }
-    }
-
-    public final boolean getRetainInstance() {
-        return this.mRetainInstance;
     }
 
     public void setHasOptionsMenu(boolean hasMenu) {
@@ -600,6 +548,10 @@ public class Fragment implements ComponentCallbacks, View.OnCreateContextMenuLis
         }
     }
 
+    public boolean getUserVisibleHint() {
+        return this.mUserVisibleHint;
+    }
+
     public void setUserVisibleHint(boolean isVisibleToUser) {
         if (!this.mUserVisibleHint && isVisibleToUser && this.mState < 3 && this.mFragmentManager != null && isAdded() && this.mIsCreated) {
             this.mFragmentManager.performPendingDeferredStart(this);
@@ -609,10 +561,6 @@ public class Fragment implements ComponentCallbacks, View.OnCreateContextMenuLis
         if (this.mSavedFragmentState != null) {
             this.mSavedUserVisibleHint = Boolean.valueOf(isVisibleToUser);
         }
-    }
-
-    public boolean getUserVisibleHint() {
-        return this.mUserVisibleHint;
     }
 
     @Deprecated
@@ -939,10 +887,6 @@ public class Fragment implements ComponentCallbacks, View.OnCreateContextMenuLis
         ensureAnimationInfo().mExitTransitionCallback = callback;
     }
 
-    public void setEnterTransition(@Nullable Object transition) {
-        ensureAnimationInfo().mEnterTransition = transition;
-    }
-
     @Nullable
     public Object getEnterTransition() {
         AnimationInfo animationInfo = this.mAnimationInfo;
@@ -952,8 +896,8 @@ public class Fragment implements ComponentCallbacks, View.OnCreateContextMenuLis
         return animationInfo.mEnterTransition;
     }
 
-    public void setReturnTransition(@Nullable Object transition) {
-        ensureAnimationInfo().mReturnTransition = transition;
+    public void setEnterTransition(@Nullable Object transition) {
+        ensureAnimationInfo().mEnterTransition = transition;
     }
 
     @Nullable
@@ -965,8 +909,8 @@ public class Fragment implements ComponentCallbacks, View.OnCreateContextMenuLis
         return animationInfo.mReturnTransition == USE_DEFAULT_TRANSITION ? getEnterTransition() : this.mAnimationInfo.mReturnTransition;
     }
 
-    public void setExitTransition(@Nullable Object transition) {
-        ensureAnimationInfo().mExitTransition = transition;
+    public void setReturnTransition(@Nullable Object transition) {
+        ensureAnimationInfo().mReturnTransition = transition;
     }
 
     @Nullable
@@ -978,8 +922,8 @@ public class Fragment implements ComponentCallbacks, View.OnCreateContextMenuLis
         return animationInfo.mExitTransition;
     }
 
-    public void setReenterTransition(@Nullable Object transition) {
-        ensureAnimationInfo().mReenterTransition = transition;
+    public void setExitTransition(@Nullable Object transition) {
+        ensureAnimationInfo().mExitTransition = transition;
     }
 
     @Nullable
@@ -991,8 +935,8 @@ public class Fragment implements ComponentCallbacks, View.OnCreateContextMenuLis
         return animationInfo.mReenterTransition == USE_DEFAULT_TRANSITION ? getExitTransition() : this.mAnimationInfo.mReenterTransition;
     }
 
-    public void setSharedElementEnterTransition(@Nullable Object transition) {
-        ensureAnimationInfo().mSharedElementEnterTransition = transition;
+    public void setReenterTransition(@Nullable Object transition) {
+        ensureAnimationInfo().mReenterTransition = transition;
     }
 
     @Nullable
@@ -1004,8 +948,8 @@ public class Fragment implements ComponentCallbacks, View.OnCreateContextMenuLis
         return animationInfo.mSharedElementEnterTransition;
     }
 
-    public void setSharedElementReturnTransition(@Nullable Object transition) {
-        ensureAnimationInfo().mSharedElementReturnTransition = transition;
+    public void setSharedElementEnterTransition(@Nullable Object transition) {
+        ensureAnimationInfo().mSharedElementEnterTransition = transition;
     }
 
     @Nullable
@@ -1017,8 +961,8 @@ public class Fragment implements ComponentCallbacks, View.OnCreateContextMenuLis
         return animationInfo.mSharedElementReturnTransition == USE_DEFAULT_TRANSITION ? getSharedElementEnterTransition() : this.mAnimationInfo.mSharedElementReturnTransition;
     }
 
-    public void setAllowEnterTransitionOverlap(boolean allow) {
-        ensureAnimationInfo().mAllowEnterTransitionOverlap = Boolean.valueOf(allow);
+    public void setSharedElementReturnTransition(@Nullable Object transition) {
+        ensureAnimationInfo().mSharedElementReturnTransition = transition;
     }
 
     public boolean getAllowEnterTransitionOverlap() {
@@ -1029,8 +973,8 @@ public class Fragment implements ComponentCallbacks, View.OnCreateContextMenuLis
         return this.mAnimationInfo.mAllowEnterTransitionOverlap.booleanValue();
     }
 
-    public void setAllowReturnTransitionOverlap(boolean allow) {
-        ensureAnimationInfo().mAllowReturnTransitionOverlap = Boolean.valueOf(allow);
+    public void setAllowEnterTransitionOverlap(boolean allow) {
+        ensureAnimationInfo().mAllowEnterTransitionOverlap = Boolean.valueOf(allow);
     }
 
     public boolean getAllowReturnTransitionOverlap() {
@@ -1039,6 +983,10 @@ public class Fragment implements ComponentCallbacks, View.OnCreateContextMenuLis
             return true;
         }
         return this.mAnimationInfo.mAllowReturnTransitionOverlap.booleanValue();
+    }
+
+    public void setAllowReturnTransitionOverlap(boolean allow) {
+        ensureAnimationInfo().mAllowReturnTransitionOverlap = Boolean.valueOf(allow);
     }
 
     public void postponeEnterTransition() {
@@ -1659,17 +1607,17 @@ public class Fragment implements ComponentCallbacks, View.OnCreateContextMenuLis
     }
 
     /* access modifiers changed from: package-private */
-    public void setAnimator(Animator animator) {
-        ensureAnimationInfo().mAnimator = animator;
-    }
-
-    /* access modifiers changed from: package-private */
     public Animator getAnimator() {
         AnimationInfo animationInfo = this.mAnimationInfo;
         if (animationInfo == null) {
             return null;
         }
         return animationInfo.mAnimator;
+    }
+
+    /* access modifiers changed from: package-private */
+    public void setAnimator(Animator animator) {
+        ensureAnimationInfo().mAnimator = animator;
     }
 
     /* access modifiers changed from: package-private */
@@ -1707,6 +1655,60 @@ public class Fragment implements ComponentCallbacks, View.OnCreateContextMenuLis
     /* access modifiers changed from: package-private */
     public void setHideReplaced(boolean replaced) {
         ensureAnimationInfo().mIsHideReplaced = replaced;
+    }
+
+    /* renamed from: android.support.v4.app.Fragment$OnStartEnterTransitionListener */
+    interface OnStartEnterTransitionListener {
+        void onStartEnterTransition();
+
+        void startListening();
+    }
+
+    @SuppressLint({"BanParcelableUsage"})
+    /* renamed from: android.support.v4.app.Fragment$SavedState */
+    public static class SavedState implements Parcelable {
+        @NonNull
+        public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.ClassLoaderCreator<SavedState>() {
+            public SavedState createFromParcel(Parcel in) {
+                return new SavedState(in, null);
+            }
+
+            public SavedState createFromParcel(Parcel in, ClassLoader loader) {
+                return new SavedState(in, loader);
+            }
+
+            public SavedState[] newArray(int size) {
+                return new SavedState[size];
+            }
+        };
+        final Bundle mState;
+
+        SavedState(Bundle state) {
+            this.mState = state;
+        }
+
+        SavedState(@NonNull Parcel in, @Nullable ClassLoader loader) {
+            Bundle bundle;
+            this.mState = in.readBundle();
+            if (loader != null && (bundle = this.mState) != null) {
+                bundle.setClassLoader(loader);
+            }
+        }
+
+        public int describeContents() {
+            return 0;
+        }
+
+        public void writeToParcel(@NonNull Parcel dest, int flags) {
+            dest.writeBundle(this.mState);
+        }
+    }
+
+    /* renamed from: android.support.v4.app.Fragment$InstantiationException */
+    public static class InstantiationException extends RuntimeException {
+        public InstantiationException(@NonNull String msg, @Nullable Exception cause) {
+            super(msg, cause);
+        }
     }
 
     /* renamed from: android.support.v4.app.Fragment$AnimationInfo */

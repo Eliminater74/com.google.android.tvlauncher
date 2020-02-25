@@ -1,6 +1,5 @@
 package com.google.android.tvlauncher.inputs;
 
-import com.google.android.tvlauncher.inputs.CustomInputsManager;
 import java.util.List;
 
 final /* synthetic */ class CustomInputsManager$$Lambda$0 implements CustomInputsManager.RefreshInputList.LoadedDataCallback {

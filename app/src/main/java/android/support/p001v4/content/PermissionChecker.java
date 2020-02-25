@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RestrictTo;
 import android.support.p001v4.app.AppOpsManagerCompat;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -15,12 +16,6 @@ public final class PermissionChecker {
     public static final int PERMISSION_DENIED = -1;
     public static final int PERMISSION_DENIED_APP_OP = -2;
     public static final int PERMISSION_GRANTED = 0;
-
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    @Retention(RetentionPolicy.SOURCE)
-    /* renamed from: android.support.v4.content.PermissionChecker$PermissionResult */
-    public @interface PermissionResult {
-    }
 
     private PermissionChecker() {
     }
@@ -59,5 +54,11 @@ public final class PermissionChecker {
 
     public static int checkCallingOrSelfPermission(@NonNull Context context, @NonNull String permission) {
         return checkPermission(context, permission, Binder.getCallingPid(), Binder.getCallingUid(), Binder.getCallingPid() == Process.myPid() ? context.getPackageName() : null);
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    @Retention(RetentionPolicy.SOURCE)
+    /* renamed from: android.support.v4.content.PermissionChecker$PermissionResult */
+    public @interface PermissionResult {
     }
 }

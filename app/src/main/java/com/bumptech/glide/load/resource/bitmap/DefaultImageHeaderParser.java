@@ -4,9 +4,11 @@ import android.support.annotation.NonNull;
 import android.support.p001v4.internal.view.SupportMenu;
 import android.support.p001v4.view.MotionEventCompat;
 import android.util.Log;
+
 import com.bumptech.glide.load.ImageHeaderParser;
 import com.bumptech.glide.load.engine.bitmap_recycle.ArrayPool;
 import com.bumptech.glide.util.Preconditions;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -14,9 +16,10 @@ import java.nio.ByteOrder;
 import java.nio.charset.Charset;
 
 public final class DefaultImageHeaderParser implements ImageHeaderParser {
-    private static final int[] BYTES_PER_FORMAT = {0, 1, 1, 2, 4, 8, 1, 1, 2, 4, 8, 4, 8};
     static final int EXIF_MAGIC_NUMBER = 65496;
     static final int EXIF_SEGMENT_TYPE = 225;
+    static final int SEGMENT_START_ID = 255;
+    private static final int[] BYTES_PER_FORMAT = {0, 1, 1, 2, 4, 8, 1, 1, 2, 4, 8, 4, 8};
     private static final int GIF_HEADER = 4671814;
     private static final int INTEL_TIFF_MAGIC_NUMBER = 18761;
     private static final String JPEG_EXIF_SEGMENT_PREAMBLE = "Exif\u0000\u0000";
@@ -27,7 +30,6 @@ public final class DefaultImageHeaderParser implements ImageHeaderParser {
     private static final int PNG_HEADER = -1991225785;
     private static final int RIFF_HEADER = 1380533830;
     private static final int SEGMENT_SOS = 218;
-    static final int SEGMENT_START_ID = 255;
     private static final String TAG = "DfltImageHeaderParser";
     private static final int VP8_HEADER = 1448097792;
     private static final int VP8_HEADER_MASK = -256;
@@ -38,16 +40,100 @@ public final class DefaultImageHeaderParser implements ImageHeaderParser {
     private static final int WEBP_HEADER = 1464156752;
     private static final int WEBP_LOSSLESS_ALPHA_FLAG = 8;
 
-    private interface Reader {
-        int getByte() throws IOException;
+    private static int parseExifSegment(RandomAccessReader segmentData) {
+        ByteOrder byteOrder;
+        RandomAccessReader randomAccessReader = segmentData;
+        int headerOffsetSize = JPEG_EXIF_SEGMENT_PREAMBLE.length();
+        short byteOrderIdentifier = randomAccessReader.getInt16(headerOffsetSize);
+        int i = 3;
+        if (byteOrderIdentifier == INTEL_TIFF_MAGIC_NUMBER) {
+            byteOrder = ByteOrder.LITTLE_ENDIAN;
+        } else if (byteOrderIdentifier != MOTOROLA_TIFF_MAGIC_NUMBER) {
+            if (Log.isLoggable(TAG, 3)) {
+                StringBuilder sb = new StringBuilder(27);
+                sb.append("Unknown endianness = ");
+                sb.append((int) byteOrderIdentifier);
+                Log.d(TAG, sb.toString());
+            }
+            byteOrder = ByteOrder.BIG_ENDIAN;
+        } else {
+            byteOrder = ByteOrder.BIG_ENDIAN;
+        }
+        randomAccessReader.order(byteOrder);
+        int firstIfdOffset = randomAccessReader.getInt32(headerOffsetSize + 4) + headerOffsetSize;
+        int tagCount = randomAccessReader.getInt16(firstIfdOffset);
+        int i2 = 0;
+        while (i2 < tagCount) {
+            int tagOffset = calcTagOffset(firstIfdOffset, i2);
+            int tagType = randomAccessReader.getInt16(tagOffset);
+            if (tagType == 274) {
+                int formatCode = randomAccessReader.getInt16(tagOffset + 2);
+                if (formatCode >= 1 && formatCode <= 12) {
+                    int componentCount = randomAccessReader.getInt32(tagOffset + 4);
+                    if (componentCount >= 0) {
+                        if (Log.isLoggable(TAG, i)) {
+                            StringBuilder sb2 = new StringBuilder(94);
+                            sb2.append("Got tagIndex=");
+                            sb2.append(i2);
+                            sb2.append(" tagType=");
+                            sb2.append(tagType);
+                            sb2.append(" formatCode=");
+                            sb2.append(formatCode);
+                            sb2.append(" componentCount=");
+                            sb2.append(componentCount);
+                            Log.d(TAG, sb2.toString());
+                        }
+                        int byteCount = BYTES_PER_FORMAT[formatCode] + componentCount;
+                        if (byteCount <= 4) {
+                            int tagValueOffset = tagOffset + 8;
+                            if (tagValueOffset < 0 || tagValueOffset > segmentData.length()) {
+                                if (Log.isLoggable(TAG, 3)) {
+                                    StringBuilder sb3 = new StringBuilder(54);
+                                    sb3.append("Illegal tagValueOffset=");
+                                    sb3.append(tagValueOffset);
+                                    sb3.append(" tagType=");
+                                    sb3.append(tagType);
+                                    Log.d(TAG, sb3.toString());
+                                }
+                            } else if (byteCount >= 0 && tagValueOffset + byteCount <= segmentData.length()) {
+                                return randomAccessReader.getInt16(tagValueOffset);
+                            } else {
+                                if (Log.isLoggable(TAG, 3)) {
+                                    StringBuilder sb4 = new StringBuilder(59);
+                                    sb4.append("Illegal number of bytes for TI tag data tagType=");
+                                    sb4.append(tagType);
+                                    Log.d(TAG, sb4.toString());
+                                }
+                            }
+                        } else if (Log.isLoggable(TAG, i)) {
+                            StringBuilder sb5 = new StringBuilder(71);
+                            sb5.append("Got byte count > 4, not orientation, continuing, formatCode=");
+                            sb5.append(formatCode);
+                            Log.d(TAG, sb5.toString());
+                        }
+                    } else if (Log.isLoggable(TAG, i)) {
+                        Log.d(TAG, "Negative tiff component count");
+                    }
+                } else if (Log.isLoggable(TAG, 3)) {
+                    StringBuilder sb6 = new StringBuilder(37);
+                    sb6.append("Got invalid format code = ");
+                    sb6.append(formatCode);
+                    Log.d(TAG, sb6.toString());
+                }
+            }
+            i2++;
+            i = 3;
+            randomAccessReader = segmentData;
+        }
+        return -1;
+    }
 
-        int getUInt16() throws IOException;
+    private static int calcTagOffset(int ifdOffset, int tagIndex) {
+        return ifdOffset + 2 + (tagIndex * 12);
+    }
 
-        short getUInt8() throws IOException;
-
-        int read(byte[] bArr, int i) throws IOException;
-
-        long skip(long j) throws IOException;
+    private static boolean handles(int imageMagicNumber) {
+        return (imageMagicNumber & EXIF_MAGIC_NUMBER) == EXIF_MAGIC_NUMBER || imageMagicNumber == MOTOROLA_TIFF_MAGIC_NUMBER || imageMagicNumber == INTEL_TIFF_MAGIC_NUMBER;
     }
 
     @NonNull
@@ -214,100 +300,16 @@ public final class DefaultImageHeaderParser implements ImageHeaderParser {
         return -1;
     }
 
-    private static int parseExifSegment(RandomAccessReader segmentData) {
-        ByteOrder byteOrder;
-        RandomAccessReader randomAccessReader = segmentData;
-        int headerOffsetSize = JPEG_EXIF_SEGMENT_PREAMBLE.length();
-        short byteOrderIdentifier = randomAccessReader.getInt16(headerOffsetSize);
-        int i = 3;
-        if (byteOrderIdentifier == INTEL_TIFF_MAGIC_NUMBER) {
-            byteOrder = ByteOrder.LITTLE_ENDIAN;
-        } else if (byteOrderIdentifier != MOTOROLA_TIFF_MAGIC_NUMBER) {
-            if (Log.isLoggable(TAG, 3)) {
-                StringBuilder sb = new StringBuilder(27);
-                sb.append("Unknown endianness = ");
-                sb.append((int) byteOrderIdentifier);
-                Log.d(TAG, sb.toString());
-            }
-            byteOrder = ByteOrder.BIG_ENDIAN;
-        } else {
-            byteOrder = ByteOrder.BIG_ENDIAN;
-        }
-        randomAccessReader.order(byteOrder);
-        int firstIfdOffset = randomAccessReader.getInt32(headerOffsetSize + 4) + headerOffsetSize;
-        int tagCount = randomAccessReader.getInt16(firstIfdOffset);
-        int i2 = 0;
-        while (i2 < tagCount) {
-            int tagOffset = calcTagOffset(firstIfdOffset, i2);
-            int tagType = randomAccessReader.getInt16(tagOffset);
-            if (tagType == 274) {
-                int formatCode = randomAccessReader.getInt16(tagOffset + 2);
-                if (formatCode >= 1 && formatCode <= 12) {
-                    int componentCount = randomAccessReader.getInt32(tagOffset + 4);
-                    if (componentCount >= 0) {
-                        if (Log.isLoggable(TAG, i)) {
-                            StringBuilder sb2 = new StringBuilder(94);
-                            sb2.append("Got tagIndex=");
-                            sb2.append(i2);
-                            sb2.append(" tagType=");
-                            sb2.append(tagType);
-                            sb2.append(" formatCode=");
-                            sb2.append(formatCode);
-                            sb2.append(" componentCount=");
-                            sb2.append(componentCount);
-                            Log.d(TAG, sb2.toString());
-                        }
-                        int byteCount = BYTES_PER_FORMAT[formatCode] + componentCount;
-                        if (byteCount <= 4) {
-                            int tagValueOffset = tagOffset + 8;
-                            if (tagValueOffset < 0 || tagValueOffset > segmentData.length()) {
-                                if (Log.isLoggable(TAG, 3)) {
-                                    StringBuilder sb3 = new StringBuilder(54);
-                                    sb3.append("Illegal tagValueOffset=");
-                                    sb3.append(tagValueOffset);
-                                    sb3.append(" tagType=");
-                                    sb3.append(tagType);
-                                    Log.d(TAG, sb3.toString());
-                                }
-                            } else if (byteCount >= 0 && tagValueOffset + byteCount <= segmentData.length()) {
-                                return randomAccessReader.getInt16(tagValueOffset);
-                            } else {
-                                if (Log.isLoggable(TAG, 3)) {
-                                    StringBuilder sb4 = new StringBuilder(59);
-                                    sb4.append("Illegal number of bytes for TI tag data tagType=");
-                                    sb4.append(tagType);
-                                    Log.d(TAG, sb4.toString());
-                                }
-                            }
-                        } else if (Log.isLoggable(TAG, i)) {
-                            StringBuilder sb5 = new StringBuilder(71);
-                            sb5.append("Got byte count > 4, not orientation, continuing, formatCode=");
-                            sb5.append(formatCode);
-                            Log.d(TAG, sb5.toString());
-                        }
-                    } else if (Log.isLoggable(TAG, i)) {
-                        Log.d(TAG, "Negative tiff component count");
-                    }
-                } else if (Log.isLoggable(TAG, 3)) {
-                    StringBuilder sb6 = new StringBuilder(37);
-                    sb6.append("Got invalid format code = ");
-                    sb6.append(formatCode);
-                    Log.d(TAG, sb6.toString());
-                }
-            }
-            i2++;
-            i = 3;
-            randomAccessReader = segmentData;
-        }
-        return -1;
-    }
+    private interface Reader {
+        int getByte() throws IOException;
 
-    private static int calcTagOffset(int ifdOffset, int tagIndex) {
-        return ifdOffset + 2 + (tagIndex * 12);
-    }
+        int getUInt16() throws IOException;
 
-    private static boolean handles(int imageMagicNumber) {
-        return (imageMagicNumber & EXIF_MAGIC_NUMBER) == EXIF_MAGIC_NUMBER || imageMagicNumber == MOTOROLA_TIFF_MAGIC_NUMBER || imageMagicNumber == INTEL_TIFF_MAGIC_NUMBER;
+        short getUInt8() throws IOException;
+
+        int read(byte[] bArr, int i) throws IOException;
+
+        long skip(long j) throws IOException;
     }
 
     private static final class RandomAccessReader {

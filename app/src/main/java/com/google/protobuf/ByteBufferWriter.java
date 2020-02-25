@@ -9,8 +9,8 @@ import java.nio.channels.WritableByteChannel;
 final class ByteBufferWriter {
     private static final ThreadLocal<SoftReference<byte[]>> BUFFER = new ThreadLocal<>();
     private static final float BUFFER_REALLOCATION_THRESHOLD = 0.5f;
-    private static final long CHANNEL_FIELD_OFFSET = getChannelFieldOffset(FILE_OUTPUT_STREAM_CLASS);
     private static final Class<?> FILE_OUTPUT_STREAM_CLASS = safeGetClass("java.io.FileOutputStream");
+    private static final long CHANNEL_FIELD_OFFSET = getChannelFieldOffset(FILE_OUTPUT_STREAM_CLASS);
     private static final int MAX_CACHED_BUFFER_SIZE = 16384;
     private static final int MIN_CACHED_BUFFER_SIZE = 1024;
 

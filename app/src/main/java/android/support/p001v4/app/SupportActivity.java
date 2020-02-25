@@ -14,12 +14,6 @@ public class SupportActivity extends Activity implements KeyEventDispatcher.Comp
     private SimpleArrayMap<Class<? extends ExtraData>, ExtraData> mExtraDataMap = new SimpleArrayMap<>();
 
     @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    /* renamed from: android.support.v4.app.SupportActivity$ExtraData */
-    /* compiled from: ComponentActivity */
-    public static class ExtraData {
-    }
-
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
     public void putExtraData(ExtraData extraData) {
         this.mExtraDataMap.put(extraData.getClass(), extraData);
     }
@@ -48,5 +42,11 @@ public class SupportActivity extends Activity implements KeyEventDispatcher.Comp
             return KeyEventDispatcher.dispatchKeyEvent(this, decor, this, event);
         }
         return true;
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    /* renamed from: android.support.v4.app.SupportActivity$ExtraData */
+    /* compiled from: ComponentActivity */
+    public static class ExtraData {
     }
 }

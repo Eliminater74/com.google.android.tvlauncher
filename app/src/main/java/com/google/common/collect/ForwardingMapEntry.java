@@ -3,16 +3,18 @@ package com.google.common.collect;
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.base.Objects;
-import java.util.Map;
+
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
+import java.util.Map;
 
 @GwtCompatible
 public abstract class ForwardingMapEntry<K, V> extends ForwardingObject implements Map.Entry<K, V> {
-    /* access modifiers changed from: protected */
-    public abstract Map.Entry<K, V> delegate();
-
     protected ForwardingMapEntry() {
     }
+
+    /* access modifiers changed from: protected */
+    public abstract Map.Entry<K, V> delegate();
 
     public K getKey() {
         return delegate().getKey();

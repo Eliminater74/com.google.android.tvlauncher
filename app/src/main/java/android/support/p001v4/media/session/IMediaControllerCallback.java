@@ -7,8 +7,8 @@ import android.os.IInterface;
 import android.os.Parcel;
 import android.os.RemoteException;
 import android.support.p001v4.media.MediaMetadataCompat;
-import android.support.p001v4.media.session.MediaSessionCompat;
 import android.text.TextUtils;
+
 import java.util.List;
 
 /* renamed from: android.support.v4.media.session.IMediaControllerCallback */
@@ -41,7 +41,6 @@ public interface IMediaControllerCallback extends IInterface {
 
     /* renamed from: android.support.v4.media.session.IMediaControllerCallback$Stub */
     public static abstract class Stub extends Binder implements IMediaControllerCallback {
-        private static final String DESCRIPTOR = "android.support.v4.media.session.IMediaControllerCallback";
         static final int TRANSACTION_onCaptioningEnabledChanged = 11;
         static final int TRANSACTION_onEvent = 1;
         static final int TRANSACTION_onExtrasChanged = 7;
@@ -55,6 +54,7 @@ public interface IMediaControllerCallback extends IInterface {
         static final int TRANSACTION_onShuffleModeChanged = 12;
         static final int TRANSACTION_onShuffleModeChangedRemoved = 10;
         static final int TRANSACTION_onVolumeInfoChanged = 8;
+        private static final String DESCRIPTOR = "android.support.v4.media.session.IMediaControllerCallback";
 
         public Stub() {
             attachInterface(this, DESCRIPTOR);

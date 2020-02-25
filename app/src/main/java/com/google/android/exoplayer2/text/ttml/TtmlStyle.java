@@ -1,7 +1,9 @@
 package com.google.android.exoplayer2.text.ttml;
 
 import android.text.Layout;
+
 import com.google.android.exoplayer2.util.Assertions;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -10,15 +12,14 @@ final class TtmlStyle {
     public static final int FONT_SIZE_UNIT_EM = 2;
     public static final int FONT_SIZE_UNIT_PERCENT = 3;
     public static final int FONT_SIZE_UNIT_PIXEL = 1;
-    private static final int OFF = 0;
-
-    /* renamed from: ON */
-    private static final int f102ON = 1;
     public static final int STYLE_BOLD = 1;
     public static final int STYLE_BOLD_ITALIC = 3;
     public static final int STYLE_ITALIC = 2;
     public static final int STYLE_NORMAL = 0;
     public static final int UNSPECIFIED = -1;
+    private static final int OFF = 0;
+    /* renamed from: ON */
+    private static final int f102ON = 1;
     private int backgroundColor;
     private int bold = -1;
     private int fontColor;
@@ -35,21 +36,6 @@ final class TtmlStyle {
     private int linethrough = -1;
     private Layout.Alignment textAlign;
     private int underline = -1;
-
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface FontSizeUnit {
-    }
-
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    private @interface OptionalBoolean {
-    }
-
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface StyleFlags {
-    }
 
     public int getStyle() {
         if (this.bold == -1 && this.italic == -1) {
@@ -182,13 +168,13 @@ final class TtmlStyle {
         return this;
     }
 
+    public String getId() {
+        return this.f103id;
+    }
+
     public TtmlStyle setId(String id) {
         this.f103id = id;
         return this;
-    }
-
-    public String getId() {
-        return this.f103id;
     }
 
     public Layout.Alignment getTextAlign() {
@@ -200,9 +186,8 @@ final class TtmlStyle {
         return this;
     }
 
-    public TtmlStyle setFontSize(float fontSize2) {
-        this.fontSize = fontSize2;
-        return this;
+    public int getFontSizeUnit() {
+        return this.fontSizeUnit;
     }
 
     public TtmlStyle setFontSizeUnit(int fontSizeUnit2) {
@@ -210,11 +195,27 @@ final class TtmlStyle {
         return this;
     }
 
-    public int getFontSizeUnit() {
-        return this.fontSizeUnit;
-    }
-
     public float getFontSize() {
         return this.fontSize;
+    }
+
+    public TtmlStyle setFontSize(float fontSize2) {
+        this.fontSize = fontSize2;
+        return this;
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface FontSizeUnit {
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    private @interface OptionalBoolean {
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface StyleFlags {
     }
 }

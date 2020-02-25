@@ -9,7 +9,7 @@ import android.support.annotation.RestrictTo;
 import android.view.KeyEvent;
 import android.view.SurfaceHolder;
 import android.view.View;
-import androidx.leanback.media.PlaybackGlue;
+
 import androidx.leanback.widget.Action;
 import androidx.leanback.widget.ArrayObjectAdapter;
 import androidx.leanback.widget.OnItemViewSelectedListener;
@@ -17,7 +17,9 @@ import androidx.leanback.widget.PlaybackControlsRow;
 import androidx.leanback.widget.Presenter;
 import androidx.leanback.widget.Row;
 import androidx.leanback.widget.RowPresenter;
+
 import com.google.devtools.build.android.desugar.runtime.ThrowableExtension;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -30,38 +32,21 @@ public class MediaPlayerGlue extends PlaybackControlGlue implements OnItemViewSe
     public static final int REPEAT_ALL = 2;
     public static final int REPEAT_ONE = 1;
     private static final String TAG = "MediaPlayerGlue";
-    private String mArtist;
-    private Drawable mCover;
+    protected final PlaybackControlsRow.ThumbsDownAction mThumbsDownAction;
+    protected final PlaybackControlsRow.ThumbsUpAction mThumbsUpAction;
+    private final PlaybackControlsRow.RepeatAction mRepeatAction;
     Handler mHandler;
     boolean mInitialized;
+    MediaPlayer mPlayer;
+    private String mArtist;
+    private Drawable mCover;
     private long mLastKeyDownEvent;
     private String mMediaSourcePath;
     private Uri mMediaSourceUri;
     private MediaPlayer.OnCompletionListener mOnCompletionListener;
-    MediaPlayer mPlayer;
-    private final PlaybackControlsRow.RepeatAction mRepeatAction;
     private Runnable mRunnable;
     private Action mSelectedAction;
-    protected final PlaybackControlsRow.ThumbsDownAction mThumbsDownAction;
-    protected final PlaybackControlsRow.ThumbsUpAction mThumbsUpAction;
     private String mTitle;
-
-    public void setCover(Drawable cover) {
-        this.mCover = cover;
-    }
-
-    public void setArtist(String artist) {
-        this.mArtist = artist;
-    }
-
-    public void setTitle(String title) {
-        this.mTitle = title;
-    }
-
-    public void setVideoUrl(String videoUrl) {
-        setMediaSource(videoUrl);
-        onMetadataChanged();
-    }
 
     public MediaPlayerGlue(Context context) {
         this(context, new int[]{1}, new int[]{1});
@@ -80,6 +65,23 @@ public class MediaPlayerGlue extends PlaybackControlGlue implements OnItemViewSe
         this.mThumbsUpAction = new PlaybackControlsRow.ThumbsUpAction(getContext());
         this.mThumbsDownAction.setIndex(1);
         this.mThumbsUpAction.setIndex(1);
+    }
+
+    public void setCover(Drawable cover) {
+        this.mCover = cover;
+    }
+
+    public void setArtist(String artist) {
+        this.mArtist = artist;
+    }
+
+    public void setTitle(String title) {
+        this.mTitle = title;
+    }
+
+    public void setVideoUrl(String videoUrl) {
+        setMediaSource(videoUrl);
+        onMetadataChanged();
     }
 
     /* access modifiers changed from: protected */

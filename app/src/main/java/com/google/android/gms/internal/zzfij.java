@@ -4,7 +4,9 @@ import android.content.ContentResolver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
+
 import com.google.android.gsf.Gservices;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -15,15 +17,15 @@ import java.util.regex.Pattern;
 public class zzfij {
     public static final Pattern zza = Pattern.compile("^(1|true|t|on|yes|y)$", 2);
     public static final Pattern zzb = Pattern.compile("^(0|false|f|off|no|n)$", 2);
-    private static final Uri zzc = Uri.parse("content://com.google.android.gsf.gservices");
-    private static final Uri zzd = Uri.parse("content://com.google.android.gsf.gservices/prefix");
     /* access modifiers changed from: private */
     public static final AtomicBoolean zze = new AtomicBoolean();
-    private static HashMap<String, String> zzf;
+    private static final Uri zzc = Uri.parse("content://com.google.android.gsf.gservices");
+    private static final Uri zzd = Uri.parse("content://com.google.android.gsf.gservices/prefix");
     private static final HashMap<String, Boolean> zzg = new HashMap<>();
     private static final HashMap<String, Integer> zzh = new HashMap<>();
     private static final HashMap<String, Long> zzi = new HashMap<>();
     private static final HashMap<String, Float> zzj = new HashMap<>();
+    private static HashMap<String, String> zzf;
     private static Object zzk;
     private static boolean zzl;
     private static String[] zzm = new String[0];

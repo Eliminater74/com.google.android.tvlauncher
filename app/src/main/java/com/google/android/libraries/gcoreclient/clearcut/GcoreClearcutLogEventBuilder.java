@@ -3,6 +3,7 @@ package com.google.android.libraries.gcoreclient.clearcut;
 import com.google.android.libraries.gcoreclient.common.api.GcorePendingResult;
 import com.google.android.libraries.gcoreclient.common.api.GcoreStatus;
 import com.google.android.libraries.gcoreclient.phenotype.GcoreExperimentTokens;
+
 import javax.annotation.Nullable;
 
 public interface GcoreClearcutLogEventBuilder {

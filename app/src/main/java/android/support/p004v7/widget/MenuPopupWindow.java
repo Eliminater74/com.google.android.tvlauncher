@@ -16,6 +16,7 @@ import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.widget.PopupWindow;
+
 import java.lang.reflect.Method;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
@@ -23,7 +24,6 @@ import java.lang.reflect.Method;
 public class MenuPopupWindow extends ListPopupWindow implements MenuItemHoverListener {
     private static final String TAG = "MenuPopupWindow";
     private static Method sSetTouchModalMethod;
-    private MenuItemHoverListener mHoverListener;
 
     static {
         Class<PopupWindow> cls = PopupWindow.class;
@@ -33,6 +33,8 @@ public class MenuPopupWindow extends ListPopupWindow implements MenuItemHoverLis
             Log.i(TAG, "Could not find method setTouchModal() on PopupWindow. Oh well.");
         }
     }
+
+    private MenuItemHoverListener mHoverListener;
 
     public MenuPopupWindow(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
@@ -90,9 +92,21 @@ public class MenuPopupWindow extends ListPopupWindow implements MenuItemHoverLis
     /* renamed from: android.support.v7.widget.MenuPopupWindow$MenuDropDownListView */
     public static class MenuDropDownListView extends DropDownListView {
         final int mAdvanceKey;
+        final int mRetreatKey;
         private MenuItemHoverListener mHoverListener;
         private MenuItem mHoveredMenuItem;
-        final int mRetreatKey;
+
+        public MenuDropDownListView(Context context, boolean hijackFocus) {
+            super(context, hijackFocus);
+            Configuration config = context.getResources().getConfiguration();
+            if (Build.VERSION.SDK_INT < 17 || 1 != config.getLayoutDirection()) {
+                this.mAdvanceKey = 22;
+                this.mRetreatKey = 21;
+                return;
+            }
+            this.mAdvanceKey = 21;
+            this.mRetreatKey = 22;
+        }
 
         public /* bridge */ /* synthetic */ boolean hasFocus() {
             return super.hasFocus();
@@ -128,18 +142,6 @@ public class MenuPopupWindow extends ListPopupWindow implements MenuItemHoverLis
 
         public /* bridge */ /* synthetic */ void setSelector(Drawable drawable) {
             super.setSelector(drawable);
-        }
-
-        public MenuDropDownListView(Context context, boolean hijackFocus) {
-            super(context, hijackFocus);
-            Configuration config = context.getResources().getConfiguration();
-            if (Build.VERSION.SDK_INT < 17 || 1 != config.getLayoutDirection()) {
-                this.mAdvanceKey = 22;
-                this.mRetreatKey = 21;
-                return;
-            }
-            this.mAdvanceKey = 21;
-            this.mRetreatKey = 22;
         }
 
         public void setHoverListener(MenuItemHoverListener hoverListener) {

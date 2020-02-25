@@ -2,9 +2,10 @@ package com.google.common.collect;
 
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.GwtIncompatible;
-import java.lang.Comparable;
-import java.util.Map;
+
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
+import java.util.Map;
 
 @GwtIncompatible
 @Beta

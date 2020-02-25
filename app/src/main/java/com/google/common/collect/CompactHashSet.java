@@ -5,6 +5,10 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
@@ -17,26 +21,32 @@ import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtIncompatible
 class CompactHashSet<E> extends AbstractSet<E> implements Serializable {
     @VisibleForTesting
     static final int DEFAULT_SIZE = 3;
+    static final int UNSET = -1;
     private static final long HASH_MASK = -4294967296L;
     private static final float LOAD_FACTOR = 1.0f;
     private static final long NEXT_MASK = 4294967295L;
-    static final int UNSET = -1;
-    @MonotonicNonNullDecl
-    transient Object[] elements;
     /* access modifiers changed from: private */
     @MonotonicNonNullDecl
     public transient long[] entries;
+    @MonotonicNonNullDecl
+    transient Object[] elements;
     transient int modCount;
     private transient int size;
     @MonotonicNonNullDecl
     private transient int[] table;
+
+    CompactHashSet() {
+        init(3);
+    }
+
+    CompactHashSet(int expectedSize) {
+        init(expectedSize);
+    }
 
     public static <E> CompactHashSet<E> create() {
         return new CompactHashSet<>();
@@ -56,34 +66,6 @@ class CompactHashSet<E> extends AbstractSet<E> implements Serializable {
 
     public static <E> CompactHashSet<E> createWithExpectedSize(int expectedSize) {
         return new CompactHashSet<>(expectedSize);
-    }
-
-    CompactHashSet() {
-        init(3);
-    }
-
-    CompactHashSet(int expectedSize) {
-        init(expectedSize);
-    }
-
-    /* access modifiers changed from: package-private */
-    public void init(int expectedSize) {
-        Preconditions.checkArgument(expectedSize >= 0, "Initial capacity must be non-negative");
-        this.modCount = Math.max(1, expectedSize);
-    }
-
-    /* access modifiers changed from: package-private */
-    public boolean needsAllocArrays() {
-        return this.table == null;
-    }
-
-    /* access modifiers changed from: package-private */
-    public void allocArrays() {
-        Preconditions.checkState(needsAllocArrays(), "Arrays already allocated");
-        int expectedSize = this.modCount;
-        this.table = newTable(Hashing.closedTableSize(expectedSize, 1.0d));
-        this.entries = newEntries(expectedSize);
-        this.elements = new Object[expectedSize];
     }
 
     private static int[] newTable(int size2) {
@@ -111,10 +93,6 @@ class CompactHashSet<E> extends AbstractSet<E> implements Serializable {
         return array;
     }
 
-    private int hashTableMask() {
-        return this.table.length - 1;
-    }
-
     /* access modifiers changed from: private */
     public static int getHash(long entry) {
         return (int) (entry >>> 32);
@@ -126,6 +104,30 @@ class CompactHashSet<E> extends AbstractSet<E> implements Serializable {
 
     private static long swapNext(long entry, int newNext) {
         return (HASH_MASK & entry) | (((long) newNext) & NEXT_MASK);
+    }
+
+    /* access modifiers changed from: package-private */
+    public void init(int expectedSize) {
+        Preconditions.checkArgument(expectedSize >= 0, "Initial capacity must be non-negative");
+        this.modCount = Math.max(1, expectedSize);
+    }
+
+    /* access modifiers changed from: package-private */
+    public boolean needsAllocArrays() {
+        return this.table == null;
+    }
+
+    /* access modifiers changed from: package-private */
+    public void allocArrays() {
+        Preconditions.checkState(needsAllocArrays(), "Arrays already allocated");
+        int expectedSize = this.modCount;
+        this.table = newTable(Hashing.closedTableSize(expectedSize, 1.0d));
+        this.entries = newEntries(expectedSize);
+        this.elements = new Object[expectedSize];
+    }
+
+    private int hashTableMask() {
+        return this.table.length - 1;
     }
 
     @CanIgnoreReturnValue

@@ -16,15 +16,16 @@ import android.support.p001v4.graphics.drawable.DrawableCompat;
 import android.support.p001v4.graphics.drawable.WrappedDrawable;
 import android.support.p004v7.graphics.drawable.DrawableWrapper;
 import android.util.Log;
+
 import java.lang.reflect.Field;
 
 @SuppressLint({"RestrictedAPI"})
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
 /* renamed from: android.support.v7.widget.DrawableUtils */
 public class DrawableUtils {
+    public static final Rect INSETS_NONE = new Rect();
     private static final int[] CHECKED_STATE_SET = {16842912};
     private static final int[] EMPTY_STATE_SET = new int[0];
-    public static final Rect INSETS_NONE = new Rect();
     private static final String TAG = "DrawableUtils";
     private static final String VECTOR_DRAWABLE_CLAZZ_NAME = "android.graphics.drawable.VectorDrawable";
     private static Class<?> sInsetsClazz;

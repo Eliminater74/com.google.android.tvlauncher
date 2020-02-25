@@ -2,9 +2,10 @@ package com.google.common.collect;
 
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.RegularImmutableMap;
-import java.util.Map;
+
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
+import java.util.Map;
 
 @GwtCompatible(emulated = true, serializable = true)
 final class RegularImmutableBiMap<K, V> extends ImmutableBiMap<K, V> {

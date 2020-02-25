@@ -1,6 +1,5 @@
 package com.google.android.exoplayer2.source;
 
-import com.google.android.exoplayer2.source.MediaSourceEventListener;
 import java.io.IOException;
 
 final /* synthetic */ class MediaSourceEventListener$EventDispatcher$$Lambda$5 implements Runnable {

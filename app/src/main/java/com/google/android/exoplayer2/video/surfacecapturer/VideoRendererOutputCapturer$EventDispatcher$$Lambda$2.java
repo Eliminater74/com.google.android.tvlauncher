@@ -1,7 +1,5 @@
 package com.google.android.exoplayer2.video.surfacecapturer;
 
-import com.google.android.exoplayer2.video.surfacecapturer.VideoRendererOutputCapturer;
-
 final /* synthetic */ class VideoRendererOutputCapturer$EventDispatcher$$Lambda$2 implements Runnable {
     private final VideoRendererOutputCapturer.EventDispatcher arg$1;
     private final Exception arg$2;

@@ -13,6 +13,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RawRes;
 import android.view.View;
+
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.manager.ConnectivityMonitor;
@@ -30,6 +31,7 @@ import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.request.target.ViewTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.bumptech.glide.util.Util;
+
 import java.io.File;
 import java.net.URL;
 import java.util.List;
@@ -39,21 +41,21 @@ public class RequestManager implements LifecycleListener, ModelTypes<RequestBuil
     private static final RequestOptions DECODE_TYPE_BITMAP = ((RequestOptions) RequestOptions.decodeTypeOf(Bitmap.class).lock());
     private static final RequestOptions DECODE_TYPE_GIF = ((RequestOptions) RequestOptions.decodeTypeOf(GifDrawable.class).lock());
     private static final RequestOptions DOWNLOAD_ONLY_OPTIONS = ((RequestOptions) ((RequestOptions) RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.DATA).priority(Priority.LOW)).skipMemoryCache(true));
-    private final Runnable addSelfToLifecycle;
-    private final ConnectivityMonitor connectivityMonitor;
     protected final Context context;
-    private final CopyOnWriteArrayList<RequestListener<Object>> defaultRequestListeners;
     protected final Glide glide;
     final Lifecycle lifecycle;
+    private final Runnable addSelfToLifecycle;
+    private final ConnectivityMonitor connectivityMonitor;
+    private final CopyOnWriteArrayList<RequestListener<Object>> defaultRequestListeners;
     private final Handler mainHandler;
-    @GuardedBy("this")
-    private RequestOptions requestOptions;
     @GuardedBy("this")
     private final RequestTracker requestTracker;
     @GuardedBy("this")
     private final TargetTracker targetTracker;
     @GuardedBy("this")
     private final RequestManagerTreeNode treeNode;
+    @GuardedBy("this")
+    private RequestOptions requestOptions;
 
     public RequestManager(@NonNull Glide glide2, @NonNull Lifecycle lifecycle2, @NonNull RequestManagerTreeNode treeNode2, @NonNull Context context2) {
         this(glide2, lifecycle2, treeNode2, new RequestTracker(), glide2.getConnectivityMonitorFactory(), context2);
@@ -96,12 +98,6 @@ public class RequestManager implements LifecycleListener, ModelTypes<RequestBuil
     @NonNull
     public synchronized RequestManager applyDefaultRequestOptions(@NonNull RequestOptions requestOptions2) {
         updateRequestOptions(requestOptions2);
-        return this;
-    }
-
-    @NonNull
-    public synchronized RequestManager setDefaultRequestOptions(@NonNull RequestOptions requestOptions2) {
-        setRequestOptions(requestOptions2);
         return this;
     }
 
@@ -309,6 +305,12 @@ public class RequestManager implements LifecycleListener, ModelTypes<RequestBuil
         return this.requestOptions;
     }
 
+    @NonNull
+    public synchronized RequestManager setDefaultRequestOptions(@NonNull RequestOptions requestOptions2) {
+        setRequestOptions(requestOptions2);
+        return this;
+    }
+
     /* access modifiers changed from: package-private */
     @NonNull
     public <T> TransitionOptions<?, T> getDefaultTransitionOptions(Class<T> transcodeClass) {
@@ -330,6 +332,15 @@ public class RequestManager implements LifecycleListener, ModelTypes<RequestBuil
         return sb.toString();
     }
 
+    private static class ClearTarget extends ViewTarget<View, Object> {
+        ClearTarget(@NonNull View view) {
+            super(view);
+        }
+
+        public void onResourceReady(@NonNull Object resource, @Nullable Transition<? super Object> transition) {
+        }
+    }
+
     private class RequestManagerConnectivityListener implements ConnectivityMonitor.ConnectivityListener {
         @GuardedBy("RequestManager.this")
         private final RequestTracker requestTracker;
@@ -344,15 +355,6 @@ public class RequestManager implements LifecycleListener, ModelTypes<RequestBuil
                     this.requestTracker.restartRequests();
                 }
             }
-        }
-    }
-
-    private static class ClearTarget extends ViewTarget<View, Object> {
-        ClearTarget(@NonNull View view) {
-            super(view);
-        }
-
-        public void onResourceReady(@NonNull Object resource, @Nullable Transition<? super Object> transition) {
         }
     }
 }

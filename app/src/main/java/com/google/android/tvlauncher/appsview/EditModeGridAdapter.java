@@ -13,7 +13,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+
 import androidx.leanback.widget.FacetProvider;
+
 import com.google.android.tvlauncher.C1188R;
 import com.google.android.tvlauncher.TvlauncherLogEnum;
 import com.google.android.tvlauncher.analytics.EventLogger;
@@ -24,36 +26,33 @@ import com.google.android.tvlauncher.appsview.data.LaunchItemsManagerProvider;
 import com.google.android.tvlauncher.appsview.data.PackageImageDataSource;
 import com.google.android.tvlauncher.util.KeylineUtil;
 import com.google.logs.tvlauncher.config.TvLauncherConstants;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 
 class EditModeGridAdapter extends RecyclerView.Adapter<LaunchItemViewHolder> implements LaunchItemsManager.AppsViewChangeListener {
     /* access modifiers changed from: private */
     public final int mBannerHeight;
-    private final int mBannerMarginBottom;
-    private final int mBannerMarginEnd;
     /* access modifiers changed from: private */
     public final int mBannerWidth;
-    /* access modifiers changed from: private */
-    public int mBottomKeyline;
-    private final EventLogger mEventLogger;
-    private final int mKeylineAppsRowTwo;
     /* access modifiers changed from: private */
     public final int mKeylineAppsRowTwoTitleAbove;
     /* access modifiers changed from: private */
     public final int mKeylineLastRow;
+    /* access modifiers changed from: private */
+    public final Drawable mPlaceholderBanner;
+    private final int mBannerMarginBottom;
+    private final int mBannerMarginEnd;
+    private final EventLogger mEventLogger;
+    private final int mKeylineAppsRowTwo;
     private final ArrayList<LaunchItem> mLaunchItems = new ArrayList<>();
-    private OnEditItemRemovedListener mOnEditItemRemovedListener;
+    /* access modifiers changed from: private */
+    public int mBottomKeyline;
     /* access modifiers changed from: private */
     public OnShowAccessibilityMenuListener mOnShowAccessibilityMenuListener;
     /* access modifiers changed from: private */
-    public final Drawable mPlaceholderBanner;
-    /* access modifiers changed from: private */
     public int mTopKeyline;
-
-    interface OnEditItemRemovedListener {
-        void onEditItemRemoved(int i);
-    }
+    private OnEditItemRemovedListener mOnEditItemRemovedListener;
 
     EditModeGridAdapter(Context context, EventLogger eventLogger) {
         Resources res = context.getResources();
@@ -98,6 +97,105 @@ class EditModeGridAdapter extends RecyclerView.Adapter<LaunchItemViewHolder> imp
     }
 
     public void onEditModeItemOrderChange(ArrayList<LaunchItem> arrayList, boolean isGameItems, Pair<Integer, Integer> pair) {
+    }
+
+    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+     method: ClspMth{android.view.LayoutInflater.inflate(int, android.view.ViewGroup, boolean):android.view.View}
+     arg types: [int, android.view.ViewGroup, int]
+     candidates:
+      ClspMth{android.view.LayoutInflater.inflate(org.xmlpull.v1.XmlPullParser, android.view.ViewGroup, boolean):android.view.View}
+      ClspMth{android.view.LayoutInflater.inflate(int, android.view.ViewGroup, boolean):android.view.View} */
+    @NonNull
+    public LaunchItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        BannerView bannerView = (BannerView) LayoutInflater.from(parent.getContext()).inflate(C1188R.layout.view_app_banner, parent, false);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(bannerView.getLayoutParams());
+        params.bottomMargin = this.mBannerMarginBottom;
+        params.setMarginEnd(this.mBannerMarginEnd);
+        bannerView.setLayoutParams(params);
+        return new LaunchItemViewHolder(bannerView);
+    }
+
+    public void onBindViewHolder(@NonNull LaunchItemViewHolder holder, int position) {
+        holder.set(this.mLaunchItems.get(position));
+    }
+
+    public int getItemCount() {
+        return this.mLaunchItems.size();
+    }
+
+    /* access modifiers changed from: package-private */
+    public void setTopKeyline(int topKeyline) {
+        this.mTopKeyline = topKeyline;
+    }
+
+    /* access modifiers changed from: package-private */
+    public void setBottomKeyline(int bottomKeyline) {
+        this.mBottomKeyline = bottomKeyline;
+    }
+
+    /* access modifiers changed from: package-private */
+    public void moveLaunchItems(int from, int to, int direction) {
+        TvlauncherLogEnum.TvLauncherEventCode eventCode;
+        if (from >= 0) {
+            int offset = 1;
+            if (from <= this.mLaunchItems.size() - 1 && to >= 0 && to <= this.mLaunchItems.size() - 1) {
+                LaunchItem fromItem = this.mLaunchItems.get(from);
+                this.mLaunchItems.set(from, this.mLaunchItems.get(to));
+                this.mLaunchItems.set(to, fromItem);
+                notifyItemMoved(from, to);
+                int positionDifference = to - from;
+                if (Math.abs(positionDifference) > 1) {
+                    if (positionDifference > 0) {
+                        offset = -1;
+                    }
+                    notifyItemMoved(to + offset, from);
+                }
+                if (direction == 17) {
+                    eventCode = TvlauncherLogEnum.TvLauncherEventCode.MOVE_LAUNCH_ITEM_LEFT;
+                } else if (direction == 33) {
+                    eventCode = TvlauncherLogEnum.TvLauncherEventCode.MOVE_LAUNCH_ITEM_UP;
+                } else if (direction == 66) {
+                    eventCode = TvlauncherLogEnum.TvLauncherEventCode.MOVE_LAUNCH_ITEM_RIGHT;
+                } else if (direction == 130) {
+                    eventCode = TvlauncherLogEnum.TvLauncherEventCode.MOVE_LAUNCH_ITEM_DOWN;
+                } else {
+                    StringBuilder sb = new StringBuilder(30);
+                    sb.append("Invalid direction: ");
+                    sb.append(direction);
+                    throw new IllegalArgumentException(sb.toString());
+                }
+                LogEvent logEvent = new LogEvent(eventCode).setVisualElementTag(TvLauncherConstants.LAUNCH_ITEM).setVisualElementRowIndex(to / 4).setVisualElementIndex(to % 4);
+                logEvent.getApplication().setPackageName(fromItem.getPackageName());
+                logEvent.pushParentVisualElementTag(fromItem.isGame() ? TvLauncherConstants.GAMES_CONTAINER : TvLauncherConstants.APPS_CONTAINER);
+                this.mEventLogger.log(logEvent);
+            }
+        }
+    }
+
+    /* access modifiers changed from: package-private */
+    public ArrayList<LaunchItem> getLaunchItems() {
+        return this.mLaunchItems;
+    }
+
+    /* access modifiers changed from: package-private */
+    public void setLaunchItems(ArrayList<LaunchItem> items) {
+        this.mLaunchItems.clear();
+        this.mLaunchItems.addAll(items);
+        notifyDataSetChanged();
+    }
+
+    /* access modifiers changed from: package-private */
+    public void setOnShowAccessibilityMenuListener(OnShowAccessibilityMenuListener listener) {
+        this.mOnShowAccessibilityMenuListener = listener;
+    }
+
+    /* access modifiers changed from: package-private */
+    public void setOnEditItemRemovedListener(OnEditItemRemovedListener listener) {
+        this.mOnEditItemRemovedListener = listener;
+    }
+
+    interface OnEditItemRemovedListener {
+        void onEditItemRemoved(int i);
     }
 
     final class LaunchItemViewHolder extends RecyclerView.ViewHolder implements FacetProvider, View.OnClickListener, View.OnFocusChangeListener {
@@ -157,100 +255,5 @@ class EditModeGridAdapter extends RecyclerView.Adapter<LaunchItemViewHolder> imp
         public BannerView getBannerView() {
             return this.mBannerView;
         }
-    }
-
-    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-     method: ClspMth{android.view.LayoutInflater.inflate(int, android.view.ViewGroup, boolean):android.view.View}
-     arg types: [int, android.view.ViewGroup, int]
-     candidates:
-      ClspMth{android.view.LayoutInflater.inflate(org.xmlpull.v1.XmlPullParser, android.view.ViewGroup, boolean):android.view.View}
-      ClspMth{android.view.LayoutInflater.inflate(int, android.view.ViewGroup, boolean):android.view.View} */
-    @NonNull
-    public LaunchItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        BannerView bannerView = (BannerView) LayoutInflater.from(parent.getContext()).inflate(C1188R.layout.view_app_banner, parent, false);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(bannerView.getLayoutParams());
-        params.bottomMargin = this.mBannerMarginBottom;
-        params.setMarginEnd(this.mBannerMarginEnd);
-        bannerView.setLayoutParams(params);
-        return new LaunchItemViewHolder(bannerView);
-    }
-
-    public void onBindViewHolder(@NonNull LaunchItemViewHolder holder, int position) {
-        holder.set(this.mLaunchItems.get(position));
-    }
-
-    public int getItemCount() {
-        return this.mLaunchItems.size();
-    }
-
-    /* access modifiers changed from: package-private */
-    public void setTopKeyline(int topKeyline) {
-        this.mTopKeyline = topKeyline;
-    }
-
-    /* access modifiers changed from: package-private */
-    public void setBottomKeyline(int bottomKeyline) {
-        this.mBottomKeyline = bottomKeyline;
-    }
-
-    /* access modifiers changed from: package-private */
-    public void setLaunchItems(ArrayList<LaunchItem> items) {
-        this.mLaunchItems.clear();
-        this.mLaunchItems.addAll(items);
-        notifyDataSetChanged();
-    }
-
-    /* access modifiers changed from: package-private */
-    public void moveLaunchItems(int from, int to, int direction) {
-        TvlauncherLogEnum.TvLauncherEventCode eventCode;
-        if (from >= 0) {
-            int offset = 1;
-            if (from <= this.mLaunchItems.size() - 1 && to >= 0 && to <= this.mLaunchItems.size() - 1) {
-                LaunchItem fromItem = this.mLaunchItems.get(from);
-                this.mLaunchItems.set(from, this.mLaunchItems.get(to));
-                this.mLaunchItems.set(to, fromItem);
-                notifyItemMoved(from, to);
-                int positionDifference = to - from;
-                if (Math.abs(positionDifference) > 1) {
-                    if (positionDifference > 0) {
-                        offset = -1;
-                    }
-                    notifyItemMoved(to + offset, from);
-                }
-                if (direction == 17) {
-                    eventCode = TvlauncherLogEnum.TvLauncherEventCode.MOVE_LAUNCH_ITEM_LEFT;
-                } else if (direction == 33) {
-                    eventCode = TvlauncherLogEnum.TvLauncherEventCode.MOVE_LAUNCH_ITEM_UP;
-                } else if (direction == 66) {
-                    eventCode = TvlauncherLogEnum.TvLauncherEventCode.MOVE_LAUNCH_ITEM_RIGHT;
-                } else if (direction == 130) {
-                    eventCode = TvlauncherLogEnum.TvLauncherEventCode.MOVE_LAUNCH_ITEM_DOWN;
-                } else {
-                    StringBuilder sb = new StringBuilder(30);
-                    sb.append("Invalid direction: ");
-                    sb.append(direction);
-                    throw new IllegalArgumentException(sb.toString());
-                }
-                LogEvent logEvent = new LogEvent(eventCode).setVisualElementTag(TvLauncherConstants.LAUNCH_ITEM).setVisualElementRowIndex(to / 4).setVisualElementIndex(to % 4);
-                logEvent.getApplication().setPackageName(fromItem.getPackageName());
-                logEvent.pushParentVisualElementTag(fromItem.isGame() ? TvLauncherConstants.GAMES_CONTAINER : TvLauncherConstants.APPS_CONTAINER);
-                this.mEventLogger.log(logEvent);
-            }
-        }
-    }
-
-    /* access modifiers changed from: package-private */
-    public ArrayList<LaunchItem> getLaunchItems() {
-        return this.mLaunchItems;
-    }
-
-    /* access modifiers changed from: package-private */
-    public void setOnShowAccessibilityMenuListener(OnShowAccessibilityMenuListener listener) {
-        this.mOnShowAccessibilityMenuListener = listener;
-    }
-
-    /* access modifiers changed from: package-private */
-    public void setOnEditItemRemovedListener(OnEditItemRemovedListener listener) {
-        this.mOnEditItemRemovedListener = listener;
     }
 }

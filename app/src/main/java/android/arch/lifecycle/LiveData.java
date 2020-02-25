@@ -2,10 +2,10 @@ package android.arch.lifecycle;
 
 import android.arch.core.executor.ArchTaskExecutor;
 import android.arch.core.internal.SafeIterableMap;
-import android.arch.lifecycle.Lifecycle;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import java.util.Iterator;
 import java.util.Map;
 
@@ -14,16 +14,16 @@ public abstract class LiveData<T> {
     public static final Object NOT_SET = new Object();
     static final int START_VERSION = -1;
     /* access modifiers changed from: private */
-    public int mActiveCount = 0;
-    private volatile Object mData;
-    /* access modifiers changed from: private */
     public final Object mDataLock = new Object();
+    private final Runnable mPostValueRunnable;
+    /* access modifiers changed from: private */
+    public int mActiveCount = 0;
+    /* access modifiers changed from: private */
+    public volatile Object mPendingData;
+    private volatile Object mData;
     private boolean mDispatchInvalidated;
     private boolean mDispatchingValue;
     private SafeIterableMap<Observer<T>, LiveData<T>.ObserverWrapper> mObservers = new SafeIterableMap<>();
-    /* access modifiers changed from: private */
-    public volatile Object mPendingData;
-    private final Runnable mPostValueRunnable;
     private int mVersion;
 
     public LiveData() {
@@ -50,6 +50,12 @@ public abstract class LiveData<T> {
                 }
             }
         };
+    }
+
+    private static void assertMainThread(String methodName) {
+        if (!ArchTaskExecutor.getInstance().isMainThread()) {
+            throw new IllegalStateException("Cannot invoke " + methodName + " on a background" + " thread");
+        }
     }
 
     private void considerNotify(LiveData<T>.ObserverWrapper observer) {
@@ -184,15 +190,6 @@ public abstract class LiveData<T> {
         throw new UnsupportedOperationException("Method not decompiled: android.arch.lifecycle.LiveData.postValue(java.lang.Object):void");
     }
 
-    /* access modifiers changed from: protected */
-    @MainThread
-    public void setValue(T value) {
-        assertMainThread("setValue");
-        this.mVersion++;
-        this.mData = value;
-        dispatchingValue(null);
-    }
-
     @Nullable
     public T getValue() {
         Object data = this.mData;
@@ -200,6 +197,15 @@ public abstract class LiveData<T> {
             return data;
         }
         return null;
+    }
+
+    /* access modifiers changed from: protected */
+    @MainThread
+    public void setValue(T value) {
+        assertMainThread("setValue");
+        this.mVersion++;
+        this.mData = value;
+        dispatchingValue(null);
     }
 
     /* access modifiers changed from: package-private */
@@ -257,16 +263,16 @@ public abstract class LiveData<T> {
     }
 
     private abstract class ObserverWrapper {
+        final Observer<T> mObserver;
         boolean mActive;
         int mLastVersion = -1;
-        final Observer<T> mObserver;
-
-        /* access modifiers changed from: package-private */
-        public abstract boolean shouldBeActive();
 
         ObserverWrapper(Observer<T> observer) {
             this.mObserver = observer;
         }
+
+        /* access modifiers changed from: package-private */
+        public abstract boolean shouldBeActive();
 
         /* access modifiers changed from: package-private */
         public boolean isAttachedTo(LifecycleOwner owner) {
@@ -310,12 +316,6 @@ public abstract class LiveData<T> {
         /* access modifiers changed from: package-private */
         public boolean shouldBeActive() {
             return true;
-        }
-    }
-
-    private static void assertMainThread(String methodName) {
-        if (!ArchTaskExecutor.getInstance().isMainThread()) {
-            throw new IllegalStateException("Cannot invoke " + methodName + " on a background" + " thread");
         }
     }
 }

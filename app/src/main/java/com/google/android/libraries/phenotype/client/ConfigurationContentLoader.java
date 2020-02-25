@@ -9,6 +9,7 @@ import android.support.annotation.GuardedBy;
 import android.support.annotation.VisibleForTesting;
 import android.support.p001v4.util.ArrayMap;
 import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -16,18 +17,18 @@ import java.util.List;
 import java.util.Map;
 
 public final class ConfigurationContentLoader implements FlagLoader {
+    public static final String[] COLUMNS = {"key", "value"};
     @VisibleForTesting
     static final int ARRAYMAP_THRESHOLD = 256;
-    public static final String[] COLUMNS = {"key", "value"};
     @GuardedBy("ConfigurationContentLoader.class")
     static final Map<Uri, ConfigurationContentLoader> LOADERS_BY_URI = new ArrayMap();
     private static final String TAG = "ConfigurationContentLoader";
     private final Object cacheLock = new Object();
-    private volatile Map<String, String> cachedFlags;
     @GuardedBy("this")
     private final List<ConfigurationUpdatedListener> listeners = new ArrayList();
     private final ContentResolver resolver;
     private final Uri uri;
+    private volatile Map<String, String> cachedFlags;
 
     private ConfigurationContentLoader(ContentResolver resolver2, Uri uri2) {
         this.resolver = resolver2;
@@ -62,6 +63,22 @@ public final class ConfigurationContentLoader implements FlagLoader {
         return loader;
     }
 
+    public static void invalidateCache(Uri uri2) {
+        synchronized (ConfigurationContentLoader.class) {
+            ConfigurationContentLoader loader = LOADERS_BY_URI.get(uri2);
+            if (loader != null) {
+                loader.invalidateCache();
+            }
+        }
+    }
+
+    @VisibleForTesting
+    public static synchronized void clearLoaderMapForTesting() {
+        synchronized (ConfigurationContentLoader.class) {
+            LOADERS_BY_URI.clear();
+        }
+    }
+
     public Map<String, String> getFlags() {
         Map<String, String> flags = this.cachedFlags;
         if (flags == null) {
@@ -86,15 +103,6 @@ public final class ConfigurationContentLoader implements FlagLoader {
             PhenotypeFlag.invalidateProcessCache();
         }
         notifyConfigurationUpdatedListeners();
-    }
-
-    public static void invalidateCache(Uri uri2) {
-        synchronized (ConfigurationContentLoader.class) {
-            ConfigurationContentLoader loader = LOADERS_BY_URI.get(uri2);
-            if (loader != null) {
-                loader.invalidateCache();
-            }
-        }
     }
 
     public void addConfigurationUpdatedListener(ConfigurationUpdatedListener listener) {
@@ -150,13 +158,6 @@ public final class ConfigurationContentLoader implements FlagLoader {
             for (ConfigurationUpdatedListener listener : this.listeners) {
                 listener.onConfigurationUpdated();
             }
-        }
-    }
-
-    @VisibleForTesting
-    public static synchronized void clearLoaderMapForTesting() {
-        synchronized (ConfigurationContentLoader.class) {
-            LOADERS_BY_URI.clear();
         }
     }
 }

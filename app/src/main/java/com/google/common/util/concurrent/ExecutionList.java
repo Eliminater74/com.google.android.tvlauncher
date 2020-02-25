@@ -3,10 +3,12 @@ package com.google.common.util.concurrent;
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.concurrent.GuardedBy;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.util.concurrent.Executor;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtIncompatible
 public final class ExecutionList {
@@ -16,6 +18,31 @@ public final class ExecutionList {
     @NullableDecl
     @GuardedBy("this")
     private RunnableExecutorPair runnables;
+
+    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+     method: ClspMth{java.util.logging.Logger.logp(java.util.logging.Level, java.lang.String, java.lang.String, java.lang.String, java.lang.Throwable):void}
+     arg types: [java.util.logging.Level, java.lang.String, java.lang.String, java.lang.String, java.lang.RuntimeException]
+     candidates:
+      ClspMth{java.util.logging.Logger.logp(java.util.logging.Level, java.lang.String, java.lang.String, java.lang.Throwable, java.util.function.Supplier<java.lang.String>):void}
+      ClspMth{java.util.logging.Logger.logp(java.util.logging.Level, java.lang.String, java.lang.String, java.lang.String, java.lang.Object[]):void}
+      ClspMth{java.util.logging.Logger.logp(java.util.logging.Level, java.lang.String, java.lang.String, java.lang.String, java.lang.Object):void}
+      ClspMth{java.util.logging.Logger.logp(java.util.logging.Level, java.lang.String, java.lang.String, java.lang.String, java.lang.Throwable):void} */
+    private static void executeListener(Runnable runnable, Executor executor) {
+        try {
+            executor.execute(runnable);
+        } catch (RuntimeException e) {
+            Logger logger = log;
+            Level level = Level.SEVERE;
+            String valueOf = String.valueOf(runnable);
+            String valueOf2 = String.valueOf(executor);
+            StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 57 + String.valueOf(valueOf2).length());
+            sb.append("RuntimeException while executing runnable ");
+            sb.append(valueOf);
+            sb.append(" with executor ");
+            sb.append(valueOf2);
+            logger.logp(level, "com.google.common.util.concurrent.ExecutionList", "executeListener", sb.toString(), (Throwable) e);
+        }
+    }
 
     public void add(Runnable runnable, Executor executor) {
         Preconditions.checkNotNull(runnable, "Runnable was null.");
@@ -93,36 +120,11 @@ public final class ExecutionList {
         throw new UnsupportedOperationException("Method not decompiled: com.google.common.util.concurrent.ExecutionList.execute():void");
     }
 
-    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-     method: ClspMth{java.util.logging.Logger.logp(java.util.logging.Level, java.lang.String, java.lang.String, java.lang.String, java.lang.Throwable):void}
-     arg types: [java.util.logging.Level, java.lang.String, java.lang.String, java.lang.String, java.lang.RuntimeException]
-     candidates:
-      ClspMth{java.util.logging.Logger.logp(java.util.logging.Level, java.lang.String, java.lang.String, java.lang.Throwable, java.util.function.Supplier<java.lang.String>):void}
-      ClspMth{java.util.logging.Logger.logp(java.util.logging.Level, java.lang.String, java.lang.String, java.lang.String, java.lang.Object[]):void}
-      ClspMth{java.util.logging.Logger.logp(java.util.logging.Level, java.lang.String, java.lang.String, java.lang.String, java.lang.Object):void}
-      ClspMth{java.util.logging.Logger.logp(java.util.logging.Level, java.lang.String, java.lang.String, java.lang.String, java.lang.Throwable):void} */
-    private static void executeListener(Runnable runnable, Executor executor) {
-        try {
-            executor.execute(runnable);
-        } catch (RuntimeException e) {
-            Logger logger = log;
-            Level level = Level.SEVERE;
-            String valueOf = String.valueOf(runnable);
-            String valueOf2 = String.valueOf(executor);
-            StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 57 + String.valueOf(valueOf2).length());
-            sb.append("RuntimeException while executing runnable ");
-            sb.append(valueOf);
-            sb.append(" with executor ");
-            sb.append(valueOf2);
-            logger.logp(level, "com.google.common.util.concurrent.ExecutionList", "executeListener", sb.toString(), (Throwable) e);
-        }
-    }
-
     private static final class RunnableExecutorPair {
         final Executor executor;
+        final Runnable runnable;
         @NullableDecl
         RunnableExecutorPair next;
-        final Runnable runnable;
 
         RunnableExecutorPair(Runnable runnable2, Executor executor2, RunnableExecutorPair next2) {
             this.runnable = runnable2;

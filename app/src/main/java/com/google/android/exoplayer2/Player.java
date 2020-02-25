@@ -6,6 +6,7 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.TextureView;
+
 import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.audio.AudioListener;
 import com.google.android.exoplayer2.audio.AuxEffectInfo;
@@ -16,6 +17,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.video.VideoFrameMetadataListener;
 import com.google.android.exoplayer2.video.VideoListener;
 import com.google.android.exoplayer2.video.spherical.CameraMotionListener;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -37,6 +39,119 @@ public interface Player {
     public static final int TIMELINE_CHANGE_REASON_PREPARED = 0;
     public static final int TIMELINE_CHANGE_REASON_RESET = 1;
 
+    void addListener(EventListener eventListener);
+
+    Looper getApplicationLooper();
+
+    @Nullable
+    AudioComponent getAudioComponent();
+
+    int getBufferedPercentage();
+
+    long getBufferedPosition();
+
+    long getContentBufferedPosition();
+
+    long getContentDuration();
+
+    long getContentPosition();
+
+    int getCurrentAdGroupIndex();
+
+    int getCurrentAdIndexInAdGroup();
+
+    @Nullable
+    Object getCurrentManifest();
+
+    int getCurrentPeriodIndex();
+
+    long getCurrentPosition();
+
+    @Nullable
+    Object getCurrentTag();
+
+    Timeline getCurrentTimeline();
+
+    TrackGroupArray getCurrentTrackGroups();
+
+    TrackSelectionArray getCurrentTrackSelections();
+
+    int getCurrentWindowIndex();
+
+    long getDuration();
+
+    @Nullable
+    MetadataComponent getMetadataComponent();
+
+    int getNextWindowIndex();
+
+    boolean getPlayWhenReady();
+
+    void setPlayWhenReady(boolean z);
+
+    @Nullable
+    ExoPlaybackException getPlaybackError();
+
+    PlaybackParameters getPlaybackParameters();
+
+    void setPlaybackParameters(@Nullable PlaybackParameters playbackParameters);
+
+    int getPlaybackState();
+
+    int getPreviousWindowIndex();
+
+    int getRendererCount();
+
+    int getRendererType(int i);
+
+    int getRepeatMode();
+
+    void setRepeatMode(int i);
+
+    boolean getShuffleModeEnabled();
+
+    void setShuffleModeEnabled(boolean z);
+
+    @Nullable
+    TextComponent getTextComponent();
+
+    long getTotalBufferedDuration();
+
+    @Nullable
+    VideoComponent getVideoComponent();
+
+    boolean hasNext();
+
+    boolean hasPrevious();
+
+    boolean isCurrentWindowDynamic();
+
+    boolean isCurrentWindowSeekable();
+
+    boolean isLoading();
+
+    boolean isPlayingAd();
+
+    void next();
+
+    void previous();
+
+    void release();
+
+    void removeListener(EventListener eventListener);
+
+    void seekTo(int i, long j);
+
+    void seekTo(long j);
+
+    void seekToDefaultPosition();
+
+    void seekToDefaultPosition(int i);
+
+    void stop();
+
+    void stop(boolean z);
+
     public interface AudioComponent {
         void addAudioListener(AudioListener audioListener);
 
@@ -44,20 +159,20 @@ public interface Player {
 
         AudioAttributes getAudioAttributes();
 
+        @Deprecated
+        void setAudioAttributes(AudioAttributes audioAttributes);
+
         int getAudioSessionId();
 
         float getVolume();
 
-        void removeAudioListener(AudioListener audioListener);
+        void setVolume(float f);
 
-        @Deprecated
-        void setAudioAttributes(AudioAttributes audioAttributes);
+        void removeAudioListener(AudioListener audioListener);
 
         void setAudioAttributes(AudioAttributes audioAttributes, boolean z);
 
         void setAuxEffectInfo(AuxEffectInfo auxEffectInfo);
-
-        void setVolume(float f);
     }
 
     @Documented
@@ -128,13 +243,13 @@ public interface Player {
 
         int getVideoScalingMode();
 
+        void setVideoScalingMode(int i);
+
         void removeVideoListener(VideoListener videoListener);
 
         void setCameraMotionListener(CameraMotionListener cameraMotionListener);
 
         void setVideoFrameMetadataListener(VideoFrameMetadataListener videoFrameMetadataListener);
-
-        void setVideoScalingMode(int i);
 
         void setVideoSurface(@Nullable Surface surface);
 
@@ -144,119 +259,6 @@ public interface Player {
 
         void setVideoTextureView(TextureView textureView);
     }
-
-    void addListener(EventListener eventListener);
-
-    Looper getApplicationLooper();
-
-    @Nullable
-    AudioComponent getAudioComponent();
-
-    int getBufferedPercentage();
-
-    long getBufferedPosition();
-
-    long getContentBufferedPosition();
-
-    long getContentDuration();
-
-    long getContentPosition();
-
-    int getCurrentAdGroupIndex();
-
-    int getCurrentAdIndexInAdGroup();
-
-    @Nullable
-    Object getCurrentManifest();
-
-    int getCurrentPeriodIndex();
-
-    long getCurrentPosition();
-
-    @Nullable
-    Object getCurrentTag();
-
-    Timeline getCurrentTimeline();
-
-    TrackGroupArray getCurrentTrackGroups();
-
-    TrackSelectionArray getCurrentTrackSelections();
-
-    int getCurrentWindowIndex();
-
-    long getDuration();
-
-    @Nullable
-    MetadataComponent getMetadataComponent();
-
-    int getNextWindowIndex();
-
-    boolean getPlayWhenReady();
-
-    @Nullable
-    ExoPlaybackException getPlaybackError();
-
-    PlaybackParameters getPlaybackParameters();
-
-    int getPlaybackState();
-
-    int getPreviousWindowIndex();
-
-    int getRendererCount();
-
-    int getRendererType(int i);
-
-    int getRepeatMode();
-
-    boolean getShuffleModeEnabled();
-
-    @Nullable
-    TextComponent getTextComponent();
-
-    long getTotalBufferedDuration();
-
-    @Nullable
-    VideoComponent getVideoComponent();
-
-    boolean hasNext();
-
-    boolean hasPrevious();
-
-    boolean isCurrentWindowDynamic();
-
-    boolean isCurrentWindowSeekable();
-
-    boolean isLoading();
-
-    boolean isPlayingAd();
-
-    void next();
-
-    void previous();
-
-    void release();
-
-    void removeListener(EventListener eventListener);
-
-    void seekTo(int i, long j);
-
-    void seekTo(long j);
-
-    void seekToDefaultPosition();
-
-    void seekToDefaultPosition(int i);
-
-    void setPlayWhenReady(boolean z);
-
-    void setPlaybackParameters(@Nullable PlaybackParameters playbackParameters);
-
-    void setRepeatMode(int i);
-
-    void setShuffleModeEnabled(boolean z);
-
-    void stop();
-
-    void stop(boolean z);
 
     @Deprecated
     public static abstract class DefaultEventListener implements EventListener {

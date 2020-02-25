@@ -4,9 +4,10 @@ import android.os.Process;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
+
 import com.bumptech.glide.load.Key;
-import com.bumptech.glide.load.engine.EngineResource;
 import com.bumptech.glide.util.Preconditions;
+
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
@@ -19,20 +20,15 @@ import java.util.concurrent.ThreadFactory;
 final class ActiveResources {
     @VisibleForTesting
     final Map<Key, ResourceWeakReference> activeEngineResources;
+    private final boolean isActiveResourceRetentionAllowed;
+    private final Executor monitorClearedResourcesExecutor;
+    private final ReferenceQueue<EngineResource<?>> resourceReferenceQueue;
     @Nullable
 
     /* renamed from: cb */
     private volatile DequeuedResourceCallback f49cb;
-    private final boolean isActiveResourceRetentionAllowed;
     private volatile boolean isShutdown;
     private EngineResource.ResourceListener listener;
-    private final Executor monitorClearedResourcesExecutor;
-    private final ReferenceQueue<EngineResource<?>> resourceReferenceQueue;
-
-    @VisibleForTesting
-    interface DequeuedResourceCallback {
-        void onResourceDequeued();
-    }
 
     ActiveResources(boolean isActiveResourceRetentionAllowed2) {
         this(isActiveResourceRetentionAllowed2, Executors.newSingleThreadExecutor(new ThreadFactory() {
@@ -161,6 +157,11 @@ final class ActiveResources {
         if (executor instanceof ExecutorService) {
             com.bumptech.glide.util.Executors.shutdownAndAwaitTermination((ExecutorService) executor);
         }
+    }
+
+    @VisibleForTesting
+    interface DequeuedResourceCallback {
+        void onResourceDequeued();
     }
 
     @VisibleForTesting

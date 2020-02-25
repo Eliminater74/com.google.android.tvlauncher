@@ -6,10 +6,14 @@ import android.support.annotation.VisibleForTesting;
 import android.support.p001v4.app.NotificationCompat;
 import android.text.TextUtils;
 import android.util.Log;
+
 import com.google.android.tvlauncher.doubleclick.Clock;
 import com.google.android.tvlauncher.doubleclick.proto.nano.AdConfig;
 import com.google.android.tvlauncher.doubleclick.proto.nano.VideoCreative;
-import com.google.android.tvlauncher.doubleclick.vast.DomDigester;
+
+import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -18,22 +22,20 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.SchemaFactory;
-import org.w3c.dom.Element;
-import org.xml.sax.SAXException;
 
 public class VastParser {
 
+    static final long AD_VALIDITY_TTL_MS = 3600000;
     /* renamed from: AD */
     private static final String f141AD = "VAST/Ad/%s";
-    static final long AD_VALIDITY_TTL_MS = 3600000;
     private static final String BASE = "VAST";
     private static final String BASE_AD = "VAST/Ad";
     private static final String COMPANION = "VAST/Ad/%s/Creatives/Creative/CompanionAds/Companion";
     private static final String COMPANION_ADS = "VAST/Ad/%s/Creatives/Creative/CompanionAds";
-    private static final String[] COMPANION_NONLINEAR = {COMPANION, NON_LINEAR};
     private static final String COMPANION_TRACKING_EVENT = "VAST/Ad/%s/Creatives/Creative/CompanionAds/Companion/TrackingEvents/Tracking";
     private static final String COMPANION_TRACKING_EVENTS = "VAST/Ad/%s/Creatives/Creative/CompanionAds/Companion/TrackingEvents";
     private static final String CREATIVE = "VAST/Ad/%s/Creatives/Creative";
@@ -48,6 +50,7 @@ public class VastParser {
     private static final String MEDIA_FILES = "VAST/Ad/%s/Creatives/Creative/Linear/MediaFiles";
     private static final String NONLINEAR_ELEMENT = "NonLinearAds";
     private static final String NON_LINEAR = "VAST/Ad/%s/Creatives/Creative/NonLinearAds/NonLinear";
+    private static final String[] COMPANION_NONLINEAR = {COMPANION, NON_LINEAR};
     private static final String NON_LINEAR_ADS = "VAST/Ad/%s/Creatives/Creative/NonLinearAds";
     private static final String NON_LINEAR_AD_TRACKING_EVENT = "VAST/Ad/%s/Creatives/Creative/NonLinearAds/TrackingEvents/Tracking";
     private static final String NON_LINEAR_AD_TRACKING_EVENTS = "VAST/Ad/%s/Creatives/Creative/NonLinearAds/TrackingEvents";
@@ -64,25 +67,10 @@ public class VastParser {
     private static final String VAST3_XSD = "/schemas/vast_3.0.0.xsd";
     private static final String VIDEO_CLICKS = "VAST/Ad/%s/Creatives/Creative/Linear/VideoClicks";
     private final Clock mClock;
-    private ParserType parserType;
     /* access modifiers changed from: private */
     public int vastVersion;
+    private ParserType parserType;
     private List<VideoCreative.VastXml> videos;
-
-    public enum ParserType {
-        INLINE("InLine"),
-        WRAPPER("Wrapper");
-        
-        private final String type;
-
-        private ParserType(String type2) {
-            this.type = type2;
-        }
-
-        public String toString() {
-            return this.type;
-        }
-    }
 
     public VastParser() {
         this(new SystemClock());
@@ -92,6 +80,34 @@ public class VastParser {
     VastParser(Clock clock) {
         this.videos = new ArrayList();
         this.mClock = clock;
+    }
+
+    private static byte[] getBytesFromInputStream(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        byte[] buffer = new byte[65536];
+        int len = inputStream.read(buffer);
+        while (len != -1) {
+            byteArrayOutputStream.write(buffer, 0, len);
+            len = inputStream.read(buffer);
+        }
+        return byteArrayOutputStream.toByteArray();
+    }
+
+    /* access modifiers changed from: private */
+    public static int parseDuration(String videoDuration) {
+        String[] tokens = videoDuration.split(":");
+        if (tokens.length != 3 && tokens.length != 4) {
+            return -1;
+        }
+        try {
+            return (int) (TimeUnit.HOURS.toMillis((long) Integer.parseInt(tokens[0])) + TimeUnit.MINUTES.toMillis((long) Integer.parseInt(tokens[1])) + Math.round(Double.parseDouble(tokens[2]) * 1000.0d) + (tokens.length == 3 ? 0 : parseAndRoundNumber(tokens[3])));
+        } catch (NumberFormatException e) {
+            return -1;
+        }
+    }
+
+    private static long parseAndRoundNumber(String number) throws NumberFormatException {
+        return Math.round(Double.parseDouble(number));
     }
 
     public boolean isVast1(byte[] input) {
@@ -351,17 +367,6 @@ public class VastParser {
         return video;
     }
 
-    private static byte[] getBytesFromInputStream(InputStream inputStream) throws IOException {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        byte[] buffer = new byte[65536];
-        int len = inputStream.read(buffer);
-        while (len != -1) {
-            byteArrayOutputStream.write(buffer, 0, len);
-            len = inputStream.read(buffer);
-        }
-        return byteArrayOutputStream.toByteArray();
-    }
-
     private long getExpirationTimeInMillis() {
         return this.mClock.getCurrentTimeMillis() + AD_VALIDITY_TTL_MS;
     }
@@ -376,23 +381,6 @@ public class VastParser {
         } catch (IOException e) {
             throw new AssertionError("This exception cannot happen. Digester creates an InputSource and  passes it to the XML parser, however that InputSource cannot throw IOException", e);
         }
-    }
-
-    /* access modifiers changed from: private */
-    public static int parseDuration(String videoDuration) {
-        String[] tokens = videoDuration.split(":");
-        if (tokens.length != 3 && tokens.length != 4) {
-            return -1;
-        }
-        try {
-            return (int) (TimeUnit.HOURS.toMillis((long) Integer.parseInt(tokens[0])) + TimeUnit.MINUTES.toMillis((long) Integer.parseInt(tokens[1])) + Math.round(Double.parseDouble(tokens[2]) * 1000.0d) + (tokens.length == 3 ? 0 : parseAndRoundNumber(tokens[3])));
-        } catch (NumberFormatException e) {
-            return -1;
-        }
-    }
-
-    private static long parseAndRoundNumber(String number) throws NumberFormatException {
-        return Math.round(Double.parseDouble(number));
     }
 
     /* access modifiers changed from: private */
@@ -420,6 +408,21 @@ public class VastParser {
     public void addVideo(@NonNull VideoCreative.VastXml video) {
         video.vastVersion = this.vastVersion;
         this.videos.add(video);
+    }
+
+    public enum ParserType {
+        INLINE("InLine"),
+        WRAPPER("Wrapper");
+
+        private final String type;
+
+        private ParserType(String type2) {
+            this.type = type2;
+        }
+
+        public String toString() {
+            return this.type;
+        }
     }
 
     private static class SystemClock implements Clock {

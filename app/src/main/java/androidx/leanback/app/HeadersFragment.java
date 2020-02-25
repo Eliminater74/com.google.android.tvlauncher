@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+
 import androidx.leanback.C0364R;
 import androidx.leanback.widget.ClassPresenterSelector;
 import androidx.leanback.widget.DividerPresenter;
@@ -33,6 +34,16 @@ public class HeadersFragment extends BaseRowFragment {
             v.setPivotY((float) (v.getMeasuredHeight() / 2));
         }
     };
+    final ItemBridgeAdapter.Wrapper mWrapper = new ItemBridgeAdapter.Wrapper() {
+        public void wrap(View wrapper, View wrapped) {
+            ((FrameLayout) wrapper).addView(wrapped);
+        }
+
+        public View createWrapper(View root) {
+            return new NoOverlappingFrameLayout(root.getContext());
+        }
+    };
+    OnHeaderClickedListener mOnHeaderClickedListener;
     private final ItemBridgeAdapter.AdapterListener mAdapterListener = new ItemBridgeAdapter.AdapterListener() {
         public void onCreate(final ItemBridgeAdapter.ViewHolder viewHolder) {
             View headerView = viewHolder.getViewHolder().view;
@@ -54,30 +65,19 @@ public class HeadersFragment extends BaseRowFragment {
     private boolean mBackgroundColorSet;
     private boolean mHeadersEnabled = true;
     private boolean mHeadersGone = false;
-    OnHeaderClickedListener mOnHeaderClickedListener;
     private OnHeaderViewSelectedListener mOnHeaderViewSelectedListener;
-    final ItemBridgeAdapter.Wrapper mWrapper = new ItemBridgeAdapter.Wrapper() {
-        public void wrap(View wrapper, View wrapped) {
-            ((FrameLayout) wrapper).addView(wrapped);
-        }
 
-        public View createWrapper(View root) {
-            return new NoOverlappingFrameLayout(root.getContext());
-        }
-    };
-
-    @Deprecated
-    public interface OnHeaderClickedListener {
-        void onHeaderClicked(RowHeaderPresenter.ViewHolder viewHolder, Row row);
-    }
-
-    @Deprecated
-    public interface OnHeaderViewSelectedListener {
-        void onHeaderSelected(RowHeaderPresenter.ViewHolder viewHolder, Row row);
+    public HeadersFragment() {
+        setPresenterSelector(sHeaderPresenter);
+        FocusHighlightHelper.setupHeaderItemFocusHighlight(getBridgeAdapter());
     }
 
     public /* bridge */ /* synthetic */ int getSelectedPosition() {
         return super.getSelectedPosition();
+    }
+
+    public /* bridge */ /* synthetic */ void setSelectedPosition(int i) {
+        super.setSelectedPosition(i);
     }
 
     public /* bridge */ /* synthetic */ View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
@@ -100,17 +100,8 @@ public class HeadersFragment extends BaseRowFragment {
         super.setAlignment(i);
     }
 
-    public /* bridge */ /* synthetic */ void setSelectedPosition(int i) {
-        super.setSelectedPosition(i);
-    }
-
     public /* bridge */ /* synthetic */ void setSelectedPosition(int i, boolean z) {
         super.setSelectedPosition(i, z);
-    }
-
-    public HeadersFragment() {
-        setPresenterSelector(sHeaderPresenter);
-        FocusHighlightHelper.setupHeaderItemFocusHighlight(getBridgeAdapter());
     }
 
     public void setOnHeaderClickedListener(OnHeaderClickedListener listener) {
@@ -189,16 +180,6 @@ public class HeadersFragment extends BaseRowFragment {
         updateListViewVisibility();
     }
 
-    static class NoOverlappingFrameLayout extends FrameLayout {
-        public NoOverlappingFrameLayout(Context context) {
-            super(context);
-        }
-
-        public boolean hasOverlappingRendering() {
-            return false;
-        }
-    }
-
     /* access modifiers changed from: package-private */
     public void updateAdapter() {
         super.updateAdapter();
@@ -249,5 +230,25 @@ public class HeadersFragment extends BaseRowFragment {
 
     public boolean isScrolling() {
         return getVerticalGridView().getScrollState() != 0;
+    }
+
+    @Deprecated
+    public interface OnHeaderClickedListener {
+        void onHeaderClicked(RowHeaderPresenter.ViewHolder viewHolder, Row row);
+    }
+
+    @Deprecated
+    public interface OnHeaderViewSelectedListener {
+        void onHeaderSelected(RowHeaderPresenter.ViewHolder viewHolder, Row row);
+    }
+
+    static class NoOverlappingFrameLayout extends FrameLayout {
+        public NoOverlappingFrameLayout(Context context) {
+            super(context);
+        }
+
+        public boolean hasOverlappingRendering() {
+            return false;
+        }
     }
 }

@@ -1,9 +1,11 @@
 package com.google.android.libraries.performance.primes.hprof;
 
 import android.support.p001v4.internal.view.SupportMenu;
+
 import com.google.android.libraries.performance.primes.hprof.collect.IntIntMap;
 import com.google.android.libraries.performance.primes.hprof.collect.IntObjectMap;
 import com.google.android.libraries.stitch.util.Preconditions;
+
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
@@ -20,13 +22,13 @@ public final class HprofClass extends HprofObject {
     private HprofClass superClass;
     private int totalOffset;
 
-    public static void setJavaLangClass(HprofClass javaLangClass2) {
-        javaLangClass = javaLangClass2;
-    }
-
     public HprofClass(int position, int classNamePosition2) {
         super(position);
         this.classNamePosition = classNamePosition2;
+    }
+
+    public static void setJavaLangClass(HprofClass javaLangClass2) {
+        javaLangClass = javaLangClass2;
     }
 
     public int getFieldsCount() {

@@ -2,6 +2,7 @@ package com.google.android.libraries.social.analytics.visualelement;
 
 import android.app.Activity;
 import android.view.View;
+
 import java.util.List;
 
 public final class VisualElementUtil {

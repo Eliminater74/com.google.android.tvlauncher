@@ -7,9 +7,11 @@ import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.support.annotation.Nullable;
 import android.util.Log;
+
 import com.google.android.tvlauncher.C1188R;
 import com.google.android.tvlauncher.util.OemConfiguration;
 import com.google.android.tvrecommendations.shared.util.AppUtil;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -19,10 +21,19 @@ import java.util.Map;
 import java.util.Set;
 
 public class InputsManagerUtil {
-    private static final String ACTION_VIEW_INPUTS = "com.android.tv.action.VIEW_INPUTS";
+    public static final int TYPE_BUNDLED_TUNER = -3;
+    public static final int TYPE_CEC_AUDIO_SYSTEM = -9;
+    public static final int TYPE_CEC_DEVICE = -2;
+    public static final int TYPE_CEC_DEVICE_PLAYBACK = -5;
+    public static final int TYPE_CEC_DEVICE_RECORDER = -4;
+    public static final int TYPE_CEC_DEVICE_TV = -8;
+    public static final int TYPE_CEC_TUNER = -10;
+    public static final int TYPE_HOME = -7;
+    public static final int TYPE_MHL_MOBILE = -6;
     static final String BUNDLED_TUNER_ID = "com.google.android.tvlauncher.input.bundled_tuner";
     static final boolean HIDE_HOME_INPUT = true;
     static final String HOME_INPUT_ID = "com.google.android.tvlauncher.input.home";
+    private static final String ACTION_VIEW_INPUTS = "com.android.tv.action.VIEW_INPUTS";
     private static final String INPUT_TYPE_BUNDLED_TUNER = "input_type_combined_tuners";
     private static final String INPUT_TYPE_CEC_AUDIO_SYSTEM = "input_type_cec_audio_system";
     private static final String INPUT_TYPE_CEC_DEVICE_TV = "input_type_cec_device_tv";
@@ -42,15 +53,6 @@ public class InputsManagerUtil {
     private static final String INPUT_TYPE_TUNER = "input_type_tuner";
     private static final String INPUT_TYPE_VGA = "input_type_vga";
     private static final String TAG = "InputsManagerUtil";
-    public static final int TYPE_BUNDLED_TUNER = -3;
-    public static final int TYPE_CEC_AUDIO_SYSTEM = -9;
-    public static final int TYPE_CEC_DEVICE = -2;
-    public static final int TYPE_CEC_DEVICE_PLAYBACK = -5;
-    public static final int TYPE_CEC_DEVICE_RECORDER = -4;
-    public static final int TYPE_CEC_DEVICE_TV = -8;
-    public static final int TYPE_CEC_TUNER = -10;
-    public static final int TYPE_HOME = -7;
-    public static final int TYPE_MHL_MOBILE = -6;
     private static final Map<String, Integer> sDescriptionTypeMap = new LinkedHashMap(18);
     private static final Set<Integer> sHdmiDeviceTypes = new HashSet(7);
     @SuppressLint({"UseSparseArrays"})

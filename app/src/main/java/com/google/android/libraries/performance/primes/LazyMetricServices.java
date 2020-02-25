@@ -5,15 +5,14 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.StrictMode;
 import android.support.annotation.VisibleForTesting;
-import com.google.android.libraries.performance.primes.MetricStamper;
-import com.google.android.libraries.performance.primes.PrimesForPrimesLogger;
-import com.google.android.libraries.performance.primes.Supplier;
+
 import com.google.android.libraries.performance.primes.hprof.PrimesHprofs;
 import com.google.android.libraries.performance.primes.jank.FrameTimeHistogramFactory;
 import com.google.android.libraries.performance.primes.metriccapture.ProcessStats;
 import com.google.android.libraries.performance.primes.transmitter.MetricTransmitter;
 import com.google.android.libraries.stitch.util.ThreadUtil;
 import com.google.common.base.Optional;
+
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -21,32 +20,32 @@ final class LazyMetricServices {
     private static final String TAG = "LazyMetricServices";
     /* access modifiers changed from: private */
     public final Application application;
-    private volatile BatteryMetricService batteryMetricServiceInstance;
+    /* access modifiers changed from: private */
+    public final Supplier<ScheduledExecutorService> executorServiceSupplier;
+    /* access modifiers changed from: private */
+    public final Supplier<MetricStamper> metricStamperSupplier;
+    /* access modifiers changed from: private */
+    public final PrimesFlags primesFlags;
     private final PrimesConfigurations configs;
+    private final Supplier<Optional<ScenarioMetricService>> scenarioMetricServiceSupplier;
+    private final SharedPreferences sharedPreferences;
+    private final Shutdown shutdown;
+    private final Supplier<Optional<TimerMetricService>> timerMetricServiceSupplier;
+    private volatile BatteryMetricService batteryMetricServiceInstance;
     private volatile CounterMetricService counterMetricServiceInstance;
     private volatile CpuMetricService cpuMetricServiceInstance;
     private volatile CpuProfilingService cpuProfilingServiceInstance;
     private volatile CrashMetricService crashMetricServiceInstance;
-    /* access modifiers changed from: private */
-    public final Supplier<ScheduledExecutorService> executorServiceSupplier;
     private volatile FrameMetricService frameMetricServiceInstance;
     private volatile JankMetricService jankMetricServiceInstance;
     private volatile MagicEyeLogService magicEyeLogServiceInstance;
     private volatile MemoryLeakMetricService memoryLeakMetricServiceInstance;
     private volatile MemoryMetricService memoryMetricServiceInstance;
-    /* access modifiers changed from: private */
-    public final Supplier<MetricStamper> metricStamperSupplier;
     private volatile MetricTransmitter metricTransmitterInstance;
     private volatile MiniHeapDumpMetricService miniHeapDumpMetricServiceInstance;
     private volatile NetworkMetricService networkMetricServiceInstance;
-    /* access modifiers changed from: private */
-    public final PrimesFlags primesFlags;
-    private final Supplier<Optional<ScenarioMetricService>> scenarioMetricServiceSupplier;
     private volatile Supplier<Optional<ScenarioSamplingMetricService>> scenarioSamplingMetricServiceSupplier;
-    private final SharedPreferences sharedPreferences;
-    private final Shutdown shutdown;
     private volatile StrictModeService strictModeServiceInstance;
-    private final Supplier<Optional<TimerMetricService>> timerMetricServiceSupplier;
     private volatile TraceMetricRecordingService traceMetricRecordingServiceInstance;
     private volatile TraceMetricService traceMetricServiceInstance;
 

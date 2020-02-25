@@ -4,8 +4,8 @@ import com.google.common.annotations.GwtCompatible;
 import com.google.common.base.Preconditions;
 import com.google.common.primitives.Ints;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
 import java.io.Serializable;
-import java.lang.Comparable;
 import java.math.BigInteger;
 import java.util.NoSuchElementException;
 
@@ -13,14 +13,49 @@ import java.util.NoSuchElementException;
 public abstract class DiscreteDomain<C extends Comparable> {
     final boolean supportsFastOffset;
 
+    protected DiscreteDomain() {
+        this(false);
+    }
+
+    private DiscreteDomain(boolean supportsFastOffset2) {
+        this.supportsFastOffset = supportsFastOffset2;
+    }
+
+    public static DiscreteDomain<Integer> integers() {
+        return IntegerDomain.INSTANCE;
+    }
+
+    public static DiscreteDomain<Long> longs() {
+        return LongDomain.INSTANCE;
+    }
+
+    public static DiscreteDomain<BigInteger> bigIntegers() {
+        return BigIntegerDomain.INSTANCE;
+    }
+
     public abstract long distance(C c, C c2);
 
     public abstract C next(C c);
 
     public abstract C previous(C c);
 
-    public static DiscreteDomain<Integer> integers() {
-        return IntegerDomain.INSTANCE;
+    /* access modifiers changed from: package-private */
+    public C offset(C origin, long distance) {
+        CollectPreconditions.checkNonnegative(distance, "distance");
+        for (long i = 0; i < distance; i++) {
+            origin = next(origin);
+        }
+        return origin;
+    }
+
+    @CanIgnoreReturnValue
+    public C minValue() {
+        throw new NoSuchElementException();
+    }
+
+    @CanIgnoreReturnValue
+    public C maxValue() {
+        throw new NoSuchElementException();
     }
 
     private static final class IntegerDomain extends DiscreteDomain<Integer> implements Serializable {
@@ -73,10 +108,6 @@ public abstract class DiscreteDomain<C extends Comparable> {
         public String toString() {
             return "DiscreteDomain.integers()";
         }
-    }
-
-    public static DiscreteDomain<Long> longs() {
-        return LongDomain.INSTANCE;
     }
 
     private static final class LongDomain extends DiscreteDomain<Long> implements Serializable {
@@ -142,10 +173,6 @@ public abstract class DiscreteDomain<C extends Comparable> {
         }
     }
 
-    public static DiscreteDomain<BigInteger> bigIntegers() {
-        return BigIntegerDomain.INSTANCE;
-    }
-
     private static final class BigIntegerDomain extends DiscreteDomain<BigInteger> implements Serializable {
         /* access modifiers changed from: private */
         public static final BigIntegerDomain INSTANCE = new BigIntegerDomain();
@@ -182,32 +209,5 @@ public abstract class DiscreteDomain<C extends Comparable> {
         public String toString() {
             return "DiscreteDomain.bigIntegers()";
         }
-    }
-
-    protected DiscreteDomain() {
-        this(false);
-    }
-
-    private DiscreteDomain(boolean supportsFastOffset2) {
-        this.supportsFastOffset = supportsFastOffset2;
-    }
-
-    /* access modifiers changed from: package-private */
-    public C offset(C origin, long distance) {
-        CollectPreconditions.checkNonnegative(distance, "distance");
-        for (long i = 0; i < distance; i++) {
-            origin = next(origin);
-        }
-        return origin;
-    }
-
-    @CanIgnoreReturnValue
-    public C minValue() {
-        throw new NoSuchElementException();
-    }
-
-    @CanIgnoreReturnValue
-    public C maxValue() {
-        throw new NoSuchElementException();
     }
 }

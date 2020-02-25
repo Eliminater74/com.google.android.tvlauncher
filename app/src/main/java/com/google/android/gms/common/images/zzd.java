@@ -2,9 +2,9 @@ package com.google.android.gms.common.images;
 
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import com.google.android.gms.common.images.ImageManager;
+
 import com.google.android.gms.common.internal.zzak;
-import com.google.android.gms.common.internal.zzc;
+
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
 

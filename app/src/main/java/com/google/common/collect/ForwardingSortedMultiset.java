@@ -2,8 +2,7 @@ package com.google.common.collect;
 
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.GwtCompatible;
-import com.google.common.collect.Multiset;
-import com.google.common.collect.SortedMultisets;
+
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.NavigableSet;
@@ -11,20 +10,14 @@ import java.util.NavigableSet;
 @GwtCompatible(emulated = true)
 @Beta
 public abstract class ForwardingSortedMultiset<E> extends ForwardingMultiset<E> implements SortedMultiset<E> {
-    /* access modifiers changed from: protected */
-    public abstract SortedMultiset<E> delegate();
-
     protected ForwardingSortedMultiset() {
     }
 
+    /* access modifiers changed from: protected */
+    public abstract SortedMultiset<E> delegate();
+
     public NavigableSet<E> elementSet() {
         return delegate().elementSet();
-    }
-
-    protected class StandardElementSet extends SortedMultisets.NavigableElementSet<E> {
-        public StandardElementSet(ForwardingSortedMultiset this$0) {
-            super(this$0);
-        }
     }
 
     public Comparator<? super E> comparator() {
@@ -33,16 +26,6 @@ public abstract class ForwardingSortedMultiset<E> extends ForwardingMultiset<E> 
 
     public SortedMultiset<E> descendingMultiset() {
         return delegate().descendingMultiset();
-    }
-
-    protected abstract class StandardDescendingMultiset extends DescendingMultiset<E> {
-        public StandardDescendingMultiset() {
-        }
-
-        /* access modifiers changed from: package-private */
-        public SortedMultiset<E> forwardMultiset() {
-            return ForwardingSortedMultiset.this;
-        }
     }
 
     public Multiset.Entry<E> firstEntry() {
@@ -120,5 +103,21 @@ public abstract class ForwardingSortedMultiset<E> extends ForwardingMultiset<E> 
 
     public SortedMultiset<E> tailMultiset(E lowerBound, BoundType boundType) {
         return delegate().tailMultiset(lowerBound, boundType);
+    }
+
+    protected class StandardElementSet extends SortedMultisets.NavigableElementSet<E> {
+        public StandardElementSet(ForwardingSortedMultiset this$0) {
+            super(this$0);
+        }
+    }
+
+    protected abstract class StandardDescendingMultiset extends DescendingMultiset<E> {
+        public StandardDescendingMultiset() {
+        }
+
+        /* access modifiers changed from: package-private */
+        public SortedMultiset<E> forwardMultiset() {
+            return ForwardingSortedMultiset.this;
+        }
     }
 }

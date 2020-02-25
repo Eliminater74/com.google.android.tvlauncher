@@ -3,6 +3,7 @@ package com.google.android.tvrecommendations.shared.util;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.support.annotation.ColorInt;
+
 import androidx.leanback.graphics.ColorFilterCache;
 
 public class ColorUtils {

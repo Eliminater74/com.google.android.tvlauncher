@@ -1,6 +1,5 @@
 package android.support.p001v4.app;
 
-import android.app.RemoteInput;
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.Intent;
@@ -11,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.annotation.RestrictTo;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.HashMap;
@@ -20,12 +20,12 @@ import java.util.Set;
 
 /* renamed from: android.support.v4.app.RemoteInput */
 public final class RemoteInput {
-    private static final String EXTRA_DATA_TYPE_RESULTS_DATA = "android.remoteinput.dataTypeResultsData";
     public static final String EXTRA_RESULTS_DATA = "android.remoteinput.resultsData";
-    private static final String EXTRA_RESULTS_SOURCE = "android.remoteinput.resultsSource";
     public static final String RESULTS_CLIP_LABEL = "android.remoteinput.results";
     public static final int SOURCE_CHOICE = 1;
     public static final int SOURCE_FREE_FORM_INPUT = 0;
+    private static final String EXTRA_DATA_TYPE_RESULTS_DATA = "android.remoteinput.dataTypeResultsData";
+    private static final String EXTRA_RESULTS_SOURCE = "android.remoteinput.resultsSource";
     private static final String TAG = "RemoteInput";
     private final boolean mAllowFreeFormTextInput;
     private final Set<String> mAllowedDataTypes;
@@ -34,12 +34,6 @@ public final class RemoteInput {
     private final CharSequence mLabel;
     private final String mResultKey;
 
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    @Retention(RetentionPolicy.SOURCE)
-    /* renamed from: android.support.v4.app.RemoteInput$Source */
-    public @interface Source {
-    }
-
     RemoteInput(String resultKey, CharSequence label, CharSequence[] choices, boolean allowFreeFormTextInput, Bundle extras, Set<String> allowedDataTypes) {
         this.mResultKey = resultKey;
         this.mLabel = label;
@@ -47,98 +41,6 @@ public final class RemoteInput {
         this.mAllowFreeFormTextInput = allowFreeFormTextInput;
         this.mExtras = extras;
         this.mAllowedDataTypes = allowedDataTypes;
-    }
-
-    public String getResultKey() {
-        return this.mResultKey;
-    }
-
-    public CharSequence getLabel() {
-        return this.mLabel;
-    }
-
-    public CharSequence[] getChoices() {
-        return this.mChoices;
-    }
-
-    public Set<String> getAllowedDataTypes() {
-        return this.mAllowedDataTypes;
-    }
-
-    public boolean isDataOnly() {
-        return !getAllowFreeFormInput() && (getChoices() == null || getChoices().length == 0) && getAllowedDataTypes() != null && !getAllowedDataTypes().isEmpty();
-    }
-
-    public boolean getAllowFreeFormInput() {
-        return this.mAllowFreeFormTextInput;
-    }
-
-    public Bundle getExtras() {
-        return this.mExtras;
-    }
-
-    /* renamed from: android.support.v4.app.RemoteInput$Builder */
-    public static final class Builder {
-        private boolean mAllowFreeFormTextInput = true;
-        private final Set<String> mAllowedDataTypes = new HashSet();
-        private CharSequence[] mChoices;
-        private final Bundle mExtras = new Bundle();
-        private CharSequence mLabel;
-        private final String mResultKey;
-
-        public Builder(@NonNull String resultKey) {
-            if (resultKey != null) {
-                this.mResultKey = resultKey;
-                return;
-            }
-            throw new IllegalArgumentException("Result key can't be null");
-        }
-
-        @NonNull
-        public Builder setLabel(@Nullable CharSequence label) {
-            this.mLabel = label;
-            return this;
-        }
-
-        @NonNull
-        public Builder setChoices(@Nullable CharSequence[] choices) {
-            this.mChoices = choices;
-            return this;
-        }
-
-        @NonNull
-        public Builder setAllowDataType(@NonNull String mimeType, boolean doAllow) {
-            if (doAllow) {
-                this.mAllowedDataTypes.add(mimeType);
-            } else {
-                this.mAllowedDataTypes.remove(mimeType);
-            }
-            return this;
-        }
-
-        @NonNull
-        public Builder setAllowFreeFormInput(boolean allowFreeFormTextInput) {
-            this.mAllowFreeFormTextInput = allowFreeFormTextInput;
-            return this;
-        }
-
-        @NonNull
-        public Builder addExtras(@NonNull Bundle extras) {
-            if (extras != null) {
-                this.mExtras.putAll(extras);
-            }
-            return this;
-        }
-
-        @NonNull
-        public Bundle getExtras() {
-            return this.mExtras;
-        }
-
-        @NonNull
-        public RemoteInput build() {
-            return new RemoteInput(this.mResultKey, this.mLabel, this.mChoices, this.mAllowFreeFormTextInput, this.mExtras, this.mAllowedDataTypes);
-        }
     }
 
     public static Map<String, Uri> getDataResultsFromIntent(Intent intent, String remoteInputResultKey) {
@@ -297,5 +199,103 @@ public final class RemoteInput {
             return clipData.getItemAt(0).getIntent();
         }
         return null;
+    }
+
+    public String getResultKey() {
+        return this.mResultKey;
+    }
+
+    public CharSequence getLabel() {
+        return this.mLabel;
+    }
+
+    public CharSequence[] getChoices() {
+        return this.mChoices;
+    }
+
+    public Set<String> getAllowedDataTypes() {
+        return this.mAllowedDataTypes;
+    }
+
+    public boolean isDataOnly() {
+        return !getAllowFreeFormInput() && (getChoices() == null || getChoices().length == 0) && getAllowedDataTypes() != null && !getAllowedDataTypes().isEmpty();
+    }
+
+    public boolean getAllowFreeFormInput() {
+        return this.mAllowFreeFormTextInput;
+    }
+
+    public Bundle getExtras() {
+        return this.mExtras;
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    @Retention(RetentionPolicy.SOURCE)
+    /* renamed from: android.support.v4.app.RemoteInput$Source */
+    public @interface Source {
+    }
+
+    /* renamed from: android.support.v4.app.RemoteInput$Builder */
+    public static final class Builder {
+        private final Set<String> mAllowedDataTypes = new HashSet();
+        private final Bundle mExtras = new Bundle();
+        private final String mResultKey;
+        private boolean mAllowFreeFormTextInput = true;
+        private CharSequence[] mChoices;
+        private CharSequence mLabel;
+
+        public Builder(@NonNull String resultKey) {
+            if (resultKey != null) {
+                this.mResultKey = resultKey;
+                return;
+            }
+            throw new IllegalArgumentException("Result key can't be null");
+        }
+
+        @NonNull
+        public Builder setLabel(@Nullable CharSequence label) {
+            this.mLabel = label;
+            return this;
+        }
+
+        @NonNull
+        public Builder setChoices(@Nullable CharSequence[] choices) {
+            this.mChoices = choices;
+            return this;
+        }
+
+        @NonNull
+        public Builder setAllowDataType(@NonNull String mimeType, boolean doAllow) {
+            if (doAllow) {
+                this.mAllowedDataTypes.add(mimeType);
+            } else {
+                this.mAllowedDataTypes.remove(mimeType);
+            }
+            return this;
+        }
+
+        @NonNull
+        public Builder setAllowFreeFormInput(boolean allowFreeFormTextInput) {
+            this.mAllowFreeFormTextInput = allowFreeFormTextInput;
+            return this;
+        }
+
+        @NonNull
+        public Builder addExtras(@NonNull Bundle extras) {
+            if (extras != null) {
+                this.mExtras.putAll(extras);
+            }
+            return this;
+        }
+
+        @NonNull
+        public Bundle getExtras() {
+            return this.mExtras;
+        }
+
+        @NonNull
+        public RemoteInput build() {
+            return new RemoteInput(this.mResultKey, this.mLabel, this.mChoices, this.mAllowFreeFormTextInput, this.mExtras, this.mAllowedDataTypes);
+        }
     }
 }

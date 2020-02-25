@@ -9,13 +9,6 @@ import android.view.ViewGroup;
 /* renamed from: android.support.v7.view.menu.MenuPresenter */
 public interface MenuPresenter {
 
-    /* renamed from: android.support.v7.view.menu.MenuPresenter$Callback */
-    public interface Callback {
-        void onCloseMenu(MenuBuilder menuBuilder, boolean z);
-
-        boolean onOpenSubMenu(MenuBuilder menuBuilder);
-    }
-
     boolean collapseItemActionView(MenuBuilder menuBuilder, MenuItemImpl menuItemImpl);
 
     boolean expandItemActionView(MenuBuilder menuBuilder, MenuItemImpl menuItemImpl);
@@ -39,4 +32,11 @@ public interface MenuPresenter {
     void setCallback(Callback callback);
 
     void updateMenuView(boolean z);
+
+    /* renamed from: android.support.v7.view.menu.MenuPresenter$Callback */
+    public interface Callback {
+        void onCloseMenu(MenuBuilder menuBuilder, boolean z);
+
+        boolean onOpenSubMenu(MenuBuilder menuBuilder);
+    }
 }

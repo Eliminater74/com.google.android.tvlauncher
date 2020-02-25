@@ -5,8 +5,8 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+
 import com.google.android.gms.common.internal.Hide;
-import com.google.android.gms.common.internal.zzc;
 import com.google.android.gms.internal.zzbku;
 
 @Hide

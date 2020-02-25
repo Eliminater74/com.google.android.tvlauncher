@@ -3,6 +3,7 @@ package com.google.android.tvlauncher.home;
 import android.content.res.Resources;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.google.android.tvlauncher.C1188R;
 import com.google.android.tvlauncher.home.view.ConfigureChannelsRowView;
 import com.google.android.tvlauncher.util.ScaleFocusHandler;
@@ -18,10 +19,10 @@ class ConfigureChannelsRowController implements HomeRow {
     private final int mDefaultStartMargin;
     private final int mDefaultTopMargin;
     private final int mMoveChannelStartMargin;
-    private OnHomeRowSelectedListener mOnHomeRowSelectedListener;
     private final ConfigureChannelsRowView mView;
     private final int mZoomedOutStartMargin;
     private final int mZoomedOutTopMargin;
+    private OnHomeRowSelectedListener mOnHomeRowSelectedListener;
 
     ConfigureChannelsRowController(ConfigureChannelsRowView v) {
         this.mView = v;

@@ -7,11 +7,14 @@ import java.nio.ByteOrder;
 import java.security.AccessController;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import libcore.io.Memory;
 import sun.misc.Unsafe;
 
 /* compiled from: UnsafeUtil */
 final class zzgrj {
+    /* access modifiers changed from: private */
+    public static final boolean zzw = (ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN);
     private static final Logger zza = Logger.getLogger(zzgrj.class.getName());
     private static final Unsafe zzb = zzc();
     private static final Class<?> zzc = zzgmt.zzb();
@@ -35,232 +38,32 @@ final class zzgrj {
     private static final long zzt = ((long) zza(Object[].class));
     private static final long zzu = ((long) zzb(Object[].class));
     private static final long zzv;
-    /* access modifiers changed from: private */
-    public static final boolean zzw = (ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN);
+
+    static {
+        Field field;
+        zzd zzd2;
+        zzd zzd3 = null;
+        if (zzb != null) {
+            if (!zzgmt.zza()) {
+                zzd3 = new zzc(zzb);
+            } else if (zzd) {
+                zzd3 = new zzb(zzb);
+            } else if (zze) {
+                zzd3 = new zza(zzb);
+            }
+        }
+        zzf = zzd3;
+        if (!zzgmt.zza() || (field = zza(Buffer.class, "effectiveDirectAddress")) == null) {
+            field = zza(Buffer.class, "address");
+        }
+        zzv = (field == null || (zzd2 = zzf) == null) ? -1 : zzd2.zza(field);
+    }
 
     private zzgrj() {
     }
 
-    /* compiled from: UnsafeUtil */
-    static final class zza extends zzd {
-        zza(Unsafe unsafe) {
-            super(unsafe);
-        }
-
-        public final void zza(long j, byte b) {
-            Memory.pokeByte((int) (j & -1), b);
-        }
-
-        public final byte zza(Object obj, long j) {
-            if (zzgrj.zzw) {
-                return zzgrj.zzk(obj, j);
-            }
-            return zzgrj.zzl(obj, j);
-        }
-
-        public final void zza(Object obj, long j, byte b) {
-            if (zzgrj.zzw) {
-                zzgrj.zzc(obj, j, b);
-            } else {
-                zzgrj.zzd(obj, j, b);
-            }
-        }
-
-        public final boolean zzb(Object obj, long j) {
-            if (zzgrj.zzw) {
-                return zzgrj.zzm(obj, j);
-            }
-            return zzgrj.zzn(obj, j);
-        }
-
-        public final void zza(Object obj, long j, boolean z) {
-            if (zzgrj.zzw) {
-                zzgrj.zzd(obj, j, z);
-            } else {
-                zzgrj.zze(obj, j, z);
-            }
-        }
-
-        public final float zzc(Object obj, long j) {
-            return Float.intBitsToFloat(zze(obj, j));
-        }
-
-        public final void zza(Object obj, long j, float f) {
-            zza(obj, j, Float.floatToIntBits(f));
-        }
-
-        public final double zzd(Object obj, long j) {
-            return Double.longBitsToDouble(zzf(obj, j));
-        }
-
-        public final void zza(Object obj, long j, double d) {
-            zza(obj, j, Double.doubleToLongBits(d));
-        }
-
-        public final void zza(byte[] bArr, long j, long j2, long j3) {
-            Memory.pokeByteArray((int) (j2 & -1), bArr, (int) j, (int) j3);
-        }
-    }
-
-    /* compiled from: UnsafeUtil */
-    static final class zzb extends zzd {
-        zzb(Unsafe unsafe) {
-            super(unsafe);
-        }
-
-        public final void zza(long j, byte b) {
-            Memory.pokeByte(j, b);
-        }
-
-        public final byte zza(Object obj, long j) {
-            if (zzgrj.zzw) {
-                return zzgrj.zzk(obj, j);
-            }
-            return zzgrj.zzl(obj, j);
-        }
-
-        public final void zza(Object obj, long j, byte b) {
-            if (zzgrj.zzw) {
-                zzgrj.zzc(obj, j, b);
-            } else {
-                zzgrj.zzd(obj, j, b);
-            }
-        }
-
-        public final boolean zzb(Object obj, long j) {
-            if (zzgrj.zzw) {
-                return zzgrj.zzm(obj, j);
-            }
-            return zzgrj.zzn(obj, j);
-        }
-
-        public final void zza(Object obj, long j, boolean z) {
-            if (zzgrj.zzw) {
-                zzgrj.zzd(obj, j, z);
-            } else {
-                zzgrj.zze(obj, j, z);
-            }
-        }
-
-        public final float zzc(Object obj, long j) {
-            return Float.intBitsToFloat(zze(obj, j));
-        }
-
-        public final void zza(Object obj, long j, float f) {
-            zza(obj, j, Float.floatToIntBits(f));
-        }
-
-        public final double zzd(Object obj, long j) {
-            return Double.longBitsToDouble(zzf(obj, j));
-        }
-
-        public final void zza(Object obj, long j, double d) {
-            zza(obj, j, Double.doubleToLongBits(d));
-        }
-
-        public final void zza(byte[] bArr, long j, long j2, long j3) {
-            Memory.pokeByteArray(j2, bArr, (int) j, (int) j3);
-        }
-    }
-
-    /* compiled from: UnsafeUtil */
-    static final class zzc extends zzd {
-        zzc(Unsafe unsafe) {
-            super(unsafe);
-        }
-
-        public final void zza(long j, byte b) {
-            this.zza.putByte(j, b);
-        }
-
-        public final byte zza(Object obj, long j) {
-            return this.zza.getByte(obj, j);
-        }
-
-        public final void zza(Object obj, long j, byte b) {
-            this.zza.putByte(obj, j, b);
-        }
-
-        public final boolean zzb(Object obj, long j) {
-            return this.zza.getBoolean(obj, j);
-        }
-
-        public final void zza(Object obj, long j, boolean z) {
-            this.zza.putBoolean(obj, j, z);
-        }
-
-        public final float zzc(Object obj, long j) {
-            return this.zza.getFloat(obj, j);
-        }
-
-        public final void zza(Object obj, long j, float f) {
-            this.zza.putFloat(obj, j, f);
-        }
-
-        public final double zzd(Object obj, long j) {
-            return this.zza.getDouble(obj, j);
-        }
-
-        public final void zza(Object obj, long j, double d) {
-            this.zza.putDouble(obj, j, d);
-        }
-
-        public final void zza(byte[] bArr, long j, long j2, long j3) {
-            this.zza.copyMemory(bArr, zzgrj.zzi + j, (Object) null, j2, j3);
-        }
-    }
-
     static boolean zza() {
         return zzh;
-    }
-
-    /* compiled from: UnsafeUtil */
-    static abstract class zzd {
-        Unsafe zza;
-
-        zzd(Unsafe unsafe) {
-            this.zza = unsafe;
-        }
-
-        public abstract byte zza(Object obj, long j);
-
-        public abstract void zza(long j, byte b);
-
-        public abstract void zza(Object obj, long j, byte b);
-
-        public abstract void zza(Object obj, long j, double d);
-
-        public abstract void zza(Object obj, long j, float f);
-
-        public abstract void zza(Object obj, long j, boolean z);
-
-        public abstract void zza(byte[] bArr, long j, long j2, long j3);
-
-        public abstract boolean zzb(Object obj, long j);
-
-        public abstract float zzc(Object obj, long j);
-
-        public abstract double zzd(Object obj, long j);
-
-        public final long zza(Field field) {
-            return this.zza.objectFieldOffset(field);
-        }
-
-        public final int zze(Object obj, long j) {
-            return this.zza.getInt(obj, j);
-        }
-
-        public final void zza(Object obj, long j, int i) {
-            this.zza.putInt(obj, j, i);
-        }
-
-        public final long zzf(Object obj, long j) {
-            return this.zza.getLong(obj, j);
-        }
-
-        public final void zza(Object obj, long j, long j2) {
-            this.zza.putLong(obj, j, j2);
-        }
     }
 
     static boolean zzb() {
@@ -518,23 +321,221 @@ final class zzgrj {
         zzd(obj, j, z ? (byte) 1 : 0);
     }
 
-    static {
-        Field field;
-        zzd zzd2;
-        zzd zzd3 = null;
-        if (zzb != null) {
-            if (!zzgmt.zza()) {
-                zzd3 = new zzc(zzb);
-            } else if (zzd) {
-                zzd3 = new zzb(zzb);
-            } else if (zze) {
-                zzd3 = new zza(zzb);
+    /* compiled from: UnsafeUtil */
+    static final class zza extends zzd {
+        zza(Unsafe unsafe) {
+            super(unsafe);
+        }
+
+        public final void zza(long j, byte b) {
+            Memory.pokeByte((int) (j & -1), b);
+        }
+
+        public final byte zza(Object obj, long j) {
+            if (zzgrj.zzw) {
+                return zzgrj.zzk(obj, j);
+            }
+            return zzgrj.zzl(obj, j);
+        }
+
+        public final void zza(Object obj, long j, byte b) {
+            if (zzgrj.zzw) {
+                zzgrj.zzc(obj, j, b);
+            } else {
+                zzgrj.zzd(obj, j, b);
             }
         }
-        zzf = zzd3;
-        if (!zzgmt.zza() || (field = zza(Buffer.class, "effectiveDirectAddress")) == null) {
-            field = zza(Buffer.class, "address");
+
+        public final boolean zzb(Object obj, long j) {
+            if (zzgrj.zzw) {
+                return zzgrj.zzm(obj, j);
+            }
+            return zzgrj.zzn(obj, j);
         }
-        zzv = (field == null || (zzd2 = zzf) == null) ? -1 : zzd2.zza(field);
+
+        public final void zza(Object obj, long j, boolean z) {
+            if (zzgrj.zzw) {
+                zzgrj.zzd(obj, j, z);
+            } else {
+                zzgrj.zze(obj, j, z);
+            }
+        }
+
+        public final float zzc(Object obj, long j) {
+            return Float.intBitsToFloat(zze(obj, j));
+        }
+
+        public final void zza(Object obj, long j, float f) {
+            zza(obj, j, Float.floatToIntBits(f));
+        }
+
+        public final double zzd(Object obj, long j) {
+            return Double.longBitsToDouble(zzf(obj, j));
+        }
+
+        public final void zza(Object obj, long j, double d) {
+            zza(obj, j, Double.doubleToLongBits(d));
+        }
+
+        public final void zza(byte[] bArr, long j, long j2, long j3) {
+            Memory.pokeByteArray((int) (j2 & -1), bArr, (int) j, (int) j3);
+        }
+    }
+
+    /* compiled from: UnsafeUtil */
+    static final class zzb extends zzd {
+        zzb(Unsafe unsafe) {
+            super(unsafe);
+        }
+
+        public final void zza(long j, byte b) {
+            Memory.pokeByte(j, b);
+        }
+
+        public final byte zza(Object obj, long j) {
+            if (zzgrj.zzw) {
+                return zzgrj.zzk(obj, j);
+            }
+            return zzgrj.zzl(obj, j);
+        }
+
+        public final void zza(Object obj, long j, byte b) {
+            if (zzgrj.zzw) {
+                zzgrj.zzc(obj, j, b);
+            } else {
+                zzgrj.zzd(obj, j, b);
+            }
+        }
+
+        public final boolean zzb(Object obj, long j) {
+            if (zzgrj.zzw) {
+                return zzgrj.zzm(obj, j);
+            }
+            return zzgrj.zzn(obj, j);
+        }
+
+        public final void zza(Object obj, long j, boolean z) {
+            if (zzgrj.zzw) {
+                zzgrj.zzd(obj, j, z);
+            } else {
+                zzgrj.zze(obj, j, z);
+            }
+        }
+
+        public final float zzc(Object obj, long j) {
+            return Float.intBitsToFloat(zze(obj, j));
+        }
+
+        public final void zza(Object obj, long j, float f) {
+            zza(obj, j, Float.floatToIntBits(f));
+        }
+
+        public final double zzd(Object obj, long j) {
+            return Double.longBitsToDouble(zzf(obj, j));
+        }
+
+        public final void zza(Object obj, long j, double d) {
+            zza(obj, j, Double.doubleToLongBits(d));
+        }
+
+        public final void zza(byte[] bArr, long j, long j2, long j3) {
+            Memory.pokeByteArray(j2, bArr, (int) j, (int) j3);
+        }
+    }
+
+    /* compiled from: UnsafeUtil */
+    static final class zzc extends zzd {
+        zzc(Unsafe unsafe) {
+            super(unsafe);
+        }
+
+        public final void zza(long j, byte b) {
+            this.zza.putByte(j, b);
+        }
+
+        public final byte zza(Object obj, long j) {
+            return this.zza.getByte(obj, j);
+        }
+
+        public final void zza(Object obj, long j, byte b) {
+            this.zza.putByte(obj, j, b);
+        }
+
+        public final boolean zzb(Object obj, long j) {
+            return this.zza.getBoolean(obj, j);
+        }
+
+        public final void zza(Object obj, long j, boolean z) {
+            this.zza.putBoolean(obj, j, z);
+        }
+
+        public final float zzc(Object obj, long j) {
+            return this.zza.getFloat(obj, j);
+        }
+
+        public final void zza(Object obj, long j, float f) {
+            this.zza.putFloat(obj, j, f);
+        }
+
+        public final double zzd(Object obj, long j) {
+            return this.zza.getDouble(obj, j);
+        }
+
+        public final void zza(Object obj, long j, double d) {
+            this.zza.putDouble(obj, j, d);
+        }
+
+        public final void zza(byte[] bArr, long j, long j2, long j3) {
+            this.zza.copyMemory(bArr, zzgrj.zzi + j, (Object) null, j2, j3);
+        }
+    }
+
+    /* compiled from: UnsafeUtil */
+    static abstract class zzd {
+        Unsafe zza;
+
+        zzd(Unsafe unsafe) {
+            this.zza = unsafe;
+        }
+
+        public abstract byte zza(Object obj, long j);
+
+        public abstract void zza(long j, byte b);
+
+        public abstract void zza(Object obj, long j, byte b);
+
+        public abstract void zza(Object obj, long j, double d);
+
+        public abstract void zza(Object obj, long j, float f);
+
+        public abstract void zza(Object obj, long j, boolean z);
+
+        public abstract void zza(byte[] bArr, long j, long j2, long j3);
+
+        public abstract boolean zzb(Object obj, long j);
+
+        public abstract float zzc(Object obj, long j);
+
+        public abstract double zzd(Object obj, long j);
+
+        public final long zza(Field field) {
+            return this.zza.objectFieldOffset(field);
+        }
+
+        public final int zze(Object obj, long j) {
+            return this.zza.getInt(obj, j);
+        }
+
+        public final void zza(Object obj, long j, int i) {
+            this.zza.putInt(obj, j, i);
+        }
+
+        public final long zzf(Object obj, long j) {
+            return this.zza.getLong(obj, j);
+        }
+
+        public final void zza(Object obj, long j, long j2) {
+            this.zza.putLong(obj, j, j2);
+        }
     }
 }

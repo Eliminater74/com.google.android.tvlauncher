@@ -3,6 +3,7 @@ package com.bumptech.glide.gifdecoder;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import java.io.InputStream;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -14,27 +15,6 @@ public interface GifDecoder {
     public static final int STATUS_OPEN_ERROR = 2;
     public static final int STATUS_PARTIAL_DECODE = 3;
     public static final int TOTAL_ITERATION_COUNT_FOREVER = 0;
-
-    public interface BitmapProvider {
-        @NonNull
-        Bitmap obtain(int i, int i2, @NonNull Bitmap.Config config);
-
-        @NonNull
-        byte[] obtainByteArray(int i);
-
-        @NonNull
-        int[] obtainIntArray(int i);
-
-        void release(@NonNull Bitmap bitmap);
-
-        void release(@NonNull byte[] bArr);
-
-        void release(@NonNull int[] iArr);
-    }
-
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface GifDecodeStatus {
-    }
 
     void advance();
 
@@ -82,4 +62,25 @@ public interface GifDecoder {
     void setData(@NonNull GifHeader gifHeader, @NonNull byte[] bArr);
 
     void setDefaultBitmapConfig(@NonNull Bitmap.Config config);
+
+    public interface BitmapProvider {
+        @NonNull
+        Bitmap obtain(int i, int i2, @NonNull Bitmap.Config config);
+
+        @NonNull
+        byte[] obtainByteArray(int i);
+
+        @NonNull
+        int[] obtainIntArray(int i);
+
+        void release(@NonNull Bitmap bitmap);
+
+        void release(@NonNull byte[] bArr);
+
+        void release(@NonNull int[] iArr);
+    }
+
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface GifDecodeStatus {
+    }
 }

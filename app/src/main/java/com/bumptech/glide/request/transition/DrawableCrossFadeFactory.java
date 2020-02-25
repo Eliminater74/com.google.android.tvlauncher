@@ -1,6 +1,7 @@
 package com.bumptech.glide.request.transition;
 
 import android.graphics.drawable.Drawable;
+
 import com.bumptech.glide.load.DataSource;
 
 public class DrawableCrossFadeFactory implements TransitionFactory<Drawable> {

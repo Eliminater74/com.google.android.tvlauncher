@@ -5,6 +5,7 @@ import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -18,21 +19,21 @@ public class Gservices {
     public static final String CHANGED_ACTION = "com.google.gservices.intent.action.GSERVICES_CHANGED";
     public static final Uri CONTENT_PREFIX_URI = Uri.parse("content://com.google.android.gsf.gservices/prefix");
     public static final Uri CONTENT_URI = Uri.parse("content://com.google.android.gsf.gservices");
-    private static final boolean DEBUG = false;
     public static final Pattern FALSE_PATTERN = Pattern.compile("^(0|false|f|off|no|n)$", 2);
     public static final String OVERRIDE_ACTION = "com.google.gservices.intent.action.GSERVICES_OVERRIDE";
     public static final String PERMISSION_READ_GSERVICES = "com.google.android.providers.gsf.permission.READ_GSERVICES";
     public static final String TAG = "Gservices";
     public static final Pattern TRUE_PATTERN = Pattern.compile("^(1|true|t|on|yes|y)$", 2);
-    static final HashMap<String, Boolean> sBooleanCache = new HashMap<>();
-    static HashMap<String, String> sCache;
-    static final HashMap<String, Float> sFloatCache = new HashMap<>();
-    static final HashMap<String, Integer> sIntCache = new HashMap<>();
     /* access modifiers changed from: private */
     public static final AtomicBoolean sInvalidateCache = new AtomicBoolean();
+    static final HashMap<String, Boolean> sBooleanCache = new HashMap<>();
+    static final HashMap<String, Float> sFloatCache = new HashMap<>();
+    static final HashMap<String, Integer> sIntCache = new HashMap<>();
     static final HashMap<String, Long> sLongCache = new HashMap<>();
-    private static boolean sPreloaded;
+    private static final boolean DEBUG = false;
+    static HashMap<String, String> sCache;
     static String[] sPreloadedPrefixes = new String[0];
+    private static boolean sPreloaded;
     private static Object sVersionToken;
 
     private static void ensureCacheInitializedLocked(ContentResolver cr) {

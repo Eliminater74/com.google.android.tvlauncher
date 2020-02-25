@@ -30,7 +30,7 @@ public final class PrimesForPrimesEventProto {
         LOGGER_JOB_HTTP_STATUS_500(14),
         LOGGER_JOB_HTTP_STATUS_OTHER(15),
         LOGGER_JOB_HTTP_TIMEOUT_EXCEPTION(16);
-        
+
         public static final int INIT_ALL_VALUE = 1;
         public static final int INIT_CONFIGS_VALUE = 3;
         public static final int INIT_DELAY_VALUE = 18;
@@ -57,8 +57,8 @@ public final class PrimesForPrimesEventProto {
         };
         private final int value;
 
-        public final int getNumber() {
-            return this.value;
+        private PrimesForPrimesEvent(int value2) {
+            this.value = value2;
         }
 
         public static PrimesForPrimesEvent forNumber(int value2) {
@@ -114,6 +114,10 @@ public final class PrimesForPrimesEventProto {
             return PrimesForPrimesEventVerifier.INSTANCE;
         }
 
+        public final int getNumber() {
+            return this.value;
+        }
+
         private static final class PrimesForPrimesEventVerifier implements Internal.EnumVerifier {
             static final Internal.EnumVerifier INSTANCE = new PrimesForPrimesEventVerifier();
 
@@ -123,10 +127,6 @@ public final class PrimesForPrimesEventProto {
             public boolean isInRange(int number) {
                 return PrimesForPrimesEvent.forNumber(number) != null;
             }
-        }
-
-        private PrimesForPrimesEvent(int value2) {
-            this.value = value2;
         }
     }
 }

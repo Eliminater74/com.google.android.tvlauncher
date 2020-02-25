@@ -1,7 +1,7 @@
 package com.google.android.exoplayer2.drm;
 
 import android.media.MediaDrm;
-import com.google.android.exoplayer2.drm.ExoMediaDrm;
+
 import java.util.List;
 
 final /* synthetic */ class FrameworkMediaDrm$$Lambda$1 implements MediaDrm.OnKeyStatusChangeListener {

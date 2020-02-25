@@ -29,7 +29,9 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import androidx.leanback.widget.HorizontalGridView;
+
 import com.google.android.tvlauncher.C1188R;
 import com.google.android.tvlauncher.home.util.ChannelStateSettings;
 import com.google.android.tvlauncher.home.util.ChannelUtil;
@@ -37,13 +39,12 @@ import com.google.android.tvlauncher.util.ScaleFocusHandler;
 import com.google.android.tvlauncher.util.Util;
 import com.google.android.tvrecommendations.shared.util.AnimUtil;
 import com.google.android.tvrecommendations.shared.util.ColorUtils;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 
 public class ChannelView extends FrameLayout {
-    private static final boolean DEBUG = false;
-    private static final float EPS = 0.001f;
     public static final int STATE_ACTIONS_NOT_SELECTED = 12;
     public static final int STATE_ACTIONS_SELECTED = 11;
     public static final int STATE_DEFAULT_ABOVE_SELECTED = 2;
@@ -69,15 +70,29 @@ public class ChannelView extends FrameLayout {
     public static final int STATE_EMPTY_ZOOMED_OUT_NOT_SELECTED = 25;
     public static final int STATE_EMPTY_ZOOMED_OUT_SELECTED = 24;
     public static final int STATE_EMPTY_ZOOMED_OUT_TOP_ROW_SELECTED = 26;
-    private static final int STATE_INVALID = -1;
     public static final int STATE_MOVE_NOT_SELECTED = 14;
     public static final int STATE_MOVE_SELECTED = 13;
     public static final int STATE_ZOOMED_OUT_NOT_SELECTED = 9;
     public static final int STATE_ZOOMED_OUT_SELECTED = 8;
     public static final int STATE_ZOOMED_OUT_TOP_ROW_SELECTED = 10;
+    private static final boolean DEBUG = false;
+    private static final float EPS = 0.001f;
+    private static final int STATE_INVALID = -1;
     private static final String TAG = "ChannelView";
     private static final int WATCH_NEXT_INFO_ACKNOWLEDGED_BUTTON_VISIBILITY_DELAY_MS = 100;
     private static final int WATCH_NEXT_INFO_CARD_ADAPTER_POSITION = 1;
+    /* access modifiers changed from: private */
+    public float mChannelLogoFocusedScale;
+    /* access modifiers changed from: private */
+    public boolean mIsFastScrolling;
+    /* access modifiers changed from: private */
+    public HorizontalGridView mItemsList;
+    /* access modifiers changed from: private */
+    public OnChannelLogoFocusedListener mOnChannelLogoFocusedListener;
+    /* access modifiers changed from: private */
+    public ObjectAnimator mWatchNextInfoAcknowledgedButtonBlinkAnim;
+    @VisibleForTesting
+    boolean mShowItemsTitle = true;
     private Drawable mActionMoveDownIcon;
     private Drawable mActionMoveUpDownIcon;
     private Drawable mActionMoveUpIcon;
@@ -86,26 +101,10 @@ public class ChannelView extends FrameLayout {
     private boolean mAllowMoving = true;
     private boolean mAllowRemoving = true;
     private boolean mAllowZoomOut = true;
-    private Runnable mAnimationCheckForWatchNextInfoButtonVisibilityRunnable = new Runnable() {
-        public void run() {
-            if (ChannelView.this.mItemsList.isAnimating()) {
-                ChannelView.this.mItemsList.getItemAnimator().isRunning(new ChannelView$2$$Lambda$0(this));
-            } else if (!ChannelView.this.mIsFastScrolling) {
-                ChannelView.this.refreshWatchNextInfoButtonVisibility();
-            }
-        }
-
-        /* access modifiers changed from: package-private */
-        public final /* synthetic */ void lambda$run$0$ChannelView$2() {
-            ChannelView.this.bridge$lambda$0$ChannelView();
-        }
-    };
     private View mChannelActionsPaddingView;
     private ImageView mChannelLogo;
     private float mChannelLogoCurrentDimmingFactor;
     private float mChannelLogoDimmedFactorValue;
-    /* access modifiers changed from: private */
-    public float mChannelLogoFocusedScale;
     private float mChannelLogoSelectedElevation;
     @ColorInt
     private int mChannelLogoTitleColor;
@@ -124,8 +123,6 @@ public class ChannelView extends FrameLayout {
     private int mEmptyChannelMessageZoomedOutMarginStart;
     private boolean mHoldingDpadLeftRight;
     private boolean mIsBranded = true;
-    /* access modifiers changed from: private */
-    public boolean mIsFastScrolling;
     private boolean mIsRtl = false;
     private boolean mIsSponsored;
     private View mItemMetaContainer;
@@ -135,8 +132,6 @@ public class ChannelView extends FrameLayout {
     private int mItemMetaContainerSelectedMarginTop;
     private int mItemMetaContainerVisibility;
     private int mItemMetaContainerZoomedOutMarginStart;
-    /* access modifiers changed from: private */
-    public HorizontalGridView mItemsList;
     private FadingEdgeContainer mItemsListContainer;
     private int mItemsListMarginStart;
     private int mItemsListZoomedOutMarginStart;
@@ -159,8 +154,6 @@ public class ChannelView extends FrameLayout {
     private View mMovingChannelBackground;
     private int mMovingChannelBackgroundVisibility;
     private View mNoMoveActionPaddingView;
-    /* access modifiers changed from: private */
-    public OnChannelLogoFocusedListener mOnChannelLogoFocusedListener;
     private ViewTreeObserver.OnGlobalFocusChangeListener mOnGlobalFocusChangeListener;
     private OnMoveChannelDownListener mOnMoveChannelDownListener;
     private OnMoveChannelUpListener mOnMoveChannelUpListener;
@@ -169,8 +162,6 @@ public class ChannelView extends FrameLayout {
     private OnStateChangeGesturePerformedListener mOnStateChangeGesturePerformedListener;
     private ImageView mRemoveButton;
     private boolean mShowItemMeta = true;
-    @VisibleForTesting
-    boolean mShowItemsTitle = true;
     @ColorInt
     private int mSponsoredBackgroundDefaultColor;
     @ColorInt
@@ -185,8 +176,6 @@ public class ChannelView extends FrameLayout {
     private SparseArray<ChannelStateSettings> mStateSettings;
     private int mUnbrandedChannelBackgroundBelowSelectedHeight;
     private TextView mWatchNextInfoAcknowledgedButton;
-    /* access modifiers changed from: private */
-    public ObjectAnimator mWatchNextInfoAcknowledgedButtonBlinkAnim;
     private AnimatorListenerAdapter mWatchNextInfoAcknowledgedButtonFadeInAnimatorListenerAdapter = new AnimatorListenerAdapter() {
         public void onAnimationEnd(Animator animation) {
             animation.removeListener(this);
@@ -197,42 +186,39 @@ public class ChannelView extends FrameLayout {
     private Animator mWatchNextInfoAcknowledgedButtonFadeInTransition;
     private boolean mWatchNextInfoAcknowledgedButtonVisible;
     private int mWatchNextInfoButtonBaseMarginStart;
-
     /* renamed from: mWatchNextInfoButtonVisibilityRefreshDueToDataDirtyAttemptAvailable */
     private boolean f142x324a9749 = true;
     private int mWatchNextInfoContentOffset;
+    private Runnable mAnimationCheckForWatchNextInfoButtonVisibilityRunnable = new Runnable() {
+        public void run() {
+            if (ChannelView.this.mItemsList.isAnimating()) {
+                ChannelView.this.mItemsList.getItemAnimator().isRunning(new ChannelView$2$$Lambda$0(this));
+            } else if (!ChannelView.this.mIsFastScrolling) {
+                ChannelView.this.refreshWatchNextInfoButtonVisibility();
+            }
+        }
+
+        /* access modifiers changed from: package-private */
+        public final /* synthetic */ void lambda$run$0$ChannelView$2() {
+            ChannelView.this.bridge$lambda$0$ChannelView();
+        }
+    };
     private TextView mZoomedOutLogoTitle;
     @ColorInt
     private int mZoomedOutLogoTitleStateColor;
     private int mZoomedOutLogoTitleVisibility;
     private View mZoomedOutPaddingView;
 
-    public interface OnChannelLogoFocusedListener {
-        void onChannelLogoFocused();
+    public ChannelView(Context context) {
+        super(context);
     }
 
-    public interface OnMoveChannelDownListener {
-        void onMoveChannelDown(ChannelView channelView);
+    public ChannelView(Context context, AttributeSet attrs) {
+        super(context, attrs);
     }
 
-    public interface OnMoveChannelUpListener {
-        void onMoveChannelUp(ChannelView channelView);
-    }
-
-    public interface OnPerformMainActionListener {
-        void onPerformMainAction(ChannelView channelView);
-    }
-
-    public interface OnRemoveListener {
-        void onRemove(ChannelView channelView);
-    }
-
-    public interface OnStateChangeGesturePerformedListener {
-        void onStateChangeGesturePerformed(ChannelView channelView, int i);
-    }
-
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface State {
+    public ChannelView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
     }
 
     public static String stateToString(int state) {
@@ -387,18 +373,6 @@ public class ChannelView extends FrameLayout {
 
     private static boolean isDefaultFastScrolling(int state) {
         return state == 6 || state == 7;
-    }
-
-    public ChannelView(Context context) {
-        super(context);
-    }
-
-    public ChannelView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-    }
-
-    public ChannelView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
     }
 
     /* access modifiers changed from: protected */
@@ -1579,5 +1553,33 @@ public class ChannelView extends FrameLayout {
         sb.append('\'');
         sb.append('}');
         return sb.toString();
+    }
+
+    public interface OnChannelLogoFocusedListener {
+        void onChannelLogoFocused();
+    }
+
+    public interface OnMoveChannelDownListener {
+        void onMoveChannelDown(ChannelView channelView);
+    }
+
+    public interface OnMoveChannelUpListener {
+        void onMoveChannelUp(ChannelView channelView);
+    }
+
+    public interface OnPerformMainActionListener {
+        void onPerformMainAction(ChannelView channelView);
+    }
+
+    public interface OnRemoveListener {
+        void onRemove(ChannelView channelView);
+    }
+
+    public interface OnStateChangeGesturePerformedListener {
+        void onStateChangeGesturePerformed(ChannelView channelView, int i);
+    }
+
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface State {
     }
 }

@@ -13,11 +13,18 @@ import com.google.protobuf.ProtoMessage;
 import com.google.protobuf.ProtoPresenceBits;
 import com.google.protobuf.ProtoPresenceCheckedField;
 import com.google.protobuf.ProtoSyntax;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 public final class ProcessProto {
+
+    private ProcessProto() {
+    }
+
+    public static void registerAllExtensions(ExtensionRegistryLite registry) {
+    }
 
     public interface AndroidProcessStatsOrBuilder extends MessageLiteOrBuilder {
         boolean getIsInForeground();
@@ -57,12 +64,6 @@ public final class ProcessProto {
         boolean hasIosProcessStats();
     }
 
-    private ProcessProto() {
-    }
-
-    public static void registerAllExtensions(ExtensionRegistryLite registry) {
-    }
-
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
     public static final class ProcessStats extends GeneratedMessageLite<ProcessStats, Builder> implements ProcessStatsOrBuilder {
         public static final int ANDROID_PROCESS_STATS_FIELD_NUMBER = 1;
@@ -70,6 +71,11 @@ public final class ProcessProto {
         public static final ProcessStats DEFAULT_INSTANCE = new ProcessStats();
         public static final int IOS_PROCESS_STATS_FIELD_NUMBER = 2;
         private static volatile Parser<ProcessStats> PARSER;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(ProcessStats.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.MESSAGE)
         @ProtoPresenceCheckedField(mask = 1, presenceBitsId = 0)
         private AndroidProcessStats androidProcessStats_;
@@ -80,6 +86,70 @@ public final class ProcessProto {
         private IosProcessStats iosProcessStats_;
 
         private ProcessStats() {
+        }
+
+        public static ProcessStats parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (ProcessStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static ProcessStats parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (ProcessStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static ProcessStats parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (ProcessStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static ProcessStats parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (ProcessStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static ProcessStats parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (ProcessStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static ProcessStats parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (ProcessStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static ProcessStats parseFrom(InputStream input) throws IOException {
+            return (ProcessStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static ProcessStats parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (ProcessStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static ProcessStats parseDelimitedFrom(InputStream input) throws IOException {
+            return (ProcessStats) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static ProcessStats parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (ProcessStats) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static ProcessStats parseFrom(CodedInputStream input) throws IOException {
+            return (ProcessStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static ProcessStats parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (ProcessStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(ProcessStats prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static ProcessStats getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<ProcessStats> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasAndroidProcessStats() {
@@ -176,60 +246,36 @@ public final class ProcessProto {
             this.bitField0_ &= -3;
         }
 
-        public static ProcessStats parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (ProcessStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static ProcessStats parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (ProcessStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static ProcessStats parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (ProcessStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static ProcessStats parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (ProcessStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static ProcessStats parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (ProcessStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static ProcessStats parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (ProcessStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static ProcessStats parseFrom(InputStream input) throws IOException {
-            return (ProcessStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static ProcessStats parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (ProcessStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static ProcessStats parseDelimitedFrom(InputStream input) throws IOException {
-            return (ProcessStats) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static ProcessStats parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (ProcessStats) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static ProcessStats parseFrom(CodedInputStream input) throws IOException {
-            return (ProcessStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static ProcessStats parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (ProcessStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(ProcessStats prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new ProcessStats();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0000\u0000\u0001\t\u0000\u0002\t\u0001", new Object[]{"bitField0_", "androidProcessStats_", "iosProcessStats_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<ProcessStats> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (ProcessStats.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<ProcessStats, Builder> implements ProcessStatsOrBuilder {
@@ -307,50 +353,6 @@ public final class ProcessProto {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new ProcessStats();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0000\u0000\u0001\t\u0000\u0002\t\u0001", new Object[]{"bitField0_", "androidProcessStats_", "iosProcessStats_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<ProcessStats> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (ProcessStats.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(ProcessStats.class, DEFAULT_INSTANCE);
-        }
-
-        public static ProcessStats getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<ProcessStats> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -358,10 +360,15 @@ public final class ProcessProto {
         /* access modifiers changed from: private */
         public static final AndroidProcessStats DEFAULT_INSTANCE = new AndroidProcessStats();
         public static final int IS_IN_FOREGROUND_FIELD_NUMBER = 2;
-        private static volatile Parser<AndroidProcessStats> PARSER = null;
         public static final int PROCESS_ELAPSED_TIME_MS_FIELD_NUMBER = 1;
         public static final int PROCESS_NAME_FIELD_NUMBER = 4;
         public static final int THREAD_COUNT_FIELD_NUMBER = 3;
+        private static volatile Parser<AndroidProcessStats> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(AndroidProcessStats.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 2, isRequired = false, type = FieldType.BOOL)
@@ -378,6 +385,70 @@ public final class ProcessProto {
         private int threadCount_;
 
         private AndroidProcessStats() {
+        }
+
+        public static AndroidProcessStats parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (AndroidProcessStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static AndroidProcessStats parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (AndroidProcessStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static AndroidProcessStats parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (AndroidProcessStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static AndroidProcessStats parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (AndroidProcessStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static AndroidProcessStats parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (AndroidProcessStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static AndroidProcessStats parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (AndroidProcessStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static AndroidProcessStats parseFrom(InputStream input) throws IOException {
+            return (AndroidProcessStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static AndroidProcessStats parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (AndroidProcessStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static AndroidProcessStats parseDelimitedFrom(InputStream input) throws IOException {
+            return (AndroidProcessStats) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static AndroidProcessStats parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (AndroidProcessStats) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static AndroidProcessStats parseFrom(CodedInputStream input) throws IOException {
+            return (AndroidProcessStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static AndroidProcessStats parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (AndroidProcessStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(AndroidProcessStats prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static AndroidProcessStats getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<AndroidProcessStats> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasProcessElapsedTimeMs() {
@@ -450,11 +521,6 @@ public final class ProcessProto {
             return this.processName_;
         }
 
-        @Deprecated
-        public ByteString getProcessNameBytes() {
-            return ByteString.copyFromUtf8(this.processName_);
-        }
-
         /* access modifiers changed from: private */
         public void setProcessName(String value) {
             if (value != null) {
@@ -465,10 +531,9 @@ public final class ProcessProto {
             throw new NullPointerException();
         }
 
-        /* access modifiers changed from: private */
-        public void clearProcessName() {
-            this.bitField0_ &= -9;
-            this.processName_ = getDefaultInstance().getProcessName();
+        @Deprecated
+        public ByteString getProcessNameBytes() {
+            return ByteString.copyFromUtf8(this.processName_);
         }
 
         /* access modifiers changed from: private */
@@ -481,60 +546,42 @@ public final class ProcessProto {
             throw new NullPointerException();
         }
 
-        public static AndroidProcessStats parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (AndroidProcessStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        /* access modifiers changed from: private */
+        public void clearProcessName() {
+            this.bitField0_ &= -9;
+            this.processName_ = getDefaultInstance().getProcessName();
         }
 
-        public static AndroidProcessStats parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (AndroidProcessStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static AndroidProcessStats parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (AndroidProcessStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static AndroidProcessStats parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (AndroidProcessStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static AndroidProcessStats parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (AndroidProcessStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static AndroidProcessStats parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (AndroidProcessStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static AndroidProcessStats parseFrom(InputStream input) throws IOException {
-            return (AndroidProcessStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static AndroidProcessStats parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (AndroidProcessStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static AndroidProcessStats parseDelimitedFrom(InputStream input) throws IOException {
-            return (AndroidProcessStats) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static AndroidProcessStats parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (AndroidProcessStats) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static AndroidProcessStats parseFrom(CodedInputStream input) throws IOException {
-            return (AndroidProcessStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static AndroidProcessStats parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (AndroidProcessStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(AndroidProcessStats prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new AndroidProcessStats();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0004\u0000\u0001\u0001\u0004\u0004\u0000\u0000\u0000\u0001\u0002\u0000\u0002\u0007\u0001\u0003\u0004\u0002\u0004\b\u0003", new Object[]{"bitField0_", "processElapsedTimeMs_", "isInForeground_", "threadCount_", "processName_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<AndroidProcessStats> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (AndroidProcessStats.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<AndroidProcessStats, Builder> implements AndroidProcessStatsOrBuilder {
@@ -613,14 +660,21 @@ public final class ProcessProto {
             }
 
             @Deprecated
+            public Builder setProcessName(String value) {
+                copyOnWrite();
+                ((AndroidProcessStats) this.instance).setProcessName(value);
+                return this;
+            }
+
+            @Deprecated
             public ByteString getProcessNameBytes() {
                 return ((AndroidProcessStats) this.instance).getProcessNameBytes();
             }
 
             @Deprecated
-            public Builder setProcessName(String value) {
+            public Builder setProcessNameBytes(ByteString value) {
                 copyOnWrite();
-                ((AndroidProcessStats) this.instance).setProcessName(value);
+                ((AndroidProcessStats) this.instance).setProcessNameBytes(value);
                 return this;
             }
 
@@ -630,57 +684,6 @@ public final class ProcessProto {
                 ((AndroidProcessStats) this.instance).clearProcessName();
                 return this;
             }
-
-            @Deprecated
-            public Builder setProcessNameBytes(ByteString value) {
-                copyOnWrite();
-                ((AndroidProcessStats) this.instance).setProcessNameBytes(value);
-                return this;
-            }
-        }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new AndroidProcessStats();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0004\u0000\u0001\u0001\u0004\u0004\u0000\u0000\u0000\u0001\u0002\u0000\u0002\u0007\u0001\u0003\u0004\u0002\u0004\b\u0003", new Object[]{"bitField0_", "processElapsedTimeMs_", "isInForeground_", "threadCount_", "processName_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<AndroidProcessStats> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (AndroidProcessStats.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(AndroidProcessStats.class, DEFAULT_INSTANCE);
-        }
-
-        public static AndroidProcessStats getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<AndroidProcessStats> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
         }
     }
 
@@ -689,6 +692,10 @@ public final class ProcessProto {
         /* access modifiers changed from: private */
         public static final IosProcessStats DEFAULT_INSTANCE = new IosProcessStats();
         private static volatile Parser<IosProcessStats> PARSER;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(IosProcessStats.class, DEFAULT_INSTANCE);
+        }
 
         private IosProcessStats() {
         }
@@ -749,10 +756,12 @@ public final class ProcessProto {
             return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
         }
 
-        public static final class Builder extends GeneratedMessageLite.Builder<IosProcessStats, Builder> implements IosProcessStatsOrBuilder {
-            private Builder() {
-                super(IosProcessStats.DEFAULT_INSTANCE);
-            }
+        public static IosProcessStats getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<IosProcessStats> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         /* access modifiers changed from: protected */
@@ -787,16 +796,10 @@ public final class ProcessProto {
             }
         }
 
-        static {
-            GeneratedMessageLite.registerDefaultInstance(IosProcessStats.class, DEFAULT_INSTANCE);
-        }
-
-        public static IosProcessStats getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<IosProcessStats> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
+        public static final class Builder extends GeneratedMessageLite.Builder<IosProcessStats, Builder> implements IosProcessStatsOrBuilder {
+            private Builder() {
+                super(IosProcessStats.DEFAULT_INSTANCE);
+            }
         }
     }
 }

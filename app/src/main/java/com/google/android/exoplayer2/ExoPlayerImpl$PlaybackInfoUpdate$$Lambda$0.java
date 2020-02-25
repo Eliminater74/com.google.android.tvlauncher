@@ -1,9 +1,5 @@
 package com.google.android.exoplayer2;
 
-import com.google.android.exoplayer2.BasePlayer;
-import com.google.android.exoplayer2.ExoPlayerImpl;
-import com.google.android.exoplayer2.Player;
-
 final /* synthetic */ class ExoPlayerImpl$PlaybackInfoUpdate$$Lambda$0 implements BasePlayer.ListenerInvocation {
     private final ExoPlayerImpl.PlaybackInfoUpdate arg$1;
 

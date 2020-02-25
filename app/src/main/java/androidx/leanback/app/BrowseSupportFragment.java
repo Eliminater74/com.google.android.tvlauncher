@@ -15,8 +15,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+
 import androidx.leanback.C0364R;
-import androidx.leanback.app.HeadersSupportFragment;
 import androidx.leanback.transition.TransitionHelper;
 import androidx.leanback.transition.TransitionListener;
 import androidx.leanback.util.StateMachine;
@@ -34,97 +34,57 @@ import androidx.leanback.widget.RowHeaderPresenter;
 import androidx.leanback.widget.RowPresenter;
 import androidx.leanback.widget.ScaleFrameLayout;
 import androidx.leanback.widget.VerticalGridView;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class BrowseSupportFragment extends BaseSupportFragment {
-    private static final String ARG_HEADERS_STATE = (BrowseSupportFragment.class.getCanonicalName() + ".headersState");
-    private static final String ARG_TITLE = (BrowseSupportFragment.class.getCanonicalName() + ".title");
-    private static final String CURRENT_SELECTED_POSITION = "currentSelectedPosition";
-    static final boolean DEBUG = false;
     public static final int HEADERS_DISABLED = 3;
     public static final int HEADERS_ENABLED = 1;
     public static final int HEADERS_HIDDEN = 2;
+    static final boolean DEBUG = false;
     static final String HEADER_SHOW = "headerShow";
     static final String HEADER_STACK_INDEX = "headerStackIndex";
+    static final String TAG = "BrowseSupportFragment";
+    private static final String ARG_HEADERS_STATE = (BrowseSupportFragment.class.getCanonicalName() + ".headersState");
+    private static final String ARG_TITLE = (BrowseSupportFragment.class.getCanonicalName() + ".title");
+    private static final String CURRENT_SELECTED_POSITION = "currentSelectedPosition";
     private static final String IS_PAGE_ROW = "isPageRow";
     private static final String LB_HEADERS_BACKSTACK = "lbHeadersBackStack_";
-    static final String TAG = "BrowseSupportFragment";
     final StateMachine.Event EVT_HEADER_VIEW_CREATED = new StateMachine.Event("headerFragmentViewCreated");
     final StateMachine.Event EVT_MAIN_FRAGMENT_VIEW_CREATED = new StateMachine.Event("mainFragmentViewCreated");
     final StateMachine.Event EVT_SCREEN_DATA_READY = new StateMachine.Event("screenDataReady");
-    final StateMachine.State STATE_SET_ENTRANCE_START_STATE = new StateMachine.State("SET_ENTRANCE_START_STATE") {
-        public void run() {
-            BrowseSupportFragment.this.setEntranceTransitionStartState();
-        }
-    };
-    private ObjectAdapter mAdapter;
-    private PresenterSelector mAdapterPresenter;
+    private final SetSelectionRunnable mSetSelectionRunnable = new SetSelectionRunnable();
     BackStackListener mBackStackChangedListener;
-    private int mBrandColor = 0;
-    private boolean mBrandColorSet;
     BrowseFrameLayout mBrowseFrame;
     BrowseTransitionListener mBrowseTransitionListener;
     boolean mCanShowHeaders = true;
-    private int mContainerListAlignTop;
-    private int mContainerListMarginStart;
     OnItemViewSelectedListener mExternalOnItemViewSelectedListener;
-    private HeadersSupportFragment.OnHeaderClickedListener mHeaderClickedListener = new HeadersSupportFragment.OnHeaderClickedListener() {
-        public void onHeaderClicked(RowHeaderPresenter.ViewHolder viewHolder, Row row) {
-            if (BrowseSupportFragment.this.mCanShowHeaders && BrowseSupportFragment.this.mShowingHeaders && !BrowseSupportFragment.this.isInHeadersTransition() && BrowseSupportFragment.this.mMainFragment != null && BrowseSupportFragment.this.mMainFragment.getView() != null) {
-                BrowseSupportFragment.this.startHeadersTransitionInternal(false);
-                BrowseSupportFragment.this.mMainFragment.getView().requestFocus();
-            }
-        }
-    };
-    private PresenterSelector mHeaderPresenterSelector;
-    private HeadersSupportFragment.OnHeaderViewSelectedListener mHeaderViewSelectedListener = new HeadersSupportFragment.OnHeaderViewSelectedListener() {
-        public void onHeaderSelected(RowHeaderPresenter.ViewHolder viewHolder, Row row) {
-            int position = BrowseSupportFragment.this.mHeadersSupportFragment.getSelectedPosition();
-            if (BrowseSupportFragment.this.mShowingHeaders) {
-                BrowseSupportFragment.this.onRowSelected(position);
-            }
-        }
-    };
     boolean mHeadersBackStackEnabled = true;
-    private int mHeadersState = 1;
     HeadersSupportFragment mHeadersSupportFragment;
     Object mHeadersTransition;
     boolean mIsPageRow;
     Fragment mMainFragment;
     MainFragmentAdapter mMainFragmentAdapter;
-    private MainFragmentAdapterRegistry mMainFragmentAdapterRegistry = new MainFragmentAdapterRegistry();
     ListRowDataAdapter mMainFragmentListRowDataAdapter;
     MainFragmentRowsAdapter mMainFragmentRowsAdapter;
-    private boolean mMainFragmentScaleEnabled = true;
-    private final BrowseFrameLayout.OnChildFocusListener mOnChildFocusListener = new BrowseFrameLayout.OnChildFocusListener() {
-        public boolean onRequestFocusInDescendants(int direction, Rect previouslyFocusedRect) {
-            if (BrowseSupportFragment.this.getChildFragmentManager().isDestroyed()) {
-                return true;
-            }
-            if (BrowseSupportFragment.this.mCanShowHeaders && BrowseSupportFragment.this.mShowingHeaders && BrowseSupportFragment.this.mHeadersSupportFragment != null && BrowseSupportFragment.this.mHeadersSupportFragment.getView() != null && BrowseSupportFragment.this.mHeadersSupportFragment.getView().requestFocus(direction, previouslyFocusedRect)) {
-                return true;
-            }
-            if (BrowseSupportFragment.this.mMainFragment != null && BrowseSupportFragment.this.mMainFragment.getView() != null && BrowseSupportFragment.this.mMainFragment.getView().requestFocus(direction, previouslyFocusedRect)) {
-                return true;
-            }
-            if (BrowseSupportFragment.this.getTitleView() == null || !BrowseSupportFragment.this.getTitleView().requestFocus(direction, previouslyFocusedRect)) {
-                return false;
-            }
-            return true;
-        }
-
-        public void onRequestChildFocus(View child, View focused) {
-            if (!BrowseSupportFragment.this.getChildFragmentManager().isDestroyed() && BrowseSupportFragment.this.mCanShowHeaders && !BrowseSupportFragment.this.isInHeadersTransition()) {
-                int childId = child.getId();
-                if (childId == C0364R.C0366id.browse_container_dock && BrowseSupportFragment.this.mShowingHeaders) {
-                    BrowseSupportFragment.this.startHeadersTransitionInternal(false);
-                } else if (childId == C0364R.C0366id.browse_headers_dock && !BrowseSupportFragment.this.mShowingHeaders) {
-                    BrowseSupportFragment.this.startHeadersTransitionInternal(true);
+    Object mPageRow;
+    Object mSceneWithHeaders;
+    Object mSceneWithoutHeaders;
+    boolean mShowingHeaders = true;
+    boolean mStopped = true;
+    private final RecyclerView.OnScrollListener mWaitScrollFinishAndCommitMainFragment = new RecyclerView.OnScrollListener() {
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            if (newState == 0) {
+                recyclerView.removeOnScrollListener(this);
+                if (!BrowseSupportFragment.this.mStopped) {
+                    BrowseSupportFragment.this.commitMainFragment();
                 }
             }
         }
     };
+    String mWithHeadersBackStackName;
+    private ObjectAdapter mAdapter;
     private final BrowseFrameLayout.OnFocusSearchListener mOnFocusSearchListener = new BrowseFrameLayout.OnFocusSearchListener() {
         public View onFocusSearch(View focused, int direction) {
             if (BrowseSupportFragment.this.mCanShowHeaders && BrowseSupportFragment.this.isInHeadersTransition()) {
@@ -164,47 +124,77 @@ public class BrowseSupportFragment extends BaseSupportFragment {
             }
         }
     };
+    private PresenterSelector mAdapterPresenter;
+    private int mBrandColor = 0;
+    private boolean mBrandColorSet;
+    private int mContainerListAlignTop;
+    private int mContainerListMarginStart;
+    final StateMachine.State STATE_SET_ENTRANCE_START_STATE = new StateMachine.State("SET_ENTRANCE_START_STATE") {
+        public void run() {
+            BrowseSupportFragment.this.setEntranceTransitionStartState();
+        }
+    };
+    private PresenterSelector mHeaderPresenterSelector;
+    private HeadersSupportFragment.OnHeaderViewSelectedListener mHeaderViewSelectedListener = new HeadersSupportFragment.OnHeaderViewSelectedListener() {
+        public void onHeaderSelected(RowHeaderPresenter.ViewHolder viewHolder, Row row) {
+            int position = BrowseSupportFragment.this.mHeadersSupportFragment.getSelectedPosition();
+            if (BrowseSupportFragment.this.mShowingHeaders) {
+                BrowseSupportFragment.this.onRowSelected(position);
+            }
+        }
+    };
+    private int mHeadersState = 1;
+    private MainFragmentAdapterRegistry mMainFragmentAdapterRegistry = new MainFragmentAdapterRegistry();
+    private boolean mMainFragmentScaleEnabled = true;
     private OnItemViewClickedListener mOnItemViewClickedListener;
-    Object mPageRow;
     private float mScaleFactor;
     private ScaleFrameLayout mScaleFrameLayout;
     private Object mSceneAfterEntranceTransition;
-    Object mSceneWithHeaders;
-    Object mSceneWithoutHeaders;
     private int mSelectedPosition = -1;
-    private final SetSelectionRunnable mSetSelectionRunnable = new SetSelectionRunnable();
-    boolean mShowingHeaders = true;
-    boolean mStopped = true;
-    private final RecyclerView.OnScrollListener mWaitScrollFinishAndCommitMainFragment = new RecyclerView.OnScrollListener() {
-        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-            if (newState == 0) {
-                recyclerView.removeOnScrollListener(this);
-                if (!BrowseSupportFragment.this.mStopped) {
-                    BrowseSupportFragment.this.commitMainFragment();
+    private HeadersSupportFragment.OnHeaderClickedListener mHeaderClickedListener = new HeadersSupportFragment.OnHeaderClickedListener() {
+        public void onHeaderClicked(RowHeaderPresenter.ViewHolder viewHolder, Row row) {
+            if (BrowseSupportFragment.this.mCanShowHeaders && BrowseSupportFragment.this.mShowingHeaders && !BrowseSupportFragment.this.isInHeadersTransition() && BrowseSupportFragment.this.mMainFragment != null && BrowseSupportFragment.this.mMainFragment.getView() != null) {
+                BrowseSupportFragment.this.startHeadersTransitionInternal(false);
+                BrowseSupportFragment.this.mMainFragment.getView().requestFocus();
+            }
+        }
+    };
+    private final BrowseFrameLayout.OnChildFocusListener mOnChildFocusListener = new BrowseFrameLayout.OnChildFocusListener() {
+        public boolean onRequestFocusInDescendants(int direction, Rect previouslyFocusedRect) {
+            if (BrowseSupportFragment.this.getChildFragmentManager().isDestroyed()) {
+                return true;
+            }
+            if (BrowseSupportFragment.this.mCanShowHeaders && BrowseSupportFragment.this.mShowingHeaders && BrowseSupportFragment.this.mHeadersSupportFragment != null && BrowseSupportFragment.this.mHeadersSupportFragment.getView() != null && BrowseSupportFragment.this.mHeadersSupportFragment.getView().requestFocus(direction, previouslyFocusedRect)) {
+                return true;
+            }
+            if (BrowseSupportFragment.this.mMainFragment != null && BrowseSupportFragment.this.mMainFragment.getView() != null && BrowseSupportFragment.this.mMainFragment.getView().requestFocus(direction, previouslyFocusedRect)) {
+                return true;
+            }
+            if (BrowseSupportFragment.this.getTitleView() == null || !BrowseSupportFragment.this.getTitleView().requestFocus(direction, previouslyFocusedRect)) {
+                return false;
+            }
+            return true;
+        }
+
+        public void onRequestChildFocus(View child, View focused) {
+            if (!BrowseSupportFragment.this.getChildFragmentManager().isDestroyed() && BrowseSupportFragment.this.mCanShowHeaders && !BrowseSupportFragment.this.isInHeadersTransition()) {
+                int childId = child.getId();
+                if (childId == C0364R.C0366id.browse_container_dock && BrowseSupportFragment.this.mShowingHeaders) {
+                    BrowseSupportFragment.this.startHeadersTransitionInternal(false);
+                } else if (childId == C0364R.C0366id.browse_headers_dock && !BrowseSupportFragment.this.mShowingHeaders) {
+                    BrowseSupportFragment.this.startHeadersTransitionInternal(true);
                 }
             }
         }
     };
-    String mWithHeadersBackStackName;
 
-    public static abstract class FragmentFactory<T extends Fragment> {
-        public abstract T createFragment(Object obj);
-    }
-
-    public interface FragmentHost {
-        void notifyDataReady(MainFragmentAdapter mainFragmentAdapter);
-
-        void notifyViewCreated(MainFragmentAdapter mainFragmentAdapter);
-
-        void showTitleView(boolean z);
-    }
-
-    public interface MainFragmentAdapterProvider {
-        MainFragmentAdapter getMainFragmentAdapter();
-    }
-
-    public interface MainFragmentRowsAdapterProvider {
-        MainFragmentRowsAdapter getMainFragmentRowsAdapter();
+    public static Bundle createArgs(Bundle args, String title, int headersState) {
+        if (args == null) {
+            args = new Bundle();
+        }
+        args.putString(ARG_TITLE, title);
+        args.putInt(ARG_HEADERS_STATE, headersState);
+        return args;
     }
 
     /* access modifiers changed from: package-private */
@@ -219,229 +209,6 @@ public class BrowseSupportFragment extends BaseSupportFragment {
         this.mStateMachine.addTransition(this.STATE_ENTRANCE_ON_PREPARED, this.STATE_SET_ENTRANCE_START_STATE, this.EVT_HEADER_VIEW_CREATED);
         this.mStateMachine.addTransition(this.STATE_ENTRANCE_ON_PREPARED, this.STATE_ENTRANCE_ON_PREPARED_ON_CREATEVIEW, this.EVT_MAIN_FRAGMENT_VIEW_CREATED);
         this.mStateMachine.addTransition(this.STATE_ENTRANCE_ON_PREPARED, this.STATE_ENTRANCE_PERFORM, this.EVT_SCREEN_DATA_READY);
-    }
-
-    final class BackStackListener implements FragmentManager.OnBackStackChangedListener {
-        int mIndexOfHeadersBackStack = -1;
-        int mLastEntryCount;
-
-        BackStackListener() {
-            this.mLastEntryCount = BrowseSupportFragment.this.getFragmentManager().getBackStackEntryCount();
-        }
-
-        /* access modifiers changed from: package-private */
-        public void load(Bundle savedInstanceState) {
-            if (savedInstanceState != null) {
-                this.mIndexOfHeadersBackStack = savedInstanceState.getInt(BrowseSupportFragment.HEADER_STACK_INDEX, -1);
-                BrowseSupportFragment.this.mShowingHeaders = this.mIndexOfHeadersBackStack == -1;
-            } else if (!BrowseSupportFragment.this.mShowingHeaders) {
-                BrowseSupportFragment.this.getFragmentManager().beginTransaction().addToBackStack(BrowseSupportFragment.this.mWithHeadersBackStackName).commit();
-            }
-        }
-
-        /* access modifiers changed from: package-private */
-        public void save(Bundle outState) {
-            outState.putInt(BrowseSupportFragment.HEADER_STACK_INDEX, this.mIndexOfHeadersBackStack);
-        }
-
-        public void onBackStackChanged() {
-            if (BrowseSupportFragment.this.getFragmentManager() == null) {
-                Log.w(BrowseSupportFragment.TAG, "getFragmentManager() is null, stack:", new Exception());
-                return;
-            }
-            int count = BrowseSupportFragment.this.getFragmentManager().getBackStackEntryCount();
-            int i = this.mLastEntryCount;
-            if (count > i) {
-                if (BrowseSupportFragment.this.mWithHeadersBackStackName.equals(BrowseSupportFragment.this.getFragmentManager().getBackStackEntryAt(count - 1).getName())) {
-                    this.mIndexOfHeadersBackStack = count - 1;
-                }
-            } else if (count < i && this.mIndexOfHeadersBackStack >= count) {
-                if (!BrowseSupportFragment.this.isHeadersDataReady()) {
-                    BrowseSupportFragment.this.getFragmentManager().beginTransaction().addToBackStack(BrowseSupportFragment.this.mWithHeadersBackStackName).commit();
-                    return;
-                }
-                this.mIndexOfHeadersBackStack = -1;
-                if (!BrowseSupportFragment.this.mShowingHeaders) {
-                    BrowseSupportFragment.this.startHeadersTransitionInternal(true);
-                }
-            }
-            this.mLastEntryCount = count;
-        }
-    }
-
-    public static class BrowseTransitionListener {
-        public void onHeadersTransitionStart(boolean withHeaders) {
-        }
-
-        public void onHeadersTransitionStop(boolean withHeaders) {
-        }
-    }
-
-    private final class SetSelectionRunnable implements Runnable {
-        static final int TYPE_INTERNAL_SYNC = 0;
-        static final int TYPE_INVALID = -1;
-        static final int TYPE_USER_REQUEST = 1;
-        private int mPosition;
-        private boolean mSmooth;
-        private int mType;
-
-        SetSelectionRunnable() {
-            reset();
-        }
-
-        /* access modifiers changed from: package-private */
-        public void post(int position, int type, boolean smooth) {
-            if (type >= this.mType) {
-                this.mPosition = position;
-                this.mType = type;
-                this.mSmooth = smooth;
-                BrowseSupportFragment.this.mBrowseFrame.removeCallbacks(this);
-                if (!BrowseSupportFragment.this.mStopped) {
-                    BrowseSupportFragment.this.mBrowseFrame.post(this);
-                }
-            }
-        }
-
-        public void run() {
-            BrowseSupportFragment.this.setSelection(this.mPosition, this.mSmooth);
-            reset();
-        }
-
-        public void stop() {
-            BrowseSupportFragment.this.mBrowseFrame.removeCallbacks(this);
-        }
-
-        public void start() {
-            if (this.mType != -1) {
-                BrowseSupportFragment.this.mBrowseFrame.post(this);
-            }
-        }
-
-        private void reset() {
-            this.mPosition = -1;
-            this.mType = -1;
-            this.mSmooth = false;
-        }
-    }
-
-    private final class FragmentHostImpl implements FragmentHost {
-        boolean mShowTitleView = true;
-
-        FragmentHostImpl() {
-        }
-
-        public void notifyViewCreated(MainFragmentAdapter fragmentAdapter) {
-            BrowseSupportFragment.this.mStateMachine.fireEvent(BrowseSupportFragment.this.EVT_MAIN_FRAGMENT_VIEW_CREATED);
-            if (!BrowseSupportFragment.this.mIsPageRow) {
-                BrowseSupportFragment.this.mStateMachine.fireEvent(BrowseSupportFragment.this.EVT_SCREEN_DATA_READY);
-            }
-        }
-
-        public void notifyDataReady(MainFragmentAdapter fragmentAdapter) {
-            if (BrowseSupportFragment.this.mMainFragmentAdapter != null && BrowseSupportFragment.this.mMainFragmentAdapter.getFragmentHost() == this && BrowseSupportFragment.this.mIsPageRow) {
-                BrowseSupportFragment.this.mStateMachine.fireEvent(BrowseSupportFragment.this.EVT_SCREEN_DATA_READY);
-            }
-        }
-
-        public void showTitleView(boolean show) {
-            this.mShowTitleView = show;
-            if (BrowseSupportFragment.this.mMainFragmentAdapter != null && BrowseSupportFragment.this.mMainFragmentAdapter.getFragmentHost() == this && BrowseSupportFragment.this.mIsPageRow) {
-                BrowseSupportFragment.this.updateTitleViewVisibility();
-            }
-        }
-    }
-
-    public static class MainFragmentAdapter<T extends Fragment> {
-        private final T mFragment;
-        FragmentHostImpl mFragmentHost;
-        private boolean mScalingEnabled;
-
-        public MainFragmentAdapter(T fragment) {
-            this.mFragment = fragment;
-        }
-
-        public final T getFragment() {
-            return this.mFragment;
-        }
-
-        public boolean isScrolling() {
-            return false;
-        }
-
-        public void setExpand(boolean expand) {
-        }
-
-        public void setEntranceTransitionState(boolean state) {
-        }
-
-        public void setAlignment(int windowAlignOffsetFromTop) {
-        }
-
-        public boolean onTransitionPrepare() {
-            return false;
-        }
-
-        public void onTransitionStart() {
-        }
-
-        public void onTransitionEnd() {
-        }
-
-        public boolean isScalingEnabled() {
-            return this.mScalingEnabled;
-        }
-
-        public void setScalingEnabled(boolean scalingEnabled) {
-            this.mScalingEnabled = scalingEnabled;
-        }
-
-        public final FragmentHost getFragmentHost() {
-            return this.mFragmentHost;
-        }
-
-        /* access modifiers changed from: package-private */
-        public void setFragmentHost(FragmentHostImpl fragmentHost) {
-            this.mFragmentHost = fragmentHost;
-        }
-    }
-
-    public static class MainFragmentRowsAdapter<T extends Fragment> {
-        private final T mFragment;
-
-        public MainFragmentRowsAdapter(T fragment) {
-            if (fragment != null) {
-                this.mFragment = fragment;
-                return;
-            }
-            throw new IllegalArgumentException("Fragment can't be null");
-        }
-
-        public final T getFragment() {
-            return this.mFragment;
-        }
-
-        public void setAdapter(ObjectAdapter adapter) {
-        }
-
-        public void setOnItemViewClickedListener(OnItemViewClickedListener listener) {
-        }
-
-        public void setOnItemViewSelectedListener(OnItemViewSelectedListener listener) {
-        }
-
-        public void setSelectedPosition(int rowPosition, boolean smooth, Presenter.ViewHolderTask rowHolderTask) {
-        }
-
-        public void setSelectedPosition(int rowPosition, boolean smooth) {
-        }
-
-        public int getSelectedPosition() {
-            return 0;
-        }
-
-        public RowPresenter.ViewHolder findRowViewHolderByPosition(int position) {
-            return null;
-        }
     }
 
     private boolean createMainFragment(ObjectAdapter adapter, int position) {
@@ -501,45 +268,9 @@ public class BrowseSupportFragment extends BaseSupportFragment {
         setMainFragmentRowsAdapter(null);
     }
 
-    public static class ListRowFragmentFactory extends FragmentFactory<RowsSupportFragment> {
-        public RowsSupportFragment createFragment(Object row) {
-            return new RowsSupportFragment();
-        }
-    }
-
-    public static final class MainFragmentAdapterRegistry {
-        private static final FragmentFactory sDefaultFragmentFactory = new ListRowFragmentFactory();
-        private final Map<Class, FragmentFactory> mItemToFragmentFactoryMapping = new HashMap();
-
-        public MainFragmentAdapterRegistry() {
-            registerFragment(ListRow.class, sDefaultFragmentFactory);
-        }
-
-        public void registerFragment(Class rowClass, FragmentFactory factory) {
-            this.mItemToFragmentFactoryMapping.put(rowClass, factory);
-        }
-
-        public Fragment createFragment(Object item) {
-            FragmentFactory fragmentFactory;
-            if (item == null) {
-                fragmentFactory = sDefaultFragmentFactory;
-            } else {
-                fragmentFactory = this.mItemToFragmentFactoryMapping.get(item.getClass());
-            }
-            if (fragmentFactory == null && !(item instanceof PageRow)) {
-                fragmentFactory = sDefaultFragmentFactory;
-            }
-            return fragmentFactory.createFragment(item);
-        }
-    }
-
-    public static Bundle createArgs(Bundle args, String title, int headersState) {
-        if (args == null) {
-            args = new Bundle();
-        }
-        args.putString(ARG_TITLE, title);
-        args.putInt(ARG_HEADERS_STATE, headersState);
-        return args;
+    @ColorInt
+    public int getBrandColor() {
+        return this.mBrandColor;
     }
 
     public void setBrandColor(@ColorInt int color) {
@@ -549,11 +280,6 @@ public class BrowseSupportFragment extends BaseSupportFragment {
         if (headersSupportFragment != null) {
             headersSupportFragment.setBackgroundColor(this.mBrandColor);
         }
-    }
-
-    @ColorInt
-    public int getBrandColor() {
-        return this.mBrandColor;
     }
 
     private void updateWrapperPresenter() {
@@ -584,15 +310,6 @@ public class BrowseSupportFragment extends BaseSupportFragment {
                     return allPresenters;
                 }
             });
-        }
-    }
-
-    public void setAdapter(ObjectAdapter adapter) {
-        this.mAdapter = adapter;
-        updateWrapperPresenter();
-        if (getView() != null) {
-            updateMainFragmentRowsAdapter();
-            this.mHeadersSupportFragment.setAdapter(this.mAdapter);
         }
     }
 
@@ -639,12 +356,21 @@ public class BrowseSupportFragment extends BaseSupportFragment {
         return this.mAdapter;
     }
 
-    public void setOnItemViewSelectedListener(OnItemViewSelectedListener listener) {
-        this.mExternalOnItemViewSelectedListener = listener;
+    public void setAdapter(ObjectAdapter adapter) {
+        this.mAdapter = adapter;
+        updateWrapperPresenter();
+        if (getView() != null) {
+            updateMainFragmentRowsAdapter();
+            this.mHeadersSupportFragment.setAdapter(this.mAdapter);
+        }
     }
 
     public OnItemViewSelectedListener getOnItemViewSelectedListener() {
         return this.mExternalOnItemViewSelectedListener;
+    }
+
+    public void setOnItemViewSelectedListener(OnItemViewSelectedListener listener) {
+        this.mExternalOnItemViewSelectedListener = listener;
     }
 
     public RowsSupportFragment getRowsSupportFragment() {
@@ -663,16 +389,16 @@ public class BrowseSupportFragment extends BaseSupportFragment {
         return this.mHeadersSupportFragment;
     }
 
+    public OnItemViewClickedListener getOnItemViewClickedListener() {
+        return this.mOnItemViewClickedListener;
+    }
+
     public void setOnItemViewClickedListener(OnItemViewClickedListener listener) {
         this.mOnItemViewClickedListener = listener;
         MainFragmentRowsAdapter mainFragmentRowsAdapter = this.mMainFragmentRowsAdapter;
         if (mainFragmentRowsAdapter != null) {
             mainFragmentRowsAdapter.setOnItemViewClickedListener(listener);
         }
-    }
-
-    public OnItemViewClickedListener getOnItemViewClickedListener() {
-        return this.mOnItemViewClickedListener;
     }
 
     public void startHeadersTransition(boolean withHeaders) {
@@ -1005,21 +731,6 @@ public class BrowseSupportFragment extends BaseSupportFragment {
         this.mScaleFrameLayout.setChildScale(scaleFactor);
     }
 
-    class MainFragmentItemViewSelectedListener implements OnItemViewSelectedListener {
-        MainFragmentRowsAdapter mMainFragmentRowsAdapter;
-
-        public MainFragmentItemViewSelectedListener(MainFragmentRowsAdapter fragmentRowsAdapter) {
-            this.mMainFragmentRowsAdapter = fragmentRowsAdapter;
-        }
-
-        public void onItemSelected(Presenter.ViewHolder itemViewHolder, Object item, RowPresenter.ViewHolder rowViewHolder, Row row) {
-            BrowseSupportFragment.this.onRowSelected(this.mMainFragmentRowsAdapter.getSelectedPosition());
-            if (BrowseSupportFragment.this.mExternalOnItemViewSelectedListener != null) {
-                BrowseSupportFragment.this.mExternalOnItemViewSelectedListener.onItemSelected(itemViewHolder, item, rowViewHolder, row);
-            }
-        }
-    }
-
     /* access modifiers changed from: package-private */
     public void onRowSelected(int position) {
         this.mSetSelectionRunnable.post(position, 0, true);
@@ -1070,12 +781,12 @@ public class BrowseSupportFragment extends BaseSupportFragment {
         }
     }
 
-    public void setSelectedPosition(int position) {
-        setSelectedPosition(position, true);
-    }
-
     public int getSelectedPosition() {
         return this.mSelectedPosition;
+    }
+
+    public void setSelectedPosition(int position) {
+        setSelectedPosition(position, true);
     }
 
     public RowPresenter.ViewHolder getSelectedRowViewHolder() {
@@ -1144,12 +855,12 @@ public class BrowseSupportFragment extends BaseSupportFragment {
         this.mMainFragmentAdapter.setAlignment(alignOffset);
     }
 
-    public final void setHeadersTransitionOnBackEnabled(boolean headersBackStackEnabled) {
-        this.mHeadersBackStackEnabled = headersBackStackEnabled;
-    }
-
     public final boolean isHeadersTransitionOnBackEnabled() {
         return this.mHeadersBackStackEnabled;
+    }
+
+    public final void setHeadersTransitionOnBackEnabled(boolean headersBackStackEnabled) {
+        this.mHeadersBackStackEnabled = headersBackStackEnabled;
     }
 
     private void readArguments(Bundle args) {
@@ -1161,6 +872,10 @@ public class BrowseSupportFragment extends BaseSupportFragment {
                 setHeadersState(args.getInt(ARG_HEADERS_STATE));
             }
         }
+    }
+
+    public int getHeadersState() {
+        return this.mHeadersState;
     }
 
     public void setHeadersState(int headersState) {
@@ -1185,10 +900,6 @@ public class BrowseSupportFragment extends BaseSupportFragment {
                 headersSupportFragment.setHeadersGone(true ^ this.mCanShowHeaders);
             }
         }
-    }
-
-    public int getHeadersState() {
-        return this.mHeadersState;
     }
 
     /* access modifiers changed from: protected */
@@ -1249,13 +960,303 @@ public class BrowseSupportFragment extends BaseSupportFragment {
         this.mMainFragmentAdapter.setEntranceTransitionState(true);
     }
 
+    public interface FragmentHost {
+        void notifyDataReady(MainFragmentAdapter mainFragmentAdapter);
+
+        void notifyViewCreated(MainFragmentAdapter mainFragmentAdapter);
+
+        void showTitleView(boolean z);
+    }
+
+    public interface MainFragmentAdapterProvider {
+        MainFragmentAdapter getMainFragmentAdapter();
+    }
+
+    public interface MainFragmentRowsAdapterProvider {
+        MainFragmentRowsAdapter getMainFragmentRowsAdapter();
+    }
+
+    public static abstract class FragmentFactory<T extends Fragment> {
+        public abstract T createFragment(Object obj);
+    }
+
+    public static class BrowseTransitionListener {
+        public void onHeadersTransitionStart(boolean withHeaders) {
+        }
+
+        public void onHeadersTransitionStop(boolean withHeaders) {
+        }
+    }
+
+    public static class MainFragmentAdapter<T extends Fragment> {
+        private final T mFragment;
+        FragmentHostImpl mFragmentHost;
+        private boolean mScalingEnabled;
+
+        public MainFragmentAdapter(T fragment) {
+            this.mFragment = fragment;
+        }
+
+        public final T getFragment() {
+            return this.mFragment;
+        }
+
+        public boolean isScrolling() {
+            return false;
+        }
+
+        public void setExpand(boolean expand) {
+        }
+
+        public void setEntranceTransitionState(boolean state) {
+        }
+
+        public void setAlignment(int windowAlignOffsetFromTop) {
+        }
+
+        public boolean onTransitionPrepare() {
+            return false;
+        }
+
+        public void onTransitionStart() {
+        }
+
+        public void onTransitionEnd() {
+        }
+
+        public boolean isScalingEnabled() {
+            return this.mScalingEnabled;
+        }
+
+        public void setScalingEnabled(boolean scalingEnabled) {
+            this.mScalingEnabled = scalingEnabled;
+        }
+
+        public final FragmentHost getFragmentHost() {
+            return this.mFragmentHost;
+        }
+
+        /* access modifiers changed from: package-private */
+        public void setFragmentHost(FragmentHostImpl fragmentHost) {
+            this.mFragmentHost = fragmentHost;
+        }
+    }
+
+    public static class MainFragmentRowsAdapter<T extends Fragment> {
+        private final T mFragment;
+
+        public MainFragmentRowsAdapter(T fragment) {
+            if (fragment != null) {
+                this.mFragment = fragment;
+                return;
+            }
+            throw new IllegalArgumentException("Fragment can't be null");
+        }
+
+        public final T getFragment() {
+            return this.mFragment;
+        }
+
+        public void setAdapter(ObjectAdapter adapter) {
+        }
+
+        public void setOnItemViewClickedListener(OnItemViewClickedListener listener) {
+        }
+
+        public void setOnItemViewSelectedListener(OnItemViewSelectedListener listener) {
+        }
+
+        public void setSelectedPosition(int rowPosition, boolean smooth, Presenter.ViewHolderTask rowHolderTask) {
+        }
+
+        public void setSelectedPosition(int rowPosition, boolean smooth) {
+        }
+
+        public int getSelectedPosition() {
+            return 0;
+        }
+
+        public RowPresenter.ViewHolder findRowViewHolderByPosition(int position) {
+            return null;
+        }
+    }
+
+    public static class ListRowFragmentFactory extends FragmentFactory<RowsSupportFragment> {
+        public RowsSupportFragment createFragment(Object row) {
+            return new RowsSupportFragment();
+        }
+    }
+
+    public static final class MainFragmentAdapterRegistry {
+        private static final FragmentFactory sDefaultFragmentFactory = new ListRowFragmentFactory();
+        private final Map<Class, FragmentFactory> mItemToFragmentFactoryMapping = new HashMap();
+
+        public MainFragmentAdapterRegistry() {
+            registerFragment(ListRow.class, sDefaultFragmentFactory);
+        }
+
+        public void registerFragment(Class rowClass, FragmentFactory factory) {
+            this.mItemToFragmentFactoryMapping.put(rowClass, factory);
+        }
+
+        public Fragment createFragment(Object item) {
+            FragmentFactory fragmentFactory;
+            if (item == null) {
+                fragmentFactory = sDefaultFragmentFactory;
+            } else {
+                fragmentFactory = this.mItemToFragmentFactoryMapping.get(item.getClass());
+            }
+            if (fragmentFactory == null && !(item instanceof PageRow)) {
+                fragmentFactory = sDefaultFragmentFactory;
+            }
+            return fragmentFactory.createFragment(item);
+        }
+    }
+
+    final class BackStackListener implements FragmentManager.OnBackStackChangedListener {
+        int mIndexOfHeadersBackStack = -1;
+        int mLastEntryCount;
+
+        BackStackListener() {
+            this.mLastEntryCount = BrowseSupportFragment.this.getFragmentManager().getBackStackEntryCount();
+        }
+
+        /* access modifiers changed from: package-private */
+        public void load(Bundle savedInstanceState) {
+            if (savedInstanceState != null) {
+                this.mIndexOfHeadersBackStack = savedInstanceState.getInt(BrowseSupportFragment.HEADER_STACK_INDEX, -1);
+                BrowseSupportFragment.this.mShowingHeaders = this.mIndexOfHeadersBackStack == -1;
+            } else if (!BrowseSupportFragment.this.mShowingHeaders) {
+                BrowseSupportFragment.this.getFragmentManager().beginTransaction().addToBackStack(BrowseSupportFragment.this.mWithHeadersBackStackName).commit();
+            }
+        }
+
+        /* access modifiers changed from: package-private */
+        public void save(Bundle outState) {
+            outState.putInt(BrowseSupportFragment.HEADER_STACK_INDEX, this.mIndexOfHeadersBackStack);
+        }
+
+        public void onBackStackChanged() {
+            if (BrowseSupportFragment.this.getFragmentManager() == null) {
+                Log.w(BrowseSupportFragment.TAG, "getFragmentManager() is null, stack:", new Exception());
+                return;
+            }
+            int count = BrowseSupportFragment.this.getFragmentManager().getBackStackEntryCount();
+            int i = this.mLastEntryCount;
+            if (count > i) {
+                if (BrowseSupportFragment.this.mWithHeadersBackStackName.equals(BrowseSupportFragment.this.getFragmentManager().getBackStackEntryAt(count - 1).getName())) {
+                    this.mIndexOfHeadersBackStack = count - 1;
+                }
+            } else if (count < i && this.mIndexOfHeadersBackStack >= count) {
+                if (!BrowseSupportFragment.this.isHeadersDataReady()) {
+                    BrowseSupportFragment.this.getFragmentManager().beginTransaction().addToBackStack(BrowseSupportFragment.this.mWithHeadersBackStackName).commit();
+                    return;
+                }
+                this.mIndexOfHeadersBackStack = -1;
+                if (!BrowseSupportFragment.this.mShowingHeaders) {
+                    BrowseSupportFragment.this.startHeadersTransitionInternal(true);
+                }
+            }
+            this.mLastEntryCount = count;
+        }
+    }
+
+    private final class SetSelectionRunnable implements Runnable {
+        static final int TYPE_INTERNAL_SYNC = 0;
+        static final int TYPE_INVALID = -1;
+        static final int TYPE_USER_REQUEST = 1;
+        private int mPosition;
+        private boolean mSmooth;
+        private int mType;
+
+        SetSelectionRunnable() {
+            reset();
+        }
+
+        /* access modifiers changed from: package-private */
+        public void post(int position, int type, boolean smooth) {
+            if (type >= this.mType) {
+                this.mPosition = position;
+                this.mType = type;
+                this.mSmooth = smooth;
+                BrowseSupportFragment.this.mBrowseFrame.removeCallbacks(this);
+                if (!BrowseSupportFragment.this.mStopped) {
+                    BrowseSupportFragment.this.mBrowseFrame.post(this);
+                }
+            }
+        }
+
+        public void run() {
+            BrowseSupportFragment.this.setSelection(this.mPosition, this.mSmooth);
+            reset();
+        }
+
+        public void stop() {
+            BrowseSupportFragment.this.mBrowseFrame.removeCallbacks(this);
+        }
+
+        public void start() {
+            if (this.mType != -1) {
+                BrowseSupportFragment.this.mBrowseFrame.post(this);
+            }
+        }
+
+        private void reset() {
+            this.mPosition = -1;
+            this.mType = -1;
+            this.mSmooth = false;
+        }
+    }
+
+    private final class FragmentHostImpl implements FragmentHost {
+        boolean mShowTitleView = true;
+
+        FragmentHostImpl() {
+        }
+
+        public void notifyViewCreated(MainFragmentAdapter fragmentAdapter) {
+            BrowseSupportFragment.this.mStateMachine.fireEvent(BrowseSupportFragment.this.EVT_MAIN_FRAGMENT_VIEW_CREATED);
+            if (!BrowseSupportFragment.this.mIsPageRow) {
+                BrowseSupportFragment.this.mStateMachine.fireEvent(BrowseSupportFragment.this.EVT_SCREEN_DATA_READY);
+            }
+        }
+
+        public void notifyDataReady(MainFragmentAdapter fragmentAdapter) {
+            if (BrowseSupportFragment.this.mMainFragmentAdapter != null && BrowseSupportFragment.this.mMainFragmentAdapter.getFragmentHost() == this && BrowseSupportFragment.this.mIsPageRow) {
+                BrowseSupportFragment.this.mStateMachine.fireEvent(BrowseSupportFragment.this.EVT_SCREEN_DATA_READY);
+            }
+        }
+
+        public void showTitleView(boolean show) {
+            this.mShowTitleView = show;
+            if (BrowseSupportFragment.this.mMainFragmentAdapter != null && BrowseSupportFragment.this.mMainFragmentAdapter.getFragmentHost() == this && BrowseSupportFragment.this.mIsPageRow) {
+                BrowseSupportFragment.this.updateTitleViewVisibility();
+            }
+        }
+    }
+
+    class MainFragmentItemViewSelectedListener implements OnItemViewSelectedListener {
+        MainFragmentRowsAdapter mMainFragmentRowsAdapter;
+
+        public MainFragmentItemViewSelectedListener(MainFragmentRowsAdapter fragmentRowsAdapter) {
+            this.mMainFragmentRowsAdapter = fragmentRowsAdapter;
+        }
+
+        public void onItemSelected(Presenter.ViewHolder itemViewHolder, Object item, RowPresenter.ViewHolder rowViewHolder, Row row) {
+            BrowseSupportFragment.this.onRowSelected(this.mMainFragmentRowsAdapter.getSelectedPosition());
+            if (BrowseSupportFragment.this.mExternalOnItemViewSelectedListener != null) {
+                BrowseSupportFragment.this.mExternalOnItemViewSelectedListener.onItemSelected(itemViewHolder, item, rowViewHolder, row);
+            }
+        }
+    }
+
     private class ExpandPreLayout implements ViewTreeObserver.OnPreDrawListener {
         static final int STATE_FIRST_DRAW = 1;
         static final int STATE_INIT = 0;
         static final int STATE_SECOND_DRAW = 2;
         private final Runnable mCallback;
-        private int mState;
         private final View mView;
+        private int mState;
         private MainFragmentAdapter mainFragmentAdapter;
 
         ExpandPreLayout(Runnable callback, MainFragmentAdapter adapter, View view) {

@@ -2,7 +2,7 @@ package androidx.leanback.widget;
 
 import android.content.Context;
 import android.os.Bundle;
-import androidx.leanback.widget.GuidedAction;
+
 import java.util.Calendar;
 
 public class GuidedDatePickerAction extends GuidedAction {
@@ -10,6 +10,34 @@ public class GuidedDatePickerAction extends GuidedAction {
     String mDatePickerFormat;
     long mMaxDate = Long.MAX_VALUE;
     long mMinDate = Long.MIN_VALUE;
+
+    public String getDatePickerFormat() {
+        return this.mDatePickerFormat;
+    }
+
+    public long getDate() {
+        return this.mDate;
+    }
+
+    public void setDate(long date) {
+        this.mDate = date;
+    }
+
+    public long getMinDate() {
+        return this.mMinDate;
+    }
+
+    public long getMaxDate() {
+        return this.mMaxDate;
+    }
+
+    public void onSaveInstanceState(Bundle bundle, String key) {
+        bundle.putLong(key, getDate());
+    }
+
+    public void onRestoreInstanceState(Bundle bundle, String key) {
+        setDate(bundle.getLong(key, getDate()));
+    }
 
     public static abstract class BuilderBase<B extends BuilderBase> extends GuidedAction.BuilderBase<B> {
         private long mDate = Calendar.getInstance().getTimeInMillis();
@@ -68,33 +96,5 @@ public class GuidedDatePickerAction extends GuidedAction {
             applyDatePickerValues(action);
             return action;
         }
-    }
-
-    public String getDatePickerFormat() {
-        return this.mDatePickerFormat;
-    }
-
-    public long getDate() {
-        return this.mDate;
-    }
-
-    public void setDate(long date) {
-        this.mDate = date;
-    }
-
-    public long getMinDate() {
-        return this.mMinDate;
-    }
-
-    public long getMaxDate() {
-        return this.mMaxDate;
-    }
-
-    public void onSaveInstanceState(Bundle bundle, String key) {
-        bundle.putLong(key, getDate());
-    }
-
-    public void onRestoreInstanceState(Bundle bundle, String key) {
-        setDate(bundle.getLong(key, getDate()));
     }
 }

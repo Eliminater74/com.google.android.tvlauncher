@@ -2,10 +2,11 @@ package com.google.android.libraries.performance.primes.tracing;
 
 import android.os.Looper;
 import android.support.annotation.VisibleForTesting;
+
 import com.google.android.libraries.performance.primes.PrimesLog;
 import com.google.android.libraries.performance.primes.PrimesToken;
-import com.google.android.libraries.performance.primes.tracing.SpanEvent;
 import com.google.android.libraries.stitch.util.Preconditions;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -17,11 +18,15 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public final class TraceData {
-    private static final String TAG = "TraceData";
     @VisibleForTesting
     public static final String THREAD_PREFIX = "Thread: ";
     @VisibleForTesting
     public static final String UI_THREAD = "UI Thread";
+    private static final String TAG = "TraceData";
+    /* access modifiers changed from: private */
+    public final AtomicInteger numOfSpans = new AtomicInteger(0);
+    /* access modifiers changed from: private */
+    public final Map<SpanEvent, ThreadData> parentSpanToThreadData = new ConcurrentHashMap();
     private final ThreadLocal<WeakReference<ThreadData>> activeNode = new ThreadLocal<WeakReference<ThreadData>>() {
         /* access modifiers changed from: protected */
         public WeakReference<ThreadData> initialValue() {
@@ -41,28 +46,15 @@ public final class TraceData {
             return new WeakReference<>(threadData);
         }
     };
-    /* access modifiers changed from: private */
-    public final AtomicInteger numOfSpans = new AtomicInteger(0);
-    /* access modifiers changed from: private */
-    public final Map<SpanEvent, ThreadData> parentSpanToThreadData = new ConcurrentHashMap();
     private final SpanEvent rootSpan;
     private final List<SpanEvent> timerSpans = new ArrayList();
 
-    private static final class ThreadData {
-        /* access modifiers changed from: private */
-        public final ArrayDeque<SpanEvent> stack = new ArrayDeque<>();
-        private final long threadId;
-        private final SpanEvent threadSpan;
-
-        ThreadData(long threadId2, SpanEvent threadSpan2) {
-            this.threadId = threadId2;
-            this.threadSpan = threadSpan2;
-            PrimesLog.m46d(TraceData.TAG, "Instantiate thread-data, thread:%d name:%s", Long.valueOf(this.threadId), this.threadSpan.spanName);
-        }
-    }
-
     TraceData(String rootSpanName) {
         this.rootSpan = SpanEvent.newSpan(rootSpanName, SpanEvent.EventNameType.CONSTANT, Thread.currentThread().getId(), SpanEvent.SpanType.ROOT_SPAN);
+    }
+
+    static final /* synthetic */ int lambda$linkTraceAndGetRootSpan$0$TraceData(SpanEvent span1, SpanEvent span2) {
+        return (int) (span1.startMs - span2.startMs);
     }
 
     private ArrayDeque<SpanEvent> activeNodeStack() {
@@ -121,10 +113,6 @@ public final class TraceData {
         return this.rootSpan;
     }
 
-    static final /* synthetic */ int lambda$linkTraceAndGetRootSpan$0$TraceData(SpanEvent span1, SpanEvent span2) {
-        return (int) (span1.startMs - span2.startMs);
-    }
-
     /* access modifiers changed from: package-private */
     public int incrementAndGetSpanCount() {
         return this.numOfSpans.incrementAndGet();
@@ -143,5 +131,18 @@ public final class TraceData {
     /* access modifiers changed from: package-private */
     public SpanEvent getRootSpan() {
         return this.rootSpan;
+    }
+
+    private static final class ThreadData {
+        /* access modifiers changed from: private */
+        public final ArrayDeque<SpanEvent> stack = new ArrayDeque<>();
+        private final long threadId;
+        private final SpanEvent threadSpan;
+
+        ThreadData(long threadId2, SpanEvent threadSpan2) {
+            this.threadId = threadId2;
+            this.threadSpan = threadSpan2;
+            PrimesLog.m46d(TraceData.TAG, "Instantiate thread-data, thread:%d name:%s", Long.valueOf(this.threadId), this.threadSpan.spanName);
+        }
     }
 }

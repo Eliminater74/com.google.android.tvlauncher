@@ -1,14 +1,15 @@
 package com.google.android.exoplayer2;
 
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.util.Assertions;
 
 public final class PlaybackParameters {
     public static final PlaybackParameters DEFAULT = new PlaybackParameters(1.0f);
     public final float pitch;
-    private final int scaledUsPerMs;
     public final boolean skipSilence;
     public final float speed;
+    private final int scaledUsPerMs;
 
     public PlaybackParameters(float speed2) {
         this(speed2, 1.0f, false);

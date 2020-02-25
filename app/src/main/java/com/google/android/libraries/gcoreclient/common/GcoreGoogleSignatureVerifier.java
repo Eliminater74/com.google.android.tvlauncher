@@ -2,6 +2,7 @@ package com.google.android.libraries.gcoreclient.common;
 
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+
 import javax.annotation.CheckReturnValue;
 
 @CheckReturnValue

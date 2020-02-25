@@ -26,24 +26,26 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
 /* renamed from: android.support.v7.view.SupportMenuInflater */
 public class SupportMenuInflater extends MenuInflater {
-    static final Class<?>[] ACTION_PROVIDER_CONSTRUCTOR_SIGNATURE = ACTION_VIEW_CONSTRUCTOR_SIGNATURE;
     static final Class<?>[] ACTION_VIEW_CONSTRUCTOR_SIGNATURE = {Context.class};
+    static final Class<?>[] ACTION_PROVIDER_CONSTRUCTOR_SIGNATURE = ACTION_VIEW_CONSTRUCTOR_SIGNATURE;
     static final String LOG_TAG = "SupportMenuInflater";
     static final int NO_ID = 0;
     private static final String XML_GROUP = "group";
     private static final String XML_ITEM = "item";
     private static final String XML_MENU = "menu";
-    final Object[] mActionProviderConstructorArguments = this.mActionViewConstructorArguments;
     final Object[] mActionViewConstructorArguments;
+    final Object[] mActionProviderConstructorArguments = this.mActionViewConstructorArguments;
     Context mContext;
     private Object mRealOwner;
 
@@ -196,13 +198,13 @@ public class SupportMenuInflater extends MenuInflater {
         private static final int defaultItemId = 0;
         private static final int defaultItemOrder = 0;
         private static final boolean defaultItemVisible = true;
+        ActionProvider itemActionProvider;
         private int groupCategory;
         private int groupCheckable;
         private boolean groupEnabled;
         private int groupId;
         private int groupOrder;
         private boolean groupVisible;
-        ActionProvider itemActionProvider;
         private String itemActionProviderClassName;
         private String itemActionViewClassName;
         private int itemActionViewLayout;

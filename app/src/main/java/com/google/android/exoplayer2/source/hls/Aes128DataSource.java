@@ -2,17 +2,20 @@ package com.google.android.exoplayer2.source.hls;
 
 import android.net.Uri;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSourceInputStream;
 import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.TransferListener;
 import com.google.android.exoplayer2.util.Assertions;
+
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
+
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.NoSuchPaddingException;
@@ -20,11 +23,11 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 class Aes128DataSource implements DataSource {
-    @Nullable
-    private CipherInputStream cipherInputStream;
     private final byte[] encryptionIv;
     private final byte[] encryptionKey;
     private final DataSource upstream;
+    @Nullable
+    private CipherInputStream cipherInputStream;
 
     public Aes128DataSource(DataSource upstream2, byte[] encryptionKey2, byte[] encryptionIv2) {
         this.upstream = upstream2;

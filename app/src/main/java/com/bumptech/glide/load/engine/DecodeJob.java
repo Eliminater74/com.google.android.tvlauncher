@@ -4,6 +4,7 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.p001v4.util.Pools;
 import android.util.Log;
+
 import com.bumptech.glide.GlideContext;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.Registry;
@@ -15,20 +16,26 @@ import com.bumptech.glide.load.ResourceEncoder;
 import com.bumptech.glide.load.Transformation;
 import com.bumptech.glide.load.data.DataFetcher;
 import com.bumptech.glide.load.data.DataRewinder;
-import com.bumptech.glide.load.engine.DataFetcherGenerator;
-import com.bumptech.glide.load.engine.DecodePath;
 import com.bumptech.glide.load.engine.cache.DiskCache;
 import com.bumptech.glide.load.resource.bitmap.Downsampler;
 import com.bumptech.glide.util.LogTime;
 import com.bumptech.glide.util.pool.FactoryPools;
 import com.bumptech.glide.util.pool.GlideTrace;
 import com.bumptech.glide.util.pool.StateVerifier;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 class DecodeJob<R> implements DataFetcherGenerator.FetcherReadyCallback, Runnable, Comparable<DecodeJob<?>>, FactoryPools.Poolable {
     private static final String TAG = "DecodeJob";
+    private final DecodeHelper<R> decodeHelper = new DecodeHelper<>();
+    private final DeferredEncodeManager<?> deferredEncodeManager = new DeferredEncodeManager<>();
+    private final DiskCacheProvider diskCacheProvider;
+    private final Pools.Pool<DecodeJob<?>> pool;
+    private final ReleaseManager releaseManager = new ReleaseManager();
+    private final StateVerifier stateVerifier = StateVerifier.newInstance();
+    private final List<Throwable> throwables = new ArrayList();
     private Callback<R> callback;
     private Key currentAttemptingKey;
     private Object currentData;
@@ -37,9 +44,6 @@ class DecodeJob<R> implements DataFetcherGenerator.FetcherReadyCallback, Runnabl
     private volatile DataFetcherGenerator currentGenerator;
     private Key currentSourceKey;
     private Thread currentThread;
-    private final DecodeHelper<R> decodeHelper = new DecodeHelper<>();
-    private final DeferredEncodeManager<?> deferredEncodeManager = new DeferredEncodeManager<>();
-    private final DiskCacheProvider diskCacheProvider;
     private DiskCacheStrategy diskCacheStrategy;
     private GlideContext glideContext;
     private int height;
@@ -50,51 +54,20 @@ class DecodeJob<R> implements DataFetcherGenerator.FetcherReadyCallback, Runnabl
     private boolean onlyRetrieveFromCache;
     private Options options;
     private int order;
-    private final Pools.Pool<DecodeJob<?>> pool;
     private Priority priority;
-    private final ReleaseManager releaseManager = new ReleaseManager();
     private RunReason runReason;
     private Key signature;
     private Stage stage;
     private long startFetchTime;
-    private final StateVerifier stateVerifier = StateVerifier.newInstance();
-    private final List<Throwable> throwables = new ArrayList();
     private int width;
-
-    interface Callback<R> {
-        void onLoadFailed(GlideException glideException);
-
-        void onResourceReady(Resource<R> resource, DataSource dataSource);
-
-        void reschedule(DecodeJob<?> decodeJob);
-    }
-
-    interface DiskCacheProvider {
-        DiskCache getDiskCache();
-    }
-
-    private enum RunReason {
-        INITIALIZE,
-        SWITCH_TO_SOURCE_SERVICE,
-        DECODE_DATA
-    }
-
-    private enum Stage {
-        INITIALIZE,
-        RESOURCE_CACHE,
-        DATA_CACHE,
-        SOURCE,
-        ENCODE,
-        FINISHED
-    }
-
-    public /* bridge */ /* synthetic */ int compareTo(@NonNull Object obj) {
-        return compareTo((DecodeJob<?>) ((DecodeJob) obj));
-    }
 
     DecodeJob(DiskCacheProvider diskCacheProvider2, Pools.Pool<DecodeJob<?>> pool2) {
         this.diskCacheProvider = diskCacheProvider2;
         this.pool = pool2;
+    }
+
+    public /* bridge */ /* synthetic */ int compareTo(@NonNull Object obj) {
+        return compareTo((DecodeJob<?>) ((DecodeJob) obj));
     }
 
     /* access modifiers changed from: package-private */
@@ -558,6 +531,33 @@ class DecodeJob<R> implements DataFetcherGenerator.FetcherReadyCallback, Runnabl
         throw new Registry.NoResultEncoderAvailableException(transformed.get().getClass());
     }
 
+    private enum RunReason {
+        INITIALIZE,
+        SWITCH_TO_SOURCE_SERVICE,
+        DECODE_DATA
+    }
+
+    private enum Stage {
+        INITIALIZE,
+        RESOURCE_CACHE,
+        DATA_CACHE,
+        SOURCE,
+        ENCODE,
+        FINISHED
+    }
+
+    interface Callback<R> {
+        void onLoadFailed(GlideException glideException);
+
+        void onResourceReady(Resource<R> resource, DataSource dataSource);
+
+        void reschedule(DecodeJob<?> decodeJob);
+    }
+
+    interface DiskCacheProvider {
+        DiskCache getDiskCache();
+    }
+
     /* renamed from: com.bumptech.glide.load.engine.DecodeJob$1 */
     static /* synthetic */ class C07891 {
         static final /* synthetic */ int[] $SwitchMap$com$bumptech$glide$load$EncodeStrategy = new int[EncodeStrategy.values().length];
@@ -605,19 +605,6 @@ class DecodeJob<R> implements DataFetcherGenerator.FetcherReadyCallback, Runnabl
                 $SwitchMap$com$bumptech$glide$load$engine$DecodeJob$RunReason[RunReason.DECODE_DATA.ordinal()] = 3;
             } catch (NoSuchFieldError e10) {
             }
-        }
-    }
-
-    private final class DecodeCallback<Z> implements DecodePath.DecodeCallback<Z> {
-        private final DataSource dataSource;
-
-        DecodeCallback(DataSource dataSource2) {
-            this.dataSource = dataSource2;
-        }
-
-        @NonNull
-        public Resource<Z> onResourceDecoded(@NonNull Resource<Z> decoded) {
-            return DecodeJob.this.onResourceDecoded(this.dataSource, decoded);
         }
     }
 
@@ -704,6 +691,19 @@ class DecodeJob<R> implements DataFetcherGenerator.FetcherReadyCallback, Runnabl
             this.key = null;
             this.encoder = null;
             this.toEncode = null;
+        }
+    }
+
+    private final class DecodeCallback<Z> implements DecodePath.DecodeCallback<Z> {
+        private final DataSource dataSource;
+
+        DecodeCallback(DataSource dataSource2) {
+            this.dataSource = dataSource2;
+        }
+
+        @NonNull
+        public Resource<Z> onResourceDecoded(@NonNull Resource<Z> decoded) {
+            return DecodeJob.this.onResourceDecoded(this.dataSource, decoded);
         }
     }
 }

@@ -1,19 +1,19 @@
 package com.google.common.collect;
 
 import com.google.common.annotations.GwtCompatible;
-import com.google.common.collect.Table;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
 @GwtCompatible
 public abstract class ForwardingTable<R, C, V> extends ForwardingObject implements Table<R, C, V> {
-    /* access modifiers changed from: protected */
-    public abstract Table<R, C, V> delegate();
-
     protected ForwardingTable() {
     }
+
+    /* access modifiers changed from: protected */
+    public abstract Table<R, C, V> delegate();
 
     public Set<Table.Cell<R, C, V>> cellSet() {
         return delegate().cellSet();

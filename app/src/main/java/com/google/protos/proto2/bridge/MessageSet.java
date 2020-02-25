@@ -8,6 +8,7 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Parser;
 import com.google.protobuf.ProtoMessage;
 import com.google.protobuf.ProtoSyntax;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -17,6 +18,11 @@ public final class MessageSet extends GeneratedMessageLite.ExtendableMessage<Mes
     /* access modifiers changed from: private */
     public static final MessageSet DEFAULT_INSTANCE = new MessageSet();
     private static volatile Parser<MessageSet> PARSER;
+
+    static {
+        GeneratedMessageLite.registerDefaultInstance(MessageSet.class, DEFAULT_INSTANCE);
+    }
+
     private byte memoizedIsInitialized = 2;
 
     private MessageSet() {
@@ -78,10 +84,12 @@ public final class MessageSet extends GeneratedMessageLite.ExtendableMessage<Mes
         return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
     }
 
-    public static final class Builder extends GeneratedMessageLite.ExtendableBuilder<MessageSet, Builder> implements MessageSetOrBuilder {
-        private Builder() {
-            super(MessageSet.DEFAULT_INSTANCE);
-        }
+    public static MessageSet getDefaultInstance() {
+        return DEFAULT_INSTANCE;
+    }
+
+    public static Parser<MessageSet> parser() {
+        return DEFAULT_INSTANCE.getParserForType();
     }
 
     /* access modifiers changed from: protected */
@@ -117,15 +125,9 @@ public final class MessageSet extends GeneratedMessageLite.ExtendableMessage<Mes
         }
     }
 
-    static {
-        GeneratedMessageLite.registerDefaultInstance(MessageSet.class, DEFAULT_INSTANCE);
-    }
-
-    public static MessageSet getDefaultInstance() {
-        return DEFAULT_INSTANCE;
-    }
-
-    public static Parser<MessageSet> parser() {
-        return DEFAULT_INSTANCE.getParserForType();
+    public static final class Builder extends GeneratedMessageLite.ExtendableBuilder<MessageSet, Builder> implements MessageSetOrBuilder {
+        private Builder() {
+            super(MessageSet.DEFAULT_INSTANCE);
+        }
     }
 }

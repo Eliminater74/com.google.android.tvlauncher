@@ -8,11 +8,13 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Xml;
 import android.view.InflateException;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
 
 class PreferenceInflater {
     private static final HashMap<String, Constructor> CONSTRUCTOR_MAP = new HashMap<>();
@@ -29,17 +31,30 @@ class PreferenceInflater {
         init(preferenceManager);
     }
 
+    private static void skipCurrentTag(XmlPullParser parser) throws XmlPullParserException, IOException {
+        int outerDepth = parser.getDepth();
+        while (true) {
+            int type = parser.next();
+            if (type == 1) {
+                return;
+            }
+            if (type == 3 && parser.getDepth() <= outerDepth) {
+                return;
+            }
+        }
+    }
+
     private void init(PreferenceManager preferenceManager) {
         this.mPreferenceManager = preferenceManager;
         setDefaultPackages(new String[]{Preference.class.getPackage().getName() + ".", SwitchPreference.class.getPackage().getName() + "."});
     }
 
-    public void setDefaultPackages(String[] defaultPackage) {
-        this.mDefaultPackages = defaultPackage;
-    }
-
     public String[] getDefaultPackages() {
         return this.mDefaultPackages;
+    }
+
+    public void setDefaultPackages(String[] defaultPackage) {
+        this.mDefaultPackages = defaultPackage;
     }
 
     public Context getContext() {
@@ -267,19 +282,6 @@ class PreferenceInflater {
                     ((PreferenceGroup) parent).addItemFromInflater(item);
                     rInflate(parser, item, attrs);
                 }
-            }
-        }
-    }
-
-    private static void skipCurrentTag(XmlPullParser parser) throws XmlPullParserException, IOException {
-        int outerDepth = parser.getDepth();
-        while (true) {
-            int type = parser.next();
-            if (type == 1) {
-                return;
-            }
-            if (type == 3 && parser.getDepth() <= outerDepth) {
-                return;
             }
         }
     }

@@ -2,6 +2,7 @@ package com.bumptech.glide.disklrucache;
 
 import android.os.Build;
 import android.os.StrictMode;
+
 import java.io.BufferedWriter;
 import java.io.Closeable;
 import java.io.EOFException;
@@ -27,15 +28,20 @@ import java.util.concurrent.TimeUnit;
 
 public final class DiskLruCache implements Closeable {
     static final long ANY_SEQUENCE_NUMBER = -1;
-    private static final String CLEAN = "CLEAN";
-    private static final String DIRTY = "DIRTY";
     static final String JOURNAL_FILE = "journal";
     static final String JOURNAL_FILE_BACKUP = "journal.bkp";
     static final String JOURNAL_FILE_TEMP = "journal.tmp";
     static final String MAGIC = "libcore.io.DiskLruCache";
+    static final String VERSION_1 = "1";
+    private static final String CLEAN = "CLEAN";
+    private static final String DIRTY = "DIRTY";
     private static final String READ = "READ";
     private static final String REMOVE = "REMOVE";
-    static final String VERSION_1 = "1";
+    /* access modifiers changed from: private */
+    public final File directory;
+    /* access modifiers changed from: private */
+    public final int valueCount;
+    final ThreadPoolExecutor executorService = new ThreadPoolExecutor(0, 1, 60, TimeUnit.SECONDS, new LinkedBlockingQueue(), new DiskLruCacheThreadFactory());
     private final int appVersion;
     private final Callable<Void> cleanupCallable = new Callable<Void>() {
         /* JADX WARNING: Code restructure failed: missing block: B:11:0x0027, code lost:
@@ -75,22 +81,17 @@ public final class DiskLruCache implements Closeable {
             throw new UnsupportedOperationException("Method not decompiled: com.bumptech.glide.disklrucache.DiskLruCache.C07821.call():java.lang.Void");
         }
     };
-    /* access modifiers changed from: private */
-    public final File directory;
-    final ThreadPoolExecutor executorService = new ThreadPoolExecutor(0, 1, 60, TimeUnit.SECONDS, new LinkedBlockingQueue(), new DiskLruCacheThreadFactory());
     private final File journalFile;
     private final File journalFileBackup;
     private final File journalFileTmp;
+    private final LinkedHashMap<String, Entry> lruEntries = new LinkedHashMap<>(0, 0.75f, true);
     /* access modifiers changed from: private */
     public Writer journalWriter;
-    private final LinkedHashMap<String, Entry> lruEntries = new LinkedHashMap<>(0, 0.75f, true);
-    private long maxSize;
-    private long nextSequenceNumber = 0;
     /* access modifiers changed from: private */
     public int redundantOpCount;
+    private long maxSize;
+    private long nextSequenceNumber = 0;
     private long size = 0;
-    /* access modifiers changed from: private */
-    public final int valueCount;
 
     private DiskLruCache(File directory2, int appVersion2, int valueCount2, long maxSize2) {
         File file = directory2;
@@ -142,6 +143,40 @@ public final class DiskLruCache implements Closeable {
             return cache;
         } else {
             throw new IllegalArgumentException("valueCount <= 0");
+        }
+    }
+
+    private static void deleteIfExists(File file) throws IOException {
+        if (file.exists() && !file.delete()) {
+            throw new IOException();
+        }
+    }
+
+    private static void renameTo(File from, File to, boolean deleteDestination) throws IOException {
+        if (deleteDestination) {
+            deleteIfExists(to);
+        }
+        if (!from.renameTo(to)) {
+            throw new IOException();
+        }
+    }
+
+    /* access modifiers changed from: private */
+    public static String inputStreamToString(InputStream in) throws IOException {
+        return Util.readFully(new InputStreamReader(in, Util.UTF_8));
+    }
+
+    private static void flushWriter(Writer writer) throws IOException {
+        if (Build.VERSION.SDK_INT < 26) {
+            writer.flush();
+            return;
+        }
+        StrictMode.ThreadPolicy oldPolicy = StrictMode.getThreadPolicy();
+        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder(oldPolicy).permitUnbufferedIo().build());
+        try {
+            writer.flush();
+        } finally {
+            StrictMode.setThreadPolicy(oldPolicy);
         }
     }
 
@@ -300,21 +335,6 @@ public final class DiskLruCache implements Closeable {
         } catch (Throwable th) {
             writer.close();
             throw th;
-        }
-    }
-
-    private static void deleteIfExists(File file) throws IOException {
-        if (file.exists() && !file.delete()) {
-            throw new IOException();
-        }
-    }
-
-    private static void renameTo(File from, File to, boolean deleteDestination) throws IOException {
-        if (deleteDestination) {
-            deleteIfExists(to);
-        }
-        if (!from.renameTo(to)) {
-            throw new IOException();
         }
     }
 
@@ -716,22 +736,15 @@ public final class DiskLruCache implements Closeable {
         Util.deleteContents(this.directory);
     }
 
-    /* access modifiers changed from: private */
-    public static String inputStreamToString(InputStream in) throws IOException {
-        return Util.readFully(new InputStreamReader(in, Util.UTF_8));
-    }
-
-    private static void flushWriter(Writer writer) throws IOException {
-        if (Build.VERSION.SDK_INT < 26) {
-            writer.flush();
-            return;
+    private static final class DiskLruCacheThreadFactory implements ThreadFactory {
+        private DiskLruCacheThreadFactory() {
         }
-        StrictMode.ThreadPolicy oldPolicy = StrictMode.getThreadPolicy();
-        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder(oldPolicy).permitUnbufferedIo().build());
-        try {
-            writer.flush();
-        } finally {
-            StrictMode.setThreadPolicy(oldPolicy);
+
+        public synchronized Thread newThread(Runnable runnable) {
+            Thread result;
+            result = new Thread(runnable, "glide-disk-lru-cache-thread");
+            result.setPriority(1);
+            return result;
         }
     }
 
@@ -766,11 +779,11 @@ public final class DiskLruCache implements Closeable {
     }
 
     public final class Editor {
-        private boolean committed;
         /* access modifiers changed from: private */
         public final Entry entry;
         /* access modifiers changed from: private */
         public final boolean[] written;
+        private boolean committed;
 
         private Editor(Entry entry2) {
             this.entry = entry2;
@@ -850,18 +863,18 @@ public final class DiskLruCache implements Closeable {
     }
 
     private final class Entry {
-        File[] cleanFiles;
-        /* access modifiers changed from: private */
-        public Editor currentEditor;
-        File[] dirtyFiles;
         /* access modifiers changed from: private */
         public final String key;
         /* access modifiers changed from: private */
         public final long[] lengths;
         /* access modifiers changed from: private */
+        public Editor currentEditor;
+        /* access modifiers changed from: private */
         public boolean readable;
         /* access modifiers changed from: private */
         public long sequenceNumber;
+        File[] cleanFiles;
+        File[] dirtyFiles;
 
         private Entry(String key2) {
             this.key = key2;
@@ -916,18 +929,6 @@ public final class DiskLruCache implements Closeable {
 
         public File getDirtyFile(int i) {
             return this.dirtyFiles[i];
-        }
-    }
-
-    private static final class DiskLruCacheThreadFactory implements ThreadFactory {
-        private DiskLruCacheThreadFactory() {
-        }
-
-        public synchronized Thread newThread(Runnable runnable) {
-            Thread result;
-            result = new Thread(runnable, "glide-disk-lru-cache-thread");
-            result.setPriority(1);
-            return result;
         }
     }
 }

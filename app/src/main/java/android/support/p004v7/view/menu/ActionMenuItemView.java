@@ -8,8 +8,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Parcelable;
 import android.support.annotation.RestrictTo;
 import android.support.p004v7.appcompat.C0233R;
-import android.support.p004v7.view.menu.MenuBuilder;
-import android.support.p004v7.view.menu.MenuView;
 import android.support.p004v7.widget.ActionMenuView;
 import android.support.p004v7.widget.AppCompatTextView;
 import android.support.p004v7.widget.ForwardingListener;
@@ -24,22 +22,17 @@ import android.view.View;
 public class ActionMenuItemView extends AppCompatTextView implements MenuView.ItemView, View.OnClickListener, ActionMenuView.ActionMenuChildView {
     private static final int MAX_ICON_SIZE = 32;
     private static final String TAG = "ActionMenuItemView";
+    MenuItemImpl mItemData;
+    MenuBuilder.ItemInvoker mItemInvoker;
+    PopupCallback mPopupCallback;
     private boolean mAllowTextWithIcon;
     private boolean mExpandedFormat;
     private ForwardingListener mForwardingListener;
     private Drawable mIcon;
-    MenuItemImpl mItemData;
-    MenuBuilder.ItemInvoker mItemInvoker;
     private int mMaxIconSize;
     private int mMinWidth;
-    PopupCallback mPopupCallback;
     private int mSavedPaddingLeft;
     private CharSequence mTitle;
-
-    /* renamed from: android.support.v7.view.menu.ActionMenuItemView$PopupCallback */
-    public static abstract class PopupCallback {
-        public abstract ShowableListMenu getPopup();
-    }
 
     public ActionMenuItemView(Context context) {
         this(context, null);
@@ -231,6 +224,15 @@ public class ActionMenuItemView extends AppCompatTextView implements MenuView.It
         }
     }
 
+    public void onRestoreInstanceState(Parcelable state) {
+        super.onRestoreInstanceState(null);
+    }
+
+    /* renamed from: android.support.v7.view.menu.ActionMenuItemView$PopupCallback */
+    public static abstract class PopupCallback {
+        public abstract ShowableListMenu getPopup();
+    }
+
     /* renamed from: android.support.v7.view.menu.ActionMenuItemView$ActionMenuItemForwardingListener */
     private class ActionMenuItemForwardingListener extends ForwardingListener {
         public ActionMenuItemForwardingListener() {
@@ -252,9 +254,5 @@ public class ActionMenuItemView extends AppCompatTextView implements MenuView.It
             }
             return true;
         }
-    }
-
-    public void onRestoreInstanceState(Parcelable state) {
-        super.onRestoreInstanceState(null);
     }
 }

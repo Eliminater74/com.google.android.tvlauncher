@@ -23,6 +23,7 @@ import android.view.ViewOutlineProvider;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.google.android.tvlauncher.BackHomeControllerListeners;
 import com.google.android.tvlauncher.C1188R;
 import com.google.android.tvlauncher.TvlauncherLogEnum;
@@ -48,6 +49,7 @@ import com.google.android.tvlauncher.util.LaunchUtil;
 import com.google.android.tvlauncher.util.ScaleFocusHandler;
 import com.google.android.tvlauncher.util.Util;
 import com.google.logs.tvlauncher.config.TvLauncherConstants;
+
 import java.util.List;
 
 class FavoriteLaunchItemsAdapter extends RecyclerView.Adapter<BaseViewHolder> implements EventLogger {
@@ -58,8 +60,6 @@ class FavoriteLaunchItemsAdapter extends RecyclerView.Adapter<BaseViewHolder> im
     private static final String TAG = "FavLaunchItemsAdapter";
     private static final int TYPE_APP = 0;
     private static final int TYPE_MORE = 1;
-    /* access modifiers changed from: private */
-    public int mAppState = 0;
     /* access modifiers changed from: private */
     public final float mBannerFocusedElevation;
     /* access modifiers changed from: private */
@@ -79,10 +79,20 @@ class FavoriteLaunchItemsAdapter extends RecyclerView.Adapter<BaseViewHolder> im
     /* access modifiers changed from: private */
     public final int mDefaultTopMargin;
     /* access modifiers changed from: private */
-    public FavoriteLaunchItemsRowEditModeActionCallbacks mEditModeCallbacks;
+    public final ScaleFocusHandler mFocusHandlerTemplate;
+    /* access modifiers changed from: private */
+    public final Drawable mPlaceholderBanner;
+    /* access modifiers changed from: private */
+    public final int mZoomedOutBottomMargin;
+    /* access modifiers changed from: private */
+    public final int mZoomedOutHorizontalMargin;
+    /* access modifiers changed from: private */
+    public final int mZoomedOutTopMargin;
     private final EventLogger mEventLogger;
     /* access modifiers changed from: private */
-    public final ScaleFocusHandler mFocusHandlerTemplate;
+    public int mAppState = 0;
+    /* access modifiers changed from: private */
+    public FavoriteLaunchItemsRowEditModeActionCallbacks mEditModeCallbacks;
     /* access modifiers changed from: private */
     public Handler mHandler = new Handler();
     /* access modifiers changed from: private */
@@ -91,22 +101,10 @@ class FavoriteLaunchItemsAdapter extends RecyclerView.Adapter<BaseViewHolder> im
     public int mLastUnfocusedAdapterPosition = -1;
     /* access modifiers changed from: private */
     public RecyclerViewStateProvider mListStateProvider;
-    private BackHomeControllerListeners.OnBackNotHandledListener mOnBackNotHandledListener;
-    private BackHomeControllerListeners.OnHomeNotHandledListener mOnHomeNotHandledListener;
-    /* access modifiers changed from: private */
-    public final Drawable mPlaceholderBanner;
     /* access modifiers changed from: private */
     public RecyclerView mRecyclerView;
-    /* access modifiers changed from: private */
-    public final int mZoomedOutBottomMargin;
-    /* access modifiers changed from: private */
-    public final int mZoomedOutHorizontalMargin;
-    /* access modifiers changed from: private */
-    public final int mZoomedOutTopMargin;
-
-    public /* bridge */ /* synthetic */ void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i, @NonNull List list) {
-        onBindViewHolder((BaseViewHolder) viewHolder, i, (List<Object>) list);
-    }
+    private BackHomeControllerListeners.OnBackNotHandledListener mOnBackNotHandledListener;
+    private BackHomeControllerListeners.OnHomeNotHandledListener mOnHomeNotHandledListener;
 
     FavoriteLaunchItemsAdapter(Context context, EventLogger eventLogger) {
         this.mDataManager = LaunchItemsManagerProvider.getInstance(context);
@@ -145,6 +143,10 @@ class FavoriteLaunchItemsAdapter extends RecyclerView.Adapter<BaseViewHolder> im
         if (!this.mDataManager.areItemsLoaded() || this.mDataManager.hasPendingLoadRequest()) {
             this.mDataManager.refreshLaunchItems();
         }
+    }
+
+    public /* bridge */ /* synthetic */ void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i, @NonNull List list) {
+        onBindViewHolder((BaseViewHolder) viewHolder, i, (List<Object>) list);
     }
 
     /* access modifiers changed from: package-private */
@@ -274,13 +276,13 @@ class FavoriteLaunchItemsAdapter extends RecyclerView.Adapter<BaseViewHolder> im
         private static final int MENU_FAVORITE = 2;
         private static final int MENU_MOVE = 1;
         private static final int MENU_PRIMARY_ACTION = 0;
-        private AccessibilityContextMenu mAccessibilityContextMenu;
+        /* access modifiers changed from: private */
+        public final BannerView mBanner;
         /* access modifiers changed from: private */
         public int mAdapterPositionAfterMovement;
         /* access modifiers changed from: private */
         public int mAdapterPositionBeforeMovement;
-        /* access modifiers changed from: private */
-        public final BannerView mBanner;
+        private AccessibilityContextMenu mAccessibilityContextMenu;
         private ContextMenu mContextMenu;
         private LaunchItem mItem;
         private Runnable mNotifyPivotChangedRunnable = new Runnable() {
@@ -701,19 +703,9 @@ class FavoriteLaunchItemsAdapter extends RecyclerView.Adapter<BaseViewHolder> im
         final Context mContext;
         ScaleFocusHandler mFocusHandler;
         ImageView mImageView;
-        private Runnable mNotifyFocusChangedRunnable = new FavoriteLaunchItemsAdapter$BaseViewHolder$$Lambda$0(this);
         int mPivotVerticalShift;
         TextView mTitleView;
-
-        /* access modifiers changed from: package-private */
-        public final /* synthetic */ void lambda$new$0$FavoriteLaunchItemsAdapter$BaseViewHolder() {
-            FavoriteLaunchItemsAdapter.this.notifyItemChanged(getAdapterPosition(), "PAYLOAD_FOCUS_CHANGED");
-            if (FavoriteLaunchItemsAdapter.this.mLastUnfocusedAdapterPosition != -1) {
-                FavoriteLaunchItemsAdapter favoriteLaunchItemsAdapter = FavoriteLaunchItemsAdapter.this;
-                favoriteLaunchItemsAdapter.notifyItemChanged(favoriteLaunchItemsAdapter.mLastUnfocusedAdapterPosition, "PAYLOAD_FOCUS_CHANGED");
-                int unused = FavoriteLaunchItemsAdapter.this.mLastUnfocusedAdapterPosition = -1;
-            }
-        }
+        private Runnable mNotifyFocusChangedRunnable = new FavoriteLaunchItemsAdapter$BaseViewHolder$$Lambda$0(this);
 
         BaseViewHolder(View v) {
             super(v);
@@ -730,6 +722,16 @@ class FavoriteLaunchItemsAdapter extends RecyclerView.Adapter<BaseViewHolder> im
                 return;
             }
             v.setOnFocusChangeListener(onFocusChangeListener);
+        }
+
+        /* access modifiers changed from: package-private */
+        public final /* synthetic */ void lambda$new$0$FavoriteLaunchItemsAdapter$BaseViewHolder() {
+            FavoriteLaunchItemsAdapter.this.notifyItemChanged(getAdapterPosition(), "PAYLOAD_FOCUS_CHANGED");
+            if (FavoriteLaunchItemsAdapter.this.mLastUnfocusedAdapterPosition != -1) {
+                FavoriteLaunchItemsAdapter favoriteLaunchItemsAdapter = FavoriteLaunchItemsAdapter.this;
+                favoriteLaunchItemsAdapter.notifyItemChanged(favoriteLaunchItemsAdapter.mLastUnfocusedAdapterPosition, "PAYLOAD_FOCUS_CHANGED");
+                int unused = FavoriteLaunchItemsAdapter.this.mLastUnfocusedAdapterPosition = -1;
+            }
         }
 
         /* access modifiers changed from: package-private */

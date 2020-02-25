@@ -4,9 +4,12 @@ import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableCollection;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.j2objc.annotations.RetainedWith;
+
+import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -19,36 +22,38 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible
 public final class HashBiMap<K, V> extends AbstractMap<K, V> implements BiMap<K, V>, Serializable {
     private static final int ABSENT = -1;
     private static final int ENDPOINT = -2;
-    private transient Set<Map.Entry<K, V>> entrySet;
     /* access modifiers changed from: private */
     @NullableDecl
     public transient int firstInInsertionOrder;
-    private transient int[] hashTableKToV;
-    private transient int[] hashTableVToK;
     /* access modifiers changed from: private */
     @RetainedWith
     @MonotonicNonNullDecl
     public transient BiMap<V, K> inverse;
-    private transient Set<K> keySet;
-    transient K[] keys;
-    @NullableDecl
-    private transient int lastInInsertionOrder;
-    transient int modCount;
-    private transient int[] nextInBucketKToV;
-    private transient int[] nextInBucketVToK;
     /* access modifiers changed from: private */
     public transient int[] nextInInsertionOrder;
-    private transient int[] prevInInsertionOrder;
+    transient K[] keys;
+    transient int modCount;
     transient int size;
-    private transient Set<V> valueSet;
     transient V[] values;
+    private transient Set<Map.Entry<K, V>> entrySet;
+    private transient int[] hashTableKToV;
+    private transient int[] hashTableVToK;
+    private transient Set<K> keySet;
+    @NullableDecl
+    private transient int lastInInsertionOrder;
+    private transient int[] nextInBucketKToV;
+    private transient int[] nextInBucketVToK;
+    private transient int[] prevInInsertionOrder;
+    private transient Set<V> valueSet;
+
+    private HashBiMap(int expectedSize) {
+        init(expectedSize);
+    }
 
     public static <K, V> HashBiMap<K, V> create() {
         return create(16);
@@ -64,8 +69,17 @@ public final class HashBiMap<K, V> extends AbstractMap<K, V> implements BiMap<K,
         return bimap;
     }
 
-    private HashBiMap(int expectedSize) {
-        init(expectedSize);
+    private static int[] createFilledWithAbsent(int size2) {
+        int[] array = new int[size2];
+        Arrays.fill(array, -1);
+        return array;
+    }
+
+    private static int[] expandAndFillWithAbsent(int[] array, int newSize) {
+        int oldSize = array.length;
+        int[] result = Arrays.copyOf(array, newSize);
+        Arrays.fill(result, oldSize, newSize, -1);
+        return result;
     }
 
     /* access modifiers changed from: package-private */
@@ -83,19 +97,6 @@ public final class HashBiMap<K, V> extends AbstractMap<K, V> implements BiMap<K,
         this.lastInInsertionOrder = -2;
         this.prevInInsertionOrder = createFilledWithAbsent(expectedSize);
         this.nextInInsertionOrder = createFilledWithAbsent(expectedSize);
-    }
-
-    private static int[] createFilledWithAbsent(int size2) {
-        int[] array = new int[size2];
-        Arrays.fill(array, -1);
-        return array;
-    }
-
-    private static int[] expandAndFillWithAbsent(int[] array, int newSize) {
-        int oldSize = array.length;
-        int[] result = Arrays.copyOf(array, newSize);
-        Arrays.fill(result, oldSize, newSize, -1);
-        return result;
     }
 
     public int size() {
@@ -548,15 +549,69 @@ public final class HashBiMap<K, V> extends AbstractMap<K, V> implements BiMap<K,
         this.modCount++;
     }
 
+    public Set<K> keySet() {
+        Set<K> result = this.keySet;
+        if (result != null) {
+            return result;
+        }
+        KeySet keySet2 = new KeySet();
+        this.keySet = keySet2;
+        return keySet2;
+    }
+
+    public Set<V> values() {
+        Set<V> result = this.valueSet;
+        if (result != null) {
+            return result;
+        }
+        ValueSet valueSet2 = new ValueSet();
+        this.valueSet = valueSet2;
+        return valueSet2;
+    }
+
+    public Set<Map.Entry<K, V>> entrySet() {
+        Set<Map.Entry<K, V>> result = this.entrySet;
+        if (result != null) {
+            return result;
+        }
+        EntrySet entrySet2 = new EntrySet();
+        this.entrySet = entrySet2;
+        return entrySet2;
+    }
+
+    public BiMap<V, K> inverse() {
+        BiMap<V, K> result = this.inverse;
+        if (result != null) {
+            return result;
+        }
+        Inverse inverse2 = new Inverse(this);
+        this.inverse = inverse2;
+        return inverse2;
+    }
+
+    @GwtIncompatible
+    private void writeObject(ObjectOutputStream stream) throws IOException {
+        stream.defaultWriteObject();
+        Serialization.writeMap(this, stream);
+    }
+
+    @GwtIncompatible
+    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        stream.defaultReadObject();
+        int size2 = Serialization.readCount(stream);
+        init(16);
+        Serialization.populateMap(this, stream, size2);
+    }
+
     static abstract class View<K, V, T> extends AbstractSet<T> {
         final HashBiMap<K, V> biMap;
-
-        /* access modifiers changed from: package-private */
-        public abstract T forEntry(int i);
 
         View(HashBiMap<K, V> biMap2) {
             this.biMap = biMap2;
         }
+
+        /* access modifiers changed from: package-private */
+        public abstract T forEntry(int i);
 
         public Iterator<T> iterator() {
             return new Iterator<T>() {
@@ -607,183 +662,6 @@ public final class HashBiMap<K, V> extends AbstractMap<K, V> implements BiMap<K,
         public void clear() {
             this.biMap.clear();
         }
-    }
-
-    public Set<K> keySet() {
-        Set<K> result = this.keySet;
-        if (result != null) {
-            return result;
-        }
-        KeySet keySet2 = new KeySet();
-        this.keySet = keySet2;
-        return keySet2;
-    }
-
-    final class KeySet extends View<K, V, K> {
-        KeySet() {
-            super(HashBiMap.this);
-        }
-
-        /* access modifiers changed from: package-private */
-        public K forEntry(int entry) {
-            return HashBiMap.this.keys[entry];
-        }
-
-        public boolean contains(@NullableDecl Object o) {
-            return HashBiMap.this.containsKey(o);
-        }
-
-        public boolean remove(@NullableDecl Object o) {
-            int oHash = Hashing.smearedHash(o);
-            int entry = HashBiMap.this.findEntryByKey(o, oHash);
-            if (entry == -1) {
-                return false;
-            }
-            HashBiMap.this.removeEntryKeyHashKnown(entry, oHash);
-            return true;
-        }
-    }
-
-    public Set<V> values() {
-        Set<V> result = this.valueSet;
-        if (result != null) {
-            return result;
-        }
-        ValueSet valueSet2 = new ValueSet();
-        this.valueSet = valueSet2;
-        return valueSet2;
-    }
-
-    final class ValueSet extends View<K, V, V> {
-        ValueSet() {
-            super(HashBiMap.this);
-        }
-
-        /* access modifiers changed from: package-private */
-        public V forEntry(int entry) {
-            return HashBiMap.this.values[entry];
-        }
-
-        public boolean contains(@NullableDecl Object o) {
-            return HashBiMap.this.containsValue(o);
-        }
-
-        public boolean remove(@NullableDecl Object o) {
-            int oHash = Hashing.smearedHash(o);
-            int entry = HashBiMap.this.findEntryByValue(o, oHash);
-            if (entry == -1) {
-                return false;
-            }
-            HashBiMap.this.removeEntryValueHashKnown(entry, oHash);
-            return true;
-        }
-    }
-
-    public Set<Map.Entry<K, V>> entrySet() {
-        Set<Map.Entry<K, V>> result = this.entrySet;
-        if (result != null) {
-            return result;
-        }
-        EntrySet entrySet2 = new EntrySet();
-        this.entrySet = entrySet2;
-        return entrySet2;
-    }
-
-    final class EntrySet extends View<K, V, Map.Entry<K, V>> {
-        EntrySet() {
-            super(HashBiMap.this);
-        }
-
-        public boolean contains(@NullableDecl Object o) {
-            if (!(o instanceof Map.Entry)) {
-                return false;
-            }
-            Map.Entry<?, ?> e = (Map.Entry) o;
-            Object k = e.getKey();
-            Object v = e.getValue();
-            int eIndex = HashBiMap.this.findEntryByKey(k);
-            if (eIndex == -1 || !Objects.equal(v, HashBiMap.this.values[eIndex])) {
-                return false;
-            }
-            return true;
-        }
-
-        @CanIgnoreReturnValue
-        public boolean remove(@NullableDecl Object o) {
-            if (!(o instanceof Map.Entry)) {
-                return false;
-            }
-            Map.Entry<?, ?> e = (Map.Entry) o;
-            Object k = e.getKey();
-            Object v = e.getValue();
-            int kHash = Hashing.smearedHash(k);
-            int eIndex = HashBiMap.this.findEntryByKey(k, kHash);
-            if (eIndex == -1 || !Objects.equal(v, HashBiMap.this.values[eIndex])) {
-                return false;
-            }
-            HashBiMap.this.removeEntryKeyHashKnown(eIndex, kHash);
-            return true;
-        }
-
-        /* access modifiers changed from: package-private */
-        public Map.Entry<K, V> forEntry(int entry) {
-            return new EntryForKey(entry);
-        }
-    }
-
-    final class EntryForKey extends AbstractMapEntry<K, V> {
-        int index;
-        @NullableDecl
-        final K key;
-
-        EntryForKey(int index2) {
-            this.key = HashBiMap.this.keys[index2];
-            this.index = index2;
-        }
-
-        /* access modifiers changed from: package-private */
-        public void updateIndex() {
-            int i = this.index;
-            if (i == -1 || i > HashBiMap.this.size || !Objects.equal(HashBiMap.this.keys[this.index], this.key)) {
-                this.index = HashBiMap.this.findEntryByKey(this.key);
-            }
-        }
-
-        public K getKey() {
-            return this.key;
-        }
-
-        @NullableDecl
-        public V getValue() {
-            updateIndex();
-            if (this.index == -1) {
-                return null;
-            }
-            return HashBiMap.this.values[this.index];
-        }
-
-        public V setValue(V value) {
-            updateIndex();
-            if (this.index == -1) {
-                return HashBiMap.this.put(this.key, value);
-            }
-            V oldValue = HashBiMap.this.values[this.index];
-            if (Objects.equal(oldValue, value)) {
-                return value;
-            }
-            HashBiMap.this.replaceValueInEntry(this.index, value, false);
-            return oldValue;
-        }
-    }
-
-    public BiMap<V, K> inverse() {
-        BiMap<V, K> result = this.inverse;
-        if (result != null) {
-            return result;
-        }
-        Inverse inverse2 = new Inverse(this);
-        this.inverse = inverse2;
-        return inverse2;
     }
 
     static class Inverse<K, V> extends AbstractMap<V, K> implements BiMap<V, K>, Serializable {
@@ -905,8 +783,8 @@ public final class HashBiMap<K, V> extends AbstractMap<K, V> implements BiMap<K,
 
     static final class EntryForValue<K, V> extends AbstractMapEntry<V, K> {
         final HashBiMap<K, V> biMap;
-        int index;
         final V value;
+        int index;
 
         EntryForValue(HashBiMap<K, V> biMap2, int index2) {
             this.biMap = biMap2;
@@ -947,17 +825,140 @@ public final class HashBiMap<K, V> extends AbstractMap<K, V> implements BiMap<K,
         }
     }
 
-    @GwtIncompatible
-    private void writeObject(ObjectOutputStream stream) throws IOException {
-        stream.defaultWriteObject();
-        Serialization.writeMap(this, stream);
+    final class KeySet extends View<K, V, K> {
+        KeySet() {
+            super(HashBiMap.this);
+        }
+
+        /* access modifiers changed from: package-private */
+        public K forEntry(int entry) {
+            return HashBiMap.this.keys[entry];
+        }
+
+        public boolean contains(@NullableDecl Object o) {
+            return HashBiMap.this.containsKey(o);
+        }
+
+        public boolean remove(@NullableDecl Object o) {
+            int oHash = Hashing.smearedHash(o);
+            int entry = HashBiMap.this.findEntryByKey(o, oHash);
+            if (entry == -1) {
+                return false;
+            }
+            HashBiMap.this.removeEntryKeyHashKnown(entry, oHash);
+            return true;
+        }
     }
 
-    @GwtIncompatible
-    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
-        stream.defaultReadObject();
-        int size2 = Serialization.readCount(stream);
-        init(16);
-        Serialization.populateMap(this, stream, size2);
+    final class ValueSet extends View<K, V, V> {
+        ValueSet() {
+            super(HashBiMap.this);
+        }
+
+        /* access modifiers changed from: package-private */
+        public V forEntry(int entry) {
+            return HashBiMap.this.values[entry];
+        }
+
+        public boolean contains(@NullableDecl Object o) {
+            return HashBiMap.this.containsValue(o);
+        }
+
+        public boolean remove(@NullableDecl Object o) {
+            int oHash = Hashing.smearedHash(o);
+            int entry = HashBiMap.this.findEntryByValue(o, oHash);
+            if (entry == -1) {
+                return false;
+            }
+            HashBiMap.this.removeEntryValueHashKnown(entry, oHash);
+            return true;
+        }
+    }
+
+    final class EntrySet extends View<K, V, Map.Entry<K, V>> {
+        EntrySet() {
+            super(HashBiMap.this);
+        }
+
+        public boolean contains(@NullableDecl Object o) {
+            if (!(o instanceof Map.Entry)) {
+                return false;
+            }
+            Map.Entry<?, ?> e = (Map.Entry) o;
+            Object k = e.getKey();
+            Object v = e.getValue();
+            int eIndex = HashBiMap.this.findEntryByKey(k);
+            if (eIndex == -1 || !Objects.equal(v, HashBiMap.this.values[eIndex])) {
+                return false;
+            }
+            return true;
+        }
+
+        @CanIgnoreReturnValue
+        public boolean remove(@NullableDecl Object o) {
+            if (!(o instanceof Map.Entry)) {
+                return false;
+            }
+            Map.Entry<?, ?> e = (Map.Entry) o;
+            Object k = e.getKey();
+            Object v = e.getValue();
+            int kHash = Hashing.smearedHash(k);
+            int eIndex = HashBiMap.this.findEntryByKey(k, kHash);
+            if (eIndex == -1 || !Objects.equal(v, HashBiMap.this.values[eIndex])) {
+                return false;
+            }
+            HashBiMap.this.removeEntryKeyHashKnown(eIndex, kHash);
+            return true;
+        }
+
+        /* access modifiers changed from: package-private */
+        public Map.Entry<K, V> forEntry(int entry) {
+            return new EntryForKey(entry);
+        }
+    }
+
+    final class EntryForKey extends AbstractMapEntry<K, V> {
+        @NullableDecl
+        final K key;
+        int index;
+
+        EntryForKey(int index2) {
+            this.key = HashBiMap.this.keys[index2];
+            this.index = index2;
+        }
+
+        /* access modifiers changed from: package-private */
+        public void updateIndex() {
+            int i = this.index;
+            if (i == -1 || i > HashBiMap.this.size || !Objects.equal(HashBiMap.this.keys[this.index], this.key)) {
+                this.index = HashBiMap.this.findEntryByKey(this.key);
+            }
+        }
+
+        public K getKey() {
+            return this.key;
+        }
+
+        @NullableDecl
+        public V getValue() {
+            updateIndex();
+            if (this.index == -1) {
+                return null;
+            }
+            return HashBiMap.this.values[this.index];
+        }
+
+        public V setValue(V value) {
+            updateIndex();
+            if (this.index == -1) {
+                return HashBiMap.this.put(this.key, value);
+            }
+            V oldValue = HashBiMap.this.values[this.index];
+            if (Objects.equal(oldValue, value)) {
+                return value;
+            }
+            HashBiMap.this.replaceValueInEntry(this.index, value, false);
+            return oldValue;
+        }
     }
 }

@@ -6,12 +6,12 @@ public final class PrimesGlobalConfigurations {
     @Nullable
     private final ComponentNameSupplier componentNameSupplier;
 
-    public interface ComponentNameSupplier extends Supplier<NoPiiString> {
-        NoPiiString get();
-    }
-
     private PrimesGlobalConfigurations(@Nullable ComponentNameSupplier componentNameSupplier2) {
         this.componentNameSupplier = componentNameSupplier2;
+    }
+
+    public static Builder newBuilder() {
+        return new Builder();
     }
 
     /* access modifiers changed from: package-private */
@@ -20,8 +20,8 @@ public final class PrimesGlobalConfigurations {
         return this.componentNameSupplier;
     }
 
-    public static Builder newBuilder() {
-        return new Builder();
+    public interface ComponentNameSupplier extends Supplier<NoPiiString> {
+        NoPiiString get();
     }
 
     public static final class Builder {

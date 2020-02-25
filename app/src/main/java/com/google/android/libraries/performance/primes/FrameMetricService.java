@@ -9,17 +9,19 @@ import android.os.HandlerThread;
 import android.support.annotation.VisibleForTesting;
 import android.view.FrameMetrics;
 import android.view.Window;
-import com.google.android.libraries.performance.primes.AppLifecycleListener;
-import com.google.android.libraries.performance.primes.MetricRecorder;
+
 import com.google.android.libraries.performance.primes.jank.FrameTimeMeasurement;
 import com.google.android.libraries.performance.primes.jank.FrameTimeMeasurementFactory;
 import com.google.android.libraries.performance.primes.metriccapture.DisplayStats;
 import com.google.android.libraries.performance.primes.transmitter.MetricTransmitter;
 import com.google.android.libraries.stitch.util.Preconditions;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
+
 import javax.annotation.Nullable;
+
 import logs.proto.wireless.performance.mobile.ExtensionMetric;
 import logs.proto.wireless.performance.mobile.SystemHealthProto;
 
@@ -34,136 +36,6 @@ final class FrameMetricService extends AbstractMetricService implements AppLifec
     private final Map<String, FrameTimeMeasurement> measurements = new HashMap();
     private final JankMetricExtensionProvider metricExtensionProvider;
     private final boolean monitorActivities;
-
-    @VisibleForTesting
-    interface FrameMetricCallback {
-        void activityPaused(String str);
-
-        void activityResumed(String str);
-
-        void frameRendered(int i);
-    }
-
-    static FrameMetricService createService(MetricTransmitter transmitter, Application application, Supplier<MetricStamper> metricStamperSupplier, Supplier<ScheduledExecutorService> executorServiceSupplier, FrameTimeMeasurementFactory frameTimeMeasurementFactory2, PrimesJankConfigurations configuration) {
-        Preconditions.checkState(Build.VERSION.SDK_INT >= 24);
-        return new FrameMetricService(transmitter, application, metricStamperSupplier, executorServiceSupplier, configuration.isMonitorActivities(), configuration.getSampleRatePerSecond(), frameTimeMeasurementFactory2, configuration.getMetricExtensionProvider());
-    }
-
-    @VisibleForTesting
-    static class ActivityTracker implements AppLifecycleListener.OnActivityResumed, AppLifecycleListener.OnActivityPaused, Window.OnFrameMetricsAvailableListener {
-        private final FrameMetricCallback callback;
-        private Activity currentActivity;
-        @Nullable
-        private Handler handler;
-        @Nullable
-        private HandlerThread handlerThread;
-        private boolean measuring;
-        private final boolean monitorActivities;
-
-        ActivityTracker(FrameMetricCallback callback2, boolean monitorActivities2) {
-            this.callback = callback2;
-            this.monitorActivities = monitorActivities2;
-            if (monitorActivities2) {
-                this.measuring = true;
-            }
-        }
-
-        private Handler getHandler() {
-            if (this.handler == null) {
-                this.handlerThread = new HandlerThread("Primes-Jank");
-                this.handlerThread.start();
-                this.handler = new Handler(this.handlerThread.getLooper());
-            }
-            return this.handler;
-        }
-
-        private void attachToCurrentActivity() {
-            Activity activity = this.currentActivity;
-            if (activity != null) {
-                activity.getWindow().addOnFrameMetricsAvailableListener(this, getHandler());
-            }
-        }
-
-        private void detachFromCurrentActivity() {
-            Activity activity = this.currentActivity;
-            if (activity != null) {
-                try {
-                    activity.getWindow().removeOnFrameMetricsAvailableListener(this);
-                } catch (RuntimeException ex) {
-                    PrimesLog.m45d(FrameMetricService.TAG, "remove frame metrics listener failed", ex, new Object[0]);
-                }
-            }
-        }
-
-        public void onActivityResumed(Activity activity) {
-            if (this.monitorActivities) {
-                this.callback.activityResumed(generateAccountableName(activity));
-            }
-            synchronized (this) {
-                this.currentActivity = activity;
-                if (this.measuring) {
-                    attachToCurrentActivity();
-                }
-            }
-        }
-
-        public void onActivityPaused(Activity activity) {
-            synchronized (this) {
-                if (this.measuring) {
-                    detachFromCurrentActivity();
-                }
-                this.currentActivity = null;
-            }
-            if (this.monitorActivities) {
-                this.callback.activityPaused(generateAccountableName(activity));
-            }
-        }
-
-        private static String generateAccountableName(Activity activity) {
-            if (activity instanceof WithAccountableName) {
-                return NoPiiString.safeToString(((WithAccountableName) activity).getAccountableName());
-            }
-            return activity.getClass().getName();
-        }
-
-        /* access modifiers changed from: package-private */
-        public void startCollecting() {
-            synchronized (this) {
-                this.measuring = true;
-                if (this.currentActivity != null) {
-                    attachToCurrentActivity();
-                } else {
-                    PrimesLog.m46d(FrameMetricService.TAG, "No activity", new Object[0]);
-                }
-            }
-        }
-
-        /* access modifiers changed from: package-private */
-        public void stopCollecting() {
-            synchronized (this) {
-                this.measuring = false;
-                detachFromCurrentActivity();
-            }
-        }
-
-        /* access modifiers changed from: package-private */
-        public void shutdown() {
-            synchronized (this) {
-                stopCollecting();
-                if (this.handler != null) {
-                    this.handlerThread.quitSafely();
-                    this.handlerThread = null;
-                    this.handler = null;
-                }
-            }
-        }
-
-        public void onFrameMetricsAvailable(Window window, FrameMetrics frameMetrics, int dropCountSinceLastInvocation) {
-            double metric = (double) frameMetrics.getMetric(8);
-            Double.isNaN(metric);
-            this.callback.frameRendered((int) (metric / 1000000.0d));
-        }
-    }
 
     @VisibleForTesting
     FrameMetricService(MetricTransmitter transmitter, Application application, Supplier<MetricStamper> metricStamperSupplier, Supplier<ScheduledExecutorService> executorServiceSupplier, boolean monitorActivities2, int maxSampleRate, FrameTimeMeasurementFactory frameTimeMeasurementFactory2, final JankMetricExtensionProvider metricExtensionProvider2) {
@@ -187,6 +59,11 @@ final class FrameMetricService extends AbstractMetricService implements AppLifec
             }
         }, monitorActivities2);
         this.appLifecycleMonitor.register(this.activityTracker);
+    }
+
+    static FrameMetricService createService(MetricTransmitter transmitter, Application application, Supplier<MetricStamper> metricStamperSupplier, Supplier<ScheduledExecutorService> executorServiceSupplier, FrameTimeMeasurementFactory frameTimeMeasurementFactory2, PrimesJankConfigurations configuration) {
+        Preconditions.checkState(Build.VERSION.SDK_INT >= 24);
+        return new FrameMetricService(transmitter, application, metricStamperSupplier, executorServiceSupplier, configuration.isMonitorActivities(), configuration.getSampleRatePerSecond(), frameTimeMeasurementFactory2, configuration.getMetricExtensionProvider());
     }
 
     public void onPrimesInitialize() {
@@ -319,6 +196,131 @@ final class FrameMetricService extends AbstractMetricService implements AppLifec
         this.activityTracker.shutdown();
         synchronized (this.measurements) {
             this.measurements.clear();
+        }
+    }
+
+    @VisibleForTesting
+    interface FrameMetricCallback {
+        void activityPaused(String str);
+
+        void activityResumed(String str);
+
+        void frameRendered(int i);
+    }
+
+    @VisibleForTesting
+    static class ActivityTracker implements AppLifecycleListener.OnActivityResumed, AppLifecycleListener.OnActivityPaused, Window.OnFrameMetricsAvailableListener {
+        private final FrameMetricCallback callback;
+        private final boolean monitorActivities;
+        private Activity currentActivity;
+        @Nullable
+        private Handler handler;
+        @Nullable
+        private HandlerThread handlerThread;
+        private boolean measuring;
+
+        ActivityTracker(FrameMetricCallback callback2, boolean monitorActivities2) {
+            this.callback = callback2;
+            this.monitorActivities = monitorActivities2;
+            if (monitorActivities2) {
+                this.measuring = true;
+            }
+        }
+
+        private static String generateAccountableName(Activity activity) {
+            if (activity instanceof WithAccountableName) {
+                return NoPiiString.safeToString(((WithAccountableName) activity).getAccountableName());
+            }
+            return activity.getClass().getName();
+        }
+
+        private Handler getHandler() {
+            if (this.handler == null) {
+                this.handlerThread = new HandlerThread("Primes-Jank");
+                this.handlerThread.start();
+                this.handler = new Handler(this.handlerThread.getLooper());
+            }
+            return this.handler;
+        }
+
+        private void attachToCurrentActivity() {
+            Activity activity = this.currentActivity;
+            if (activity != null) {
+                activity.getWindow().addOnFrameMetricsAvailableListener(this, getHandler());
+            }
+        }
+
+        private void detachFromCurrentActivity() {
+            Activity activity = this.currentActivity;
+            if (activity != null) {
+                try {
+                    activity.getWindow().removeOnFrameMetricsAvailableListener(this);
+                } catch (RuntimeException ex) {
+                    PrimesLog.m45d(FrameMetricService.TAG, "remove frame metrics listener failed", ex, new Object[0]);
+                }
+            }
+        }
+
+        public void onActivityResumed(Activity activity) {
+            if (this.monitorActivities) {
+                this.callback.activityResumed(generateAccountableName(activity));
+            }
+            synchronized (this) {
+                this.currentActivity = activity;
+                if (this.measuring) {
+                    attachToCurrentActivity();
+                }
+            }
+        }
+
+        public void onActivityPaused(Activity activity) {
+            synchronized (this) {
+                if (this.measuring) {
+                    detachFromCurrentActivity();
+                }
+                this.currentActivity = null;
+            }
+            if (this.monitorActivities) {
+                this.callback.activityPaused(generateAccountableName(activity));
+            }
+        }
+
+        /* access modifiers changed from: package-private */
+        public void startCollecting() {
+            synchronized (this) {
+                this.measuring = true;
+                if (this.currentActivity != null) {
+                    attachToCurrentActivity();
+                } else {
+                    PrimesLog.m46d(FrameMetricService.TAG, "No activity", new Object[0]);
+                }
+            }
+        }
+
+        /* access modifiers changed from: package-private */
+        public void stopCollecting() {
+            synchronized (this) {
+                this.measuring = false;
+                detachFromCurrentActivity();
+            }
+        }
+
+        /* access modifiers changed from: package-private */
+        public void shutdown() {
+            synchronized (this) {
+                stopCollecting();
+                if (this.handler != null) {
+                    this.handlerThread.quitSafely();
+                    this.handlerThread = null;
+                    this.handler = null;
+                }
+            }
+        }
+
+        public void onFrameMetricsAvailable(Window window, FrameMetrics frameMetrics, int dropCountSinceLastInvocation) {
+            double metric = (double) frameMetrics.getMetric(8);
+            Double.isNaN(metric);
+            this.callback.frameRendered((int) (metric / 1000000.0d));
         }
     }
 }

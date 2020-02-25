@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.ViewConfiguration;
+
 import java.lang.reflect.Method;
 
 /* renamed from: android.support.v4.view.ViewConfigurationCompat */
@@ -22,6 +23,9 @@ public final class ViewConfigurationCompat {
                 Log.i(TAG, "Could not find method getScaledScrollFactor() on ViewConfiguration");
             }
         }
+    }
+
+    private ViewConfigurationCompat() {
     }
 
     @Deprecated
@@ -78,8 +82,5 @@ public final class ViewConfigurationCompat {
         Resources res = context.getResources();
         int platformResId = res.getIdentifier("config_showMenuShortcutsWhenKeyboardPresent", "bool", "android");
         return platformResId != 0 && res.getBoolean(platformResId);
-    }
-
-    private ViewConfigurationCompat() {
     }
 }

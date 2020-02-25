@@ -7,6 +7,7 @@ import android.os.IInterface;
 import android.os.Looper;
 import android.os.RemoteException;
 import android.util.Log;
+
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.common.api.internal.zzcj;
@@ -14,21 +15,22 @@ import com.google.android.gms.common.api.internal.zzo;
 import com.google.android.gms.common.internal.ClientSettings;
 import com.google.android.gms.common.internal.zzl;
 import com.google.android.gms.usagereporting.UsageReportingApi;
+
 import java.util.concurrent.atomic.AtomicReference;
 
 /* compiled from: UsageReportingClientImpl */
 public final class zzffg extends zzl<zzfez> {
     private final AtomicReference<zzffn> zzc = new AtomicReference<>();
 
+    public zzffg(Context context, Looper looper, ClientSettings clientSettings, GoogleApiClient.ConnectionCallbacks connectionCallbacks, GoogleApiClient.OnConnectionFailedListener onConnectionFailedListener) {
+        super(context, looper, 41, clientSettings, connectionCallbacks, onConnectionFailedListener);
+    }
+
     public static boolean zza(Context context) {
         if (!context.getPackageManager().queryIntentServices(new Intent("com.google.android.gms.usagereporting.service.START").setPackage("com.google.android.gms"), 0).isEmpty()) {
             return true;
         }
         return false;
-    }
-
-    public zzffg(Context context, Looper looper, ClientSettings clientSettings, GoogleApiClient.ConnectionCallbacks connectionCallbacks, GoogleApiClient.OnConnectionFailedListener onConnectionFailedListener) {
-        super(context, looper, 41, clientSettings, connectionCallbacks, onConnectionFailedListener);
     }
 
     public final void zza(zzcj<UsageReportingApi.OptInOptionsChangedListener> zzcj, zzo<Status> zzo) throws RemoteException {

@@ -13,26 +13,18 @@ import android.text.TextUtils;
 import android.util.Log;
 
 public class LaunchOnBootCompletedHelper {
-    private static final String CURRENT_SDK_INT_KEY = "current_sdk_int";
-    private static final String LAUNCH_BOOT_COUNT_KEY = "launch_boot_count";
     /* access modifiers changed from: private */
     public static final String[] PROJECTION = {"package_name"};
+    private static final String CURRENT_SDK_INT_KEY = "current_sdk_int";
+    private static final String LAUNCH_BOOT_COUNT_KEY = "launch_boot_count";
     private static final String TAG = "LaunchOnBootCompletedHelper";
-    private boolean mCheckedLaunchAfterBoot;
     private final Context mContext;
+    private boolean mCheckedLaunchAfterBoot;
     private boolean mForceLaunchOemPackage;
     private boolean mForegroundActivityWasLaunchPackage;
     private boolean mIsLoaded;
     private boolean mIsOperatorTier;
     private String mOemPackage;
-
-    public interface OnDataLoadCompleteListener {
-        void onDataLoadComplete();
-    }
-
-    private interface SetLoadedDataCallback {
-        void setLoadedData(boolean z, boolean z2, boolean z3, String str);
-    }
 
     public LaunchOnBootCompletedHelper(Context context) {
         this.mContext = context;
@@ -117,6 +109,14 @@ public class LaunchOnBootCompletedHelper {
     @VisibleForTesting
     public void setIsOperatorTier(boolean isOperator) {
         this.mIsOperatorTier = isOperator;
+    }
+
+    public interface OnDataLoadCompleteListener {
+        void onDataLoadComplete();
+    }
+
+    private interface SetLoadedDataCallback {
+        void setLoadedData(boolean z, boolean z2, boolean z3, String str);
     }
 
     private static class LoadLaunchOnBootFlagsTask extends AsyncTask<Context, Void, Void> {

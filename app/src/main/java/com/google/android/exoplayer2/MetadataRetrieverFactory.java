@@ -2,6 +2,7 @@ package com.google.android.exoplayer2;
 
 import android.content.Context;
 import android.os.Looper;
+
 import com.google.android.exoplayer2.util.Clock;
 
 public final class MetadataRetrieverFactory {

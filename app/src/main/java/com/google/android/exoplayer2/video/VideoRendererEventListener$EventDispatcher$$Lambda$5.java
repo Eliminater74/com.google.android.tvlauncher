@@ -1,7 +1,6 @@
 package com.google.android.exoplayer2.video;
 
 import android.view.Surface;
-import com.google.android.exoplayer2.video.VideoRendererEventListener;
 
 final /* synthetic */ class VideoRendererEventListener$EventDispatcher$$Lambda$5 implements Runnable {
     private final VideoRendererEventListener.EventDispatcher arg$1;

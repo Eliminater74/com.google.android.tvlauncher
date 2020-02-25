@@ -2,8 +2,10 @@ package com.google.android.exoplayer2.source.ads;
 
 import android.net.Uri;
 import android.support.annotation.CheckResult;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.util.Assertions;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -21,161 +23,6 @@ public final class AdPlaybackState {
     public final AdGroup[] adGroups;
     public final long adResumePositionUs;
     public final long contentDurationUs;
-
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface AdState {
-    }
-
-    public static final class AdGroup {
-        public final int count;
-        public final long[] durationsUs;
-        public final int[] states;
-        public final Uri[] uris;
-
-        public AdGroup() {
-            this(-1, new int[0], new Uri[0], new long[0]);
-        }
-
-        private AdGroup(int count2, int[] states2, Uri[] uris2, long[] durationsUs2) {
-            Assertions.checkArgument(states2.length == uris2.length);
-            this.count = count2;
-            this.states = states2;
-            this.uris = uris2;
-            this.durationsUs = durationsUs2;
-        }
-
-        public int getFirstAdIndexToPlay() {
-            return getNextAdIndexToPlay(-1);
-        }
-
-        public int getNextAdIndexToPlay(int lastPlayedAdIndex) {
-            int nextAdIndexToPlay = lastPlayedAdIndex + 1;
-            while (true) {
-                int[] iArr = this.states;
-                if (nextAdIndexToPlay >= iArr.length || iArr[nextAdIndexToPlay] == 0 || iArr[nextAdIndexToPlay] == 1) {
-                    return nextAdIndexToPlay;
-                }
-                nextAdIndexToPlay++;
-            }
-            return nextAdIndexToPlay;
-        }
-
-        public boolean hasUnplayedAds() {
-            return this.count == -1 || getFirstAdIndexToPlay() < this.count;
-        }
-
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
-            AdGroup adGroup = (AdGroup) o;
-            if (this.count != adGroup.count || !Arrays.equals(this.uris, adGroup.uris) || !Arrays.equals(this.states, adGroup.states) || !Arrays.equals(this.durationsUs, adGroup.durationsUs)) {
-                return false;
-            }
-            return true;
-        }
-
-        public int hashCode() {
-            return (((((this.count * 31) + Arrays.hashCode(this.uris)) * 31) + Arrays.hashCode(this.states)) * 31) + Arrays.hashCode(this.durationsUs);
-        }
-
-        @CheckResult
-        public AdGroup withAdCount(int count2) {
-            Assertions.checkArgument(this.count == -1 && this.states.length <= count2);
-            return new AdGroup(count2, copyStatesWithSpaceForAdCount(this.states, count2), (Uri[]) Arrays.copyOf(this.uris, count2), copyDurationsUsWithSpaceForAdCount(this.durationsUs, count2));
-        }
-
-        @CheckResult
-        public AdGroup withAdUri(Uri uri, int index) {
-            int i = this.count;
-            boolean z = false;
-            Assertions.checkArgument(i == -1 || index < i);
-            int[] states2 = copyStatesWithSpaceForAdCount(this.states, index + 1);
-            if (states2[index] == 0) {
-                z = true;
-            }
-            Assertions.checkArgument(z);
-            long[] durationsUs2 = this.durationsUs;
-            if (durationsUs2.length != states2.length) {
-                durationsUs2 = copyDurationsUsWithSpaceForAdCount(durationsUs2, states2.length);
-            }
-            Uri[] uris2 = (Uri[]) Arrays.copyOf(this.uris, states2.length);
-            uris2[index] = uri;
-            states2[index] = 1;
-            return new AdGroup(this.count, states2, uris2, durationsUs2);
-        }
-
-        @CheckResult
-        public AdGroup withAdState(int state, int index) {
-            int i = this.count;
-            boolean z = false;
-            Assertions.checkArgument(i == -1 || index < i);
-            int[] states2 = copyStatesWithSpaceForAdCount(this.states, index + 1);
-            if (states2[index] == 0 || states2[index] == 1 || states2[index] == state) {
-                z = true;
-            }
-            Assertions.checkArgument(z);
-            long[] durationsUs2 = this.durationsUs;
-            if (durationsUs2.length != states2.length) {
-                durationsUs2 = copyDurationsUsWithSpaceForAdCount(durationsUs2, states2.length);
-            }
-            Uri[] uris2 = this.uris;
-            if (uris2.length != states2.length) {
-                uris2 = (Uri[]) Arrays.copyOf(uris2, states2.length);
-            }
-            states2[index] = state;
-            return new AdGroup(this.count, states2, uris2, durationsUs2);
-        }
-
-        @CheckResult
-        public AdGroup withAdDurationsUs(long[] durationsUs2) {
-            Assertions.checkArgument(this.count == -1 || durationsUs2.length <= this.uris.length);
-            int length = durationsUs2.length;
-            Uri[] uriArr = this.uris;
-            if (length < uriArr.length) {
-                durationsUs2 = copyDurationsUsWithSpaceForAdCount(durationsUs2, uriArr.length);
-            }
-            return new AdGroup(this.count, this.states, this.uris, durationsUs2);
-        }
-
-        @CheckResult
-        public AdGroup withAllAdsSkipped() {
-            if (this.count == -1) {
-                return new AdGroup(0, new int[0], new Uri[0], new long[0]);
-            }
-            int[] iArr = this.states;
-            int count2 = iArr.length;
-            int[] states2 = Arrays.copyOf(iArr, count2);
-            for (int i = 0; i < count2; i++) {
-                if (states2[i] == 1 || states2[i] == 0) {
-                    states2[i] = 2;
-                }
-            }
-            return new AdGroup(count2, states2, this.uris, this.durationsUs);
-        }
-
-        @CheckResult
-        private static int[] copyStatesWithSpaceForAdCount(int[] states2, int count2) {
-            int oldStateCount = states2.length;
-            int newStateCount = Math.max(count2, oldStateCount);
-            int[] states3 = Arrays.copyOf(states2, newStateCount);
-            Arrays.fill(states3, oldStateCount, newStateCount, 0);
-            return states3;
-        }
-
-        @CheckResult
-        private static long[] copyDurationsUsWithSpaceForAdCount(long[] durationsUs2, int count2) {
-            int oldDurationsUsCount = durationsUs2.length;
-            int newDurationsUsCount = Math.max(count2, oldDurationsUsCount);
-            long[] durationsUs3 = Arrays.copyOf(durationsUs2, newDurationsUsCount);
-            Arrays.fill(durationsUs3, oldDurationsUsCount, newDurationsUsCount, (long) C0841C.TIME_UNSET);
-            return durationsUs3;
-        }
-    }
 
     public AdPlaybackState(long... adGroupTimesUs2) {
         int count = adGroupTimesUs2.length;
@@ -336,6 +183,161 @@ public final class AdPlaybackState {
             return true;
         } else {
             return false;
+        }
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface AdState {
+    }
+
+    public static final class AdGroup {
+        public final int count;
+        public final long[] durationsUs;
+        public final int[] states;
+        public final Uri[] uris;
+
+        public AdGroup() {
+            this(-1, new int[0], new Uri[0], new long[0]);
+        }
+
+        private AdGroup(int count2, int[] states2, Uri[] uris2, long[] durationsUs2) {
+            Assertions.checkArgument(states2.length == uris2.length);
+            this.count = count2;
+            this.states = states2;
+            this.uris = uris2;
+            this.durationsUs = durationsUs2;
+        }
+
+        @CheckResult
+        private static int[] copyStatesWithSpaceForAdCount(int[] states2, int count2) {
+            int oldStateCount = states2.length;
+            int newStateCount = Math.max(count2, oldStateCount);
+            int[] states3 = Arrays.copyOf(states2, newStateCount);
+            Arrays.fill(states3, oldStateCount, newStateCount, 0);
+            return states3;
+        }
+
+        @CheckResult
+        private static long[] copyDurationsUsWithSpaceForAdCount(long[] durationsUs2, int count2) {
+            int oldDurationsUsCount = durationsUs2.length;
+            int newDurationsUsCount = Math.max(count2, oldDurationsUsCount);
+            long[] durationsUs3 = Arrays.copyOf(durationsUs2, newDurationsUsCount);
+            Arrays.fill(durationsUs3, oldDurationsUsCount, newDurationsUsCount, (long) C0841C.TIME_UNSET);
+            return durationsUs3;
+        }
+
+        public int getFirstAdIndexToPlay() {
+            return getNextAdIndexToPlay(-1);
+        }
+
+        public int getNextAdIndexToPlay(int lastPlayedAdIndex) {
+            int nextAdIndexToPlay = lastPlayedAdIndex + 1;
+            while (true) {
+                int[] iArr = this.states;
+                if (nextAdIndexToPlay >= iArr.length || iArr[nextAdIndexToPlay] == 0 || iArr[nextAdIndexToPlay] == 1) {
+                    return nextAdIndexToPlay;
+                }
+                nextAdIndexToPlay++;
+            }
+            return nextAdIndexToPlay;
+        }
+
+        public boolean hasUnplayedAds() {
+            return this.count == -1 || getFirstAdIndexToPlay() < this.count;
+        }
+
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+            AdGroup adGroup = (AdGroup) o;
+            if (this.count != adGroup.count || !Arrays.equals(this.uris, adGroup.uris) || !Arrays.equals(this.states, adGroup.states) || !Arrays.equals(this.durationsUs, adGroup.durationsUs)) {
+                return false;
+            }
+            return true;
+        }
+
+        public int hashCode() {
+            return (((((this.count * 31) + Arrays.hashCode(this.uris)) * 31) + Arrays.hashCode(this.states)) * 31) + Arrays.hashCode(this.durationsUs);
+        }
+
+        @CheckResult
+        public AdGroup withAdCount(int count2) {
+            Assertions.checkArgument(this.count == -1 && this.states.length <= count2);
+            return new AdGroup(count2, copyStatesWithSpaceForAdCount(this.states, count2), (Uri[]) Arrays.copyOf(this.uris, count2), copyDurationsUsWithSpaceForAdCount(this.durationsUs, count2));
+        }
+
+        @CheckResult
+        public AdGroup withAdUri(Uri uri, int index) {
+            int i = this.count;
+            boolean z = false;
+            Assertions.checkArgument(i == -1 || index < i);
+            int[] states2 = copyStatesWithSpaceForAdCount(this.states, index + 1);
+            if (states2[index] == 0) {
+                z = true;
+            }
+            Assertions.checkArgument(z);
+            long[] durationsUs2 = this.durationsUs;
+            if (durationsUs2.length != states2.length) {
+                durationsUs2 = copyDurationsUsWithSpaceForAdCount(durationsUs2, states2.length);
+            }
+            Uri[] uris2 = (Uri[]) Arrays.copyOf(this.uris, states2.length);
+            uris2[index] = uri;
+            states2[index] = 1;
+            return new AdGroup(this.count, states2, uris2, durationsUs2);
+        }
+
+        @CheckResult
+        public AdGroup withAdState(int state, int index) {
+            int i = this.count;
+            boolean z = false;
+            Assertions.checkArgument(i == -1 || index < i);
+            int[] states2 = copyStatesWithSpaceForAdCount(this.states, index + 1);
+            if (states2[index] == 0 || states2[index] == 1 || states2[index] == state) {
+                z = true;
+            }
+            Assertions.checkArgument(z);
+            long[] durationsUs2 = this.durationsUs;
+            if (durationsUs2.length != states2.length) {
+                durationsUs2 = copyDurationsUsWithSpaceForAdCount(durationsUs2, states2.length);
+            }
+            Uri[] uris2 = this.uris;
+            if (uris2.length != states2.length) {
+                uris2 = (Uri[]) Arrays.copyOf(uris2, states2.length);
+            }
+            states2[index] = state;
+            return new AdGroup(this.count, states2, uris2, durationsUs2);
+        }
+
+        @CheckResult
+        public AdGroup withAdDurationsUs(long[] durationsUs2) {
+            Assertions.checkArgument(this.count == -1 || durationsUs2.length <= this.uris.length);
+            int length = durationsUs2.length;
+            Uri[] uriArr = this.uris;
+            if (length < uriArr.length) {
+                durationsUs2 = copyDurationsUsWithSpaceForAdCount(durationsUs2, uriArr.length);
+            }
+            return new AdGroup(this.count, this.states, this.uris, durationsUs2);
+        }
+
+        @CheckResult
+        public AdGroup withAllAdsSkipped() {
+            if (this.count == -1) {
+                return new AdGroup(0, new int[0], new Uri[0], new long[0]);
+            }
+            int[] iArr = this.states;
+            int count2 = iArr.length;
+            int[] states2 = Arrays.copyOf(iArr, count2);
+            for (int i = 0; i < count2; i++) {
+                if (states2[i] == 1 || states2[i] == 0) {
+                    states2[i] = 2;
+                }
+            }
+            return new AdGroup(count2, states2, this.uris, this.durationsUs);
         }
     }
 }

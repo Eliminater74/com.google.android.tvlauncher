@@ -3,8 +3,10 @@ package com.google.android.gms.common;
 import android.accounts.Account;
 import android.content.Intent;
 import android.os.Bundle;
+
 import com.google.android.gms.common.internal.Hide;
 import com.google.android.gms.common.internal.zzau;
+
 import java.util.ArrayList;
 
 public final class AccountPicker {

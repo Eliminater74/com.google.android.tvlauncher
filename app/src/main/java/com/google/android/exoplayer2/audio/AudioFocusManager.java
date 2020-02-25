@@ -6,60 +6,89 @@ import android.media.AudioManager;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.annotation.VisibleForTesting;
+
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.Util;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 public final class AudioFocusManager {
+    public static final int PLAYER_COMMAND_DO_NOT_PLAY = -1;
+    public static final int PLAYER_COMMAND_PLAY_WHEN_READY = 1;
+    public static final int PLAYER_COMMAND_WAIT_FOR_CALLBACK = 0;
     private static final int AUDIO_FOCUS_STATE_HAVE_FOCUS = 1;
     private static final int AUDIO_FOCUS_STATE_LOSS_TRANSIENT = 2;
     private static final int AUDIO_FOCUS_STATE_LOSS_TRANSIENT_DUCK = 3;
     private static final int AUDIO_FOCUS_STATE_LOST_FOCUS = -1;
     private static final int AUDIO_FOCUS_STATE_NO_FOCUS = 0;
-    public static final int PLAYER_COMMAND_DO_NOT_PLAY = -1;
-    public static final int PLAYER_COMMAND_PLAY_WHEN_READY = 1;
-    public static final int PLAYER_COMMAND_WAIT_FOR_CALLBACK = 0;
     private static final String TAG = "AudioFocusManager";
     private static final float VOLUME_MULTIPLIER_DEFAULT = 1.0f;
     private static final float VOLUME_MULTIPLIER_DUCK = 0.2f;
+    /* access modifiers changed from: private */
+    public final PlayerControl playerControl;
+    private final AudioManager audioManager;
+    private final AudioFocusListener focusListener;
+    /* access modifiers changed from: private */
+    public int audioFocusState;
+    /* access modifiers changed from: private */
+    public float volumeMultiplier = VOLUME_MULTIPLIER_DEFAULT;
     @Nullable
     private AudioAttributes audioAttributes;
     private AudioFocusRequest audioFocusRequest;
-    /* access modifiers changed from: private */
-    public int audioFocusState;
-    private final AudioManager audioManager;
     private int focusGain;
-    private final AudioFocusListener focusListener;
-    /* access modifiers changed from: private */
-    public final PlayerControl playerControl;
     private boolean rebuildAudioFocusRequest;
-    /* access modifiers changed from: private */
-    public float volumeMultiplier = VOLUME_MULTIPLIER_DEFAULT;
-
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    private @interface AudioFocusState {
-    }
-
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface PlayerCommand {
-    }
-
-    public interface PlayerControl {
-        void executePlayerCommand(int i);
-
-        void setVolumeMultiplier(float f);
-    }
 
     public AudioFocusManager(Context context, PlayerControl playerControl2) {
         this.audioManager = (AudioManager) context.getApplicationContext().getSystemService("audio");
         this.playerControl = playerControl2;
         this.focusListener = new AudioFocusListener();
         this.audioFocusState = 0;
+    }
+
+    private static int convertAudioAttributesToFocusGain(@Nullable AudioAttributes audioAttributes2) {
+        if (audioAttributes2 == null) {
+            return 0;
+        }
+        switch (audioAttributes2.usage) {
+            case 0:
+                Log.m30w(TAG, "Specify a proper usage in the audio attributes for audio focus handling. Using AUDIOFOCUS_GAIN by default.");
+                return 1;
+            case 1:
+            case 14:
+                return 1;
+            case 2:
+            case 4:
+                return 2;
+            case 3:
+                return 0;
+            case 5:
+            case 6:
+            case 7:
+            case 8:
+            case 9:
+            case 10:
+            case 12:
+            case 13:
+                return 3;
+            case 11:
+                return audioAttributes2.contentType == 1 ? 2 : 3;
+            case 15:
+            default:
+                int i = audioAttributes2.usage;
+                StringBuilder sb = new StringBuilder(37);
+                sb.append("Unidentified audio usage: ");
+                sb.append(i);
+                Log.m30w(TAG, sb.toString());
+                return 0;
+            case 16:
+                if (Util.SDK_INT >= 19) {
+                    return 4;
+                }
+                return 2;
+        }
     }
 
     public float getVolumeMultiplier() {
@@ -199,47 +228,20 @@ public final class AudioFocusManager {
         return audioAttributes2 != null && audioAttributes2.contentType == 1;
     }
 
-    private static int convertAudioAttributesToFocusGain(@Nullable AudioAttributes audioAttributes2) {
-        if (audioAttributes2 == null) {
-            return 0;
-        }
-        switch (audioAttributes2.usage) {
-            case 0:
-                Log.m30w(TAG, "Specify a proper usage in the audio attributes for audio focus handling. Using AUDIOFOCUS_GAIN by default.");
-                return 1;
-            case 1:
-            case 14:
-                return 1;
-            case 2:
-            case 4:
-                return 2;
-            case 3:
-                return 0;
-            case 5:
-            case 6:
-            case 7:
-            case 8:
-            case 9:
-            case 10:
-            case 12:
-            case 13:
-                return 3;
-            case 11:
-                return audioAttributes2.contentType == 1 ? 2 : 3;
-            case 15:
-            default:
-                int i = audioAttributes2.usage;
-                StringBuilder sb = new StringBuilder(37);
-                sb.append("Unidentified audio usage: ");
-                sb.append(i);
-                Log.m30w(TAG, sb.toString());
-                return 0;
-            case 16:
-                if (Util.SDK_INT >= 19) {
-                    return 4;
-                }
-                return 2;
-        }
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    private @interface AudioFocusState {
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface PlayerCommand {
+    }
+
+    public interface PlayerControl {
+        void executePlayerCommand(int i);
+
+        void setVolumeMultiplier(float f);
     }
 
     private class AudioFocusListener implements AudioManager.OnAudioFocusChangeListener {

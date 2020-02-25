@@ -13,6 +13,7 @@ import com.google.protobuf.ProtoMessage;
 import com.google.protobuf.ProtoPresenceBits;
 import com.google.protobuf.ProtoPresenceCheckedField;
 import com.google.protobuf.ProtoSyntax;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -23,6 +24,11 @@ public final class MutationRules extends GeneratedMessageLite<MutationRules, Bui
     public static final MutationRules DEFAULT_INSTANCE = new MutationRules();
     public static final int MUTABILITY_FIELD_NUMBER = 1;
     private static volatile Parser<MutationRules> PARSER;
+
+    static {
+        GeneratedMessageLite.registerDefaultInstance(MutationRules.class, DEFAULT_INSTANCE);
+    }
+
     @ProtoPresenceBits(mo28548id = 0)
     private int bitField0_;
     @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.ENUM)
@@ -30,87 +36,6 @@ public final class MutationRules extends GeneratedMessageLite<MutationRules, Bui
     private int mutability_ = 1;
 
     private MutationRules() {
-    }
-
-    public enum Mutability implements Internal.EnumLite {
-        UNKNOWN(0),
-        MUTABLE(1),
-        IMMUTABLE(2);
-        
-        public static final int IMMUTABLE_VALUE = 2;
-        public static final int MUTABLE_VALUE = 1;
-        public static final int UNKNOWN_VALUE = 0;
-        private static final Internal.EnumLiteMap<Mutability> internalValueMap = new Internal.EnumLiteMap<Mutability>() {
-            public Mutability findValueByNumber(int number) {
-                return Mutability.forNumber(number);
-            }
-        };
-        private final int value;
-
-        public final int getNumber() {
-            return this.value;
-        }
-
-        public static Mutability forNumber(int value2) {
-            if (value2 == 0) {
-                return UNKNOWN;
-            }
-            if (value2 == 1) {
-                return MUTABLE;
-            }
-            if (value2 != 2) {
-                return null;
-            }
-            return IMMUTABLE;
-        }
-
-        public static Internal.EnumLiteMap<Mutability> internalGetValueMap() {
-            return internalValueMap;
-        }
-
-        public static Internal.EnumVerifier internalGetVerifier() {
-            return MutabilityVerifier.INSTANCE;
-        }
-
-        private static final class MutabilityVerifier implements Internal.EnumVerifier {
-            static final Internal.EnumVerifier INSTANCE = new MutabilityVerifier();
-
-            private MutabilityVerifier() {
-            }
-
-            public boolean isInRange(int number) {
-                return Mutability.forNumber(number) != null;
-            }
-        }
-
-        private Mutability(int value2) {
-            this.value = value2;
-        }
-    }
-
-    public boolean hasMutability() {
-        return (this.bitField0_ & 1) != 0;
-    }
-
-    public Mutability getMutability() {
-        Mutability result = Mutability.forNumber(this.mutability_);
-        return result == null ? Mutability.MUTABLE : result;
-    }
-
-    /* access modifiers changed from: private */
-    public void setMutability(Mutability value) {
-        if (value != null) {
-            this.bitField0_ |= 1;
-            this.mutability_ = value.getNumber();
-            return;
-        }
-        throw new NullPointerException();
-    }
-
-    /* access modifiers changed from: private */
-    public void clearMutability() {
-        this.bitField0_ &= -2;
-        this.mutability_ = 1;
     }
 
     public static MutationRules parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
@@ -169,30 +94,37 @@ public final class MutationRules extends GeneratedMessageLite<MutationRules, Bui
         return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
     }
 
-    public static final class Builder extends GeneratedMessageLite.Builder<MutationRules, Builder> implements MutationRulesOrBuilder {
-        private Builder() {
-            super(MutationRules.DEFAULT_INSTANCE);
-        }
+    public static MutationRules getDefaultInstance() {
+        return DEFAULT_INSTANCE;
+    }
 
-        public boolean hasMutability() {
-            return ((MutationRules) this.instance).hasMutability();
-        }
+    public static Parser<MutationRules> parser() {
+        return DEFAULT_INSTANCE.getParserForType();
+    }
 
-        public Mutability getMutability() {
-            return ((MutationRules) this.instance).getMutability();
-        }
+    public boolean hasMutability() {
+        return (this.bitField0_ & 1) != 0;
+    }
 
-        public Builder setMutability(Mutability value) {
-            copyOnWrite();
-            ((MutationRules) this.instance).setMutability(value);
-            return this;
-        }
+    public Mutability getMutability() {
+        Mutability result = Mutability.forNumber(this.mutability_);
+        return result == null ? Mutability.MUTABLE : result;
+    }
 
-        public Builder clearMutability() {
-            copyOnWrite();
-            ((MutationRules) this.instance).clearMutability();
-            return this;
+    /* access modifiers changed from: private */
+    public void setMutability(Mutability value) {
+        if (value != null) {
+            this.bitField0_ |= 1;
+            this.mutability_ = value.getNumber();
+            return;
         }
+        throw new NullPointerException();
+    }
+
+    /* access modifiers changed from: private */
+    public void clearMutability() {
+        this.bitField0_ &= -2;
+        this.mutability_ = 1;
     }
 
     /* access modifiers changed from: protected */
@@ -227,15 +159,85 @@ public final class MutationRules extends GeneratedMessageLite<MutationRules, Bui
         }
     }
 
-    static {
-        GeneratedMessageLite.registerDefaultInstance(MutationRules.class, DEFAULT_INSTANCE);
+    public enum Mutability implements Internal.EnumLite {
+        UNKNOWN(0),
+        MUTABLE(1),
+        IMMUTABLE(2);
+
+        public static final int IMMUTABLE_VALUE = 2;
+        public static final int MUTABLE_VALUE = 1;
+        public static final int UNKNOWN_VALUE = 0;
+        private static final Internal.EnumLiteMap<Mutability> internalValueMap = new Internal.EnumLiteMap<Mutability>() {
+            public Mutability findValueByNumber(int number) {
+                return Mutability.forNumber(number);
+            }
+        };
+        private final int value;
+
+        private Mutability(int value2) {
+            this.value = value2;
+        }
+
+        public static Mutability forNumber(int value2) {
+            if (value2 == 0) {
+                return UNKNOWN;
+            }
+            if (value2 == 1) {
+                return MUTABLE;
+            }
+            if (value2 != 2) {
+                return null;
+            }
+            return IMMUTABLE;
+        }
+
+        public static Internal.EnumLiteMap<Mutability> internalGetValueMap() {
+            return internalValueMap;
+        }
+
+        public static Internal.EnumVerifier internalGetVerifier() {
+            return MutabilityVerifier.INSTANCE;
+        }
+
+        public final int getNumber() {
+            return this.value;
+        }
+
+        private static final class MutabilityVerifier implements Internal.EnumVerifier {
+            static final Internal.EnumVerifier INSTANCE = new MutabilityVerifier();
+
+            private MutabilityVerifier() {
+            }
+
+            public boolean isInRange(int number) {
+                return Mutability.forNumber(number) != null;
+            }
+        }
     }
 
-    public static MutationRules getDefaultInstance() {
-        return DEFAULT_INSTANCE;
-    }
+    public static final class Builder extends GeneratedMessageLite.Builder<MutationRules, Builder> implements MutationRulesOrBuilder {
+        private Builder() {
+            super(MutationRules.DEFAULT_INSTANCE);
+        }
 
-    public static Parser<MutationRules> parser() {
-        return DEFAULT_INSTANCE.getParserForType();
+        public boolean hasMutability() {
+            return ((MutationRules) this.instance).hasMutability();
+        }
+
+        public Mutability getMutability() {
+            return ((MutationRules) this.instance).getMutability();
+        }
+
+        public Builder setMutability(Mutability value) {
+            copyOnWrite();
+            ((MutationRules) this.instance).setMutability(value);
+            return this;
+        }
+
+        public Builder clearMutability() {
+            copyOnWrite();
+            ((MutationRules) this.instance).clearMutability();
+            return this;
+        }
     }
 }

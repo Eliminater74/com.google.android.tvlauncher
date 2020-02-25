@@ -9,13 +9,14 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
-import com.google.android.exoplayer2.offline.DownloadManager;
+
 import com.google.android.exoplayer2.scheduler.Requirements;
 import com.google.android.exoplayer2.scheduler.Scheduler;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.NotificationUtil;
 import com.google.android.exoplayer2.util.Util;
+
 import java.util.HashMap;
 import java.util.List;
 
@@ -24,40 +25,30 @@ public abstract class DownloadService extends Service {
     public static final String ACTION_INIT = "com.google.android.exoplayer.downloadService.action.INIT";
     public static final String ACTION_PAUSE_DOWNLOADS = "com.google.android.exoplayer.downloadService.action.PAUSE_DOWNLOADS";
     public static final String ACTION_REMOVE_DOWNLOAD = "com.google.android.exoplayer.downloadService.action.REMOVE_DOWNLOAD";
-    private static final String ACTION_RESTART = "com.google.android.exoplayer.downloadService.action.RESTART";
     public static final String ACTION_RESUME_DOWNLOADS = "com.google.android.exoplayer.downloadService.action.RESUME_DOWNLOADS";
     public static final String ACTION_SET_STOP_REASON = "com.google.android.exoplayer.downloadService.action.SET_STOP_REASON";
-    private static final boolean DEBUG = false;
     public static final long DEFAULT_FOREGROUND_NOTIFICATION_UPDATE_INTERVAL = 1000;
     public static final int FOREGROUND_NOTIFICATION_ID_NONE = 0;
     public static final String KEY_CONTENT_ID = "content_id";
     public static final String KEY_DOWNLOAD_REQUEST = "download_request";
     public static final String KEY_FOREGROUND = "foreground";
     public static final String KEY_STOP_REASON = "manual_stop_reason";
+    private static final String ACTION_RESTART = "com.google.android.exoplayer.downloadService.action.RESTART";
+    private static final boolean DEBUG = false;
     private static final String TAG = "DownloadService";
     private static final HashMap<Class<? extends DownloadService>, DownloadManagerHelper> downloadManagerListeners = new HashMap<>();
     @Nullable
     private final String channelId;
     @StringRes
     private final int channelNameResourceId;
-    /* access modifiers changed from: private */
-    public DownloadManager downloadManager;
     @Nullable
     private final ForegroundNotificationUpdater foregroundNotificationUpdater;
+    /* access modifiers changed from: private */
+    public DownloadManager downloadManager;
     private boolean isDestroyed;
     private int lastStartId;
     private boolean startedInForeground;
     private boolean taskRemoved;
-
-    /* access modifiers changed from: protected */
-    public abstract DownloadManager getDownloadManager();
-
-    /* access modifiers changed from: protected */
-    public abstract Notification getForegroundNotification(List<Download> list);
-
-    /* access modifiers changed from: protected */
-    @Nullable
-    public abstract Scheduler getScheduler();
 
     protected DownloadService(int foregroundNotificationId) {
         this(foregroundNotificationId, 1000);
@@ -134,6 +125,33 @@ public abstract class DownloadService extends Service {
     public static void startForeground(Context context, Class<? extends DownloadService> clazz) {
         Util.startForegroundService(context, getIntent(context, clazz, ACTION_INIT, true));
     }
+
+    private static Intent getIntent(Context context, Class<? extends DownloadService> clazz, String action, boolean foreground) {
+        return getIntent(context, clazz, action).putExtra(KEY_FOREGROUND, foreground);
+    }
+
+    /* access modifiers changed from: private */
+    public static Intent getIntent(Context context, Class<? extends DownloadService> clazz, String action) {
+        return new Intent(context, clazz).setAction(action);
+    }
+
+    private static void startService(Context context, Intent intent, boolean foreground) {
+        if (foreground) {
+            Util.startForegroundService(context, intent);
+        } else {
+            context.startService(intent);
+        }
+    }
+
+    /* access modifiers changed from: protected */
+    public abstract DownloadManager getDownloadManager();
+
+    /* access modifiers changed from: protected */
+    public abstract Notification getForegroundNotification(List<Download> list);
+
+    /* access modifiers changed from: protected */
+    @Nullable
+    public abstract Scheduler getScheduler();
 
     public void onCreate() {
         logd("onCreate");
@@ -368,85 +386,15 @@ public abstract class DownloadService extends Service {
     private void logd(String message) {
     }
 
-    private static Intent getIntent(Context context, Class<? extends DownloadService> clazz, String action, boolean foreground) {
-        return getIntent(context, clazz, action).putExtra(KEY_FOREGROUND, foreground);
-    }
-
-    /* access modifiers changed from: private */
-    public static Intent getIntent(Context context, Class<? extends DownloadService> clazz, String action) {
-        return new Intent(context, clazz).setAction(action);
-    }
-
-    private static void startService(Context context, Intent intent, boolean foreground) {
-        if (foreground) {
-            Util.startForegroundService(context, intent);
-        } else {
-            context.startService(intent);
-        }
-    }
-
-    private final class ForegroundNotificationUpdater {
-        private final Handler handler = new Handler(Looper.getMainLooper());
-        private boolean notificationDisplayed;
-        private final int notificationId;
-        private boolean periodicUpdatesStarted;
-        private final long updateInterval;
-        private final Runnable updateRunnable = new DownloadService$ForegroundNotificationUpdater$$Lambda$0(this);
-
-        public ForegroundNotificationUpdater(int notificationId2, long updateInterval2) {
-            this.notificationId = notificationId2;
-            this.updateInterval = updateInterval2;
-        }
-
-        public void startPeriodicUpdates() {
-            this.periodicUpdatesStarted = true;
-            bridge$lambda$0$DownloadService$ForegroundNotificationUpdater();
-        }
-
-        public void stopPeriodicUpdates() {
-            this.periodicUpdatesStarted = false;
-            this.handler.removeCallbacks(this.updateRunnable);
-        }
-
-        public void showNotificationIfNotAlready() {
-            if (!this.notificationDisplayed) {
-                bridge$lambda$0$DownloadService$ForegroundNotificationUpdater();
-            }
-        }
-
-        public void invalidate() {
-            if (this.notificationDisplayed) {
-                bridge$lambda$0$DownloadService$ForegroundNotificationUpdater();
-            }
-        }
-
-        /* access modifiers changed from: private */
-        /* renamed from: update */
-        public void bridge$lambda$0$DownloadService$ForegroundNotificationUpdater() {
-            List<Download> downloads = DownloadService.this.downloadManager.getCurrentDownloads();
-            DownloadService downloadService = DownloadService.this;
-            downloadService.startForeground(this.notificationId, downloadService.getForegroundNotification(downloads));
-            this.notificationDisplayed = true;
-            if (this.periodicUpdatesStarted) {
-                this.handler.removeCallbacks(this.updateRunnable);
-                this.handler.postDelayed(this.updateRunnable, this.updateInterval);
-            }
-        }
-    }
-
     private static final class DownloadManagerHelper implements DownloadManager.Listener {
-        private final Context context;
         /* access modifiers changed from: private */
         public final DownloadManager downloadManager;
-        @Nullable
-        private DownloadService downloadService;
+        private final Context context;
         @Nullable
         private final Scheduler scheduler;
         private final Class<? extends DownloadService> serviceClass;
-
-        public void onInitialized(DownloadManager downloadManager2) {
-            DownloadManager$Listener$$CC.onInitialized$$dflt$$(this, downloadManager2);
-        }
+        @Nullable
+        private DownloadService downloadService;
 
         private DownloadManagerHelper(Context context2, DownloadManager downloadManager2, @Nullable Scheduler scheduler2, Class<? extends DownloadService> serviceClass2) {
             this.context = context2;
@@ -458,6 +406,10 @@ public abstract class DownloadService extends Service {
                 Requirements requirements = downloadManager2.getRequirements();
                 setSchedulerEnabled(!requirements.checkRequirements(context2), requirements);
             }
+        }
+
+        public void onInitialized(DownloadManager downloadManager2) {
+            DownloadManager$Listener$$CC.onInitialized$$dflt$$(this, downloadManager2);
         }
 
         public void attachService(DownloadService downloadService2) {
@@ -520,6 +472,55 @@ public abstract class DownloadService extends Service {
             }
             if (!this.scheduler.schedule(requirements, this.context.getPackageName(), DownloadService.ACTION_RESTART)) {
                 Log.m26e(DownloadService.TAG, "Scheduling downloads failed.");
+            }
+        }
+    }
+
+    private final class ForegroundNotificationUpdater {
+        private final Handler handler = new Handler(Looper.getMainLooper());
+        private final int notificationId;
+        private final long updateInterval;
+        private final Runnable updateRunnable = new DownloadService$ForegroundNotificationUpdater$$Lambda$0(this);
+        private boolean notificationDisplayed;
+        private boolean periodicUpdatesStarted;
+
+        public ForegroundNotificationUpdater(int notificationId2, long updateInterval2) {
+            this.notificationId = notificationId2;
+            this.updateInterval = updateInterval2;
+        }
+
+        public void startPeriodicUpdates() {
+            this.periodicUpdatesStarted = true;
+            bridge$lambda$0$DownloadService$ForegroundNotificationUpdater();
+        }
+
+        public void stopPeriodicUpdates() {
+            this.periodicUpdatesStarted = false;
+            this.handler.removeCallbacks(this.updateRunnable);
+        }
+
+        public void showNotificationIfNotAlready() {
+            if (!this.notificationDisplayed) {
+                bridge$lambda$0$DownloadService$ForegroundNotificationUpdater();
+            }
+        }
+
+        public void invalidate() {
+            if (this.notificationDisplayed) {
+                bridge$lambda$0$DownloadService$ForegroundNotificationUpdater();
+            }
+        }
+
+        /* access modifiers changed from: private */
+        /* renamed from: update */
+        public void bridge$lambda$0$DownloadService$ForegroundNotificationUpdater() {
+            List<Download> downloads = DownloadService.this.downloadManager.getCurrentDownloads();
+            DownloadService downloadService = DownloadService.this;
+            downloadService.startForeground(this.notificationId, downloadService.getForegroundNotification(downloads));
+            this.notificationDisplayed = true;
+            if (this.periodicUpdatesStarted) {
+                this.handler.removeCallbacks(this.updateRunnable);
+                this.handler.postDelayed(this.updateRunnable, this.updateInterval);
             }
         }
     }

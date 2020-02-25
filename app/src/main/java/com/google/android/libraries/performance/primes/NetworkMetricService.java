@@ -4,10 +4,10 @@ import android.app.Activity;
 import android.app.Application;
 import android.support.annotation.GuardedBy;
 import android.support.annotation.VisibleForTesting;
-import com.google.android.libraries.performance.primes.AppLifecycleListener;
-import com.google.android.libraries.performance.primes.MetricRecorder;
+
 import com.google.android.libraries.performance.primes.transmitter.MetricTransmitter;
 import com.google.common.base.Optional;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
@@ -23,14 +23,6 @@ final class NetworkMetricService extends AbstractMetricService implements AppLif
     private final NetworkMetricCollector metricCollector;
     private final AtomicInteger pendingRecords;
 
-    static NetworkMetricService createService(MetricTransmitter transmitter, Application application, Supplier<MetricStamper> metricStamperSupplier, Supplier<ScheduledExecutorService> executorServiceSupplier, Supplier<Optional<ScenarioMetricService>> scenarioServiceSupplier, PrimesNetworkConfigurations networkConfigurations, boolean enableAutoSanitization) {
-        return createService(transmitter, application, metricStamperSupplier, executorServiceSupplier, scenarioServiceSupplier, networkConfigurations, enableAutoSanitization, MetricRecorder.RunIn.SAME_THREAD);
-    }
-
-    static NetworkMetricService createService(MetricTransmitter transmitter, Application application, Supplier<MetricStamper> metricStamperSupplier, Supplier<ScheduledExecutorService> executorServiceSupplier, Supplier<Optional<ScenarioMetricService>> supplier, PrimesNetworkConfigurations configs, boolean enableAutoSanitization, MetricRecorder.RunIn runIn) {
-        return new NetworkMetricService(transmitter, application, metricStamperSupplier, executorServiceSupplier, runIn, Integer.MAX_VALUE, configs.batchSize(), enableAutoSanitization, configs.getUrlSanitizer(), configs.getMetricExtensionProvider());
-    }
-
     @VisibleForTesting
     NetworkMetricService(MetricTransmitter transmitter, Application application, Supplier<MetricStamper> metricStamperSupplier, Supplier<ScheduledExecutorService> executorServiceSupplier, MetricRecorder.RunIn runIn, int sampleRate, int batchSize2, boolean enableAutoSanitization, UrlSanitizer urlSanitizer, Optional<NetworkMetricExtensionProvider> metricExtensionProvider) {
         super(transmitter, application, metricStamperSupplier, executorServiceSupplier, runIn, sampleRate);
@@ -39,6 +31,14 @@ final class NetworkMetricService extends AbstractMetricService implements AppLif
         this.metricCollector = new NetworkMetricCollector(enableAutoSanitization, urlSanitizer, metricExtensionProvider);
         this.pendingRecords = new AtomicInteger();
         AppLifecycleMonitor.getInstance(getApplication()).register(this);
+    }
+
+    static NetworkMetricService createService(MetricTransmitter transmitter, Application application, Supplier<MetricStamper> metricStamperSupplier, Supplier<ScheduledExecutorService> executorServiceSupplier, Supplier<Optional<ScenarioMetricService>> scenarioServiceSupplier, PrimesNetworkConfigurations networkConfigurations, boolean enableAutoSanitization) {
+        return createService(transmitter, application, metricStamperSupplier, executorServiceSupplier, scenarioServiceSupplier, networkConfigurations, enableAutoSanitization, MetricRecorder.RunIn.SAME_THREAD);
+    }
+
+    static NetworkMetricService createService(MetricTransmitter transmitter, Application application, Supplier<MetricStamper> metricStamperSupplier, Supplier<ScheduledExecutorService> executorServiceSupplier, Supplier<Optional<ScenarioMetricService>> supplier, PrimesNetworkConfigurations configs, boolean enableAutoSanitization, MetricRecorder.RunIn runIn) {
+        return new NetworkMetricService(transmitter, application, metricStamperSupplier, executorServiceSupplier, runIn, Integer.MAX_VALUE, configs.batchSize(), enableAutoSanitization, configs.getUrlSanitizer(), configs.getMetricExtensionProvider());
     }
 
     public void onAppToBackground(Activity activity) {

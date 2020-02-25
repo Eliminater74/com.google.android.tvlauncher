@@ -13,6 +13,10 @@ public final class PrimesExperimentalConfigurations {
         this.strictModeConfigurations = strictModeConfigs;
     }
 
+    public static Builder newBuilder() {
+        return new Builder();
+    }
+
     public Optional<PrimesCounterConfigurations> counterConfigurations() {
         return this.counterConfigurations;
     }
@@ -23,10 +27,6 @@ public final class PrimesExperimentalConfigurations {
 
     public Optional<PrimesStrictModeConfigurations> strictModeConfigurations() {
         return this.strictModeConfigurations;
-    }
-
-    public static Builder newBuilder() {
-        return new Builder();
     }
 
     public static final class Builder {

@@ -13,9 +13,11 @@ import android.support.annotation.XmlRes;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.Xml;
-import java.io.IOException;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.IOException;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
 /* renamed from: android.support.v4.content.res.ColorStateListInflaterCompat */

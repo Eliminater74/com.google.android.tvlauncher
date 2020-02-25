@@ -28,11 +28,6 @@ public class Space extends View {
         this(context, null);
     }
 
-    @SuppressLint({"MissingSuperCall"})
-    @Deprecated
-    public void draw(Canvas canvas) {
-    }
-
     private static int getDefaultSize2(int size, int measureSpec) {
         int result = size;
         int specMode = View.MeasureSpec.getMode(measureSpec);
@@ -47,6 +42,11 @@ public class Space extends View {
             return result;
         }
         return specSize;
+    }
+
+    @SuppressLint({"MissingSuperCall"})
+    @Deprecated
+    public void draw(Canvas canvas) {
     }
 
     /* access modifiers changed from: protected */

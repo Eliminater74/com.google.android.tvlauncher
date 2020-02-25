@@ -18,12 +18,21 @@ public interface ThemedSpinnerAdapter extends SpinnerAdapter {
     /* renamed from: android.support.v7.widget.ThemedSpinnerAdapter$Helper */
     public static final class Helper {
         private final Context mContext;
-        private LayoutInflater mDropDownInflater;
         private final LayoutInflater mInflater;
+        private LayoutInflater mDropDownInflater;
 
         public Helper(@NonNull Context context) {
             this.mContext = context;
             this.mInflater = LayoutInflater.from(context);
+        }
+
+        @Nullable
+        public Resources.Theme getDropDownViewTheme() {
+            LayoutInflater layoutInflater = this.mDropDownInflater;
+            if (layoutInflater == null) {
+                return null;
+            }
+            return layoutInflater.getContext().getTheme();
         }
 
         public void setDropDownViewTheme(@Nullable Resources.Theme theme) {
@@ -34,15 +43,6 @@ public interface ThemedSpinnerAdapter extends SpinnerAdapter {
             } else {
                 this.mDropDownInflater = LayoutInflater.from(new ContextThemeWrapper(this.mContext, theme));
             }
-        }
-
-        @Nullable
-        public Resources.Theme getDropDownViewTheme() {
-            LayoutInflater layoutInflater = this.mDropDownInflater;
-            if (layoutInflater == null) {
-                return null;
-            }
-            return layoutInflater.getContext().getTheme();
         }
 
         @NonNull

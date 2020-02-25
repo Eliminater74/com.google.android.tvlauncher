@@ -3,6 +3,7 @@ package com.google.android.exoplayer2.source.hls.playlist;
 import com.google.android.exoplayer2.offline.FilteringManifestParser;
 import com.google.android.exoplayer2.offline.StreamKey;
 import com.google.android.exoplayer2.upstream.ParsingLoadable;
+
 import java.util.List;
 
 public final class FilteringHlsPlaylistParserFactory implements HlsPlaylistParserFactory {

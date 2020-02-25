@@ -17,62 +17,28 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+
 import androidx.leanback.C0364R;
 
 public class SearchOrbView extends FrameLayout implements View.OnClickListener {
-    private boolean mAttachedToWindow;
-    private boolean mColorAnimationEnabled;
-    private ValueAnimator mColorAnimator;
     private final ArgbEvaluator mColorEvaluator;
-    private Colors mColors;
     private final ValueAnimator.AnimatorUpdateListener mFocusUpdateListener;
     private final float mFocusedZ;
     private final float mFocusedZoom;
+    private final int mPulseDurationMs;
+    private final int mScaleDurationMs;
+    private final float mUnfocusedZ;
+    private final ValueAnimator.AnimatorUpdateListener mUpdateListener;
+    private boolean mAttachedToWindow;
+    private boolean mColorAnimationEnabled;
+    private ValueAnimator mColorAnimator;
+    private Colors mColors;
     private ImageView mIcon;
     private Drawable mIconDrawable;
     private View.OnClickListener mListener;
-    private final int mPulseDurationMs;
     private View mRootView;
-    private final int mScaleDurationMs;
     private View mSearchOrbView;
     private ValueAnimator mShadowFocusAnimator;
-    private final float mUnfocusedZ;
-    private final ValueAnimator.AnimatorUpdateListener mUpdateListener;
-
-    public static class Colors {
-        private static final float BRIGHTNESS_ALPHA = 0.15f;
-        @ColorInt
-        public int brightColor;
-        @ColorInt
-        public int color;
-        @ColorInt
-        public int iconColor;
-
-        public Colors(@ColorInt int color2) {
-            this(color2, color2);
-        }
-
-        public Colors(@ColorInt int color2, @ColorInt int brightColor2) {
-            this(color2, brightColor2, 0);
-        }
-
-        public Colors(@ColorInt int color2, @ColorInt int brightColor2, @ColorInt int iconColor2) {
-            this.color = color2;
-            this.brightColor = brightColor2 == color2 ? getBrightColor(color2) : brightColor2;
-            this.iconColor = iconColor2;
-        }
-
-        public static int getBrightColor(int color2) {
-            return Color.argb((int) ((((float) Color.alpha(color2)) * 0.85f) + 38.25f), (int) ((((float) Color.red(color2)) * 0.85f) + 38.25f), (int) ((((float) Color.green(color2)) * 0.85f) + 38.25f), (int) ((((float) Color.blue(color2)) * 0.85f) + 38.25f));
-        }
-    }
-
-    /* access modifiers changed from: package-private */
-    public void setSearchOrbZ(float fraction) {
-        View view = this.mSearchOrbView;
-        float f = this.mUnfocusedZ;
-        ViewCompat.setZ(view, f + ((this.mFocusedZ - f) * fraction));
-    }
 
     public SearchOrbView(Context context) {
         this(context, null);
@@ -125,6 +91,13 @@ public class SearchOrbView extends FrameLayout implements View.OnClickListener {
     }
 
     /* access modifiers changed from: package-private */
+    public void setSearchOrbZ(float fraction) {
+        View view = this.mSearchOrbView;
+        float f = this.mUnfocusedZ;
+        ViewCompat.setZ(view, f + ((this.mFocusedZ - f) * fraction));
+    }
+
+    /* access modifiers changed from: package-private */
     public int getLayoutResourceId() {
         return C0364R.layout.lb_search_orb;
     }
@@ -174,21 +147,17 @@ public class SearchOrbView extends FrameLayout implements View.OnClickListener {
         enableOrbColorAnimation(hasFocus);
     }
 
+    public Drawable getOrbIcon() {
+        return this.mIconDrawable;
+    }
+
     public void setOrbIcon(Drawable icon) {
         this.mIconDrawable = icon;
         this.mIcon.setImageDrawable(this.mIconDrawable);
     }
 
-    public Drawable getOrbIcon() {
-        return this.mIconDrawable;
-    }
-
     public void setOnOrbClickedListener(View.OnClickListener listener) {
         this.mListener = listener;
-    }
-
-    public void setOrbColor(int color) {
-        setOrbColors(new Colors(color, color, 0));
     }
 
     @Deprecated
@@ -201,6 +170,14 @@ public class SearchOrbView extends FrameLayout implements View.OnClickListener {
         return this.mColors.color;
     }
 
+    public void setOrbColor(int color) {
+        setOrbColors(new Colors(color, color, 0));
+    }
+
+    public Colors getOrbColors() {
+        return this.mColors;
+    }
+
     public void setOrbColors(Colors colors) {
         this.mColors = colors;
         this.mIcon.setColorFilter(this.mColors.iconColor);
@@ -209,10 +186,6 @@ public class SearchOrbView extends FrameLayout implements View.OnClickListener {
         } else {
             enableOrbColorAnimation(true);
         }
-    }
-
-    public Colors getOrbColors() {
-        return this.mColors;
     }
 
     public void enableOrbColorAnimation(boolean enable) {
@@ -254,5 +227,33 @@ public class SearchOrbView extends FrameLayout implements View.OnClickListener {
         this.mAttachedToWindow = false;
         updateColorAnimator();
         super.onDetachedFromWindow();
+    }
+
+    public static class Colors {
+        private static final float BRIGHTNESS_ALPHA = 0.15f;
+        @ColorInt
+        public int brightColor;
+        @ColorInt
+        public int color;
+        @ColorInt
+        public int iconColor;
+
+        public Colors(@ColorInt int color2) {
+            this(color2, color2);
+        }
+
+        public Colors(@ColorInt int color2, @ColorInt int brightColor2) {
+            this(color2, brightColor2, 0);
+        }
+
+        public Colors(@ColorInt int color2, @ColorInt int brightColor2, @ColorInt int iconColor2) {
+            this.color = color2;
+            this.brightColor = brightColor2 == color2 ? getBrightColor(color2) : brightColor2;
+            this.iconColor = iconColor2;
+        }
+
+        public static int getBrightColor(int color2) {
+            return Color.argb((int) ((((float) Color.alpha(color2)) * 0.85f) + 38.25f), (int) ((((float) Color.red(color2)) * 0.85f) + 38.25f), (int) ((((float) Color.green(color2)) * 0.85f) + 38.25f), (int) ((((float) Color.blue(color2)) * 0.85f) + 38.25f));
+        }
     }
 }

@@ -8,9 +8,10 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
-import com.google.android.libraries.performance.primes.AppLifecycleListener;
+
 import com.google.android.libraries.performance.primes.metriccapture.ProcessStats;
 import com.google.android.libraries.stitch.util.Preconditions;
+
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -18,12 +19,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 public final class AppLifecycleTracker {
     private static final String TAG = "AppLifecycleTracker";
     private final Callbacks callbacks = new Callbacks();
-
-    public enum AppForegroundState {
-        UNKNOWN,
-        FOREGROUND,
-        BACKGROUND
-    }
 
     public void attachToApp(Application application) {
         application.registerActivityLifecycleCallbacks(this.callbacks);
@@ -102,28 +97,34 @@ public final class AppLifecycleTracker {
         return this.callbacks;
     }
 
+    public enum AppForegroundState {
+        UNKNOWN,
+        FOREGROUND,
+        BACKGROUND
+    }
+
     private static final class Callbacks implements Application.ActivityLifecycleCallbacks, ComponentCallbacks2 {
         /* access modifiers changed from: private */
         public final AtomicInteger createdCount;
         /* access modifiers changed from: private */
         public final AtomicInteger destroyedCount;
         /* access modifiers changed from: private */
-        public Boolean lastForegroundState;
-        /* access modifiers changed from: private */
         public final List<AppLifecycleListener> lifecycleListeners;
-        /* access modifiers changed from: private */
-        @Nullable
-        public volatile String nameOfForegroundActivity;
         /* access modifiers changed from: private */
         public final AtomicInteger pausedCount;
         /* access modifiers changed from: private */
         public final AtomicInteger resumedCount;
         /* access modifiers changed from: private */
         public final AtomicInteger startedCount;
-        @Nullable
-        private volatile Activity stoppedActivity;
         /* access modifiers changed from: private */
         public final AtomicInteger stoppedCount;
+        /* access modifiers changed from: private */
+        public Boolean lastForegroundState;
+        /* access modifiers changed from: private */
+        @Nullable
+        public volatile String nameOfForegroundActivity;
+        @Nullable
+        private volatile Activity stoppedActivity;
 
         private Callbacks() {
             this.lifecycleListeners = new CopyOnWriteArrayList();

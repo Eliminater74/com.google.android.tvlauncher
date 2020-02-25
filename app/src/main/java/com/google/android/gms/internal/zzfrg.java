@@ -1,6 +1,7 @@
 package com.google.android.gms.internal;
 
 import com.google.devtools.build.android.desugar.runtime.ThrowableExtension;
+
 import java.io.PrintStream;
 import java.io.PrintWriter;
 
@@ -8,53 +9,6 @@ import java.io.PrintWriter;
 public final class zzfrg {
     private static final zzfrh zza;
     private static final int zzb;
-
-    /* compiled from: ThrowableExtension */
-    static final class zza extends zzfrh {
-        zza() {
-        }
-
-        public final void zza(Throwable th, Throwable th2) {
-        }
-
-        public final void zza(Throwable th) {
-            ThrowableExtension.printStackTrace(th);
-        }
-
-        public final void zza(Throwable th, PrintStream printStream) {
-            ThrowableExtension.printStackTrace(th, printStream);
-        }
-
-        public final void zza(Throwable th, PrintWriter printWriter) {
-            ThrowableExtension.printStackTrace(th, printWriter);
-        }
-    }
-
-    public static void zza(Throwable th, Throwable th2) {
-        zza.zza(th, th2);
-    }
-
-    public static void zza(Throwable th) {
-        zza.zza(th);
-    }
-
-    public static void zza(Throwable th, PrintWriter printWriter) {
-        zza.zza(th, printWriter);
-    }
-
-    public static void zza(Throwable th, PrintStream printStream) {
-        zza.zza(th, printStream);
-    }
-
-    private static Integer zza() {
-        try {
-            return (Integer) Class.forName("android.os.Build$VERSION").getField("SDK_INT").get(null);
-        } catch (Exception e) {
-            System.err.println("Failed to retrieve value from android.os.Build$VERSION.SDK_INT due to the following exception.");
-            ThrowableExtension.printStackTrace(e, System.err);
-            return null;
-        }
-    }
 
     /* JADX WARNING: Removed duplicated region for block: B:18:0x006a  */
     static {
@@ -117,5 +71,52 @@ public final class zzfrg {
             return
         */
         throw new UnsupportedOperationException("Method not decompiled: com.google.android.gms.internal.zzfrg.<clinit>():void");
+    }
+
+    public static void zza(Throwable th, Throwable th2) {
+        zza.zza(th, th2);
+    }
+
+    public static void zza(Throwable th) {
+        zza.zza(th);
+    }
+
+    public static void zza(Throwable th, PrintWriter printWriter) {
+        zza.zza(th, printWriter);
+    }
+
+    public static void zza(Throwable th, PrintStream printStream) {
+        zza.zza(th, printStream);
+    }
+
+    private static Integer zza() {
+        try {
+            return (Integer) Class.forName("android.os.Build$VERSION").getField("SDK_INT").get(null);
+        } catch (Exception e) {
+            System.err.println("Failed to retrieve value from android.os.Build$VERSION.SDK_INT due to the following exception.");
+            ThrowableExtension.printStackTrace(e, System.err);
+            return null;
+        }
+    }
+
+    /* compiled from: ThrowableExtension */
+    static final class zza extends zzfrh {
+        zza() {
+        }
+
+        public final void zza(Throwable th, Throwable th2) {
+        }
+
+        public final void zza(Throwable th) {
+            ThrowableExtension.printStackTrace(th);
+        }
+
+        public final void zza(Throwable th, PrintStream printStream) {
+            ThrowableExtension.printStackTrace(th, printStream);
+        }
+
+        public final void zza(Throwable th, PrintWriter printWriter) {
+            ThrowableExtension.printStackTrace(th, printWriter);
+        }
     }
 }

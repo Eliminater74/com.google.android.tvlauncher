@@ -1,10 +1,11 @@
 package com.google.android.exoplayer2.extractor;
 
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.C0841C;
-import com.google.android.exoplayer2.extractor.SeekMap;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.IOException;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -13,36 +14,11 @@ import java.nio.ByteBuffer;
 
 public abstract class BinarySearchSeeker {
     private static final long MAX_SKIP_BYTES = 262144;
-    private final int minimumSearchRange;
     protected final BinarySearchSeekMap seekMap;
+    protected final TimestampSeeker timestampSeeker;
+    private final int minimumSearchRange;
     @Nullable
     protected SeekOperationParams seekOperationParams;
-    protected final TimestampSeeker timestampSeeker;
-
-    protected interface SeekTimestampConverter {
-        long timeUsToTargetTime(long j);
-    }
-
-    protected interface TimestampSeeker {
-        void onSeekFinished();
-
-        TimestampSearchResult searchForTimestamp(ExtractorInput extractorInput, long j, OutputFrameHolder outputFrameHolder) throws IOException, InterruptedException;
-    }
-
-    public static final class OutputFrameHolder {
-        public final ByteBuffer byteBuffer;
-        public long timeUs = 0;
-
-        public OutputFrameHolder(ByteBuffer outputByteBuffer) {
-            this.byteBuffer = outputByteBuffer;
-        }
-    }
-
-    public static final class DefaultSeekTimestampConverter implements SeekTimestampConverter {
-        public long timeUsToTargetTime(long timeUs) {
-            return timeUs;
-        }
-    }
 
     protected BinarySearchSeeker(SeekTimestampConverter seekTimestampConverter, TimestampSeeker timestampSeeker2, long durationUs, long floorTimePosition, long ceilingTimePosition, long floorBytePosition, long ceilingBytePosition, long approxBytesPerFrame, int minimumSearchRange2) {
         this.timestampSeeker = timestampSeeker2;
@@ -138,23 +114,40 @@ public abstract class BinarySearchSeeker {
         return 1;
     }
 
+    protected interface SeekTimestampConverter {
+        long timeUsToTargetTime(long j);
+    }
+
+    protected interface TimestampSeeker {
+        void onSeekFinished();
+
+        TimestampSearchResult searchForTimestamp(ExtractorInput extractorInput, long j, OutputFrameHolder outputFrameHolder) throws IOException, InterruptedException;
+    }
+
+    public static final class OutputFrameHolder {
+        public final ByteBuffer byteBuffer;
+        public long timeUs = 0;
+
+        public OutputFrameHolder(ByteBuffer outputByteBuffer) {
+            this.byteBuffer = outputByteBuffer;
+        }
+    }
+
+    public static final class DefaultSeekTimestampConverter implements SeekTimestampConverter {
+        public long timeUsToTargetTime(long timeUs) {
+            return timeUs;
+        }
+    }
+
     protected static class SeekOperationParams {
         private final long approxBytesPerFrame;
+        private final long seekTimeUs;
+        private final long targetTimePosition;
         private long ceilingBytePosition;
         private long ceilingTimePosition;
         private long floorBytePosition;
         private long floorTimePosition;
         private long nextSearchBytePosition;
-        private final long seekTimeUs;
-        private final long targetTimePosition;
-
-        protected static long calculateNextSearchBytePosition(long targetTimePosition2, long floorTimePosition2, long ceilingTimePosition2, long floorBytePosition2, long ceilingBytePosition2, long approxBytesPerFrame2) {
-            if (floorBytePosition2 + 1 >= ceilingBytePosition2 || floorTimePosition2 + 1 >= ceilingTimePosition2) {
-                return floorBytePosition2;
-            }
-            long bytesToSkip = (long) (((float) (targetTimePosition2 - floorTimePosition2)) * (((float) (ceilingBytePosition2 - floorBytePosition2)) / ((float) (ceilingTimePosition2 - floorTimePosition2))));
-            return Util.constrainValue(((floorBytePosition2 + bytesToSkip) - approxBytesPerFrame2) - (bytesToSkip / 20), floorBytePosition2, ceilingBytePosition2 - 1);
-        }
 
         protected SeekOperationParams(long seekTimeUs2, long targetTimePosition2, long floorTimePosition2, long ceilingTimePosition2, long floorBytePosition2, long ceilingBytePosition2, long approxBytesPerFrame2) {
             this.seekTimeUs = seekTimeUs2;
@@ -165,6 +158,14 @@ public abstract class BinarySearchSeeker {
             this.ceilingBytePosition = ceilingBytePosition2;
             this.approxBytesPerFrame = approxBytesPerFrame2;
             this.nextSearchBytePosition = calculateNextSearchBytePosition(targetTimePosition2, floorTimePosition2, ceilingTimePosition2, floorBytePosition2, ceilingBytePosition2, approxBytesPerFrame2);
+        }
+
+        protected static long calculateNextSearchBytePosition(long targetTimePosition2, long floorTimePosition2, long ceilingTimePosition2, long floorBytePosition2, long ceilingBytePosition2, long approxBytesPerFrame2) {
+            if (floorBytePosition2 + 1 >= ceilingBytePosition2 || floorTimePosition2 + 1 >= ceilingTimePosition2) {
+                return floorBytePosition2;
+            }
+            long bytesToSkip = (long) (((float) (targetTimePosition2 - floorTimePosition2)) * (((float) (ceilingBytePosition2 - floorBytePosition2)) / ((float) (ceilingTimePosition2 - floorTimePosition2))));
+            return Util.constrainValue(((floorBytePosition2 + bytesToSkip) - approxBytesPerFrame2) - (bytesToSkip / 20), floorBytePosition2, ceilingBytePosition2 - 1);
         }
 
         /* access modifiers changed from: private */
@@ -224,11 +225,6 @@ public abstract class BinarySearchSeeker {
         /* access modifiers changed from: private */
         public final int type;
 
-        @Documented
-        @Retention(RetentionPolicy.SOURCE)
-        @interface Type {
-        }
-
         private TimestampSearchResult(int type2, long timestampToUpdate2, long bytePositionToUpdate2) {
             this.type = type2;
             this.timestampToUpdate = timestampToUpdate2;
@@ -246,6 +242,11 @@ public abstract class BinarySearchSeeker {
         public static TimestampSearchResult targetFoundResult(long resultBytePosition) {
             return new TimestampSearchResult(0, C0841C.TIME_UNSET, resultBytePosition);
         }
+
+        @Documented
+        @Retention(RetentionPolicy.SOURCE)
+        @interface Type {
+        }
     }
 
     public static class BinarySearchSeekMap implements SeekMap {
@@ -255,11 +256,11 @@ public abstract class BinarySearchSeeker {
         public final long ceilingBytePosition;
         /* access modifiers changed from: private */
         public final long ceilingTimePosition;
-        private final long durationUs;
         /* access modifiers changed from: private */
         public final long floorBytePosition;
         /* access modifiers changed from: private */
         public final long floorTimePosition;
+        private final long durationUs;
         private final SeekTimestampConverter seekTimestampConverter;
 
         public BinarySearchSeekMap(SeekTimestampConverter seekTimestampConverter2, long durationUs2, long floorTimePosition2, long ceilingTimePosition2, long floorBytePosition2, long ceilingBytePosition2, long approxBytesPerFrame2) {

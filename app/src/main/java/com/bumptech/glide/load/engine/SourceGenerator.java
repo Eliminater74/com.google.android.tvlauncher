@@ -2,13 +2,14 @@ package com.bumptech.glide.load.engine;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
+
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.Encoder;
 import com.bumptech.glide.load.Key;
 import com.bumptech.glide.load.data.DataFetcher;
-import com.bumptech.glide.load.engine.DataFetcherGenerator;
 import com.bumptech.glide.load.model.ModelLoader;
 import com.bumptech.glide.util.LogTime;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -17,8 +18,8 @@ class SourceGenerator implements DataFetcherGenerator, DataFetcher.DataCallback<
 
     /* renamed from: cb */
     private final DataFetcherGenerator.FetcherReadyCallback f56cb;
-    private Object dataToCache;
     private final DecodeHelper<?> helper;
+    private Object dataToCache;
     private volatile ModelLoader.LoadData<?> loadData;
     private int loadDataListIndex;
     private DataCacheKey originalKey;

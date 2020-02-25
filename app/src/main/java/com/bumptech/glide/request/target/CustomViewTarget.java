@@ -13,9 +13,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
+
 import com.bumptech.glide.C0776R;
 import com.bumptech.glide.request.Request;
 import com.bumptech.glide.util.Preconditions;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -25,22 +27,22 @@ public abstract class CustomViewTarget<T extends View, Z> implements Target<Z> {
     private static final String TAG = "CustomViewTarget";
     @IdRes
     private static final int VIEW_TAG_ID = C0776R.C0778id.glide_custom_view_target_tag;
+    protected final T view;
+    private final SizeDeterminer sizeDeterminer;
     @Nullable
     private View.OnAttachStateChangeListener attachStateListener;
     private boolean isAttachStateListenerAdded;
     private boolean isClearedByUs;
     @IdRes
     private int overrideTag;
-    private final SizeDeterminer sizeDeterminer;
-    protected final T view;
-
-    /* access modifiers changed from: protected */
-    public abstract void onResourceCleared(@Nullable Drawable drawable);
 
     public CustomViewTarget(@NonNull T view2) {
         this.view = (View) Preconditions.checkNotNull(view2);
         this.sizeDeterminer = new SizeDeterminer(view2);
     }
+
+    /* access modifiers changed from: protected */
+    public abstract void onResourceCleared(@Nullable Drawable drawable);
 
     /* access modifiers changed from: protected */
     public void onResourceLoading(@Nullable Drawable placeholder) {
@@ -113,10 +115,6 @@ public abstract class CustomViewTarget<T extends View, Z> implements Target<Z> {
         }
     }
 
-    public final void setRequest(@Nullable Request request) {
-        setTag(request);
-    }
-
     @Nullable
     public final Request getRequest() {
         Object tag = getTag();
@@ -127,6 +125,10 @@ public abstract class CustomViewTarget<T extends View, Z> implements Target<Z> {
             return (Request) tag;
         }
         throw new IllegalArgumentException("You must not pass non-R.id ids to setTag(id)");
+    }
+
+    public final void setRequest(@Nullable Request request) {
+        setTag(request);
     }
 
     public String toString() {
@@ -166,33 +168,6 @@ public abstract class CustomViewTarget<T extends View, Z> implements Target<Z> {
         	at jadx.core.dex.visitors.MethodInvokeVisitor.processOverloaded(MethodInvokeVisitor.java:106)
         	at jadx.core.dex.visitors.MethodInvokeVisitor.processInvoke(MethodInvokeVisitor.java:99)
         	at jadx.core.dex.visitors.MethodInvokeVisitor.processInsn(MethodInvokeVisitor.java:70)
-        	at jadx.core.dex.visitors.MethodInvokeVisitor.visit(MethodInvokeVisitor.java:63)
-        */
-    private void setTag(@android.support.annotation.Nullable java.lang.Object r3) {
-        /*
-            r2 = this;
-            T r0 = r2.view
-            int r1 = r2.overrideTag
-            if (r1 != 0) goto L_0x0008
-            int r1 = com.bumptech.glide.request.target.CustomViewTarget.VIEW_TAG_ID
-        L_0x0008:
-            r0.setTag(r1, r3)
-            return
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.bumptech.glide.request.target.CustomViewTarget.setTag(java.lang.Object):void");
-    }
-
-    /*  JADX ERROR: JadxRuntimeException in pass: MethodInvokeVisitor
-        jadx.core.utils.exceptions.JadxRuntimeException: Not class type: T
-        	at jadx.core.dex.info.ClassInfo.checkClassType(ClassInfo.java:60)
-        	at jadx.core.dex.info.ClassInfo.fromType(ClassInfo.java:31)
-        	at jadx.core.dex.nodes.DexNode.resolveClass(DexNode.java:143)
-        	at jadx.core.dex.nodes.RootNode.resolveClass(RootNode.java:183)
-        	at jadx.core.dex.nodes.utils.MethodUtils.processMethodArgsOverloaded(MethodUtils.java:75)
-        	at jadx.core.dex.nodes.utils.MethodUtils.collectOverloadedMethods(MethodUtils.java:54)
-        	at jadx.core.dex.visitors.MethodInvokeVisitor.processOverloaded(MethodInvokeVisitor.java:106)
-        	at jadx.core.dex.visitors.MethodInvokeVisitor.processInvoke(MethodInvokeVisitor.java:99)
-        	at jadx.core.dex.visitors.MethodInvokeVisitor.processInsn(MethodInvokeVisitor.java:70)
         	at jadx.core.dex.visitors.MethodInvokeVisitor.processInsn(MethodInvokeVisitor.java:75)
         	at jadx.core.dex.visitors.MethodInvokeVisitor.visit(MethodInvokeVisitor.java:63)
         */
@@ -209,6 +184,33 @@ public abstract class CustomViewTarget<T extends View, Z> implements Target<Z> {
             return r0
         */
         throw new UnsupportedOperationException("Method not decompiled: com.bumptech.glide.request.target.CustomViewTarget.getTag():java.lang.Object");
+    }
+
+    /*  JADX ERROR: JadxRuntimeException in pass: MethodInvokeVisitor
+        jadx.core.utils.exceptions.JadxRuntimeException: Not class type: T
+        	at jadx.core.dex.info.ClassInfo.checkClassType(ClassInfo.java:60)
+        	at jadx.core.dex.info.ClassInfo.fromType(ClassInfo.java:31)
+        	at jadx.core.dex.nodes.DexNode.resolveClass(DexNode.java:143)
+        	at jadx.core.dex.nodes.RootNode.resolveClass(RootNode.java:183)
+        	at jadx.core.dex.nodes.utils.MethodUtils.processMethodArgsOverloaded(MethodUtils.java:75)
+        	at jadx.core.dex.nodes.utils.MethodUtils.collectOverloadedMethods(MethodUtils.java:54)
+        	at jadx.core.dex.visitors.MethodInvokeVisitor.processOverloaded(MethodInvokeVisitor.java:106)
+        	at jadx.core.dex.visitors.MethodInvokeVisitor.processInvoke(MethodInvokeVisitor.java:99)
+        	at jadx.core.dex.visitors.MethodInvokeVisitor.processInsn(MethodInvokeVisitor.java:70)
+        	at jadx.core.dex.visitors.MethodInvokeVisitor.visit(MethodInvokeVisitor.java:63)
+        */
+    private void setTag(@android.support.annotation.Nullable java.lang.Object r3) {
+        /*
+            r2 = this;
+            T r0 = r2.view
+            int r1 = r2.overrideTag
+            if (r1 != 0) goto L_0x0008
+            int r1 = com.bumptech.glide.request.target.CustomViewTarget.VIEW_TAG_ID
+        L_0x0008:
+            r0.setTag(r1, r3)
+            return
+        */
+        throw new UnsupportedOperationException("Method not decompiled: com.bumptech.glide.request.target.CustomViewTarget.setTag(java.lang.Object):void");
     }
 
     /*  JADX ERROR: JadxRuntimeException in pass: MethodInvokeVisitor
@@ -284,10 +286,10 @@ public abstract class CustomViewTarget<T extends View, Z> implements Target<Z> {
         @VisibleForTesting
         static Integer maxDisplayLength;
         private final List<SizeReadyCallback> cbs = new ArrayList();
-        @Nullable
-        private SizeDeterminerLayoutListener layoutListener;
         private final View view;
         boolean waitForLayout;
+        @Nullable
+        private SizeDeterminerLayoutListener layoutListener;
 
         SizeDeterminer(@NonNull View view2) {
             this.view = view2;

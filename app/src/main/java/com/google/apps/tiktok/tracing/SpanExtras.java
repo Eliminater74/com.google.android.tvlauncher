@@ -1,31 +1,34 @@
 package com.google.apps.tiktok.tracing;
 
 import android.support.p001v4.util.SimpleArrayMap;
-import com.google.apps.tiktok.tracing.SpanExtra;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.DoNotMock;
+
 import java.util.Set;
+
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
 
 @CheckReturnValue
 @DoNotMock
 public abstract class SpanExtras {
+    /* access modifiers changed from: private */
+    public final SimpleArrayMap<SpanExtraKey<?>, Object> map;
     @Nullable
     private final SpanExtras delegate;
     /* access modifiers changed from: private */
     public boolean isFrozen;
-    /* access modifiers changed from: private */
-    public final SimpleArrayMap<SpanExtraKey<?>, Object> map;
 
-    @DoNotMock
-    public interface Builder {
-        SpanExtras build();
-
-        @CanIgnoreReturnValue
-        <T> Builder put(SpanExtraKey<T> spanExtraKey, T t);
+    private SpanExtras(@Nullable SpanExtras delegate2, SimpleArrayMap<SpanExtraKey<?>, Object> map2) {
+        this.isFrozen = false;
+        if (delegate2 != null) {
+            Preconditions.checkArgument(delegate2.isFrozen);
+        }
+        this.delegate = delegate2;
+        this.map = map2;
     }
 
     public static <T> SpanExtra<T> getSpanExtra(SpanExtraKey<T> key, SpanExtras extras, TracingRestricted restricted) {
@@ -37,46 +40,12 @@ public abstract class SpanExtras {
         return SpanExtra.create((Object) result);
     }
 
-    static final class SpanExtrasImpl extends SpanExtras implements Builder {
-        static final SpanExtras EMPTY_EXTRAS = new SpanExtrasImpl(null, new SimpleArrayMap(0)).freeze();
-
-        private SpanExtrasImpl(SpanExtras delegate, SimpleArrayMap<SpanExtraKey<?>, Object> map) {
-            super(map);
-        }
-
-        public SpanExtras build() {
-            return freeze();
-        }
-
-        @CanIgnoreReturnValue
-        public <T> Builder put(SpanExtraKey<T> key, T value) {
-            Preconditions.checkState(!this.isFrozen, "Can't mutate after handing to trace");
-            Preconditions.checkNotNull(value);
-            Preconditions.checkState(!containsKey(key), "Key already present");
-            this.map.put(key, value);
-            return this;
-        }
-    }
-
     public static Builder newBuilder() {
         return SpanExtrasImpl.EMPTY_EXTRAS.toBuilder();
     }
 
-    public final Builder toBuilder() {
-        return new SpanExtrasImpl(new SimpleArrayMap());
-    }
-
     public static SpanExtras empty() {
         return SpanExtrasImpl.EMPTY_EXTRAS;
-    }
-
-    private SpanExtras(@Nullable SpanExtras delegate2, SimpleArrayMap<SpanExtraKey<?>, Object> map2) {
-        this.isFrozen = false;
-        if (delegate2 != null) {
-            Preconditions.checkArgument(delegate2.isFrozen);
-        }
-        this.delegate = delegate2;
-        this.map = map2;
     }
 
     static SpanExtras copyCombine(SpanExtras first, SpanExtras second) {
@@ -122,6 +91,10 @@ public abstract class SpanExtras {
         return new SpanExtrasImpl(map2).freeze();
     }
 
+    public final Builder toBuilder() {
+        return new SpanExtrasImpl(new SimpleArrayMap());
+    }
+
     /* access modifiers changed from: package-private */
     public final SpanExtras freeze() {
         if (!this.isFrozen) {
@@ -160,5 +133,34 @@ public abstract class SpanExtras {
             return object;
         }
         return spanExtras.get(key);
+    }
+
+    @DoNotMock
+    public interface Builder {
+        SpanExtras build();
+
+        @CanIgnoreReturnValue
+        <T> Builder put(SpanExtraKey<T> spanExtraKey, T t);
+    }
+
+    static final class SpanExtrasImpl extends SpanExtras implements Builder {
+        static final SpanExtras EMPTY_EXTRAS = new SpanExtrasImpl(null, new SimpleArrayMap(0)).freeze();
+
+        private SpanExtrasImpl(SpanExtras delegate, SimpleArrayMap<SpanExtraKey<?>, Object> map) {
+            super(map);
+        }
+
+        public SpanExtras build() {
+            return freeze();
+        }
+
+        @CanIgnoreReturnValue
+        public <T> Builder put(SpanExtraKey<T> key, T value) {
+            Preconditions.checkState(!this.isFrozen, "Can't mutate after handing to trace");
+            Preconditions.checkNotNull(value);
+            Preconditions.checkState(!containsKey(key), "Key already present");
+            this.map.put(key, value);
+            return this;
+        }
     }
 }

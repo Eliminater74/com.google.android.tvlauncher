@@ -28,152 +28,80 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+
 import com.google.android.tvlauncher.C1188R;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class ContextMenu {
     @VisibleForTesting
     static final int BOTTOM_ALIGN = 1;
-    private static final float FLOAT_COMPARISON_DELTA = 1.0E-4f;
     @VisibleForTesting
     static final int SCROLL = 2;
     @VisibleForTesting
     static final int TOP_ALIGN = 0;
-    private Activity mActivity;
+    private static final float FLOAT_COMPARISON_DELTA = 1.0E-4f;
+    /* access modifiers changed from: private */
+    public final int mDimBackgroundColor;
+    /* access modifiers changed from: private */
+    public final int mFocusedColor;
+    /* access modifiers changed from: private */
+    public final int mUnfocusedColor;
+    private final int mDisabledColor;
+    private final int mEnabledColor;
+    private final int mMenuHeightPerRow;
+    private final int mMenuVerticalMargin;
+    private final float mOverlayAlpha;
+    private final int mOverlayDismissAnimationDuration;
+    private final int mOverlayShowAnimationDuration;
+    private final int mOverscanHorizontal;
+    private final int mOverscanVertical;
+    private final int mTriangleEdgeOffset;
+    private final int mTriangleHeight;
+    private final int mTriangleVerticalMenuMargin;
+    private final int mTriangleWidth;
     /* access modifiers changed from: private */
     public View mAnchor;
     /* access modifiers changed from: private */
     public View.OnAttachStateChangeListener mAnchorOnAttachStateChangeListener;
-    private float mAnchorRealHeight;
-    private float mAnchorRealWidth;
     /* access modifiers changed from: private */
     public View.OnLayoutChangeListener mAnchorRootLayoutChangeListener;
-    private float mAnchorX;
-    private float mAnchorY;
-    private List<ContextMenuItem> mContextMenuItems;
     /* access modifiers changed from: private */
     public CutoutOverlayLayout mCutoutOverlay;
-    private float mDeltaX;
-    private float mDeltaY;
-    /* access modifiers changed from: private */
-    public final int mDimBackgroundColor;
-    private final int mDisabledColor;
-    private final int mEnabledColor;
-    /* access modifiers changed from: private */
-    public final int mFocusedColor;
-    private int mGravity;
-    private int mHorizontalPosition;
     /* access modifiers changed from: private */
     public boolean mIsShowing;
-    private FrameLayout mMenuContainer;
-    private int mMenuHeight;
-    private final int mMenuHeightPerRow;
-    private LinearLayout mMenuLinearLayout;
-    private final int mMenuVerticalMargin;
-    private int mMenuWidth;
     /* access modifiers changed from: private */
     public OnDismissListener mOnDismissListener;
     /* access modifiers changed from: private */
     public OnItemClickListener mOnItemClickListener;
     /* access modifiers changed from: private */
     public ViewTreeObserver.OnScrollChangedListener mOnScrollChangedListener;
-    private final float mOverlayAlpha;
-    private ObjectAnimator mOverlayAnimator;
-    private final int mOverlayDismissAnimationDuration;
-    private final int mOverlayShowAnimationDuration;
-    private final int mOverscanHorizontal;
-    private final int mOverscanVertical;
-    private PopupWindow mPopupWindow;
     /* access modifiers changed from: private */
     public ViewGroup mRootParentWindow;
     /* access modifiers changed from: private */
     public ImageView mTriangle;
-    private final int mTriangleEdgeOffset;
-    private final int mTriangleHeight;
-    private final int mTriangleVerticalMenuMargin;
-    private final int mTriangleWidth;
-    /* access modifiers changed from: private */
-    public final int mUnfocusedColor;
-    @VerticalPosition
-    private int mVerticalPosition;
     /* access modifiers changed from: private */
     public List<ContextMenuItem> mVisibleItems;
+    private Activity mActivity;
+    private float mAnchorRealHeight;
+    private float mAnchorRealWidth;
+    private float mAnchorX;
+    private float mAnchorY;
+    private List<ContextMenuItem> mContextMenuItems;
+    private float mDeltaX;
+    private float mDeltaY;
+    private int mGravity;
+    private int mHorizontalPosition;
+    private FrameLayout mMenuContainer;
+    private int mMenuHeight;
+    private LinearLayout mMenuLinearLayout;
+    private int mMenuWidth;
+    private ObjectAnimator mOverlayAnimator;
+    private PopupWindow mPopupWindow;
+    @VerticalPosition
+    private int mVerticalPosition;
     private List<View> mVisibleMenuItemViews;
-
-    public interface OnDismissListener {
-        void onDismiss();
-    }
-
-    public interface OnItemClickListener {
-        void onItemClick(ContextMenuItem contextMenuItem);
-    }
-
-    @interface VerticalPosition {
-    }
-
-    public boolean isShowing() {
-        return this.mIsShowing;
-    }
-
-    /* access modifiers changed from: package-private */
-    @VisibleForTesting
-    public List<View> getVisibleMenuItemViews() {
-        return this.mVisibleMenuItemViews;
-    }
-
-    @VisibleForTesting
-    public List<ContextMenuItem> getContextMenuItems() {
-        return this.mContextMenuItems;
-    }
-
-    /* access modifiers changed from: package-private */
-    @VisibleForTesting
-    public View.OnAttachStateChangeListener getAnchorOnAttachStateChangeListener() {
-        return this.mAnchorOnAttachStateChangeListener;
-    }
-
-    /* access modifiers changed from: package-private */
-    @VisibleForTesting
-    public ObjectAnimator getOverlayAnimator() {
-        return this.mOverlayAnimator;
-    }
-
-    /* access modifiers changed from: package-private */
-    @VisibleForTesting
-    public float getDeltaY() {
-        return this.mDeltaY;
-    }
-
-    /* access modifiers changed from: package-private */
-    @VisibleForTesting
-    public float getDeltaX() {
-        return this.mDeltaX;
-    }
-
-    /* access modifiers changed from: package-private */
-    @VisibleForTesting
-    public int getGravity() {
-        return this.mGravity;
-    }
-
-    /* access modifiers changed from: package-private */
-    @VisibleForTesting
-    public CutoutOverlayLayout getCutoutOverlay() {
-        return this.mCutoutOverlay;
-    }
-
-    /* access modifiers changed from: package-private */
-    @VisibleForTesting
-    public int getHorizontalPosition() {
-        return this.mHorizontalPosition;
-    }
-
-    /* access modifiers changed from: package-private */
-    @VisibleForTesting
-    public int getVerticalPosition() {
-        return this.mVerticalPosition;
-    }
 
     public ContextMenu(Activity activity, View anchor, int cornerRadius) {
         this(activity, anchor, cornerRadius, anchor.getScaleX(), anchor.getScaleY());
@@ -247,6 +175,69 @@ public class ContextMenu {
         this.mCutoutOverlay = new CutoutOverlayLayout(this.mActivity, (int) (((float) cornerRadius) * scaleX), (int) (((float) cornerRadius) * scaleY));
         this.mCutoutOverlay.setAnchorRect(anchorRect);
         this.mTriangle = new ImageView(this.mActivity);
+    }
+
+    public boolean isShowing() {
+        return this.mIsShowing;
+    }
+
+    /* access modifiers changed from: package-private */
+    @VisibleForTesting
+    public List<View> getVisibleMenuItemViews() {
+        return this.mVisibleMenuItemViews;
+    }
+
+    @VisibleForTesting
+    public List<ContextMenuItem> getContextMenuItems() {
+        return this.mContextMenuItems;
+    }
+
+    /* access modifiers changed from: package-private */
+    @VisibleForTesting
+    public View.OnAttachStateChangeListener getAnchorOnAttachStateChangeListener() {
+        return this.mAnchorOnAttachStateChangeListener;
+    }
+
+    /* access modifiers changed from: package-private */
+    @VisibleForTesting
+    public ObjectAnimator getOverlayAnimator() {
+        return this.mOverlayAnimator;
+    }
+
+    /* access modifiers changed from: package-private */
+    @VisibleForTesting
+    public float getDeltaY() {
+        return this.mDeltaY;
+    }
+
+    /* access modifiers changed from: package-private */
+    @VisibleForTesting
+    public float getDeltaX() {
+        return this.mDeltaX;
+    }
+
+    /* access modifiers changed from: package-private */
+    @VisibleForTesting
+    public int getGravity() {
+        return this.mGravity;
+    }
+
+    /* access modifiers changed from: package-private */
+    @VisibleForTesting
+    public CutoutOverlayLayout getCutoutOverlay() {
+        return this.mCutoutOverlay;
+    }
+
+    /* access modifiers changed from: package-private */
+    @VisibleForTesting
+    public int getHorizontalPosition() {
+        return this.mHorizontalPosition;
+    }
+
+    /* access modifiers changed from: package-private */
+    @VisibleForTesting
+    public int getVerticalPosition() {
+        return this.mVerticalPosition;
     }
 
     @VisibleForTesting
@@ -681,6 +672,17 @@ public class ContextMenu {
                 this.mCutoutOverlay.invalidate();
             }
         }
+    }
+
+    public interface OnDismissListener {
+        void onDismiss();
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(ContextMenuItem contextMenuItem);
+    }
+
+    @interface VerticalPosition {
     }
 
     @VisibleForTesting

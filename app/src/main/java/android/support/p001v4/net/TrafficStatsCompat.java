@@ -4,12 +4,16 @@ import android.net.TrafficStats;
 import android.os.Build;
 import android.os.ParcelFileDescriptor;
 import android.support.annotation.NonNull;
+
 import java.net.DatagramSocket;
 import java.net.Socket;
 import java.net.SocketException;
 
 /* renamed from: android.support.v4.net.TrafficStatsCompat */
 public final class TrafficStatsCompat {
+    private TrafficStatsCompat() {
+    }
+
     @Deprecated
     public static void clearThreadStatsTag() {
         TrafficStats.clearThreadStatsTag();
@@ -21,6 +25,11 @@ public final class TrafficStatsCompat {
     }
 
     @Deprecated
+    public static void setThreadStatsTag(int tag) {
+        TrafficStats.setThreadStatsTag(tag);
+    }
+
+    @Deprecated
     public static void incrementOperationCount(int operationCount) {
         TrafficStats.incrementOperationCount(operationCount);
     }
@@ -28,11 +37,6 @@ public final class TrafficStatsCompat {
     @Deprecated
     public static void incrementOperationCount(int tag, int operationCount) {
         TrafficStats.incrementOperationCount(tag, operationCount);
-    }
-
-    @Deprecated
-    public static void setThreadStatsTag(int tag) {
-        TrafficStats.setThreadStatsTag(tag);
     }
 
     @Deprecated
@@ -63,8 +67,5 @@ public final class TrafficStatsCompat {
         ParcelFileDescriptor pfd = ParcelFileDescriptor.fromDatagramSocket(socket);
         TrafficStats.untagSocket(new DatagramSocketWrapper(socket, pfd.getFileDescriptor()));
         pfd.detachFd();
-    }
-
-    private TrafficStatsCompat() {
     }
 }

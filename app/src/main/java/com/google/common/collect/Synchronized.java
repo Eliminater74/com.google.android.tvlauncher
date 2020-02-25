@@ -5,9 +5,11 @@ import com.google.common.annotations.GwtIncompatible;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Multiset;
-import com.google.common.collect.Table;
 import com.google.j2objc.annotations.RetainedWith;
+
+import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -25,12 +27,147 @@ import java.util.RandomAccess;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
-import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible(emulated = true)
 final class Synchronized {
     private Synchronized() {
+    }
+
+    /* access modifiers changed from: private */
+    public static <E> Collection<E> collection(Collection<E> collection, @NullableDecl Object mutex) {
+        return new SynchronizedCollection(collection, mutex);
+    }
+
+    @VisibleForTesting
+    static <E> Set<E> set(Set<E> set, @NullableDecl Object mutex) {
+        return new SynchronizedSet(set, mutex);
+    }
+
+    /* access modifiers changed from: private */
+    public static <E> SortedSet<E> sortedSet(SortedSet<E> set, @NullableDecl Object mutex) {
+        return new SynchronizedSortedSet(set, mutex);
+    }
+
+    /* access modifiers changed from: private */
+    public static <E> List<E> list(List<E> list, @NullableDecl Object mutex) {
+        if (list instanceof RandomAccess) {
+            return new SynchronizedRandomAccessList(list, mutex);
+        }
+        return new SynchronizedList(list, mutex);
+    }
+
+    static <E> Multiset<E> multiset(Multiset<E> multiset, @NullableDecl Object mutex) {
+        if ((multiset instanceof SynchronizedMultiset) || (multiset instanceof ImmutableMultiset)) {
+            return multiset;
+        }
+        return new SynchronizedMultiset(multiset, mutex);
+    }
+
+    static <K, V> Multimap<K, V> multimap(Multimap<K, V> multimap, @NullableDecl Object mutex) {
+        if ((multimap instanceof SynchronizedMultimap) || (multimap instanceof BaseImmutableMultimap)) {
+            return multimap;
+        }
+        return new SynchronizedMultimap(multimap, mutex);
+    }
+
+    static <K, V> ListMultimap<K, V> listMultimap(ListMultimap<K, V> multimap, @NullableDecl Object mutex) {
+        if ((multimap instanceof SynchronizedListMultimap) || (multimap instanceof BaseImmutableMultimap)) {
+            return multimap;
+        }
+        return new SynchronizedListMultimap(multimap, mutex);
+    }
+
+    static <K, V> SetMultimap<K, V> setMultimap(SetMultimap<K, V> multimap, @NullableDecl Object mutex) {
+        if ((multimap instanceof SynchronizedSetMultimap) || (multimap instanceof BaseImmutableMultimap)) {
+            return multimap;
+        }
+        return new SynchronizedSetMultimap(multimap, mutex);
+    }
+
+    static <K, V> SortedSetMultimap<K, V> sortedSetMultimap(SortedSetMultimap<K, V> multimap, @NullableDecl Object mutex) {
+        if (multimap instanceof SynchronizedSortedSetMultimap) {
+            return multimap;
+        }
+        return new SynchronizedSortedSetMultimap(multimap, mutex);
+    }
+
+    /* access modifiers changed from: private */
+    public static <E> Collection<E> typePreservingCollection(Collection<E> collection, @NullableDecl Object mutex) {
+        if (collection instanceof SortedSet) {
+            return sortedSet((SortedSet) collection, mutex);
+        }
+        if (collection instanceof Set) {
+            return set((Set) collection, mutex);
+        }
+        if (collection instanceof List) {
+            return list((List) collection, mutex);
+        }
+        return collection(collection, mutex);
+    }
+
+    /* access modifiers changed from: private */
+    public static <E> Set<E> typePreservingSet(Set<E> set, @NullableDecl Object mutex) {
+        if (set instanceof SortedSet) {
+            return sortedSet((SortedSet) set, mutex);
+        }
+        return set(set, mutex);
+    }
+
+    @VisibleForTesting
+    static <K, V> Map<K, V> map(Map<K, V> map, @NullableDecl Object mutex) {
+        return new SynchronizedMap(map, mutex);
+    }
+
+    static <K, V> SortedMap<K, V> sortedMap(SortedMap<K, V> sortedMap, @NullableDecl Object mutex) {
+        return new SynchronizedSortedMap(sortedMap, mutex);
+    }
+
+    static <K, V> BiMap<K, V> biMap(BiMap<K, V> bimap, @NullableDecl Object mutex) {
+        if ((bimap instanceof SynchronizedBiMap) || (bimap instanceof ImmutableBiMap)) {
+            return bimap;
+        }
+        return new SynchronizedBiMap(bimap, mutex, null);
+    }
+
+    @GwtIncompatible
+    static <E> NavigableSet<E> navigableSet(NavigableSet<E> navigableSet, @NullableDecl Object mutex) {
+        return new SynchronizedNavigableSet(navigableSet, mutex);
+    }
+
+    @GwtIncompatible
+    static <E> NavigableSet<E> navigableSet(NavigableSet<E> navigableSet) {
+        return navigableSet(navigableSet, null);
+    }
+
+    @GwtIncompatible
+    static <K, V> NavigableMap<K, V> navigableMap(NavigableMap<K, V> navigableMap) {
+        return navigableMap(navigableMap, null);
+    }
+
+    @GwtIncompatible
+    static <K, V> NavigableMap<K, V> navigableMap(NavigableMap<K, V> navigableMap, @NullableDecl Object mutex) {
+        return new SynchronizedNavigableMap(navigableMap, mutex);
+    }
+
+    /* access modifiers changed from: private */
+    @GwtIncompatible
+    public static <K, V> Map.Entry<K, V> nullableSynchronizedEntry(@NullableDecl Map.Entry<K, V> entry, @NullableDecl Object mutex) {
+        if (entry == null) {
+            return null;
+        }
+        return new SynchronizedEntry(entry, mutex);
+    }
+
+    static <E> Queue<E> queue(Queue<E> queue, @NullableDecl Object mutex) {
+        return queue instanceof SynchronizedQueue ? queue : new SynchronizedQueue(queue, mutex);
+    }
+
+    static <E> Deque<E> deque(Deque<E> deque, @NullableDecl Object mutex) {
+        return new SynchronizedDeque(deque, mutex);
+    }
+
+    static <R, C, V> Table<R, C, V> table(Table<R, C, V> table, Object mutex) {
+        return new SynchronizedTable(table, mutex);
     }
 
     static class SynchronizedObject implements Serializable {
@@ -63,11 +200,6 @@ final class Synchronized {
                 stream.defaultWriteObject();
             }
         }
-    }
-
-    /* access modifiers changed from: private */
-    public static <E> Collection<E> collection(Collection<E> collection, @NullableDecl Object mutex) {
-        return new SynchronizedCollection(collection, mutex);
     }
 
     @VisibleForTesting
@@ -182,11 +314,6 @@ final class Synchronized {
         }
     }
 
-    @VisibleForTesting
-    static <E> Set<E> set(Set<E> set, @NullableDecl Object mutex) {
-        return new SynchronizedSet(set, mutex);
-    }
-
     static class SynchronizedSet<E> extends SynchronizedCollection<E> implements Set<E> {
         private static final long serialVersionUID = 0;
 
@@ -217,11 +344,6 @@ final class Synchronized {
             }
             return hashCode;
         }
-    }
-
-    /* access modifiers changed from: private */
-    public static <E> SortedSet<E> sortedSet(SortedSet<E> set, @NullableDecl Object mutex) {
-        return new SynchronizedSortedSet(set, mutex);
     }
 
     static class SynchronizedSortedSet<E> extends SynchronizedSet<E> implements SortedSet<E> {
@@ -283,14 +405,6 @@ final class Synchronized {
             }
             return last;
         }
-    }
-
-    /* access modifiers changed from: private */
-    public static <E> List<E> list(List<E> list, @NullableDecl Object mutex) {
-        if (list instanceof RandomAccess) {
-            return new SynchronizedRandomAccessList(list, mutex);
-        }
-        return new SynchronizedList(list, mutex);
     }
 
     private static class SynchronizedList<E> extends SynchronizedCollection<E> implements List<E> {
@@ -403,13 +517,6 @@ final class Synchronized {
         }
     }
 
-    static <E> Multiset<E> multiset(Multiset<E> multiset, @NullableDecl Object mutex) {
-        if ((multiset instanceof SynchronizedMultiset) || (multiset instanceof ImmutableMultiset)) {
-            return multiset;
-        }
-        return new SynchronizedMultiset(multiset, mutex);
-    }
-
     private static class SynchronizedMultiset<E> extends SynchronizedCollection<E> implements Multiset<E> {
         private static final long serialVersionUID = 0;
         @MonotonicNonNullDecl
@@ -508,13 +615,6 @@ final class Synchronized {
         }
     }
 
-    static <K, V> Multimap<K, V> multimap(Multimap<K, V> multimap, @NullableDecl Object mutex) {
-        if ((multimap instanceof SynchronizedMultimap) || (multimap instanceof BaseImmutableMultimap)) {
-            return multimap;
-        }
-        return new SynchronizedMultimap(multimap, mutex);
-    }
-
     private static class SynchronizedMultimap<K, V> extends SynchronizedObject implements Multimap<K, V> {
         private static final long serialVersionUID = 0;
         @MonotonicNonNullDecl
@@ -528,13 +628,13 @@ final class Synchronized {
         @MonotonicNonNullDecl
         transient Collection<V> valuesCollection;
 
+        SynchronizedMultimap(Multimap<K, V> delegate, @NullableDecl Object mutex) {
+            super(delegate, mutex);
+        }
+
         /* access modifiers changed from: package-private */
         public Multimap<K, V> delegate() {
             return (Multimap) super.delegate();
-        }
-
-        SynchronizedMultimap(Multimap<K, V> delegate, @NullableDecl Object mutex) {
-            super(delegate, mutex);
         }
 
         public int size() {
@@ -714,13 +814,6 @@ final class Synchronized {
         }
     }
 
-    static <K, V> ListMultimap<K, V> listMultimap(ListMultimap<K, V> multimap, @NullableDecl Object mutex) {
-        if ((multimap instanceof SynchronizedListMultimap) || (multimap instanceof BaseImmutableMultimap)) {
-            return multimap;
-        }
-        return new SynchronizedListMultimap(multimap, mutex);
-    }
-
     private static class SynchronizedListMultimap<K, V> extends SynchronizedMultimap<K, V> implements ListMultimap<K, V> {
         private static final long serialVersionUID = 0;
 
@@ -762,13 +855,6 @@ final class Synchronized {
             }
             return replaceValues;
         }
-    }
-
-    static <K, V> SetMultimap<K, V> setMultimap(SetMultimap<K, V> multimap, @NullableDecl Object mutex) {
-        if ((multimap instanceof SynchronizedSetMultimap) || (multimap instanceof BaseImmutableMultimap)) {
-            return multimap;
-        }
-        return new SynchronizedSetMultimap(multimap, mutex);
     }
 
     private static class SynchronizedSetMultimap<K, V> extends SynchronizedMultimap<K, V> implements SetMultimap<K, V> {
@@ -827,13 +913,6 @@ final class Synchronized {
         }
     }
 
-    static <K, V> SortedSetMultimap<K, V> sortedSetMultimap(SortedSetMultimap<K, V> multimap, @NullableDecl Object mutex) {
-        if (multimap instanceof SynchronizedSortedSetMultimap) {
-            return multimap;
-        }
-        return new SynchronizedSortedSetMultimap(multimap, mutex);
-    }
-
     private static class SynchronizedSortedSetMultimap<K, V> extends SynchronizedSetMultimap<K, V> implements SortedSetMultimap<K, V> {
         private static final long serialVersionUID = 0;
 
@@ -884,28 +963,6 @@ final class Synchronized {
             }
             return valueComparator;
         }
-    }
-
-    /* access modifiers changed from: private */
-    public static <E> Collection<E> typePreservingCollection(Collection<E> collection, @NullableDecl Object mutex) {
-        if (collection instanceof SortedSet) {
-            return sortedSet((SortedSet) collection, mutex);
-        }
-        if (collection instanceof Set) {
-            return set((Set) collection, mutex);
-        }
-        if (collection instanceof List) {
-            return list((List) collection, mutex);
-        }
-        return collection(collection, mutex);
-    }
-
-    /* access modifiers changed from: private */
-    public static <E> Set<E> typePreservingSet(Set<E> set, @NullableDecl Object mutex) {
-        if (set instanceof SortedSet) {
-            return sortedSet((SortedSet) set, mutex);
-        }
-        return set(set, mutex);
     }
 
     private static class SynchronizedAsMapEntries<K, V> extends SynchronizedSet<Map.Entry<K, Collection<V>>> {
@@ -999,11 +1056,6 @@ final class Synchronized {
             }
             return retainAll;
         }
-    }
-
-    @VisibleForTesting
-    static <K, V> Map<K, V> map(Map<K, V> map, @NullableDecl Object mutex) {
-        return new SynchronizedMap(map, mutex);
     }
 
     private static class SynchronizedMap<K, V> extends SynchronizedObject implements Map<K, V> {
@@ -1145,10 +1197,6 @@ final class Synchronized {
         }
     }
 
-    static <K, V> SortedMap<K, V> sortedMap(SortedMap<K, V> sortedMap, @NullableDecl Object mutex) {
-        return new SynchronizedSortedMap(sortedMap, mutex);
-    }
-
     static class SynchronizedSortedMap<K, V> extends SynchronizedMap<K, V> implements SortedMap<K, V> {
         private static final long serialVersionUID = 0;
 
@@ -1208,13 +1256,6 @@ final class Synchronized {
             }
             return sortedMap;
         }
-    }
-
-    static <K, V> BiMap<K, V> biMap(BiMap<K, V> bimap, @NullableDecl Object mutex) {
-        if ((bimap instanceof SynchronizedBiMap) || (bimap instanceof ImmutableBiMap)) {
-            return bimap;
-        }
-        return new SynchronizedBiMap(bimap, mutex, null);
     }
 
     @VisibleForTesting
@@ -1449,26 +1490,6 @@ final class Synchronized {
     }
 
     @GwtIncompatible
-    static <E> NavigableSet<E> navigableSet(NavigableSet<E> navigableSet, @NullableDecl Object mutex) {
-        return new SynchronizedNavigableSet(navigableSet, mutex);
-    }
-
-    @GwtIncompatible
-    static <E> NavigableSet<E> navigableSet(NavigableSet<E> navigableSet) {
-        return navigableSet(navigableSet, null);
-    }
-
-    @GwtIncompatible
-    static <K, V> NavigableMap<K, V> navigableMap(NavigableMap<K, V> navigableMap) {
-        return navigableMap(navigableMap, null);
-    }
-
-    @GwtIncompatible
-    static <K, V> NavigableMap<K, V> navigableMap(NavigableMap<K, V> navigableMap, @NullableDecl Object mutex) {
-        return new SynchronizedNavigableMap(navigableMap, mutex);
-    }
-
-    @GwtIncompatible
     @VisibleForTesting
     static class SynchronizedNavigableMap<K, V> extends SynchronizedSortedMap<K, V> implements NavigableMap<K, V> {
         private static final long serialVersionUID = 0;
@@ -1661,15 +1682,6 @@ final class Synchronized {
         }
     }
 
-    /* access modifiers changed from: private */
-    @GwtIncompatible
-    public static <K, V> Map.Entry<K, V> nullableSynchronizedEntry(@NullableDecl Map.Entry<K, V> entry, @NullableDecl Object mutex) {
-        if (entry == null) {
-            return null;
-        }
-        return new SynchronizedEntry(entry, mutex);
-    }
-
     @GwtIncompatible
     private static class SynchronizedEntry<K, V> extends SynchronizedObject implements Map.Entry<K, V> {
         private static final long serialVersionUID = 0;
@@ -1724,10 +1736,6 @@ final class Synchronized {
         }
     }
 
-    static <E> Queue<E> queue(Queue<E> queue, @NullableDecl Object mutex) {
-        return queue instanceof SynchronizedQueue ? queue : new SynchronizedQueue(queue, mutex);
-    }
-
     private static class SynchronizedQueue<E> extends SynchronizedCollection<E> implements Queue<E> {
         private static final long serialVersionUID = 0;
 
@@ -1779,10 +1787,6 @@ final class Synchronized {
             }
             return remove;
         }
-    }
-
-    static <E> Deque<E> deque(Deque<E> deque, @NullableDecl Object mutex) {
-        return new SynchronizedDeque(deque, mutex);
     }
 
     private static final class SynchronizedDeque<E> extends SynchronizedQueue<E> implements Deque<E> {
@@ -1926,10 +1930,6 @@ final class Synchronized {
             }
             return descendingIterator;
         }
-    }
-
-    static <R, C, V> Table<R, C, V> table(Table<R, C, V> table, Object mutex) {
-        return new SynchronizedTable(table, mutex);
     }
 
     private static final class SynchronizedTable<R, C, V> extends SynchronizedObject implements Table<R, C, V> {

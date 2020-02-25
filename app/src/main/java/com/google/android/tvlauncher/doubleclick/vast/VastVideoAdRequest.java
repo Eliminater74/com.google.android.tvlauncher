@@ -2,8 +2,10 @@ package com.google.android.tvlauncher.doubleclick.vast;
 
 import android.net.Uri;
 import android.util.Size;
+
 import com.google.android.exoplayer2.metadata.icy.IcyHeaders;
 import com.google.android.tvlauncher.doubleclick.DoubleClickAdRequest;
+
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -16,6 +18,26 @@ public class VastVideoAdRequest implements DoubleClickAdRequest {
 
     public VastVideoAdRequest(VastVideoAdTagModel vastVideoAdTagModel) {
         this.mDfpRequestUri = buildAdRequest(vastVideoAdTagModel);
+    }
+
+    private static String joinSizes(Set<Size> sizes, char delimtier) {
+        StringBuilder sizesBuilder = new StringBuilder();
+        Iterator<Size> iterator = sizes.iterator();
+        if (!iterator.hasNext()) {
+            return null;
+        }
+        Size nextSize = iterator.next();
+        sizesBuilder.append(nextSize.getWidth());
+        sizesBuilder.append('x');
+        sizesBuilder.append(nextSize.getHeight());
+        while (iterator.hasNext()) {
+            Size nextSize2 = iterator.next();
+            sizesBuilder.append(delimtier);
+            sizesBuilder.append(nextSize2.getWidth());
+            sizesBuilder.append('x');
+            sizesBuilder.append(nextSize2.getHeight());
+        }
+        return sizesBuilder.toString();
     }
 
     public Uri getDfpRequestUri() {
@@ -63,25 +85,5 @@ public class VastVideoAdRequest implements DoubleClickAdRequest {
             }
         }
         return targetingBuilder.toString();
-    }
-
-    private static String joinSizes(Set<Size> sizes, char delimtier) {
-        StringBuilder sizesBuilder = new StringBuilder();
-        Iterator<Size> iterator = sizes.iterator();
-        if (!iterator.hasNext()) {
-            return null;
-        }
-        Size nextSize = iterator.next();
-        sizesBuilder.append(nextSize.getWidth());
-        sizesBuilder.append('x');
-        sizesBuilder.append(nextSize.getHeight());
-        while (iterator.hasNext()) {
-            Size nextSize2 = iterator.next();
-            sizesBuilder.append(delimtier);
-            sizesBuilder.append(nextSize2.getWidth());
-            sizesBuilder.append('x');
-            sizesBuilder.append(nextSize2.getHeight());
-        }
-        return sizesBuilder.toString();
     }
 }

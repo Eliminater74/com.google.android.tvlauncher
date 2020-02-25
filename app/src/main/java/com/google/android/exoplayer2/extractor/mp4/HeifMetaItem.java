@@ -1,6 +1,7 @@
 package com.google.android.exoplayer2.extractor.mp4;
 
 import android.util.LongSparseArray;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -16,6 +17,19 @@ public final class HeifMetaItem {
     public final int protectionIndex;
     public final int[] sizes;
     public final int type;
+
+    private HeifMetaItem(String name2, int type2, int protectionIndex2, Property[] properties2, boolean[] arePropertiesEssential2, int[] dependencyIds2, int[] dependencyTypes2, long[] offsets2, int[] sizes2, byte[][] data2) {
+        this.name = name2;
+        this.type = type2;
+        this.protectionIndex = protectionIndex2;
+        this.properties = properties2;
+        this.arePropertiesEssential = arePropertiesEssential2;
+        this.dependencyIds = dependencyIds2;
+        this.dependencyTypes = dependencyTypes2;
+        this.offsets = offsets2;
+        this.sizes = sizes2;
+        this.data = data2;
+    }
 
     public static final class Property {
         public final byte[] data;
@@ -86,11 +100,11 @@ public final class HeifMetaItem {
         private final List<Integer> dependencyTypes = new ArrayList();
         private final List<Integer> itemDataOffsets = new ArrayList();
         private final List<Integer> itemDataSizes = new ArrayList();
-        private String name;
         private final List<Long> offsets = new ArrayList();
         private final List<Property> properties = new ArrayList();
-        private int protectionIndex;
         private final List<Integer> sizes = new ArrayList();
+        private String name;
+        private int protectionIndex;
         private int type;
 
         public void setEntry(String name2, int type2, int protectionIndex2) {
@@ -148,18 +162,5 @@ public final class HeifMetaItem {
             }
             return new HeifMetaItem(this.name, this.type, this.protectionIndex, properties2, arePropertiesEssential2, dependencyIds2, dependencyTypes2, offsets2, sizes2, itemDatas);
         }
-    }
-
-    private HeifMetaItem(String name2, int type2, int protectionIndex2, Property[] properties2, boolean[] arePropertiesEssential2, int[] dependencyIds2, int[] dependencyTypes2, long[] offsets2, int[] sizes2, byte[][] data2) {
-        this.name = name2;
-        this.type = type2;
-        this.protectionIndex = protectionIndex2;
-        this.properties = properties2;
-        this.arePropertiesEssential = arePropertiesEssential2;
-        this.dependencyIds = dependencyIds2;
-        this.dependencyTypes = dependencyTypes2;
-        this.offsets = offsets2;
-        this.sizes = sizes2;
-        this.data = data2;
     }
 }

@@ -24,7 +24,7 @@ public final class ChinaAnnotations {
         PR_ALL_RESTRICTED(0),
         PR_CONTAINS_NON_RESTRICTED(1),
         PR_CONTAINS_SERIALIZED_NON_RESTRICTED(2);
-        
+
         public static final int PR_ALL_RESTRICTED_VALUE = 0;
         public static final int PR_CONTAINS_NON_RESTRICTED_VALUE = 1;
         public static final int PR_CONTAINS_SERIALIZED_NON_RESTRICTED_VALUE = 2;
@@ -35,8 +35,8 @@ public final class ChinaAnnotations {
         };
         private final int value;
 
-        public final int getNumber() {
-            return this.value;
+        private PrcRestrictionTag(int value2) {
+            this.value = value2;
         }
 
         public static PrcRestrictionTag forNumber(int value2) {
@@ -60,6 +60,10 @@ public final class ChinaAnnotations {
             return PrcRestrictionTagVerifier.INSTANCE;
         }
 
+        public final int getNumber() {
+            return this.value;
+        }
+
         private static final class PrcRestrictionTagVerifier implements Internal.EnumVerifier {
             static final Internal.EnumVerifier INSTANCE = new PrcRestrictionTagVerifier();
 
@@ -70,10 +74,6 @@ public final class ChinaAnnotations {
                 return PrcRestrictionTag.forNumber(number) != null;
             }
         }
-
-        private PrcRestrictionTag(int value2) {
-            this.value = value2;
-        }
     }
 
     public enum SerializedDataTag implements Internal.EnumLite {
@@ -81,7 +81,7 @@ public final class ChinaAnnotations {
         SD_CLEARCUT_SOURCE_EXTENSION(1),
         SD_CLEARCUT_SOURCE_EXTENSION_JS(2),
         SD_CLEARCUT_LOGEVENTS(3);
-        
+
         public static final int NONE_VALUE = 0;
         public static final int SD_CLEARCUT_LOGEVENTS_VALUE = 3;
         public static final int SD_CLEARCUT_SOURCE_EXTENSION_JS_VALUE = 2;
@@ -93,8 +93,8 @@ public final class ChinaAnnotations {
         };
         private final int value;
 
-        public final int getNumber() {
-            return this.value;
+        private SerializedDataTag(int value2) {
+            this.value = value2;
         }
 
         public static SerializedDataTag forNumber(int value2) {
@@ -121,6 +121,10 @@ public final class ChinaAnnotations {
             return SerializedDataTagVerifier.INSTANCE;
         }
 
+        public final int getNumber() {
+            return this.value;
+        }
+
         private static final class SerializedDataTagVerifier implements Internal.EnumVerifier {
             static final Internal.EnumVerifier INSTANCE = new SerializedDataTagVerifier();
 
@@ -130,10 +134,6 @@ public final class ChinaAnnotations {
             public boolean isInRange(int number) {
                 return SerializedDataTag.forNumber(number) != null;
             }
-        }
-
-        private SerializedDataTag(int value2) {
-            this.value = value2;
         }
     }
 }

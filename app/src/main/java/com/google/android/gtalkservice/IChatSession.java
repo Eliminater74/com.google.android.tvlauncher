@@ -6,7 +6,6 @@ import android.os.IBinder;
 import android.os.IInterface;
 import android.os.Parcel;
 import android.os.RemoteException;
-import com.google.android.gtalkservice.IChatListener;
 
 public interface IChatSession extends IInterface {
     void addRemoteChatListener(IChatListener iChatListener) throws RemoteException;
@@ -42,7 +41,6 @@ public interface IChatSession extends IInterface {
     void sendChatMessage(String str) throws RemoteException;
 
     public static abstract class Stub extends Binder implements IChatSession {
-        private static final String DESCRIPTOR = "com.google.android.gtalkservice.IChatSession";
         static final int TRANSACTION_addRemoteChatListener = 9;
         static final int TRANSACTION_clearChatHistory = 16;
         static final int TRANSACTION_ensureNonZeroLastMessageDate = 15;
@@ -59,6 +57,7 @@ public interface IChatSession extends IInterface {
         static final int TRANSACTION_reportMissedCall = 14;
         static final int TRANSACTION_saveUnsentComposedMessage = 7;
         static final int TRANSACTION_sendChatMessage = 6;
+        private static final String DESCRIPTOR = "com.google.android.gtalkservice.IChatSession";
 
         public Stub() {
             attachInterface(this, DESCRIPTOR);

@@ -1,6 +1,7 @@
 package com.google.android.gms.common.util;
 
 import android.os.Build;
+
 import com.google.android.gms.common.internal.Hide;
 
 @Hide

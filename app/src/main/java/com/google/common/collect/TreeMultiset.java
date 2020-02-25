@@ -5,10 +5,11 @@ import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Multiset;
-import com.google.common.collect.Multisets;
 import com.google.common.primitives.Ints;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -19,7 +20,6 @@ import java.util.Iterator;
 import java.util.NavigableSet;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible(emulated = true)
 public final class TreeMultiset<E> extends AbstractSortedMultiset<E> implements Serializable {
@@ -31,41 +31,56 @@ public final class TreeMultiset<E> extends AbstractSortedMultiset<E> implements 
     public final transient GeneralRange<E> range;
     private final transient Reference<AvlNode<E>> rootReference;
 
-    private enum Aggregate {
-        SIZE {
-            /* access modifiers changed from: package-private */
-            public int nodeAggregate(AvlNode<?> node) {
-                return node.elemCount;
-            }
+    TreeMultiset(Reference<AvlNode<E>> rootReference2, GeneralRange<E> range2, AvlNode<E> endLink) {
+        super(range2.comparator());
+        this.rootReference = rootReference2;
+        this.range = range2;
+        this.header = endLink;
+    }
 
-            /* access modifiers changed from: package-private */
-            public long treeAggregate(@NullableDecl AvlNode<?> root) {
-                if (root == null) {
-                    return 0;
-                }
-                return root.totalCount;
-            }
-        },
-        DISTINCT {
-            /* access modifiers changed from: package-private */
-            public int nodeAggregate(AvlNode<?> avlNode) {
-                return 1;
-            }
+    TreeMultiset(Comparator<? super E> comparator) {
+        super(comparator);
+        this.range = GeneralRange.all(comparator);
+        this.header = new AvlNode<>(null, 1);
+        AvlNode<E> avlNode = this.header;
+        successor(avlNode, avlNode);
+        this.rootReference = new Reference<>();
+    }
 
-            /* access modifiers changed from: package-private */
-            public long treeAggregate(@NullableDecl AvlNode<?> root) {
-                if (root == null) {
-                    return 0;
-                }
-                return (long) root.distinctElements;
-            }
-        };
+    public static <E extends Comparable> TreeMultiset<E> create() {
+        return new TreeMultiset<>(Ordering.natural());
+    }
 
-        /* access modifiers changed from: package-private */
-        public abstract int nodeAggregate(AvlNode<?> avlNode);
+    public static <E> TreeMultiset<E> create(@NullableDecl Comparator<? super E> comparator) {
+        if (comparator == null) {
+            return new TreeMultiset<>(Ordering.natural());
+        }
+        return new TreeMultiset<>(comparator);
+    }
 
-        /* access modifiers changed from: package-private */
-        public abstract long treeAggregate(@NullableDecl AvlNode<?> avlNode);
+    public static <E extends Comparable> TreeMultiset<E> create(Iterable<? extends E> elements) {
+        TreeMultiset<E> multiset = create();
+        Iterables.addAll(multiset, elements);
+        return multiset;
+    }
+
+    static int distinctElements(@NullableDecl AvlNode<?> node) {
+        if (node == null) {
+            return 0;
+        }
+        return node.distinctElements;
+    }
+
+    /* access modifiers changed from: private */
+    public static <T> void successor(AvlNode<T> a, AvlNode<T> b) {
+        AvlNode unused = a.succ = b;
+        AvlNode unused2 = b.pred = a;
+    }
+
+    /* access modifiers changed from: private */
+    public static <T> void successor(AvlNode<T> a, AvlNode<T> b, AvlNode<T> c) {
+        successor(a, b);
+        successor(b, c);
     }
 
     public /* bridge */ /* synthetic */ Comparator comparator() {
@@ -112,39 +127,6 @@ public final class TreeMultiset<E> extends AbstractSortedMultiset<E> implements 
         return super.subMultiset(obj, boundType, obj2, boundType2);
     }
 
-    public static <E extends Comparable> TreeMultiset<E> create() {
-        return new TreeMultiset<>(Ordering.natural());
-    }
-
-    public static <E> TreeMultiset<E> create(@NullableDecl Comparator<? super E> comparator) {
-        if (comparator == null) {
-            return new TreeMultiset<>(Ordering.natural());
-        }
-        return new TreeMultiset<>(comparator);
-    }
-
-    public static <E extends Comparable> TreeMultiset<E> create(Iterable<? extends E> elements) {
-        TreeMultiset<E> multiset = create();
-        Iterables.addAll(multiset, elements);
-        return multiset;
-    }
-
-    TreeMultiset(Reference<AvlNode<E>> rootReference2, GeneralRange<E> range2, AvlNode<E> endLink) {
-        super(range2.comparator());
-        this.rootReference = rootReference2;
-        this.range = range2;
-        this.header = endLink;
-    }
-
-    TreeMultiset(Comparator<? super E> comparator) {
-        super(comparator);
-        this.range = GeneralRange.all(comparator);
-        this.header = new AvlNode<>(null, 1);
-        AvlNode<E> avlNode = this.header;
-        successor(avlNode, avlNode);
-        this.rootReference = new Reference<>();
-    }
-
     private long aggregateForEntries(Aggregate aggr) {
         AvlNode<E> root = this.rootReference.get();
         long total = aggr.treeAggregate(root);
@@ -178,22 +160,6 @@ public final class TreeMultiset<E> extends AbstractSortedMultiset<E> implements 
         throw new AssertionError();
     }
 
-    /* renamed from: com.google.common.collect.TreeMultiset$4 */
-    static /* synthetic */ class C17134 {
-        static final /* synthetic */ int[] $SwitchMap$com$google$common$collect$BoundType = new int[BoundType.values().length];
-
-        static {
-            try {
-                $SwitchMap$com$google$common$collect$BoundType[BoundType.OPEN.ordinal()] = 1;
-            } catch (NoSuchFieldError e) {
-            }
-            try {
-                $SwitchMap$com$google$common$collect$BoundType[BoundType.CLOSED.ordinal()] = 2;
-            } catch (NoSuchFieldError e2) {
-            }
-        }
-    }
-
     private long aggregateAboveRange(Aggregate aggr, @NullableDecl AvlNode<E> node) {
         if (node == null) {
             return 0;
@@ -222,13 +188,6 @@ public final class TreeMultiset<E> extends AbstractSortedMultiset<E> implements 
     /* access modifiers changed from: package-private */
     public int distinctElements() {
         return Ints.saturatedCast(aggregateForEntries(Aggregate.DISTINCT));
-    }
-
-    static int distinctElements(@NullableDecl AvlNode<?> node) {
-        if (node == null) {
-            return 0;
-        }
-        return node.distinctElements;
     }
 
     public int count(@NullableDecl Object element) {
@@ -525,6 +484,103 @@ public final class TreeMultiset<E> extends AbstractSortedMultiset<E> implements 
         return new TreeMultiset(this.rootReference, this.range.intersect(GeneralRange.downTo(comparator(), lowerBound, boundType)), this.header);
     }
 
+    @GwtIncompatible
+    private void writeObject(ObjectOutputStream stream) throws IOException {
+        stream.defaultWriteObject();
+        stream.writeObject(elementSet().comparator());
+        Serialization.writeMultiset(this, stream);
+    }
+
+    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+     method: com.google.common.collect.Serialization.FieldSetter.set(com.google.common.collect.ConcurrentHashMultiset, java.lang.Object):void
+     arg types: [com.google.common.collect.TreeMultiset, java.util.Comparator<? super E>]
+     candidates:
+      com.google.common.collect.Serialization.FieldSetter.set(com.google.common.collect.ConcurrentHashMultiset, int):void
+      com.google.common.collect.Serialization.FieldSetter.set(com.google.common.collect.ConcurrentHashMultiset, java.lang.Object):void */
+    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+     method: com.google.common.collect.Serialization.FieldSetter.set(com.google.common.collect.ConcurrentHashMultiset, java.lang.Object):void
+     arg types: [com.google.common.collect.TreeMultiset, com.google.common.collect.GeneralRange<? super E>]
+     candidates:
+      com.google.common.collect.Serialization.FieldSetter.set(com.google.common.collect.ConcurrentHashMultiset, int):void
+      com.google.common.collect.Serialization.FieldSetter.set(com.google.common.collect.ConcurrentHashMultiset, java.lang.Object):void */
+    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+     method: com.google.common.collect.Serialization.FieldSetter.set(com.google.common.collect.ConcurrentHashMultiset, java.lang.Object):void
+     arg types: [com.google.common.collect.TreeMultiset, com.google.common.collect.TreeMultiset$Reference]
+     candidates:
+      com.google.common.collect.Serialization.FieldSetter.set(com.google.common.collect.ConcurrentHashMultiset, int):void
+      com.google.common.collect.Serialization.FieldSetter.set(com.google.common.collect.ConcurrentHashMultiset, java.lang.Object):void */
+    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+     method: com.google.common.collect.Serialization.FieldSetter.set(com.google.common.collect.ConcurrentHashMultiset, java.lang.Object):void
+     arg types: [com.google.common.collect.TreeMultiset, com.google.common.collect.TreeMultiset$AvlNode<E>]
+     candidates:
+      com.google.common.collect.Serialization.FieldSetter.set(com.google.common.collect.ConcurrentHashMultiset, int):void
+      com.google.common.collect.Serialization.FieldSetter.set(com.google.common.collect.ConcurrentHashMultiset, java.lang.Object):void */
+    @GwtIncompatible
+    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        stream.defaultReadObject();
+        Comparator<? super E> comparator = (Comparator) stream.readObject();
+        Serialization.getFieldSetter(AbstractSortedMultiset.class, "comparator").set((ConcurrentHashMultiset) this, (Object) comparator);
+        Serialization.getFieldSetter(TreeMultiset.class, "range").set((ConcurrentHashMultiset) this, (Object) GeneralRange.all(comparator));
+        Serialization.getFieldSetter(TreeMultiset.class, "rootReference").set((ConcurrentHashMultiset) this, (Object) new Reference());
+        AvlNode<E> header2 = new AvlNode<>(null, 1);
+        Serialization.getFieldSetter(TreeMultiset.class, "header").set((ConcurrentHashMultiset) this, (Object) header2);
+        successor(header2, header2);
+        Serialization.populateMultiset(this, stream);
+    }
+
+    private enum Aggregate {
+        SIZE {
+            /* access modifiers changed from: package-private */
+            public int nodeAggregate(AvlNode<?> node) {
+                return node.elemCount;
+            }
+
+            /* access modifiers changed from: package-private */
+            public long treeAggregate(@NullableDecl AvlNode<?> root) {
+                if (root == null) {
+                    return 0;
+                }
+                return root.totalCount;
+            }
+        },
+        DISTINCT {
+            /* access modifiers changed from: package-private */
+            public int nodeAggregate(AvlNode<?> avlNode) {
+                return 1;
+            }
+
+            /* access modifiers changed from: package-private */
+            public long treeAggregate(@NullableDecl AvlNode<?> root) {
+                if (root == null) {
+                    return 0;
+                }
+                return (long) root.distinctElements;
+            }
+        };
+
+        /* access modifiers changed from: package-private */
+        public abstract int nodeAggregate(AvlNode<?> avlNode);
+
+        /* access modifiers changed from: package-private */
+        public abstract long treeAggregate(@NullableDecl AvlNode<?> avlNode);
+    }
+
+    /* renamed from: com.google.common.collect.TreeMultiset$4 */
+    static /* synthetic */ class C17134 {
+        static final /* synthetic */ int[] $SwitchMap$com$google$common$collect$BoundType = new int[BoundType.values().length];
+
+        static {
+            try {
+                $SwitchMap$com$google$common$collect$BoundType[BoundType.OPEN.ordinal()] = 1;
+            } catch (NoSuchFieldError e) {
+            }
+            try {
+                $SwitchMap$com$google$common$collect$BoundType[BoundType.CLOSED.ordinal()] = 2;
+            } catch (NoSuchFieldError e2) {
+            }
+        }
+    }
+
     private static final class Reference<T> {
         @NullableDecl
         private T value;
@@ -553,13 +609,12 @@ public final class TreeMultiset<E> extends AbstractSortedMultiset<E> implements 
 
     private static final class AvlNode<E> {
         /* access modifiers changed from: private */
-        public int distinctElements;
-        /* access modifiers changed from: private */
         @NullableDecl
         public final E elem;
         /* access modifiers changed from: private */
+        public int distinctElements;
+        /* access modifiers changed from: private */
         public int elemCount;
-        private int height;
         /* access modifiers changed from: private */
         @NullableDecl
         public AvlNode<E> left;
@@ -574,6 +629,7 @@ public final class TreeMultiset<E> extends AbstractSortedMultiset<E> implements 
         public AvlNode<E> succ;
         /* access modifiers changed from: private */
         public long totalCount;
+        private int height;
 
         AvlNode(@NullableDecl E elem2, int elemCount2) {
             Preconditions.checkArgument(elemCount2 > 0);
@@ -584,6 +640,20 @@ public final class TreeMultiset<E> extends AbstractSortedMultiset<E> implements 
             this.height = 1;
             this.left = null;
             this.right = null;
+        }
+
+        private static long totalCount(@NullableDecl AvlNode<?> node) {
+            if (node == null) {
+                return 0;
+            }
+            return node.totalCount;
+        }
+
+        private static int height(@NullableDecl AvlNode<?> node) {
+            if (node == null) {
+                return 0;
+            }
+            return node.height;
         }
 
         public int count(Comparator<? super E> comparator, E e) {
@@ -921,20 +991,6 @@ public final class TreeMultiset<E> extends AbstractSortedMultiset<E> implements 
             return newTop;
         }
 
-        private static long totalCount(@NullableDecl AvlNode<?> node) {
-            if (node == null) {
-                return 0;
-            }
-            return node.totalCount;
-        }
-
-        private static int height(@NullableDecl AvlNode<?> node) {
-            if (node == null) {
-                return 0;
-            }
-            return node.height;
-        }
-
         /* access modifiers changed from: private */
         @NullableDecl
         public AvlNode<E> ceiling(Comparator<? super E> comparator, E e) {
@@ -984,61 +1040,5 @@ public final class TreeMultiset<E> extends AbstractSortedMultiset<E> implements 
         public String toString() {
             return Multisets.immutableEntry(getElement(), getCount()).toString();
         }
-    }
-
-    /* access modifiers changed from: private */
-    public static <T> void successor(AvlNode<T> a, AvlNode<T> b) {
-        AvlNode unused = a.succ = b;
-        AvlNode unused2 = b.pred = a;
-    }
-
-    /* access modifiers changed from: private */
-    public static <T> void successor(AvlNode<T> a, AvlNode<T> b, AvlNode<T> c) {
-        successor(a, b);
-        successor(b, c);
-    }
-
-    @GwtIncompatible
-    private void writeObject(ObjectOutputStream stream) throws IOException {
-        stream.defaultWriteObject();
-        stream.writeObject(elementSet().comparator());
-        Serialization.writeMultiset(this, stream);
-    }
-
-    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-     method: com.google.common.collect.Serialization.FieldSetter.set(com.google.common.collect.ConcurrentHashMultiset, java.lang.Object):void
-     arg types: [com.google.common.collect.TreeMultiset, java.util.Comparator<? super E>]
-     candidates:
-      com.google.common.collect.Serialization.FieldSetter.set(com.google.common.collect.ConcurrentHashMultiset, int):void
-      com.google.common.collect.Serialization.FieldSetter.set(com.google.common.collect.ConcurrentHashMultiset, java.lang.Object):void */
-    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-     method: com.google.common.collect.Serialization.FieldSetter.set(com.google.common.collect.ConcurrentHashMultiset, java.lang.Object):void
-     arg types: [com.google.common.collect.TreeMultiset, com.google.common.collect.GeneralRange<? super E>]
-     candidates:
-      com.google.common.collect.Serialization.FieldSetter.set(com.google.common.collect.ConcurrentHashMultiset, int):void
-      com.google.common.collect.Serialization.FieldSetter.set(com.google.common.collect.ConcurrentHashMultiset, java.lang.Object):void */
-    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-     method: com.google.common.collect.Serialization.FieldSetter.set(com.google.common.collect.ConcurrentHashMultiset, java.lang.Object):void
-     arg types: [com.google.common.collect.TreeMultiset, com.google.common.collect.TreeMultiset$Reference]
-     candidates:
-      com.google.common.collect.Serialization.FieldSetter.set(com.google.common.collect.ConcurrentHashMultiset, int):void
-      com.google.common.collect.Serialization.FieldSetter.set(com.google.common.collect.ConcurrentHashMultiset, java.lang.Object):void */
-    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-     method: com.google.common.collect.Serialization.FieldSetter.set(com.google.common.collect.ConcurrentHashMultiset, java.lang.Object):void
-     arg types: [com.google.common.collect.TreeMultiset, com.google.common.collect.TreeMultiset$AvlNode<E>]
-     candidates:
-      com.google.common.collect.Serialization.FieldSetter.set(com.google.common.collect.ConcurrentHashMultiset, int):void
-      com.google.common.collect.Serialization.FieldSetter.set(com.google.common.collect.ConcurrentHashMultiset, java.lang.Object):void */
-    @GwtIncompatible
-    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
-        stream.defaultReadObject();
-        Comparator<? super E> comparator = (Comparator) stream.readObject();
-        Serialization.getFieldSetter(AbstractSortedMultiset.class, "comparator").set((ConcurrentHashMultiset) this, (Object) comparator);
-        Serialization.getFieldSetter(TreeMultiset.class, "range").set((ConcurrentHashMultiset) this, (Object) GeneralRange.all(comparator));
-        Serialization.getFieldSetter(TreeMultiset.class, "rootReference").set((ConcurrentHashMultiset) this, (Object) new Reference());
-        AvlNode<E> header2 = new AvlNode<>(null, 1);
-        Serialization.getFieldSetter(TreeMultiset.class, "header").set((ConcurrentHashMultiset) this, (Object) header2);
-        successor(header2, header2);
-        Serialization.populateMultiset(this, stream);
     }
 }

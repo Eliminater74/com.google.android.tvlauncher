@@ -2,6 +2,7 @@ package com.google.android.gms.location.places;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
 import com.google.android.gms.common.internal.Hide;
 import com.google.android.gms.common.internal.ReflectedParcelable;
 import com.google.android.gms.common.internal.zzak;
@@ -10,6 +11,7 @@ import com.google.android.gms.common.internal.zzau;
 import com.google.android.gms.internal.zzbkv;
 import com.google.android.gms.internal.zzbky;
 import com.google.android.tvlauncher.notifications.NotificationsContract;
+
 import java.util.Arrays;
 
 public class PlaceReport extends zzbkv implements ReflectedParcelable {
@@ -30,6 +32,14 @@ public class PlaceReport extends zzbkv implements ReflectedParcelable {
     private final String zzb;
     private final String zzc;
     private final String zzd;
+
+    @Hide
+    PlaceReport(int i, String str, String str2, String str3) {
+        this.zza = i;
+        this.zzb = str;
+        this.zzc = str2;
+        this.zzd = str3;
+    }
 
     public static PlaceReport create(String str, String str2) {
         return create(str, str2, "unknown");
@@ -95,14 +105,6 @@ public class PlaceReport extends zzbkv implements ReflectedParcelable {
         }
         zzau.zzb(z, "Invalid source");
         return new PlaceReport(1, str, str2, str3);
-    }
-
-    @Hide
-    PlaceReport(int i, String str, String str2, String str3) {
-        this.zza = i;
-        this.zzb = str;
-        this.zzc = str2;
-        this.zzd = str3;
     }
 
     public String getPlaceId() {

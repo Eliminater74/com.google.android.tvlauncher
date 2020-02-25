@@ -22,6 +22,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -42,13 +43,15 @@ class InstallStateOverlayHelper {
     public final int mAnimationDuration;
     /* access modifiers changed from: private */
     public final FrameLayout mBannerContainer;
-    private final int mBannerMaxHeight;
-    private final int mBannerMaxWidth;
+    /* access modifiers changed from: private */
+    public final View mOverlay;
     /* access modifiers changed from: private */
     public final ImageView mBannerView = ((ImageView) this.mOverlay.findViewById(C1188R.C1191id.app_install_banner));
-    private Animator mCircleRevealAnimator;
+    /* access modifiers changed from: private */
+    public final ProgressBar mProgressBar = ((ProgressBar) this.mOverlay.findViewById(C1188R.C1191id.progress_bar));
+    private final int mBannerMaxHeight;
+    private final int mBannerMaxWidth;
     private final ImageView mContainerImageView;
-    private float mCurrentDimmingFactor;
     private final int mDeterminateProgressHeight;
     private final float mDimmedFactorValue;
     private final String mDownloadingString;
@@ -61,17 +64,15 @@ class InstallStateOverlayHelper {
     private final int mIndeterminateProgressHeight;
     private final String mInstallPendingString;
     private final String mInstallingString;
-    /* access modifiers changed from: private */
-    public boolean mIsShowingBanner;
-    /* access modifiers changed from: private */
-    public final View mOverlay;
     private final Drawable mPlaceholderBanner;
-    private Drawable mPlaceholderIcon;
-    /* access modifiers changed from: private */
-    public final ProgressBar mProgressBar = ((ProgressBar) this.mOverlay.findViewById(C1188R.C1191id.progress_bar));
     private final String mRestorePendingString;
     private final TextView mTitleView;
     private final String mUpdatePendingString;
+    /* access modifiers changed from: private */
+    public boolean mIsShowingBanner;
+    private Animator mCircleRevealAnimator;
+    private float mCurrentDimmingFactor;
+    private Drawable mPlaceholderIcon;
 
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
      method: ClspMth{android.view.LayoutInflater.inflate(int, android.view.ViewGroup, boolean):android.view.View}

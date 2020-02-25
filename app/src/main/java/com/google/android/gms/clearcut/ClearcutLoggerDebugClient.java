@@ -2,6 +2,7 @@ package com.google.android.gms.clearcut;
 
 import android.content.Context;
 import android.os.RemoteException;
+
 import com.google.android.gms.clearcut.internal.zzp;
 import com.google.android.gms.common.api.Api;
 import com.google.android.gms.common.api.GoogleApi;
@@ -18,11 +19,48 @@ public class ClearcutLoggerDebugClient extends GoogleApi<Api.ApiOptions.NoOption
         super(context, ClearcutLogger.API, (Api.ApiOptions) null, GoogleApi.zza.zza);
     }
 
+    public Task<Void> forceUpload() {
+        return zzb(new zzf(this));
+    }
+
+    public Task<Long> startCollectForDebug() {
+        return zzb(new zzg(this));
+    }
+
+    public Task<CollectForDebugParcelable> startCollectForDebugWithParcelable(CollectForDebugParcelable collectForDebugParcelable) {
+        return zzb(new zzh(this, collectForDebugParcelable));
+    }
+
+    public Task<Void> stopCollectForDebug() {
+        return zzb(new zzi(this));
+    }
+
+    public Task<Long> getCollectForDebugExpiryTime() {
+        return zza(new zzj(this));
+    }
+
+    @Deprecated
+    public Task<LogEventParcelable[]> getLogEventParcelables(String str) {
+        return zza(new zzk(this, str));
+    }
+
+    public Task<CollectForDebugParcelable> getCollectForDebugParcelable() {
+        return zza(new zzl(this));
+    }
+
+    public Task<LogEventParcelable[]> getLogEventParcelablesAndClear(String str) {
+        return zza(new zzm(this, str));
+    }
+
     static class zza extends zzp {
         private final TaskCompletionSource zza;
 
         private zza(TaskCompletionSource taskCompletionSource) {
             this.zza = taskCompletionSource;
+        }
+
+        /* synthetic */ zza(TaskCompletionSource taskCompletionSource, zzf zzf) {
+            this(taskCompletionSource);
         }
 
         public final void zza(Status status) throws RemoteException {
@@ -66,42 +104,5 @@ public class ClearcutLoggerDebugClient extends GoogleApi<Api.ApiOptions.NoOption
             zzd.release();
             zzdm.zza(new Status(dataHolder.getStatusCode()), logEventParcelableArr, this.zza);
         }
-
-        /* synthetic */ zza(TaskCompletionSource taskCompletionSource, zzf zzf) {
-            this(taskCompletionSource);
-        }
-    }
-
-    public Task<Void> forceUpload() {
-        return zzb(new zzf(this));
-    }
-
-    public Task<Long> startCollectForDebug() {
-        return zzb(new zzg(this));
-    }
-
-    public Task<CollectForDebugParcelable> startCollectForDebugWithParcelable(CollectForDebugParcelable collectForDebugParcelable) {
-        return zzb(new zzh(this, collectForDebugParcelable));
-    }
-
-    public Task<Void> stopCollectForDebug() {
-        return zzb(new zzi(this));
-    }
-
-    public Task<Long> getCollectForDebugExpiryTime() {
-        return zza(new zzj(this));
-    }
-
-    @Deprecated
-    public Task<LogEventParcelable[]> getLogEventParcelables(String str) {
-        return zza(new zzk(this, str));
-    }
-
-    public Task<CollectForDebugParcelable> getCollectForDebugParcelable() {
-        return zza(new zzl(this));
-    }
-
-    public Task<LogEventParcelable[]> getLogEventParcelablesAndClear(String str) {
-        return zza(new zzm(this, str));
     }
 }

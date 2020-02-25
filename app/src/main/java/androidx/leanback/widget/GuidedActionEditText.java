@@ -13,37 +13,12 @@ import android.view.accessibility.AccessibilityNodeInfo;
 import android.view.autofill.AutofillValue;
 import android.widget.EditText;
 import android.widget.TextView;
-import androidx.leanback.widget.GuidedActionAutofillSupport;
-import androidx.leanback.widget.ImeKeyMonitor;
 
 public class GuidedActionEditText extends EditText implements ImeKeyMonitor, GuidedActionAutofillSupport {
-    private GuidedActionAutofillSupport.OnAutofillListener mAutofillListener;
-    private ImeKeyMonitor.ImeKeyListener mKeyListener;
     private final Drawable mNoPaddingDrawable;
     private final Drawable mSavedBackground;
-
-    static final class NoPaddingDrawable extends Drawable {
-        NoPaddingDrawable() {
-        }
-
-        public boolean getPadding(Rect padding) {
-            padding.set(0, 0, 0, 0);
-            return true;
-        }
-
-        public void draw(Canvas canvas) {
-        }
-
-        public void setAlpha(int alpha) {
-        }
-
-        public void setColorFilter(ColorFilter colorFilter) {
-        }
-
-        public int getOpacity() {
-            return -2;
-        }
-    }
+    private GuidedActionAutofillSupport.OnAutofillListener mAutofillListener;
+    private ImeKeyMonitor.ImeKeyListener mKeyListener;
 
     public GuidedActionEditText(Context ctx) {
         this(ctx, null);
@@ -112,5 +87,28 @@ public class GuidedActionEditText extends EditText implements ImeKeyMonitor, Gui
 
     public void setCustomSelectionActionModeCallback(ActionMode.Callback actionModeCallback) {
         super.setCustomSelectionActionModeCallback(TextViewCompat.wrapCustomSelectionActionModeCallback(this, actionModeCallback));
+    }
+
+    static final class NoPaddingDrawable extends Drawable {
+        NoPaddingDrawable() {
+        }
+
+        public boolean getPadding(Rect padding) {
+            padding.set(0, 0, 0, 0);
+            return true;
+        }
+
+        public void draw(Canvas canvas) {
+        }
+
+        public void setAlpha(int alpha) {
+        }
+
+        public void setColorFilter(ColorFilter colorFilter) {
+        }
+
+        public int getOpacity() {
+            return -2;
+        }
     }
 }

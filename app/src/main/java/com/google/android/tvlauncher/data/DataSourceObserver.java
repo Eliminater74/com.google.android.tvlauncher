@@ -13,10 +13,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 import android.support.annotation.WorkerThread;
 import android.util.Log;
+
 import androidx.tvprovider.media.p005tv.TvContractCompat;
+
 import com.google.android.exoplayer2.DefaultRenderersFactory;
-import com.google.android.tvlauncher.data.DataLoadingBackgroundTask;
 import com.google.android.tvlauncher.util.ExtendableTimer;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -59,14 +61,37 @@ class DataSourceObserver {
     private static final int WATCH_NEXT_PROGRAMS_INVALIDATION_MAXIMUM_DELAY_MS = 10000;
     /* access modifiers changed from: private */
     public static UriMatcher sUriMatcher = new UriMatcher(-1);
-    private ExtendableTimer mAllChannelsInvalidationTimer;
+
+    static {
+        sUriMatcher.addURI(TvContractCompat.AUTHORITY, "channel", 1);
+        sUriMatcher.addURI(TvContractCompat.AUTHORITY, "channel/#", 2);
+        sUriMatcher.addURI(TvContractCompat.AUTHORITY, "channel/#/logo", 3);
+        sUriMatcher.addURI(TvContractCompat.AUTHORITY, "preview_program", 4);
+        sUriMatcher.addURI(TvContractCompat.AUTHORITY, "preview_program/#", 5);
+        sUriMatcher.addURI(TvContractCompat.AUTHORITY, "watch_next_program", 6);
+        sUriMatcher.addURI(TvContractCompat.AUTHORITY, "watch_next_program/#", 7);
+    }
+
+    private final Context mContext;
     /* access modifiers changed from: private */
     public ExtendableTimer mAllProgramsInvalidationTimer;
-    private BackgroundTaskCallbacks mBackgroundTaskCallbacks;
     /* access modifiers changed from: private */
     public Callbacks mCallbacks;
     /* access modifiers changed from: private */
     public Set<Long> mChannelsToCountPrograms = new HashSet(100);
+    /* access modifiers changed from: private */
+    @SuppressLint({"UseSparseArrays"})
+    public Map<Long, ExtendableTimer> mHomeChannelProgramsInvalidationTimers = new HashMap(10);
+    /* access modifiers changed from: private */
+    public ExtendableTimer mProgramsCountTimer;
+    private ExtendableTimer mAllChannelsInvalidationTimer;
+    private BackgroundTaskCallbacks mBackgroundTaskCallbacks;
+    private ExtendableTimerListener mExtendableTimerListener;
+    private ExtendableTimer mPackageChannelsInvalidationTimer;
+    private ExtendableTimer mProgramsDataLoadTimer;
+    private Set<Long> mProgramsToLoadData = new HashSet(100);
+    private boolean mRegistered;
+    private ExtendableTimer mWatchNextInvalidationTimer;
     private final ContentObserver mContentObserver = new ContentObserver(new Handler()) {
         public void onChange(boolean selfChange) {
             onChange(selfChange, null);
@@ -148,52 +173,6 @@ class DataSourceObserver {
             }
         }
     };
-    private final Context mContext;
-    private ExtendableTimerListener mExtendableTimerListener;
-    /* access modifiers changed from: private */
-    @SuppressLint({"UseSparseArrays"})
-    public Map<Long, ExtendableTimer> mHomeChannelProgramsInvalidationTimers = new HashMap(10);
-    private ExtendableTimer mPackageChannelsInvalidationTimer;
-    /* access modifiers changed from: private */
-    public ExtendableTimer mProgramsCountTimer;
-    private ExtendableTimer mProgramsDataLoadTimer;
-    private Set<Long> mProgramsToLoadData = new HashSet(100);
-    private boolean mRegistered;
-    private ExtendableTimer mWatchNextInvalidationTimer;
-
-    interface Callbacks {
-        boolean areProgramsCached(long j);
-
-        Long findCachedChannelId(long j);
-
-        Set<Long> getAllHomeChannelIds();
-
-        void invalidateAllChannels();
-
-        void invalidateAllPrograms();
-
-        void invalidateChannelLogo(long j);
-
-        void invalidateHomeChannelPrograms(long j);
-
-        void invalidatePackageChannels();
-
-        void invalidateProgramsCountForBrowsableChannels(Set<Long> set);
-
-        void invalidateWatchNextPrograms();
-
-        boolean isChannelBrowsable(long j);
-    }
-
-    static {
-        sUriMatcher.addURI(TvContractCompat.AUTHORITY, "channel", 1);
-        sUriMatcher.addURI(TvContractCompat.AUTHORITY, "channel/#", 2);
-        sUriMatcher.addURI(TvContractCompat.AUTHORITY, "channel/#/logo", 3);
-        sUriMatcher.addURI(TvContractCompat.AUTHORITY, "preview_program", 4);
-        sUriMatcher.addURI(TvContractCompat.AUTHORITY, "preview_program/#", 5);
-        sUriMatcher.addURI(TvContractCompat.AUTHORITY, "watch_next_program", 6);
-        sUriMatcher.addURI(TvContractCompat.AUTHORITY, "watch_next_program/#", 7);
-    }
 
     DataSourceObserver(Context context, Callbacks callbacks) {
         this.mContext = context.getApplicationContext();
@@ -413,6 +392,30 @@ class DataSourceObserver {
         sb.setLength(sb.length() - 1);
         sb.append(')');
         return sb.toString();
+    }
+
+    interface Callbacks {
+        boolean areProgramsCached(long j);
+
+        Long findCachedChannelId(long j);
+
+        Set<Long> getAllHomeChannelIds();
+
+        void invalidateAllChannels();
+
+        void invalidateAllPrograms();
+
+        void invalidateChannelLogo(long j);
+
+        void invalidateHomeChannelPrograms(long j);
+
+        void invalidatePackageChannels();
+
+        void invalidateProgramsCountForBrowsableChannels(Set<Long> set);
+
+        void invalidateWatchNextPrograms();
+
+        boolean isChannelBrowsable(long j);
     }
 
     private class BackgroundTaskCallbacks implements DataLoadingBackgroundTask.Callbacks {

@@ -3,11 +3,13 @@ package com.google.android.gms.security;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+
 import com.google.android.gms.common.GoogleApiAvailabilityLight;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.GooglePlayServicesUtilLight;
 import com.google.android.gms.common.internal.zzau;
+
 import java.lang.reflect.Method;
 
 public class ProviderInstaller {
@@ -16,12 +18,6 @@ public class ProviderInstaller {
     public static final GoogleApiAvailabilityLight zza = GoogleApiAvailabilityLight.getInstance();
     private static final Object zzb = new Object();
     private static Method zzc = null;
-
-    public interface ProviderInstallListener {
-        void onProviderInstallFailed(int i, Intent intent);
-
-        void onProviderInstalled();
-    }
 
     public static void installIfNeeded(Context context) throws GooglePlayServicesRepairableException, GooglePlayServicesNotAvailableException {
         zzau.zza(context, "Context must not be null");
@@ -53,5 +49,11 @@ public class ProviderInstaller {
         zzau.zza(providerInstallListener, "Listener must not be null");
         zzau.zzb("Must be called on the UI thread");
         new zza(context, providerInstallListener).execute(new Void[0]);
+    }
+
+    public interface ProviderInstallListener {
+        void onProviderInstallFailed(int i, Intent intent);
+
+        void onProviderInstalled();
     }
 }

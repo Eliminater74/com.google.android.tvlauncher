@@ -9,6 +9,14 @@ import android.widget.OverScroller;
 public final class ScrollerCompat {
     OverScroller mScroller;
 
+    ScrollerCompat(Context context, Interpolator interpolator) {
+        OverScroller overScroller;
+        if (interpolator == null) {
+            overScroller = new OverScroller(context);
+        }
+        this.mScroller = overScroller;
+    }
+
     @Deprecated
     public static ScrollerCompat create(Context context) {
         return create(context, null);
@@ -17,14 +25,6 @@ public final class ScrollerCompat {
     @Deprecated
     public static ScrollerCompat create(Context context, Interpolator interpolator) {
         return new ScrollerCompat(context, interpolator);
-    }
-
-    ScrollerCompat(Context context, Interpolator interpolator) {
-        OverScroller overScroller;
-        if (interpolator == null) {
-            overScroller = new OverScroller(context);
-        }
-        this.mScroller = overScroller;
     }
 
     @Deprecated

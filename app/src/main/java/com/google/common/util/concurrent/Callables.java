@@ -5,8 +5,10 @@ import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Supplier;
-import java.util.concurrent.Callable;
+
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
+import java.util.concurrent.Callable;
 
 @GwtCompatible(emulated = true)
 public final class Callables {

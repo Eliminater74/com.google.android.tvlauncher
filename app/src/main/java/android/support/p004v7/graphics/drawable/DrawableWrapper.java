@@ -28,12 +28,12 @@ public class DrawableWrapper extends Drawable implements Drawable.Callback {
         this.mDrawable.setBounds(bounds);
     }
 
-    public void setChangingConfigurations(int configs) {
-        this.mDrawable.setChangingConfigurations(configs);
-    }
-
     public int getChangingConfigurations() {
         return this.mDrawable.getChangingConfigurations();
+    }
+
+    public void setChangingConfigurations(int configs) {
+        this.mDrawable.setChangingConfigurations(configs);
     }
 
     public void setDither(boolean dither) {
@@ -121,12 +121,12 @@ public class DrawableWrapper extends Drawable implements Drawable.Callback {
         return this.mDrawable.setLevel(level);
     }
 
-    public void setAutoMirrored(boolean mirrored) {
-        DrawableCompat.setAutoMirrored(this.mDrawable, mirrored);
-    }
-
     public boolean isAutoMirrored() {
         return DrawableCompat.isAutoMirrored(this.mDrawable);
+    }
+
+    public void setAutoMirrored(boolean mirrored) {
+        DrawableCompat.setAutoMirrored(this.mDrawable, mirrored);
     }
 
     public void setTint(int tint) {

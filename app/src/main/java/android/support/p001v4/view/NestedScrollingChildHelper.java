@@ -7,14 +7,18 @@ import android.view.ViewParent;
 
 /* renamed from: android.support.v4.view.NestedScrollingChildHelper */
 public class NestedScrollingChildHelper {
+    private final View mView;
     private boolean mIsNestedScrollingEnabled;
     private ViewParent mNestedScrollingParentNonTouch;
     private ViewParent mNestedScrollingParentTouch;
     private int[] mTempNestedScrollConsumed;
-    private final View mView;
 
     public NestedScrollingChildHelper(@NonNull View view) {
         this.mView = view;
+    }
+
+    public boolean isNestedScrollingEnabled() {
+        return this.mIsNestedScrollingEnabled;
     }
 
     public void setNestedScrollingEnabled(boolean enabled) {
@@ -22,10 +26,6 @@ public class NestedScrollingChildHelper {
             ViewCompat.stopNestedScroll(this.mView);
         }
         this.mIsNestedScrollingEnabled = enabled;
-    }
-
-    public boolean isNestedScrollingEnabled() {
-        return this.mIsNestedScrollingEnabled;
     }
 
     public boolean hasNestedScrollingParent() {

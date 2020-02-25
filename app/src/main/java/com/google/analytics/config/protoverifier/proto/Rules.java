@@ -14,6 +14,7 @@ import com.google.protobuf.ProtoMessage;
 import com.google.protobuf.ProtoPresenceBits;
 import com.google.protobuf.ProtoPresenceCheckedField;
 import com.google.protobuf.ProtoSyntax;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -40,6 +41,11 @@ public final class Rules extends GeneratedMessageLite<Rules, Builder> implements
     public static final int MUST_BE_SET_FIELD_NUMBER = 1;
     public static final int NOT_MATCH_REGEX_FIELD_NUMBER = 9;
     private static volatile Parser<Rules> PARSER;
+
+    static {
+        GeneratedMessageLite.registerDefaultInstance(Rules.class, DEFAULT_INSTANCE);
+    }
+
     @ProtoPresenceBits(mo28548id = 0)
     private int bitField0_;
     @ProtoField(fieldNumber = 10, isEnforceUtf8 = false, type = FieldType.STRING_LIST)
@@ -88,6 +94,70 @@ public final class Rules extends GeneratedMessageLite<Rules, Builder> implements
     private String notMatchRegex_ = "";
 
     private Rules() {
+    }
+
+    public static Rules parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+        return (Rules) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+    }
+
+    public static Rules parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+        return (Rules) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+    }
+
+    public static Rules parseFrom(ByteString data) throws InvalidProtocolBufferException {
+        return (Rules) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+    }
+
+    public static Rules parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+        return (Rules) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+    }
+
+    public static Rules parseFrom(byte[] data) throws InvalidProtocolBufferException {
+        return (Rules) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+    }
+
+    public static Rules parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+        return (Rules) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+    }
+
+    public static Rules parseFrom(InputStream input) throws IOException {
+        return (Rules) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+    }
+
+    public static Rules parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+        return (Rules) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+    }
+
+    public static Rules parseDelimitedFrom(InputStream input) throws IOException {
+        return (Rules) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+    }
+
+    public static Rules parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+        return (Rules) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+    }
+
+    public static Rules parseFrom(CodedInputStream input) throws IOException {
+        return (Rules) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+    }
+
+    public static Rules parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+        return (Rules) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() {
+        return (Builder) DEFAULT_INSTANCE.createBuilder();
+    }
+
+    public static Builder newBuilder(Rules prototype) {
+        return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+    }
+
+    public static Rules getDefaultInstance() {
+        return DEFAULT_INSTANCE;
+    }
+
+    public static Parser<Rules> parser() {
+        return DEFAULT_INSTANCE.getParserForType();
     }
 
     public boolean hasMustBeSet() {
@@ -238,10 +308,6 @@ public final class Rules extends GeneratedMessageLite<Rules, Builder> implements
         return this.matchRegex_;
     }
 
-    public ByteString getMatchRegexBytes() {
-        return ByteString.copyFromUtf8(this.matchRegex_);
-    }
-
     /* access modifiers changed from: private */
     public void setMatchRegex(String value) {
         if (value != null) {
@@ -252,10 +318,8 @@ public final class Rules extends GeneratedMessageLite<Rules, Builder> implements
         throw new NullPointerException();
     }
 
-    /* access modifiers changed from: private */
-    public void clearMatchRegex() {
-        this.bitField0_ &= -129;
-        this.matchRegex_ = getDefaultInstance().getMatchRegex();
+    public ByteString getMatchRegexBytes() {
+        return ByteString.copyFromUtf8(this.matchRegex_);
     }
 
     /* access modifiers changed from: private */
@@ -268,16 +332,18 @@ public final class Rules extends GeneratedMessageLite<Rules, Builder> implements
         throw new NullPointerException();
     }
 
+    /* access modifiers changed from: private */
+    public void clearMatchRegex() {
+        this.bitField0_ &= -129;
+        this.matchRegex_ = getDefaultInstance().getMatchRegex();
+    }
+
     public boolean hasNotMatchRegex() {
         return (this.bitField0_ & 256) != 0;
     }
 
     public String getNotMatchRegex() {
         return this.notMatchRegex_;
-    }
-
-    public ByteString getNotMatchRegexBytes() {
-        return ByteString.copyFromUtf8(this.notMatchRegex_);
     }
 
     /* access modifiers changed from: private */
@@ -290,10 +356,8 @@ public final class Rules extends GeneratedMessageLite<Rules, Builder> implements
         throw new NullPointerException();
     }
 
-    /* access modifiers changed from: private */
-    public void clearNotMatchRegex() {
-        this.bitField0_ &= -257;
-        this.notMatchRegex_ = getDefaultInstance().getNotMatchRegex();
+    public ByteString getNotMatchRegexBytes() {
+        return ByteString.copyFromUtf8(this.notMatchRegex_);
     }
 
     /* access modifiers changed from: private */
@@ -304,6 +368,12 @@ public final class Rules extends GeneratedMessageLite<Rules, Builder> implements
             return;
         }
         throw new NullPointerException();
+    }
+
+    /* access modifiers changed from: private */
+    public void clearNotMatchRegex() {
+        this.bitField0_ &= -257;
+        this.notMatchRegex_ = getDefaultInstance().getNotMatchRegex();
     }
 
     public List<String> getCustomRuleList() {
@@ -475,60 +545,36 @@ public final class Rules extends GeneratedMessageLite<Rules, Builder> implements
         this.languageCode_ = false;
     }
 
-    public static Rules parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-        return (Rules) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-    }
-
-    public static Rules parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-        return (Rules) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-    }
-
-    public static Rules parseFrom(ByteString data) throws InvalidProtocolBufferException {
-        return (Rules) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-    }
-
-    public static Rules parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-        return (Rules) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-    }
-
-    public static Rules parseFrom(byte[] data) throws InvalidProtocolBufferException {
-        return (Rules) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-    }
-
-    public static Rules parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-        return (Rules) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-    }
-
-    public static Rules parseFrom(InputStream input) throws IOException {
-        return (Rules) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-    }
-
-    public static Rules parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-        return (Rules) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-    }
-
-    public static Rules parseDelimitedFrom(InputStream input) throws IOException {
-        return (Rules) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-    }
-
-    public static Rules parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-        return (Rules) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-    }
-
-    public static Rules parseFrom(CodedInputStream input) throws IOException {
-        return (Rules) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-    }
-
-    public static Rules parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-        return (Rules) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-    }
-
-    public static Builder newBuilder() {
-        return (Builder) DEFAULT_INSTANCE.createBuilder();
-    }
-
-    public static Builder newBuilder(Rules prototype) {
-        return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+    /* access modifiers changed from: protected */
+    public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+        switch (method) {
+            case NEW_MUTABLE_INSTANCE:
+                return new Rules();
+            case NEW_BUILDER:
+                return new Builder();
+            case BUILD_MESSAGE_INFO:
+                return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u000f\u0000\u0001\u0001\u000f\u000f\u0000\u0001\u0000\u0001\u0007\u0000\u0002\u0002\u0001\u0003\u0001\u0002\u0004\u0000\u0003\u0005\u0002\u0004\u0006\u0001\u0005\u0007\u0000\u0006\b\b\u0007\t\b\b\n\u001a\u000b\u0004\t\f\u0004\n\r\u0004\u000b\u000e\u0004\f\u000f\u0007\r", new Object[]{"bitField0_", "mustBeSet_", "minInt_", "minFloat_", "minDouble_", "maxInt_", "maxFloat_", "maxDouble_", "matchRegex_", "notMatchRegex_", "customRule_", "minStringLength_", "maxStringLength_", "minRepeatedLength_", "maxRepeatedLength_", "languageCode_"});
+            case GET_DEFAULT_INSTANCE:
+                return DEFAULT_INSTANCE;
+            case GET_PARSER:
+                Parser<Rules> parser = PARSER;
+                if (parser == null) {
+                    synchronized (Rules.class) {
+                        parser = PARSER;
+                        if (parser == null) {
+                            parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                            PARSER = parser;
+                        }
+                    }
+                }
+                return parser;
+            case GET_MEMOIZED_IS_INITIALIZED:
+                return (byte) 1;
+            case SET_MEMOIZED_IS_INITIALIZED:
+                return null;
+            default:
+                throw new UnsupportedOperationException();
+        }
     }
 
     public static final class Builder extends GeneratedMessageLite.Builder<Rules, Builder> implements RulesOrBuilder {
@@ -684,25 +730,25 @@ public final class Rules extends GeneratedMessageLite<Rules, Builder> implements
             return ((Rules) this.instance).getMatchRegex();
         }
 
-        public ByteString getMatchRegexBytes() {
-            return ((Rules) this.instance).getMatchRegexBytes();
-        }
-
         public Builder setMatchRegex(String value) {
             copyOnWrite();
             ((Rules) this.instance).setMatchRegex(value);
             return this;
         }
 
-        public Builder clearMatchRegex() {
-            copyOnWrite();
-            ((Rules) this.instance).clearMatchRegex();
-            return this;
+        public ByteString getMatchRegexBytes() {
+            return ((Rules) this.instance).getMatchRegexBytes();
         }
 
         public Builder setMatchRegexBytes(ByteString value) {
             copyOnWrite();
             ((Rules) this.instance).setMatchRegexBytes(value);
+            return this;
+        }
+
+        public Builder clearMatchRegex() {
+            copyOnWrite();
+            ((Rules) this.instance).clearMatchRegex();
             return this;
         }
 
@@ -714,25 +760,25 @@ public final class Rules extends GeneratedMessageLite<Rules, Builder> implements
             return ((Rules) this.instance).getNotMatchRegex();
         }
 
-        public ByteString getNotMatchRegexBytes() {
-            return ((Rules) this.instance).getNotMatchRegexBytes();
-        }
-
         public Builder setNotMatchRegex(String value) {
             copyOnWrite();
             ((Rules) this.instance).setNotMatchRegex(value);
             return this;
         }
 
-        public Builder clearNotMatchRegex() {
-            copyOnWrite();
-            ((Rules) this.instance).clearNotMatchRegex();
-            return this;
+        public ByteString getNotMatchRegexBytes() {
+            return ((Rules) this.instance).getNotMatchRegexBytes();
         }
 
         public Builder setNotMatchRegexBytes(ByteString value) {
             copyOnWrite();
             ((Rules) this.instance).setNotMatchRegexBytes(value);
+            return this;
+        }
+
+        public Builder clearNotMatchRegex() {
+            copyOnWrite();
+            ((Rules) this.instance).clearNotMatchRegex();
             return this;
         }
 
@@ -881,49 +927,5 @@ public final class Rules extends GeneratedMessageLite<Rules, Builder> implements
             ((Rules) this.instance).clearLanguageCode();
             return this;
         }
-    }
-
-    /* access modifiers changed from: protected */
-    public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-        switch (method) {
-            case NEW_MUTABLE_INSTANCE:
-                return new Rules();
-            case NEW_BUILDER:
-                return new Builder();
-            case BUILD_MESSAGE_INFO:
-                return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u000f\u0000\u0001\u0001\u000f\u000f\u0000\u0001\u0000\u0001\u0007\u0000\u0002\u0002\u0001\u0003\u0001\u0002\u0004\u0000\u0003\u0005\u0002\u0004\u0006\u0001\u0005\u0007\u0000\u0006\b\b\u0007\t\b\b\n\u001a\u000b\u0004\t\f\u0004\n\r\u0004\u000b\u000e\u0004\f\u000f\u0007\r", new Object[]{"bitField0_", "mustBeSet_", "minInt_", "minFloat_", "minDouble_", "maxInt_", "maxFloat_", "maxDouble_", "matchRegex_", "notMatchRegex_", "customRule_", "minStringLength_", "maxStringLength_", "minRepeatedLength_", "maxRepeatedLength_", "languageCode_"});
-            case GET_DEFAULT_INSTANCE:
-                return DEFAULT_INSTANCE;
-            case GET_PARSER:
-                Parser<Rules> parser = PARSER;
-                if (parser == null) {
-                    synchronized (Rules.class) {
-                        parser = PARSER;
-                        if (parser == null) {
-                            parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                            PARSER = parser;
-                        }
-                    }
-                }
-                return parser;
-            case GET_MEMOIZED_IS_INITIALIZED:
-                return (byte) 1;
-            case SET_MEMOIZED_IS_INITIALIZED:
-                return null;
-            default:
-                throw new UnsupportedOperationException();
-        }
-    }
-
-    static {
-        GeneratedMessageLite.registerDefaultInstance(Rules.class, DEFAULT_INSTANCE);
-    }
-
-    public static Rules getDefaultInstance() {
-        return DEFAULT_INSTANCE;
-    }
-
-    public static Parser<Rules> parser() {
-        return DEFAULT_INSTANCE.getParserForType();
     }
 }

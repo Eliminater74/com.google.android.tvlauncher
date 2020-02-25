@@ -6,12 +6,17 @@ import android.content.pm.PackageStats;
 import android.os.storage.StorageManager;
 import android.os.storage.StorageVolume;
 import android.support.annotation.Nullable;
+
 import com.google.android.libraries.performance.primes.PrimesLog;
+
 import java.util.UUID;
 
 @TargetApi(26)
 final class PackageStatsCaptureO {
     private static final String TAG = "PackageStatsO";
+
+    private PackageStatsCaptureO() {
+    }
 
     /* JADX WARNING: Code restructure failed: missing block: B:20:0x0072, code lost:
         r4 = e;
@@ -115,8 +120,5 @@ final class PackageStatsCaptureO {
         packageStats.externalCodeSize += storageStats.getAppBytes();
         packageStats.externalDataSize += storageStats.getDataBytes() - storageStats.getCacheBytes();
         packageStats.externalCacheSize += storageStats.getCacheBytes();
-    }
-
-    private PackageStatsCaptureO() {
     }
 }

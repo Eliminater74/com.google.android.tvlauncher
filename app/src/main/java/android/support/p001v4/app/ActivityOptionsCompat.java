@@ -19,6 +19,9 @@ public class ActivityOptionsCompat {
     public static final String EXTRA_USAGE_TIME_REPORT = "android.activity.usage_time";
     public static final String EXTRA_USAGE_TIME_REPORT_PACKAGES = "android.usage_time_packages";
 
+    protected ActivityOptionsCompat() {
+    }
+
     @NonNull
     public static ActivityOptionsCompat makeCustomAnimation(@NonNull Context context, int enterResId, int exitResId) {
         if (Build.VERSION.SDK_INT >= 16) {
@@ -90,6 +93,27 @@ public class ActivityOptionsCompat {
         return new ActivityOptionsCompat();
     }
 
+    @Nullable
+    public Rect getLaunchBounds() {
+        return null;
+    }
+
+    @NonNull
+    public ActivityOptionsCompat setLaunchBounds(@Nullable Rect screenSpacePixelRect) {
+        return this;
+    }
+
+    @Nullable
+    public Bundle toBundle() {
+        return null;
+    }
+
+    public void update(@NonNull ActivityOptionsCompat otherOptions) {
+    }
+
+    public void requestUsageTimeReport(@NonNull PendingIntent receiver) {
+    }
+
     @RequiresApi(16)
     /* renamed from: android.support.v4.app.ActivityOptionsCompat$ActivityOptionsCompatImpl */
     private static class ActivityOptionsCompatImpl extends ActivityOptionsCompat {
@@ -128,29 +152,5 @@ public class ActivityOptionsCompat {
             }
             return this.mActivityOptions.getLaunchBounds();
         }
-    }
-
-    protected ActivityOptionsCompat() {
-    }
-
-    @NonNull
-    public ActivityOptionsCompat setLaunchBounds(@Nullable Rect screenSpacePixelRect) {
-        return this;
-    }
-
-    @Nullable
-    public Rect getLaunchBounds() {
-        return null;
-    }
-
-    @Nullable
-    public Bundle toBundle() {
-        return null;
-    }
-
-    public void update(@NonNull ActivityOptionsCompat otherOptions) {
-    }
-
-    public void requestUsageTimeReport(@NonNull PendingIntent receiver) {
     }
 }

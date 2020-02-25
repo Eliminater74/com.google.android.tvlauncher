@@ -2,6 +2,7 @@ package com.google.android.tvlauncher.analytics;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import com.google.android.libraries.social.analytics.visualelement.VisualElementTag;
 import com.google.android.tvlauncher.TvlauncherLogEnum;
 import com.google.common.logging.AncestryVisualElement;
@@ -39,6 +40,131 @@ public class LogEvent {
         this.mEventCode = eventCode;
     }
 
+    @NonNull
+    public static TvlauncherClientLog.Notification.Importance notificationImportance(int importance) {
+        if (importance == 1) {
+            return TvlauncherClientLog.Notification.Importance.MIN;
+        }
+        if (importance == 2) {
+            return TvlauncherClientLog.Notification.Importance.LOW;
+        }
+        if (importance == 3) {
+            return TvlauncherClientLog.Notification.Importance.DEFAULT;
+        }
+        if (importance == 4) {
+            return TvlauncherClientLog.Notification.Importance.HIGH;
+        }
+        if (importance != 5) {
+            return TvlauncherClientLog.Notification.Importance.DEFAULT;
+        }
+        return TvlauncherClientLog.Notification.Importance.MAX;
+    }
+
+    public static TvlauncherClientLog.Program.Type programType(int programType) {
+        switch (programType) {
+            case 0:
+                return TvlauncherClientLog.Program.Type.MOVIE;
+            case 1:
+                return TvlauncherClientLog.Program.Type.TV_SERIES;
+            case 2:
+                return TvlauncherClientLog.Program.Type.TV_SEASON;
+            case 3:
+                return TvlauncherClientLog.Program.Type.TV_EPISODE;
+            case 4:
+                return TvlauncherClientLog.Program.Type.CLIP;
+            case 5:
+                return TvlauncherClientLog.Program.Type.EVENT;
+            case 6:
+                return TvlauncherClientLog.Program.Type.CHANNEL;
+            case 7:
+                return TvlauncherClientLog.Program.Type.TRACK;
+            case 8:
+                return TvlauncherClientLog.Program.Type.ALBUM;
+            case 9:
+                return TvlauncherClientLog.Program.Type.ARTIST;
+            case 10:
+                return TvlauncherClientLog.Program.Type.PLAYLIST;
+            case 11:
+                return TvlauncherClientLog.Program.Type.STATION;
+            case 12:
+                return TvlauncherClientLog.Program.Type.GAME;
+            default:
+                return null;
+        }
+    }
+
+    public static TvlauncherClientLog.Program.InteractionCount.Type interactionType(int type) {
+        switch (type) {
+            case 0:
+                return TvlauncherClientLog.Program.InteractionCount.Type.VIEWS;
+            case 1:
+                return TvlauncherClientLog.Program.InteractionCount.Type.LISTENS;
+            case 2:
+                return TvlauncherClientLog.Program.InteractionCount.Type.FOLLOWERS;
+            case 3:
+                return TvlauncherClientLog.Program.InteractionCount.Type.FANS;
+            case 4:
+                return TvlauncherClientLog.Program.InteractionCount.Type.LIKES;
+            case 5:
+                return TvlauncherClientLog.Program.InteractionCount.Type.THUMBS;
+            case 6:
+                return TvlauncherClientLog.Program.InteractionCount.Type.VIEWERS;
+            default:
+                return null;
+        }
+    }
+
+    @Nullable
+    public static TvlauncherClientLog.Input.Type inputType(int inputType) {
+        if (inputType == -10) {
+            return TvlauncherClientLog.Input.Type.CEC_DEVICE;
+        }
+        if (inputType == -9) {
+            return TvlauncherClientLog.Input.Type.CEC_DEVICE;
+        }
+        if (inputType == -8) {
+            return TvlauncherClientLog.Input.Type.CEC_DEVICE;
+        }
+        if (inputType == -6) {
+            return TvlauncherClientLog.Input.Type.MHL_MOBILE;
+        }
+        if (inputType == -5) {
+            return TvlauncherClientLog.Input.Type.CEC_DEVICE_PLAYBACK;
+        }
+        if (inputType == -4) {
+            return TvlauncherClientLog.Input.Type.CEC_DEVICE_RECORDER;
+        }
+        if (inputType == -3) {
+            return TvlauncherClientLog.Input.Type.BUNDLED_TUNER;
+        }
+        if (inputType == -2) {
+            return TvlauncherClientLog.Input.Type.CEC_DEVICE;
+        }
+        if (inputType == 0) {
+            return TvlauncherClientLog.Input.Type.TUNER;
+        }
+        switch (inputType) {
+            case 1001:
+                return TvlauncherClientLog.Input.Type.COMPOSITE;
+            case 1002:
+                return TvlauncherClientLog.Input.Type.SVIDEO;
+            case 1003:
+                return TvlauncherClientLog.Input.Type.SCART;
+            case 1004:
+                return TvlauncherClientLog.Input.Type.COMPONENT;
+            case 1005:
+                return TvlauncherClientLog.Input.Type.VGA;
+            case 1006:
+                return TvlauncherClientLog.Input.Type.DVI;
+            case 1007:
+                return TvlauncherClientLog.Input.Type.HDMI;
+            case 1008:
+                return TvlauncherClientLog.Input.Type.DISPLAY_PORT;
+            default:
+                return null;
+        }
+    }
+
     public LogEvent bypassUsageReportingOptOut() {
         this.mBypassUsageReportingOptOut = true;
         return this;
@@ -53,14 +179,14 @@ public class LogEvent {
         return this;
     }
 
-    public LogEvent setParameterTimeout(long timeoutMillis) {
-        this.mTimeoutMillis = timeoutMillis;
-        return this;
-    }
-
     /* access modifiers changed from: package-private */
     public long getParameterTimeout() {
         return this.mTimeoutMillis;
+    }
+
+    public LogEvent setParameterTimeout(long timeoutMillis) {
+        this.mTimeoutMillis = timeoutMillis;
+        return this;
     }
 
     /* access modifiers changed from: package-private */
@@ -295,130 +421,5 @@ public class LogEvent {
     public void mergeFrom(LogEvent event) {
         build();
         this.mLogEntry.mergeFrom((GeneratedMessageLite) event.getClientLogEntry());
-    }
-
-    @NonNull
-    public static TvlauncherClientLog.Notification.Importance notificationImportance(int importance) {
-        if (importance == 1) {
-            return TvlauncherClientLog.Notification.Importance.MIN;
-        }
-        if (importance == 2) {
-            return TvlauncherClientLog.Notification.Importance.LOW;
-        }
-        if (importance == 3) {
-            return TvlauncherClientLog.Notification.Importance.DEFAULT;
-        }
-        if (importance == 4) {
-            return TvlauncherClientLog.Notification.Importance.HIGH;
-        }
-        if (importance != 5) {
-            return TvlauncherClientLog.Notification.Importance.DEFAULT;
-        }
-        return TvlauncherClientLog.Notification.Importance.MAX;
-    }
-
-    public static TvlauncherClientLog.Program.Type programType(int programType) {
-        switch (programType) {
-            case 0:
-                return TvlauncherClientLog.Program.Type.MOVIE;
-            case 1:
-                return TvlauncherClientLog.Program.Type.TV_SERIES;
-            case 2:
-                return TvlauncherClientLog.Program.Type.TV_SEASON;
-            case 3:
-                return TvlauncherClientLog.Program.Type.TV_EPISODE;
-            case 4:
-                return TvlauncherClientLog.Program.Type.CLIP;
-            case 5:
-                return TvlauncherClientLog.Program.Type.EVENT;
-            case 6:
-                return TvlauncherClientLog.Program.Type.CHANNEL;
-            case 7:
-                return TvlauncherClientLog.Program.Type.TRACK;
-            case 8:
-                return TvlauncherClientLog.Program.Type.ALBUM;
-            case 9:
-                return TvlauncherClientLog.Program.Type.ARTIST;
-            case 10:
-                return TvlauncherClientLog.Program.Type.PLAYLIST;
-            case 11:
-                return TvlauncherClientLog.Program.Type.STATION;
-            case 12:
-                return TvlauncherClientLog.Program.Type.GAME;
-            default:
-                return null;
-        }
-    }
-
-    public static TvlauncherClientLog.Program.InteractionCount.Type interactionType(int type) {
-        switch (type) {
-            case 0:
-                return TvlauncherClientLog.Program.InteractionCount.Type.VIEWS;
-            case 1:
-                return TvlauncherClientLog.Program.InteractionCount.Type.LISTENS;
-            case 2:
-                return TvlauncherClientLog.Program.InteractionCount.Type.FOLLOWERS;
-            case 3:
-                return TvlauncherClientLog.Program.InteractionCount.Type.FANS;
-            case 4:
-                return TvlauncherClientLog.Program.InteractionCount.Type.LIKES;
-            case 5:
-                return TvlauncherClientLog.Program.InteractionCount.Type.THUMBS;
-            case 6:
-                return TvlauncherClientLog.Program.InteractionCount.Type.VIEWERS;
-            default:
-                return null;
-        }
-    }
-
-    @Nullable
-    public static TvlauncherClientLog.Input.Type inputType(int inputType) {
-        if (inputType == -10) {
-            return TvlauncherClientLog.Input.Type.CEC_DEVICE;
-        }
-        if (inputType == -9) {
-            return TvlauncherClientLog.Input.Type.CEC_DEVICE;
-        }
-        if (inputType == -8) {
-            return TvlauncherClientLog.Input.Type.CEC_DEVICE;
-        }
-        if (inputType == -6) {
-            return TvlauncherClientLog.Input.Type.MHL_MOBILE;
-        }
-        if (inputType == -5) {
-            return TvlauncherClientLog.Input.Type.CEC_DEVICE_PLAYBACK;
-        }
-        if (inputType == -4) {
-            return TvlauncherClientLog.Input.Type.CEC_DEVICE_RECORDER;
-        }
-        if (inputType == -3) {
-            return TvlauncherClientLog.Input.Type.BUNDLED_TUNER;
-        }
-        if (inputType == -2) {
-            return TvlauncherClientLog.Input.Type.CEC_DEVICE;
-        }
-        if (inputType == 0) {
-            return TvlauncherClientLog.Input.Type.TUNER;
-        }
-        switch (inputType) {
-            case 1001:
-                return TvlauncherClientLog.Input.Type.COMPOSITE;
-            case 1002:
-                return TvlauncherClientLog.Input.Type.SVIDEO;
-            case 1003:
-                return TvlauncherClientLog.Input.Type.SCART;
-            case 1004:
-                return TvlauncherClientLog.Input.Type.COMPONENT;
-            case 1005:
-                return TvlauncherClientLog.Input.Type.VGA;
-            case 1006:
-                return TvlauncherClientLog.Input.Type.DVI;
-            case 1007:
-                return TvlauncherClientLog.Input.Type.HDMI;
-            case 1008:
-                return TvlauncherClientLog.Input.Type.DISPLAY_PORT;
-            default:
-                return null;
-        }
     }
 }

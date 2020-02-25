@@ -7,6 +7,7 @@ import android.support.p004v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+
 import com.google.android.tvlauncher.BackHomeControllerListeners;
 import com.google.android.tvlauncher.C1188R;
 import com.google.android.tvlauncher.analytics.EventLogger;
@@ -16,6 +17,7 @@ import com.google.android.tvlauncher.data.TvDataManager;
 import com.google.android.tvlauncher.home.view.ProgramView;
 import com.google.android.tvlauncher.model.Program;
 import com.google.protos.logs.proto.wireless.android.tvlauncher.TvlauncherClientLog;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -25,16 +27,15 @@ public class ChannelItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private static final int NO_CHANNEL_ID = -1;
     private static final String PAYLOAD_LIVE_PROGRESS_UPDATE = "PAYLOAD_LIVE_PROGRESS_UPDATE";
     private static final String TAG = "ChannelItemsAdapter";
-    private Set<ProgramController> mActiveProgramControllers = new HashSet();
+    /* access modifiers changed from: private */
+    public final TvDataManager mDataManager;
+    private final EventLogger mEventLogger;
     /* access modifiers changed from: private */
     public boolean mCanAddToWatchNext;
     /* access modifiers changed from: private */
     public boolean mCanRemoveProgram;
     /* access modifiers changed from: private */
     public long mChannelId = -1;
-    /* access modifiers changed from: private */
-    public final TvDataManager mDataManager;
-    private final EventLogger mEventLogger;
     /* access modifiers changed from: private */
     public Handler mHandler = new Handler();
     /* access modifiers changed from: private */
@@ -47,15 +48,6 @@ public class ChannelItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public boolean mIsSponsoredBranded;
     /* access modifiers changed from: private */
     public int mLastUnfocusedAdapterPosition = -1;
-    /* access modifiers changed from: private */
-    public RecyclerViewStateProvider mListStateProvider;
-    private BackHomeControllerListeners.OnHomeNotHandledListener mOnHomeNotHandledListener;
-    /* access modifiers changed from: private */
-    public OnProgramSelectedListener mOnProgramSelectedListener;
-    /* access modifiers changed from: private */
-    public String mPackageName;
-    /* access modifiers changed from: private */
-    public int mProgramState = 0;
     private final ChannelProgramsObserver mProgramsObserver = new ChannelProgramsObserver() {
         public void onProgramsChange(long channelId) {
             int unused = ChannelItemsAdapter.this.mLastUnfocusedAdapterPosition = -1;
@@ -63,7 +55,17 @@ public class ChannelItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     };
     /* access modifiers changed from: private */
+    public RecyclerViewStateProvider mListStateProvider;
+    /* access modifiers changed from: private */
+    public OnProgramSelectedListener mOnProgramSelectedListener;
+    /* access modifiers changed from: private */
+    public String mPackageName;
+    /* access modifiers changed from: private */
+    public int mProgramState = 0;
+    /* access modifiers changed from: private */
     public RecyclerView mRecyclerView;
+    private Set<ProgramController> mActiveProgramControllers = new HashSet();
+    private BackHomeControllerListeners.OnHomeNotHandledListener mOnHomeNotHandledListener;
     private boolean mStarted;
 
     ChannelItemsAdapter(Context context, EventLogger eventLogger) {
@@ -257,10 +259,19 @@ public class ChannelItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     public class ProgramViewHolder extends RecyclerView.ViewHolder implements OnProgramViewFocusChangedListener, ProgramViewLiveProgressUpdateCallback, BackHomeControllerListeners.OnHomePressedListener, EventLogger {
+        final ProgramController mProgramController;
         private final EventLogger mEventLogger;
         private Runnable mNotifyFocusChangedRunnable = new ChannelItemsAdapter$ProgramViewHolder$$Lambda$0(this);
         private Runnable mNotifyLiveProgressUpdateRunnable = new ChannelItemsAdapter$ProgramViewHolder$$Lambda$1(this);
-        final ProgramController mProgramController;
+
+        ProgramViewHolder(ProgramView v, EventLogger eventLogger) {
+            super(v);
+            this.mEventLogger = eventLogger;
+            this.mProgramController = new ProgramController(v, this, ChannelItemsAdapter.this.mIsSponsored, ChannelItemsAdapter.this.mIsSponsoredBranded);
+            this.mProgramController.setOnProgramViewFocusChangedListener(this);
+            this.mProgramController.setIsWatchNextProgram(false);
+            this.mProgramController.setProgramViewLiveProgressUpdateCallback(this);
+        }
 
         /* access modifiers changed from: package-private */
         public final /* synthetic */ void lambda$new$0$ChannelItemsAdapter$ProgramViewHolder() {
@@ -275,15 +286,6 @@ public class ChannelItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         /* access modifiers changed from: package-private */
         public final /* synthetic */ void lambda$new$1$ChannelItemsAdapter$ProgramViewHolder() {
             ChannelItemsAdapter.this.notifyItemChanged(getAdapterPosition(), ChannelItemsAdapter.PAYLOAD_LIVE_PROGRESS_UPDATE);
-        }
-
-        ProgramViewHolder(ProgramView v, EventLogger eventLogger) {
-            super(v);
-            this.mEventLogger = eventLogger;
-            this.mProgramController = new ProgramController(v, this, ChannelItemsAdapter.this.mIsSponsored, ChannelItemsAdapter.this.mIsSponsoredBranded);
-            this.mProgramController.setOnProgramViewFocusChangedListener(this);
-            this.mProgramController.setIsWatchNextProgram(false);
-            this.mProgramController.setProgramViewLiveProgressUpdateCallback(this);
         }
 
         public void onProgramViewFocusChanged(boolean hasFocus) {

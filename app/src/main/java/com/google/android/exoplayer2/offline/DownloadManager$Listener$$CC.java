@@ -1,6 +1,5 @@
 package com.google.android.exoplayer2.offline;
 
-import com.google.android.exoplayer2.offline.DownloadManager;
 import com.google.android.exoplayer2.scheduler.Requirements;
 
 public abstract /* synthetic */ class DownloadManager$Listener$$CC {

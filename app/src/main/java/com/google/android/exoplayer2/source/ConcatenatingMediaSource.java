@@ -5,14 +5,14 @@ import android.os.Message;
 import android.support.annotation.GuardedBy;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.Timeline;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.ShuffleOrder;
 import com.google.android.exoplayer2.upstream.Allocator;
 import com.google.android.exoplayer2.upstream.TransferListener;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,18 +38,18 @@ public class ConcatenatingMediaSource extends CompositeMediaSource<MediaSourceHo
     private final List<MediaSourceHolder> mediaSourceHolders;
     @GuardedBy("this")
     private final List<MediaSourceHolder> mediaSourcesPublic;
-    private Set<HandlerAndRunnable> nextTimelineUpdateOnCompletionActions;
     @GuardedBy("this")
     private final Set<HandlerAndRunnable> pendingOnCompletionActions;
     private final Timeline.Period period;
+    private final boolean useLazyPreparation;
+    private final Timeline.Window window;
+    private Set<HandlerAndRunnable> nextTimelineUpdateOnCompletionActions;
     private int periodCount;
     @Nullable
     @GuardedBy("this")
     private Handler playbackThreadHandler;
     private ShuffleOrder shuffleOrder;
     private boolean timelineUpdateScheduled;
-    private final boolean useLazyPreparation;
-    private final Timeline.Window window;
     private int windowCount;
 
     public ConcatenatingMediaSource(MediaSource... mediaSources) {
@@ -80,6 +80,22 @@ public class ConcatenatingMediaSource extends CompositeMediaSource<MediaSourceHo
         this.window = new Timeline.Window();
         this.period = new Timeline.Period();
         addMediaSources(Arrays.asList(mediaSources));
+    }
+
+    private static Object getMediaSourceHolderUid(Object periodUid) {
+        return ConcatenatedTimeline.getChildTimelineUidFromConcatenatedUid(periodUid);
+    }
+
+    private static Object getChildPeriodUid(MediaSourceHolder holder, Object periodUid) {
+        Object childUid = ConcatenatedTimeline.getChildPeriodUidFromConcatenatedUid(periodUid);
+        return childUid.equals(DeferredTimeline.DUMMY_ID) ? holder.timeline.replacedId : childUid;
+    }
+
+    private static Object getPeriodUid(MediaSourceHolder holder, Object childPeriodUid) {
+        if (holder.timeline.replacedId.equals(childPeriodUid)) {
+            childPeriodUid = DeferredTimeline.DUMMY_ID;
+        }
+        return ConcatenatedTimeline.getConcatenatedUid(holder.uid, childPeriodUid);
     }
 
     public final synchronized void addMediaSource(MediaSource mediaSource) {
@@ -581,33 +597,17 @@ public class ConcatenatingMediaSource extends CompositeMediaSource<MediaSourceHo
         }
     }
 
-    private static Object getMediaSourceHolderUid(Object periodUid) {
-        return ConcatenatedTimeline.getChildTimelineUidFromConcatenatedUid(periodUid);
-    }
-
-    private static Object getChildPeriodUid(MediaSourceHolder holder, Object periodUid) {
-        Object childUid = ConcatenatedTimeline.getChildPeriodUidFromConcatenatedUid(periodUid);
-        return childUid.equals(DeferredTimeline.DUMMY_ID) ? holder.timeline.replacedId : childUid;
-    }
-
-    private static Object getPeriodUid(MediaSourceHolder holder, Object childPeriodUid) {
-        if (holder.timeline.replacedId.equals(childPeriodUid)) {
-            childPeriodUid = DeferredTimeline.DUMMY_ID;
-        }
-        return ConcatenatedTimeline.getConcatenatedUid(holder.uid, childPeriodUid);
-    }
-
     static final class MediaSourceHolder implements Comparable<MediaSourceHolder> {
         public final List<DeferredMediaPeriod> activeMediaPeriods = new ArrayList();
+        public final MediaSource mediaSource;
+        public final Object uid = new Object();
         public int childIndex;
         public int firstPeriodIndexInChild;
         public int firstWindowIndexInChild;
         public boolean hasStartedPreparing;
         public boolean isPrepared;
         public boolean isRemoved;
-        public final MediaSource mediaSource;
         public DeferredTimeline timeline;
-        public final Object uid = new Object();
 
         public MediaSourceHolder(MediaSource mediaSource2) {
             this.mediaSource = mediaSource2;
@@ -739,17 +739,17 @@ public class ConcatenatingMediaSource extends CompositeMediaSource<MediaSourceHo
         /* access modifiers changed from: private */
         public final Object replacedId;
 
+        private DeferredTimeline(Timeline timeline, Object replacedId2) {
+            super(timeline);
+            this.replacedId = replacedId2;
+        }
+
         public static DeferredTimeline createWithDummyTimeline(@Nullable Object windowTag) {
             return new DeferredTimeline(new DummyTimeline(windowTag), DUMMY_ID);
         }
 
         public static DeferredTimeline createWithRealTimeline(Timeline timeline, Object firstPeriodUid) {
             return new DeferredTimeline(timeline, firstPeriodUid);
-        }
-
-        private DeferredTimeline(Timeline timeline, Object replacedId2) {
-            super(timeline);
-            this.replacedId = replacedId2;
         }
 
         public DeferredTimeline cloneWithUpdatedTimeline(Timeline timeline) {

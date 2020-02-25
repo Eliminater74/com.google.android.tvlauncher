@@ -1,38 +1,40 @@
 package com.google.android.exoplayer2.extractor.ogg;
 
 import android.support.annotation.VisibleForTesting;
+
 import com.google.android.exoplayer2.extractor.ExtractorInput;
 import com.google.android.exoplayer2.extractor.SeekMap;
 import com.google.android.exoplayer2.extractor.SeekPoint;
 import com.google.android.exoplayer2.util.Assertions;
+
 import java.io.EOFException;
 import java.io.IOException;
 
 final class DefaultOggSeeker implements OggSeeker {
-    private static final int DEFAULT_OFFSET = 30000;
     @VisibleForTesting
     public static final int MATCH_BYTE_RANGE = 100000;
     @VisibleForTesting
     public static final int MATCH_RANGE = 72000;
+    private static final int DEFAULT_OFFSET = 30000;
     private static final int STATE_IDLE = 3;
     private static final int STATE_READ_LAST_PAGE = 1;
     private static final int STATE_SEEK = 2;
     private static final int STATE_SEEK_TO_END = 0;
-    private long end;
-    private long endGranule;
+    /* access modifiers changed from: private */
+    public final long startPosition;
+    /* access modifiers changed from: private */
+    public final StreamReader streamReader;
     private final long endPosition;
     private final OggPageHeader pageHeader = new OggPageHeader();
+    /* access modifiers changed from: private */
+    public long totalGranules;
+    private long end;
+    private long endGranule;
     private long positionBeforeSeekToEnd;
     private long start;
     private long startGranule;
-    /* access modifiers changed from: private */
-    public final long startPosition;
     private int state;
-    /* access modifiers changed from: private */
-    public final StreamReader streamReader;
     private long targetGranule;
-    /* access modifiers changed from: private */
-    public long totalGranules;
 
     public DefaultOggSeeker(long startPosition2, long endPosition2, StreamReader streamReader2, long firstPayloadPageSize, long firstPayloadPageGranulePosition, boolean firstPayloadPageIsLastPage) {
         Assertions.checkArgument(startPosition2 >= 0 && endPosition2 > startPosition2);
@@ -176,28 +178,6 @@ final class DefaultOggSeeker implements OggSeeker {
         return position2;
     }
 
-    private class OggSeekMap implements SeekMap {
-        private OggSeekMap() {
-        }
-
-        public boolean isSeekable() {
-            return true;
-        }
-
-        public SeekMap.SeekPoints getSeekPoints(long timeUs) {
-            if (timeUs == 0) {
-                return new SeekMap.SeekPoints(new SeekPoint(0, DefaultOggSeeker.this.startPosition));
-            }
-            long granule = DefaultOggSeeker.this.streamReader.convertTimeToGranule(timeUs);
-            DefaultOggSeeker defaultOggSeeker = DefaultOggSeeker.this;
-            return new SeekMap.SeekPoints(new SeekPoint(timeUs, defaultOggSeeker.getEstimatedPosition(defaultOggSeeker.startPosition, granule, 30000)));
-        }
-
-        public long getDurationUs() {
-            return DefaultOggSeeker.this.streamReader.convertGranuleToTime(DefaultOggSeeker.this.totalGranules);
-        }
-    }
-
     /* access modifiers changed from: package-private */
     @VisibleForTesting
     public void skipToNextPage(ExtractorInput input) throws IOException, InterruptedException {
@@ -250,5 +230,27 @@ final class DefaultOggSeeker implements OggSeeker {
         }
         input.resetPeekPosition();
         return currentGranule;
+    }
+
+    private class OggSeekMap implements SeekMap {
+        private OggSeekMap() {
+        }
+
+        public boolean isSeekable() {
+            return true;
+        }
+
+        public SeekMap.SeekPoints getSeekPoints(long timeUs) {
+            if (timeUs == 0) {
+                return new SeekMap.SeekPoints(new SeekPoint(0, DefaultOggSeeker.this.startPosition));
+            }
+            long granule = DefaultOggSeeker.this.streamReader.convertTimeToGranule(timeUs);
+            DefaultOggSeeker defaultOggSeeker = DefaultOggSeeker.this;
+            return new SeekMap.SeekPoints(new SeekPoint(timeUs, defaultOggSeeker.getEstimatedPosition(defaultOggSeeker.startPosition, granule, 30000)));
+        }
+
+        public long getDurationUs() {
+            return DefaultOggSeeker.this.streamReader.convertGranuleToTime(DefaultOggSeeker.this.totalGranules);
+        }
     }
 }

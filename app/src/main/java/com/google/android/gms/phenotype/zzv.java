@@ -1,7 +1,6 @@
 package com.google.android.gms.phenotype;
 
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.phenotype.PhenotypeClient;
 import com.google.android.gms.tasks.TaskCompletionSource;
 
 /* compiled from: PhenotypeClient */

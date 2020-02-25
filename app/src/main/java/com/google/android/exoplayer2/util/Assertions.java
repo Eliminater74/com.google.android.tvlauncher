@@ -3,6 +3,7 @@ package com.google.android.exoplayer2.util;
 import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 
 public final class Assertions {

@@ -8,7 +8,9 @@ import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import androidx.palette.graphics.Palette;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.Options;
 import com.bumptech.glide.load.engine.Resource;

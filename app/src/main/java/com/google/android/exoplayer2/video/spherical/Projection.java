@@ -1,6 +1,7 @@
 package com.google.android.exoplayer2.video.spherical;
 
 import com.google.android.exoplayer2.util.Assertions;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -16,9 +17,15 @@ public final class Projection {
     public final boolean singleMesh;
     public final int stereoMode;
 
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface DrawMode {
+    public Projection(Mesh mesh, int stereoMode2) {
+        this(mesh, mesh, stereoMode2);
+    }
+
+    public Projection(Mesh leftMesh2, Mesh rightMesh2, int stereoMode2) {
+        this.leftMesh = leftMesh2;
+        this.rightMesh = rightMesh2;
+        this.stereoMode = stereoMode2;
+        this.singleMesh = leftMesh2 == rightMesh2;
     }
 
     public static Projection createEquirectangular(int stereoMode2) {
@@ -137,15 +144,9 @@ public final class Projection {
         return new Projection(new Mesh(new SubMesh(0, vertexData, textureData, 1)), stereoMode2);
     }
 
-    public Projection(Mesh mesh, int stereoMode2) {
-        this(mesh, mesh, stereoMode2);
-    }
-
-    public Projection(Mesh leftMesh2, Mesh rightMesh2, int stereoMode2) {
-        this.leftMesh = leftMesh2;
-        this.rightMesh = rightMesh2;
-        this.stereoMode = stereoMode2;
-        this.singleMesh = leftMesh2 == rightMesh2;
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface DrawMode {
     }
 
     public static final class SubMesh {

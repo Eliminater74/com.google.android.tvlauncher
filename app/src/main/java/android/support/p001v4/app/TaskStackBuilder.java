@@ -12,7 +12,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.p001v4.content.ContextCompat;
 import android.util.Log;
+
 import com.google.android.exoplayer2.C0841C;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -21,12 +23,6 @@ public final class TaskStackBuilder implements Iterable<Intent> {
     private static final String TAG = "TaskStackBuilder";
     private final ArrayList<Intent> mIntents = new ArrayList<>();
     private final Context mSourceContext;
-
-    /* renamed from: android.support.v4.app.TaskStackBuilder$SupportParentable */
-    public interface SupportParentable {
-        @Nullable
-        Intent getSupportParentActivityIntent();
-    }
 
     private TaskStackBuilder(Context a) {
         this.mSourceContext = a;
@@ -170,5 +166,11 @@ public final class TaskStackBuilder implements Iterable<Intent> {
             intents[i] = new Intent(this.mIntents.get(i));
         }
         return intents;
+    }
+
+    /* renamed from: android.support.v4.app.TaskStackBuilder$SupportParentable */
+    public interface SupportParentable {
+        @Nullable
+        Intent getSupportParentActivityIntent();
     }
 }

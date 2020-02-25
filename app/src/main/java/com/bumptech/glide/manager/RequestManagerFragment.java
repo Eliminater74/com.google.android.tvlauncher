@@ -9,8 +9,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.util.Log;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -20,11 +22,11 @@ public class RequestManagerFragment extends Fragment {
     private static final String TAG = "RMFragment";
     private final Set<RequestManagerFragment> childRequestManagerFragments;
     private final ActivityFragmentLifecycle lifecycle;
+    private final RequestManagerTreeNode requestManagerTreeNode;
     @Nullable
     private Fragment parentFragmentHint;
     @Nullable
     private RequestManager requestManager;
-    private final RequestManagerTreeNode requestManagerTreeNode;
     @Nullable
     private RequestManagerFragment rootRequestManagerFragment;
 
@@ -40,10 +42,6 @@ public class RequestManagerFragment extends Fragment {
         this.lifecycle = lifecycle2;
     }
 
-    public void setRequestManager(@Nullable RequestManager requestManager2) {
-        this.requestManager = requestManager2;
-    }
-
     /* access modifiers changed from: package-private */
     @NonNull
     public ActivityFragmentLifecycle getGlideLifecycle() {
@@ -53,6 +51,10 @@ public class RequestManagerFragment extends Fragment {
     @Nullable
     public RequestManager getRequestManager() {
         return this.requestManager;
+    }
+
+    public void setRequestManager(@Nullable RequestManager requestManager2) {
+        this.requestManager = requestManager2;
     }
 
     @NonNull

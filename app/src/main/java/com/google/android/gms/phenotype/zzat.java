@@ -3,15 +3,15 @@ package com.google.android.gms.phenotype;
 import android.content.SharedPreferences;
 import android.util.Base64;
 import android.util.Log;
-import com.google.android.gms.phenotype.PhenotypeFlag;
+
 import java.io.IOException;
 
 /* compiled from: PhenotypeFlag */
 final class zzat extends PhenotypeFlag<T> {
     private final Object zzb = new Object();
+    private final /* synthetic */ PhenotypeFlag.BytesConverter zze;
     private String zzc;
     private T zzd;
-    private final /* synthetic */ PhenotypeFlag.BytesConverter zze;
 
     /* JADX INFO: super call moved to the top of the method (can break code semantics) */
     zzat(PhenotypeFlag.Factory factory, String str, Object obj, PhenotypeFlag.BytesConverter bytesConverter) {

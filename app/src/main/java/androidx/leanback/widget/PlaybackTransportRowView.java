@@ -9,16 +9,12 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+
 import androidx.leanback.C0364R;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
 public class PlaybackTransportRowView extends LinearLayout {
     private OnUnhandledKeyListener mOnUnhandledKeyListener;
-
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    public interface OnUnhandledKeyListener {
-        boolean onUnhandledKey(KeyEvent keyEvent);
-    }
 
     public PlaybackTransportRowView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -29,13 +25,13 @@ public class PlaybackTransportRowView extends LinearLayout {
     }
 
     /* access modifiers changed from: package-private */
-    public void setOnUnhandledKeyListener(OnUnhandledKeyListener listener) {
-        this.mOnUnhandledKeyListener = listener;
+    public OnUnhandledKeyListener getOnUnhandledKeyListener() {
+        return this.mOnUnhandledKeyListener;
     }
 
     /* access modifiers changed from: package-private */
-    public OnUnhandledKeyListener getOnUnhandledKeyListener() {
-        return this.mOnUnhandledKeyListener;
+    public void setOnUnhandledKeyListener(OnUnhandledKeyListener listener) {
+        this.mOnUnhandledKeyListener = listener;
     }
 
     public boolean dispatchKeyEvent(KeyEvent event) {
@@ -90,5 +86,10 @@ public class PlaybackTransportRowView extends LinearLayout {
 
     public boolean hasOverlappingRendering() {
         return false;
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    public interface OnUnhandledKeyListener {
+        boolean onUnhandledKey(KeyEvent keyEvent);
     }
 }

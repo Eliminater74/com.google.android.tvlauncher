@@ -6,8 +6,7 @@ import android.app.Application;
 import android.content.SharedPreferences;
 import android.os.Debug;
 import android.support.annotation.VisibleForTesting;
-import com.google.android.libraries.performance.primes.AppLifecycleListener;
-import com.google.android.libraries.performance.primes.MetricRecorder;
+
 import com.google.android.libraries.performance.primes.backgroundjobs.PrimesJobScheduler;
 import com.google.android.libraries.performance.primes.hprof.HprofSerializer;
 import com.google.android.libraries.performance.primes.metriccapture.MemoryUsageCapture;
@@ -18,6 +17,7 @@ import com.google.android.libraries.performance.primes.transmitter.MetricTransmi
 import com.google.android.libraries.stitch.util.Preconditions;
 import com.google.protobuf.ExtensionRegistryLite;
 import com.google.protobuf.InvalidProtocolBufferException;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -26,17 +26,18 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReentrantLock;
+
 import logs.proto.wireless.performance.mobile.PrimesHeapDumpProto;
 import logs.proto.wireless.performance.mobile.SystemHealthProto;
 
 @TargetApi(23)
 final class MiniHeapDumpMetricService extends AbstractMetricService {
-    private static final String DEV_HEAP_DUMP_NOSEND = "primes.dev.heapdump_nosend";
-    private static final String DEV_HEAP_DUMP_NOWAIT = "primes.dev.heapdump_nowait";
     @VisibleForTesting
     static final String IS_CALIBRATED_PREFERENCE_KEY = "primes.miniheapdump.isCalibrated";
     static final int MEMORY_COLLECTION_DELAY_IN_SECONDS = 10;
     static final long MIN_HEAP_DUMP_INTERVAL_MS = TimeUnit.DAYS.toMillis(1);
+    private static final String DEV_HEAP_DUMP_NOSEND = "primes.dev.heapdump_nosend";
+    private static final String DEV_HEAP_DUMP_NOWAIT = "primes.dev.heapdump_nowait";
     private static final String TAG = "MiniHeapDumpMetric";
     private static volatile MiniHeapDumpMetricService service;
     /* access modifiers changed from: private */
@@ -44,11 +45,9 @@ final class MiniHeapDumpMetricService extends AbstractMetricService {
     /* access modifiers changed from: private */
     public final Supplier<ScheduledExecutorService> executorServiceSupplier;
     /* access modifiers changed from: private */
-    public volatile ScheduledFuture<?> futureMemoryCollectionTask;
-    private final ReentrantLock heapDumpLock = new ReentrantLock();
-    private final HprofSerializer hprofSerializer;
-    @VisibleForTesting
-    final AtomicLong lastSent = new AtomicLong();
+    public final MiniHeapDumpMemorySampler miniHeapDumpSampler;
+    /* access modifiers changed from: private */
+    public final SharedPreferences preferences;
     /* access modifiers changed from: private */
     public final AppLifecycleListener.OnAppToBackground logTotalPssSampleCount = new AppLifecycleListener.OnAppToBackground() {
         public void onAppToBackground(Activity activity) {
@@ -63,17 +62,19 @@ final class MiniHeapDumpMetricService extends AbstractMetricService {
             }));
         }
     };
+    @VisibleForTesting
+    final AtomicLong lastSent = new AtomicLong();
+    private final ReentrantLock heapDumpLock = new ReentrantLock();
+    private final HprofSerializer hprofSerializer;
     private final double memoryUsagePercentileThreshold;
     private final Supplier<MetricStamper> metricStamperSupplier;
     /* access modifiers changed from: private */
-    public final MiniHeapDumpMemorySampler miniHeapDumpSampler;
+    public volatile ScheduledFuture<?> futureMemoryCollectionTask;
     private final AppLifecycleListener.OnAppToForeground onAppToForeground = new AppLifecycleListener.OnAppToForeground() {
         public void onAppToForeground(Activity activity) {
             MiniHeapDumpMetricService.this.cancelFutureTasksIfAny();
         }
     };
-    /* access modifiers changed from: private */
-    public final SharedPreferences preferences;
     private final AppLifecycleListener.OnAppToBackground takeAndLogMemorySample = new AppLifecycleListener.OnAppToBackground() {
         public void onAppToBackground(Activity activity) {
             MiniHeapDumpMetricService.this.cancelFutureTasksIfAny();

@@ -5,17 +5,15 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimaps;
-import com.google.common.collect.Multiset;
-import com.google.common.collect.Multisets;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible
 class FilteredEntryMultimap<K, V> extends AbstractMultimap<K, V> implements FilteredMultimap<K, V> {
@@ -25,6 +23,13 @@ class FilteredEntryMultimap<K, V> extends AbstractMultimap<K, V> implements Filt
     FilteredEntryMultimap(Multimap<K, V> unfiltered2, Predicate<? super Map.Entry<K, V>> predicate2) {
         this.unfiltered = (Multimap) Preconditions.checkNotNull(unfiltered2);
         this.predicate = (Predicate) Preconditions.checkNotNull(predicate2);
+    }
+
+    static <E> Collection<E> filterCollection(Collection<E> collection, Predicate<? super E> predicate2) {
+        if (collection instanceof Set) {
+            return Sets.filter((Set) collection, predicate2);
+        }
+        return Collections2.filter(collection, predicate2);
     }
 
     public Multimap<K, V> unfiltered() {
@@ -42,25 +47,6 @@ class FilteredEntryMultimap<K, V> extends AbstractMultimap<K, V> implements Filt
     /* access modifiers changed from: private */
     public boolean satisfies(K key, V value) {
         return this.predicate.apply(Maps.immutableEntry(key, value));
-    }
-
-    final class ValuePredicate implements Predicate<V> {
-        private final K key;
-
-        ValuePredicate(K key2) {
-            this.key = key2;
-        }
-
-        public boolean apply(@NullableDecl V value) {
-            return FilteredEntryMultimap.this.satisfies(this.key, value);
-        }
-    }
-
-    static <E> Collection<E> filterCollection(Collection<E> collection, Predicate<? super E> predicate2) {
-        if (collection instanceof Set) {
-            return Sets.filter((Set) collection, predicate2);
-        }
-        return Collections2.filter(collection, predicate2);
     }
 
     public boolean containsKey(@NullableDecl Object key) {
@@ -130,6 +116,23 @@ class FilteredEntryMultimap<K, V> extends AbstractMultimap<K, V> implements Filt
             }
         }
         return changed;
+    }
+
+    /* access modifiers changed from: package-private */
+    public Multiset<K> createKeys() {
+        return new Keys();
+    }
+
+    final class ValuePredicate implements Predicate<V> {
+        private final K key;
+
+        ValuePredicate(K key2) {
+            this.key = key2;
+        }
+
+        public boolean apply(@NullableDecl V value) {
+            return FilteredEntryMultimap.this.satisfies(this.key, value);
+        }
     }
 
     class AsMap extends Maps.ViewCachingAbstractMap<K, Collection<V>> {
@@ -271,11 +274,6 @@ class FilteredEntryMultimap<K, V> extends AbstractMultimap<K, V> implements Filt
                 }
             };
         }
-    }
-
-    /* access modifiers changed from: package-private */
-    public Multiset<K> createKeys() {
-        return new Keys();
     }
 
     class Keys extends Multimaps.Keys<K, V> {

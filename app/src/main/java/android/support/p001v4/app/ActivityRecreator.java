@@ -10,7 +10,9 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.RestrictTo;
+
 import com.google.devtools.build.android.desugar.runtime.ThrowableExtension;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -19,12 +21,12 @@ import java.util.List;
 /* renamed from: android.support.v4.app.ActivityRecreator */
 final class ActivityRecreator {
     protected static final Class<?> activityThreadClass = getActivityThreadClass();
-    private static final Handler mainHandler = new Handler(Looper.getMainLooper());
     protected static final Field mainThreadField = getMainThreadField();
     protected static final Method performStopActivity2ParamsMethod = getPerformStopActivity2Params(activityThreadClass);
     protected static final Method performStopActivity3ParamsMethod = getPerformStopActivity3Params(activityThreadClass);
     protected static final Method requestRelaunchActivityMethod = getRequestRelaunchActivityMethod(activityThreadClass);
     protected static final Field tokenField = getTokenField();
+    private static final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     private ActivityRecreator() {
     }
@@ -69,51 +71,6 @@ final class ActivityRecreator {
             } catch (Throwable t) {
                 handleReflectiveException(t);
                 return false;
-            }
-        }
-    }
-
-    /* renamed from: android.support.v4.app.ActivityRecreator$LifecycleCheckCallbacks */
-    private static final class LifecycleCheckCallbacks implements Application.ActivityLifecycleCallbacks {
-        Object currentlyRecreatingToken;
-        private Activity mActivity;
-        private boolean mDestroyed = false;
-        private boolean mStarted = false;
-        private boolean mStopQueued = false;
-
-        LifecycleCheckCallbacks(@NonNull Activity aboutToRecreate) {
-            this.mActivity = aboutToRecreate;
-        }
-
-        public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-        }
-
-        public void onActivityStarted(Activity activity) {
-            if (this.mActivity == activity) {
-                this.mStarted = true;
-            }
-        }
-
-        public void onActivityResumed(Activity activity) {
-        }
-
-        public void onActivityPaused(Activity activity) {
-            if (this.mDestroyed && !this.mStopQueued && !this.mStarted && ActivityRecreator.queueOnStopIfNecessary(this.currentlyRecreatingToken, activity)) {
-                this.mStopQueued = true;
-                this.currentlyRecreatingToken = null;
-            }
-        }
-
-        public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
-        }
-
-        public void onActivityStopped(Activity activity) {
-        }
-
-        public void onActivityDestroyed(Activity activity) {
-            if (this.mActivity == activity) {
-                this.mActivity = null;
-                this.mDestroyed = true;
             }
         }
     }
@@ -230,5 +187,50 @@ final class ActivityRecreator {
 
     protected static void handleReflectiveException(Throwable t) {
         ThrowableExtension.printStackTrace(t);
+    }
+
+    /* renamed from: android.support.v4.app.ActivityRecreator$LifecycleCheckCallbacks */
+    private static final class LifecycleCheckCallbacks implements Application.ActivityLifecycleCallbacks {
+        Object currentlyRecreatingToken;
+        private Activity mActivity;
+        private boolean mDestroyed = false;
+        private boolean mStarted = false;
+        private boolean mStopQueued = false;
+
+        LifecycleCheckCallbacks(@NonNull Activity aboutToRecreate) {
+            this.mActivity = aboutToRecreate;
+        }
+
+        public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+        }
+
+        public void onActivityStarted(Activity activity) {
+            if (this.mActivity == activity) {
+                this.mStarted = true;
+            }
+        }
+
+        public void onActivityResumed(Activity activity) {
+        }
+
+        public void onActivityPaused(Activity activity) {
+            if (this.mDestroyed && !this.mStopQueued && !this.mStarted && ActivityRecreator.queueOnStopIfNecessary(this.currentlyRecreatingToken, activity)) {
+                this.mStopQueued = true;
+                this.currentlyRecreatingToken = null;
+            }
+        }
+
+        public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+        }
+
+        public void onActivityStopped(Activity activity) {
+        }
+
+        public void onActivityDestroyed(Activity activity) {
+            if (this.mActivity == activity) {
+                this.mActivity = null;
+                this.mDestroyed = true;
+            }
+        }
     }
 }

@@ -9,6 +9,28 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 public @interface InspectableProperty {
 
+    int attributeId() default 0;
+
+    EnumEntry[] enumMapping() default {};
+
+    FlagEntry[] flagMapping() default {};
+
+    boolean hasAttributeId() default true;
+
+    String name() default "";
+
+    ValueType valueType() default ValueType.INFERRED;
+
+    public enum ValueType {
+        NONE,
+        INFERRED,
+        INT_ENUM,
+        INT_FLAG,
+        COLOR,
+        GRAVITY,
+        RESOURCE_ID
+    }
+
     @Target({ElementType.TYPE})
     @Retention(RetentionPolicy.SOURCE)
     public @interface EnumEntry {
@@ -26,26 +48,4 @@ public @interface InspectableProperty {
 
         int target();
     }
-
-    public enum ValueType {
-        NONE,
-        INFERRED,
-        INT_ENUM,
-        INT_FLAG,
-        COLOR,
-        GRAVITY,
-        RESOURCE_ID
-    }
-
-    int attributeId() default 0;
-
-    EnumEntry[] enumMapping() default {};
-
-    FlagEntry[] flagMapping() default {};
-
-    boolean hasAttributeId() default true;
-
-    String name() default "";
-
-    ValueType valueType() default ValueType.INFERRED;
 }

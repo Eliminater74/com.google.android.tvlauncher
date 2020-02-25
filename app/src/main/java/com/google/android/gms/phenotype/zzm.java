@@ -2,8 +2,10 @@ package com.google.android.gms.phenotype;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
 import com.google.android.gms.common.internal.Hide;
 import com.google.android.gms.internal.zzbkw;
+
 import java.util.ArrayList;
 
 @Hide

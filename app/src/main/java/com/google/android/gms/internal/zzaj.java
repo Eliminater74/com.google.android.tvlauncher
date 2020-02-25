@@ -33,6 +33,18 @@ public class zzaj implements zzm {
         this.zzd = zzak;
     }
 
+    private static void zza(String str, zzr<?> zzr, zzae zzae) throws zzae {
+        zzab zzj = zzr.zzj();
+        int zzi = zzr.zzi();
+        try {
+            zzj.zza(zzae);
+            zzr.zza(String.format("%s-retry [timeout=%s]", str, Integer.valueOf(zzi)));
+        } catch (zzae e) {
+            zzr.zza(String.format("%s-timeout-giveup [timeout=%s]", str, Integer.valueOf(zzi)));
+            throw e;
+        }
+    }
+
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
      method: com.google.android.gms.internal.zzp.<init>(int, byte[], boolean, long, java.util.List<com.google.android.gms.internal.zzl>):void
      arg types: [?, ?[OBJECT, ARRAY], int, long, java.util.List<com.google.android.gms.internal.zzl>]
@@ -420,18 +432,6 @@ public class zzaj implements zzm {
             goto L_0x0008
         */
         throw new UnsupportedOperationException("Method not decompiled: com.google.android.gms.internal.zzaj.zza(com.google.android.gms.internal.zzr):com.google.android.gms.internal.zzp");
-    }
-
-    private static void zza(String str, zzr<?> zzr, zzae zzae) throws zzae {
-        zzab zzj = zzr.zzj();
-        int zzi = zzr.zzi();
-        try {
-            zzj.zza(zzae);
-            zzr.zza(String.format("%s-retry [timeout=%s]", str, Integer.valueOf(zzi)));
-        } catch (zzae e) {
-            zzr.zza(String.format("%s-timeout-giveup [timeout=%s]", str, Integer.valueOf(zzi)));
-            throw e;
-        }
     }
 
     private final byte[] zza(InputStream inputStream, int i) throws IOException, zzac {

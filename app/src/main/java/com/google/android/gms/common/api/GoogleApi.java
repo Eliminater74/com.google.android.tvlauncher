@@ -8,9 +8,8 @@ import android.os.Looper;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.WorkerThread;
+
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.common.api.Api;
-import com.google.android.gms.common.api.Api.ApiOptions;
 import com.google.android.gms.common.api.internal.zzai;
 import com.google.android.gms.common.api.internal.zzbn;
 import com.google.android.gms.common.api.internal.zzbp;
@@ -31,6 +30,7 @@ import com.google.android.gms.common.internal.Hide;
 import com.google.android.gms.common.internal.zzau;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
+
 import java.util.Collections;
 import java.util.Set;
 
@@ -45,18 +45,6 @@ public class GoogleApi<O extends Api.ApiOptions> {
     private final int zzg;
     private final GoogleApiClient zzh;
     private final zzdg zzi;
-
-    @Hide
-    public static class zza {
-        public static final zza zza = new zzd().zza();
-        public final zzdg zzb;
-        public final Looper zzc;
-
-        private zza(zzdg zzdg, Account account, Looper looper) {
-            this.zzb = zzdg;
-            this.zzc = looper;
-        }
-    }
 
     @Hide
     protected GoogleApi(@NonNull Context context, Api<O> api, Looper looper) {
@@ -300,5 +288,17 @@ public class GoogleApi<O extends Api.ApiOptions> {
     @Hide
     public zzdb zza(Context context, Handler handler) {
         return new zzdb(context, handler, zza().zza());
+    }
+
+    @Hide
+    public static class zza {
+        public static final zza zza = new zzd().zza();
+        public final zzdg zzb;
+        public final Looper zzc;
+
+        private zza(zzdg zzdg, Account account, Looper looper) {
+            this.zzb = zzdg;
+            this.zzc = looper;
+        }
     }
 }

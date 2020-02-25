@@ -22,49 +22,76 @@ public class LaunchItem implements Comparable<LaunchItem> {
     private String mPkgName;
     private ResolveInfo mResolveInfo;
 
-    public enum InstallState {
-        UNKNOWN,
-        INSTALL_PENDING,
-        UPDATE_PENDING,
-        RESTORE_PENDING,
-        DOWNLOADING,
-        INSTALLING
-    }
-
     public Intent getIntent() {
         return this.mIntent;
+    }
+
+    public void setIntent(Intent intent) {
+        this.mIntent = intent;
     }
 
     public CharSequence getLabel() {
         return this.mLabel;
     }
 
+    public void setLabel(CharSequence label) {
+        this.mLabel = label;
+    }
+
     public String getPackageName() {
         return this.mPkgName;
+    }
+
+    public void setPackageName(String pkgName) {
+        this.mPkgName = pkgName;
     }
 
     public String getIconUri() {
         return this.mIconUri;
     }
 
+    public void setIconUri(String iconUri) {
+        this.mIconUri = iconUri;
+    }
+
     public String getBannerUri() {
         return this.mBannerUri;
+    }
+
+    public void setBannerUri(String bannerUri) {
+        this.mBannerUri = bannerUri;
     }
 
     public String getDataUri() {
         return this.mDataUri;
     }
 
+    public void setDataUri(String dataUri) {
+        this.mDataUri = dataUri;
+    }
+
     public ResolveInfo getResolveInfo() {
         return this.mResolveInfo;
+    }
+
+    public void setResolveInfo(ResolveInfo resolveInfo) {
+        this.mResolveInfo = resolveInfo;
     }
 
     public int getInstallProgressPercent() {
         return this.mInstallProgressPercent;
     }
 
+    public void setInstallProgressPercent(int progressPercent) {
+        this.mInstallProgressPercent = progressPercent;
+    }
+
     public boolean isInitialInstall() {
         return this.mIsInitialInstall;
+    }
+
+    public void setInitialInstall(boolean initialInstall) {
+        this.mIsInitialInstall = initialInstall;
     }
 
     public boolean isInstalling() {
@@ -73,6 +100,10 @@ public class LaunchItem implements Comparable<LaunchItem> {
 
     public InstallState getInstallState() {
         return this.mInstallState;
+    }
+
+    public void setInstallState(InstallState state) {
+        this.mInstallState = state;
     }
 
     public boolean isGame() {
@@ -85,6 +116,10 @@ public class LaunchItem implements Comparable<LaunchItem> {
 
     public long getLastUpdateTime() {
         return this.mLastUpdateTime;
+    }
+
+    public void setLastUpdateTime(long lastUpdateTime) {
+        this.mLastUpdateTime = lastUpdateTime;
     }
 
     public int compareTo(@NonNull LaunchItem another) {
@@ -134,56 +169,12 @@ public class LaunchItem implements Comparable<LaunchItem> {
         return TextUtils.equals(this.mPkgName, packageName);
     }
 
-    public void setInitialInstall(boolean initialInstall) {
-        this.mIsInitialInstall = initialInstall;
-    }
-
-    public void setInstallProgressPercent(int progressPercent) {
-        this.mInstallProgressPercent = progressPercent;
-    }
-
-    public void setIntent(Intent intent) {
-        this.mIntent = intent;
-    }
-
-    public void setLabel(CharSequence label) {
-        this.mLabel = label;
-    }
-
-    public void setPackageName(String pkgName) {
-        this.mPkgName = pkgName;
-    }
-
-    public void setIconUri(String iconUri) {
-        this.mIconUri = iconUri;
-    }
-
-    public void setBannerUri(String bannerUri) {
-        this.mBannerUri = bannerUri;
-    }
-
-    public void setDataUri(String dataUri) {
-        this.mDataUri = dataUri;
-    }
-
-    public void setResolveInfo(ResolveInfo resolveInfo) {
-        this.mResolveInfo = resolveInfo;
-    }
-
     public void setIsGame(boolean isGame) {
         this.mIsGame = isGame;
     }
 
     public void setIsAppLink(boolean isAppLink) {
         this.mIsAppLink = isAppLink;
-    }
-
-    public void setInstallState(InstallState state) {
-        this.mInstallState = state;
-    }
-
-    public void setLastUpdateTime(long lastUpdateTime) {
-        this.mLastUpdateTime = lastUpdateTime;
     }
 
     public void recycle() {
@@ -199,5 +190,14 @@ public class LaunchItem implements Comparable<LaunchItem> {
         this.mBannerUri = null;
         this.mIsAppLink = false;
         this.mDataUri = null;
+    }
+
+    public enum InstallState {
+        UNKNOWN,
+        INSTALL_PENDING,
+        UPDATE_PENDING,
+        RESTORE_PENDING,
+        DOWNLOADING,
+        INSTALLING
     }
 }

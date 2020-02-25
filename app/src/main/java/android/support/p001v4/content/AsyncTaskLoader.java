@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.p001v4.p003os.OperationCanceledException;
 import android.text.format.DateUtils;
+
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.concurrent.Executor;
@@ -24,47 +25,12 @@ public abstract class AsyncTaskLoader<D> extends Loader<D> {
     private volatile AsyncTaskLoader<D>.LoadTask mTask;
     private long mUpdateThrottle;
 
-    @Nullable
-    public abstract D loadInBackground();
-
-    /* renamed from: android.support.v4.content.AsyncTaskLoader$LoadTask */
-    final class LoadTask extends ModernAsyncTask<D> implements Runnable {
-        boolean waiting;
-
-        LoadTask() {
-        }
-
-        /* access modifiers changed from: protected */
-        public D doInBackground() {
-            try {
-                return AsyncTaskLoader.this.onLoadInBackground();
-            } catch (OperationCanceledException ex) {
-                if (isCancelled()) {
-                    return null;
-                }
-                throw ex;
-            }
-        }
-
-        /* access modifiers changed from: protected */
-        public void onPostExecute(D data) {
-            AsyncTaskLoader.this.dispatchOnLoadComplete(this, data);
-        }
-
-        /* access modifiers changed from: protected */
-        public void onCancelled(D data) {
-            AsyncTaskLoader.this.dispatchOnCancelled(this, data);
-        }
-
-        public void run() {
-            this.waiting = false;
-            AsyncTaskLoader.this.executePendingTask();
-        }
-    }
-
     public AsyncTaskLoader(@NonNull Context context) {
         super(context);
     }
+
+    @Nullable
+    public abstract D loadInBackground();
 
     public void setUpdateThrottle(long delayMS) {
         this.mUpdateThrottle = delayMS;
@@ -209,6 +175,41 @@ public abstract class AsyncTaskLoader<D> extends Loader<D> {
             }
             writer.print(str);
             writer.println();
+        }
+    }
+
+    /* renamed from: android.support.v4.content.AsyncTaskLoader$LoadTask */
+    final class LoadTask extends ModernAsyncTask<D> implements Runnable {
+        boolean waiting;
+
+        LoadTask() {
+        }
+
+        /* access modifiers changed from: protected */
+        public D doInBackground() {
+            try {
+                return AsyncTaskLoader.this.onLoadInBackground();
+            } catch (OperationCanceledException ex) {
+                if (isCancelled()) {
+                    return null;
+                }
+                throw ex;
+            }
+        }
+
+        /* access modifiers changed from: protected */
+        public void onPostExecute(D data) {
+            AsyncTaskLoader.this.dispatchOnLoadComplete(this, data);
+        }
+
+        /* access modifiers changed from: protected */
+        public void onCancelled(D data) {
+            AsyncTaskLoader.this.dispatchOnCancelled(this, data);
+        }
+
+        public void run() {
+            this.waiting = false;
+            AsyncTaskLoader.this.executePendingTask();
         }
     }
 }

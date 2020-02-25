@@ -27,56 +27,24 @@ import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.PopupWindow;
+
 import java.lang.reflect.Method;
 
 /* renamed from: android.support.v7.widget.ListPopupWindow */
 public class ListPopupWindow implements ShowableListMenu {
-    private static final boolean DEBUG = false;
-    static final int EXPAND_LIST_TIMEOUT = 250;
     public static final int INPUT_METHOD_FROM_FOCUSABLE = 0;
     public static final int INPUT_METHOD_NEEDED = 1;
     public static final int INPUT_METHOD_NOT_NEEDED = 2;
     public static final int MATCH_PARENT = -1;
     public static final int POSITION_PROMPT_ABOVE = 0;
     public static final int POSITION_PROMPT_BELOW = 1;
-    private static final String TAG = "ListPopupWindow";
     public static final int WRAP_CONTENT = -2;
+    static final int EXPAND_LIST_TIMEOUT = 250;
+    private static final boolean DEBUG = false;
+    private static final String TAG = "ListPopupWindow";
     private static Method sClipToWindowEnabledMethod;
     private static Method sGetMaxAvailableHeightMethod;
     private static Method sSetEpicenterBoundsMethod;
-    private ListAdapter mAdapter;
-    private Context mContext;
-    private boolean mDropDownAlwaysVisible;
-    private View mDropDownAnchorView;
-    private int mDropDownGravity;
-    private int mDropDownHeight;
-    private int mDropDownHorizontalOffset;
-    DropDownListView mDropDownList;
-    private Drawable mDropDownListHighlight;
-    private int mDropDownVerticalOffset;
-    private boolean mDropDownVerticalOffsetSet;
-    private int mDropDownWidth;
-    private int mDropDownWindowLayoutType;
-    private Rect mEpicenterBounds;
-    private boolean mForceIgnoreOutsideTouch;
-    final Handler mHandler;
-    private final ListSelectorHider mHideSelector;
-    private boolean mIsAnimatedFromAnchor;
-    private AdapterView.OnItemClickListener mItemClickListener;
-    private AdapterView.OnItemSelectedListener mItemSelectedListener;
-    int mListItemExpandMaximum;
-    private boolean mModal;
-    private DataSetObserver mObserver;
-    private boolean mOverlapAnchor;
-    private boolean mOverlapAnchorSet;
-    PopupWindow mPopup;
-    private int mPromptPosition;
-    private View mPromptView;
-    final ResizePopupRunnable mResizePopupRunnable;
-    private final PopupScrollListener mScrollListener;
-    private Runnable mShowDropDownRunnable;
-    private final Rect mTempRect;
-    private final PopupTouchInterceptor mTouchInterceptor;
 
     static {
         Class<PopupWindow> cls = PopupWindow.class;
@@ -97,6 +65,40 @@ public class ListPopupWindow implements ShowableListMenu {
             Log.i(TAG, "Could not find method setEpicenterBounds(Rect) on PopupWindow. Oh well.");
         }
     }
+
+    final Handler mHandler;
+    final ResizePopupRunnable mResizePopupRunnable;
+    private final ListSelectorHider mHideSelector;
+    private final PopupScrollListener mScrollListener;
+    private final Rect mTempRect;
+    private final PopupTouchInterceptor mTouchInterceptor;
+    DropDownListView mDropDownList;
+    int mListItemExpandMaximum;
+    PopupWindow mPopup;
+    private ListAdapter mAdapter;
+    private Context mContext;
+    private boolean mDropDownAlwaysVisible;
+    private View mDropDownAnchorView;
+    private int mDropDownGravity;
+    private int mDropDownHeight;
+    private int mDropDownHorizontalOffset;
+    private Drawable mDropDownListHighlight;
+    private int mDropDownVerticalOffset;
+    private boolean mDropDownVerticalOffsetSet;
+    private int mDropDownWidth;
+    private int mDropDownWindowLayoutType;
+    private Rect mEpicenterBounds;
+    private boolean mForceIgnoreOutsideTouch;
+    private boolean mIsAnimatedFromAnchor;
+    private AdapterView.OnItemClickListener mItemClickListener;
+    private AdapterView.OnItemSelectedListener mItemSelectedListener;
+    private boolean mModal;
+    private DataSetObserver mObserver;
+    private boolean mOverlapAnchor;
+    private boolean mOverlapAnchorSet;
+    private int mPromptPosition;
+    private View mPromptView;
+    private Runnable mShowDropDownRunnable;
 
     public ListPopupWindow(@NonNull Context context) {
         this(context, null, C0233R.attr.listPopupWindowStyle);
@@ -138,6 +140,10 @@ public class ListPopupWindow implements ShowableListMenu {
         this.mPopup.setInputMethodMode(1);
     }
 
+    private static boolean isConfirmKey(int keyCode) {
+        return keyCode == 66 || keyCode == 23;
+    }
+
     public void setAdapter(@Nullable ListAdapter adapter) {
         DataSetObserver dataSetObserver = this.mObserver;
         if (dataSetObserver == null) {
@@ -158,21 +164,21 @@ public class ListPopupWindow implements ShowableListMenu {
         }
     }
 
+    public int getPromptPosition() {
+        return this.mPromptPosition;
+    }
+
     public void setPromptPosition(int position) {
         this.mPromptPosition = position;
     }
 
-    public int getPromptPosition() {
-        return this.mPromptPosition;
+    public boolean isModal() {
+        return this.mModal;
     }
 
     public void setModal(boolean modal) {
         this.mModal = modal;
         this.mPopup.setFocusable(modal);
-    }
-
-    public boolean isModal() {
-        return this.mModal;
     }
 
     @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
@@ -181,21 +187,21 @@ public class ListPopupWindow implements ShowableListMenu {
     }
 
     @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    public void setDropDownAlwaysVisible(boolean dropDownAlwaysVisible) {
-        this.mDropDownAlwaysVisible = dropDownAlwaysVisible;
-    }
-
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
     public boolean isDropDownAlwaysVisible() {
         return this.mDropDownAlwaysVisible;
     }
 
-    public void setSoftInputMode(int mode) {
-        this.mPopup.setSoftInputMode(mode);
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    public void setDropDownAlwaysVisible(boolean dropDownAlwaysVisible) {
+        this.mDropDownAlwaysVisible = dropDownAlwaysVisible;
     }
 
     public int getSoftInputMode() {
         return this.mPopup.getSoftInputMode();
+    }
+
+    public void setSoftInputMode(int mode) {
+        this.mPopup.setSoftInputMode(mode);
     }
 
     public void setListSelector(Drawable selector) {
@@ -211,13 +217,13 @@ public class ListPopupWindow implements ShowableListMenu {
         this.mPopup.setBackgroundDrawable(d);
     }
 
-    public void setAnimationStyle(@StyleRes int animationStyle) {
-        this.mPopup.setAnimationStyle(animationStyle);
-    }
-
     @StyleRes
     public int getAnimationStyle() {
         return this.mPopup.getAnimationStyle();
+    }
+
+    public void setAnimationStyle(@StyleRes int animationStyle) {
+        this.mPopup.setAnimationStyle(animationStyle);
     }
 
     @Nullable
@@ -249,10 +255,6 @@ public class ListPopupWindow implements ShowableListMenu {
         this.mDropDownVerticalOffsetSet = true;
     }
 
-    public void setEpicenterBounds(@Nullable Rect bounds) {
-        this.mEpicenterBounds = bounds != null ? new Rect(bounds) : null;
-    }
-
     @Nullable
     public Rect getEpicenterBounds() {
         Rect rect = this.mEpicenterBounds;
@@ -260,6 +262,10 @@ public class ListPopupWindow implements ShowableListMenu {
             return new Rect(rect);
         }
         return null;
+    }
+
+    public void setEpicenterBounds(@Nullable Rect bounds) {
+        this.mEpicenterBounds = bounds != null ? new Rect(bounds) : null;
     }
 
     public void setDropDownGravity(int gravity) {
@@ -426,12 +432,12 @@ public class ListPopupWindow implements ShowableListMenu {
         }
     }
 
-    public void setInputMethodMode(int mode) {
-        this.mPopup.setInputMethodMode(mode);
-    }
-
     public int getInputMethodMode() {
         return this.mPopup.getInputMethodMode();
+    }
+
+    public void setInputMethodMode(int mode) {
+        this.mPopup.setInputMethodMode(mode);
     }
 
     public void setSelection(int position) {
@@ -842,6 +848,29 @@ public class ListPopupWindow implements ShowableListMenu {
         this.mOverlapAnchor = overlapAnchor;
     }
 
+    private void setPopupClipToScreenEnabled(boolean clip) {
+        Method method = sClipToWindowEnabledMethod;
+        if (method != null) {
+            try {
+                method.invoke(this.mPopup, Boolean.valueOf(clip));
+            } catch (Exception e) {
+                Log.i(TAG, "Could not call setClipToScreenEnabled() on PopupWindow. Oh well.");
+            }
+        }
+    }
+
+    private int getMaxAvailableHeight(View anchor, int yOffset, boolean ignoreBottomDecorations) {
+        Method method = sGetMaxAvailableHeightMethod;
+        if (method != null) {
+            try {
+                return ((Integer) method.invoke(this.mPopup, anchor, Integer.valueOf(yOffset), Boolean.valueOf(ignoreBottomDecorations))).intValue();
+            } catch (Exception e) {
+                Log.i(TAG, "Could not call getMaxAvailableHeightMethod(View, int, boolean) on PopupWindow. Using the public version.");
+            }
+        }
+        return this.mPopup.getMaxAvailableHeight(anchor, yOffset);
+    }
+
     /* renamed from: android.support.v7.widget.ListPopupWindow$PopupDataSetObserver */
     private class PopupDataSetObserver extends DataSetObserver {
         PopupDataSetObserver() {
@@ -916,32 +945,5 @@ public class ListPopupWindow implements ShowableListMenu {
                 ListPopupWindow.this.mResizePopupRunnable.run();
             }
         }
-    }
-
-    private static boolean isConfirmKey(int keyCode) {
-        return keyCode == 66 || keyCode == 23;
-    }
-
-    private void setPopupClipToScreenEnabled(boolean clip) {
-        Method method = sClipToWindowEnabledMethod;
-        if (method != null) {
-            try {
-                method.invoke(this.mPopup, Boolean.valueOf(clip));
-            } catch (Exception e) {
-                Log.i(TAG, "Could not call setClipToScreenEnabled() on PopupWindow. Oh well.");
-            }
-        }
-    }
-
-    private int getMaxAvailableHeight(View anchor, int yOffset, boolean ignoreBottomDecorations) {
-        Method method = sGetMaxAvailableHeightMethod;
-        if (method != null) {
-            try {
-                return ((Integer) method.invoke(this.mPopup, anchor, Integer.valueOf(yOffset), Boolean.valueOf(ignoreBottomDecorations))).intValue();
-            } catch (Exception e) {
-                Log.i(TAG, "Could not call getMaxAvailableHeightMethod(View, int, boolean) on PopupWindow. Using the public version.");
-            }
-        }
-        return this.mPopup.getMaxAvailableHeight(anchor, yOffset);
     }
 }

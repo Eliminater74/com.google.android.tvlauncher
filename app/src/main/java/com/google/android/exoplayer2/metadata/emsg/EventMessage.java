@@ -3,8 +3,10 @@ package com.google.android.exoplayer2.metadata.emsg;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.metadata.Metadata;
 import com.google.android.exoplayer2.util.Util;
+
 import java.util.Arrays;
 
 public final class EventMessage implements Metadata.Entry {
@@ -18,13 +20,12 @@ public final class EventMessage implements Metadata.Entry {
         }
     };
     public final long durationMs;
-    private int hashCode;
-
     /* renamed from: id */
     public final long f79id;
     public final byte[] messageData;
     public final String schemeIdUri;
     public final String value;
+    private int hashCode;
 
     public EventMessage(String schemeIdUri2, String value2, long durationMs2, long id, byte[] messageData2) {
         this.schemeIdUri = schemeIdUri2;

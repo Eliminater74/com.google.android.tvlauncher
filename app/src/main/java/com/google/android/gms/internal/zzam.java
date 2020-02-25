@@ -2,6 +2,7 @@ package com.google.android.gms.internal;
 
 import android.os.SystemClock;
 import android.text.TextUtils;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
@@ -24,9 +25,9 @@ import java.util.TreeMap;
 /* compiled from: DiskBasedCache */
 public final class zzam implements zzb {
     private final Map<String, zzan> zza;
-    private long zzb;
     private final File zzc;
     private final int zzd;
+    private long zzb;
 
     private zzam(File file, int i) {
         this.zza = new LinkedHashMap(16, 0.75f, true);
@@ -37,6 +38,93 @@ public final class zzam implements zzb {
 
     public zzam(File file) {
         this(file, 5242880);
+    }
+
+    private static String zzc(String str) {
+        int length = str.length() / 2;
+        String valueOf = String.valueOf(String.valueOf(str.substring(0, length).hashCode()));
+        String valueOf2 = String.valueOf(String.valueOf(str.substring(length).hashCode()));
+        return valueOf2.length() != 0 ? valueOf.concat(valueOf2) : new String(valueOf);
+    }
+
+    private static byte[] zza(zzao zzao, long j) throws IOException {
+        long zza2 = zzao.zza();
+        if (j >= 0 && j <= zza2) {
+            int i = (int) j;
+            if (((long) i) == j) {
+                byte[] bArr = new byte[i];
+                new DataInputStream(zzao).readFully(bArr);
+                return bArr;
+            }
+        }
+        StringBuilder sb = new StringBuilder(73);
+        sb.append("streamToBytes length=");
+        sb.append(j);
+        sb.append(", maxLength=");
+        sb.append(zza2);
+        throw new IOException(sb.toString());
+    }
+
+    private static InputStream zza(File file) throws FileNotFoundException {
+        return new FileInputStream(file);
+    }
+
+    private static int zzc(InputStream inputStream) throws IOException {
+        int read = inputStream.read();
+        if (read != -1) {
+            return read;
+        }
+        throw new EOFException();
+    }
+
+    static void zza(OutputStream outputStream, int i) throws IOException {
+        outputStream.write(i & 255);
+        outputStream.write((i >> 8) & 255);
+        outputStream.write((i >> 16) & 255);
+        outputStream.write(i >>> 24);
+    }
+
+    static int zza(InputStream inputStream) throws IOException {
+        return (zzc(inputStream) << 24) | zzc(inputStream) | 0 | (zzc(inputStream) << 8) | (zzc(inputStream) << 16);
+    }
+
+    static void zza(OutputStream outputStream, long j) throws IOException {
+        outputStream.write((byte) ((int) j));
+        outputStream.write((byte) ((int) (j >>> 8)));
+        outputStream.write((byte) ((int) (j >>> 16)));
+        outputStream.write((byte) ((int) (j >>> 24)));
+        outputStream.write((byte) ((int) (j >>> 32)));
+        outputStream.write((byte) ((int) (j >>> 40)));
+        outputStream.write((byte) ((int) (j >>> 48)));
+        outputStream.write((byte) ((int) (j >>> 56)));
+    }
+
+    static long zzb(InputStream inputStream) throws IOException {
+        return (((long) zzc(inputStream)) & 255) | 0 | ((((long) zzc(inputStream)) & 255) << 8) | ((((long) zzc(inputStream)) & 255) << 16) | ((((long) zzc(inputStream)) & 255) << 24) | ((((long) zzc(inputStream)) & 255) << 32) | ((((long) zzc(inputStream)) & 255) << 40) | ((((long) zzc(inputStream)) & 255) << 48) | ((255 & ((long) zzc(inputStream))) << 56);
+    }
+
+    static void zza(OutputStream outputStream, String str) throws IOException {
+        byte[] bytes = str.getBytes("UTF-8");
+        zza(outputStream, (long) bytes.length);
+        outputStream.write(bytes, 0, bytes.length);
+    }
+
+    static String zza(zzao zzao) throws IOException {
+        return new String(zza(zzao, zzb((InputStream) zzao)), "UTF-8");
+    }
+
+    static List<zzl> zzb(zzao zzao) throws IOException {
+        List<zzl> list;
+        int zza2 = zza((InputStream) zzao);
+        if (zza2 == 0) {
+            list = Collections.emptyList();
+        } else {
+            list = new ArrayList<>(zza2);
+        }
+        for (int i = 0; i < zza2; i++) {
+            list.add(new zzl(zza(zzao).intern(), zza(zzao).intern()));
+        }
+        return list;
     }
 
     public final synchronized zzc zza(String str) {
@@ -223,13 +311,6 @@ public final class zzam implements zzb {
         }
     }
 
-    private static String zzc(String str) {
-        int length = str.length() / 2;
-        String valueOf = String.valueOf(String.valueOf(str.substring(0, length).hashCode()));
-        String valueOf2 = String.valueOf(String.valueOf(str.substring(length).hashCode()));
-        return valueOf2.length() != 0 ? valueOf.concat(valueOf2) : new String(valueOf);
-    }
-
     private final File zzd(String str) {
         return new File(this.zzc, zzc(str));
     }
@@ -248,85 +329,5 @@ public final class zzam implements zzb {
         if (remove != null) {
             this.zzb -= remove.zza;
         }
-    }
-
-    private static byte[] zza(zzao zzao, long j) throws IOException {
-        long zza2 = zzao.zza();
-        if (j >= 0 && j <= zza2) {
-            int i = (int) j;
-            if (((long) i) == j) {
-                byte[] bArr = new byte[i];
-                new DataInputStream(zzao).readFully(bArr);
-                return bArr;
-            }
-        }
-        StringBuilder sb = new StringBuilder(73);
-        sb.append("streamToBytes length=");
-        sb.append(j);
-        sb.append(", maxLength=");
-        sb.append(zza2);
-        throw new IOException(sb.toString());
-    }
-
-    private static InputStream zza(File file) throws FileNotFoundException {
-        return new FileInputStream(file);
-    }
-
-    private static int zzc(InputStream inputStream) throws IOException {
-        int read = inputStream.read();
-        if (read != -1) {
-            return read;
-        }
-        throw new EOFException();
-    }
-
-    static void zza(OutputStream outputStream, int i) throws IOException {
-        outputStream.write(i & 255);
-        outputStream.write((i >> 8) & 255);
-        outputStream.write((i >> 16) & 255);
-        outputStream.write(i >>> 24);
-    }
-
-    static int zza(InputStream inputStream) throws IOException {
-        return (zzc(inputStream) << 24) | zzc(inputStream) | 0 | (zzc(inputStream) << 8) | (zzc(inputStream) << 16);
-    }
-
-    static void zza(OutputStream outputStream, long j) throws IOException {
-        outputStream.write((byte) ((int) j));
-        outputStream.write((byte) ((int) (j >>> 8)));
-        outputStream.write((byte) ((int) (j >>> 16)));
-        outputStream.write((byte) ((int) (j >>> 24)));
-        outputStream.write((byte) ((int) (j >>> 32)));
-        outputStream.write((byte) ((int) (j >>> 40)));
-        outputStream.write((byte) ((int) (j >>> 48)));
-        outputStream.write((byte) ((int) (j >>> 56)));
-    }
-
-    static long zzb(InputStream inputStream) throws IOException {
-        return (((long) zzc(inputStream)) & 255) | 0 | ((((long) zzc(inputStream)) & 255) << 8) | ((((long) zzc(inputStream)) & 255) << 16) | ((((long) zzc(inputStream)) & 255) << 24) | ((((long) zzc(inputStream)) & 255) << 32) | ((((long) zzc(inputStream)) & 255) << 40) | ((((long) zzc(inputStream)) & 255) << 48) | ((255 & ((long) zzc(inputStream))) << 56);
-    }
-
-    static void zza(OutputStream outputStream, String str) throws IOException {
-        byte[] bytes = str.getBytes("UTF-8");
-        zza(outputStream, (long) bytes.length);
-        outputStream.write(bytes, 0, bytes.length);
-    }
-
-    static String zza(zzao zzao) throws IOException {
-        return new String(zza(zzao, zzb((InputStream) zzao)), "UTF-8");
-    }
-
-    static List<zzl> zzb(zzao zzao) throws IOException {
-        List<zzl> list;
-        int zza2 = zza((InputStream) zzao);
-        if (zza2 == 0) {
-            list = Collections.emptyList();
-        } else {
-            list = new ArrayList<>(zza2);
-        }
-        for (int i = 0; i < zza2; i++) {
-            list.add(new zzl(zza(zzao).intern(), zza(zzao).intern()));
-        }
-        return list;
     }
 }

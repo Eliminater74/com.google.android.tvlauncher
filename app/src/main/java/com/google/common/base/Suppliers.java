@@ -2,21 +2,61 @@ package com.google.common.base;
 
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.VisibleForTesting;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible
 public final class Suppliers {
-
-    private interface SupplierFunction<T> extends Function<Supplier<T>, T> {
-    }
 
     private Suppliers() {
     }
 
     public static <F, T> Supplier<T> compose(Function<? super F, T> function, Supplier<F> supplier) {
         return new SupplierComposition(function, supplier);
+    }
+
+    public static <T> Supplier<T> memoize(Supplier<T> delegate) {
+        if ((delegate instanceof NonSerializableMemoizingSupplier) || (delegate instanceof MemoizingSupplier)) {
+            return delegate;
+        }
+        if (delegate instanceof Serializable) {
+            return new MemoizingSupplier(delegate);
+        }
+        return new NonSerializableMemoizingSupplier(delegate);
+    }
+
+    public static <T> Supplier<T> memoizeWithExpiration(Supplier<T> delegate, long duration, TimeUnit unit) {
+        return new ExpiringMemoizingSupplier(delegate, duration, unit);
+    }
+
+    public static <T> Supplier<T> ofInstance(@NullableDecl T instance) {
+        return new SupplierOfInstance(instance);
+    }
+
+    public static <T> Supplier<T> synchronizedSupplier(Supplier<T> delegate) {
+        return new ThreadSafeSupplier(delegate);
+    }
+
+    public static <T> Function<Supplier<T>, T> supplierFunction() {
+        return SupplierFunctionImpl.INSTANCE;
+    }
+
+    private enum SupplierFunctionImpl implements SupplierFunction<Object> {
+        INSTANCE;
+
+        public Object apply(Supplier<Object> input) {
+            return input.get();
+        }
+
+        public String toString() {
+            return "Suppliers.supplierFunction()";
+        }
+    }
+
+    private interface SupplierFunction<T> extends Function<Supplier<T>, T> {
     }
 
     private static class SupplierComposition<F, T> implements Supplier<T>, Serializable {
@@ -59,16 +99,6 @@ public final class Suppliers {
             sb.append(")");
             return sb.toString();
         }
-    }
-
-    public static <T> Supplier<T> memoize(Supplier<T> delegate) {
-        if ((delegate instanceof NonSerializableMemoizingSupplier) || (delegate instanceof MemoizingSupplier)) {
-            return delegate;
-        }
-        if (delegate instanceof Serializable) {
-            return new MemoizingSupplier(delegate);
-        }
-        return new NonSerializableMemoizingSupplier(delegate);
     }
 
     @VisibleForTesting
@@ -166,10 +196,6 @@ public final class Suppliers {
         }
     }
 
-    public static <T> Supplier<T> memoizeWithExpiration(Supplier<T> delegate, long duration, TimeUnit unit) {
-        return new ExpiringMemoizingSupplier(delegate, duration, unit);
-    }
-
     @VisibleForTesting
     static class ExpiringMemoizingSupplier<T> implements Supplier<T>, Serializable {
         private static final long serialVersionUID = 0;
@@ -215,10 +241,6 @@ public final class Suppliers {
         }
     }
 
-    public static <T> Supplier<T> ofInstance(@NullableDecl T instance) {
-        return new SupplierOfInstance(instance);
-    }
-
     private static class SupplierOfInstance<T> implements Supplier<T>, Serializable {
         private static final long serialVersionUID = 0;
         @NullableDecl
@@ -253,10 +275,6 @@ public final class Suppliers {
         }
     }
 
-    public static <T> Supplier<T> synchronizedSupplier(Supplier<T> delegate) {
-        return new ThreadSafeSupplier(delegate);
-    }
-
     private static class ThreadSafeSupplier<T> implements Supplier<T>, Serializable {
         private static final long serialVersionUID = 0;
         final Supplier<T> delegate;
@@ -280,22 +298,6 @@ public final class Suppliers {
             sb.append(valueOf);
             sb.append(")");
             return sb.toString();
-        }
-    }
-
-    public static <T> Function<Supplier<T>, T> supplierFunction() {
-        return SupplierFunctionImpl.INSTANCE;
-    }
-
-    private enum SupplierFunctionImpl implements SupplierFunction<Object> {
-        INSTANCE;
-
-        public Object apply(Supplier<Object> input) {
-            return input.get();
-        }
-
-        public String toString() {
-            return "Suppliers.supplierFunction()";
         }
     }
 }

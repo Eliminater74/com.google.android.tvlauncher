@@ -2,10 +2,12 @@ package com.google.android.libraries.performance.primes.hprof;
 
 import android.support.annotation.VisibleForTesting;
 import android.support.p001v4.util.ArrayMap;
+
 import com.google.android.libraries.performance.primes.hprof.collect.IntIntMap;
 import com.google.android.libraries.performance.primes.hprof.collect.IntObjectMap;
 import com.google.android.libraries.performance.primes.hprof.collect.TrieMap;
 import com.google.android.libraries.stitch.util.Preconditions;
+
 import java.lang.ref.Reference;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -14,27 +16,6 @@ import java.util.Map;
 
 final class HprofParser {
     private static final Map<String, Integer> PRIMITIVE_ARRAY_2_TYPES = new ArrayMap();
-    private final TrieMap<ParseAction> actionsForClass = new TrieMap<>();
-    private final ByteBuffer buffer;
-    private final IntObjectMap<HprofClass> classes = new IntObjectMap<>();
-    private String heapName = "";
-    private final IntObjectMap<ParseAction> id2Actions = new IntObjectMap<>();
-    private final IntObjectMap<HprofObject> instances = new IntObjectMap<>();
-    private final Map<String, List<HprofObject>> instancesFound = new ArrayMap();
-    private int objectClassId;
-    private final ParseContext parseContext;
-    private final IntIntMap rootIds = new IntIntMap();
-    private final IntIntMap rootTagsToExclude = new IntIntMap();
-    private final IntIntMap stringPositions = new IntIntMap();
-    private final IntObjectMap<ParseAction> type2Actions = new IntObjectMap<>();
-
-    private enum ParseAction {
-        EXCLUDE_INSTANCE,
-        FIND_INSTANCE,
-        CLASSIFY_REF,
-        IDENTIFY_OBJECT_CLASS,
-        IDENTIFY_JAVA_LANG_CLASS
-    }
 
     static {
         PRIMITIVE_ARRAY_2_TYPES.put("boolean[]", 4);
@@ -47,9 +28,19 @@ final class HprofParser {
         PRIMITIVE_ARRAY_2_TYPES.put("long[]", 11);
     }
 
-    static ParseResult parseBuffer(ParseContext parseContext2, Iterable<Integer> rootTagsToExclude2, Iterable<String> instancesToExclude, Iterable<String> instancesToFind) {
-        return new HprofParser(parseContext2, rootTagsToExclude2, instancesToExclude, instancesToFind).parse();
-    }
+    private final TrieMap<ParseAction> actionsForClass = new TrieMap<>();
+    private final ByteBuffer buffer;
+    private final IntObjectMap<HprofClass> classes = new IntObjectMap<>();
+    private final IntObjectMap<ParseAction> id2Actions = new IntObjectMap<>();
+    private final IntObjectMap<HprofObject> instances = new IntObjectMap<>();
+    private final Map<String, List<HprofObject>> instancesFound = new ArrayMap();
+    private final ParseContext parseContext;
+    private final IntIntMap rootIds = new IntIntMap();
+    private final IntIntMap rootTagsToExclude = new IntIntMap();
+    private final IntIntMap stringPositions = new IntIntMap();
+    private final IntObjectMap<ParseAction> type2Actions = new IntObjectMap<>();
+    private String heapName = "";
+    private int objectClassId;
 
     @VisibleForTesting
     HprofParser(ParseContext parseContext2, Iterable<Integer> rootTagsToExclude2, Iterable<String> instancesToExclude, Iterable<String> instancesToFind) {
@@ -76,6 +67,10 @@ final class HprofParser {
                 this.rootTagsToExclude.putIfAbsent(intValue.intValue(), 0);
             }
         }
+    }
+
+    static ParseResult parseBuffer(ParseContext parseContext2, Iterable<Integer> rootTagsToExclude2, Iterable<String> instancesToExclude, Iterable<String> instancesToFind) {
+        return new HprofParser(parseContext2, rootTagsToExclude2, instancesToExclude, instancesToFind).parse();
     }
 
     /* access modifiers changed from: package-private */
@@ -257,5 +252,13 @@ final class HprofParser {
             primitiveArrayInstance.heapName = this.heapName;
             this.instances.putIfAbsent(id, primitiveArrayInstance);
         }
+    }
+
+    private enum ParseAction {
+        EXCLUDE_INSTANCE,
+        FIND_INSTANCE,
+        CLASSIFY_REF,
+        IDENTIFY_OBJECT_CLASS,
+        IDENTIFY_JAVA_LANG_CLASS
     }
 }

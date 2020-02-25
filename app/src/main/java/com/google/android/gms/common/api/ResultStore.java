@@ -4,10 +4,12 @@ import android.app.Activity;
 import android.app.FragmentManager;
 import android.support.annotation.NonNull;
 import android.support.p001v4.app.FragmentActivity;
+
 import com.google.android.gms.common.api.internal.zzce;
 import com.google.android.gms.common.api.internal.zzci;
 import com.google.android.gms.common.api.internal.zzdk;
 import com.google.android.gms.common.internal.Hide;
+
 import java.util.Map;
 import java.util.WeakHashMap;
 
@@ -15,17 +17,6 @@ import java.util.WeakHashMap;
 public abstract class ResultStore {
     private static final Map<Object, ResultStore> zza = new WeakHashMap();
     private static final Object zzb = new Object();
-
-    public abstract boolean hasPendingResult(int i);
-
-    public abstract void remove(int i);
-
-    public abstract void setResultCallbacks(int i, @NonNull ResultCallbacks<?> resultCallbacks);
-
-    @Hide
-    public <R extends Result> void zza(int i, @NonNull PendingResult pendingResult) {
-        throw new UnsupportedOperationException();
-    }
 
     @NonNull
     public static ResultStore getInstance(@NonNull Activity activity, @NonNull GoogleApiClient googleApiClient) {
@@ -90,5 +81,16 @@ public abstract class ResultStore {
         synchronized (zzb) {
             zza.remove(obj);
         }
+    }
+
+    public abstract boolean hasPendingResult(int i);
+
+    public abstract void remove(int i);
+
+    public abstract void setResultCallbacks(int i, @NonNull ResultCallbacks<?> resultCallbacks);
+
+    @Hide
+    public <R extends Result> void zza(int i, @NonNull PendingResult pendingResult) {
+        throw new UnsupportedOperationException();
     }
 }

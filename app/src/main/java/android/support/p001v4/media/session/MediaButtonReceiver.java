@@ -14,76 +14,12 @@ import android.support.p001v4.media.MediaBrowserCompat;
 import android.support.p001v4.media.MediaBrowserServiceCompat;
 import android.util.Log;
 import android.view.KeyEvent;
+
 import java.util.List;
 
 /* renamed from: android.support.v4.media.session.MediaButtonReceiver */
 public class MediaButtonReceiver extends BroadcastReceiver {
     private static final String TAG = "MediaButtonReceiver";
-
-    public void onReceive(Context context, Intent intent) {
-        if (intent == null || !"android.intent.action.MEDIA_BUTTON".equals(intent.getAction()) || !intent.hasExtra("android.intent.extra.KEY_EVENT")) {
-            Log.d(TAG, "Ignore unsupported intent: " + intent);
-            return;
-        }
-        ComponentName mediaButtonServiceComponentName = getServiceComponentByAction(context, "android.intent.action.MEDIA_BUTTON");
-        if (mediaButtonServiceComponentName != null) {
-            intent.setComponent(mediaButtonServiceComponentName);
-            startForegroundService(context, intent);
-            return;
-        }
-        ComponentName mediaBrowserServiceComponentName = getServiceComponentByAction(context, MediaBrowserServiceCompat.SERVICE_INTERFACE);
-        if (mediaBrowserServiceComponentName != null) {
-            BroadcastReceiver.PendingResult pendingResult = goAsync();
-            Context applicationContext = context.getApplicationContext();
-            MediaButtonConnectionCallback connectionCallback = new MediaButtonConnectionCallback(applicationContext, intent, pendingResult);
-            MediaBrowserCompat mediaBrowser = new MediaBrowserCompat(applicationContext, mediaBrowserServiceComponentName, connectionCallback, null);
-            connectionCallback.setMediaBrowser(mediaBrowser);
-            mediaBrowser.connect();
-            return;
-        }
-        throw new IllegalStateException("Could not find any Service that handles android.intent.action.MEDIA_BUTTON or implements a media browser service.");
-    }
-
-    /* renamed from: android.support.v4.media.session.MediaButtonReceiver$MediaButtonConnectionCallback */
-    private static class MediaButtonConnectionCallback extends MediaBrowserCompat.ConnectionCallback {
-        private final Context mContext;
-        private final Intent mIntent;
-        private MediaBrowserCompat mMediaBrowser;
-        private final BroadcastReceiver.PendingResult mPendingResult;
-
-        MediaButtonConnectionCallback(Context context, Intent intent, BroadcastReceiver.PendingResult pendingResult) {
-            this.mContext = context;
-            this.mIntent = intent;
-            this.mPendingResult = pendingResult;
-        }
-
-        /* access modifiers changed from: package-private */
-        public void setMediaBrowser(MediaBrowserCompat mediaBrowser) {
-            this.mMediaBrowser = mediaBrowser;
-        }
-
-        public void onConnected() {
-            try {
-                new MediaControllerCompat(this.mContext, this.mMediaBrowser.getSessionToken()).dispatchMediaButtonEvent((KeyEvent) this.mIntent.getParcelableExtra("android.intent.extra.KEY_EVENT"));
-            } catch (RemoteException e) {
-                Log.e(MediaButtonReceiver.TAG, "Failed to create a media controller", e);
-            }
-            finish();
-        }
-
-        public void onConnectionSuspended() {
-            finish();
-        }
-
-        public void onConnectionFailed() {
-            finish();
-        }
-
-        private void finish() {
-            this.mMediaBrowser.disconnect();
-            this.mPendingResult.finish();
-        }
-    }
 
     public static KeyEvent handleIntent(MediaSessionCompat mediaSessionCompat, Intent intent) {
         if (mediaSessionCompat == null || intent == null || !"android.intent.action.MEDIA_BUTTON".equals(intent.getAction()) || !intent.hasExtra("android.intent.extra.KEY_EVENT")) {
@@ -155,6 +91,71 @@ public class MediaButtonReceiver extends BroadcastReceiver {
             return null;
         } else {
             throw new IllegalStateException("Expected 1 service that handles " + action + ", found " + resolveInfos.size());
+        }
+    }
+
+    public void onReceive(Context context, Intent intent) {
+        if (intent == null || !"android.intent.action.MEDIA_BUTTON".equals(intent.getAction()) || !intent.hasExtra("android.intent.extra.KEY_EVENT")) {
+            Log.d(TAG, "Ignore unsupported intent: " + intent);
+            return;
+        }
+        ComponentName mediaButtonServiceComponentName = getServiceComponentByAction(context, "android.intent.action.MEDIA_BUTTON");
+        if (mediaButtonServiceComponentName != null) {
+            intent.setComponent(mediaButtonServiceComponentName);
+            startForegroundService(context, intent);
+            return;
+        }
+        ComponentName mediaBrowserServiceComponentName = getServiceComponentByAction(context, MediaBrowserServiceCompat.SERVICE_INTERFACE);
+        if (mediaBrowserServiceComponentName != null) {
+            BroadcastReceiver.PendingResult pendingResult = goAsync();
+            Context applicationContext = context.getApplicationContext();
+            MediaButtonConnectionCallback connectionCallback = new MediaButtonConnectionCallback(applicationContext, intent, pendingResult);
+            MediaBrowserCompat mediaBrowser = new MediaBrowserCompat(applicationContext, mediaBrowserServiceComponentName, connectionCallback, null);
+            connectionCallback.setMediaBrowser(mediaBrowser);
+            mediaBrowser.connect();
+            return;
+        }
+        throw new IllegalStateException("Could not find any Service that handles android.intent.action.MEDIA_BUTTON or implements a media browser service.");
+    }
+
+    /* renamed from: android.support.v4.media.session.MediaButtonReceiver$MediaButtonConnectionCallback */
+    private static class MediaButtonConnectionCallback extends MediaBrowserCompat.ConnectionCallback {
+        private final Context mContext;
+        private final Intent mIntent;
+        private final BroadcastReceiver.PendingResult mPendingResult;
+        private MediaBrowserCompat mMediaBrowser;
+
+        MediaButtonConnectionCallback(Context context, Intent intent, BroadcastReceiver.PendingResult pendingResult) {
+            this.mContext = context;
+            this.mIntent = intent;
+            this.mPendingResult = pendingResult;
+        }
+
+        /* access modifiers changed from: package-private */
+        public void setMediaBrowser(MediaBrowserCompat mediaBrowser) {
+            this.mMediaBrowser = mediaBrowser;
+        }
+
+        public void onConnected() {
+            try {
+                new MediaControllerCompat(this.mContext, this.mMediaBrowser.getSessionToken()).dispatchMediaButtonEvent((KeyEvent) this.mIntent.getParcelableExtra("android.intent.extra.KEY_EVENT"));
+            } catch (RemoteException e) {
+                Log.e(MediaButtonReceiver.TAG, "Failed to create a media controller", e);
+            }
+            finish();
+        }
+
+        public void onConnectionSuspended() {
+            finish();
+        }
+
+        public void onConnectionFailed() {
+            finish();
+        }
+
+        private void finish() {
+            this.mMediaBrowser.disconnect();
+            this.mPendingResult.finish();
         }
     }
 }

@@ -9,9 +9,10 @@ import android.support.p001v4.view.ViewCompat;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
+
 import androidx.leanback.transition.TransitionHelper;
 import androidx.leanback.transition.TransitionListener;
-import androidx.leanback.widget.DetailsOverviewRowPresenter;
+
 import java.lang.ref.WeakReference;
 import java.util.List;
 
@@ -21,28 +22,18 @@ final class DetailsOverviewSharedElementHelper extends SharedElementCallback {
     Activity mActivityToRunTransition;
     int mRightPanelHeight;
     int mRightPanelWidth;
-    private Matrix mSavedMatrix;
-    private ImageView.ScaleType mSavedScaleType;
     String mSharedElementName;
     boolean mStartedPostpone;
     DetailsOverviewRowPresenter.ViewHolder mViewHolder;
+    private Matrix mSavedMatrix;
+    private ImageView.ScaleType mSavedScaleType;
 
     DetailsOverviewSharedElementHelper() {
     }
 
-    static class TransitionTimeOutRunnable implements Runnable {
-        WeakReference<DetailsOverviewSharedElementHelper> mHelperRef;
-
-        TransitionTimeOutRunnable(DetailsOverviewSharedElementHelper helper) {
-            this.mHelperRef = new WeakReference<>(helper);
-        }
-
-        public void run() {
-            DetailsOverviewSharedElementHelper helper = this.mHelperRef.get();
-            if (helper != null) {
-                helper.startPostponedEnterTransition();
-            }
-        }
+    private static void updateImageViewAfterScaleTypeChange(ImageView imageView) {
+        imageView.measure(View.MeasureSpec.makeMeasureSpec(imageView.getMeasuredWidth(), 1073741824), View.MeasureSpec.makeMeasureSpec(imageView.getMeasuredHeight(), 1073741824));
+        imageView.layout(imageView.getLeft(), imageView.getTop(), imageView.getRight(), imageView.getBottom());
     }
 
     private boolean hasImageViewScaleChange(View snapshotView) {
@@ -55,11 +46,6 @@ final class DetailsOverviewSharedElementHelper extends SharedElementCallback {
             this.mSavedScaleType = imageView.getScaleType();
             this.mSavedMatrix = this.mSavedScaleType == ImageView.ScaleType.MATRIX ? imageView.getMatrix() : null;
         }
-    }
-
-    private static void updateImageViewAfterScaleTypeChange(ImageView imageView) {
-        imageView.measure(View.MeasureSpec.makeMeasureSpec(imageView.getMeasuredWidth(), 1073741824), View.MeasureSpec.makeMeasureSpec(imageView.getMeasuredHeight(), 1073741824));
-        imageView.layout(imageView.getLeft(), imageView.getTop(), imageView.getRight(), imageView.getBottom());
     }
 
     private void changeImageViewScale(View snapshotView) {
@@ -187,6 +173,21 @@ final class DetailsOverviewSharedElementHelper extends SharedElementCallback {
         if (!this.mStartedPostpone) {
             ActivityCompat.startPostponedEnterTransition(this.mActivityToRunTransition);
             this.mStartedPostpone = true;
+        }
+    }
+
+    static class TransitionTimeOutRunnable implements Runnable {
+        WeakReference<DetailsOverviewSharedElementHelper> mHelperRef;
+
+        TransitionTimeOutRunnable(DetailsOverviewSharedElementHelper helper) {
+            this.mHelperRef = new WeakReference<>(helper);
+        }
+
+        public void run() {
+            DetailsOverviewSharedElementHelper helper = this.mHelperRef.get();
+            if (helper != null) {
+                helper.startPostponedEnterTransition();
+            }
         }
     }
 }

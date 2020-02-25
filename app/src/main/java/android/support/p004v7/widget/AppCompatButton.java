@@ -56,14 +56,6 @@ public class AppCompatButton extends Button implements TintableBackgroundView, A
         }
     }
 
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    public void setSupportBackgroundTintList(@Nullable ColorStateList tint) {
-        AppCompatBackgroundHelper appCompatBackgroundHelper = this.mBackgroundTintHelper;
-        if (appCompatBackgroundHelper != null) {
-            appCompatBackgroundHelper.setSupportBackgroundTintList(tint);
-        }
-    }
-
     @Nullable
     @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
     public ColorStateList getSupportBackgroundTintList() {
@@ -75,10 +67,10 @@ public class AppCompatButton extends Button implements TintableBackgroundView, A
     }
 
     @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    public void setSupportBackgroundTintMode(@Nullable PorterDuff.Mode tintMode) {
+    public void setSupportBackgroundTintList(@Nullable ColorStateList tint) {
         AppCompatBackgroundHelper appCompatBackgroundHelper = this.mBackgroundTintHelper;
         if (appCompatBackgroundHelper != null) {
-            appCompatBackgroundHelper.setSupportBackgroundTintMode(tintMode);
+            appCompatBackgroundHelper.setSupportBackgroundTintList(tint);
         }
     }
 
@@ -90,6 +82,14 @@ public class AppCompatButton extends Button implements TintableBackgroundView, A
             return appCompatBackgroundHelper.getSupportBackgroundTintMode();
         }
         return null;
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    public void setSupportBackgroundTintMode(@Nullable PorterDuff.Mode tintMode) {
+        AppCompatBackgroundHelper appCompatBackgroundHelper = this.mBackgroundTintHelper;
+        if (appCompatBackgroundHelper != null) {
+            appCompatBackgroundHelper.setSupportBackgroundTintMode(tintMode);
+        }
     }
 
     /* access modifiers changed from: protected */

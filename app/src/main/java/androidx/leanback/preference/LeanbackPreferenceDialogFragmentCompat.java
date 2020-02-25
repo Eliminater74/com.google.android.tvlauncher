@@ -3,6 +3,7 @@ package androidx.leanback.preference;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.p001v4.app.Fragment;
+
 import androidx.preference.DialogPreference;
 
 public class LeanbackPreferenceDialogFragmentCompat extends Fragment {

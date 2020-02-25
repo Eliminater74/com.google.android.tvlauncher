@@ -2,13 +2,14 @@ package com.google.protobuf;
 
 import com.google.common.base.Ascii;
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.nio.ByteBuffer;
 
 final class Utf8 {
-    private static final long ASCII_MASK_LONG = -9187201950435737472L;
     public static final int COMPLETE = 0;
     public static final int MALFORMED = -1;
     static final int MAX_BYTES_PER_CHAR = 3;
+    private static final long ASCII_MASK_LONG = -9187201950435737472L;
     private static final int UNSAFE_COUNT_ASCII_THRESHOLD = 16;
     private static final Processor processor;
 
@@ -20,6 +21,9 @@ final class Utf8 {
             processor2 = new UnsafeProcessor();
         }
         processor = processor2;
+    }
+
+    private Utf8() {
     }
 
     public static boolean isValidUtf8(byte[] bytes) {
@@ -86,29 +90,6 @@ final class Utf8 {
             return incompleteStateFor(byte1, buffer.get(index), buffer.get(index + 1));
         }
         throw new AssertionError();
-    }
-
-    static class UnpairedSurrogateException extends IllegalArgumentException {
-        /* JADX WARNING: Illegal instructions before constructor call */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
-        UnpairedSurrogateException(int r3, int r4) {
-            /*
-                r2 = this;
-                java.lang.StringBuilder r0 = new java.lang.StringBuilder
-                r1 = 54
-                r0.<init>(r1)
-                java.lang.String r1 = "Unpaired surrogate at index "
-                r0.append(r1)
-                r0.append(r3)
-                java.lang.String r1 = " of "
-                r0.append(r1)
-                r0.append(r4)
-                java.lang.String r0 = r0.toString()
-                r2.<init>(r0)
-                return
-            */
-            throw new UnsupportedOperationException("Method not decompiled: com.google.protobuf.Utf8.UnpairedSurrogateException.<init>(int, int):void");
-        }
     }
 
     static int encodedLength(CharSequence sequence) {
@@ -197,7 +178,80 @@ final class Utf8 {
         return i - index;
     }
 
+    static class UnpairedSurrogateException extends IllegalArgumentException {
+        /* JADX WARNING: Illegal instructions before constructor call */
+        /* Code decompiled incorrectly, please refer to instructions dump. */
+        UnpairedSurrogateException(int r3, int r4) {
+            /*
+                r2 = this;
+                java.lang.StringBuilder r0 = new java.lang.StringBuilder
+                r1 = 54
+                r0.<init>(r1)
+                java.lang.String r1 = "Unpaired surrogate at index "
+                r0.append(r1)
+                r0.append(r3)
+                java.lang.String r1 = " of "
+                r0.append(r1)
+                r0.append(r4)
+                java.lang.String r0 = r0.toString()
+                r2.<init>(r0)
+                return
+            */
+            throw new UnsupportedOperationException("Method not decompiled: com.google.protobuf.Utf8.UnpairedSurrogateException.<init>(int, int):void");
+        }
+    }
+
     static abstract class Processor {
+        Processor() {
+        }
+
+        /* JADX INFO: Multiple debug info for r0v3 byte: [D('byte2' int), D('index' int)] */
+        /* JADX INFO: Multiple debug info for r0v4 byte: [D('index' int), D('byte2' byte)] */
+        private static int partialIsValidUtf8(ByteBuffer buffer, int index, int limit) {
+            int index2 = index + Utf8.estimateConsecutiveAscii(buffer, index, limit);
+            while (index2 < limit) {
+                int index3 = index2 + 1;
+                int index4 = buffer.get(index2);
+                int byte1 = index4;
+                if (index4 >= 0) {
+                    index2 = index3;
+                } else if (byte1 < -32) {
+                    if (index3 >= limit) {
+                        return byte1;
+                    }
+                    if (byte1 < -62 || buffer.get(index3) > -65) {
+                        return -1;
+                    }
+                    index2 = index3 + 1;
+                } else if (byte1 < -16) {
+                    if (index3 >= limit - 1) {
+                        return Utf8.incompleteStateFor(buffer, byte1, index3, limit - index3);
+                    }
+                    int index5 = index3 + 1;
+                    byte byte2 = buffer.get(index3);
+                    if (byte2 > -65 || ((byte1 == -32 && byte2 < -96) || ((byte1 == -19 && byte2 >= -96) || buffer.get(index5) > -65))) {
+                        return -1;
+                    }
+                    index2 = index5 + 1;
+                } else if (index3 >= limit - 2) {
+                    return Utf8.incompleteStateFor(buffer, byte1, index3, limit - index3);
+                } else {
+                    int index6 = index3 + 1;
+                    int index7 = buffer.get(index3);
+                    if (index7 <= -65 && (((byte1 << 28) + (index7 + 112)) >> 30) == 0) {
+                        int index8 = index6 + 1;
+                        if (buffer.get(index6) <= -65) {
+                            index2 = index8 + 1;
+                            if (buffer.get(index8) > -65) {
+                            }
+                        }
+                    }
+                    return -1;
+                }
+            }
+            return 0;
+        }
+
         /* access modifiers changed from: package-private */
         public abstract String decodeUtf8(byte[] bArr, int i, int i2) throws InvalidProtocolBufferException;
 
@@ -215,9 +269,6 @@ final class Utf8 {
 
         /* access modifiers changed from: package-private */
         public abstract int partialIsValidUtf8Direct(int i, ByteBuffer byteBuffer, int i2, int i3);
-
-        Processor() {
-        }
 
         /* access modifiers changed from: package-private */
         public final boolean isValidUtf8(byte[] bytes, int index, int limit) {
@@ -304,53 +355,6 @@ final class Utf8 {
                 }
             }
             return partialIsValidUtf8(buffer, index2, limit);
-        }
-
-        /* JADX INFO: Multiple debug info for r0v3 byte: [D('byte2' int), D('index' int)] */
-        /* JADX INFO: Multiple debug info for r0v4 byte: [D('index' int), D('byte2' byte)] */
-        private static int partialIsValidUtf8(ByteBuffer buffer, int index, int limit) {
-            int index2 = index + Utf8.estimateConsecutiveAscii(buffer, index, limit);
-            while (index2 < limit) {
-                int index3 = index2 + 1;
-                int index4 = buffer.get(index2);
-                int byte1 = index4;
-                if (index4 >= 0) {
-                    index2 = index3;
-                } else if (byte1 < -32) {
-                    if (index3 >= limit) {
-                        return byte1;
-                    }
-                    if (byte1 < -62 || buffer.get(index3) > -65) {
-                        return -1;
-                    }
-                    index2 = index3 + 1;
-                } else if (byte1 < -16) {
-                    if (index3 >= limit - 1) {
-                        return Utf8.incompleteStateFor(buffer, byte1, index3, limit - index3);
-                    }
-                    int index5 = index3 + 1;
-                    byte byte2 = buffer.get(index3);
-                    if (byte2 > -65 || ((byte1 == -32 && byte2 < -96) || ((byte1 == -19 && byte2 >= -96) || buffer.get(index5) > -65))) {
-                        return -1;
-                    }
-                    index2 = index5 + 1;
-                } else if (index3 >= limit - 2) {
-                    return Utf8.incompleteStateFor(buffer, byte1, index3, limit - index3);
-                } else {
-                    int index6 = index3 + 1;
-                    int index7 = buffer.get(index3);
-                    if (index7 <= -65 && (((byte1 << 28) + (index7 + 112)) >> 30) == 0) {
-                        int index8 = index6 + 1;
-                        if (buffer.get(index6) <= -65) {
-                            index2 = index8 + 1;
-                            if (buffer.get(index8) > -65) {
-                            }
-                        }
-                    }
-                    return -1;
-                }
-            }
-            return 0;
         }
 
         /* access modifiers changed from: package-private */
@@ -542,6 +546,66 @@ final class Utf8 {
 
     static final class SafeProcessor extends Processor {
         SafeProcessor() {
+        }
+
+        private static int partialIsValidUtf8(byte[] bytes, int index, int limit) {
+            while (index < limit && bytes[index] >= 0) {
+                index++;
+            }
+            if (index >= limit) {
+                return 0;
+            }
+            return partialIsValidUtf8NonAscii(bytes, index, limit);
+        }
+
+        private static int partialIsValidUtf8NonAscii(byte[] bytes, int index, int limit) {
+            while (index < limit) {
+                int index2 = index + 1;
+                byte b = bytes[index];
+                int byte1 = b;
+                if (b >= 0) {
+                    index = index2;
+                } else if (byte1 < -32) {
+                    if (index2 >= limit) {
+                        return byte1;
+                    }
+                    if (byte1 >= -62) {
+                        index = index2 + 1;
+                        if (bytes[index2] > -65) {
+                        }
+                    }
+                    return -1;
+                } else if (byte1 < -16) {
+                    if (index2 >= limit - 1) {
+                        return Utf8.incompleteStateFor(bytes, index2, limit);
+                    }
+                    int index3 = index2 + 1;
+                    byte b2 = bytes[index2];
+                    int byte2 = b2;
+                    if (b2 <= -65 && ((byte1 != -32 || byte2 >= -96) && (byte1 != -19 || byte2 < -96))) {
+                        index = index3 + 1;
+                        if (bytes[index3] > -65) {
+                        }
+                    }
+                    return -1;
+                } else if (index2 >= limit - 2) {
+                    return Utf8.incompleteStateFor(bytes, index2, limit);
+                } else {
+                    int index4 = index2 + 1;
+                    byte b3 = bytes[index2];
+                    int byte22 = b3;
+                    if (b3 <= -65 && (((byte1 << 28) + (byte22 + 112)) >> 30) == 0) {
+                        int index5 = index4 + 1;
+                        if (bytes[index4] <= -65) {
+                            index = index5 + 1;
+                            if (bytes[index5] > -65) {
+                            }
+                        }
+                    }
+                    return -1;
+                }
+            }
+            return 0;
         }
 
         /* access modifiers changed from: package-private */
@@ -763,66 +827,6 @@ final class Utf8 {
         public void encodeUtf8Direct(CharSequence in, ByteBuffer out) {
             encodeUtf8Default(in, out);
         }
-
-        private static int partialIsValidUtf8(byte[] bytes, int index, int limit) {
-            while (index < limit && bytes[index] >= 0) {
-                index++;
-            }
-            if (index >= limit) {
-                return 0;
-            }
-            return partialIsValidUtf8NonAscii(bytes, index, limit);
-        }
-
-        private static int partialIsValidUtf8NonAscii(byte[] bytes, int index, int limit) {
-            while (index < limit) {
-                int index2 = index + 1;
-                byte b = bytes[index];
-                int byte1 = b;
-                if (b >= 0) {
-                    index = index2;
-                } else if (byte1 < -32) {
-                    if (index2 >= limit) {
-                        return byte1;
-                    }
-                    if (byte1 >= -62) {
-                        index = index2 + 1;
-                        if (bytes[index2] > -65) {
-                        }
-                    }
-                    return -1;
-                } else if (byte1 < -16) {
-                    if (index2 >= limit - 1) {
-                        return Utf8.incompleteStateFor(bytes, index2, limit);
-                    }
-                    int index3 = index2 + 1;
-                    byte b2 = bytes[index2];
-                    int byte2 = b2;
-                    if (b2 <= -65 && ((byte1 != -32 || byte2 >= -96) && (byte1 != -19 || byte2 < -96))) {
-                        index = index3 + 1;
-                        if (bytes[index3] > -65) {
-                        }
-                    }
-                    return -1;
-                } else if (index2 >= limit - 2) {
-                    return Utf8.incompleteStateFor(bytes, index2, limit);
-                } else {
-                    int index4 = index2 + 1;
-                    byte b3 = bytes[index2];
-                    int byte22 = b3;
-                    if (b3 <= -65 && (((byte1 << 28) + (byte22 + 112)) >> 30) == 0) {
-                        int index5 = index4 + 1;
-                        if (bytes[index4] <= -65) {
-                            index = index5 + 1;
-                            if (bytes[index5] > -65) {
-                            }
-                        }
-                    }
-                    return -1;
-                }
-            }
-            return 0;
-        }
     }
 
     static final class UnsafeProcessor extends Processor {
@@ -831,6 +835,311 @@ final class Utf8 {
 
         static boolean isAvailable() {
             return UnsafeUtil.hasUnsafeArrayOperations() && UnsafeUtil.hasUnsafeByteBufferOperations();
+        }
+
+        private static int unsafeEstimateConsecutiveAscii(byte[] bytes, long offset, int maxChars) {
+            if (maxChars < 16) {
+                return 0;
+            }
+            int i = 0;
+            while (i < maxChars) {
+                long offset2 = 1 + offset;
+                if (UnsafeUtil.getByte(bytes, offset) < 0) {
+                    return i;
+                }
+                i++;
+                offset = offset2;
+            }
+            return maxChars;
+        }
+
+        private static int unsafeEstimateConsecutiveAscii(long address, int maxChars) {
+            int remaining = maxChars;
+            if (remaining < 16) {
+                return 0;
+            }
+            int unaligned = 8 - (((int) address) & 7);
+            int j = unaligned;
+            while (j > 0) {
+                long address2 = 1 + address;
+                if (UnsafeUtil.getByte(address) < 0) {
+                    return unaligned - j;
+                }
+                j--;
+                address = address2;
+            }
+            int remaining2 = remaining - unaligned;
+            while (remaining2 >= 8 && (UnsafeUtil.getLong(address) & Utf8.ASCII_MASK_LONG) == 0) {
+                address += 8;
+                remaining2 -= 8;
+            }
+            return maxChars - remaining2;
+        }
+
+        /* JADX WARNING: Code restructure failed: missing block: B:20:0x003b, code lost:
+            return -1;
+         */
+        /* JADX WARNING: Code restructure failed: missing block: B:39:0x006a, code lost:
+            return -1;
+         */
+        /* Code decompiled incorrectly, please refer to instructions dump. */
+        private static int partialIsValidUtf8(byte[] r11, long r12, int r14) {
+            /*
+                int r0 = unsafeEstimateConsecutiveAscii(r11, r12, r14)
+                int r14 = r14 - r0
+                long r1 = (long) r0
+                long r12 = r12 + r1
+            L_0x0007:
+                r1 = 0
+            L_0x0008:
+                r2 = 1
+                if (r14 <= 0) goto L_0x001a
+                long r4 = r12 + r2
+                byte r12 = com.google.protobuf.UnsafeUtil.getByte(r11, r12)
+                r1 = r12
+                if (r12 < 0) goto L_0x0019
+                int r14 = r14 + -1
+                r12 = r4
+                goto L_0x0008
+            L_0x0019:
+                r12 = r4
+            L_0x001a:
+                if (r14 != 0) goto L_0x001e
+                r2 = 0
+                return r2
+            L_0x001e:
+                int r14 = r14 + -1
+                r4 = -32
+                r5 = -65
+                r6 = -1
+                if (r1 >= r4) goto L_0x003c
+                if (r14 != 0) goto L_0x002a
+                return r1
+            L_0x002a:
+                int r14 = r14 + -1
+                r4 = -62
+                if (r1 < r4) goto L_0x003b
+                long r2 = r2 + r12
+                byte r12 = com.google.protobuf.UnsafeUtil.getByte(r11, r12)
+                if (r12 <= r5) goto L_0x0039
+                r12 = r2
+                goto L_0x003b
+            L_0x0039:
+                r12 = r2
+                goto L_0x0099
+            L_0x003b:
+                return r6
+            L_0x003c:
+                r7 = -16
+                if (r1 >= r7) goto L_0x006b
+                r7 = 2
+                if (r14 >= r7) goto L_0x0048
+                int r2 = unsafeIncompleteStateFor(r11, r1, r12, r14)
+                return r2
+            L_0x0048:
+                int r14 = r14 + -2
+                long r7 = r12 + r2
+                byte r12 = com.google.protobuf.UnsafeUtil.getByte(r11, r12)
+                r13 = r12
+                if (r12 > r5) goto L_0x0069
+                r12 = -96
+                if (r1 != r4) goto L_0x0059
+                if (r13 < r12) goto L_0x0069
+            L_0x0059:
+                r4 = -19
+                if (r1 != r4) goto L_0x005f
+                if (r13 >= r12) goto L_0x0069
+            L_0x005f:
+                long r2 = r2 + r7
+                byte r12 = com.google.protobuf.UnsafeUtil.getByte(r11, r7)
+                if (r12 <= r5) goto L_0x0067
+                goto L_0x006a
+            L_0x0067:
+                r12 = r2
+                goto L_0x0099
+            L_0x0069:
+                r2 = r7
+            L_0x006a:
+                return r6
+            L_0x006b:
+                r4 = 3
+                if (r14 >= r4) goto L_0x0073
+                int r2 = unsafeIncompleteStateFor(r11, r1, r12, r14)
+                return r2
+            L_0x0073:
+                int r14 = r14 + -3
+                long r7 = r12 + r2
+                byte r12 = com.google.protobuf.UnsafeUtil.getByte(r11, r12)
+                r13 = r12
+                if (r12 > r5) goto L_0x009c
+                int r12 = r1 << 28
+                int r4 = r13 + 112
+                int r12 = r12 + r4
+                int r12 = r12 >> 30
+                if (r12 != 0) goto L_0x009c
+                long r9 = r7 + r2
+                byte r12 = com.google.protobuf.UnsafeUtil.getByte(r11, r7)
+                if (r12 > r5) goto L_0x009b
+                long r7 = r9 + r2
+                byte r12 = com.google.protobuf.UnsafeUtil.getByte(r11, r9)
+                if (r12 <= r5) goto L_0x0098
+                goto L_0x009c
+            L_0x0098:
+                r12 = r7
+            L_0x0099:
+                goto L_0x0007
+            L_0x009b:
+                r7 = r9
+            L_0x009c:
+                return r6
+            */
+            throw new UnsupportedOperationException("Method not decompiled: com.google.protobuf.Utf8.UnsafeProcessor.partialIsValidUtf8(byte[], long, int):int");
+        }
+
+        /* JADX INFO: Multiple debug info for r11v6 byte: [D('byte2' byte), D('address' long)] */
+        /* JADX INFO: Multiple debug info for r11v8 byte: [D('byte2' byte), D('address' long)] */
+        /* JADX WARNING: Code restructure failed: missing block: B:20:0x003b, code lost:
+            return -1;
+         */
+        /* JADX WARNING: Code restructure failed: missing block: B:39:0x0069, code lost:
+            return -1;
+         */
+        /* Code decompiled incorrectly, please refer to instructions dump. */
+        private static int partialIsValidUtf8(long r11, int r13) {
+            /*
+                int r0 = unsafeEstimateConsecutiveAscii(r11, r13)
+                long r1 = (long) r0
+                long r11 = r11 + r1
+                int r13 = r13 - r0
+            L_0x0007:
+                r1 = 0
+            L_0x0008:
+                r2 = 1
+                if (r13 <= 0) goto L_0x001a
+                long r4 = r11 + r2
+                byte r11 = com.google.protobuf.UnsafeUtil.getByte(r11)
+                r1 = r11
+                if (r11 < 0) goto L_0x0019
+                int r13 = r13 + -1
+                r11 = r4
+                goto L_0x0008
+            L_0x0019:
+                r11 = r4
+            L_0x001a:
+                if (r13 != 0) goto L_0x001e
+                r2 = 0
+                return r2
+            L_0x001e:
+                int r13 = r13 + -1
+                r4 = -32
+                r5 = -65
+                r6 = -1
+                if (r1 >= r4) goto L_0x003c
+                if (r13 != 0) goto L_0x002a
+                return r1
+            L_0x002a:
+                int r13 = r13 + -1
+                r4 = -62
+                if (r1 < r4) goto L_0x003b
+                long r2 = r2 + r11
+                byte r11 = com.google.protobuf.UnsafeUtil.getByte(r11)
+                if (r11 <= r5) goto L_0x0039
+                r11 = r2
+                goto L_0x003b
+            L_0x0039:
+                r11 = r2
+                goto L_0x0097
+            L_0x003b:
+                return r6
+            L_0x003c:
+                r7 = -16
+                if (r1 >= r7) goto L_0x006a
+                r7 = 2
+                if (r13 >= r7) goto L_0x0048
+                int r2 = unsafeIncompleteStateFor(r11, r1, r13)
+                return r2
+            L_0x0048:
+                int r13 = r13 + -2
+                long r7 = r11 + r2
+                byte r11 = com.google.protobuf.UnsafeUtil.getByte(r11)
+                if (r11 > r5) goto L_0x0068
+                r12 = -96
+                if (r1 != r4) goto L_0x0058
+                if (r11 < r12) goto L_0x0068
+            L_0x0058:
+                r4 = -19
+                if (r1 != r4) goto L_0x005e
+                if (r11 >= r12) goto L_0x0068
+            L_0x005e:
+                long r2 = r2 + r7
+                byte r12 = com.google.protobuf.UnsafeUtil.getByte(r7)
+                if (r12 <= r5) goto L_0x0066
+                goto L_0x0069
+            L_0x0066:
+                r11 = r2
+                goto L_0x0097
+            L_0x0068:
+                r2 = r7
+            L_0x0069:
+                return r6
+            L_0x006a:
+                r4 = 3
+                if (r13 >= r4) goto L_0x0072
+                int r2 = unsafeIncompleteStateFor(r11, r1, r13)
+                return r2
+            L_0x0072:
+                int r13 = r13 + -3
+                long r7 = r11 + r2
+                byte r11 = com.google.protobuf.UnsafeUtil.getByte(r11)
+                if (r11 > r5) goto L_0x009a
+                int r12 = r1 << 28
+                int r4 = r11 + 112
+                int r12 = r12 + r4
+                int r12 = r12 >> 30
+                if (r12 != 0) goto L_0x009a
+                long r9 = r7 + r2
+                byte r12 = com.google.protobuf.UnsafeUtil.getByte(r7)
+                if (r12 > r5) goto L_0x0099
+                long r7 = r9 + r2
+                byte r12 = com.google.protobuf.UnsafeUtil.getByte(r9)
+                if (r12 <= r5) goto L_0x0096
+                goto L_0x009a
+            L_0x0096:
+                r11 = r7
+            L_0x0097:
+                goto L_0x0007
+            L_0x0099:
+                r7 = r9
+            L_0x009a:
+                return r6
+            */
+            throw new UnsupportedOperationException("Method not decompiled: com.google.protobuf.Utf8.UnsafeProcessor.partialIsValidUtf8(long, int):int");
+        }
+
+        private static int unsafeIncompleteStateFor(byte[] bytes, int byte1, long offset, int remaining) {
+            if (remaining == 0) {
+                return Utf8.incompleteStateFor(byte1);
+            }
+            if (remaining == 1) {
+                return Utf8.incompleteStateFor(byte1, UnsafeUtil.getByte(bytes, offset));
+            }
+            if (remaining == 2) {
+                return Utf8.incompleteStateFor(byte1, UnsafeUtil.getByte(bytes, offset), UnsafeUtil.getByte(bytes, 1 + offset));
+            }
+            throw new AssertionError();
+        }
+
+        private static int unsafeIncompleteStateFor(long address, int byte1, int remaining) {
+            if (remaining == 0) {
+                return Utf8.incompleteStateFor(byte1);
+            }
+            if (remaining == 1) {
+                return Utf8.incompleteStateFor(byte1, UnsafeUtil.getByte(address));
+            }
+            if (remaining == 2) {
+                return Utf8.incompleteStateFor(byte1, UnsafeUtil.getByte(address), UnsafeUtil.getByte(1 + address));
+            }
+            throw new AssertionError();
         }
 
         /* access modifiers changed from: package-private */
@@ -1421,311 +1730,6 @@ final class Utf8 {
             sb2.append(limit);
             throw new ArrayIndexOutOfBoundsException(sb2.toString());
         }
-
-        private static int unsafeEstimateConsecutiveAscii(byte[] bytes, long offset, int maxChars) {
-            if (maxChars < 16) {
-                return 0;
-            }
-            int i = 0;
-            while (i < maxChars) {
-                long offset2 = 1 + offset;
-                if (UnsafeUtil.getByte(bytes, offset) < 0) {
-                    return i;
-                }
-                i++;
-                offset = offset2;
-            }
-            return maxChars;
-        }
-
-        private static int unsafeEstimateConsecutiveAscii(long address, int maxChars) {
-            int remaining = maxChars;
-            if (remaining < 16) {
-                return 0;
-            }
-            int unaligned = 8 - (((int) address) & 7);
-            int j = unaligned;
-            while (j > 0) {
-                long address2 = 1 + address;
-                if (UnsafeUtil.getByte(address) < 0) {
-                    return unaligned - j;
-                }
-                j--;
-                address = address2;
-            }
-            int remaining2 = remaining - unaligned;
-            while (remaining2 >= 8 && (UnsafeUtil.getLong(address) & Utf8.ASCII_MASK_LONG) == 0) {
-                address += 8;
-                remaining2 -= 8;
-            }
-            return maxChars - remaining2;
-        }
-
-        /* JADX WARNING: Code restructure failed: missing block: B:20:0x003b, code lost:
-            return -1;
-         */
-        /* JADX WARNING: Code restructure failed: missing block: B:39:0x006a, code lost:
-            return -1;
-         */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
-        private static int partialIsValidUtf8(byte[] r11, long r12, int r14) {
-            /*
-                int r0 = unsafeEstimateConsecutiveAscii(r11, r12, r14)
-                int r14 = r14 - r0
-                long r1 = (long) r0
-                long r12 = r12 + r1
-            L_0x0007:
-                r1 = 0
-            L_0x0008:
-                r2 = 1
-                if (r14 <= 0) goto L_0x001a
-                long r4 = r12 + r2
-                byte r12 = com.google.protobuf.UnsafeUtil.getByte(r11, r12)
-                r1 = r12
-                if (r12 < 0) goto L_0x0019
-                int r14 = r14 + -1
-                r12 = r4
-                goto L_0x0008
-            L_0x0019:
-                r12 = r4
-            L_0x001a:
-                if (r14 != 0) goto L_0x001e
-                r2 = 0
-                return r2
-            L_0x001e:
-                int r14 = r14 + -1
-                r4 = -32
-                r5 = -65
-                r6 = -1
-                if (r1 >= r4) goto L_0x003c
-                if (r14 != 0) goto L_0x002a
-                return r1
-            L_0x002a:
-                int r14 = r14 + -1
-                r4 = -62
-                if (r1 < r4) goto L_0x003b
-                long r2 = r2 + r12
-                byte r12 = com.google.protobuf.UnsafeUtil.getByte(r11, r12)
-                if (r12 <= r5) goto L_0x0039
-                r12 = r2
-                goto L_0x003b
-            L_0x0039:
-                r12 = r2
-                goto L_0x0099
-            L_0x003b:
-                return r6
-            L_0x003c:
-                r7 = -16
-                if (r1 >= r7) goto L_0x006b
-                r7 = 2
-                if (r14 >= r7) goto L_0x0048
-                int r2 = unsafeIncompleteStateFor(r11, r1, r12, r14)
-                return r2
-            L_0x0048:
-                int r14 = r14 + -2
-                long r7 = r12 + r2
-                byte r12 = com.google.protobuf.UnsafeUtil.getByte(r11, r12)
-                r13 = r12
-                if (r12 > r5) goto L_0x0069
-                r12 = -96
-                if (r1 != r4) goto L_0x0059
-                if (r13 < r12) goto L_0x0069
-            L_0x0059:
-                r4 = -19
-                if (r1 != r4) goto L_0x005f
-                if (r13 >= r12) goto L_0x0069
-            L_0x005f:
-                long r2 = r2 + r7
-                byte r12 = com.google.protobuf.UnsafeUtil.getByte(r11, r7)
-                if (r12 <= r5) goto L_0x0067
-                goto L_0x006a
-            L_0x0067:
-                r12 = r2
-                goto L_0x0099
-            L_0x0069:
-                r2 = r7
-            L_0x006a:
-                return r6
-            L_0x006b:
-                r4 = 3
-                if (r14 >= r4) goto L_0x0073
-                int r2 = unsafeIncompleteStateFor(r11, r1, r12, r14)
-                return r2
-            L_0x0073:
-                int r14 = r14 + -3
-                long r7 = r12 + r2
-                byte r12 = com.google.protobuf.UnsafeUtil.getByte(r11, r12)
-                r13 = r12
-                if (r12 > r5) goto L_0x009c
-                int r12 = r1 << 28
-                int r4 = r13 + 112
-                int r12 = r12 + r4
-                int r12 = r12 >> 30
-                if (r12 != 0) goto L_0x009c
-                long r9 = r7 + r2
-                byte r12 = com.google.protobuf.UnsafeUtil.getByte(r11, r7)
-                if (r12 > r5) goto L_0x009b
-                long r7 = r9 + r2
-                byte r12 = com.google.protobuf.UnsafeUtil.getByte(r11, r9)
-                if (r12 <= r5) goto L_0x0098
-                goto L_0x009c
-            L_0x0098:
-                r12 = r7
-            L_0x0099:
-                goto L_0x0007
-            L_0x009b:
-                r7 = r9
-            L_0x009c:
-                return r6
-            */
-            throw new UnsupportedOperationException("Method not decompiled: com.google.protobuf.Utf8.UnsafeProcessor.partialIsValidUtf8(byte[], long, int):int");
-        }
-
-        /* JADX INFO: Multiple debug info for r11v6 byte: [D('byte2' byte), D('address' long)] */
-        /* JADX INFO: Multiple debug info for r11v8 byte: [D('byte2' byte), D('address' long)] */
-        /* JADX WARNING: Code restructure failed: missing block: B:20:0x003b, code lost:
-            return -1;
-         */
-        /* JADX WARNING: Code restructure failed: missing block: B:39:0x0069, code lost:
-            return -1;
-         */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
-        private static int partialIsValidUtf8(long r11, int r13) {
-            /*
-                int r0 = unsafeEstimateConsecutiveAscii(r11, r13)
-                long r1 = (long) r0
-                long r11 = r11 + r1
-                int r13 = r13 - r0
-            L_0x0007:
-                r1 = 0
-            L_0x0008:
-                r2 = 1
-                if (r13 <= 0) goto L_0x001a
-                long r4 = r11 + r2
-                byte r11 = com.google.protobuf.UnsafeUtil.getByte(r11)
-                r1 = r11
-                if (r11 < 0) goto L_0x0019
-                int r13 = r13 + -1
-                r11 = r4
-                goto L_0x0008
-            L_0x0019:
-                r11 = r4
-            L_0x001a:
-                if (r13 != 0) goto L_0x001e
-                r2 = 0
-                return r2
-            L_0x001e:
-                int r13 = r13 + -1
-                r4 = -32
-                r5 = -65
-                r6 = -1
-                if (r1 >= r4) goto L_0x003c
-                if (r13 != 0) goto L_0x002a
-                return r1
-            L_0x002a:
-                int r13 = r13 + -1
-                r4 = -62
-                if (r1 < r4) goto L_0x003b
-                long r2 = r2 + r11
-                byte r11 = com.google.protobuf.UnsafeUtil.getByte(r11)
-                if (r11 <= r5) goto L_0x0039
-                r11 = r2
-                goto L_0x003b
-            L_0x0039:
-                r11 = r2
-                goto L_0x0097
-            L_0x003b:
-                return r6
-            L_0x003c:
-                r7 = -16
-                if (r1 >= r7) goto L_0x006a
-                r7 = 2
-                if (r13 >= r7) goto L_0x0048
-                int r2 = unsafeIncompleteStateFor(r11, r1, r13)
-                return r2
-            L_0x0048:
-                int r13 = r13 + -2
-                long r7 = r11 + r2
-                byte r11 = com.google.protobuf.UnsafeUtil.getByte(r11)
-                if (r11 > r5) goto L_0x0068
-                r12 = -96
-                if (r1 != r4) goto L_0x0058
-                if (r11 < r12) goto L_0x0068
-            L_0x0058:
-                r4 = -19
-                if (r1 != r4) goto L_0x005e
-                if (r11 >= r12) goto L_0x0068
-            L_0x005e:
-                long r2 = r2 + r7
-                byte r12 = com.google.protobuf.UnsafeUtil.getByte(r7)
-                if (r12 <= r5) goto L_0x0066
-                goto L_0x0069
-            L_0x0066:
-                r11 = r2
-                goto L_0x0097
-            L_0x0068:
-                r2 = r7
-            L_0x0069:
-                return r6
-            L_0x006a:
-                r4 = 3
-                if (r13 >= r4) goto L_0x0072
-                int r2 = unsafeIncompleteStateFor(r11, r1, r13)
-                return r2
-            L_0x0072:
-                int r13 = r13 + -3
-                long r7 = r11 + r2
-                byte r11 = com.google.protobuf.UnsafeUtil.getByte(r11)
-                if (r11 > r5) goto L_0x009a
-                int r12 = r1 << 28
-                int r4 = r11 + 112
-                int r12 = r12 + r4
-                int r12 = r12 >> 30
-                if (r12 != 0) goto L_0x009a
-                long r9 = r7 + r2
-                byte r12 = com.google.protobuf.UnsafeUtil.getByte(r7)
-                if (r12 > r5) goto L_0x0099
-                long r7 = r9 + r2
-                byte r12 = com.google.protobuf.UnsafeUtil.getByte(r9)
-                if (r12 <= r5) goto L_0x0096
-                goto L_0x009a
-            L_0x0096:
-                r11 = r7
-            L_0x0097:
-                goto L_0x0007
-            L_0x0099:
-                r7 = r9
-            L_0x009a:
-                return r6
-            */
-            throw new UnsupportedOperationException("Method not decompiled: com.google.protobuf.Utf8.UnsafeProcessor.partialIsValidUtf8(long, int):int");
-        }
-
-        private static int unsafeIncompleteStateFor(byte[] bytes, int byte1, long offset, int remaining) {
-            if (remaining == 0) {
-                return Utf8.incompleteStateFor(byte1);
-            }
-            if (remaining == 1) {
-                return Utf8.incompleteStateFor(byte1, UnsafeUtil.getByte(bytes, offset));
-            }
-            if (remaining == 2) {
-                return Utf8.incompleteStateFor(byte1, UnsafeUtil.getByte(bytes, offset), UnsafeUtil.getByte(bytes, 1 + offset));
-            }
-            throw new AssertionError();
-        }
-
-        private static int unsafeIncompleteStateFor(long address, int byte1, int remaining) {
-            if (remaining == 0) {
-                return Utf8.incompleteStateFor(byte1);
-            }
-            if (remaining == 1) {
-                return Utf8.incompleteStateFor(byte1, UnsafeUtil.getByte(address));
-            }
-            if (remaining == 2) {
-                return Utf8.incompleteStateFor(byte1, UnsafeUtil.getByte(address), UnsafeUtil.getByte(1 + address));
-            }
-            throw new AssertionError();
-        }
     }
 
     private static class DecodeUtil {
@@ -1793,8 +1797,5 @@ final class Utf8 {
         private static char lowSurrogate(int codePoint) {
             return (char) ((codePoint & ClientAnalytics.LogRequest.LogSource.G_SUITE_ADD_ONS_COUNTERS_VALUE) + 56320);
         }
-    }
-
-    private Utf8() {
     }
 }

@@ -2,13 +2,14 @@ package android.support.p001v4.text.util;
 
 import android.support.annotation.RestrictTo;
 import android.support.annotation.VisibleForTesting;
+
 import java.util.Locale;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-/* renamed from: android.support.v4.text.util.FindAddress */
+        /* renamed from: android.support.v4.text.util.FindAddress */
 class FindAddress {
     private static final String HOUSE_COMPONENT = "(?:one|\\d+([a-z](?=[^a-z]|$)|st|nd|rd|th)?)";
     private static final String HOUSE_END = "(?=[,\"'\t                　\n\u000b\f\r  ]|$)";
@@ -38,28 +39,7 @@ class FindAddress {
     private static final Pattern sWordRe = Pattern.compile("[^,*•\t                　\n\u000b\f\r  ]+(?=[,*•\t                　\n\u000b\f\r  ]|$)", 2);
     private static final Pattern sZipCodeRe = Pattern.compile("(?:\\d{5}(?:-\\d{4})?)(?=[,*•\t                　\n\u000b\f\r  ]|$)", 2);
 
-    /* renamed from: android.support.v4.text.util.FindAddress$ZipRange */
-    private static class ZipRange {
-        int mException1;
-        int mException2;
-        int mHigh;
-        int mLow;
-
-        ZipRange(int low, int high, int exception1, int exception2) {
-            this.mLow = low;
-            this.mHigh = high;
-            this.mException1 = exception1;
-            this.mException2 = exception2;
-        }
-
-        /* access modifiers changed from: package-private */
-        public boolean matches(String zipCode) {
-            int prefix = Integer.parseInt(zipCode.substring(0, 2));
-            if ((this.mLow <= prefix && prefix <= this.mHigh) || prefix == this.mException1 || prefix == this.mException2) {
-                return true;
-            }
-            return false;
-        }
+    private FindAddress() {
     }
 
     private static boolean checkHouseNumber(String houseNumber) {
@@ -258,6 +238,27 @@ class FindAddress {
         return null;
     }
 
-    private FindAddress() {
+    /* renamed from: android.support.v4.text.util.FindAddress$ZipRange */
+    private static class ZipRange {
+        int mException1;
+        int mException2;
+        int mHigh;
+        int mLow;
+
+        ZipRange(int low, int high, int exception1, int exception2) {
+            this.mLow = low;
+            this.mHigh = high;
+            this.mException1 = exception1;
+            this.mException2 = exception2;
+        }
+
+        /* access modifiers changed from: package-private */
+        public boolean matches(String zipCode) {
+            int prefix = Integer.parseInt(zipCode.substring(0, 2));
+            if ((this.mLow <= prefix && prefix <= this.mHigh) || prefix == this.mException1 || prefix == this.mException2) {
+                return true;
+            }
+            return false;
+        }
     }
 }

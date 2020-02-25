@@ -4,31 +4,32 @@ import android.app.Activity;
 import android.app.Application;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
-import com.google.android.libraries.performance.primes.AppLifecycleListener;
-import com.google.android.libraries.performance.primes.MetricRecorder;
+
 import com.google.android.libraries.performance.primes.aggregation.MetricAggregatorIdentifier;
 import com.google.android.libraries.performance.primes.aggregation.impl.MetricAggregatorStore;
 import com.google.android.libraries.performance.primes.transmitter.MetricTransmitter;
+
 import java.util.concurrent.ScheduledExecutorService;
+
 import logs.proto.wireless.performance.mobile.SystemHealthProto;
 
 public final class CounterMetricService extends AbstractMetricService implements AppLifecycleListener.OnAppToBackground {
     private final AppLifecycleMonitor lifecycleMonitor;
     private final MetricAggregatorStore metricAggregatorStore = new MetricAggregatorStore();
 
-    public /* bridge */ /* synthetic */ void onShutdown() {
-        super.onShutdown();
+    @VisibleForTesting
+    CounterMetricService(MetricTransmitter transmitter, Application application, AppLifecycleMonitor lifecycleMonitor2, Supplier<MetricStamper> metricStamperSupplier, Supplier<ScheduledExecutorService> executorServiceSupplier) {
+        super(transmitter, application, metricStamperSupplier, executorServiceSupplier, MetricRecorder.RunIn.BACKGROUND_THREAD);
+        this.lifecycleMonitor = lifecycleMonitor2;
+        lifecycleMonitor2.register(this);
     }
 
     static CounterMetricService createService(MetricTransmitter transmitter, Application application, Supplier<MetricStamper> metricStamperSupplier, Supplier<ScheduledExecutorService> executorServiceSupplier) {
         return new CounterMetricService(transmitter, application, AppLifecycleMonitor.getInstance(application), metricStamperSupplier, executorServiceSupplier);
     }
 
-    @VisibleForTesting
-    CounterMetricService(MetricTransmitter transmitter, Application application, AppLifecycleMonitor lifecycleMonitor2, Supplier<MetricStamper> metricStamperSupplier, Supplier<ScheduledExecutorService> executorServiceSupplier) {
-        super(transmitter, application, metricStamperSupplier, executorServiceSupplier, MetricRecorder.RunIn.BACKGROUND_THREAD);
-        this.lifecycleMonitor = lifecycleMonitor2;
-        lifecycleMonitor2.register(this);
+    public /* bridge */ /* synthetic */ void onShutdown() {
+        super.onShutdown();
     }
 
     /* access modifiers changed from: package-private */

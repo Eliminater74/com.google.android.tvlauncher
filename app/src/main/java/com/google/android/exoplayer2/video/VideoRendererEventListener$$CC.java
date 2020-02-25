@@ -2,6 +2,7 @@ package com.google.android.exoplayer2.video;
 
 import android.support.annotation.Nullable;
 import android.view.Surface;
+
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.decoder.DecoderCounters;
 

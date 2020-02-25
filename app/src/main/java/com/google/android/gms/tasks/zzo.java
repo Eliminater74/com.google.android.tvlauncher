@@ -1,13 +1,14 @@
 package com.google.android.gms.tasks;
 
 import android.support.annotation.NonNull;
+
 import java.util.concurrent.Executor;
 
 /* compiled from: OnSuccessTaskCompletionListener */
 final class zzo<TResult, TContinuationResult> implements OnCanceledListener, OnFailureListener, OnSuccessListener<TContinuationResult>, zzq<TResult> {
-    private final Executor zza;
     /* access modifiers changed from: private */
     public final SuccessContinuation<TResult, TContinuationResult> zzb;
+    private final Executor zza;
     private final zzu<TContinuationResult> zzc;
 
     public zzo(@NonNull Executor executor, @NonNull SuccessContinuation<TResult, TContinuationResult> successContinuation, @NonNull zzu<TContinuationResult> zzu) {

@@ -2,15 +2,16 @@ package com.google.android.exoplayer2.extractor.p007ts;
 
 import android.support.annotation.Nullable;
 import android.util.Pair;
+
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.extractor.ExtractorOutput;
 import com.google.android.exoplayer2.extractor.TrackOutput;
-import com.google.android.exoplayer2.extractor.p007ts.TsPayloadReader;
 import com.google.android.exoplayer2.util.CodecSpecificDataUtil;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.ParsableBitArray;
 import com.google.android.exoplayer2.util.ParsableByteArray;
+
 import java.util.Collections;
 
 /* renamed from: com.google.android.exoplayer2.extractor.ts.LatmReader */
@@ -22,19 +23,19 @@ public final class LatmReader implements ElementaryStreamReader {
     private static final int STATE_READING_SAMPLE = 3;
     private static final int SYNC_BYTE_FIRST = 86;
     private static final int SYNC_BYTE_SECOND = 224;
+    private final String language;
+    private final ParsableByteArray sampleDataBuffer = new ParsableByteArray(1024);
+    private final ParsableBitArray sampleBitArray = new ParsableBitArray(this.sampleDataBuffer.data);
     private int audioMuxVersionA;
     private int bytesRead;
     private int channelCount;
     private Format format;
     private String formatId;
     private int frameLengthType;
-    private final String language;
     private int numSubframes;
     private long otherDataLenBits;
     private boolean otherDataPresent;
     private TrackOutput output;
-    private final ParsableBitArray sampleBitArray = new ParsableBitArray(this.sampleDataBuffer.data);
-    private final ParsableByteArray sampleDataBuffer = new ParsableByteArray(1024);
     private long sampleDurationUs;
     private int sampleRateHz;
     private int sampleSize;
@@ -45,6 +46,10 @@ public final class LatmReader implements ElementaryStreamReader {
 
     public LatmReader(@Nullable String language2) {
         this.language = language2;
+    }
+
+    private static long latmGetValue(ParsableBitArray data) {
+        return (long) data.readBits((data.readBits(2) + 1) * 8);
     }
 
     public void seek() {
@@ -230,9 +235,5 @@ public final class LatmReader implements ElementaryStreamReader {
     private void resetBufferForSize(int newSize) {
         this.sampleDataBuffer.reset(newSize);
         this.sampleBitArray.reset(this.sampleDataBuffer.data);
-    }
-
-    private static long latmGetValue(ParsableBitArray data) {
-        return (long) data.readBits((data.readBits(2) + 1) * 8);
     }
 }

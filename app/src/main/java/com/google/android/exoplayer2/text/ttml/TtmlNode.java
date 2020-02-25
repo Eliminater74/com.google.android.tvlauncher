@@ -7,9 +7,11 @@ import android.text.Layout;
 import android.text.SpannableStringBuilder;
 import android.util.Base64;
 import android.util.Pair;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.text.Cue;
 import com.google.android.exoplayer2.util.Assertions;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -58,31 +60,23 @@ final class TtmlNode {
     public static final String TAG_STYLING = "styling";
     public static final String TAG_TT = "tt";
     public static final String UNDERLINE = "underline";
-    private List<TtmlNode> children;
     public final long endTimeUs;
     @Nullable
     public final String imageId;
     public final boolean isTextNode;
-    private final HashMap<String, Integer> nodeEndsByRegion;
-    private final HashMap<String, Integer> nodeStartsByRegion;
     public final String regionId;
     public final long startTimeUs;
     @Nullable
     public final TtmlStyle style;
     @Nullable
-    private final String[] styleIds;
-    @Nullable
     public final String tag;
     @Nullable
     public final String text;
-
-    public static TtmlNode buildTextNode(String text2) {
-        return new TtmlNode(null, TtmlRenderUtil.applyTextElementSpacePolicy(text2), C0841C.TIME_UNSET, C0841C.TIME_UNSET, null, null, "", null);
-    }
-
-    public static TtmlNode buildNode(@Nullable String tag2, long startTimeUs2, long endTimeUs2, @Nullable TtmlStyle style2, @Nullable String[] styleIds2, String regionId2, @Nullable String imageId2) {
-        return new TtmlNode(tag2, null, startTimeUs2, endTimeUs2, style2, styleIds2, regionId2, imageId2);
-    }
+    private final HashMap<String, Integer> nodeEndsByRegion;
+    private final HashMap<String, Integer> nodeStartsByRegion;
+    @Nullable
+    private final String[] styleIds;
+    private List<TtmlNode> children;
 
     private TtmlNode(@Nullable String tag2, @Nullable String text2, long startTimeUs2, long endTimeUs2, @Nullable TtmlStyle style2, @Nullable String[] styleIds2, String regionId2, @Nullable String imageId2) {
         this.tag = tag2;
@@ -96,6 +90,21 @@ final class TtmlNode {
         this.regionId = (String) Assertions.checkNotNull(regionId2);
         this.nodeStartsByRegion = new HashMap<>();
         this.nodeEndsByRegion = new HashMap<>();
+    }
+
+    public static TtmlNode buildTextNode(String text2) {
+        return new TtmlNode(null, TtmlRenderUtil.applyTextElementSpacePolicy(text2), C0841C.TIME_UNSET, C0841C.TIME_UNSET, null, null, "", null);
+    }
+
+    public static TtmlNode buildNode(@Nullable String tag2, long startTimeUs2, long endTimeUs2, @Nullable TtmlStyle style2, @Nullable String[] styleIds2, String regionId2, @Nullable String imageId2) {
+        return new TtmlNode(tag2, null, startTimeUs2, endTimeUs2, style2, styleIds2, regionId2, imageId2);
+    }
+
+    private static SpannableStringBuilder getRegionOutput(String resolvedRegionId, Map<String, SpannableStringBuilder> regionOutputs) {
+        if (!regionOutputs.containsKey(resolvedRegionId)) {
+            regionOutputs.put(resolvedRegionId, new SpannableStringBuilder());
+        }
+        return regionOutputs.get(resolvedRegionId);
     }
 
     public boolean isActive(long timeUs) {
@@ -230,13 +239,6 @@ final class TtmlNode {
                 }
             }
         }
-    }
-
-    private static SpannableStringBuilder getRegionOutput(String resolvedRegionId, Map<String, SpannableStringBuilder> regionOutputs) {
-        if (!regionOutputs.containsKey(resolvedRegionId)) {
-            regionOutputs.put(resolvedRegionId, new SpannableStringBuilder());
-        }
-        return regionOutputs.get(resolvedRegionId);
     }
 
     private void traverseForStyle(long timeUs, Map<String, TtmlStyle> globalStyles, Map<String, SpannableStringBuilder> regionOutputs) {

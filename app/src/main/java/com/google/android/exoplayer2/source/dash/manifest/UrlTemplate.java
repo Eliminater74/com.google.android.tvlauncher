@@ -18,13 +18,6 @@ public final class UrlTemplate {
     private final int[] identifiers;
     private final String[] urlPieces;
 
-    public static UrlTemplate compile(String template) {
-        String[] urlPieces2 = new String[5];
-        int[] identifiers2 = new int[4];
-        String[] identifierFormatTags2 = new String[4];
-        return new UrlTemplate(urlPieces2, identifiers2, identifierFormatTags2, parseTemplate(template, urlPieces2, identifiers2, identifierFormatTags2));
-    }
-
     private UrlTemplate(String[] urlPieces2, int[] identifiers2, String[] identifierFormatTags2, int identifierCount2) {
         this.urlPieces = urlPieces2;
         this.identifiers = identifiers2;
@@ -32,29 +25,11 @@ public final class UrlTemplate {
         this.identifierCount = identifierCount2;
     }
 
-    public String buildUri(String representationId, long segmentNumber, int bandwidth, long time) {
-        StringBuilder builder = new StringBuilder();
-        int i = 0;
-        while (true) {
-            int i2 = this.identifierCount;
-            if (i < i2) {
-                builder.append(this.urlPieces[i]);
-                int[] iArr = this.identifiers;
-                if (iArr[i] == 1) {
-                    builder.append(representationId);
-                } else if (iArr[i] == 2) {
-                    builder.append(String.format(Locale.US, this.identifierFormatTags[i], Long.valueOf(segmentNumber)));
-                } else if (iArr[i] == 3) {
-                    builder.append(String.format(Locale.US, this.identifierFormatTags[i], Integer.valueOf(bandwidth)));
-                } else if (iArr[i] == 4) {
-                    builder.append(String.format(Locale.US, this.identifierFormatTags[i], Long.valueOf(time)));
-                }
-                i++;
-            } else {
-                builder.append(this.urlPieces[i2]);
-                return builder.toString();
-            }
-        }
+    public static UrlTemplate compile(String template) {
+        String[] urlPieces2 = new String[5];
+        int[] identifiers2 = new int[4];
+        String[] identifierFormatTags2 = new String[4];
+        return new UrlTemplate(urlPieces2, identifiers2, identifierFormatTags2, parseTemplate(template, urlPieces2, identifiers2, identifierFormatTags2));
     }
 
     private static int parseTemplate(String template, String[] urlPieces2, int[] identifiers2, String[] identifierFormatTags2) {
@@ -122,5 +97,30 @@ public final class UrlTemplate {
             }
         }
         return identifierCount2;
+    }
+
+    public String buildUri(String representationId, long segmentNumber, int bandwidth, long time) {
+        StringBuilder builder = new StringBuilder();
+        int i = 0;
+        while (true) {
+            int i2 = this.identifierCount;
+            if (i < i2) {
+                builder.append(this.urlPieces[i]);
+                int[] iArr = this.identifiers;
+                if (iArr[i] == 1) {
+                    builder.append(representationId);
+                } else if (iArr[i] == 2) {
+                    builder.append(String.format(Locale.US, this.identifierFormatTags[i], Long.valueOf(segmentNumber)));
+                } else if (iArr[i] == 3) {
+                    builder.append(String.format(Locale.US, this.identifierFormatTags[i], Integer.valueOf(bandwidth)));
+                } else if (iArr[i] == 4) {
+                    builder.append(String.format(Locale.US, this.identifierFormatTags[i], Long.valueOf(time)));
+                }
+                i++;
+            } else {
+                builder.append(this.urlPieces[i2]);
+                return builder.toString();
+            }
+        }
     }
 }

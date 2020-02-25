@@ -2,6 +2,7 @@ package com.google.android.gms.internal;
 
 import android.os.Handler;
 import android.os.Looper;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -19,8 +20,8 @@ public final class zzv {
     private final zzm zzf;
     private final zzaa zzg;
     private final zzn[] zzh;
-    private zzd zzi;
     private final List<zzw> zzj;
+    private zzd zzi;
 
     private zzv(zzb zzb2, zzm zzm, int i, zzaa zzaa) {
         this.zza = new AtomicInteger();

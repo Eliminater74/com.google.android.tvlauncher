@@ -21,7 +21,6 @@ import android.support.annotation.RestrictTo;
 import android.support.annotation.UiThread;
 import android.support.compat.C0014R;
 import android.support.p001v4.util.ArrayMap;
-import android.support.p001v4.view.AccessibilityDelegateCompat;
 import android.support.p001v4.view.accessibility.AccessibilityNodeInfoCompat;
 import android.support.p001v4.view.accessibility.AccessibilityNodeProviderCompat;
 import android.support.p001v4.view.accessibility.AccessibilityViewCommand;
@@ -40,6 +39,7 @@ import android.view.WindowManager;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
 import android.view.accessibility.AccessibilityNodeProvider;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.ref.WeakReference;
@@ -56,7 +56,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /* renamed from: android.support.v4.view.ViewCompat */
 public class ViewCompat {
-    private static final int[] ACCESSIBILITY_ACTIONS_RESOURCE_IDS = {C0014R.C0016id.accessibility_custom_action_0, C0014R.C0016id.accessibility_custom_action_1, C0014R.C0016id.accessibility_custom_action_2, C0014R.C0016id.accessibility_custom_action_3, C0014R.C0016id.accessibility_custom_action_4, C0014R.C0016id.accessibility_custom_action_5, C0014R.C0016id.accessibility_custom_action_6, C0014R.C0016id.accessibility_custom_action_7, C0014R.C0016id.accessibility_custom_action_8, C0014R.C0016id.accessibility_custom_action_9, C0014R.C0016id.accessibility_custom_action_10, C0014R.C0016id.accessibility_custom_action_11, C0014R.C0016id.accessibility_custom_action_12, C0014R.C0016id.accessibility_custom_action_13, C0014R.C0016id.accessibility_custom_action_14, C0014R.C0016id.accessibility_custom_action_15, C0014R.C0016id.accessibility_custom_action_16, C0014R.C0016id.accessibility_custom_action_17, C0014R.C0016id.accessibility_custom_action_18, C0014R.C0016id.accessibility_custom_action_19, C0014R.C0016id.accessibility_custom_action_20, C0014R.C0016id.accessibility_custom_action_21, C0014R.C0016id.accessibility_custom_action_22, C0014R.C0016id.accessibility_custom_action_23, C0014R.C0016id.accessibility_custom_action_24, C0014R.C0016id.accessibility_custom_action_25, C0014R.C0016id.accessibility_custom_action_26, C0014R.C0016id.accessibility_custom_action_27, C0014R.C0016id.accessibility_custom_action_28, C0014R.C0016id.accessibility_custom_action_29, C0014R.C0016id.accessibility_custom_action_30, C0014R.C0016id.accessibility_custom_action_31};
     public static final int ACCESSIBILITY_LIVE_REGION_ASSERTIVE = 2;
     public static final int ACCESSIBILITY_LIVE_REGION_NONE = 0;
     public static final int ACCESSIBILITY_LIVE_REGION_POLITE = 1;
@@ -97,9 +96,11 @@ public class ViewCompat {
     public static final int SCROLL_INDICATOR_RIGHT = 8;
     public static final int SCROLL_INDICATOR_START = 16;
     public static final int SCROLL_INDICATOR_TOP = 1;
-    private static final String TAG = "ViewCompat";
     public static final int TYPE_NON_TOUCH = 1;
     public static final int TYPE_TOUCH = 0;
+    private static final int[] ACCESSIBILITY_ACTIONS_RESOURCE_IDS = {C0014R.C0016id.accessibility_custom_action_0, C0014R.C0016id.accessibility_custom_action_1, C0014R.C0016id.accessibility_custom_action_2, C0014R.C0016id.accessibility_custom_action_3, C0014R.C0016id.accessibility_custom_action_4, C0014R.C0016id.accessibility_custom_action_5, C0014R.C0016id.accessibility_custom_action_6, C0014R.C0016id.accessibility_custom_action_7, C0014R.C0016id.accessibility_custom_action_8, C0014R.C0016id.accessibility_custom_action_9, C0014R.C0016id.accessibility_custom_action_10, C0014R.C0016id.accessibility_custom_action_11, C0014R.C0016id.accessibility_custom_action_12, C0014R.C0016id.accessibility_custom_action_13, C0014R.C0016id.accessibility_custom_action_14, C0014R.C0016id.accessibility_custom_action_15, C0014R.C0016id.accessibility_custom_action_16, C0014R.C0016id.accessibility_custom_action_17, C0014R.C0016id.accessibility_custom_action_18, C0014R.C0016id.accessibility_custom_action_19, C0014R.C0016id.accessibility_custom_action_20, C0014R.C0016id.accessibility_custom_action_21, C0014R.C0016id.accessibility_custom_action_22, C0014R.C0016id.accessibility_custom_action_23, C0014R.C0016id.accessibility_custom_action_24, C0014R.C0016id.accessibility_custom_action_25, C0014R.C0016id.accessibility_custom_action_26, C0014R.C0016id.accessibility_custom_action_27, C0014R.C0016id.accessibility_custom_action_28, C0014R.C0016id.accessibility_custom_action_29, C0014R.C0016id.accessibility_custom_action_30, C0014R.C0016id.accessibility_custom_action_31};
+    private static final String TAG = "ViewCompat";
+    private static final AtomicInteger sNextGeneratedId = new AtomicInteger(1);
     private static boolean sAccessibilityDelegateCheckFailed = false;
     private static Field sAccessibilityDelegateField;
     private static AccessibilityPaneVisibilityManager sAccessibilityPaneVisibilityManager = new AccessibilityPaneVisibilityManager();
@@ -110,51 +111,12 @@ public class ViewCompat {
     private static boolean sMinHeightFieldFetched;
     private static Field sMinWidthField;
     private static boolean sMinWidthFieldFetched;
-    private static final AtomicInteger sNextGeneratedId = new AtomicInteger(1);
     private static boolean sTempDetachBound;
     private static ThreadLocal<Rect> sThreadLocalRect;
     private static WeakHashMap<View, String> sTransitionNameMap;
     private static WeakHashMap<View, ViewPropertyAnimatorCompat> sViewPropertyAnimatorMap = null;
 
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    @Retention(RetentionPolicy.SOURCE)
-    /* renamed from: android.support.v4.view.ViewCompat$FocusDirection */
-    public @interface FocusDirection {
-    }
-
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    @Retention(RetentionPolicy.SOURCE)
-    /* renamed from: android.support.v4.view.ViewCompat$FocusRealDirection */
-    public @interface FocusRealDirection {
-    }
-
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    @Retention(RetentionPolicy.SOURCE)
-    /* renamed from: android.support.v4.view.ViewCompat$FocusRelativeDirection */
-    public @interface FocusRelativeDirection {
-    }
-
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    @Retention(RetentionPolicy.SOURCE)
-    /* renamed from: android.support.v4.view.ViewCompat$NestedScrollType */
-    public @interface NestedScrollType {
-    }
-
-    /* renamed from: android.support.v4.view.ViewCompat$OnUnhandledKeyEventListenerCompat */
-    public interface OnUnhandledKeyEventListenerCompat {
-        boolean onUnhandledKeyEvent(View view, KeyEvent keyEvent);
-    }
-
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    @Retention(RetentionPolicy.SOURCE)
-    /* renamed from: android.support.v4.view.ViewCompat$ScrollAxis */
-    public @interface ScrollAxis {
-    }
-
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    @Retention(RetentionPolicy.SOURCE)
-    /* renamed from: android.support.v4.view.ViewCompat$ScrollIndicators */
-    public @interface ScrollIndicators {
+    protected ViewCompat() {
     }
 
     private static Rect getEmptyTempRect() {
@@ -1512,9 +1474,6 @@ public class ViewCompat {
         }
     }
 
-    protected ViewCompat() {
-    }
-
     @UiThread
     static boolean dispatchUnhandledKeyEventBeforeHierarchy(View root, KeyEvent evt) {
         if (Build.VERSION.SDK_INT >= 28) {
@@ -1639,18 +1598,73 @@ public class ViewCompat {
         };
     }
 
+    @SuppressLint({"BanTargetApiAnnotation"})
+    @TargetApi(19)
+    static void notifyViewAccessibilityStateChangedIfNeeded(View view, int changeType) {
+        if (((AccessibilityManager) view.getContext().getSystemService("accessibility")).isEnabled()) {
+            boolean isAccessibilityPane = getAccessibilityPaneTitle(view) != null;
+            if (getAccessibilityLiveRegion(view) != 0 || (isAccessibilityPane && view.getVisibility() == 0)) {
+                AccessibilityEvent event = AccessibilityEvent.obtain();
+                event.setEventType(isAccessibilityPane ? 32 : 2048);
+                event.setContentChangeTypes(changeType);
+                view.sendAccessibilityEventUnchecked(event);
+            } else if (view.getParent() != null) {
+                try {
+                    view.getParent().notifySubtreeAccessibilityStateChanged(view, view, changeType);
+                } catch (AbstractMethodError e) {
+                    Log.e(TAG, view.getParent().getClass().getSimpleName() + " does not fully implement ViewParent", e);
+                }
+            }
+        }
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    @Retention(RetentionPolicy.SOURCE)
+    /* renamed from: android.support.v4.view.ViewCompat$FocusDirection */
+    public @interface FocusDirection {
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    @Retention(RetentionPolicy.SOURCE)
+    /* renamed from: android.support.v4.view.ViewCompat$FocusRealDirection */
+    public @interface FocusRealDirection {
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    @Retention(RetentionPolicy.SOURCE)
+    /* renamed from: android.support.v4.view.ViewCompat$FocusRelativeDirection */
+    public @interface FocusRelativeDirection {
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    @Retention(RetentionPolicy.SOURCE)
+    /* renamed from: android.support.v4.view.ViewCompat$NestedScrollType */
+    public @interface NestedScrollType {
+    }
+
+    /* renamed from: android.support.v4.view.ViewCompat$OnUnhandledKeyEventListenerCompat */
+    public interface OnUnhandledKeyEventListenerCompat {
+        boolean onUnhandledKeyEvent(View view, KeyEvent keyEvent);
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    @Retention(RetentionPolicy.SOURCE)
+    /* renamed from: android.support.v4.view.ViewCompat$ScrollAxis */
+    public @interface ScrollAxis {
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    @Retention(RetentionPolicy.SOURCE)
+    /* renamed from: android.support.v4.view.ViewCompat$ScrollIndicators */
+    public @interface ScrollIndicators {
+    }
+
     /* renamed from: android.support.v4.view.ViewCompat$AccessibilityViewProperty */
     static abstract class AccessibilityViewProperty<T> {
         private final int mContentChangeType;
         private final int mFrameworkMinimumSdk;
         private final int mTagKey;
         private final Class<T> mType;
-
-        /* access modifiers changed from: package-private */
-        public abstract T frameworkGet(View view);
-
-        /* access modifiers changed from: package-private */
-        public abstract void frameworkSet(View view, T t);
 
         AccessibilityViewProperty(int tagKey, Class<T> type, int frameworkMinimumSdk) {
             this(tagKey, type, 0, frameworkMinimumSdk);
@@ -1662,6 +1676,12 @@ public class ViewCompat {
             this.mContentChangeType = contentChangeType;
             this.mFrameworkMinimumSdk = frameworkMinimumSdk;
         }
+
+        /* access modifiers changed from: package-private */
+        public abstract T frameworkGet(View view);
+
+        /* access modifiers changed from: package-private */
+        public abstract void frameworkSet(View view, T t);
 
         /* access modifiers changed from: package-private */
         public void set(View view, T value) {
@@ -1733,26 +1753,6 @@ public class ViewCompat {
 
     @SuppressLint({"BanTargetApiAnnotation"})
     @TargetApi(19)
-    static void notifyViewAccessibilityStateChangedIfNeeded(View view, int changeType) {
-        if (((AccessibilityManager) view.getContext().getSystemService("accessibility")).isEnabled()) {
-            boolean isAccessibilityPane = getAccessibilityPaneTitle(view) != null;
-            if (getAccessibilityLiveRegion(view) != 0 || (isAccessibilityPane && view.getVisibility() == 0)) {
-                AccessibilityEvent event = AccessibilityEvent.obtain();
-                event.setEventType(isAccessibilityPane ? 32 : 2048);
-                event.setContentChangeTypes(changeType);
-                view.sendAccessibilityEventUnchecked(event);
-            } else if (view.getParent() != null) {
-                try {
-                    view.getParent().notifySubtreeAccessibilityStateChanged(view, view, changeType);
-                } catch (AbstractMethodError e) {
-                    Log.e(TAG, view.getParent().getClass().getSimpleName() + " does not fully implement ViewParent", e);
-                }
-            }
-        }
-    }
-
-    @SuppressLint({"BanTargetApiAnnotation"})
-    @TargetApi(19)
     /* renamed from: android.support.v4.view.ViewCompat$AccessibilityPaneVisibilityManager */
     static class AccessibilityPaneVisibilityManager implements ViewTreeObserver.OnGlobalLayoutListener, View.OnAttachStateChangeListener {
         private WeakHashMap<View, Boolean> mPanesToVisible = new WeakHashMap<>();
@@ -1819,13 +1819,6 @@ public class ViewCompat {
         UnhandledKeyEventManager() {
         }
 
-        private SparseArray<WeakReference<View>> getCapturedKeys() {
-            if (this.mCapturedKeys == null) {
-                this.mCapturedKeys = new SparseArray<>();
-            }
-            return this.mCapturedKeys;
-        }
-
         /* renamed from: at */
         static UnhandledKeyEventManager m4at(View root) {
             UnhandledKeyEventManager manager = (UnhandledKeyEventManager) root.getTag(C0014R.C0016id.tag_unhandled_key_event_manager);
@@ -1835,6 +1828,36 @@ public class ViewCompat {
             UnhandledKeyEventManager manager2 = new UnhandledKeyEventManager();
             root.setTag(C0014R.C0016id.tag_unhandled_key_event_manager, manager2);
             return manager2;
+        }
+
+        static void registerListeningView(View v) {
+            synchronized (sViewsWithListeners) {
+                Iterator<WeakReference<View>> it = sViewsWithListeners.iterator();
+                while (it.hasNext()) {
+                    if (it.next().get() == v) {
+                        return;
+                    }
+                }
+                sViewsWithListeners.add(new WeakReference(v));
+            }
+        }
+
+        static void unregisterListeningView(View v) {
+            synchronized (sViewsWithListeners) {
+                for (int i = 0; i < sViewsWithListeners.size(); i++) {
+                    if (sViewsWithListeners.get(i).get() == v) {
+                        sViewsWithListeners.remove(i);
+                        return;
+                    }
+                }
+            }
+        }
+
+        private SparseArray<WeakReference<View>> getCapturedKeys() {
+            if (this.mCapturedKeys == null) {
+                this.mCapturedKeys = new SparseArray<>();
+            }
+            return this.mCapturedKeys;
         }
 
         /* access modifiers changed from: package-private */
@@ -1911,29 +1934,6 @@ public class ViewCompat {
                 }
             }
             return false;
-        }
-
-        static void registerListeningView(View v) {
-            synchronized (sViewsWithListeners) {
-                Iterator<WeakReference<View>> it = sViewsWithListeners.iterator();
-                while (it.hasNext()) {
-                    if (it.next().get() == v) {
-                        return;
-                    }
-                }
-                sViewsWithListeners.add(new WeakReference(v));
-            }
-        }
-
-        static void unregisterListeningView(View v) {
-            synchronized (sViewsWithListeners) {
-                for (int i = 0; i < sViewsWithListeners.size(); i++) {
-                    if (sViewsWithListeners.get(i).get() == v) {
-                        sViewsWithListeners.remove(i);
-                        return;
-                    }
-                }
-            }
         }
 
         private void recalcViewsWithUnhandled() {

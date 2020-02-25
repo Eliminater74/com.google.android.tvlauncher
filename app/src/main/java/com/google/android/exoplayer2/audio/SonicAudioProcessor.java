@@ -2,21 +2,22 @@ package com.google.android.exoplayer2.audio;
 
 import android.support.annotation.Nullable;
 import android.support.p001v4.media.session.PlaybackStateCompat;
-import com.google.android.exoplayer2.audio.AudioProcessor;
+
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Util;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.ShortBuffer;
 
 public final class SonicAudioProcessor implements AudioProcessor {
-    private static final float CLOSE_THRESHOLD = 0.01f;
     public static final float MAXIMUM_PITCH = 8.0f;
     public static final float MAXIMUM_SPEED = 8.0f;
     public static final float MINIMUM_PITCH = 0.1f;
     public static final float MINIMUM_SPEED = 0.1f;
-    private static final int MIN_BYTES_FOR_SPEEDUP_CALCULATION = 1024;
     public static final int SAMPLE_RATE_NO_CHANGE = -1;
+    private static final float CLOSE_THRESHOLD = 0.01f;
+    private static final int MIN_BYTES_FOR_SPEEDUP_CALCULATION = 1024;
     private ByteBuffer buffer = EMPTY_BUFFER;
     private int channelCount = -1;
     private long inputBytes;
@@ -65,10 +66,6 @@ public final class SonicAudioProcessor implements AudioProcessor {
         }
         flush();
         return pitch3;
-    }
-
-    public void setOutputSampleRateHz(int sampleRateHz2) {
-        this.pendingOutputSampleRateHz = sampleRateHz2;
     }
 
     public long scaleDurationForSpeedup(long duration) {
@@ -120,6 +117,10 @@ public final class SonicAudioProcessor implements AudioProcessor {
 
     public int getOutputSampleRateHz() {
         return this.outputSampleRateHz;
+    }
+
+    public void setOutputSampleRateHz(int sampleRateHz2) {
+        this.pendingOutputSampleRateHz = sampleRateHz2;
     }
 
     public void queueInput(ByteBuffer inputBuffer) {

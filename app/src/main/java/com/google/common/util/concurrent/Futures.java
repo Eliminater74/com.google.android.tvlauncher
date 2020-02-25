@@ -7,11 +7,10 @@ import com.google.common.base.Function;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import com.google.common.util.concurrent.AbstractFuture;
-import com.google.common.util.concurrent.CollectionFuture;
-import com.google.common.util.concurrent.ImmediateFuture;
-import com.google.common.util.concurrent.Partially;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -21,7 +20,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible(emulated = true)
 public final class Futures extends GwtFuturesCatchingSpecialization {
@@ -186,37 +184,6 @@ public final class Futures extends GwtFuturesCatchingSpecialization {
         return new FutureCombiner<>(true, ImmutableList.copyOf(futures));
     }
 
-    @GwtCompatible
-    @CanIgnoreReturnValue
-    @Beta
-    public static final class FutureCombiner<V> {
-        private final boolean allMustSucceed;
-        private final ImmutableList<ListenableFuture<? extends V>> futures;
-
-        private FutureCombiner(boolean allMustSucceed2, ImmutableList<ListenableFuture<? extends V>> futures2) {
-            this.allMustSucceed = allMustSucceed2;
-            this.futures = futures2;
-        }
-
-        public <C> ListenableFuture<C> callAsync(AsyncCallable<C> combiner, Executor executor) {
-            return new CombinedFuture(this.futures, this.allMustSucceed, executor, combiner);
-        }
-
-        @CanIgnoreReturnValue
-        public <C> ListenableFuture<C> call(Callable<C> combiner, Executor executor) {
-            return new CombinedFuture(this.futures, this.allMustSucceed, executor, combiner);
-        }
-
-        public ListenableFuture<?> run(final Runnable combiner, Executor executor) {
-            return call(new Callable<Void>(this) {
-                public Void call() throws Exception {
-                    combiner.run();
-                    return null;
-                }
-            }, executor);
-        }
-    }
-
     @Beta
     public static <V> ListenableFuture<V> nonCancellationPropagating(ListenableFuture<V> future) {
         if (future.isDone()) {
@@ -225,40 +192,6 @@ public final class Futures extends GwtFuturesCatchingSpecialization {
         NonCancellationPropagatingFuture<V> output = new NonCancellationPropagatingFuture<>(future);
         future.addListener(output, MoreExecutors.directExecutor());
         return output;
-    }
-
-    private static final class NonCancellationPropagatingFuture<V> extends AbstractFuture.TrustedFuture<V> implements Runnable {
-        private ListenableFuture<V> delegate;
-
-        NonCancellationPropagatingFuture(ListenableFuture<V> delegate2) {
-            this.delegate = delegate2;
-        }
-
-        public void run() {
-            ListenableFuture<V> localDelegate = this.delegate;
-            if (localDelegate != null) {
-                setFuture(localDelegate);
-            }
-        }
-
-        /* access modifiers changed from: protected */
-        public String pendingToString() {
-            ListenableFuture<V> localDelegate = this.delegate;
-            if (localDelegate == null) {
-                return null;
-            }
-            String valueOf = String.valueOf(localDelegate);
-            StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 11);
-            sb.append("delegate=[");
-            sb.append(valueOf);
-            sb.append("]");
-            return sb.toString();
-        }
-
-        /* access modifiers changed from: protected */
-        public void afterDone() {
-            this.delegate = null;
-        }
     }
 
     @SafeVarargs
@@ -325,6 +258,114 @@ public final class Futures extends GwtFuturesCatchingSpecialization {
         throw new UnsupportedOperationException("Method not decompiled: com.google.common.util.concurrent.Futures.inCompletionOrder(java.lang.Iterable):com.google.common.collect.ImmutableList");
     }
 
+    public static <V> void addCallback(ListenableFuture<V> future, FutureCallback<? super V> callback, Executor executor) {
+        Preconditions.checkNotNull(callback);
+        future.addListener(new CallbackListener(future, callback), executor);
+    }
+
+    @CanIgnoreReturnValue
+    public static <V> V getDone(Future<V> future) throws ExecutionException {
+        Preconditions.checkState(future.isDone(), "Future was expected to be done: %s", future);
+        return Uninterruptibles.getUninterruptibly(future);
+    }
+
+    @GwtIncompatible
+    @CanIgnoreReturnValue
+    @Beta
+    public static <V, X extends Exception> V getChecked(Future<V> future, Class<X> exceptionClass) throws Exception {
+        return FuturesGetChecked.getChecked(future, exceptionClass);
+    }
+
+    @GwtIncompatible
+    @CanIgnoreReturnValue
+    @Beta
+    public static <V, X extends Exception> V getChecked(Future<V> future, Class<X> exceptionClass, long timeout, TimeUnit unit) throws Exception {
+        return FuturesGetChecked.getChecked(future, exceptionClass, timeout, unit);
+    }
+
+    @CanIgnoreReturnValue
+    public static <V> V getUnchecked(Future<V> future) {
+        Preconditions.checkNotNull(future);
+        try {
+            return Uninterruptibles.getUninterruptibly(future);
+        } catch (ExecutionException e) {
+            wrapAndThrowUnchecked(e.getCause());
+            throw new AssertionError();
+        }
+    }
+
+    private static void wrapAndThrowUnchecked(Throwable cause) {
+        if (cause instanceof Error) {
+            throw new ExecutionError((Error) cause);
+        }
+        throw new UncheckedExecutionException(cause);
+    }
+
+    @GwtCompatible
+    @CanIgnoreReturnValue
+    @Beta
+    public static final class FutureCombiner<V> {
+        private final boolean allMustSucceed;
+        private final ImmutableList<ListenableFuture<? extends V>> futures;
+
+        private FutureCombiner(boolean allMustSucceed2, ImmutableList<ListenableFuture<? extends V>> futures2) {
+            this.allMustSucceed = allMustSucceed2;
+            this.futures = futures2;
+        }
+
+        public <C> ListenableFuture<C> callAsync(AsyncCallable<C> combiner, Executor executor) {
+            return new CombinedFuture(this.futures, this.allMustSucceed, executor, combiner);
+        }
+
+        @CanIgnoreReturnValue
+        public <C> ListenableFuture<C> call(Callable<C> combiner, Executor executor) {
+            return new CombinedFuture(this.futures, this.allMustSucceed, executor, combiner);
+        }
+
+        public ListenableFuture<?> run(final Runnable combiner, Executor executor) {
+            return call(new Callable<Void>(this) {
+                public Void call() throws Exception {
+                    combiner.run();
+                    return null;
+                }
+            }, executor);
+        }
+    }
+
+    private static final class NonCancellationPropagatingFuture<V> extends AbstractFuture.TrustedFuture<V> implements Runnable {
+        private ListenableFuture<V> delegate;
+
+        NonCancellationPropagatingFuture(ListenableFuture<V> delegate2) {
+            this.delegate = delegate2;
+        }
+
+        public void run() {
+            ListenableFuture<V> localDelegate = this.delegate;
+            if (localDelegate != null) {
+                setFuture(localDelegate);
+            }
+        }
+
+        /* access modifiers changed from: protected */
+        public String pendingToString() {
+            ListenableFuture<V> localDelegate = this.delegate;
+            if (localDelegate == null) {
+                return null;
+            }
+            String valueOf = String.valueOf(localDelegate);
+            StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 11);
+            sb.append("delegate=[");
+            sb.append(valueOf);
+            sb.append("]");
+            return sb.toString();
+        }
+
+        /* access modifiers changed from: protected */
+        public void afterDone() {
+            this.delegate = null;
+        }
+    }
+
     private static final class InCompletionOrderFuture<T> extends AbstractFuture<T> {
         private InCompletionOrderState<T> state;
 
@@ -365,11 +406,11 @@ public final class Futures extends GwtFuturesCatchingSpecialization {
     }
 
     private static final class InCompletionOrderState<T> {
-        private volatile int delegateIndex;
         /* access modifiers changed from: private */
         public final AtomicInteger incompleteOutputCount;
         /* access modifiers changed from: private */
         public final ListenableFuture<? extends T>[] inputFutures;
+        private volatile int delegateIndex;
         private boolean shouldInterrupt;
         private boolean wasCancelled;
 
@@ -416,11 +457,6 @@ public final class Futures extends GwtFuturesCatchingSpecialization {
         }
     }
 
-    public static <V> void addCallback(ListenableFuture<V> future, FutureCallback<? super V> callback, Executor executor) {
-        Preconditions.checkNotNull(callback);
-        future.addListener(new CallbackListener(future, callback), executor);
-    }
-
     private static final class CallbackListener<V> implements Runnable {
         final FutureCallback<? super V> callback;
         final Future<V> future;
@@ -443,44 +479,6 @@ public final class Futures extends GwtFuturesCatchingSpecialization {
         public String toString() {
             return MoreObjects.toStringHelper(this).addValue(this.callback).toString();
         }
-    }
-
-    @CanIgnoreReturnValue
-    public static <V> V getDone(Future<V> future) throws ExecutionException {
-        Preconditions.checkState(future.isDone(), "Future was expected to be done: %s", future);
-        return Uninterruptibles.getUninterruptibly(future);
-    }
-
-    @GwtIncompatible
-    @CanIgnoreReturnValue
-    @Beta
-    public static <V, X extends Exception> V getChecked(Future<V> future, Class<X> exceptionClass) throws Exception {
-        return FuturesGetChecked.getChecked(future, exceptionClass);
-    }
-
-    @GwtIncompatible
-    @CanIgnoreReturnValue
-    @Beta
-    public static <V, X extends Exception> V getChecked(Future<V> future, Class<X> exceptionClass, long timeout, TimeUnit unit) throws Exception {
-        return FuturesGetChecked.getChecked(future, exceptionClass, timeout, unit);
-    }
-
-    @CanIgnoreReturnValue
-    public static <V> V getUnchecked(Future<V> future) {
-        Preconditions.checkNotNull(future);
-        try {
-            return Uninterruptibles.getUninterruptibly(future);
-        } catch (ExecutionException e) {
-            wrapAndThrowUnchecked(e.getCause());
-            throw new AssertionError();
-        }
-    }
-
-    private static void wrapAndThrowUnchecked(Throwable cause) {
-        if (cause instanceof Error) {
-            throw new ExecutionError((Error) cause);
-        }
-        throw new UncheckedExecutionException(cause);
     }
 
     @GwtIncompatible

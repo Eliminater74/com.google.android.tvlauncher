@@ -13,11 +13,18 @@ import com.google.protobuf.ProtoMessage;
 import com.google.protobuf.ProtoPresenceBits;
 import com.google.protobuf.ProtoPresenceCheckedField;
 import com.google.protobuf.ProtoSyntax;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 public final class IosAccessibilityStateProto {
+
+    private IosAccessibilityStateProto() {
+    }
+
+    public static void registerAllExtensions(ExtensionRegistryLite registry) {
+    }
 
     public interface IosAccessibilityStateOrBuilder extends MessageLiteOrBuilder {
         boolean getAssistiveTouchRunning();
@@ -81,12 +88,6 @@ public final class IosAccessibilityStateProto {
         boolean hasVoiceOverRunning();
     }
 
-    private IosAccessibilityStateProto() {
-    }
-
-    public static void registerAllExtensions(ExtensionRegistryLite registry) {
-    }
-
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
     public static final class IosAccessibilityState extends GeneratedMessageLite<IosAccessibilityState, Builder> implements IosAccessibilityStateOrBuilder {
         public static final int ASSISTIVE_TOUCH_RUNNING_FIELD_NUMBER = 1;
@@ -99,7 +100,6 @@ public final class IosAccessibilityStateProto {
         public static final int GUIDED_ACCESS_ENABLED_FIELD_NUMBER = 9;
         public static final int INVERT_COLORS_ENABLED_FIELD_NUMBER = 10;
         public static final int MONO_AUDIO_ENABLED_FIELD_NUMBER = 11;
-        private static volatile Parser<IosAccessibilityState> PARSER = null;
         public static final int REDUCE_MOTION_ENABLED_FIELD_NUMBER = 12;
         public static final int REDUCE_TRANSPARENCY_ENABLED_FIELD_NUMBER = 13;
         public static final int SHAKE_TO_UNDO_ENABLED_FIELD_NUMBER = 4;
@@ -107,6 +107,12 @@ public final class IosAccessibilityStateProto {
         public static final int SPEAK_SELECTION_ENABLED_FIELD_NUMBER = 15;
         public static final int SWITCH_CONTROL_RUNNING_FIELD_NUMBER = 3;
         public static final int VOICE_OVER_RUNNING_FIELD_NUMBER = 2;
+        private static volatile Parser<IosAccessibilityState> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(IosAccessibilityState.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.BOOL)
         @ProtoPresenceCheckedField(mask = 1, presenceBitsId = 0)
         private boolean assistiveTouchRunning_;
@@ -156,6 +162,70 @@ public final class IosAccessibilityStateProto {
         private boolean voiceOverRunning_;
 
         private IosAccessibilityState() {
+        }
+
+        public static IosAccessibilityState parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (IosAccessibilityState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static IosAccessibilityState parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (IosAccessibilityState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static IosAccessibilityState parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (IosAccessibilityState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static IosAccessibilityState parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (IosAccessibilityState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static IosAccessibilityState parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (IosAccessibilityState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static IosAccessibilityState parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (IosAccessibilityState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static IosAccessibilityState parseFrom(InputStream input) throws IOException {
+            return (IosAccessibilityState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static IosAccessibilityState parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (IosAccessibilityState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static IosAccessibilityState parseDelimitedFrom(InputStream input) throws IOException {
+            return (IosAccessibilityState) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static IosAccessibilityState parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (IosAccessibilityState) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static IosAccessibilityState parseFrom(CodedInputStream input) throws IOException {
+            return (IosAccessibilityState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static IosAccessibilityState parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (IosAccessibilityState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(IosAccessibilityState prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static IosAccessibilityState getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<IosAccessibilityState> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasAssistiveTouchRunning() {
@@ -458,60 +528,36 @@ public final class IosAccessibilityStateProto {
             this.speakSelectionEnabled_ = false;
         }
 
-        public static IosAccessibilityState parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (IosAccessibilityState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static IosAccessibilityState parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (IosAccessibilityState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static IosAccessibilityState parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (IosAccessibilityState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static IosAccessibilityState parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (IosAccessibilityState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static IosAccessibilityState parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (IosAccessibilityState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static IosAccessibilityState parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (IosAccessibilityState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static IosAccessibilityState parseFrom(InputStream input) throws IOException {
-            return (IosAccessibilityState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static IosAccessibilityState parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (IosAccessibilityState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static IosAccessibilityState parseDelimitedFrom(InputStream input) throws IOException {
-            return (IosAccessibilityState) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static IosAccessibilityState parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (IosAccessibilityState) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static IosAccessibilityState parseFrom(CodedInputStream input) throws IOException {
-            return (IosAccessibilityState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static IosAccessibilityState parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (IosAccessibilityState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(IosAccessibilityState prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new IosAccessibilityState();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u000f\u0000\u0001\u0001\u000f\u000f\u0000\u0000\u0000\u0001\u0007\u0000\u0002\u0007\u0001\u0003\u0007\u0002\u0004\u0007\u0003\u0005\u0007\u0004\u0006\u0007\u0005\u0007\u0007\u0006\b\u0007\u0007\t\u0007\b\n\u0007\t\u000b\u0007\n\f\u0007\u000b\r\u0007\f\u000e\u0007\r\u000f\u0007\u000e", new Object[]{"bitField0_", "assistiveTouchRunning_", "voiceOverRunning_", "switchControlRunning_", "shakeToUndoEnabled_", "closedCaptioningEnabled_", "boldTextEnabled_", "darkerSystemColorsEnabled_", "grayscaleEnabled_", "guidedAccessEnabled_", "invertColorsEnabled_", "monoAudioEnabled_", "reduceMotionEnabled_", "reduceTransparencyEnabled_", "speakScreenEnabled_", "speakSelectionEnabled_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<IosAccessibilityState> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (IosAccessibilityState.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<IosAccessibilityState, Builder> implements IosAccessibilityStateOrBuilder {
@@ -818,50 +864,6 @@ public final class IosAccessibilityStateProto {
                 ((IosAccessibilityState) this.instance).clearSpeakSelectionEnabled();
                 return this;
             }
-        }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new IosAccessibilityState();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u000f\u0000\u0001\u0001\u000f\u000f\u0000\u0000\u0000\u0001\u0007\u0000\u0002\u0007\u0001\u0003\u0007\u0002\u0004\u0007\u0003\u0005\u0007\u0004\u0006\u0007\u0005\u0007\u0007\u0006\b\u0007\u0007\t\u0007\b\n\u0007\t\u000b\u0007\n\f\u0007\u000b\r\u0007\f\u000e\u0007\r\u000f\u0007\u000e", new Object[]{"bitField0_", "assistiveTouchRunning_", "voiceOverRunning_", "switchControlRunning_", "shakeToUndoEnabled_", "closedCaptioningEnabled_", "boldTextEnabled_", "darkerSystemColorsEnabled_", "grayscaleEnabled_", "guidedAccessEnabled_", "invertColorsEnabled_", "monoAudioEnabled_", "reduceMotionEnabled_", "reduceTransparencyEnabled_", "speakScreenEnabled_", "speakSelectionEnabled_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<IosAccessibilityState> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (IosAccessibilityState.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(IosAccessibilityState.class, DEFAULT_INSTANCE);
-        }
-
-        public static IosAccessibilityState getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<IosAccessibilityState> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
         }
     }
 }

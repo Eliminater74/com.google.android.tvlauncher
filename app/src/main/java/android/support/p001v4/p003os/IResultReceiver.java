@@ -13,8 +13,8 @@ public interface IResultReceiver extends IInterface {
 
     /* renamed from: android.support.v4.os.IResultReceiver$Stub */
     public static abstract class Stub extends Binder implements IResultReceiver {
-        private static final String DESCRIPTOR = "android.support.v4.os.IResultReceiver";
         static final int TRANSACTION_send = 1;
+        private static final String DESCRIPTOR = "android.support.v4.os.IResultReceiver";
 
         public Stub() {
             attachInterface(this, DESCRIPTOR);

@@ -2,13 +2,13 @@ package android.support.p001v4.app;
 
 import android.graphics.Rect;
 import android.os.Build;
-import android.support.p001v4.app.FragmentTransaction;
 import android.support.p001v4.util.ArrayMap;
 import android.support.p001v4.view.OneShotPreDrawListener;
 import android.support.p001v4.view.ViewCompat;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -18,6 +18,9 @@ class FragmentTransition {
     private static final int[] INVERSE_OPS = {0, 3, 0, 1, 5, 4, 7, 6, 9, 8, 11, 10};
     private static final FragmentTransitionImpl PLATFORM_IMPL = (Build.VERSION.SDK_INT >= 21 ? new FragmentTransitionCompat21() : null);
     private static final FragmentTransitionImpl SUPPORT_IMPL = resolveSupportImpl();
+
+    private FragmentTransition() {
+    }
 
     private static FragmentTransitionImpl resolveSupportImpl() {
         try {
@@ -1128,8 +1131,5 @@ class FragmentTransition {
 
         FragmentContainerTransition() {
         }
-    }
-
-    private FragmentTransition() {
     }
 }

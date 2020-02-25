@@ -1,6 +1,7 @@
 package android.support.p004v7.widget;
 
 import android.view.View;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -32,8 +33,50 @@ class ViewBoundsCheck {
     /* renamed from: LT */
     static final int f28LT = 4;
     static final int MASK = 7;
-    BoundFlags mBoundFlags = new BoundFlags();
     final Callback mCallback;
+    BoundFlags mBoundFlags = new BoundFlags();
+
+    ViewBoundsCheck(Callback callback) {
+        this.mCallback = callback;
+    }
+
+    /* access modifiers changed from: package-private */
+    public View findOneViewWithinBoundFlags(int fromIndex, int toIndex, int preferredBoundFlags, int acceptableBoundFlags) {
+        int start = this.mCallback.getParentStart();
+        int end = this.mCallback.getParentEnd();
+        int next = toIndex > fromIndex ? 1 : -1;
+        View acceptableMatch = null;
+        for (int i = fromIndex; i != toIndex; i += next) {
+            View child = this.mCallback.getChildAt(i);
+            this.mBoundFlags.setBounds(start, end, this.mCallback.getChildStart(child), this.mCallback.getChildEnd(child));
+            if (preferredBoundFlags != 0) {
+                this.mBoundFlags.resetFlags();
+                this.mBoundFlags.addFlags(preferredBoundFlags);
+                if (this.mBoundFlags.boundsMatch()) {
+                    return child;
+                }
+            }
+            if (acceptableBoundFlags != 0) {
+                this.mBoundFlags.resetFlags();
+                this.mBoundFlags.addFlags(acceptableBoundFlags);
+                if (this.mBoundFlags.boundsMatch()) {
+                    acceptableMatch = child;
+                }
+            }
+        }
+        return acceptableMatch;
+    }
+
+    /* access modifiers changed from: package-private */
+    public boolean isViewWithinBoundFlags(View child, int boundsFlags) {
+        this.mBoundFlags.setBounds(this.mCallback.getParentStart(), this.mCallback.getParentEnd(), this.mCallback.getChildStart(child), this.mCallback.getChildEnd(child));
+        if (boundsFlags == 0) {
+            return false;
+        }
+        this.mBoundFlags.resetFlags();
+        this.mBoundFlags.addFlags(boundsFlags);
+        return this.mBoundFlags.boundsMatch();
+    }
 
     /* renamed from: android.support.v7.widget.ViewBoundsCheck$Callback */
     interface Callback {
@@ -51,10 +94,6 @@ class ViewBoundsCheck {
     @Retention(RetentionPolicy.SOURCE)
     /* renamed from: android.support.v7.widget.ViewBoundsCheck$ViewBounds */
     public @interface ViewBounds {
-    }
-
-    ViewBoundsCheck(Callback callback) {
-        this.mCallback = callback;
     }
 
     /* renamed from: android.support.v7.widget.ViewBoundsCheck$BoundFlags */
@@ -117,43 +156,5 @@ class ViewBoundsCheck {
             }
             return false;
         }
-    }
-
-    /* access modifiers changed from: package-private */
-    public View findOneViewWithinBoundFlags(int fromIndex, int toIndex, int preferredBoundFlags, int acceptableBoundFlags) {
-        int start = this.mCallback.getParentStart();
-        int end = this.mCallback.getParentEnd();
-        int next = toIndex > fromIndex ? 1 : -1;
-        View acceptableMatch = null;
-        for (int i = fromIndex; i != toIndex; i += next) {
-            View child = this.mCallback.getChildAt(i);
-            this.mBoundFlags.setBounds(start, end, this.mCallback.getChildStart(child), this.mCallback.getChildEnd(child));
-            if (preferredBoundFlags != 0) {
-                this.mBoundFlags.resetFlags();
-                this.mBoundFlags.addFlags(preferredBoundFlags);
-                if (this.mBoundFlags.boundsMatch()) {
-                    return child;
-                }
-            }
-            if (acceptableBoundFlags != 0) {
-                this.mBoundFlags.resetFlags();
-                this.mBoundFlags.addFlags(acceptableBoundFlags);
-                if (this.mBoundFlags.boundsMatch()) {
-                    acceptableMatch = child;
-                }
-            }
-        }
-        return acceptableMatch;
-    }
-
-    /* access modifiers changed from: package-private */
-    public boolean isViewWithinBoundFlags(View child, int boundsFlags) {
-        this.mBoundFlags.setBounds(this.mCallback.getParentStart(), this.mCallback.getParentEnd(), this.mCallback.getChildStart(child), this.mCallback.getChildEnd(child));
-        if (boundsFlags == 0) {
-            return false;
-        }
-        this.mBoundFlags.resetFlags();
-        this.mBoundFlags.addFlags(boundsFlags);
-        return this.mBoundFlags.boundsMatch();
     }
 }

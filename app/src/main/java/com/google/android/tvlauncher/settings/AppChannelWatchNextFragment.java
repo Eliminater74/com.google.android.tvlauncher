@@ -8,10 +8,12 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.p001v4.content.ContextCompat;
+
 import androidx.leanback.preference.LeanbackPreferenceFragment;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceScreen;
 import androidx.preference.SwitchPreference;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.BaseRequestOptions;
@@ -25,15 +27,15 @@ import com.google.android.tvlauncher.analytics.UserActionEvent;
 import com.google.android.tvlauncher.appsview.data.LaunchItemsManagerProvider;
 import com.google.android.tvlauncher.appsview.data.PackageImageDataSource;
 import com.google.android.tvlauncher.home.WatchNextPrefs;
-import com.google.android.tvlauncher.settings.AppModel;
 import com.google.android.tvlauncher.util.AddBackgroundColorTransformation;
 import com.google.android.tvlauncher.util.OemConfiguration;
+
 import java.util.Collections;
 import java.util.List;
 
 public class AppChannelWatchNextFragment extends LeanbackPreferenceFragment implements AppModel.LoadAppsCallback, Preference.OnPreferenceChangeListener {
-    private AppModel mAppModel;
     private final FragmentEventLogger mEventLogger = new FragmentEventLogger(this);
+    private AppModel mAppModel;
     private int mMaxIconHeight;
     private int mMaxIconWidth;
     private Drawable mPlaceholderBanner;

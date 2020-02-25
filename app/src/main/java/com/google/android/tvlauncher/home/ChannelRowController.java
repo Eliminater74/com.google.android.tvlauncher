@@ -10,7 +10,9 @@ import android.support.p004v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
+
 import androidx.leanback.widget.HorizontalGridView;
+
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.request.target.ImageViewTarget;
 import com.google.android.libraries.social.analytics.visualelement.VisualElementTag;
@@ -24,7 +26,6 @@ import com.google.android.tvlauncher.appsview.LaunchItem;
 import com.google.android.tvlauncher.appsview.data.LaunchItemsManagerProvider;
 import com.google.android.tvlauncher.data.ChannelOrderManager;
 import com.google.android.tvlauncher.data.TvDataManager;
-import com.google.android.tvlauncher.home.RecyclerViewFastScrollingManager;
 import com.google.android.tvlauncher.home.util.ChannelUtil;
 import com.google.android.tvlauncher.home.util.ProgramStateUtil;
 import com.google.android.tvlauncher.home.view.ChannelItemsAnimator;
@@ -38,24 +39,25 @@ import com.google.logs.tvlauncher.config.TvLauncherConstants;
 import com.google.protos.logs.proto.wireless.android.tvlauncher.TvlauncherClientLog;
 
 class ChannelRowController implements HomeRow, ChannelView.OnPerformMainActionListener, ChannelView.OnMoveChannelUpListener, ChannelView.OnMoveChannelDownListener, ChannelView.OnRemoveListener, ChannelView.OnStateChangeGesturePerformedListener, ChannelView.OnChannelLogoFocusedListener, EventLogger, BackHomeControllerListeners.OnBackPressedListener, BackHomeControllerListeners.OnHomePressedListener, BackHomeControllerListeners.OnHomeNotHandledListener, RecyclerViewStateProvider, RecyclerViewFastScrollingManager.OnFastScrollingChangedListener {
-    private static final int ACCESSIBILITY_MENU_DONE = 4;
     @VisibleForTesting
     static final int ACCESSIBILITY_MENU_DOWN = 2;
-    private static final int ACCESSIBILITY_MENU_OPEN = 0;
-    private static final int ACCESSIBILITY_MENU_REMOVE = 3;
     @VisibleForTesting
     static final int ACCESSIBILITY_MENU_UP = 1;
+    private static final int ACCESSIBILITY_MENU_DONE = 4;
+    private static final int ACCESSIBILITY_MENU_OPEN = 0;
+    private static final int ACCESSIBILITY_MENU_REMOVE = 3;
     private static final boolean DEBUG = false;
     private static final String TAG = "ChannelRowController";
+    private final RequestManager mChannelLogoRequestManager;
+    private final ChannelView mChannelView;
+    private final EventLogger mEventLogger;
+    private final HorizontalGridView mItemsListView;
     private AccessibilityContextMenu mAccessibilityContextMenu;
     private String mActionUri;
     private long mChannelId;
     private String mChannelLogoContentDescriptionFormat;
-    private final RequestManager mChannelLogoRequestManager;
     private Uri mChannelLogoThumbnailUri;
     private ChannelOrderManager mChannelOrderManager;
-    private final ChannelView mChannelView;
-    private final EventLogger mEventLogger;
     private RecyclerViewFastScrollingManager mFastScrollingManager;
     private boolean mHomeIsFastScrolling;
     private RecyclerViewStateProvider mHomeListStateProvider;
@@ -64,7 +66,6 @@ class ChannelRowController implements HomeRow, ChannelView.OnPerformMainActionLi
     private boolean mIsLegacy;
     private boolean mIsSponsored;
     private ChannelItemsAdapter mItemsAdapter;
-    private final HorizontalGridView mItemsListView;
     private ImageViewTarget<Bitmap> mLogoGlideTarget;
     private ChannelItemMetadataController mMetadataController;
     private BackHomeControllerListeners.OnBackNotHandledListener mOnBackNotHandledListener;

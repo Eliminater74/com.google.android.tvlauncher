@@ -8,14 +8,11 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
-import com.google.common.collect.AbstractMapBasedMultimap;
-import com.google.common.collect.AbstractMultimap;
-import com.google.common.collect.ImmutableListMultimap;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multiset;
-import com.google.common.collect.Multisets;
-import com.google.common.collect.Sets;
 import com.google.j2objc.annotations.Weak;
+
+import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -32,8 +29,6 @@ import java.util.NavigableSet;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.SortedSet;
-import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible(emulated = true)
 public final class Multimaps {
@@ -42,6 +37,362 @@ public final class Multimaps {
 
     public static <K, V> Multimap<K, V> newMultimap(Map<K, Collection<V>> map, Supplier<? extends Collection<V>> factory) {
         return new CustomMultimap(map, factory);
+    }
+
+    public static <K, V> ListMultimap<K, V> newListMultimap(Map<K, Collection<V>> map, Supplier<? extends List<V>> factory) {
+        return new CustomListMultimap(map, factory);
+    }
+
+    public static <K, V> SetMultimap<K, V> newSetMultimap(Map<K, Collection<V>> map, Supplier<? extends Set<V>> factory) {
+        return new CustomSetMultimap(map, factory);
+    }
+
+    public static <K, V> SortedSetMultimap<K, V> newSortedSetMultimap(Map<K, Collection<V>> map, Supplier<? extends SortedSet<V>> factory) {
+        return new CustomSortedSetMultimap(map, factory);
+    }
+
+    /*  JADX ERROR: JadxRuntimeException in pass: MethodInvokeVisitor
+        jadx.core.utils.exceptions.JadxRuntimeException: Not class type: M
+        	at jadx.core.dex.info.ClassInfo.checkClassType(ClassInfo.java:60)
+        	at jadx.core.dex.info.ClassInfo.fromType(ClassInfo.java:31)
+        	at jadx.core.dex.nodes.DexNode.resolveClass(DexNode.java:143)
+        	at jadx.core.dex.nodes.RootNode.resolveClass(RootNode.java:183)
+        	at jadx.core.dex.nodes.utils.MethodUtils.processMethodArgsOverloaded(MethodUtils.java:75)
+        	at jadx.core.dex.nodes.utils.MethodUtils.collectOverloadedMethods(MethodUtils.java:54)
+        	at jadx.core.dex.visitors.MethodInvokeVisitor.processOverloaded(MethodInvokeVisitor.java:106)
+        	at jadx.core.dex.visitors.MethodInvokeVisitor.processInvoke(MethodInvokeVisitor.java:99)
+        	at jadx.core.dex.visitors.MethodInvokeVisitor.processInsn(MethodInvokeVisitor.java:70)
+        	at jadx.core.dex.visitors.MethodInvokeVisitor.visit(MethodInvokeVisitor.java:63)
+        */
+    @com.google.errorprone.annotations.CanIgnoreReturnValue
+    public static <K, V, M extends com.google.common.collect.Multimap<K, V>> M invertFrom(com.google.common.collect.Multimap<? extends V, ? extends K> r4, M r5) {
+        /*
+            com.google.common.base.Preconditions.checkNotNull(r5)
+            java.util.Collection r0 = r4.entries()
+            java.util.Iterator r0 = r0.iterator()
+        L_0x000b:
+            boolean r1 = r0.hasNext()
+            if (r1 == 0) goto L_0x0023
+            java.lang.Object r1 = r0.next()
+            java.util.Map$Entry r1 = (java.util.Map.Entry) r1
+            java.lang.Object r2 = r1.getValue()
+            java.lang.Object r3 = r1.getKey()
+            r5.put(r2, r3)
+            goto L_0x000b
+        L_0x0023:
+            return r5
+        */
+        throw new UnsupportedOperationException("Method not decompiled: com.google.common.collect.Multimaps.invertFrom(com.google.common.collect.Multimap, com.google.common.collect.Multimap):com.google.common.collect.Multimap");
+    }
+
+    public static <K, V> Multimap<K, V> synchronizedMultimap(Multimap<K, V> multimap) {
+        return Synchronized.multimap(multimap, null);
+    }
+
+    public static <K, V> Multimap<K, V> unmodifiableMultimap(Multimap<K, V> delegate) {
+        if ((delegate instanceof UnmodifiableMultimap) || (delegate instanceof ImmutableMultimap)) {
+            return delegate;
+        }
+        return new UnmodifiableMultimap(delegate);
+    }
+
+    @Deprecated
+    public static <K, V> Multimap<K, V> unmodifiableMultimap(ImmutableMultimap<K, V> delegate) {
+        return (Multimap) Preconditions.checkNotNull(delegate);
+    }
+
+    public static <K, V> SetMultimap<K, V> synchronizedSetMultimap(SetMultimap<K, V> multimap) {
+        return Synchronized.setMultimap(multimap, null);
+    }
+
+    public static <K, V> SetMultimap<K, V> unmodifiableSetMultimap(SetMultimap<K, V> delegate) {
+        if ((delegate instanceof UnmodifiableSetMultimap) || (delegate instanceof ImmutableSetMultimap)) {
+            return delegate;
+        }
+        return new UnmodifiableSetMultimap(delegate);
+    }
+
+    @Deprecated
+    public static <K, V> SetMultimap<K, V> unmodifiableSetMultimap(ImmutableSetMultimap<K, V> delegate) {
+        return (SetMultimap) Preconditions.checkNotNull(delegate);
+    }
+
+    public static <K, V> SortedSetMultimap<K, V> synchronizedSortedSetMultimap(SortedSetMultimap<K, V> multimap) {
+        return Synchronized.sortedSetMultimap(multimap, null);
+    }
+
+    public static <K, V> SortedSetMultimap<K, V> unmodifiableSortedSetMultimap(SortedSetMultimap<K, V> delegate) {
+        if (delegate instanceof UnmodifiableSortedSetMultimap) {
+            return delegate;
+        }
+        return new UnmodifiableSortedSetMultimap(delegate);
+    }
+
+    public static <K, V> ListMultimap<K, V> synchronizedListMultimap(ListMultimap<K, V> multimap) {
+        return Synchronized.listMultimap(multimap, null);
+    }
+
+    public static <K, V> ListMultimap<K, V> unmodifiableListMultimap(ListMultimap<K, V> delegate) {
+        if ((delegate instanceof UnmodifiableListMultimap) || (delegate instanceof ImmutableListMultimap)) {
+            return delegate;
+        }
+        return new UnmodifiableListMultimap(delegate);
+    }
+
+    @Deprecated
+    public static <K, V> ListMultimap<K, V> unmodifiableListMultimap(ImmutableListMultimap<K, V> delegate) {
+        return (ListMultimap) Preconditions.checkNotNull(delegate);
+    }
+
+    /* JADX WARN: Type inference failed for: r1v0, types: [java.util.Collection<V>, java.util.Collection] */
+    /* access modifiers changed from: private */
+    /* JADX WARNING: Unknown variable types count: 1 */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    public static <V> java.util.Collection<V> unmodifiableValueCollection(java.util.Collection<V> r1) {
+        /*
+            boolean r0 = r1 instanceof java.util.SortedSet
+            if (r0 == 0) goto L_0x000c
+            r0 = r1
+            java.util.SortedSet r0 = (java.util.SortedSet) r0
+            java.util.SortedSet r0 = java.util.Collections.unmodifiableSortedSet(r0)
+            return r0
+        L_0x000c:
+            boolean r0 = r1 instanceof java.util.Set
+            if (r0 == 0) goto L_0x0018
+            r0 = r1
+            java.util.Set r0 = (java.util.Set) r0
+            java.util.Set r0 = java.util.Collections.unmodifiableSet(r0)
+            return r0
+        L_0x0018:
+            boolean r0 = r1 instanceof java.util.List
+            if (r0 == 0) goto L_0x0024
+            r0 = r1
+            java.util.List r0 = (java.util.List) r0
+            java.util.List r0 = java.util.Collections.unmodifiableList(r0)
+            return r0
+        L_0x0024:
+            java.util.Collection r0 = java.util.Collections.unmodifiableCollection(r1)
+            return r0
+        */
+        throw new UnsupportedOperationException("Method not decompiled: com.google.common.collect.Multimaps.unmodifiableValueCollection(java.util.Collection):java.util.Collection");
+    }
+
+    /* access modifiers changed from: private */
+    public static <K, V> Collection<Map.Entry<K, V>> unmodifiableEntries(Collection<Map.Entry<K, V>> entries) {
+        if (entries instanceof Set) {
+            return Maps.unmodifiableEntrySet((Set) entries);
+        }
+        return new Maps.UnmodifiableEntries(Collections.unmodifiableCollection(entries));
+    }
+
+    /* JADX WARN: Type inference failed for: r1v0, types: [com.google.common.collect.ListMultimap<K, V>, com.google.common.collect.ListMultimap] */
+    /* JADX WARNING: Unknown variable types count: 1 */
+    @com.google.common.annotations.Beta
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    public static <K, V> java.util.Map<K, java.util.List<V>> asMap(com.google.common.collect.ListMultimap<K, V> r1) {
+        /*
+            java.util.Map r0 = r1.asMap()
+            return r0
+        */
+        throw new UnsupportedOperationException("Method not decompiled: com.google.common.collect.Multimaps.asMap(com.google.common.collect.ListMultimap):java.util.Map");
+    }
+
+    /* JADX WARN: Type inference failed for: r1v0, types: [com.google.common.collect.SetMultimap<K, V>, com.google.common.collect.SetMultimap] */
+    /* JADX WARNING: Unknown variable types count: 1 */
+    @com.google.common.annotations.Beta
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    public static <K, V> java.util.Map<K, java.util.Set<V>> asMap(com.google.common.collect.SetMultimap<K, V> r1) {
+        /*
+            java.util.Map r0 = r1.asMap()
+            return r0
+        */
+        throw new UnsupportedOperationException("Method not decompiled: com.google.common.collect.Multimaps.asMap(com.google.common.collect.SetMultimap):java.util.Map");
+    }
+
+    /* JADX WARN: Type inference failed for: r1v0, types: [com.google.common.collect.SortedSetMultimap<K, V>, com.google.common.collect.SortedSetMultimap] */
+    /* JADX WARNING: Unknown variable types count: 1 */
+    @com.google.common.annotations.Beta
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    public static <K, V> java.util.Map<K, java.util.SortedSet<V>> asMap(com.google.common.collect.SortedSetMultimap<K, V> r1) {
+        /*
+            java.util.Map r0 = r1.asMap()
+            return r0
+        */
+        throw new UnsupportedOperationException("Method not decompiled: com.google.common.collect.Multimaps.asMap(com.google.common.collect.SortedSetMultimap):java.util.Map");
+    }
+
+    @Beta
+    public static <K, V> Map<K, Collection<V>> asMap(Multimap<K, V> multimap) {
+        return multimap.asMap();
+    }
+
+    public static <K, V> SetMultimap<K, V> forMap(Map<K, V> map) {
+        return new MapMultimap(map);
+    }
+
+    public static <K, V1, V2> Multimap<K, V2> transformValues(Multimap<K, V1> fromMultimap, Function<? super V1, V2> function) {
+        Preconditions.checkNotNull(function);
+        return transformEntries(fromMultimap, Maps.asEntryTransformer(function));
+    }
+
+    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+     method: com.google.common.collect.Multimaps.transformEntries(com.google.common.collect.ListMultimap, com.google.common.collect.Maps$EntryTransformer):com.google.common.collect.ListMultimap<K, V2>
+     arg types: [com.google.common.collect.ListMultimap<K, V1>, com.google.common.collect.Maps$EntryTransformer<K, V1, V2>]
+     candidates:
+      com.google.common.collect.Multimaps.transformEntries(com.google.common.collect.Multimap, com.google.common.collect.Maps$EntryTransformer):com.google.common.collect.Multimap<K, V2>
+      com.google.common.collect.Multimaps.transformEntries(com.google.common.collect.ListMultimap, com.google.common.collect.Maps$EntryTransformer):com.google.common.collect.ListMultimap<K, V2> */
+    public static <K, V1, V2> ListMultimap<K, V2> transformValues(ListMultimap<K, V1> fromMultimap, Function<? super V1, V2> function) {
+        Preconditions.checkNotNull(function);
+        return transformEntries((ListMultimap) fromMultimap, (Maps.EntryTransformer) Maps.asEntryTransformer(function));
+    }
+
+    public static <K, V1, V2> Multimap<K, V2> transformEntries(Multimap<K, V1> fromMap, Maps.EntryTransformer<? super K, ? super V1, V2> transformer) {
+        return new TransformedEntriesMultimap(fromMap, transformer);
+    }
+
+    public static <K, V1, V2> ListMultimap<K, V2> transformEntries(ListMultimap<K, V1> fromMap, Maps.EntryTransformer<? super K, ? super V1, V2> transformer) {
+        return new TransformedEntriesListMultimap(fromMap, transformer);
+    }
+
+    public static <K, V> ImmutableListMultimap<K, V> index(Iterable<V> values, Function<? super V, K> keyFunction) {
+        return index(values.iterator(), keyFunction);
+    }
+
+    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+     method: com.google.common.collect.ImmutableListMultimap.Builder.put(java.lang.Object, java.lang.Object):com.google.common.collect.ImmutableListMultimap$Builder<K, V>
+     arg types: [K, V]
+     candidates:
+      com.google.common.collect.ImmutableListMultimap.Builder.put(java.lang.Object, java.lang.Object):com.google.common.collect.ImmutableMultimap$Builder
+      com.google.common.collect.ImmutableMultimap.Builder.put(java.lang.Object, java.lang.Object):com.google.common.collect.ImmutableMultimap$Builder<K, V>
+      com.google.common.collect.ImmutableListMultimap.Builder.put(java.lang.Object, java.lang.Object):com.google.common.collect.ImmutableListMultimap$Builder<K, V> */
+    public static <K, V> ImmutableListMultimap<K, V> index(Iterator<V> values, Function<? super V, K> keyFunction) {
+        Preconditions.checkNotNull(keyFunction);
+        ImmutableListMultimap.Builder<K, V> builder = ImmutableListMultimap.builder();
+        while (values.hasNext()) {
+            V value = values.next();
+            Preconditions.checkNotNull(value, values);
+            builder.put((Object) keyFunction.apply(value), (Object) value);
+        }
+        return builder.build();
+    }
+
+    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+     method: com.google.common.collect.Multimaps.filterKeys(com.google.common.collect.SetMultimap, com.google.common.base.Predicate):com.google.common.collect.SetMultimap<K, V>
+     arg types: [com.google.common.collect.SetMultimap, com.google.common.base.Predicate<? super K>]
+     candidates:
+      com.google.common.collect.Multimaps.filterKeys(com.google.common.collect.ListMultimap, com.google.common.base.Predicate):com.google.common.collect.ListMultimap<K, V>
+      com.google.common.collect.Multimaps.filterKeys(com.google.common.collect.Multimap, com.google.common.base.Predicate):com.google.common.collect.Multimap<K, V>
+      com.google.common.collect.Multimaps.filterKeys(com.google.common.collect.SetMultimap, com.google.common.base.Predicate):com.google.common.collect.SetMultimap<K, V> */
+    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+     method: com.google.common.collect.Multimaps.filterKeys(com.google.common.collect.ListMultimap, com.google.common.base.Predicate):com.google.common.collect.ListMultimap<K, V>
+     arg types: [com.google.common.collect.ListMultimap, com.google.common.base.Predicate<? super K>]
+     candidates:
+      com.google.common.collect.Multimaps.filterKeys(com.google.common.collect.Multimap, com.google.common.base.Predicate):com.google.common.collect.Multimap<K, V>
+      com.google.common.collect.Multimaps.filterKeys(com.google.common.collect.SetMultimap, com.google.common.base.Predicate):com.google.common.collect.SetMultimap<K, V>
+      com.google.common.collect.Multimaps.filterKeys(com.google.common.collect.ListMultimap, com.google.common.base.Predicate):com.google.common.collect.ListMultimap<K, V> */
+    public static <K, V> Multimap<K, V> filterKeys(Multimap<K, V> unfiltered, Predicate<? super K> keyPredicate) {
+        if (unfiltered instanceof SetMultimap) {
+            return filterKeys((SetMultimap) unfiltered, (Predicate) keyPredicate);
+        }
+        if (unfiltered instanceof ListMultimap) {
+            return filterKeys((ListMultimap) unfiltered, (Predicate) keyPredicate);
+        }
+        if (unfiltered instanceof FilteredKeyMultimap) {
+            FilteredKeyMultimap<K, V> prev = (FilteredKeyMultimap) unfiltered;
+            return new FilteredKeyMultimap(prev.unfiltered, Predicates.and(prev.keyPredicate, keyPredicate));
+        } else if (unfiltered instanceof FilteredMultimap) {
+            return filterFiltered((FilteredMultimap) unfiltered, Maps.keyPredicateOnEntries(keyPredicate));
+        } else {
+            return new FilteredKeyMultimap(unfiltered, keyPredicate);
+        }
+    }
+
+    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+     method: com.google.common.collect.Multimaps.filterFiltered(com.google.common.collect.FilteredSetMultimap, com.google.common.base.Predicate):com.google.common.collect.SetMultimap<K, V>
+     arg types: [com.google.common.collect.FilteredSetMultimap<K, V>, com.google.common.base.Predicate<java.util.Map$Entry<K, ?>>]
+     candidates:
+      com.google.common.collect.Multimaps.filterFiltered(com.google.common.collect.FilteredMultimap, com.google.common.base.Predicate):com.google.common.collect.Multimap<K, V>
+      com.google.common.collect.Multimaps.filterFiltered(com.google.common.collect.FilteredSetMultimap, com.google.common.base.Predicate):com.google.common.collect.SetMultimap<K, V> */
+    public static <K, V> SetMultimap<K, V> filterKeys(SetMultimap<K, V> unfiltered, Predicate<? super K> keyPredicate) {
+        if (unfiltered instanceof FilteredKeySetMultimap) {
+            FilteredKeySetMultimap<K, V> prev = (FilteredKeySetMultimap) unfiltered;
+            return new FilteredKeySetMultimap(prev.unfiltered(), Predicates.and(prev.keyPredicate, keyPredicate));
+        } else if (unfiltered instanceof FilteredSetMultimap) {
+            return filterFiltered((FilteredSetMultimap) ((FilteredSetMultimap) unfiltered), (Predicate) Maps.keyPredicateOnEntries(keyPredicate));
+        } else {
+            return new FilteredKeySetMultimap(unfiltered, keyPredicate);
+        }
+    }
+
+    public static <K, V> ListMultimap<K, V> filterKeys(ListMultimap<K, V> unfiltered, Predicate<? super K> keyPredicate) {
+        if (!(unfiltered instanceof FilteredKeyListMultimap)) {
+            return new FilteredKeyListMultimap(unfiltered, keyPredicate);
+        }
+        FilteredKeyListMultimap<K, V> prev = (FilteredKeyListMultimap) unfiltered;
+        return new FilteredKeyListMultimap(prev.unfiltered(), Predicates.and(prev.keyPredicate, keyPredicate));
+    }
+
+    public static <K, V> Multimap<K, V> filterValues(Multimap<K, V> unfiltered, Predicate<? super V> valuePredicate) {
+        return filterEntries(unfiltered, Maps.valuePredicateOnEntries(valuePredicate));
+    }
+
+    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+     method: com.google.common.collect.Multimaps.filterEntries(com.google.common.collect.SetMultimap, com.google.common.base.Predicate):com.google.common.collect.SetMultimap<K, V>
+     arg types: [com.google.common.collect.SetMultimap<K, V>, com.google.common.base.Predicate<java.util.Map$Entry<?, V>>]
+     candidates:
+      com.google.common.collect.Multimaps.filterEntries(com.google.common.collect.Multimap, com.google.common.base.Predicate):com.google.common.collect.Multimap<K, V>
+      com.google.common.collect.Multimaps.filterEntries(com.google.common.collect.SetMultimap, com.google.common.base.Predicate):com.google.common.collect.SetMultimap<K, V> */
+    public static <K, V> SetMultimap<K, V> filterValues(SetMultimap<K, V> unfiltered, Predicate<? super V> valuePredicate) {
+        return filterEntries((SetMultimap) unfiltered, (Predicate) Maps.valuePredicateOnEntries(valuePredicate));
+    }
+
+    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+     method: com.google.common.collect.Multimaps.filterEntries(com.google.common.collect.SetMultimap, com.google.common.base.Predicate):com.google.common.collect.SetMultimap<K, V>
+     arg types: [com.google.common.collect.SetMultimap, com.google.common.base.Predicate<? super java.util.Map$Entry<K, V>>]
+     candidates:
+      com.google.common.collect.Multimaps.filterEntries(com.google.common.collect.Multimap, com.google.common.base.Predicate):com.google.common.collect.Multimap<K, V>
+      com.google.common.collect.Multimaps.filterEntries(com.google.common.collect.SetMultimap, com.google.common.base.Predicate):com.google.common.collect.SetMultimap<K, V> */
+    public static <K, V> Multimap<K, V> filterEntries(Multimap<K, V> unfiltered, Predicate<? super Map.Entry<K, V>> entryPredicate) {
+        Preconditions.checkNotNull(entryPredicate);
+        if (unfiltered instanceof SetMultimap) {
+            return filterEntries((SetMultimap) unfiltered, (Predicate) entryPredicate);
+        }
+        if (unfiltered instanceof FilteredMultimap) {
+            return filterFiltered((FilteredMultimap) unfiltered, entryPredicate);
+        }
+        return new FilteredEntryMultimap((Multimap) Preconditions.checkNotNull(unfiltered), entryPredicate);
+    }
+
+    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+     method: com.google.common.collect.Multimaps.filterFiltered(com.google.common.collect.FilteredSetMultimap, com.google.common.base.Predicate):com.google.common.collect.SetMultimap<K, V>
+     arg types: [com.google.common.collect.FilteredSetMultimap, com.google.common.base.Predicate<? super java.util.Map$Entry<K, V>>]
+     candidates:
+      com.google.common.collect.Multimaps.filterFiltered(com.google.common.collect.FilteredMultimap, com.google.common.base.Predicate):com.google.common.collect.Multimap<K, V>
+      com.google.common.collect.Multimaps.filterFiltered(com.google.common.collect.FilteredSetMultimap, com.google.common.base.Predicate):com.google.common.collect.SetMultimap<K, V> */
+    public static <K, V> SetMultimap<K, V> filterEntries(SetMultimap<K, V> unfiltered, Predicate<? super Map.Entry<K, V>> entryPredicate) {
+        Preconditions.checkNotNull(entryPredicate);
+        if (unfiltered instanceof FilteredSetMultimap) {
+            return filterFiltered((FilteredSetMultimap) unfiltered, (Predicate) entryPredicate);
+        }
+        return new FilteredEntrySetMultimap((SetMultimap) Preconditions.checkNotNull(unfiltered), entryPredicate);
+    }
+
+    private static <K, V> Multimap<K, V> filterFiltered(FilteredMultimap<K, V> multimap, Predicate<? super Map.Entry<K, V>> entryPredicate) {
+        return new FilteredEntryMultimap(multimap.unfiltered(), Predicates.and(multimap.entryPredicate(), entryPredicate));
+    }
+
+    private static <K, V> SetMultimap<K, V> filterFiltered(FilteredSetMultimap<K, V> multimap, Predicate<? super Map.Entry<K, V>> entryPredicate) {
+        return new FilteredEntrySetMultimap(multimap.unfiltered(), Predicates.and(multimap.entryPredicate(), entryPredicate));
+    }
+
+    static boolean equalsImpl(Multimap<?, ?> multimap, @NullableDecl Object object) {
+        if (object == multimap) {
+            return true;
+        }
+        if (object instanceof Multimap) {
+            return multimap.asMap().equals(((Multimap) object).asMap());
+        }
+        return false;
     }
 
     private static class CustomMultimap<K, V> extends AbstractMapBasedMultimap<K, V> {
@@ -142,10 +493,6 @@ public final class Multimaps {
         }
     }
 
-    public static <K, V> ListMultimap<K, V> newListMultimap(Map<K, Collection<V>> map, Supplier<? extends List<V>> factory) {
-        return new CustomListMultimap(map, factory);
-    }
-
     private static class CustomListMultimap<K, V> extends AbstractListMultimap<K, V> {
         @GwtIncompatible
         private static final long serialVersionUID = 0;
@@ -184,10 +531,6 @@ public final class Multimaps {
             this.factory = (Supplier) stream.readObject();
             setMap((Map) stream.readObject());
         }
-    }
-
-    public static <K, V> SetMultimap<K, V> newSetMultimap(Map<K, Collection<V>> map, Supplier<? extends Set<V>> factory) {
-        return new CustomSetMultimap(map, factory);
     }
 
     private static class CustomSetMultimap<K, V> extends AbstractSetMultimap<K, V> {
@@ -252,10 +595,6 @@ public final class Multimaps {
         }
     }
 
-    public static <K, V> SortedSetMultimap<K, V> newSortedSetMultimap(Map<K, Collection<V>> map, Supplier<? extends SortedSet<V>> factory) {
-        return new CustomSortedSetMultimap(map, factory);
-    }
-
     private static class CustomSortedSetMultimap<K, V> extends AbstractSortedSetMultimap<K, V> {
         @GwtIncompatible
         private static final long serialVersionUID = 0;
@@ -301,56 +640,6 @@ public final class Multimaps {
             this.valueComparator = ((SortedSet) this.factory.get()).comparator();
             setMap((Map) stream.readObject());
         }
-    }
-
-    /*  JADX ERROR: JadxRuntimeException in pass: MethodInvokeVisitor
-        jadx.core.utils.exceptions.JadxRuntimeException: Not class type: M
-        	at jadx.core.dex.info.ClassInfo.checkClassType(ClassInfo.java:60)
-        	at jadx.core.dex.info.ClassInfo.fromType(ClassInfo.java:31)
-        	at jadx.core.dex.nodes.DexNode.resolveClass(DexNode.java:143)
-        	at jadx.core.dex.nodes.RootNode.resolveClass(RootNode.java:183)
-        	at jadx.core.dex.nodes.utils.MethodUtils.processMethodArgsOverloaded(MethodUtils.java:75)
-        	at jadx.core.dex.nodes.utils.MethodUtils.collectOverloadedMethods(MethodUtils.java:54)
-        	at jadx.core.dex.visitors.MethodInvokeVisitor.processOverloaded(MethodInvokeVisitor.java:106)
-        	at jadx.core.dex.visitors.MethodInvokeVisitor.processInvoke(MethodInvokeVisitor.java:99)
-        	at jadx.core.dex.visitors.MethodInvokeVisitor.processInsn(MethodInvokeVisitor.java:70)
-        	at jadx.core.dex.visitors.MethodInvokeVisitor.visit(MethodInvokeVisitor.java:63)
-        */
-    @com.google.errorprone.annotations.CanIgnoreReturnValue
-    public static <K, V, M extends com.google.common.collect.Multimap<K, V>> M invertFrom(com.google.common.collect.Multimap<? extends V, ? extends K> r4, M r5) {
-        /*
-            com.google.common.base.Preconditions.checkNotNull(r5)
-            java.util.Collection r0 = r4.entries()
-            java.util.Iterator r0 = r0.iterator()
-        L_0x000b:
-            boolean r1 = r0.hasNext()
-            if (r1 == 0) goto L_0x0023
-            java.lang.Object r1 = r0.next()
-            java.util.Map$Entry r1 = (java.util.Map.Entry) r1
-            java.lang.Object r2 = r1.getValue()
-            java.lang.Object r3 = r1.getKey()
-            r5.put(r2, r3)
-            goto L_0x000b
-        L_0x0023:
-            return r5
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.google.common.collect.Multimaps.invertFrom(com.google.common.collect.Multimap, com.google.common.collect.Multimap):com.google.common.collect.Multimap");
-    }
-
-    public static <K, V> Multimap<K, V> synchronizedMultimap(Multimap<K, V> multimap) {
-        return Synchronized.multimap(multimap, null);
-    }
-
-    public static <K, V> Multimap<K, V> unmodifiableMultimap(Multimap<K, V> delegate) {
-        if ((delegate instanceof UnmodifiableMultimap) || (delegate instanceof ImmutableMultimap)) {
-            return delegate;
-        }
-        return new UnmodifiableMultimap(delegate);
-    }
-
-    @Deprecated
-    public static <K, V> Multimap<K, V> unmodifiableMultimap(ImmutableMultimap<K, V> delegate) {
-        return (Multimap) Preconditions.checkNotNull(delegate);
     }
 
     private static class UnmodifiableMultimap<K, V> extends ForwardingMultimap<K, V> implements Serializable {
@@ -547,135 +836,6 @@ public final class Multimaps {
         }
     }
 
-    public static <K, V> SetMultimap<K, V> synchronizedSetMultimap(SetMultimap<K, V> multimap) {
-        return Synchronized.setMultimap(multimap, null);
-    }
-
-    public static <K, V> SetMultimap<K, V> unmodifiableSetMultimap(SetMultimap<K, V> delegate) {
-        if ((delegate instanceof UnmodifiableSetMultimap) || (delegate instanceof ImmutableSetMultimap)) {
-            return delegate;
-        }
-        return new UnmodifiableSetMultimap(delegate);
-    }
-
-    @Deprecated
-    public static <K, V> SetMultimap<K, V> unmodifiableSetMultimap(ImmutableSetMultimap<K, V> delegate) {
-        return (SetMultimap) Preconditions.checkNotNull(delegate);
-    }
-
-    public static <K, V> SortedSetMultimap<K, V> synchronizedSortedSetMultimap(SortedSetMultimap<K, V> multimap) {
-        return Synchronized.sortedSetMultimap(multimap, null);
-    }
-
-    public static <K, V> SortedSetMultimap<K, V> unmodifiableSortedSetMultimap(SortedSetMultimap<K, V> delegate) {
-        if (delegate instanceof UnmodifiableSortedSetMultimap) {
-            return delegate;
-        }
-        return new UnmodifiableSortedSetMultimap(delegate);
-    }
-
-    public static <K, V> ListMultimap<K, V> synchronizedListMultimap(ListMultimap<K, V> multimap) {
-        return Synchronized.listMultimap(multimap, null);
-    }
-
-    public static <K, V> ListMultimap<K, V> unmodifiableListMultimap(ListMultimap<K, V> delegate) {
-        if ((delegate instanceof UnmodifiableListMultimap) || (delegate instanceof ImmutableListMultimap)) {
-            return delegate;
-        }
-        return new UnmodifiableListMultimap(delegate);
-    }
-
-    @Deprecated
-    public static <K, V> ListMultimap<K, V> unmodifiableListMultimap(ImmutableListMultimap<K, V> delegate) {
-        return (ListMultimap) Preconditions.checkNotNull(delegate);
-    }
-
-    /* JADX WARN: Type inference failed for: r1v0, types: [java.util.Collection<V>, java.util.Collection] */
-    /* access modifiers changed from: private */
-    /* JADX WARNING: Unknown variable types count: 1 */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
-    public static <V> java.util.Collection<V> unmodifiableValueCollection(java.util.Collection<V> r1) {
-        /*
-            boolean r0 = r1 instanceof java.util.SortedSet
-            if (r0 == 0) goto L_0x000c
-            r0 = r1
-            java.util.SortedSet r0 = (java.util.SortedSet) r0
-            java.util.SortedSet r0 = java.util.Collections.unmodifiableSortedSet(r0)
-            return r0
-        L_0x000c:
-            boolean r0 = r1 instanceof java.util.Set
-            if (r0 == 0) goto L_0x0018
-            r0 = r1
-            java.util.Set r0 = (java.util.Set) r0
-            java.util.Set r0 = java.util.Collections.unmodifiableSet(r0)
-            return r0
-        L_0x0018:
-            boolean r0 = r1 instanceof java.util.List
-            if (r0 == 0) goto L_0x0024
-            r0 = r1
-            java.util.List r0 = (java.util.List) r0
-            java.util.List r0 = java.util.Collections.unmodifiableList(r0)
-            return r0
-        L_0x0024:
-            java.util.Collection r0 = java.util.Collections.unmodifiableCollection(r1)
-            return r0
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.google.common.collect.Multimaps.unmodifiableValueCollection(java.util.Collection):java.util.Collection");
-    }
-
-    /* access modifiers changed from: private */
-    public static <K, V> Collection<Map.Entry<K, V>> unmodifiableEntries(Collection<Map.Entry<K, V>> entries) {
-        if (entries instanceof Set) {
-            return Maps.unmodifiableEntrySet((Set) entries);
-        }
-        return new Maps.UnmodifiableEntries(Collections.unmodifiableCollection(entries));
-    }
-
-    /* JADX WARN: Type inference failed for: r1v0, types: [com.google.common.collect.ListMultimap<K, V>, com.google.common.collect.ListMultimap] */
-    /* JADX WARNING: Unknown variable types count: 1 */
-    @com.google.common.annotations.Beta
-    /* Code decompiled incorrectly, please refer to instructions dump. */
-    public static <K, V> java.util.Map<K, java.util.List<V>> asMap(com.google.common.collect.ListMultimap<K, V> r1) {
-        /*
-            java.util.Map r0 = r1.asMap()
-            return r0
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.google.common.collect.Multimaps.asMap(com.google.common.collect.ListMultimap):java.util.Map");
-    }
-
-    /* JADX WARN: Type inference failed for: r1v0, types: [com.google.common.collect.SetMultimap<K, V>, com.google.common.collect.SetMultimap] */
-    /* JADX WARNING: Unknown variable types count: 1 */
-    @com.google.common.annotations.Beta
-    /* Code decompiled incorrectly, please refer to instructions dump. */
-    public static <K, V> java.util.Map<K, java.util.Set<V>> asMap(com.google.common.collect.SetMultimap<K, V> r1) {
-        /*
-            java.util.Map r0 = r1.asMap()
-            return r0
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.google.common.collect.Multimaps.asMap(com.google.common.collect.SetMultimap):java.util.Map");
-    }
-
-    /* JADX WARN: Type inference failed for: r1v0, types: [com.google.common.collect.SortedSetMultimap<K, V>, com.google.common.collect.SortedSetMultimap] */
-    /* JADX WARNING: Unknown variable types count: 1 */
-    @com.google.common.annotations.Beta
-    /* Code decompiled incorrectly, please refer to instructions dump. */
-    public static <K, V> java.util.Map<K, java.util.SortedSet<V>> asMap(com.google.common.collect.SortedSetMultimap<K, V> r1) {
-        /*
-            java.util.Map r0 = r1.asMap()
-            return r0
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.google.common.collect.Multimaps.asMap(com.google.common.collect.SortedSetMultimap):java.util.Map");
-    }
-
-    @Beta
-    public static <K, V> Map<K, Collection<V>> asMap(Multimap<K, V> multimap) {
-        return multimap.asMap();
-    }
-
-    public static <K, V> SetMultimap<K, V> forMap(Map<K, V> map) {
-        return new MapMultimap(map);
-    }
-
     private static class MapMultimap<K, V> extends AbstractMultimap<K, V> implements SetMultimap<K, V>, Serializable {
         private static final long serialVersionUID = 7845222491160860175L;
         final Map<K, V> map;
@@ -808,30 +968,6 @@ public final class Multimaps {
         public int hashCode() {
             return this.map.hashCode();
         }
-    }
-
-    public static <K, V1, V2> Multimap<K, V2> transformValues(Multimap<K, V1> fromMultimap, Function<? super V1, V2> function) {
-        Preconditions.checkNotNull(function);
-        return transformEntries(fromMultimap, Maps.asEntryTransformer(function));
-    }
-
-    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-     method: com.google.common.collect.Multimaps.transformEntries(com.google.common.collect.ListMultimap, com.google.common.collect.Maps$EntryTransformer):com.google.common.collect.ListMultimap<K, V2>
-     arg types: [com.google.common.collect.ListMultimap<K, V1>, com.google.common.collect.Maps$EntryTransformer<K, V1, V2>]
-     candidates:
-      com.google.common.collect.Multimaps.transformEntries(com.google.common.collect.Multimap, com.google.common.collect.Maps$EntryTransformer):com.google.common.collect.Multimap<K, V2>
-      com.google.common.collect.Multimaps.transformEntries(com.google.common.collect.ListMultimap, com.google.common.collect.Maps$EntryTransformer):com.google.common.collect.ListMultimap<K, V2> */
-    public static <K, V1, V2> ListMultimap<K, V2> transformValues(ListMultimap<K, V1> fromMultimap, Function<? super V1, V2> function) {
-        Preconditions.checkNotNull(function);
-        return transformEntries((ListMultimap) fromMultimap, (Maps.EntryTransformer) Maps.asEntryTransformer(function));
-    }
-
-    public static <K, V1, V2> Multimap<K, V2> transformEntries(Multimap<K, V1> fromMap, Maps.EntryTransformer<? super K, ? super V1, V2> transformer) {
-        return new TransformedEntriesMultimap(fromMap, transformer);
-    }
-
-    public static <K, V1, V2> ListMultimap<K, V2> transformEntries(ListMultimap<K, V1> fromMap, Maps.EntryTransformer<? super K, ? super V1, V2> transformer) {
-        return new TransformedEntriesListMultimap(fromMap, transformer);
     }
 
     private static class TransformedEntriesMultimap<K, V1, V2> extends AbstractMultimap<K, V2> {
@@ -981,28 +1117,6 @@ public final class Multimaps {
         }
     }
 
-    public static <K, V> ImmutableListMultimap<K, V> index(Iterable<V> values, Function<? super V, K> keyFunction) {
-        return index(values.iterator(), keyFunction);
-    }
-
-    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-     method: com.google.common.collect.ImmutableListMultimap.Builder.put(java.lang.Object, java.lang.Object):com.google.common.collect.ImmutableListMultimap$Builder<K, V>
-     arg types: [K, V]
-     candidates:
-      com.google.common.collect.ImmutableListMultimap.Builder.put(java.lang.Object, java.lang.Object):com.google.common.collect.ImmutableMultimap$Builder
-      com.google.common.collect.ImmutableMultimap.Builder.put(java.lang.Object, java.lang.Object):com.google.common.collect.ImmutableMultimap$Builder<K, V>
-      com.google.common.collect.ImmutableListMultimap.Builder.put(java.lang.Object, java.lang.Object):com.google.common.collect.ImmutableListMultimap$Builder<K, V> */
-    public static <K, V> ImmutableListMultimap<K, V> index(Iterator<V> values, Function<? super V, K> keyFunction) {
-        Preconditions.checkNotNull(keyFunction);
-        ImmutableListMultimap.Builder<K, V> builder = ImmutableListMultimap.builder();
-        while (values.hasNext()) {
-            V value = values.next();
-            Preconditions.checkNotNull(value, values);
-            builder.put((Object) keyFunction.apply(value), (Object) value);
-        }
-        return builder.build();
-    }
-
     static class Keys<K, V> extends AbstractMultiset<K> {
         @Weak
         final Multimap<K, V> multimap;
@@ -1091,11 +1205,11 @@ public final class Multimaps {
     }
 
     static abstract class Entries<K, V> extends AbstractCollection<Map.Entry<K, V>> {
-        /* access modifiers changed from: package-private */
-        public abstract Multimap<K, V> multimap();
-
         Entries() {
         }
+
+        /* access modifiers changed from: package-private */
+        public abstract Multimap<K, V> multimap();
 
         public int size() {
             return multimap().size();
@@ -1145,32 +1259,6 @@ public final class Multimaps {
             this.multimap.keySet().remove(key);
         }
 
-        class EntrySet extends Maps.EntrySet<K, Collection<V>> {
-            EntrySet() {
-            }
-
-            /* access modifiers changed from: package-private */
-            public Map<K, Collection<V>> map() {
-                return AsMap.this;
-            }
-
-            public Iterator<Map.Entry<K, Collection<V>>> iterator() {
-                return Maps.asMapEntryIterator(AsMap.this.multimap.keySet(), new Function<K, Collection<V>>() {
-                    public Collection<V> apply(K key) {
-                        return AsMap.this.multimap.get(key);
-                    }
-                });
-            }
-
-            public boolean remove(Object o) {
-                if (!contains(o)) {
-                    return false;
-                }
-                AsMap.this.removeValuesForKey(((Map.Entry) o).getKey());
-                return true;
-            }
-        }
-
         public Collection<V> get(Object key) {
             if (containsKey(key)) {
                 return this.multimap.get(key);
@@ -1200,124 +1288,31 @@ public final class Multimaps {
         public void clear() {
             this.multimap.clear();
         }
-    }
 
-    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-     method: com.google.common.collect.Multimaps.filterKeys(com.google.common.collect.SetMultimap, com.google.common.base.Predicate):com.google.common.collect.SetMultimap<K, V>
-     arg types: [com.google.common.collect.SetMultimap, com.google.common.base.Predicate<? super K>]
-     candidates:
-      com.google.common.collect.Multimaps.filterKeys(com.google.common.collect.ListMultimap, com.google.common.base.Predicate):com.google.common.collect.ListMultimap<K, V>
-      com.google.common.collect.Multimaps.filterKeys(com.google.common.collect.Multimap, com.google.common.base.Predicate):com.google.common.collect.Multimap<K, V>
-      com.google.common.collect.Multimaps.filterKeys(com.google.common.collect.SetMultimap, com.google.common.base.Predicate):com.google.common.collect.SetMultimap<K, V> */
-    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-     method: com.google.common.collect.Multimaps.filterKeys(com.google.common.collect.ListMultimap, com.google.common.base.Predicate):com.google.common.collect.ListMultimap<K, V>
-     arg types: [com.google.common.collect.ListMultimap, com.google.common.base.Predicate<? super K>]
-     candidates:
-      com.google.common.collect.Multimaps.filterKeys(com.google.common.collect.Multimap, com.google.common.base.Predicate):com.google.common.collect.Multimap<K, V>
-      com.google.common.collect.Multimaps.filterKeys(com.google.common.collect.SetMultimap, com.google.common.base.Predicate):com.google.common.collect.SetMultimap<K, V>
-      com.google.common.collect.Multimaps.filterKeys(com.google.common.collect.ListMultimap, com.google.common.base.Predicate):com.google.common.collect.ListMultimap<K, V> */
-    public static <K, V> Multimap<K, V> filterKeys(Multimap<K, V> unfiltered, Predicate<? super K> keyPredicate) {
-        if (unfiltered instanceof SetMultimap) {
-            return filterKeys((SetMultimap) unfiltered, (Predicate) keyPredicate);
-        }
-        if (unfiltered instanceof ListMultimap) {
-            return filterKeys((ListMultimap) unfiltered, (Predicate) keyPredicate);
-        }
-        if (unfiltered instanceof FilteredKeyMultimap) {
-            FilteredKeyMultimap<K, V> prev = (FilteredKeyMultimap) unfiltered;
-            return new FilteredKeyMultimap(prev.unfiltered, Predicates.and(prev.keyPredicate, keyPredicate));
-        } else if (unfiltered instanceof FilteredMultimap) {
-            return filterFiltered((FilteredMultimap) unfiltered, Maps.keyPredicateOnEntries(keyPredicate));
-        } else {
-            return new FilteredKeyMultimap(unfiltered, keyPredicate);
-        }
-    }
+        class EntrySet extends Maps.EntrySet<K, Collection<V>> {
+            EntrySet() {
+            }
 
-    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-     method: com.google.common.collect.Multimaps.filterFiltered(com.google.common.collect.FilteredSetMultimap, com.google.common.base.Predicate):com.google.common.collect.SetMultimap<K, V>
-     arg types: [com.google.common.collect.FilteredSetMultimap<K, V>, com.google.common.base.Predicate<java.util.Map$Entry<K, ?>>]
-     candidates:
-      com.google.common.collect.Multimaps.filterFiltered(com.google.common.collect.FilteredMultimap, com.google.common.base.Predicate):com.google.common.collect.Multimap<K, V>
-      com.google.common.collect.Multimaps.filterFiltered(com.google.common.collect.FilteredSetMultimap, com.google.common.base.Predicate):com.google.common.collect.SetMultimap<K, V> */
-    public static <K, V> SetMultimap<K, V> filterKeys(SetMultimap<K, V> unfiltered, Predicate<? super K> keyPredicate) {
-        if (unfiltered instanceof FilteredKeySetMultimap) {
-            FilteredKeySetMultimap<K, V> prev = (FilteredKeySetMultimap) unfiltered;
-            return new FilteredKeySetMultimap(prev.unfiltered(), Predicates.and(prev.keyPredicate, keyPredicate));
-        } else if (unfiltered instanceof FilteredSetMultimap) {
-            return filterFiltered((FilteredSetMultimap) ((FilteredSetMultimap) unfiltered), (Predicate) Maps.keyPredicateOnEntries(keyPredicate));
-        } else {
-            return new FilteredKeySetMultimap(unfiltered, keyPredicate);
+            /* access modifiers changed from: package-private */
+            public Map<K, Collection<V>> map() {
+                return AsMap.this;
+            }
+
+            public Iterator<Map.Entry<K, Collection<V>>> iterator() {
+                return Maps.asMapEntryIterator(AsMap.this.multimap.keySet(), new Function<K, Collection<V>>() {
+                    public Collection<V> apply(K key) {
+                        return AsMap.this.multimap.get(key);
+                    }
+                });
+            }
+
+            public boolean remove(Object o) {
+                if (!contains(o)) {
+                    return false;
+                }
+                AsMap.this.removeValuesForKey(((Map.Entry) o).getKey());
+                return true;
+            }
         }
-    }
-
-    public static <K, V> ListMultimap<K, V> filterKeys(ListMultimap<K, V> unfiltered, Predicate<? super K> keyPredicate) {
-        if (!(unfiltered instanceof FilteredKeyListMultimap)) {
-            return new FilteredKeyListMultimap(unfiltered, keyPredicate);
-        }
-        FilteredKeyListMultimap<K, V> prev = (FilteredKeyListMultimap) unfiltered;
-        return new FilteredKeyListMultimap(prev.unfiltered(), Predicates.and(prev.keyPredicate, keyPredicate));
-    }
-
-    public static <K, V> Multimap<K, V> filterValues(Multimap<K, V> unfiltered, Predicate<? super V> valuePredicate) {
-        return filterEntries(unfiltered, Maps.valuePredicateOnEntries(valuePredicate));
-    }
-
-    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-     method: com.google.common.collect.Multimaps.filterEntries(com.google.common.collect.SetMultimap, com.google.common.base.Predicate):com.google.common.collect.SetMultimap<K, V>
-     arg types: [com.google.common.collect.SetMultimap<K, V>, com.google.common.base.Predicate<java.util.Map$Entry<?, V>>]
-     candidates:
-      com.google.common.collect.Multimaps.filterEntries(com.google.common.collect.Multimap, com.google.common.base.Predicate):com.google.common.collect.Multimap<K, V>
-      com.google.common.collect.Multimaps.filterEntries(com.google.common.collect.SetMultimap, com.google.common.base.Predicate):com.google.common.collect.SetMultimap<K, V> */
-    public static <K, V> SetMultimap<K, V> filterValues(SetMultimap<K, V> unfiltered, Predicate<? super V> valuePredicate) {
-        return filterEntries((SetMultimap) unfiltered, (Predicate) Maps.valuePredicateOnEntries(valuePredicate));
-    }
-
-    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-     method: com.google.common.collect.Multimaps.filterEntries(com.google.common.collect.SetMultimap, com.google.common.base.Predicate):com.google.common.collect.SetMultimap<K, V>
-     arg types: [com.google.common.collect.SetMultimap, com.google.common.base.Predicate<? super java.util.Map$Entry<K, V>>]
-     candidates:
-      com.google.common.collect.Multimaps.filterEntries(com.google.common.collect.Multimap, com.google.common.base.Predicate):com.google.common.collect.Multimap<K, V>
-      com.google.common.collect.Multimaps.filterEntries(com.google.common.collect.SetMultimap, com.google.common.base.Predicate):com.google.common.collect.SetMultimap<K, V> */
-    public static <K, V> Multimap<K, V> filterEntries(Multimap<K, V> unfiltered, Predicate<? super Map.Entry<K, V>> entryPredicate) {
-        Preconditions.checkNotNull(entryPredicate);
-        if (unfiltered instanceof SetMultimap) {
-            return filterEntries((SetMultimap) unfiltered, (Predicate) entryPredicate);
-        }
-        if (unfiltered instanceof FilteredMultimap) {
-            return filterFiltered((FilteredMultimap) unfiltered, entryPredicate);
-        }
-        return new FilteredEntryMultimap((Multimap) Preconditions.checkNotNull(unfiltered), entryPredicate);
-    }
-
-    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-     method: com.google.common.collect.Multimaps.filterFiltered(com.google.common.collect.FilteredSetMultimap, com.google.common.base.Predicate):com.google.common.collect.SetMultimap<K, V>
-     arg types: [com.google.common.collect.FilteredSetMultimap, com.google.common.base.Predicate<? super java.util.Map$Entry<K, V>>]
-     candidates:
-      com.google.common.collect.Multimaps.filterFiltered(com.google.common.collect.FilteredMultimap, com.google.common.base.Predicate):com.google.common.collect.Multimap<K, V>
-      com.google.common.collect.Multimaps.filterFiltered(com.google.common.collect.FilteredSetMultimap, com.google.common.base.Predicate):com.google.common.collect.SetMultimap<K, V> */
-    public static <K, V> SetMultimap<K, V> filterEntries(SetMultimap<K, V> unfiltered, Predicate<? super Map.Entry<K, V>> entryPredicate) {
-        Preconditions.checkNotNull(entryPredicate);
-        if (unfiltered instanceof FilteredSetMultimap) {
-            return filterFiltered((FilteredSetMultimap) unfiltered, (Predicate) entryPredicate);
-        }
-        return new FilteredEntrySetMultimap((SetMultimap) Preconditions.checkNotNull(unfiltered), entryPredicate);
-    }
-
-    private static <K, V> Multimap<K, V> filterFiltered(FilteredMultimap<K, V> multimap, Predicate<? super Map.Entry<K, V>> entryPredicate) {
-        return new FilteredEntryMultimap(multimap.unfiltered(), Predicates.and(multimap.entryPredicate(), entryPredicate));
-    }
-
-    private static <K, V> SetMultimap<K, V> filterFiltered(FilteredSetMultimap<K, V> multimap, Predicate<? super Map.Entry<K, V>> entryPredicate) {
-        return new FilteredEntrySetMultimap(multimap.unfiltered(), Predicates.and(multimap.entryPredicate(), entryPredicate));
-    }
-
-    static boolean equalsImpl(Multimap<?, ?> multimap, @NullableDecl Object object) {
-        if (object == multimap) {
-            return true;
-        }
-        if (object instanceof Multimap) {
-            return multimap.asMap().equals(((Multimap) object).asMap());
-        }
-        return false;
     }
 }

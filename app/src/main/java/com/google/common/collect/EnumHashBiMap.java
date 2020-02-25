@@ -4,21 +4,37 @@ import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.lang.Enum;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible(emulated = true)
 public final class EnumHashBiMap<K extends Enum<K>, V> extends AbstractBiMap<K, V> {
     @GwtIncompatible
     private static final long serialVersionUID = 0;
     private transient Class<K> keyType;
+
+    private EnumHashBiMap(Class<K> keyType2) {
+        super(new EnumMap(keyType2), Maps.newHashMapWithExpectedSize(((Enum[]) keyType2.getEnumConstants()).length));
+        this.keyType = keyType2;
+    }
+
+    public static <K extends Enum<K>, V> EnumHashBiMap<K, V> create(Class<K> keyType2) {
+        return new EnumHashBiMap<>(keyType2);
+    }
+
+    public static <K extends Enum<K>, V> EnumHashBiMap<K, V> create(Map<K, ? extends V> map) {
+        EnumHashBiMap<K, V> bimap = create(EnumBiMap.inferKeyType(map));
+        bimap.putAll(map);
+        return bimap;
+    }
 
     public /* bridge */ /* synthetic */ void clear() {
         super.clear();
@@ -51,21 +67,6 @@ public final class EnumHashBiMap<K extends Enum<K>, V> extends AbstractBiMap<K, 
 
     public /* bridge */ /* synthetic */ Set values() {
         return super.values();
-    }
-
-    public static <K extends Enum<K>, V> EnumHashBiMap<K, V> create(Class<K> keyType2) {
-        return new EnumHashBiMap<>(keyType2);
-    }
-
-    public static <K extends Enum<K>, V> EnumHashBiMap<K, V> create(Map<K, ? extends V> map) {
-        EnumHashBiMap<K, V> bimap = create(EnumBiMap.inferKeyType(map));
-        bimap.putAll(map);
-        return bimap;
-    }
-
-    private EnumHashBiMap(Class<K> keyType2) {
-        super(new EnumMap(keyType2), Maps.newHashMapWithExpectedSize(((Enum[]) keyType2.getEnumConstants()).length));
-        this.keyType = keyType2;
     }
 
     /* access modifiers changed from: package-private */

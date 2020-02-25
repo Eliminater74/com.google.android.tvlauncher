@@ -4,8 +4,10 @@ import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.VisibleForTesting;
+
 import com.google.android.tvlauncher.data.TvDataManager;
 import com.google.android.tvlauncher.home.view.ChannelView;
+
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -16,10 +18,10 @@ class EmptyChannelsHelper {
     private static final long EMPTY_CHANNEL_TIMER_DELAY = 30000;
     /* access modifiers changed from: private */
     public TvDataManager mDataManager;
-    private EmptyChannelTimerHandler mEmptyChannelHandler = new EmptyChannelTimerHandler();
     /* access modifiers changed from: private */
     @SuppressLint({"UseSparseArrays"})
     public Map<Long, Long> mMessageChannelIds = new HashMap();
+    private EmptyChannelTimerHandler mEmptyChannelHandler = new EmptyChannelTimerHandler();
 
     EmptyChannelsHelper(TvDataManager tvDataManager) {
         this.mDataManager = tvDataManager;

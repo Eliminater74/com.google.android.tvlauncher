@@ -18,13 +18,13 @@ public final class PhenotypeCore {
     public static final String LOGGED_OUT_USER = "";
     public static final String SERVER_TOKEN_FLAG_NAME = "__phenotype_server_token";
 
+    private PhenotypeCore() {
+    }
+
     static boolean zza(Object obj, Object obj2) {
         if (obj != obj2) {
             return obj != null && obj.equals(obj2);
         }
         return true;
-    }
-
-    private PhenotypeCore() {
     }
 }

@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
@@ -24,6 +25,7 @@ import com.google.android.tvlauncher.appsview.data.AppLinksDataManager;
 import com.google.android.tvlauncher.util.IntentUtil;
 import com.google.android.tvlauncher.util.OemPromotionApp;
 import com.google.android.tvrecommendations.shared.util.Constants;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +39,40 @@ public class PromotionRowAdapter extends RecyclerView.Adapter<PromotionViewHolde
     PromotionRowAdapter(Context context) {
         Drawable placeholderBanner = new ColorDrawable(ContextCompat.getColor(context, C1188R.color.app_banner_background_color));
         this.mBannerRequestOptions = (RequestOptions) ((RequestOptions) ((RequestOptions) new RequestOptions().placeholder(placeholderBanner)).error(placeholderBanner)).diskCacheStrategy(DiskCacheStrategy.NONE);
+    }
+
+    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+     method: ClspMth{android.view.LayoutInflater.inflate(int, android.view.ViewGroup, boolean):android.view.View}
+     arg types: [int, android.view.ViewGroup, int]
+     candidates:
+      ClspMth{android.view.LayoutInflater.inflate(org.xmlpull.v1.XmlPullParser, android.view.ViewGroup, boolean):android.view.View}
+      ClspMth{android.view.LayoutInflater.inflate(int, android.view.ViewGroup, boolean):android.view.View} */
+    @NonNull
+    public PromotionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        return new PromotionViewHolder(LayoutInflater.from(parent.getContext()).inflate(C1188R.layout.view_app_banner, parent, false));
+    }
+
+    public void onBindViewHolder(@NonNull PromotionViewHolder holder, int position) {
+        holder.setPromotion(this.mPromotions.get(position));
+    }
+
+    public int getItemCount() {
+        return this.mPromotions.size();
+    }
+
+    public long getItemId(int position) {
+        return (long) this.mPromotions.get(position).getId().hashCode();
+    }
+
+    /* access modifiers changed from: package-private */
+    public void setOnAppsViewActionListener(OnAppsViewActionListener listener) {
+        this.mOnAppsViewActionListener = listener;
+    }
+
+    /* access modifiers changed from: package-private */
+    public void setPromotions(List<OemPromotionApp> promotions) {
+        this.mPromotions = promotions;
+        notifyDataSetChanged();
     }
 
     class PromotionViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnFocusChangeListener {
@@ -117,39 +153,5 @@ public class PromotionRowAdapter extends RecyclerView.Adapter<PromotionViewHolde
         public void onFocusChange(View v, boolean hasFocus) {
             this.mBannerView.setFocusedState(hasFocus);
         }
-    }
-
-    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-     method: ClspMth{android.view.LayoutInflater.inflate(int, android.view.ViewGroup, boolean):android.view.View}
-     arg types: [int, android.view.ViewGroup, int]
-     candidates:
-      ClspMth{android.view.LayoutInflater.inflate(org.xmlpull.v1.XmlPullParser, android.view.ViewGroup, boolean):android.view.View}
-      ClspMth{android.view.LayoutInflater.inflate(int, android.view.ViewGroup, boolean):android.view.View} */
-    @NonNull
-    public PromotionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new PromotionViewHolder(LayoutInflater.from(parent.getContext()).inflate(C1188R.layout.view_app_banner, parent, false));
-    }
-
-    public void onBindViewHolder(@NonNull PromotionViewHolder holder, int position) {
-        holder.setPromotion(this.mPromotions.get(position));
-    }
-
-    public int getItemCount() {
-        return this.mPromotions.size();
-    }
-
-    public long getItemId(int position) {
-        return (long) this.mPromotions.get(position).getId().hashCode();
-    }
-
-    /* access modifiers changed from: package-private */
-    public void setOnAppsViewActionListener(OnAppsViewActionListener listener) {
-        this.mOnAppsViewActionListener = listener;
-    }
-
-    /* access modifiers changed from: package-private */
-    public void setPromotions(List<OemPromotionApp> promotions) {
-        this.mPromotions = promotions;
-        notifyDataSetChanged();
     }
 }

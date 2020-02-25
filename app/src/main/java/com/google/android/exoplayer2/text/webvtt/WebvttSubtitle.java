@@ -1,19 +1,21 @@
 package com.google.android.exoplayer2.text.webvtt;
 
 import android.text.SpannableStringBuilder;
+
 import com.google.android.exoplayer2.text.Cue;
 import com.google.android.exoplayer2.text.Subtitle;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Util;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 final class WebvttSubtitle implements Subtitle {
-    private final long[] cueTimesUs = new long[(this.numCues * 2)];
     private final List<WebvttCue> cues;
     private final int numCues;
+    private final long[] cueTimesUs = new long[(this.numCues * 2)];
     private final long[] sortedCueTimesUs;
 
     public WebvttSubtitle(List<WebvttCue> cues2) {

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
+
 import com.google.android.gms.common.api.Api;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -15,36 +16,18 @@ import com.google.android.gms.common.internal.Hide;
 import com.google.android.gms.internal.zzckq;
 import com.google.android.gms.internal.zzckr;
 import com.google.android.gms.internal.zzcks;
+
 import java.io.File;
 
 public final class Feedback {
     public static final String ANONYMOUS = "anonymous";
-    public static final Api<Api.ApiOptions.NoOptions> API = new Api<>("Feedback.API", zzc, zzb);
     /* access modifiers changed from: private */
     public static final Status zza = new Status(13);
     private static final Api.ClientKey<zzckq> zzb = new Api.ClientKey<>();
     private static final Api.zza<zzckq, Api.ApiOptions.NoOptions> zzc = new zzb();
+    public static final Api<Api.ApiOptions.NoOptions> API = new Api<>("Feedback.API", zzc, zzb);
 
     private Feedback() {
-    }
-
-    @VisibleForTesting
-    static abstract class zza extends zzn<Status, zzckq> {
-        public zza(GoogleApiClient googleApiClient) {
-            super(Feedback.API, googleApiClient);
-        }
-
-        @Hide
-        public final /* bridge */ /* synthetic */ void zza(Object obj) {
-            super.zza((Result) ((Status) obj));
-        }
-
-        public final /* synthetic */ Result zza(Status status) {
-            if (status == null) {
-                return Status.zzc;
-            }
-            return status;
-        }
     }
 
     public static FeedbackClient getClient(@NonNull Context context) {
@@ -81,5 +64,24 @@ public final class Feedback {
     @Hide
     public static PendingResult<Status> zza(GoogleApiClient googleApiClient, FeedbackOptions feedbackOptions, Bundle bundle, long j) {
         return googleApiClient.zza((zzn) new zzf(googleApiClient, feedbackOptions, bundle, j));
+    }
+
+    @VisibleForTesting
+    static abstract class zza extends zzn<Status, zzckq> {
+        public zza(GoogleApiClient googleApiClient) {
+            super(Feedback.API, googleApiClient);
+        }
+
+        @Hide
+        public final /* bridge */ /* synthetic */ void zza(Object obj) {
+            super.zza((Result) ((Status) obj));
+        }
+
+        public final /* synthetic */ Result zza(Status status) {
+            if (status == null) {
+                return Status.zzc;
+            }
+            return status;
+        }
     }
 }

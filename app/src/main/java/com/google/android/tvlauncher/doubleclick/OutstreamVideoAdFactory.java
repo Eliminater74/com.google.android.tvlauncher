@@ -1,10 +1,13 @@
 package com.google.android.tvlauncher.doubleclick;
 
 import android.util.Log;
+
 import com.google.android.tvlauncher.doubleclick.customcreative.CustomCreativeVideoAdFactory;
 import com.google.android.tvlauncher.doubleclick.proto.nano.AdConfig;
 import com.google.android.tvlauncher.doubleclick.vast.VastVideoAdFactory;
+
 import java.io.InputStream;
+
 import javax.annotation.Nonnull;
 
 public class OutstreamVideoAdFactory {

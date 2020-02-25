@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.p001v4.util.ArrayMap;
+
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.lang.ref.WeakReference;
@@ -17,11 +18,11 @@ import java.util.WeakHashMap;
 /* compiled from: LifecycleFragmentImpl */
 public final class zzcg extends Fragment implements zzcf {
     private static WeakHashMap<Activity, WeakReference<zzcg>> zza = new WeakHashMap<>();
-    private Map<String, LifecycleCallback> zzb = new ArrayMap();
     /* access modifiers changed from: private */
     public int zzc = 0;
     /* access modifiers changed from: private */
     public Bundle zzd;
+    private Map<String, LifecycleCallback> zzb = new ArrayMap();
 
     public static zzcg zza(Activity activity) {
         zzcg zzcg;

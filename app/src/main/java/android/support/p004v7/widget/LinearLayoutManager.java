@@ -8,37 +8,38 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.RestrictTo;
 import android.support.p001v4.app.FragmentTransaction;
-import android.support.p004v7.widget.RecyclerView;
 import android.support.p004v7.widget.helper.ItemTouchHelper;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
+
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.util.List;
 
 /* renamed from: android.support.v7.widget.LinearLayoutManager */
 public class LinearLayoutManager extends RecyclerView.LayoutManager implements ItemTouchHelper.ViewDropHandler, RecyclerView.SmoothScroller.ScrollVectorProvider {
-    static final boolean DEBUG = false;
     public static final int HORIZONTAL = 0;
     public static final int INVALID_OFFSET = Integer.MIN_VALUE;
+    public static final int VERTICAL = 1;
+    static final boolean DEBUG = false;
     private static final float MAX_SCROLL_FACTOR = 0.33333334f;
     private static final String TAG = "LinearLayoutManager";
-    public static final int VERTICAL = 1;
     final AnchorInfo mAnchorInfo;
-    private int mInitialPrefetchItemCount;
-    private boolean mLastStackFromEnd;
     private final LayoutChunkResult mLayoutChunkResult;
-    private LayoutState mLayoutState;
     int mOrientation;
     OrientationHelper mOrientationHelper;
     SavedState mPendingSavedState;
     int mPendingScrollPosition;
     int mPendingScrollPositionOffset;
+    boolean mShouldReverseLayout;
+    private int mInitialPrefetchItemCount;
+    private boolean mLastStackFromEnd;
+    private LayoutState mLayoutState;
     private boolean mRecycleChildrenOnDetach;
     private int[] mReusableIntPair;
     private boolean mReverseLayout;
-    boolean mShouldReverseLayout;
     private boolean mSmoothScrollbarEnabled;
     private boolean mStackFromEnd;
 
@@ -154,16 +155,16 @@ public class LinearLayoutManager extends RecyclerView.LayoutManager implements I
         return this.mOrientation == 1;
     }
 
+    public boolean getStackFromEnd() {
+        return this.mStackFromEnd;
+    }
+
     public void setStackFromEnd(boolean stackFromEnd) {
         assertNotInLayoutOrScroll(null);
         if (this.mStackFromEnd != stackFromEnd) {
             this.mStackFromEnd = stackFromEnd;
             requestLayout();
         }
-    }
-
-    public boolean getStackFromEnd() {
-        return this.mStackFromEnd;
     }
 
     public int getOrientation() {
@@ -729,12 +730,12 @@ public class LinearLayoutManager extends RecyclerView.LayoutManager implements I
         return ScrollbarHelper.computeScrollRange(state, this.mOrientationHelper, findFirstVisibleChildClosestToStart(!this.mSmoothScrollbarEnabled, true), findFirstVisibleChildClosestToEnd(!this.mSmoothScrollbarEnabled, true), this, this.mSmoothScrollbarEnabled);
     }
 
-    public void setSmoothScrollbarEnabled(boolean enabled) {
-        this.mSmoothScrollbarEnabled = enabled;
-    }
-
     public boolean isSmoothScrollbarEnabled() {
         return this.mSmoothScrollbarEnabled;
+    }
+
+    public void setSmoothScrollbarEnabled(boolean enabled) {
+        this.mSmoothScrollbarEnabled = enabled;
     }
 
     private void updateLayoutState(int layoutDirection, int requiredSpace, boolean canUseExistingSpace, RecyclerView.State state) {
@@ -825,12 +826,12 @@ public class LinearLayoutManager extends RecyclerView.LayoutManager implements I
         }
     }
 
-    public void setInitialPrefetchItemCount(int itemCount) {
-        this.mInitialPrefetchItemCount = itemCount;
-    }
-
     public int getInitialPrefetchItemCount() {
         return this.mInitialPrefetchItemCount;
+    }
+
+    public void setInitialPrefetchItemCount(int itemCount) {
+        this.mInitialPrefetchItemCount = itemCount;
     }
 
     public void collectAdjacentPrefetchPositions(int dx, int dy, RecyclerView.State state, RecyclerView.LayoutManager.LayoutPrefetchRegistry layoutPrefetchRegistry) {

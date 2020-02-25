@@ -11,32 +11,30 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+
 import com.google.devtools.build.android.desugar.runtime.ThrowableExtension;
+
 import java.util.HashSet;
 import java.util.Set;
 
 public final class SilentFeedback {
     public static final String CATEGORY_TAG_KEY = "com.google.android.libraries.social.silentfeedback.SilentFeedbackReceiver.categoryTag";
-    private static final String DEFAULT_EXCEPTION_FILENAME = "Unknown Source";
     public static final String EXCEPTION_CLASS_NAME_KEY = "com.google.android.libraries.social.silentfeedback.SilentFeedbackReceiver.exceptionClass";
     public static final String EXCEPTION_MESSAGE_KEY = "com.google.android.libraries.social.silentfeedback.SilentFeedbackReceiver.exceptionMessage";
     public static final String EXCLUDE_PII_KEY = "com.google.android.libraries.social.silentfeedback.SilentFeedbackReceiver.excludePii";
     public static final String PSD_BUNDLE_KEY = "com.google.android.libraries.social.silentfeedback.SilentFeedbackReceiver.psdBundle";
-    private static final String SILENT_FEEDBACK_SERVICE_REGEX = "com\\.google\\.android\\.libraries\\.social\\.silentfeedback\\.\\w*\\.SilentFeedbackReceiver";
     public static final String STACK_TRACE_KEY = "com.google.android.libraries.social.silentfeedback.SilentFeedbackReceiver.stackTrace";
-    private static final String TAG = "SilentFeedback";
     public static final String THROWING_CLASS_NAME_KEY = "com.google.android.libraries.social.silentfeedback.SilentFeedbackReceiver.throwingClass";
     public static final String THROWING_FILE_NAME_KEY = "com.google.android.libraries.social.silentfeedback.SilentFeedbackReceiver.throwingFile";
     public static final String THROWING_LINE_NUMBER_KEY = "com.google.android.libraries.social.silentfeedback.SilentFeedbackReceiver.throwingLine";
     public static final String THROWING_METHOD_NAME_KEY = "com.google.android.libraries.social.silentfeedback.SilentFeedbackReceiver.throwingMethod";
+    private static final String DEFAULT_EXCEPTION_FILENAME = "Unknown Source";
+    private static final String SILENT_FEEDBACK_SERVICE_REGEX = "com\\.google\\.android\\.libraries\\.social\\.silentfeedback\\.\\w*\\.SilentFeedbackReceiver";
+    private static final String TAG = "SilentFeedback";
     private final Context context;
 
     public SilentFeedback(Context context2) {
         this.context = context2;
-    }
-
-    public void sendSilentFeedback(Throwable ex, String categoryTag) {
-        sendSilentFeedback(this.context, ex, categoryTag, false, null);
     }
 
     public static void sendSilentFeedback(Context context2, Throwable ex, String categoryTag, boolean fullFeedback, Bundle psdBundle) {
@@ -150,5 +148,9 @@ public final class SilentFeedback {
             intent.putExtra(PSD_BUNDLE_KEY, psdBundle);
         }
         return intent;
+    }
+
+    public void sendSilentFeedback(Throwable ex, String categoryTag) {
+        sendSilentFeedback(this.context, ex, categoryTag, false, null);
     }
 }

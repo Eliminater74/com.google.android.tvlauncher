@@ -7,7 +7,9 @@ import android.app.Application;
 import android.content.ComponentCallbacks2;
 import android.content.res.Configuration;
 import android.os.Bundle;
+
 import com.google.android.gms.common.util.zzp;
+
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 

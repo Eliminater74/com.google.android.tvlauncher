@@ -6,6 +6,7 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.Pair;
+
 import com.google.android.gms.common.annotation.KeepName;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -19,6 +20,7 @@ import com.google.android.gms.common.api.TransformedResult;
 import com.google.android.gms.common.internal.Hide;
 import com.google.android.gms.common.internal.zzau;
 import com.google.android.gms.common.internal.zzx;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
@@ -29,18 +31,18 @@ import java.util.concurrent.atomic.AtomicReference;
 @Hide
 public abstract class BasePendingResult<R extends Result> extends PendingResult<R> {
     static final ThreadLocal<Boolean> zzc = new zzt();
-    @KeepName
-    private zzb mResultGuardian;
     private final Object zza;
     @Hide
     private final zza<R> zzb;
     private final WeakReference<GoogleApiClient> zzd;
     private final CountDownLatch zze;
     private final ArrayList<PendingResult.zza> zzf;
-    private ResultCallback<? super R> zzg;
     private final AtomicReference<zzdu> zzh;
     /* access modifiers changed from: private */
     public R zzi;
+    @KeepName
+    private zzb mResultGuardian;
+    private ResultCallback<? super R> zzg;
     private Status zzj;
     private volatile boolean zzk;
     private boolean zzl;
@@ -49,21 +51,6 @@ public abstract class BasePendingResult<R extends Result> extends PendingResult<
     private Integer zzo;
     private volatile zzdo<R> zzp;
     private boolean zzq;
-
-    final class zzb {
-        private zzb() {
-        }
-
-        /* access modifiers changed from: protected */
-        public final void finalize() throws Throwable {
-            BasePendingResult.zzb(BasePendingResult.this.zzi);
-            super.finalize();
-        }
-
-        /* synthetic */ zzb(BasePendingResult basePendingResult, zzt zzt) {
-            this();
-        }
-    }
 
     @Deprecated
     BasePendingResult() {
@@ -74,49 +61,6 @@ public abstract class BasePendingResult<R extends Result> extends PendingResult<
         this.zzq = false;
         this.zzb = new zza<>(Looper.getMainLooper());
         this.zzd = new WeakReference<>(null);
-    }
-
-    /* access modifiers changed from: protected */
-    @Hide
-    @NonNull
-    public abstract R zza(Status status);
-
-    @Hide
-    public static class zza<R extends Result> extends Handler {
-        public zza() {
-            this(Looper.getMainLooper());
-        }
-
-        public zza(Looper looper) {
-            super(looper);
-        }
-
-        public final void zza(ResultCallback<? super R> resultCallback, R r) {
-            sendMessage(obtainMessage(1, new Pair(resultCallback, r)));
-        }
-
-        public final void handleMessage(Message message) {
-            int i = message.what;
-            if (i == 1) {
-                Pair pair = (Pair) message.obj;
-                ResultCallback resultCallback = (ResultCallback) pair.first;
-                Result result = (Result) pair.second;
-                try {
-                    resultCallback.onResult(result);
-                } catch (RuntimeException e) {
-                    BasePendingResult.zzb(result);
-                    throw e;
-                }
-            } else if (i != 2) {
-                int i2 = message.what;
-                StringBuilder sb = new StringBuilder(45);
-                sb.append("Don't know how to handle message: ");
-                sb.append(i2);
-                Log.wtf("BasePendingResult", sb.toString(), new Exception());
-            } else {
-                ((BasePendingResult) message.obj).zzd(Status.zzd);
-            }
-        }
     }
 
     protected BasePendingResult(GoogleApiClient googleApiClient) {
@@ -139,6 +83,26 @@ public abstract class BasePendingResult<R extends Result> extends PendingResult<
         this.zzb = new zza<>(looper);
         this.zzd = new WeakReference<>(null);
     }
+
+    @Hide
+    public static void zzb(Result result) {
+        if (result instanceof Releasable) {
+            try {
+                ((Releasable) result).release();
+            } catch (RuntimeException e) {
+                String valueOf = String.valueOf(result);
+                StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 18);
+                sb.append("Unable to release ");
+                sb.append(valueOf);
+                Log.w("BasePendingResult", sb.toString(), e);
+            }
+        }
+    }
+
+    /* access modifiers changed from: protected */
+    @Hide
+    @NonNull
+    public abstract R zza(Status status);
 
     @Hide
     public final boolean zze() {
@@ -583,17 +547,55 @@ public abstract class BasePendingResult<R extends Result> extends PendingResult<
     }
 
     @Hide
-    public static void zzb(Result result) {
-        if (result instanceof Releasable) {
-            try {
-                ((Releasable) result).release();
-            } catch (RuntimeException e) {
-                String valueOf = String.valueOf(result);
-                StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 18);
-                sb.append("Unable to release ");
-                sb.append(valueOf);
-                Log.w("BasePendingResult", sb.toString(), e);
+    public static class zza<R extends Result> extends Handler {
+        public zza() {
+            this(Looper.getMainLooper());
+        }
+
+        public zza(Looper looper) {
+            super(looper);
+        }
+
+        public final void zza(ResultCallback<? super R> resultCallback, R r) {
+            sendMessage(obtainMessage(1, new Pair(resultCallback, r)));
+        }
+
+        public final void handleMessage(Message message) {
+            int i = message.what;
+            if (i == 1) {
+                Pair pair = (Pair) message.obj;
+                ResultCallback resultCallback = (ResultCallback) pair.first;
+                Result result = (Result) pair.second;
+                try {
+                    resultCallback.onResult(result);
+                } catch (RuntimeException e) {
+                    BasePendingResult.zzb(result);
+                    throw e;
+                }
+            } else if (i != 2) {
+                int i2 = message.what;
+                StringBuilder sb = new StringBuilder(45);
+                sb.append("Don't know how to handle message: ");
+                sb.append(i2);
+                Log.wtf("BasePendingResult", sb.toString(), new Exception());
+            } else {
+                ((BasePendingResult) message.obj).zzd(Status.zzd);
             }
+        }
+    }
+
+    final class zzb {
+        private zzb() {
+        }
+
+        /* synthetic */ zzb(BasePendingResult basePendingResult, zzt zzt) {
+            this();
+        }
+
+        /* access modifiers changed from: protected */
+        public final void finalize() throws Throwable {
+            BasePendingResult.zzb(BasePendingResult.this.zzi);
+            super.finalize();
         }
     }
 }

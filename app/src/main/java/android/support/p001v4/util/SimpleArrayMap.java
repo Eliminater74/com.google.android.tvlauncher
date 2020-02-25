@@ -2,6 +2,7 @@ package android.support.p001v4.util;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import java.util.ConcurrentModificationException;
 
 /* renamed from: android.support.v4.util.SimpleArrayMap */
@@ -21,11 +22,62 @@ public class SimpleArrayMap<K, V> {
     int[] mHashes;
     int mSize;
 
+    public SimpleArrayMap() {
+        this.mHashes = ContainerHelpers.EMPTY_INTS;
+        this.mArray = ContainerHelpers.EMPTY_OBJECTS;
+        this.mSize = 0;
+    }
+
+    public SimpleArrayMap(int capacity) {
+        if (capacity == 0) {
+            this.mHashes = ContainerHelpers.EMPTY_INTS;
+            this.mArray = ContainerHelpers.EMPTY_OBJECTS;
+        } else {
+            allocArrays(capacity);
+        }
+        this.mSize = 0;
+    }
+
+    public SimpleArrayMap(SimpleArrayMap simpleArrayMap) {
+        this();
+        if (simpleArrayMap != null) {
+            putAll(simpleArrayMap);
+        }
+    }
+
     private static int binarySearchHashes(int[] hashes, int N, int hash) {
         try {
             return ContainerHelpers.binarySearch(hashes, N, hash);
         } catch (ArrayIndexOutOfBoundsException e) {
             throw new ConcurrentModificationException();
+        }
+    }
+
+    private static void freeArrays(int[] hashes, Object[] array, int size) {
+        if (hashes.length == 8) {
+            synchronized (SimpleArrayMap.class) {
+                if (mTwiceBaseCacheSize < 10) {
+                    array[0] = mTwiceBaseCache;
+                    array[1] = hashes;
+                    for (int i = (size << 1) - 1; i >= 2; i--) {
+                        array[i] = null;
+                    }
+                    mTwiceBaseCache = array;
+                    mTwiceBaseCacheSize++;
+                }
+            }
+        } else if (hashes.length == 4) {
+            synchronized (SimpleArrayMap.class) {
+                if (mBaseCacheSize < 10) {
+                    array[0] = mBaseCache;
+                    array[1] = hashes;
+                    for (int i2 = (size << 1) - 1; i2 >= 2; i2--) {
+                        array[i2] = null;
+                    }
+                    mBaseCache = array;
+                    mBaseCacheSize++;
+                }
+            }
         }
     }
 
@@ -113,57 +165,6 @@ public class SimpleArrayMap<K, V> {
         }
         this.mHashes = new int[size];
         this.mArray = new Object[(size << 1)];
-    }
-
-    private static void freeArrays(int[] hashes, Object[] array, int size) {
-        if (hashes.length == 8) {
-            synchronized (SimpleArrayMap.class) {
-                if (mTwiceBaseCacheSize < 10) {
-                    array[0] = mTwiceBaseCache;
-                    array[1] = hashes;
-                    for (int i = (size << 1) - 1; i >= 2; i--) {
-                        array[i] = null;
-                    }
-                    mTwiceBaseCache = array;
-                    mTwiceBaseCacheSize++;
-                }
-            }
-        } else if (hashes.length == 4) {
-            synchronized (SimpleArrayMap.class) {
-                if (mBaseCacheSize < 10) {
-                    array[0] = mBaseCache;
-                    array[1] = hashes;
-                    for (int i2 = (size << 1) - 1; i2 >= 2; i2--) {
-                        array[i2] = null;
-                    }
-                    mBaseCache = array;
-                    mBaseCacheSize++;
-                }
-            }
-        }
-    }
-
-    public SimpleArrayMap() {
-        this.mHashes = ContainerHelpers.EMPTY_INTS;
-        this.mArray = ContainerHelpers.EMPTY_OBJECTS;
-        this.mSize = 0;
-    }
-
-    public SimpleArrayMap(int capacity) {
-        if (capacity == 0) {
-            this.mHashes = ContainerHelpers.EMPTY_INTS;
-            this.mArray = ContainerHelpers.EMPTY_OBJECTS;
-        } else {
-            allocArrays(capacity);
-        }
-        this.mSize = 0;
-    }
-
-    public SimpleArrayMap(SimpleArrayMap simpleArrayMap) {
-        this();
-        if (simpleArrayMap != null) {
-            putAll(simpleArrayMap);
-        }
     }
 
     public void clear() {

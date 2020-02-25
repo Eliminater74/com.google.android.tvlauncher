@@ -1,9 +1,11 @@
 package com.google.android.libraries.performance.primes.hprof;
 
 import android.support.annotation.VisibleForTesting;
+
 import com.android.ahat.dominators.Dominators;
 import com.google.android.libraries.performance.primes.hprof.collect.IntObjectMap;
 import com.google.android.libraries.performance.primes.leak.LeakInfo;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;

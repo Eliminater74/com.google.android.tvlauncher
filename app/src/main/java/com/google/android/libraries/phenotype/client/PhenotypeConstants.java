@@ -16,6 +16,9 @@ public final class PhenotypeConstants {
     public static final String SERVER_TOKEN_FLAG_NAME = "__phenotype_server_token";
     public static final String SNAPSHOT_TOKEN_FLAG_NAME = "__phenotype_snapshot_token";
 
+    private PhenotypeConstants() {
+    }
+
     public static Uri getContentProviderUri(String configPackageName) {
         String valueOf = String.valueOf(Uri.encode(configPackageName));
         return Uri.parse(valueOf.length() != 0 ? "content://com.google.android.gms.phenotype/".concat(valueOf) : new String("content://com.google.android.gms.phenotype/"));
@@ -51,8 +54,5 @@ public final class PhenotypeConstants {
             return false;
         }
         return true;
-    }
-
-    private PhenotypeConstants() {
     }
 }

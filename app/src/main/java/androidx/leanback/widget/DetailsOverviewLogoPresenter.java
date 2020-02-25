@@ -4,37 +4,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
 import androidx.leanback.C0364R;
-import androidx.leanback.widget.FullWidthDetailsOverviewRowPresenter;
-import androidx.leanback.widget.Presenter;
 
 public class DetailsOverviewLogoPresenter extends Presenter {
-
-    public static class ViewHolder extends Presenter.ViewHolder {
-        protected FullWidthDetailsOverviewRowPresenter mParentPresenter;
-        protected FullWidthDetailsOverviewRowPresenter.ViewHolder mParentViewHolder;
-        private boolean mSizeFromDrawableIntrinsic;
-
-        public ViewHolder(View view) {
-            super(view);
-        }
-
-        public FullWidthDetailsOverviewRowPresenter getParentPresenter() {
-            return this.mParentPresenter;
-        }
-
-        public FullWidthDetailsOverviewRowPresenter.ViewHolder getParentViewHolder() {
-            return this.mParentViewHolder;
-        }
-
-        public boolean isSizeFromDrawableIntrinsic() {
-            return this.mSizeFromDrawableIntrinsic;
-        }
-
-        public void setSizeFromDrawableIntrinsic(boolean sizeFromDrawableIntrinsic) {
-            this.mSizeFromDrawableIntrinsic = sizeFromDrawableIntrinsic;
-        }
-    }
 
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
      method: ClspMth{android.view.LayoutInflater.inflate(int, android.view.ViewGroup, boolean):android.view.View}
@@ -93,5 +66,31 @@ public class DetailsOverviewLogoPresenter extends Presenter {
     }
 
     public void onUnbindViewHolder(Presenter.ViewHolder viewHolder) {
+    }
+
+    public static class ViewHolder extends Presenter.ViewHolder {
+        protected FullWidthDetailsOverviewRowPresenter mParentPresenter;
+        protected FullWidthDetailsOverviewRowPresenter.ViewHolder mParentViewHolder;
+        private boolean mSizeFromDrawableIntrinsic;
+
+        public ViewHolder(View view) {
+            super(view);
+        }
+
+        public FullWidthDetailsOverviewRowPresenter getParentPresenter() {
+            return this.mParentPresenter;
+        }
+
+        public FullWidthDetailsOverviewRowPresenter.ViewHolder getParentViewHolder() {
+            return this.mParentViewHolder;
+        }
+
+        public boolean isSizeFromDrawableIntrinsic() {
+            return this.mSizeFromDrawableIntrinsic;
+        }
+
+        public void setSizeFromDrawableIntrinsic(boolean sizeFromDrawableIntrinsic) {
+            this.mSizeFromDrawableIntrinsic = sizeFromDrawableIntrinsic;
+        }
     }
 }

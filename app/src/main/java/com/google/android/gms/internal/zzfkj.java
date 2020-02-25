@@ -10,6 +10,9 @@ import java.util.RandomAccess;
 public abstract class zzfkj<E> extends zzfkg<E> implements List<E>, RandomAccess {
     private static final zzfkp<Object> zza = new zzfkl(zzfkn.zza, 0);
 
+    zzfkj() {
+    }
+
     public static <E> zzfkj<E> zzd() {
         return zzfkn.zza;
     }
@@ -50,7 +53,8 @@ public abstract class zzfkj<E> extends zzfkg<E> implements List<E>, RandomAccess
         return new zzfkn(objArr, i);
     }
 
-    zzfkj() {
+    public static <E> zzfkk<E> zze() {
+        return new zzfkk<>();
     }
 
     public final zzfko<E> zza() {
@@ -198,10 +202,6 @@ public abstract class zzfkj<E> extends zzfkg<E> implements List<E>, RandomAccess
             i = (((i * 31) + get(i2).hashCode()) ^ -1) ^ -1;
         }
         return i;
-    }
-
-    public static <E> zzfkk<E> zze() {
-        return new zzfkk<>();
     }
 
     public /* synthetic */ Iterator iterator() {

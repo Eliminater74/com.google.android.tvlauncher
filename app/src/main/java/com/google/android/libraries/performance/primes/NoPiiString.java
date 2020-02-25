@@ -3,6 +3,7 @@ package com.google.android.libraries.performance.primes;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.text.TextUtils;
+
 import com.google.android.libraries.stitch.util.Preconditions;
 import com.google.errorprone.annotations.CompileTimeConstant;
 import com.google.errorprone.annotations.Immutable;
@@ -11,6 +12,10 @@ import com.google.errorprone.annotations.Immutable;
 @javax.annotation.concurrent.Immutable
 public final class NoPiiString {
     private final String value;
+
+    private NoPiiString(String value2) {
+        this.value = value2;
+    }
 
     public static NoPiiString fromConstant(@CompileTimeConstant String value2) {
         return new NoPiiString((String) Preconditions.checkNotNull(value2));
@@ -68,20 +73,16 @@ public final class NoPiiString {
         return new NoPiiString(value2);
     }
 
-    private NoPiiString(String value2) {
-        this.value = value2;
-    }
-
-    public String toString() {
-        return this.value;
-    }
-
     @Nullable
     public static String safeToString(@Nullable NoPiiString noPiiString) {
         if (noPiiString == null) {
             return null;
         }
         return noPiiString.toString();
+    }
+
+    public String toString() {
+        return this.value;
     }
 
     public boolean equals(Object obj) {

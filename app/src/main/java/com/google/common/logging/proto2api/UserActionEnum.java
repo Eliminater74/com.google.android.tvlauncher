@@ -53,7 +53,7 @@ public final class UserActionEnum {
         MULTI_KEY_PRESS(39),
         TWO_FINGER_DRAG(40),
         ENTER_PROXIMITY(41);
-        
+
         public static final int ACTION_BY_TIMER_VALUE = 33;
         public static final int ARROW_KEYS_VALUE = 24;
         public static final int AUTOMATED_VALUE = 1;
@@ -103,8 +103,8 @@ public final class UserActionEnum {
         };
         private final int value;
 
-        public final int getNumber() {
-            return this.value;
+        private UserAction(int value2) {
+            this.value = value2;
         }
 
         public static UserAction forNumber(int value2) {
@@ -206,6 +206,10 @@ public final class UserActionEnum {
             return UserActionVerifier.INSTANCE;
         }
 
+        public final int getNumber() {
+            return this.value;
+        }
+
         private static final class UserActionVerifier implements Internal.EnumVerifier {
             static final Internal.EnumVerifier INSTANCE = new UserActionVerifier();
 
@@ -216,10 +220,6 @@ public final class UserActionEnum {
                 return UserAction.forNumber(number) != null;
             }
         }
-
-        private UserAction(int value2) {
-            this.value = value2;
-        }
     }
 
     public enum CardinalDirection implements Internal.EnumLite {
@@ -228,7 +228,7 @@ public final class UserActionEnum {
         RIGHT(2),
         UP(3),
         DOWN(4);
-        
+
         public static final int DOWN_VALUE = 4;
         public static final int LEFT_VALUE = 1;
         public static final int RIGHT_VALUE = 2;
@@ -241,8 +241,8 @@ public final class UserActionEnum {
         };
         private final int value;
 
-        public final int getNumber() {
-            return this.value;
+        private CardinalDirection(int value2) {
+            this.value = value2;
         }
 
         public static CardinalDirection forNumber(int value2) {
@@ -272,6 +272,10 @@ public final class UserActionEnum {
             return CardinalDirectionVerifier.INSTANCE;
         }
 
+        public final int getNumber() {
+            return this.value;
+        }
+
         private static final class CardinalDirectionVerifier implements Internal.EnumVerifier {
             static final Internal.EnumVerifier INSTANCE = new CardinalDirectionVerifier();
 
@@ -281,10 +285,6 @@ public final class UserActionEnum {
             public boolean isInRange(int number) {
                 return CardinalDirection.forNumber(number) != null;
             }
-        }
-
-        private CardinalDirection(int value2) {
-            this.value = value2;
         }
     }
 }

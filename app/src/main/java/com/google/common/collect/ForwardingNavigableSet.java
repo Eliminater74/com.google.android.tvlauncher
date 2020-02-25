@@ -2,18 +2,18 @@ package com.google.common.collect;
 
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.GwtIncompatible;
-import com.google.common.collect.Sets;
+
 import java.util.Iterator;
 import java.util.NavigableSet;
 import java.util.SortedSet;
 
 @GwtIncompatible
 public abstract class ForwardingNavigableSet<E> extends ForwardingSortedSet<E> implements NavigableSet<E> {
-    /* access modifiers changed from: protected */
-    public abstract NavigableSet<E> delegate();
-
     protected ForwardingNavigableSet() {
     }
+
+    /* access modifiers changed from: protected */
+    public abstract NavigableSet<E> delegate();
 
     public E lower(E e) {
         return delegate().lower(e);
@@ -83,13 +83,6 @@ public abstract class ForwardingNavigableSet<E> extends ForwardingSortedSet<E> i
         return delegate().descendingSet();
     }
 
-    @Beta
-    protected class StandardDescendingSet extends Sets.DescendingSet<E> {
-        public StandardDescendingSet(ForwardingNavigableSet this$0) {
-            super(this$0);
-        }
-    }
-
     public Iterator<E> descendingIterator() {
         return delegate().descendingIterator();
     }
@@ -125,5 +118,12 @@ public abstract class ForwardingNavigableSet<E> extends ForwardingSortedSet<E> i
     /* access modifiers changed from: protected */
     public SortedSet<E> standardTailSet(E fromElement) {
         return tailSet(fromElement, true);
+    }
+
+    @Beta
+    protected class StandardDescendingSet extends Sets.DescendingSet<E> {
+        public StandardDescendingSet(ForwardingNavigableSet this$0) {
+            super(this$0);
+        }
     }
 }

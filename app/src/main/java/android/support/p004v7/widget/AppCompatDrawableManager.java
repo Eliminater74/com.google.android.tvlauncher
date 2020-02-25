@@ -13,16 +13,15 @@ import android.support.annotation.RestrictTo;
 import android.support.p001v4.graphics.ColorUtils;
 import android.support.p004v7.appcompat.C0233R;
 import android.support.p004v7.content.res.AppCompatResources;
-import android.support.p004v7.widget.ResourceManagerInternal;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
 /* renamed from: android.support.v7.widget.AppCompatDrawableManager */
 public final class AppCompatDrawableManager {
-    private static final boolean DEBUG = false;
     /* access modifiers changed from: private */
     public static final PorterDuff.Mode DEFAULT_MODE = PorterDuff.Mode.SRC_IN;
-    private static AppCompatDrawableManager INSTANCE = null;
+    private static final boolean DEBUG = false;
     private static final String TAG = "AppCompatDrawableManag";
+    private static AppCompatDrawableManager INSTANCE = null;
     private ResourceManagerInternal mResourceManager;
 
     public static synchronized void preload() {
@@ -235,6 +234,18 @@ public final class AppCompatDrawableManager {
         return appCompatDrawableManager;
     }
 
+    static void tintDrawable(Drawable drawable, TintInfo tint, int[] state) {
+        ResourceManagerInternal.tintDrawable(drawable, tint, state);
+    }
+
+    public static synchronized PorterDuffColorFilter getPorterDuffColorFilter(int color, PorterDuff.Mode mode) {
+        PorterDuffColorFilter porterDuffColorFilter;
+        synchronized (AppCompatDrawableManager.class) {
+            porterDuffColorFilter = ResourceManagerInternal.getPorterDuffColorFilter(color, mode);
+        }
+        return porterDuffColorFilter;
+    }
+
     public synchronized Drawable getDrawable(@NonNull Context context, @DrawableRes int resId) {
         return this.mResourceManager.getDrawable(context, resId);
     }
@@ -261,17 +272,5 @@ public final class AppCompatDrawableManager {
     /* access modifiers changed from: package-private */
     public synchronized ColorStateList getTintList(@NonNull Context context, @DrawableRes int resId) {
         return this.mResourceManager.getTintList(context, resId);
-    }
-
-    static void tintDrawable(Drawable drawable, TintInfo tint, int[] state) {
-        ResourceManagerInternal.tintDrawable(drawable, tint, state);
-    }
-
-    public static synchronized PorterDuffColorFilter getPorterDuffColorFilter(int color, PorterDuff.Mode mode) {
-        PorterDuffColorFilter porterDuffColorFilter;
-        synchronized (AppCompatDrawableManager.class) {
-            porterDuffColorFilter = ResourceManagerInternal.getPorterDuffColorFilter(color, mode);
-        }
-        return porterDuffColorFilter;
     }
 }

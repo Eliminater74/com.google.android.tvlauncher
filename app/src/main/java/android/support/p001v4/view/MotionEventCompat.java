@@ -112,6 +112,9 @@ public final class MotionEventCompat {
     @Deprecated
     public static final int BUTTON_PRIMARY = 1;
 
+    private MotionEventCompat() {
+    }
+
     @Deprecated
     public static int getActionMasked(MotionEvent event) {
         return event.getActionMasked();
@@ -169,8 +172,5 @@ public final class MotionEventCompat {
     @Deprecated
     public static int getButtonState(MotionEvent event) {
         return event.getButtonState();
-    }
-
-    private MotionEventCompat() {
     }
 }

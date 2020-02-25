@@ -1,6 +1,7 @@
 package com.google.android.libraries.performance.primes.scenario;
 
 import com.google.android.libraries.performance.primes.NoPiiString;
+
 import java.util.Set;
 
 public interface ScenarioStructureProvider {

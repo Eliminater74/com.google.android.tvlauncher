@@ -8,6 +8,7 @@ import com.google.android.exoplayer2.extractor.ExtractorsFactory;
 import com.google.android.exoplayer2.extractor.PositionHolder;
 import com.google.android.exoplayer2.extractor.TrackOutput;
 import com.google.android.exoplayer2.util.ParsableByteArray;
+
 import java.io.IOException;
 
 public class OggExtractor implements Extractor {
@@ -19,6 +20,11 @@ public class OggExtractor implements Extractor {
 
     static final /* synthetic */ Extractor[] lambda$static$0$OggExtractor() {
         return new Extractor[]{new OggExtractor()};
+    }
+
+    private static ParsableByteArray resetPosition(ParsableByteArray scratch) {
+        scratch.setPosition(0);
+        return scratch;
     }
 
     public boolean sniff(ExtractorInput input) throws IOException, InterruptedException {
@@ -78,10 +84,5 @@ public class OggExtractor implements Extractor {
             this.streamReader = new OpusReader();
         }
         return true;
-    }
-
-    private static ParsableByteArray resetPosition(ParsableByteArray scratch) {
-        scratch.setPosition(0);
-        return scratch;
     }
 }

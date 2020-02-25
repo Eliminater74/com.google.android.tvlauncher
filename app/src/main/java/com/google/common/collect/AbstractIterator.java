@@ -3,8 +3,10 @@ package com.google.common.collect;
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import java.util.NoSuchElementException;
+
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
+import java.util.NoSuchElementException;
 
 @GwtCompatible
 public abstract class AbstractIterator<T> extends UnmodifiableIterator<T> {
@@ -12,40 +14,17 @@ public abstract class AbstractIterator<T> extends UnmodifiableIterator<T> {
     private T next;
     private State state = State.NOT_READY;
 
-    private enum State {
-        READY,
-        NOT_READY,
-        DONE,
-        FAILED
+    protected AbstractIterator() {
     }
 
     /* access modifiers changed from: protected */
     public abstract T computeNext();
-
-    protected AbstractIterator() {
-    }
 
     /* access modifiers changed from: protected */
     @CanIgnoreReturnValue
     public final T endOfData() {
         this.state = State.DONE;
         return null;
-    }
-
-    /* renamed from: com.google.common.collect.AbstractIterator$1 */
-    static /* synthetic */ class C15131 {
-        static final /* synthetic */ int[] $SwitchMap$com$google$common$collect$AbstractIterator$State = new int[State.values().length];
-
-        static {
-            try {
-                $SwitchMap$com$google$common$collect$AbstractIterator$State[State.DONE.ordinal()] = 1;
-            } catch (NoSuchFieldError e) {
-            }
-            try {
-                $SwitchMap$com$google$common$collect$AbstractIterator$State[State.READY.ordinal()] = 2;
-            } catch (NoSuchFieldError e2) {
-            }
-        }
     }
 
     @CanIgnoreReturnValue
@@ -87,5 +66,28 @@ public abstract class AbstractIterator<T> extends UnmodifiableIterator<T> {
             return this.next;
         }
         throw new NoSuchElementException();
+    }
+
+    private enum State {
+        READY,
+        NOT_READY,
+        DONE,
+        FAILED
+    }
+
+    /* renamed from: com.google.common.collect.AbstractIterator$1 */
+    static /* synthetic */ class C15131 {
+        static final /* synthetic */ int[] $SwitchMap$com$google$common$collect$AbstractIterator$State = new int[State.values().length];
+
+        static {
+            try {
+                $SwitchMap$com$google$common$collect$AbstractIterator$State[State.DONE.ordinal()] = 1;
+            } catch (NoSuchFieldError e) {
+            }
+            try {
+                $SwitchMap$com$google$common$collect$AbstractIterator$State[State.READY.ordinal()] = 2;
+            } catch (NoSuchFieldError e2) {
+            }
+        }
     }
 }

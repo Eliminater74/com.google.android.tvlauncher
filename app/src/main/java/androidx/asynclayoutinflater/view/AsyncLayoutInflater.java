@@ -13,11 +13,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import java.util.concurrent.ArrayBlockingQueue;
 
 public final class AsyncLayoutInflater {
     private static final String TAG = "AsyncLayoutInflater";
     Handler mHandler;
+    InflateThread mInflateThread;
+    LayoutInflater mInflater;
     private Handler.Callback mHandlerCallback = new Handler.Callback() {
         /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
          method: ClspMth{android.view.LayoutInflater.inflate(int, android.view.ViewGroup, boolean):android.view.View}
@@ -35,12 +38,6 @@ public final class AsyncLayoutInflater {
             return true;
         }
     };
-    InflateThread mInflateThread;
-    LayoutInflater mInflater;
-
-    public interface OnInflateFinishedListener {
-        void onInflateFinished(@NonNull View view, @LayoutRes int i, @Nullable ViewGroup viewGroup);
-    }
 
     public AsyncLayoutInflater(@NonNull Context context) {
         this.mInflater = new BasicInflater(context);
@@ -60,6 +57,10 @@ public final class AsyncLayoutInflater {
             return;
         }
         throw new NullPointerException("callback argument may not be null!");
+    }
+
+    public interface OnInflateFinishedListener {
+        void onInflateFinished(@NonNull View view, @LayoutRes int i, @Nullable ViewGroup viewGroup);
     }
 
     private static class InflateRequest {
@@ -105,14 +106,15 @@ public final class AsyncLayoutInflater {
 
     private static class InflateThread extends Thread {
         private static final InflateThread sInstance = new InflateThread();
+
+        static {
+            sInstance.start();
+        }
+
         private ArrayBlockingQueue<InflateRequest> mQueue = new ArrayBlockingQueue<>(10);
         private Pools.SynchronizedPool<InflateRequest> mRequestPool = new Pools.SynchronizedPool<>(10);
 
         private InflateThread() {
-        }
-
-        static {
-            sInstance.start();
         }
 
         public static InflateThread getInstance() {

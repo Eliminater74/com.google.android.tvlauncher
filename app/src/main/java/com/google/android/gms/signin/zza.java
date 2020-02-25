@@ -10,9 +10,9 @@ public final class zza {
     @Hide
     public static final Api.zza<zzemc, SignInOptions> zza = new zzb();
     @Hide
-    public static final Api<SignInOptions> zzb = new Api<>("SignIn.API", zza, zzc);
-    @Hide
     private static final Api.ClientKey<zzemc> zzc = new Api.ClientKey<>();
+    @Hide
+    public static final Api<SignInOptions> zzb = new Api<>("SignIn.API", zza, zzc);
     @Hide
     private static final Api.ClientKey<zzemc> zzd = new Api.ClientKey<>();
     @Hide

@@ -3,6 +3,7 @@ package androidx.core.app;
 import android.support.annotation.RestrictTo;
 import android.support.p001v4.app.Person;
 import android.support.p001v4.graphics.drawable.IconCompat;
+
 import androidx.versionedparcelable.VersionedParcel;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY})

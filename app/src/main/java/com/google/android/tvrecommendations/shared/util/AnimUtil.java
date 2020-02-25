@@ -17,21 +17,18 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.List;
 
 public class AnimUtil {
+    public static final ScaleProperty SCALE_PROPERTY = new ScaleProperty();
     private static final BoundsProperty BOUNDS_PROPERTY = new BoundsProperty();
     private static final Interpolator DELAYED_APPEARANCE_INTERPOLATOR = new AccelerateInterpolator(2.0f);
     private static final float EPS = 0.001f;
     private static final Interpolator FAST_DISAPPEARANCE_INTERPOLATOR = new DecelerateInterpolator(3.0f);
     private static final PivotXProperty PIVOT_X_PROPERTY = new PivotXProperty();
-    public static final ScaleProperty SCALE_PROPERTY = new ScaleProperty();
-
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface Visibility {
-    }
 
     private static void setInterpolatorIfNotNull(@Nullable Animator animator, @Nullable Interpolator interpolator) {
         if (animator != null && interpolator != null) {
@@ -263,6 +260,10 @@ public class AnimUtil {
         if (animator != null) {
             animators.add(animator);
         }
+    }
+
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface Visibility {
     }
 
     private static class ScaleProperty extends FloatProperty<View> {

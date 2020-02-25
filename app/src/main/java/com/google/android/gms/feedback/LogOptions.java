@@ -2,6 +2,7 @@ package com.google.android.gms.feedback;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
 import com.google.android.gms.common.internal.Hide;
 import com.google.android.gms.internal.zzbkv;
 import com.google.android.gms.internal.zzbky;
@@ -12,23 +13,9 @@ public class LogOptions extends zzbkv {
     private String zza;
     private boolean zzb;
 
-    public static class Builder {
-        private String zza;
-        private boolean zzb;
-
-        public Builder setSystemLogFilter(String str) {
-            this.zza = str;
-            return this;
-        }
-
-        public Builder setRadioLogsIncluded(boolean z) {
-            this.zzb = z;
-            return this;
-        }
-
-        public LogOptions build() {
-            return new LogOptions(this.zza, this.zzb);
-        }
+    LogOptions(String str, boolean z) {
+        this.zza = str;
+        this.zzb = z;
     }
 
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
@@ -65,8 +52,22 @@ public class LogOptions extends zzbkv {
         zzbky.zza(parcel, zza2);
     }
 
-    LogOptions(String str, boolean z) {
-        this.zza = str;
-        this.zzb = z;
+    public static class Builder {
+        private String zza;
+        private boolean zzb;
+
+        public Builder setSystemLogFilter(String str) {
+            this.zza = str;
+            return this;
+        }
+
+        public Builder setRadioLogsIncluded(boolean z) {
+            this.zzb = z;
+            return this;
+        }
+
+        public LogOptions build() {
+            return new LogOptions(this.zza, this.zzb);
+        }
     }
 }

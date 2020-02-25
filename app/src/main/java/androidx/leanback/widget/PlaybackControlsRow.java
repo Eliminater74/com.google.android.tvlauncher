@@ -10,8 +10,10 @@ import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.TypedValue;
+
 import androidx.leanback.C0364R;
 import androidx.leanback.util.MathUtil;
+
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
 
 public class PlaybackControlsRow extends Row {
@@ -23,6 +25,200 @@ public class PlaybackControlsRow extends Row {
     private ObjectAdapter mPrimaryActionsAdapter;
     private ObjectAdapter mSecondaryActionsAdapter;
     private long mTotalTimeMs;
+
+    public PlaybackControlsRow(Object item) {
+        this.mItem = item;
+    }
+
+    public PlaybackControlsRow() {
+    }
+
+    static Bitmap createBitmap(Bitmap bitmap, int color) {
+        Bitmap dst = bitmap.copy(bitmap.getConfig(), true);
+        Canvas canvas = new Canvas(dst);
+        Paint paint = new Paint();
+        paint.setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_ATOP));
+        canvas.drawBitmap(bitmap, 0.0f, 0.0f, paint);
+        return dst;
+    }
+
+    static int getIconHighlightColor(Context context) {
+        TypedValue outValue = new TypedValue();
+        if (context.getTheme().resolveAttribute(C0364R.attr.playbackControlsIconHighlightColor, outValue, true)) {
+            return outValue.data;
+        }
+        return context.getResources().getColor(C0364R.color.lb_playback_icon_highlight_no_theme);
+    }
+
+    static Drawable getStyledDrawable(Context context, int index) {
+        TypedValue outValue = new TypedValue();
+        if (!context.getTheme().resolveAttribute(C0364R.attr.playbackControlsActionIcons, outValue, false)) {
+            return null;
+        }
+        TypedArray array = context.getTheme().obtainStyledAttributes(outValue.data, C0364R.styleable.lbPlaybackControlsActionIcons);
+        Drawable drawable = array.getDrawable(index);
+        array.recycle();
+        return drawable;
+    }
+
+    public final Object getItem() {
+        return this.mItem;
+    }
+
+    public final void setImageBitmap(Context context, Bitmap bm) {
+        this.mImageDrawable = new BitmapDrawable(context.getResources(), bm);
+    }
+
+    public final Drawable getImageDrawable() {
+        return this.mImageDrawable;
+    }
+
+    public final void setImageDrawable(Drawable drawable) {
+        this.mImageDrawable = drawable;
+    }
+
+    public final ObjectAdapter getPrimaryActionsAdapter() {
+        return this.mPrimaryActionsAdapter;
+    }
+
+    public final void setPrimaryActionsAdapter(ObjectAdapter adapter) {
+        this.mPrimaryActionsAdapter = adapter;
+    }
+
+    public final ObjectAdapter getSecondaryActionsAdapter() {
+        return this.mSecondaryActionsAdapter;
+    }
+
+    public final void setSecondaryActionsAdapter(ObjectAdapter adapter) {
+        this.mSecondaryActionsAdapter = adapter;
+    }
+
+    @Deprecated
+    public int getTotalTime() {
+        return MathUtil.safeLongToInt(getTotalTimeLong());
+    }
+
+    @Deprecated
+    public void setTotalTime(int ms) {
+        setDuration((long) ms);
+    }
+
+    @Deprecated
+    public long getTotalTimeLong() {
+        return this.mTotalTimeMs;
+    }
+
+    @Deprecated
+    public void setTotalTimeLong(long ms) {
+        setDuration(ms);
+    }
+
+    public long getDuration() {
+        return this.mTotalTimeMs;
+    }
+
+    public void setDuration(long ms) {
+        if (this.mTotalTimeMs != ms) {
+            this.mTotalTimeMs = ms;
+            OnPlaybackProgressCallback onPlaybackProgressCallback = this.mListener;
+            if (onPlaybackProgressCallback != null) {
+                onPlaybackProgressCallback.onDurationChanged(this, this.mTotalTimeMs);
+            }
+        }
+    }
+
+    @Deprecated
+    public int getCurrentTime() {
+        return MathUtil.safeLongToInt(getCurrentTimeLong());
+    }
+
+    @Deprecated
+    public void setCurrentTime(int ms) {
+        setCurrentTimeLong((long) ms);
+    }
+
+    @Deprecated
+    public long getCurrentTimeLong() {
+        return this.mCurrentTimeMs;
+    }
+
+    @Deprecated
+    public void setCurrentTimeLong(long ms) {
+        setCurrentPosition(ms);
+    }
+
+    public long getCurrentPosition() {
+        return this.mCurrentTimeMs;
+    }
+
+    public void setCurrentPosition(long ms) {
+        if (this.mCurrentTimeMs != ms) {
+            this.mCurrentTimeMs = ms;
+            OnPlaybackProgressCallback onPlaybackProgressCallback = this.mListener;
+            if (onPlaybackProgressCallback != null) {
+                onPlaybackProgressCallback.onCurrentPositionChanged(this, this.mCurrentTimeMs);
+            }
+        }
+    }
+
+    @Deprecated
+    public int getBufferedProgress() {
+        return MathUtil.safeLongToInt(getBufferedPosition());
+    }
+
+    @Deprecated
+    public void setBufferedProgress(int ms) {
+        setBufferedPosition((long) ms);
+    }
+
+    @Deprecated
+    public long getBufferedProgressLong() {
+        return this.mBufferedProgressMs;
+    }
+
+    @Deprecated
+    public void setBufferedProgressLong(long ms) {
+        setBufferedPosition(ms);
+    }
+
+    public long getBufferedPosition() {
+        return this.mBufferedProgressMs;
+    }
+
+    public void setBufferedPosition(long ms) {
+        if (this.mBufferedProgressMs != ms) {
+            this.mBufferedProgressMs = ms;
+            OnPlaybackProgressCallback onPlaybackProgressCallback = this.mListener;
+            if (onPlaybackProgressCallback != null) {
+                onPlaybackProgressCallback.onBufferedPositionChanged(this, this.mBufferedProgressMs);
+            }
+        }
+    }
+
+    public Action getActionForKeyCode(int keyCode) {
+        Action action = getActionForKeyCode(getPrimaryActionsAdapter(), keyCode);
+        if (action != null) {
+            return action;
+        }
+        return getActionForKeyCode(getSecondaryActionsAdapter(), keyCode);
+    }
+
+    public Action getActionForKeyCode(ObjectAdapter adapter, int keyCode) {
+        if (adapter == this.mPrimaryActionsAdapter || adapter == this.mSecondaryActionsAdapter) {
+            for (int i = 0; i < adapter.size(); i++) {
+                Action action = (Action) adapter.get(i);
+                if (action.respondsToKeyCode(keyCode)) {
+                    return action;
+                }
+            }
+            return null;
+        }
+        throw new IllegalArgumentException("Invalid adapter");
+    }
+
+    public void setOnPlaybackProgressChangedListener(OnPlaybackProgressCallback listener) {
+        this.mListener = listener;
+    }
 
     public static class OnPlaybackProgressCallback {
         public void onCurrentPositionChanged(PlaybackControlsRow row, long currentTimeMs) {
@@ -100,6 +296,10 @@ public class PlaybackControlsRow extends Row {
             setIndex(this.mIndex < getActionCount() + -1 ? this.mIndex + 1 : 0);
         }
 
+        public int getIndex() {
+            return this.mIndex;
+        }
+
         public void setIndex(int index) {
             this.mIndex = index;
             Drawable[] drawableArr = this.mDrawables;
@@ -114,10 +314,6 @@ public class PlaybackControlsRow extends Row {
             if (strArr2 != null) {
                 setLabel2(strArr2[this.mIndex]);
             }
-        }
-
-        public int getIndex() {
-            return this.mIndex;
         }
     }
 
@@ -391,199 +587,5 @@ public class PlaybackControlsRow extends Row {
             labels[1] = context.getString(C0364R.string.lb_playback_controls_closed_captioning_disable);
             setLabels(labels);
         }
-    }
-
-    static Bitmap createBitmap(Bitmap bitmap, int color) {
-        Bitmap dst = bitmap.copy(bitmap.getConfig(), true);
-        Canvas canvas = new Canvas(dst);
-        Paint paint = new Paint();
-        paint.setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_ATOP));
-        canvas.drawBitmap(bitmap, 0.0f, 0.0f, paint);
-        return dst;
-    }
-
-    static int getIconHighlightColor(Context context) {
-        TypedValue outValue = new TypedValue();
-        if (context.getTheme().resolveAttribute(C0364R.attr.playbackControlsIconHighlightColor, outValue, true)) {
-            return outValue.data;
-        }
-        return context.getResources().getColor(C0364R.color.lb_playback_icon_highlight_no_theme);
-    }
-
-    static Drawable getStyledDrawable(Context context, int index) {
-        TypedValue outValue = new TypedValue();
-        if (!context.getTheme().resolveAttribute(C0364R.attr.playbackControlsActionIcons, outValue, false)) {
-            return null;
-        }
-        TypedArray array = context.getTheme().obtainStyledAttributes(outValue.data, C0364R.styleable.lbPlaybackControlsActionIcons);
-        Drawable drawable = array.getDrawable(index);
-        array.recycle();
-        return drawable;
-    }
-
-    public PlaybackControlsRow(Object item) {
-        this.mItem = item;
-    }
-
-    public PlaybackControlsRow() {
-    }
-
-    public final Object getItem() {
-        return this.mItem;
-    }
-
-    public final void setImageDrawable(Drawable drawable) {
-        this.mImageDrawable = drawable;
-    }
-
-    public final void setImageBitmap(Context context, Bitmap bm) {
-        this.mImageDrawable = new BitmapDrawable(context.getResources(), bm);
-    }
-
-    public final Drawable getImageDrawable() {
-        return this.mImageDrawable;
-    }
-
-    public final void setPrimaryActionsAdapter(ObjectAdapter adapter) {
-        this.mPrimaryActionsAdapter = adapter;
-    }
-
-    public final void setSecondaryActionsAdapter(ObjectAdapter adapter) {
-        this.mSecondaryActionsAdapter = adapter;
-    }
-
-    public final ObjectAdapter getPrimaryActionsAdapter() {
-        return this.mPrimaryActionsAdapter;
-    }
-
-    public final ObjectAdapter getSecondaryActionsAdapter() {
-        return this.mSecondaryActionsAdapter;
-    }
-
-    @Deprecated
-    public void setTotalTime(int ms) {
-        setDuration((long) ms);
-    }
-
-    @Deprecated
-    public void setTotalTimeLong(long ms) {
-        setDuration(ms);
-    }
-
-    public void setDuration(long ms) {
-        if (this.mTotalTimeMs != ms) {
-            this.mTotalTimeMs = ms;
-            OnPlaybackProgressCallback onPlaybackProgressCallback = this.mListener;
-            if (onPlaybackProgressCallback != null) {
-                onPlaybackProgressCallback.onDurationChanged(this, this.mTotalTimeMs);
-            }
-        }
-    }
-
-    @Deprecated
-    public int getTotalTime() {
-        return MathUtil.safeLongToInt(getTotalTimeLong());
-    }
-
-    @Deprecated
-    public long getTotalTimeLong() {
-        return this.mTotalTimeMs;
-    }
-
-    public long getDuration() {
-        return this.mTotalTimeMs;
-    }
-
-    @Deprecated
-    public void setCurrentTime(int ms) {
-        setCurrentTimeLong((long) ms);
-    }
-
-    @Deprecated
-    public void setCurrentTimeLong(long ms) {
-        setCurrentPosition(ms);
-    }
-
-    public void setCurrentPosition(long ms) {
-        if (this.mCurrentTimeMs != ms) {
-            this.mCurrentTimeMs = ms;
-            OnPlaybackProgressCallback onPlaybackProgressCallback = this.mListener;
-            if (onPlaybackProgressCallback != null) {
-                onPlaybackProgressCallback.onCurrentPositionChanged(this, this.mCurrentTimeMs);
-            }
-        }
-    }
-
-    @Deprecated
-    public int getCurrentTime() {
-        return MathUtil.safeLongToInt(getCurrentTimeLong());
-    }
-
-    @Deprecated
-    public long getCurrentTimeLong() {
-        return this.mCurrentTimeMs;
-    }
-
-    public long getCurrentPosition() {
-        return this.mCurrentTimeMs;
-    }
-
-    @Deprecated
-    public void setBufferedProgress(int ms) {
-        setBufferedPosition((long) ms);
-    }
-
-    @Deprecated
-    public void setBufferedProgressLong(long ms) {
-        setBufferedPosition(ms);
-    }
-
-    public void setBufferedPosition(long ms) {
-        if (this.mBufferedProgressMs != ms) {
-            this.mBufferedProgressMs = ms;
-            OnPlaybackProgressCallback onPlaybackProgressCallback = this.mListener;
-            if (onPlaybackProgressCallback != null) {
-                onPlaybackProgressCallback.onBufferedPositionChanged(this, this.mBufferedProgressMs);
-            }
-        }
-    }
-
-    @Deprecated
-    public int getBufferedProgress() {
-        return MathUtil.safeLongToInt(getBufferedPosition());
-    }
-
-    @Deprecated
-    public long getBufferedProgressLong() {
-        return this.mBufferedProgressMs;
-    }
-
-    public long getBufferedPosition() {
-        return this.mBufferedProgressMs;
-    }
-
-    public Action getActionForKeyCode(int keyCode) {
-        Action action = getActionForKeyCode(getPrimaryActionsAdapter(), keyCode);
-        if (action != null) {
-            return action;
-        }
-        return getActionForKeyCode(getSecondaryActionsAdapter(), keyCode);
-    }
-
-    public Action getActionForKeyCode(ObjectAdapter adapter, int keyCode) {
-        if (adapter == this.mPrimaryActionsAdapter || adapter == this.mSecondaryActionsAdapter) {
-            for (int i = 0; i < adapter.size(); i++) {
-                Action action = (Action) adapter.get(i);
-                if (action.respondsToKeyCode(keyCode)) {
-                    return action;
-                }
-            }
-            return null;
-        }
-        throw new IllegalArgumentException("Invalid adapter");
-    }
-
-    public void setOnPlaybackProgressChangedListener(OnPlaybackProgressCallback listener) {
-        this.mListener = listener;
     }
 }

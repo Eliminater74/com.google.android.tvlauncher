@@ -1,7 +1,9 @@
 package com.bumptech.glide.load.resource.bytes;
 
 import android.support.annotation.NonNull;
+
 import com.bumptech.glide.load.data.DataRewinder;
+
 import java.nio.ByteBuffer;
 
 public class ByteBufferRewinder implements DataRewinder<ByteBuffer> {

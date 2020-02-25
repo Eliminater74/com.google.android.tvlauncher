@@ -5,15 +5,18 @@ import android.content.SharedPreferences;
 import android.support.annotation.VisibleForTesting;
 import android.text.TextUtils;
 import android.util.Log;
+
 import com.google.android.tvlauncher.util.OemAppBase;
 import com.google.android.tvlauncher.util.OemPromotionApp;
 import com.google.android.tvrecommendations.shared.util.Constants;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AppLinksDataManager {
     private static final String PREF_FILE_NAME = "com.google.android.tvlauncher.appsview.AppLinksDataManager";
@@ -22,6 +25,13 @@ public class AppLinksDataManager {
     private final SharedPreferences mAppLinkIdPrefs;
     private final Map<String, OemAppBase> mAppLinks = new HashMap();
     private final LaunchItemsManager mLaunchItemsManager;
+
+    @VisibleForTesting
+    AppLinksDataManager(Context context) {
+        this.mLaunchItemsManager = LaunchItemsManagerProvider.getInstance(context);
+        this.mAppLinkIdPrefs = context.getSharedPreferences(PREF_FILE_NAME, 0);
+        readFromPreferences();
+    }
 
     public static AppLinksDataManager getInstance(Context context) {
         if (sInstance == null) {
@@ -32,13 +42,6 @@ public class AppLinksDataManager {
             }
         }
         return sInstance;
-    }
-
-    @VisibleForTesting
-    AppLinksDataManager(Context context) {
-        this.mLaunchItemsManager = LaunchItemsManagerProvider.getInstance(context);
-        this.mAppLinkIdPrefs = context.getSharedPreferences(PREF_FILE_NAME, 0);
-        readFromPreferences();
     }
 
     public void createAppLink(OemAppBase appPromotion) {

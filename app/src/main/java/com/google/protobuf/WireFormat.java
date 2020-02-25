@@ -3,6 +3,12 @@ package com.google.protobuf;
 import java.io.IOException;
 
 public final class WireFormat {
+    public static final int WIRETYPE_END_GROUP = 4;
+    public static final int WIRETYPE_FIXED32 = 5;
+    public static final int WIRETYPE_FIXED64 = 1;
+    public static final int WIRETYPE_LENGTH_DELIMITED = 2;
+    public static final int WIRETYPE_START_GROUP = 3;
+    public static final int WIRETYPE_VARINT = 0;
     static final int FIXED32_SIZE = 4;
     static final int FIXED64_SIZE = 8;
     static final int MAX_VARINT32_SIZE = 5;
@@ -17,12 +23,64 @@ public final class WireFormat {
     static final int MESSAGE_SET_TYPE_ID_TAG = makeTag(2, 0);
     static final int TAG_TYPE_BITS = 3;
     static final int TAG_TYPE_MASK = 7;
-    public static final int WIRETYPE_END_GROUP = 4;
-    public static final int WIRETYPE_FIXED32 = 5;
-    public static final int WIRETYPE_FIXED64 = 1;
-    public static final int WIRETYPE_LENGTH_DELIMITED = 2;
-    public static final int WIRETYPE_START_GROUP = 3;
-    public static final int WIRETYPE_VARINT = 0;
+
+    private WireFormat() {
+    }
+
+    public static int getTagWireType(int tag) {
+        return tag & 7;
+    }
+
+    public static int getTagFieldNumber(int tag) {
+        return tag >>> 3;
+    }
+
+    static int makeTag(int fieldNumber, int wireType) {
+        return (fieldNumber << 3) | wireType;
+    }
+
+    static Object readPrimitiveField(CodedInputStream input, FieldType type, Utf8Validation utf8Validation) throws IOException {
+        switch (type) {
+            case DOUBLE:
+                return Double.valueOf(input.readDouble());
+            case FLOAT:
+                return Float.valueOf(input.readFloat());
+            case INT64:
+                return Long.valueOf(input.readInt64());
+            case UINT64:
+                return Long.valueOf(input.readUInt64());
+            case INT32:
+                return Integer.valueOf(input.readInt32());
+            case FIXED64:
+                return Long.valueOf(input.readFixed64());
+            case FIXED32:
+                return Integer.valueOf(input.readFixed32());
+            case BOOL:
+                return Boolean.valueOf(input.readBool());
+            case BYTES:
+                return input.readBytes();
+            case UINT32:
+                return Integer.valueOf(input.readUInt32());
+            case SFIXED32:
+                return Integer.valueOf(input.readSFixed32());
+            case SFIXED64:
+                return Long.valueOf(input.readSFixed64());
+            case SINT32:
+                return Integer.valueOf(input.readSInt32());
+            case SINT64:
+                return Long.valueOf(input.readSInt64());
+            case STRING:
+                return utf8Validation.readString(input);
+            case GROUP:
+                throw new IllegalArgumentException("readPrimitiveField() cannot handle nested groups.");
+            case MESSAGE:
+                throw new IllegalArgumentException("readPrimitiveField() cannot handle embedded messages.");
+            case ENUM:
+                throw new IllegalArgumentException("readPrimitiveField() cannot handle enums.");
+            default:
+                throw new RuntimeException("There is no way to get here, but the compiler thinks otherwise.");
+        }
+    }
 
     enum Utf8Validation {
         LOOSE {
@@ -48,21 +106,6 @@ public final class WireFormat {
         public abstract Object readString(CodedInputStream codedInputStream) throws IOException;
     }
 
-    private WireFormat() {
-    }
-
-    public static int getTagWireType(int tag) {
-        return tag & 7;
-    }
-
-    public static int getTagFieldNumber(int tag) {
-        return tag >>> 3;
-    }
-
-    static int makeTag(int fieldNumber, int wireType) {
-        return (fieldNumber << 3) | wireType;
-    }
-
     public enum JavaType {
         INT(0),
         LONG(0L),
@@ -73,7 +116,7 @@ public final class WireFormat {
         BYTE_STRING(ByteString.EMPTY),
         ENUM(null),
         MESSAGE(null);
-        
+
         private final Object defaultDefault;
 
         private JavaType(Object defaultDefault2) {
@@ -121,7 +164,7 @@ public final class WireFormat {
         SFIXED64(JavaType.LONG, 1),
         SINT32(JavaType.INT, 0),
         SINT64(JavaType.LONG, 0);
-        
+
         private final JavaType javaType;
         private final int wireType;
 
@@ -140,49 +183,6 @@ public final class WireFormat {
 
         public boolean isPackable() {
             return true;
-        }
-    }
-
-    static Object readPrimitiveField(CodedInputStream input, FieldType type, Utf8Validation utf8Validation) throws IOException {
-        switch (type) {
-            case DOUBLE:
-                return Double.valueOf(input.readDouble());
-            case FLOAT:
-                return Float.valueOf(input.readFloat());
-            case INT64:
-                return Long.valueOf(input.readInt64());
-            case UINT64:
-                return Long.valueOf(input.readUInt64());
-            case INT32:
-                return Integer.valueOf(input.readInt32());
-            case FIXED64:
-                return Long.valueOf(input.readFixed64());
-            case FIXED32:
-                return Integer.valueOf(input.readFixed32());
-            case BOOL:
-                return Boolean.valueOf(input.readBool());
-            case BYTES:
-                return input.readBytes();
-            case UINT32:
-                return Integer.valueOf(input.readUInt32());
-            case SFIXED32:
-                return Integer.valueOf(input.readSFixed32());
-            case SFIXED64:
-                return Long.valueOf(input.readSFixed64());
-            case SINT32:
-                return Integer.valueOf(input.readSInt32());
-            case SINT64:
-                return Long.valueOf(input.readSInt64());
-            case STRING:
-                return utf8Validation.readString(input);
-            case GROUP:
-                throw new IllegalArgumentException("readPrimitiveField() cannot handle nested groups.");
-            case MESSAGE:
-                throw new IllegalArgumentException("readPrimitiveField() cannot handle embedded messages.");
-            case ENUM:
-                throw new IllegalArgumentException("readPrimitiveField() cannot handle enums.");
-            default:
-                throw new RuntimeException("There is no way to get here, but the compiler thinks otherwise.");
         }
     }
 }

@@ -1,7 +1,9 @@
 package com.google.android.gms.internal;
 
 import android.os.StrictMode;
+
 import com.google.android.gms.common.internal.Hide;
+
 import java.util.concurrent.Callable;
 
 @Hide

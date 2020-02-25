@@ -3,8 +3,10 @@ package com.google.common.collect;
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableCollection;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
@@ -14,11 +16,13 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.RandomAccess;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible(emulated = true, serializable = true)
 public abstract class ImmutableList<E> extends ImmutableCollection<E> implements List<E>, RandomAccess {
     private static final UnmodifiableListIterator<Object> EMPTY_ITR = new Itr(RegularImmutableList.EMPTY, 0);
+
+    ImmutableList() {
+    }
 
     /* renamed from: of */
     public static <E> ImmutableList<E> m107of() {
@@ -166,7 +170,14 @@ public abstract class ImmutableList<E> extends ImmutableCollection<E> implements
         return new RegularImmutableList(elements, length);
     }
 
-    ImmutableList() {
+    public static <E> Builder<E> builder() {
+        return new Builder<>();
+    }
+
+    @Beta
+    public static <E> Builder<E> builderWithExpectedSize(int expectedSize) {
+        CollectPreconditions.checkNonnegative(expectedSize, "expectedSize");
+        return new Builder<>(expectedSize);
     }
 
     public UnmodifiableIterator<E> iterator() {
@@ -183,20 +194,6 @@ public abstract class ImmutableList<E> extends ImmutableCollection<E> implements
             return EMPTY_ITR;
         }
         return new Itr(this, index);
-    }
-
-    static class Itr<E> extends AbstractIndexedListIterator<E> {
-        private final ImmutableList<E> list;
-
-        Itr(ImmutableList<E> list2, int index) {
-            super(list2.size(), index);
-            this.list = list2;
-        }
-
-        /* access modifiers changed from: protected */
-        public E get(int index) {
-            return this.list.get(index);
-        }
     }
 
     public int indexOf(@NullableDecl Object object) {
@@ -232,59 +229,6 @@ public abstract class ImmutableList<E> extends ImmutableCollection<E> implements
     /* access modifiers changed from: package-private */
     public ImmutableList<E> subListUnchecked(int fromIndex, int toIndex) {
         return new SubList(fromIndex, toIndex - fromIndex);
-    }
-
-    class SubList extends ImmutableList<E> {
-        final transient int length;
-        final transient int offset;
-
-        SubList(int offset2, int length2) {
-            this.offset = offset2;
-            this.length = length2;
-        }
-
-        public int size() {
-            return this.length;
-        }
-
-        /* access modifiers changed from: package-private */
-        public Object[] internalArray() {
-            return ImmutableList.this.internalArray();
-        }
-
-        /* access modifiers changed from: package-private */
-        public int internalArrayStart() {
-            return ImmutableList.this.internalArrayStart() + this.offset;
-        }
-
-        /* access modifiers changed from: package-private */
-        public int internalArrayEnd() {
-            return ImmutableList.this.internalArrayStart() + this.offset + this.length;
-        }
-
-        public E get(int index) {
-            Preconditions.checkElementIndex(index, this.length);
-            return ImmutableList.this.get(this.offset + index);
-        }
-
-        /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-         method: com.google.common.collect.ImmutableList.subList(int, int):com.google.common.collect.ImmutableList<E>
-         arg types: [int, int]
-         candidates:
-          com.google.common.collect.ImmutableList.subList(int, int):java.util.List
-          ClspMth{java.util.List.subList(int, int):java.util.List<E>}
-          com.google.common.collect.ImmutableList.subList(int, int):com.google.common.collect.ImmutableList<E> */
-        public ImmutableList<E> subList(int fromIndex, int toIndex) {
-            Preconditions.checkPositionIndexes(fromIndex, toIndex, this.length);
-            ImmutableList immutableList = ImmutableList.this;
-            int i = this.offset;
-            return immutableList.subList(fromIndex + i, i + toIndex);
-        }
-
-        /* access modifiers changed from: package-private */
-        public boolean isPartialView() {
-            return true;
-        }
     }
 
     @CanIgnoreReturnValue
@@ -325,6 +269,42 @@ public abstract class ImmutableList<E> extends ImmutableCollection<E> implements
 
     public ImmutableList<E> reverse() {
         return size() <= 1 ? this : new ReverseImmutableList(this);
+    }
+
+    public boolean equals(@NullableDecl Object obj) {
+        return Lists.equalsImpl(this, obj);
+    }
+
+    public int hashCode() {
+        int hashCode = 1;
+        int n = size();
+        for (int i = 0; i < n; i++) {
+            hashCode = (((hashCode * 31) + get(i).hashCode()) ^ -1) ^ -1;
+        }
+        return hashCode;
+    }
+
+    private void readObject(ObjectInputStream stream) throws InvalidObjectException {
+        throw new InvalidObjectException("Use SerializedForm");
+    }
+
+    /* access modifiers changed from: package-private */
+    public Object writeReplace() {
+        return new SerializedForm(toArray());
+    }
+
+    static class Itr<E> extends AbstractIndexedListIterator<E> {
+        private final ImmutableList<E> list;
+
+        Itr(ImmutableList<E> list2, int index) {
+            super(list2.size(), index);
+            this.list = list2;
+        }
+
+        /* access modifiers changed from: protected */
+        public E get(int index) {
+            return this.list.get(index);
+        }
     }
 
     private static class ReverseImmutableList<E> extends ImmutableList<E> {
@@ -393,19 +373,6 @@ public abstract class ImmutableList<E> extends ImmutableCollection<E> implements
         }
     }
 
-    public boolean equals(@NullableDecl Object obj) {
-        return Lists.equalsImpl(this, obj);
-    }
-
-    public int hashCode() {
-        int hashCode = 1;
-        int n = size();
-        for (int i = 0; i < n; i++) {
-            hashCode = (((hashCode * 31) + get(i).hashCode()) ^ -1) ^ -1;
-        }
-        return hashCode;
-    }
-
     static class SerializedForm implements Serializable {
         private static final long serialVersionUID = 0;
         final Object[] elements;
@@ -418,25 +385,6 @@ public abstract class ImmutableList<E> extends ImmutableCollection<E> implements
         public Object readResolve() {
             return ImmutableList.copyOf(this.elements);
         }
-    }
-
-    private void readObject(ObjectInputStream stream) throws InvalidObjectException {
-        throw new InvalidObjectException("Use SerializedForm");
-    }
-
-    /* access modifiers changed from: package-private */
-    public Object writeReplace() {
-        return new SerializedForm(toArray());
-    }
-
-    public static <E> Builder<E> builder() {
-        return new Builder<>();
-    }
-
-    @Beta
-    public static <E> Builder<E> builderWithExpectedSize(int expectedSize) {
-        CollectPreconditions.checkNonnegative(expectedSize, "expectedSize");
-        return new Builder<>(expectedSize);
     }
 
     public static final class Builder<E> extends ImmutableCollection.ArrayBasedBuilder<E> {
@@ -475,6 +423,59 @@ public abstract class ImmutableList<E> extends ImmutableCollection<E> implements
         public ImmutableList<E> build() {
             this.forceCopy = true;
             return ImmutableList.asImmutableList(this.contents, this.size);
+        }
+    }
+
+    class SubList extends ImmutableList<E> {
+        final transient int length;
+        final transient int offset;
+
+        SubList(int offset2, int length2) {
+            this.offset = offset2;
+            this.length = length2;
+        }
+
+        public int size() {
+            return this.length;
+        }
+
+        /* access modifiers changed from: package-private */
+        public Object[] internalArray() {
+            return ImmutableList.this.internalArray();
+        }
+
+        /* access modifiers changed from: package-private */
+        public int internalArrayStart() {
+            return ImmutableList.this.internalArrayStart() + this.offset;
+        }
+
+        /* access modifiers changed from: package-private */
+        public int internalArrayEnd() {
+            return ImmutableList.this.internalArrayStart() + this.offset + this.length;
+        }
+
+        public E get(int index) {
+            Preconditions.checkElementIndex(index, this.length);
+            return ImmutableList.this.get(this.offset + index);
+        }
+
+        /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+         method: com.google.common.collect.ImmutableList.subList(int, int):com.google.common.collect.ImmutableList<E>
+         arg types: [int, int]
+         candidates:
+          com.google.common.collect.ImmutableList.subList(int, int):java.util.List
+          ClspMth{java.util.List.subList(int, int):java.util.List<E>}
+          com.google.common.collect.ImmutableList.subList(int, int):com.google.common.collect.ImmutableList<E> */
+        public ImmutableList<E> subList(int fromIndex, int toIndex) {
+            Preconditions.checkPositionIndexes(fromIndex, toIndex, this.length);
+            ImmutableList immutableList = ImmutableList.this;
+            int i = this.offset;
+            return immutableList.subList(fromIndex + i, i + toIndex);
+        }
+
+        /* access modifiers changed from: package-private */
+        public boolean isPartialView() {
+            return true;
         }
     }
 }

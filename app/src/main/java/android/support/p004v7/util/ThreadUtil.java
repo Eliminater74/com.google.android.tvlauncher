@@ -1,9 +1,11 @@
 package android.support.p004v7.util;
 
-import android.support.p004v7.util.TileList;
-
 /* renamed from: android.support.v7.util.ThreadUtil */
 interface ThreadUtil<T> {
+
+    BackgroundCallback<T> getBackgroundProxy(BackgroundCallback<T> backgroundCallback);
+
+    MainThreadCallback<T> getMainThreadProxy(MainThreadCallback<T> mainThreadCallback);
 
     /* renamed from: android.support.v7.util.ThreadUtil$BackgroundCallback */
     public interface BackgroundCallback<T> {
@@ -24,8 +26,4 @@ interface ThreadUtil<T> {
 
         void updateItemCount(int i, int i2);
     }
-
-    BackgroundCallback<T> getBackgroundProxy(BackgroundCallback<T> backgroundCallback);
-
-    MainThreadCallback<T> getMainThreadProxy(MainThreadCallback<T> mainThreadCallback);
 }

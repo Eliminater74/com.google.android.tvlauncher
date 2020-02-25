@@ -5,6 +5,9 @@ import com.google.android.exoplayer2.util.ParsableByteArray;
 
 /* renamed from: com.google.android.exoplayer2.extractor.ts.TsUtil */
 public final class TsUtil {
+    private TsUtil() {
+    }
+
     public static int findSyncBytePosition(byte[] data, int startPosition, int limitPosition) {
         int position = startPosition;
         while (position < limitPosition && data[position] != 71) {
@@ -38,8 +41,5 @@ public final class TsUtil {
 
     private static long readPcrValueFromPcrBytes(byte[] pcrBytes) {
         return ((((long) pcrBytes[0]) & 255) << 25) | ((((long) pcrBytes[1]) & 255) << 17) | ((((long) pcrBytes[2]) & 255) << 9) | ((((long) pcrBytes[3]) & 255) << 1) | ((255 & ((long) pcrBytes[4])) >> 7);
-    }
-
-    private TsUtil() {
     }
 }

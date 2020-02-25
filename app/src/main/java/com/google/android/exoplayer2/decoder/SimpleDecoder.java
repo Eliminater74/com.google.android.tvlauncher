@@ -1,39 +1,25 @@
 package com.google.android.exoplayer2.decoder;
 
 import android.support.annotation.Nullable;
-import com.google.android.exoplayer2.decoder.DecoderInputBuffer;
-import com.google.android.exoplayer2.decoder.OutputBuffer;
+
 import com.google.android.exoplayer2.util.Assertions;
-import java.lang.Exception;
+
 import java.util.ArrayDeque;
 
 public abstract class SimpleDecoder<I extends DecoderInputBuffer, O extends OutputBuffer, E extends Exception> implements Decoder<I, O, E> {
-    private int availableInputBufferCount;
     private final I[] availableInputBuffers;
-    private int availableOutputBufferCount;
     private final O[] availableOutputBuffers;
     private final Thread decodeThread;
-    private I dequeuedInputBuffer;
-    private E exception;
-    private boolean flushed;
     private final Object lock = new Object();
     private final ArrayDeque<I> queuedInputBuffers = new ArrayDeque<>();
     private final ArrayDeque<O> queuedOutputBuffers = new ArrayDeque<>();
+    private int availableInputBufferCount;
+    private int availableOutputBufferCount;
+    private I dequeuedInputBuffer;
+    private E exception;
+    private boolean flushed;
     private boolean released;
     private int skippedOutputBufferCount;
-
-    /* access modifiers changed from: protected */
-    public abstract I createInputBuffer();
-
-    /* access modifiers changed from: protected */
-    public abstract O createOutputBuffer();
-
-    /* access modifiers changed from: protected */
-    public abstract E createUnexpectedDecodeException(Throwable th);
-
-    /* access modifiers changed from: protected */
-    @Nullable
-    public abstract E decode(I i, O o, boolean z);
 
     protected SimpleDecoder(I[] inputBuffers, O[] outputBuffers) {
         this.availableInputBuffers = inputBuffers;
@@ -53,6 +39,19 @@ public abstract class SimpleDecoder<I extends DecoderInputBuffer, O extends Outp
         };
         this.decodeThread.start();
     }
+
+    /* access modifiers changed from: protected */
+    public abstract I createInputBuffer();
+
+    /* access modifiers changed from: protected */
+    public abstract O createOutputBuffer();
+
+    /* access modifiers changed from: protected */
+    public abstract E createUnexpectedDecodeException(Throwable th);
+
+    /* access modifiers changed from: protected */
+    @Nullable
+    public abstract E decode(I i, O o, boolean z);
 
     /*  JADX ERROR: JadxRuntimeException in pass: MethodInvokeVisitor
         jadx.core.utils.exceptions.JadxRuntimeException: Not class type: I

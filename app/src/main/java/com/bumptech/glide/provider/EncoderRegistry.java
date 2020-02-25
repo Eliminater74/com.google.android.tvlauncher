@@ -2,7 +2,9 @@ package com.bumptech.glide.provider;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import com.bumptech.glide.load.Encoder;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,8 +30,8 @@ public class EncoderRegistry {
     }
 
     private static final class Entry<T> {
-        private final Class<T> dataClass;
         final Encoder<T> encoder;
+        private final Class<T> dataClass;
 
         Entry(@NonNull Class<T> dataClass2, @NonNull Encoder<T> encoder2) {
             this.dataClass = dataClass2;

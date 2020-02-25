@@ -16,17 +16,12 @@ import android.widget.CompoundButton;
 
 /* renamed from: android.support.v7.widget.AppCompatCompoundButtonHelper */
 class AppCompatCompoundButtonHelper {
+    private final CompoundButton mView;
     private ColorStateList mButtonTintList = null;
     private PorterDuff.Mode mButtonTintMode = null;
     private boolean mHasButtonTint = false;
     private boolean mHasButtonTintMode = false;
     private boolean mSkipNextApply;
-    private final CompoundButton mView;
-
-    /* renamed from: android.support.v7.widget.AppCompatCompoundButtonHelper$DirectSetButtonDrawableInterface */
-    interface DirectSetButtonDrawableInterface {
-        void setButtonDrawable(Drawable drawable);
-    }
 
     AppCompatCompoundButtonHelper(CompoundButton view) {
         this.mView = view;
@@ -63,6 +58,11 @@ class AppCompatCompoundButtonHelper {
     }
 
     /* access modifiers changed from: package-private */
+    public ColorStateList getSupportButtonTintList() {
+        return this.mButtonTintList;
+    }
+
+    /* access modifiers changed from: package-private */
     public void setSupportButtonTintList(ColorStateList tint) {
         this.mButtonTintList = tint;
         this.mHasButtonTint = true;
@@ -70,8 +70,8 @@ class AppCompatCompoundButtonHelper {
     }
 
     /* access modifiers changed from: package-private */
-    public ColorStateList getSupportButtonTintList() {
-        return this.mButtonTintList;
+    public PorterDuff.Mode getSupportButtonTintMode() {
+        return this.mButtonTintMode;
     }
 
     /* access modifiers changed from: package-private */
@@ -79,11 +79,6 @@ class AppCompatCompoundButtonHelper {
         this.mButtonTintMode = tintMode;
         this.mHasButtonTintMode = true;
         applyButtonTint();
-    }
-
-    /* access modifiers changed from: package-private */
-    public PorterDuff.Mode getSupportButtonTintMode() {
-        return this.mButtonTintMode;
     }
 
     /* access modifiers changed from: package-private */
@@ -124,5 +119,10 @@ class AppCompatCompoundButtonHelper {
             return superValue;
         }
         return superValue + buttonDrawable.getIntrinsicWidth();
+    }
+
+    /* renamed from: android.support.v7.widget.AppCompatCompoundButtonHelper$DirectSetButtonDrawableInterface */
+    interface DirectSetButtonDrawableInterface {
+        void setButtonDrawable(Drawable drawable);
     }
 }

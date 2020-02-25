@@ -6,7 +6,9 @@ import android.os.Message;
 import android.support.annotation.GuardedBy;
 import android.support.annotation.RestrictTo;
 import android.support.annotation.VisibleForTesting;
+
 import com.google.android.gms.feedback.BaseFeedbackProductSpecificData;
+
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -19,6 +21,16 @@ import java.util.concurrent.locks.ReentrantLock;
 public class SelfDestructiveThread {
     private static final int MSG_DESTRUCTION = 0;
     private static final int MSG_INVOKE_RUNNABLE = 1;
+    private final int mDestructAfterMillisec;
+    private final Object mLock = new Object();
+    private final int mPriority;
+    private final String mThreadName;
+    @GuardedBy("mLock")
+    private int mGeneration;
+    @GuardedBy("mLock")
+    private Handler mHandler;
+    @GuardedBy("mLock")
+    private HandlerThread mThread;
     private Handler.Callback mCallback = new Handler.Callback() {
         public boolean handleMessage(Message msg) {
             int i = msg.what;
@@ -33,21 +45,6 @@ public class SelfDestructiveThread {
             }
         }
     };
-    private final int mDestructAfterMillisec;
-    @GuardedBy("mLock")
-    private int mGeneration;
-    @GuardedBy("mLock")
-    private Handler mHandler;
-    private final Object mLock = new Object();
-    private final int mPriority;
-    @GuardedBy("mLock")
-    private HandlerThread mThread;
-    private final String mThreadName;
-
-    /* renamed from: android.support.v4.provider.SelfDestructiveThread$ReplyCallback */
-    public interface ReplyCallback<T> {
-        void onReply(Object obj);
-    }
 
     public SelfDestructiveThread(String threadName, int priority, int destructAfterMillisec) {
         this.mThreadName = threadName;
@@ -170,5 +167,10 @@ public class SelfDestructiveThread {
                 this.mHandler = null;
             }
         }
+    }
+
+    /* renamed from: android.support.v4.provider.SelfDestructiveThread$ReplyCallback */
+    public interface ReplyCallback<T> {
+        void onReply(Object obj);
     }
 }

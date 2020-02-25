@@ -2,7 +2,9 @@ package com.google.android.tvlauncher.settings;
 
 import android.content.Context;
 import android.widget.ImageView;
+
 import androidx.preference.PreferenceViewHolder;
+
 import com.google.android.tvlauncher.C1188R;
 import com.google.android.tvlauncher.util.Util;
 

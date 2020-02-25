@@ -10,9 +10,13 @@ import android.text.style.StrikethroughSpan;
 import android.text.style.StyleSpan;
 import android.text.style.TypefaceSpan;
 import android.text.style.UnderlineSpan;
+
 import java.util.Map;
 
 final class TtmlRenderUtil {
+    private TtmlRenderUtil() {
+    }
+
     public static TtmlStyle resolveStyle(TtmlStyle style, String[] styleIds, Map<String, TtmlStyle> globalStyles) {
         if (style == null && styleIds == null) {
             return null;
@@ -88,8 +92,5 @@ final class TtmlRenderUtil {
 
     static String applyTextElementSpacePolicy(String in) {
         return in.replaceAll("\r\n", "\n").replaceAll(" *\n *", "\n").replaceAll("\n", " ").replaceAll("[ \t\\x0B\f\r]+", " ");
-    }
-
-    private TtmlRenderUtil() {
     }
 }

@@ -3,12 +3,14 @@ package com.bumptech.glide.load.model.stream;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+
 import com.bumptech.glide.load.Key;
 import com.bumptech.glide.load.Options;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.model.Headers;
 import com.bumptech.glide.load.model.ModelCache;
 import com.bumptech.glide.load.model.ModelLoader;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,9 +22,6 @@ public abstract class BaseGlideUrlLoader<Model> implements ModelLoader<Model, In
     @Nullable
     private final ModelCache<Model, GlideUrl> modelCache;
 
-    /* access modifiers changed from: protected */
-    public abstract String getUrl(Model model, int i, int i2, Options options);
-
     protected BaseGlideUrlLoader(ModelLoader<GlideUrl, InputStream> concreteLoader2) {
         this(concreteLoader2, null);
     }
@@ -31,6 +30,17 @@ public abstract class BaseGlideUrlLoader<Model> implements ModelLoader<Model, In
         this.concreteLoader = concreteLoader2;
         this.modelCache = modelCache2;
     }
+
+    private static List<Key> getAlternateKeys(Collection<String> alternateUrls) {
+        List<Key> result = new ArrayList<>(alternateUrls.size());
+        for (String alternate : alternateUrls) {
+            result.add(new GlideUrl(alternate));
+        }
+        return result;
+    }
+
+    /* access modifiers changed from: protected */
+    public abstract String getUrl(Model model, int i, int i2, Options options);
 
     /* JADX INFO: Multiple debug info for r1v1 java.util.List<java.lang.String>: [D('alternateUrls' java.util.List<java.lang.String>), D('stringURL' java.lang.String)] */
     @Nullable
@@ -57,14 +67,6 @@ public abstract class BaseGlideUrlLoader<Model> implements ModelLoader<Model, In
             return concreteLoaderData;
         }
         return new ModelLoader.LoadData<>(concreteLoaderData.sourceKey, getAlternateKeys(alternateUrls), concreteLoaderData.fetcher);
-    }
-
-    private static List<Key> getAlternateKeys(Collection<String> alternateUrls) {
-        List<Key> result = new ArrayList<>(alternateUrls.size());
-        for (String alternate : alternateUrls) {
-            result.add(new GlideUrl(alternate));
-        }
-        return result;
     }
 
     /* access modifiers changed from: protected */

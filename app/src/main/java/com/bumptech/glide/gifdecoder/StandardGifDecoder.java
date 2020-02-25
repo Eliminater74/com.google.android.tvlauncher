@@ -5,8 +5,9 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import com.bumptech.glide.gifdecoder.GifDecoder;
+
 import com.google.common.primitives.UnsignedBytes;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,11 +25,13 @@ public class StandardGifDecoder implements GifDecoder {
     private static final int MAX_STACK_SIZE = 4096;
     private static final int NULL_CODE = -1;
     private static final String TAG = StandardGifDecoder.class.getSimpleName();
+    private final GifDecoder.BitmapProvider bitmapProvider;
+    @ColorInt
+    private final int[] pct;
     @ColorInt
     private int[] act;
     @NonNull
     private Bitmap.Config bitmapConfig;
-    private final GifDecoder.BitmapProvider bitmapProvider;
     private byte[] block;
     private int downsampledHeight;
     private int downsampledWidth;
@@ -40,8 +43,6 @@ public class StandardGifDecoder implements GifDecoder {
     @ColorInt
     private int[] mainScratch;
     private GifHeaderParser parser;
-    @ColorInt
-    private final int[] pct;
     private byte[] pixelStack;
     private short[] prefix;
     private Bitmap previousImage;

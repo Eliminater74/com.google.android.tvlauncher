@@ -10,23 +10,20 @@ import android.net.Network;
 import android.net.NetworkRequest;
 import android.os.Handler;
 import android.support.annotation.RequiresApi;
+
 import com.google.android.exoplayer2.util.Util;
 
 public final class RequirementsWatcher {
     private static final String TAG = "RequirementsWatcher";
-    private final Context context;
     /* access modifiers changed from: private */
     public final Handler handler = new Handler(Util.getLooper());
+    private final Context context;
     private final Listener listener;
+    private final Requirements requirements;
     /* access modifiers changed from: private */
     public CapabilityValidatedCallback networkCallback;
     private int notMetRequirements;
     private DeviceStatusChangeReceiver receiver;
-    private final Requirements requirements;
-
-    public interface Listener {
-        void onRequirementsStateChanged(RequirementsWatcher requirementsWatcher, int i);
-    }
 
     public RequirementsWatcher(Context context2, Listener listener2, Requirements requirements2) {
         this.context = context2.getApplicationContext();
@@ -37,6 +34,10 @@ public final class RequirementsWatcher {
         sb.append(valueOf);
         sb.append(" created");
         logd(sb.toString());
+    }
+
+    /* access modifiers changed from: private */
+    public static void logd(String message) {
     }
 
     public int start() {
@@ -119,8 +120,8 @@ public final class RequirementsWatcher {
         }
     }
 
-    /* access modifiers changed from: private */
-    public static void logd(String message) {
+    public interface Listener {
+        void onRequirementsStateChanged(RequirementsWatcher requirementsWatcher, int i);
     }
 
     private class DeviceStatusChangeReceiver extends BroadcastReceiver {

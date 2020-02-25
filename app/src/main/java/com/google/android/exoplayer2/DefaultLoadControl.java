@@ -20,69 +20,13 @@ public class DefaultLoadControl implements LoadControl {
     private final long backBufferDurationUs;
     private final long bufferForPlaybackAfterRebufferUs;
     private final long bufferForPlaybackUs;
-    private boolean isBuffering;
     private final long maxBufferUs;
     private final long minBufferUs;
     private final boolean prioritizeTimeOverSizeThresholds;
     private final boolean retainBackBufferFromKeyframe;
     private final int targetBufferBytesOverwrite;
+    private boolean isBuffering;
     private int targetBufferSize;
-
-    public static final class Builder {
-        private DefaultAllocator allocator;
-        private int backBufferDurationMs = 0;
-        private int bufferForPlaybackAfterRebufferMs = 5000;
-        private int bufferForPlaybackMs = 2500;
-        private boolean createDefaultLoadControlCalled;
-        private int maxBufferMs = 50000;
-        private int minBufferMs = 15000;
-        private boolean prioritizeTimeOverSizeThresholds = true;
-        private boolean retainBackBufferFromKeyframe = false;
-        private int targetBufferBytes = -1;
-
-        public Builder setAllocator(DefaultAllocator allocator2) {
-            Assertions.checkState(!this.createDefaultLoadControlCalled);
-            this.allocator = allocator2;
-            return this;
-        }
-
-        public Builder setBufferDurationsMs(int minBufferMs2, int maxBufferMs2, int bufferForPlaybackMs2, int bufferForPlaybackAfterRebufferMs2) {
-            Assertions.checkState(!this.createDefaultLoadControlCalled);
-            this.minBufferMs = minBufferMs2;
-            this.maxBufferMs = maxBufferMs2;
-            this.bufferForPlaybackMs = bufferForPlaybackMs2;
-            this.bufferForPlaybackAfterRebufferMs = bufferForPlaybackAfterRebufferMs2;
-            return this;
-        }
-
-        public Builder setTargetBufferBytes(int targetBufferBytes2) {
-            Assertions.checkState(!this.createDefaultLoadControlCalled);
-            this.targetBufferBytes = targetBufferBytes2;
-            return this;
-        }
-
-        public Builder setPrioritizeTimeOverSizeThresholds(boolean prioritizeTimeOverSizeThresholds2) {
-            Assertions.checkState(!this.createDefaultLoadControlCalled);
-            this.prioritizeTimeOverSizeThresholds = prioritizeTimeOverSizeThresholds2;
-            return this;
-        }
-
-        public Builder setBackBuffer(int backBufferDurationMs2, boolean retainBackBufferFromKeyframe2) {
-            Assertions.checkState(!this.createDefaultLoadControlCalled);
-            this.backBufferDurationMs = backBufferDurationMs2;
-            this.retainBackBufferFromKeyframe = retainBackBufferFromKeyframe2;
-            return this;
-        }
-
-        public DefaultLoadControl createDefaultLoadControl() {
-            Assertions.checkState(!this.createDefaultLoadControlCalled);
-            this.createDefaultLoadControlCalled = true;
-            if (this.allocator == null) {
-                this.allocator = new DefaultAllocator(true, 65536);
-            }
-            return new DefaultLoadControl(this.allocator, this.minBufferMs, this.maxBufferMs, this.bufferForPlaybackMs, this.bufferForPlaybackAfterRebufferMs, this.targetBufferBytes, this.prioritizeTimeOverSizeThresholds, this.backBufferDurationMs, this.retainBackBufferFromKeyframe);
-        }
-    }
 
     public DefaultLoadControl() {
         this(new DefaultAllocator(true, 65536));
@@ -114,6 +58,15 @@ public class DefaultLoadControl implements LoadControl {
         this.prioritizeTimeOverSizeThresholds = prioritizeTimeOverSizeThresholds2;
         this.backBufferDurationUs = C0841C.msToUs((long) backBufferDurationMs);
         this.retainBackBufferFromKeyframe = retainBackBufferFromKeyframe2;
+    }
+
+    private static void assertGreaterOrEqual(int value1, int value2, String name1, String name2) {
+        boolean z = value1 >= value2;
+        StringBuilder sb = new StringBuilder(String.valueOf(name1).length() + 21 + String.valueOf(name2).length());
+        sb.append(name1);
+        sb.append(" cannot be less than ");
+        sb.append(name2);
+        Assertions.checkArgument(z, sb.toString());
     }
 
     public void onPrepared() {
@@ -192,12 +145,59 @@ public class DefaultLoadControl implements LoadControl {
         }
     }
 
-    private static void assertGreaterOrEqual(int value1, int value2, String name1, String name2) {
-        boolean z = value1 >= value2;
-        StringBuilder sb = new StringBuilder(String.valueOf(name1).length() + 21 + String.valueOf(name2).length());
-        sb.append(name1);
-        sb.append(" cannot be less than ");
-        sb.append(name2);
-        Assertions.checkArgument(z, sb.toString());
+    public static final class Builder {
+        private DefaultAllocator allocator;
+        private int backBufferDurationMs = 0;
+        private int bufferForPlaybackAfterRebufferMs = 5000;
+        private int bufferForPlaybackMs = 2500;
+        private boolean createDefaultLoadControlCalled;
+        private int maxBufferMs = 50000;
+        private int minBufferMs = 15000;
+        private boolean prioritizeTimeOverSizeThresholds = true;
+        private boolean retainBackBufferFromKeyframe = false;
+        private int targetBufferBytes = -1;
+
+        public Builder setAllocator(DefaultAllocator allocator2) {
+            Assertions.checkState(!this.createDefaultLoadControlCalled);
+            this.allocator = allocator2;
+            return this;
+        }
+
+        public Builder setBufferDurationsMs(int minBufferMs2, int maxBufferMs2, int bufferForPlaybackMs2, int bufferForPlaybackAfterRebufferMs2) {
+            Assertions.checkState(!this.createDefaultLoadControlCalled);
+            this.minBufferMs = minBufferMs2;
+            this.maxBufferMs = maxBufferMs2;
+            this.bufferForPlaybackMs = bufferForPlaybackMs2;
+            this.bufferForPlaybackAfterRebufferMs = bufferForPlaybackAfterRebufferMs2;
+            return this;
+        }
+
+        public Builder setTargetBufferBytes(int targetBufferBytes2) {
+            Assertions.checkState(!this.createDefaultLoadControlCalled);
+            this.targetBufferBytes = targetBufferBytes2;
+            return this;
+        }
+
+        public Builder setPrioritizeTimeOverSizeThresholds(boolean prioritizeTimeOverSizeThresholds2) {
+            Assertions.checkState(!this.createDefaultLoadControlCalled);
+            this.prioritizeTimeOverSizeThresholds = prioritizeTimeOverSizeThresholds2;
+            return this;
+        }
+
+        public Builder setBackBuffer(int backBufferDurationMs2, boolean retainBackBufferFromKeyframe2) {
+            Assertions.checkState(!this.createDefaultLoadControlCalled);
+            this.backBufferDurationMs = backBufferDurationMs2;
+            this.retainBackBufferFromKeyframe = retainBackBufferFromKeyframe2;
+            return this;
+        }
+
+        public DefaultLoadControl createDefaultLoadControl() {
+            Assertions.checkState(!this.createDefaultLoadControlCalled);
+            this.createDefaultLoadControlCalled = true;
+            if (this.allocator == null) {
+                this.allocator = new DefaultAllocator(true, 65536);
+            }
+            return new DefaultLoadControl(this.allocator, this.minBufferMs, this.maxBufferMs, this.bufferForPlaybackMs, this.bufferForPlaybackAfterRebufferMs, this.targetBufferBytes, this.prioritizeTimeOverSizeThresholds, this.backBufferDurationMs, this.retainBackBufferFromKeyframe);
+        }
     }
 }

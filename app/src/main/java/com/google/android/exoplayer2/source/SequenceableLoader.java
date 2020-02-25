@@ -2,10 +2,6 @@ package com.google.android.exoplayer2.source;
 
 public interface SequenceableLoader {
 
-    public interface Callback<T extends SequenceableLoader> {
-        void onContinueLoadingRequested(SequenceableLoader sequenceableLoader);
-    }
-
     boolean continueLoading(long j);
 
     long getBufferedPositionUs();
@@ -13,4 +9,8 @@ public interface SequenceableLoader {
     long getNextLoadPositionUs();
 
     void reevaluateBuffer(long j);
+
+    public interface Callback<T extends SequenceableLoader> {
+        void onContinueLoadingRequested(SequenceableLoader sequenceableLoader);
+    }
 }

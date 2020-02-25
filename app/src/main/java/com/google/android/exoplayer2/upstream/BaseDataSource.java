@@ -1,23 +1,25 @@
 package com.google.android.exoplayer2.upstream;
 
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.util.Util;
+
 import java.util.ArrayList;
 import java.util.Map;
 
 public abstract class BaseDataSource implements DataSource {
+    private final boolean isNetwork;
+    private final ArrayList<TransferListener> listeners = new ArrayList<>(1);
     @Nullable
     private DataSpec dataSpec;
-    private final boolean isNetwork;
     private int listenerCount;
-    private final ArrayList<TransferListener> listeners = new ArrayList<>(1);
-
-    public Map getResponseHeaders() {
-        return DataSource$$CC.getResponseHeaders$$dflt$$(this);
-    }
 
     protected BaseDataSource(boolean isNetwork2) {
         this.isNetwork = isNetwork2;
+    }
+
+    public Map getResponseHeaders() {
+        return DataSource$$CC.getResponseHeaders$$dflt$$(this);
     }
 
     public final void addTransferListener(TransferListener transferListener) {

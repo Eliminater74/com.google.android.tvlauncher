@@ -7,16 +7,13 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+
 import com.google.android.exoplayer2.C0841C;
-import com.google.android.exoplayer2.drm.DefaultDrmSession;
-import com.google.android.exoplayer2.drm.DrmInitData;
-import com.google.android.exoplayer2.drm.DrmSession;
-import com.google.android.exoplayer2.drm.ExoMediaCrypto;
-import com.google.android.exoplayer2.drm.ExoMediaDrm;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.EventDispatcher;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.Util;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -35,71 +32,24 @@ public class DefaultDrmSessionManager<T extends ExoMediaCrypto> implements DrmSe
     public static final int MODE_RELEASE = 3;
     public static final String PLAYREADY_CUSTOM_DATA_KEY = "PRCustomData";
     private static final String TAG = "DefaultDrmSessionMgr";
+    /* access modifiers changed from: private */
+    public final List<DefaultDrmSession<T>> sessions;
     private final MediaDrmCallback callback;
     private final EventDispatcher<DefaultDrmSessionEventListener> eventDispatcher;
     private final int initialDrmRequestRetryCount;
     private final ExoMediaDrm<T> mediaDrm;
+    private final boolean multiSession;
+    @Nullable
+    private final HashMap<String, String> optionalKeyRequestParameters;
+    private final List<DefaultDrmSession<T>> provisioningSessions;
+    private final UUID uuid;
     @Nullable
     volatile DefaultDrmSessionManager<T>.MediaDrmHandler mediaDrmHandler;
     private int mode;
-    private final boolean multiSession;
     @Nullable
     private byte[] offlineLicenseKeySetId;
     @Nullable
-    private final HashMap<String, String> optionalKeyRequestParameters;
-    @Nullable
     private Looper playbackLooper;
-    private final List<DefaultDrmSession<T>> provisioningSessions;
-    /* access modifiers changed from: private */
-    public final List<DefaultDrmSession<T>> sessions;
-    private final UUID uuid;
-
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface Mode {
-    }
-
-    public static final class MissingSchemeDataException extends Exception {
-        /* JADX WARNING: Illegal instructions before constructor call */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
-        private MissingSchemeDataException(java.util.UUID r4) {
-            /*
-                r3 = this;
-                java.lang.String r0 = java.lang.String.valueOf(r4)
-                java.lang.String r1 = java.lang.String.valueOf(r0)
-                int r1 = r1.length()
-                int r1 = r1 + 29
-                java.lang.StringBuilder r2 = new java.lang.StringBuilder
-                r2.<init>(r1)
-                java.lang.String r1 = "Media does not support uuid: "
-                r2.append(r1)
-                r2.append(r0)
-                java.lang.String r0 = r2.toString()
-                r3.<init>(r0)
-                return
-            */
-            throw new UnsupportedOperationException("Method not decompiled: com.google.android.exoplayer2.drm.DefaultDrmSessionManager.MissingSchemeDataException.<init>(java.util.UUID):void");
-        }
-    }
-
-    public static DefaultDrmSessionManager<FrameworkMediaCrypto> newWidevineInstance(MediaDrmCallback callback2, @Nullable HashMap<String, String> optionalKeyRequestParameters2) throws UnsupportedDrmException {
-        return newFrameworkInstance(C0841C.WIDEVINE_UUID, callback2, optionalKeyRequestParameters2);
-    }
-
-    public static DefaultDrmSessionManager<FrameworkMediaCrypto> newPlayReadyInstance(MediaDrmCallback callback2, @Nullable String customData) throws UnsupportedDrmException {
-        HashMap<String, String> optionalKeyRequestParameters2;
-        if (!TextUtils.isEmpty(customData)) {
-            optionalKeyRequestParameters2 = new HashMap<>();
-            optionalKeyRequestParameters2.put(PLAYREADY_CUSTOM_DATA_KEY, customData);
-        } else {
-            optionalKeyRequestParameters2 = null;
-        }
-        return newFrameworkInstance(C0841C.PLAYREADY_UUID, callback2, optionalKeyRequestParameters2);
-    }
-
-    public static DefaultDrmSessionManager<FrameworkMediaCrypto> newFrameworkInstance(UUID uuid2, MediaDrmCallback callback2, @Nullable HashMap<String, String> optionalKeyRequestParameters2) throws UnsupportedDrmException {
-        return new DefaultDrmSessionManager(uuid2, FrameworkMediaDrm.newInstance(uuid2), callback2, optionalKeyRequestParameters2, false, 3);
-    }
 
     public DefaultDrmSessionManager(UUID uuid2, ExoMediaDrm<T> mediaDrm2, MediaDrmCallback callback2, @Nullable HashMap<String, String> optionalKeyRequestParameters2) {
         this(uuid2, mediaDrm2, callback2, optionalKeyRequestParameters2, false, 3);
@@ -127,6 +77,36 @@ public class DefaultDrmSessionManager<T extends ExoMediaCrypto> implements DrmSe
             mediaDrm2.setPropertyString("sessionSharing", "enable");
         }
         mediaDrm2.setOnEventListener(new MediaDrmEventListener());
+    }
+
+    public static DefaultDrmSessionManager<FrameworkMediaCrypto> newWidevineInstance(MediaDrmCallback callback2, @Nullable HashMap<String, String> optionalKeyRequestParameters2) throws UnsupportedDrmException {
+        return newFrameworkInstance(C0841C.WIDEVINE_UUID, callback2, optionalKeyRequestParameters2);
+    }
+
+    public static DefaultDrmSessionManager<FrameworkMediaCrypto> newPlayReadyInstance(MediaDrmCallback callback2, @Nullable String customData) throws UnsupportedDrmException {
+        HashMap<String, String> optionalKeyRequestParameters2;
+        if (!TextUtils.isEmpty(customData)) {
+            optionalKeyRequestParameters2 = new HashMap<>();
+            optionalKeyRequestParameters2.put(PLAYREADY_CUSTOM_DATA_KEY, customData);
+        } else {
+            optionalKeyRequestParameters2 = null;
+        }
+        return newFrameworkInstance(C0841C.PLAYREADY_UUID, callback2, optionalKeyRequestParameters2);
+    }
+
+    public static DefaultDrmSessionManager<FrameworkMediaCrypto> newFrameworkInstance(UUID uuid2, MediaDrmCallback callback2, @Nullable HashMap<String, String> optionalKeyRequestParameters2) throws UnsupportedDrmException {
+        return new DefaultDrmSessionManager(uuid2, FrameworkMediaDrm.newInstance(uuid2), callback2, optionalKeyRequestParameters2, false, 3);
+    }
+
+    private static List<DrmInitData.SchemeData> getSchemeDatas(DrmInitData drmInitData, UUID uuid2, boolean allowMissingData) {
+        List<DrmInitData.SchemeData> matchingSchemeDatas = new ArrayList<>(drmInitData.schemeDataCount);
+        for (int i = 0; i < drmInitData.schemeDataCount; i++) {
+            DrmInitData.SchemeData schemeData = drmInitData.get(i);
+            if ((schemeData.matches(uuid2) || (C0841C.CLEARKEY_UUID.equals(uuid2) && schemeData.matches(C0841C.COMMON_PSSH_UUID))) && (schemeData.data != null || allowMissingData)) {
+                matchingSchemeDatas.add(schemeData);
+            }
+        }
+        return matchingSchemeDatas;
     }
 
     public final void addListener(Handler handler, DefaultDrmSessionEventListener eventListener) {
@@ -274,15 +254,32 @@ public class DefaultDrmSessionManager<T extends ExoMediaCrypto> implements DrmSe
         this.provisioningSessions.clear();
     }
 
-    private static List<DrmInitData.SchemeData> getSchemeDatas(DrmInitData drmInitData, UUID uuid2, boolean allowMissingData) {
-        List<DrmInitData.SchemeData> matchingSchemeDatas = new ArrayList<>(drmInitData.schemeDataCount);
-        for (int i = 0; i < drmInitData.schemeDataCount; i++) {
-            DrmInitData.SchemeData schemeData = drmInitData.get(i);
-            if ((schemeData.matches(uuid2) || (C0841C.CLEARKEY_UUID.equals(uuid2) && schemeData.matches(C0841C.COMMON_PSSH_UUID))) && (schemeData.data != null || allowMissingData)) {
-                matchingSchemeDatas.add(schemeData);
-            }
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface Mode {
+    }
+
+    public static final class MissingSchemeDataException extends Exception {
+        /* JADX WARNING: Illegal instructions before constructor call */
+        /* Code decompiled incorrectly, please refer to instructions dump. */
+        private MissingSchemeDataException(java.util.UUID r4) {
+            /*
+                r3 = this;
+                java.lang.String r0 = java.lang.String.valueOf(r4)
+                java.lang.String r1 = java.lang.String.valueOf(r0)
+                int r1 = r1.length()
+                int r1 = r1 + 29
+                java.lang.StringBuilder r2 = new java.lang.StringBuilder
+                r2.<init>(r1)
+                java.lang.String r1 = "Media does not support uuid: "
+                r2.append(r1)
+                r2.append(r0)
+                java.lang.String r0 = r2.toString()
+                r3.<init>(r0)
+                return
+            */
+            throw new UnsupportedOperationException("Method not decompiled: com.google.android.exoplayer2.drm.DefaultDrmSessionManager.MissingSchemeDataException.<init>(java.util.UUID):void");
         }
-        return matchingSchemeDatas;
     }
 
     @SuppressLint({"HandlerLeak"})

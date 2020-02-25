@@ -4,6 +4,7 @@ import android.icu.util.ULocale;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.util.Log;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Locale;
@@ -34,6 +35,9 @@ public final class ICUCompat {
                 throw new IllegalStateException(e2);
             }
         }
+    }
+
+    private ICUCompat() {
     }
 
     @Nullable
@@ -85,8 +89,5 @@ public final class ICUCompat {
             Log.w(TAG, e2);
         }
         return localeStr;
-    }
-
-    private ICUCompat() {
     }
 }

@@ -7,14 +7,6 @@ public final class zzx<T> {
     public final zzae zzc;
     public boolean zzd;
 
-    public static <T> zzx<T> zza(T t, zzc zzc2) {
-        return new zzx<>(t, zzc2);
-    }
-
-    public static <T> zzx<T> zza(zzae zzae) {
-        return new zzx<>(zzae);
-    }
-
     private zzx(T t, zzc zzc2) {
         this.zzd = false;
         this.zza = t;
@@ -27,5 +19,13 @@ public final class zzx<T> {
         this.zza = null;
         this.zzb = null;
         this.zzc = zzae;
+    }
+
+    public static <T> zzx<T> zza(T t, zzc zzc2) {
+        return new zzx<>(t, zzc2);
+    }
+
+    public static <T> zzx<T> zza(zzae zzae) {
+        return new zzx<>(zzae);
     }
 }

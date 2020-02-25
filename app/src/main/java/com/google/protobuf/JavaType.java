@@ -11,7 +11,7 @@ public enum JavaType {
     BYTE_STRING(ByteString.class, ByteString.class, ByteString.EMPTY),
     ENUM(Integer.TYPE, Integer.class, null),
     MESSAGE(Object.class, Object.class, null);
-    
+
     private final Class<?> boxedType;
     private final Object defaultDefault;
     private final Class<?> type;

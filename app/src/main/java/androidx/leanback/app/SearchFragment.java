@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.CompletionInfo;
+
 import androidx.leanback.C0364R;
 import androidx.leanback.widget.BrowseFrameLayout;
 import androidx.leanback.widget.ObjectAdapter;
@@ -22,43 +23,38 @@ import androidx.leanback.widget.SearchBar;
 import androidx.leanback.widget.SearchOrbView;
 import androidx.leanback.widget.SpeechRecognitionCallback;
 import androidx.leanback.widget.VerticalGridView;
+
 import java.util.ArrayList;
 import java.util.List;
 
 @Deprecated
 public class SearchFragment extends Fragment {
-    private static final String ARG_PREFIX = SearchFragment.class.getCanonicalName();
-    private static final String ARG_QUERY = (ARG_PREFIX + ".query");
-    private static final String ARG_TITLE = (ARG_PREFIX + ".title");
     static final int AUDIO_PERMISSION_REQUEST_CODE = 0;
     static final boolean DEBUG = false;
-    private static final String EXTRA_LEANBACK_BADGE_PRESENT = "LEANBACK_BADGE_PRESENT";
     static final int QUERY_COMPLETE = 2;
     static final int RESULTS_CHANGED = 1;
     static final long SPEECH_RECOGNITION_DELAY_MS = 300;
     static final String TAG = SearchFragment.class.getSimpleName();
-    final ObjectAdapter.DataObserver mAdapterObserver = new ObjectAdapter.DataObserver() {
-        public void onChanged() {
-            SearchFragment.this.mHandler.removeCallbacks(SearchFragment.this.mResultsChangedCallback);
-            SearchFragment.this.mHandler.post(SearchFragment.this.mResultsChangedCallback);
-        }
-    };
-    boolean mAutoStartRecognition = true;
-    private Drawable mBadgeDrawable;
-    private ExternalQuery mExternalQuery;
+    private static final String ARG_PREFIX = SearchFragment.class.getCanonicalName();
+    private static final String ARG_QUERY = (ARG_PREFIX + ".query");
+    private static final String ARG_TITLE = (ARG_PREFIX + ".title");
+    private static final String EXTRA_LEANBACK_BADGE_PRESENT = "LEANBACK_BADGE_PRESENT";
     final Handler mHandler = new Handler();
-    private boolean mIsPaused;
-    private OnItemViewClickedListener mOnItemViewClickedListener;
+    boolean mAutoStartRecognition = true;
     OnItemViewSelectedListener mOnItemViewSelectedListener;
     String mPendingQuery = null;
-    private boolean mPendingStartRecognitionWhenPaused;
-    private SearchBar.SearchBarPermissionListener mPermissionListener = new SearchBar.SearchBarPermissionListener() {
-        public void requestAudioPermission() {
-            PermissionHelper.requestPermissions(SearchFragment.this, new String[]{"android.permission.RECORD_AUDIO"}, 0);
-        }
-    };
     SearchResultProvider mProvider;
     ObjectAdapter mResultAdapter;
+    RowsFragment mRowsFragment;
+    SearchBar mSearchBar;
+    final Runnable mStartRecognitionRunnable = new Runnable() {
+        public void run() {
+            SearchFragment searchFragment = SearchFragment.this;
+            searchFragment.mAutoStartRecognition = false;
+            searchFragment.mSearchBar.startRecognition();
+        }
+    };
+    int mStatus;
     final Runnable mResultsChangedCallback = new Runnable() {
         public void run() {
             if (!(SearchFragment.this.mRowsFragment == null || SearchFragment.this.mRowsFragment.getAdapter() == SearchFragment.this.mResultAdapter || (SearchFragment.this.mRowsFragment.getAdapter() == null && SearchFragment.this.mResultAdapter.size() == 0))) {
@@ -72,8 +68,12 @@ public class SearchFragment extends Fragment {
             }
         }
     };
-    RowsFragment mRowsFragment;
-    SearchBar mSearchBar;
+    final ObjectAdapter.DataObserver mAdapterObserver = new ObjectAdapter.DataObserver() {
+        public void onChanged() {
+            SearchFragment.this.mHandler.removeCallbacks(SearchFragment.this.mResultsChangedCallback);
+            SearchFragment.this.mHandler.post(SearchFragment.this.mResultsChangedCallback);
+        }
+    };
     private final Runnable mSetSearchResultProvider = new Runnable() {
         public void run() {
             if (SearchFragment.this.mRowsFragment != null) {
@@ -100,31 +100,19 @@ public class SearchFragment extends Fragment {
             }
         }
     };
-    private SpeechRecognitionCallback mSpeechRecognitionCallback;
-    private SpeechRecognizer mSpeechRecognizer;
-    final Runnable mStartRecognitionRunnable = new Runnable() {
-        public void run() {
-            SearchFragment searchFragment = SearchFragment.this;
-            searchFragment.mAutoStartRecognition = false;
-            searchFragment.mSearchBar.startRecognition();
+    private Drawable mBadgeDrawable;
+    private ExternalQuery mExternalQuery;
+    private boolean mIsPaused;
+    private OnItemViewClickedListener mOnItemViewClickedListener;
+    private boolean mPendingStartRecognitionWhenPaused;
+    private SearchBar.SearchBarPermissionListener mPermissionListener = new SearchBar.SearchBarPermissionListener() {
+        public void requestAudioPermission() {
+            PermissionHelper.requestPermissions(SearchFragment.this, new String[]{"android.permission.RECORD_AUDIO"}, 0);
         }
     };
-    int mStatus;
+    private SpeechRecognitionCallback mSpeechRecognitionCallback;
+    private SpeechRecognizer mSpeechRecognizer;
     private String mTitle;
-
-    public interface SearchResultProvider {
-        ObjectAdapter getResultsAdapter();
-
-        boolean onQueryTextChange(String str);
-
-        boolean onQueryTextSubmit(String str);
-    }
-
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (requestCode == 0 && permissions.length > 0 && permissions[0].equals("android.permission.RECORD_AUDIO") && grantResults[0] == 0) {
-            startRecognition();
-        }
-    }
 
     public static Bundle createArgs(Bundle args, String query) {
         return createArgs(args, query, null);
@@ -143,6 +131,12 @@ public class SearchFragment extends Fragment {
         SearchFragment fragment = new SearchFragment();
         fragment.setArguments(createArgs(null, query));
         return fragment;
+    }
+
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == 0 && permissions.length > 0 && permissions[0].equals("android.permission.RECORD_AUDIO") && grantResults[0] == 0) {
+            startRecognition();
+        }
     }
 
     public void onCreate(Bundle savedInstanceState) {
@@ -305,6 +299,14 @@ public class SearchFragment extends Fragment {
         }
     }
 
+    public String getTitle() {
+        SearchBar searchBar = this.mSearchBar;
+        if (searchBar != null) {
+            return searchBar.getTitle();
+        }
+        return null;
+    }
+
     public void setTitle(String title) {
         this.mTitle = title;
         SearchBar searchBar = this.mSearchBar;
@@ -313,10 +315,10 @@ public class SearchFragment extends Fragment {
         }
     }
 
-    public String getTitle() {
+    public Drawable getBadgeDrawable() {
         SearchBar searchBar = this.mSearchBar;
         if (searchBar != null) {
-            return searchBar.getTitle();
+            return searchBar.getBadgeDrawable();
         }
         return null;
     }
@@ -327,14 +329,6 @@ public class SearchFragment extends Fragment {
         if (searchBar != null) {
             searchBar.setBadgeDrawable(drawable);
         }
-    }
-
-    public Drawable getBadgeDrawable() {
-        SearchBar searchBar = this.mSearchBar;
-        if (searchBar != null) {
-            return searchBar.getBadgeDrawable();
-        }
-        return null;
     }
 
     public void setSearchAffordanceColors(SearchOrbView.Colors colors) {
@@ -528,6 +522,14 @@ public class SearchFragment extends Fragment {
 
     private void setSearchQuery(String query) {
         this.mSearchBar.setSearchQuery(query);
+    }
+
+    public interface SearchResultProvider {
+        ObjectAdapter getResultsAdapter();
+
+        boolean onQueryTextChange(String str);
+
+        boolean onQueryTextSubmit(String str);
     }
 
     static class ExternalQuery {

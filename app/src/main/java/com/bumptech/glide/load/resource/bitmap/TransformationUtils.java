@@ -14,9 +14,11 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 import android.util.Log;
+
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.util.Preconditions;
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -26,13 +28,13 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public final class TransformationUtils {
-    private static final Lock BITMAP_DRAWABLE_LOCK = (MODELS_REQUIRING_BITMAP_LOCK.contains(Build.MODEL) ? new ReentrantLock() : new NoLock());
+    public static final int PAINT_FLAGS = 6;
     private static final Paint CIRCLE_CROP_BITMAP_PAINT = new Paint(7);
     private static final int CIRCLE_CROP_PAINT_FLAGS = 7;
     private static final Paint CIRCLE_CROP_SHAPE_PAINT = new Paint(7);
     private static final Paint DEFAULT_PAINT = new Paint(6);
     private static final Set<String> MODELS_REQUIRING_BITMAP_LOCK = new HashSet(Arrays.asList("XT1085", "XT1092", "XT1093", "XT1094", "XT1095", "XT1096", "XT1097", "XT1098", "XT1031", "XT1028", "XT937C", "XT1032", "XT1008", "XT1033", "XT1035", "XT1034", "XT939G", "XT1039", "XT1040", "XT1042", "XT1045", "XT1063", "XT1064", "XT1068", "XT1069", "XT1072", "XT1077", "XT1078", "XT1079"));
-    public static final int PAINT_FLAGS = 6;
+    private static final Lock BITMAP_DRAWABLE_LOCK = (MODELS_REQUIRING_BITMAP_LOCK.contains(Build.MODEL) ? new ReentrantLock() : new NoLock());
     private static final String TAG = "TransformationUtils";
 
     static {

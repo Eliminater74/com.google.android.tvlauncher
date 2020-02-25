@@ -1,6 +1,7 @@
 package com.google.android.libraries.performance.primes;
 
 import android.support.annotation.Nullable;
+
 import com.google.android.libraries.stitch.util.Preconditions;
 import com.google.common.base.Optional;
 
@@ -39,6 +40,10 @@ public class PrimesTimerConfigurations {
         this.perEventConfigFlags = perEventConfigFlags2;
     }
 
+    public static Builder newBuilder() {
+        return new Builder();
+    }
+
     public boolean isEnabled() {
         return this.enabled;
     }
@@ -62,10 +67,6 @@ public class PrimesTimerConfigurations {
         float unused3 = builder.samplingProbability = this.samplingProbability;
         Optional unused4 = builder.perEventConfigFlags = this.perEventConfigFlags;
         return builder;
-    }
-
-    public static Builder newBuilder() {
-        return new Builder();
     }
 
     public static final class Builder {

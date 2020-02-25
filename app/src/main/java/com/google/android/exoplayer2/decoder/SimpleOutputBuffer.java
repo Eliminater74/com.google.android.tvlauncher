@@ -4,8 +4,8 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 public class SimpleOutputBuffer extends OutputBuffer {
-    public ByteBuffer data;
     private final SimpleDecoder<?, SimpleOutputBuffer, ?> owner;
+    public ByteBuffer data;
 
     public SimpleOutputBuffer(SimpleDecoder<?, SimpleOutputBuffer, ?> owner2) {
         this.owner = owner2;

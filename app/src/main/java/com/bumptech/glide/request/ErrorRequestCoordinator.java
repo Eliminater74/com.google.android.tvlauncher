@@ -3,9 +3,9 @@ package com.bumptech.glide.request;
 import android.support.annotation.Nullable;
 
 public final class ErrorRequestCoordinator implements RequestCoordinator, Request {
-    private Request error;
     @Nullable
     private final RequestCoordinator parent;
+    private Request error;
     private Request primary;
 
     public ErrorRequestCoordinator(@Nullable RequestCoordinator parent2) {

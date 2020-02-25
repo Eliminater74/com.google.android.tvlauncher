@@ -2,7 +2,9 @@ package com.google.android.tvlauncher.model;
 
 import android.database.Cursor;
 import android.support.annotation.VisibleForTesting;
+
 import androidx.tvprovider.media.p005tv.TvContractCompat;
+
 import com.google.android.tvrecommendations.shared.util.Constants;
 
 public class HomeChannel {
@@ -18,6 +20,27 @@ public class HomeChannel {
     private String mPackageName;
     private int mSubtype;
     private String mSystemChannelKey;
+
+    private HomeChannel() {
+        this.mCanMove = true;
+        this.mCanRemove = true;
+        this.mLegacy = false;
+    }
+
+    @VisibleForTesting
+    public HomeChannel(long id, String packageName, String systemChannelKey) {
+        this.mCanMove = true;
+        this.mCanRemove = true;
+        this.mLegacy = false;
+        this.mId = id;
+        this.mPackageName = packageName;
+        this.mSystemChannelKey = systemChannelKey;
+    }
+
+    @VisibleForTesting
+    public HomeChannel(long id, String packageName) {
+        this(id, packageName, null);
+    }
 
     /* JADX INFO: Multiple debug info for r2v7 byte[]: [D('index' int), D('packageNameBlob' byte[])] */
     public static HomeChannel fromCursor(Cursor cursor) {
@@ -50,33 +73,17 @@ public class HomeChannel {
         return channel;
     }
 
-    private HomeChannel() {
-        this.mCanMove = true;
-        this.mCanRemove = true;
-        this.mLegacy = false;
-    }
-
-    @VisibleForTesting
-    public HomeChannel(long id, String packageName, String systemChannelKey) {
-        this.mCanMove = true;
-        this.mCanRemove = true;
-        this.mLegacy = false;
-        this.mId = id;
-        this.mPackageName = packageName;
-        this.mSystemChannelKey = systemChannelKey;
-    }
-
-    @VisibleForTesting
-    public HomeChannel(long id, String packageName) {
-        this(id, packageName, null);
-    }
-
     public long getId() {
         return this.mId;
     }
 
     public String getDisplayName() {
         return this.mDisplayName;
+    }
+
+    @VisibleForTesting
+    public void setDisplayName(String displayName) {
+        this.mDisplayName = displayName;
     }
 
     public String getLaunchUri() {
@@ -102,11 +109,6 @@ public class HomeChannel {
 
     public boolean isLegacy() {
         return this.mLegacy;
-    }
-
-    @VisibleForTesting
-    public void setDisplayName(String displayName) {
-        this.mDisplayName = displayName;
     }
 
     public boolean isSponsored() {

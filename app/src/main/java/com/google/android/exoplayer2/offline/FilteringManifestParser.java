@@ -1,8 +1,9 @@
 package com.google.android.exoplayer2.offline;
 
 import android.support.annotation.Nullable;
-import com.google.android.exoplayer2.offline.FilterableManifest;
+
 import com.google.android.exoplayer2.upstream.ParsingLoadable;
+
 import java.util.List;
 
 public final class FilteringManifestParser<T extends FilterableManifest<T>> implements ParsingLoadable.Parser<T> {

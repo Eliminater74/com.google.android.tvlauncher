@@ -2,15 +2,17 @@ package com.google.android.exoplayer2.upstream;
 
 import android.net.Uri;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.util.Assertions;
+
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 public final class StatsDataSource implements DataSource {
-    private long bytesRead;
     private final DataSource dataSource;
+    private long bytesRead;
     private Uri lastOpenedUri = Uri.EMPTY;
     private Map<String, List<String>> lastResponseHeaders = Collections.emptyMap();
 

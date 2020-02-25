@@ -1,6 +1,7 @@
 package com.google.android.exoplayer2.extractor.amr;
 
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.ParserException;
@@ -14,6 +15,7 @@ import com.google.android.exoplayer2.extractor.SeekMap;
 import com.google.android.exoplayer2.extractor.TrackOutput;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.EOFException;
 import java.io.IOException;
 import java.lang.annotation.Documented;
@@ -24,7 +26,6 @@ import java.util.Arrays;
 public final class AmrExtractor implements Extractor {
     public static final ExtractorsFactory FACTORY = AmrExtractor$$Lambda$0.$instance;
     public static final int FLAG_ENABLE_CONSTANT_BITRATE_SEEKING = 1;
-    private static final int MAX_FRAME_SIZE_BYTES = frameSizeBytesByTypeWb[8];
     private static final int NUM_SAME_SIZE_CONSTANT_BIT_RATE_THRESHOLD = 20;
     private static final int SAMPLE_RATE_NB = 8000;
     private static final int SAMPLE_RATE_WB = 16000;
@@ -33,31 +34,23 @@ public final class AmrExtractor implements Extractor {
     private static final byte[] amrSignatureWb = Util.getUtf8Bytes("#!AMR-WB\n");
     private static final int[] frameSizeBytesByTypeNb = {13, 14, 16, 18, 20, 21, 27, 32, 6, 7, 6, 6, 1, 1, 1, 1};
     private static final int[] frameSizeBytesByTypeWb = {18, 24, 33, 37, 41, 47, 51, 59, 61, 6, 1, 1, 1, 1, 1, 1};
+    private static final int MAX_FRAME_SIZE_BYTES = frameSizeBytesByTypeWb[8];
+    private final int flags;
+    private final byte[] scratch;
     private int currentSampleBytesRemaining;
     private int currentSampleSize;
     private long currentSampleTimeUs;
     private ExtractorOutput extractorOutput;
     private long firstSamplePosition;
     private int firstSampleSize;
-    private final int flags;
     private boolean hasOutputFormat;
     private boolean hasOutputSeekMap;
     private boolean isWideBand;
     private int numSamplesWithSameSize;
-    private final byte[] scratch;
     @Nullable
     private SeekMap seekMap;
     private long timeOffsetUs;
     private TrackOutput trackOutput;
-
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface Flags {
-    }
-
-    static final /* synthetic */ Extractor[] lambda$static$0$AmrExtractor() {
-        return new Extractor[]{new AmrExtractor()};
-    }
 
     public AmrExtractor() {
         this(0);
@@ -67,6 +60,32 @@ public final class AmrExtractor implements Extractor {
         this.flags = flags2;
         this.scratch = new byte[1];
         this.firstSampleSize = -1;
+    }
+
+    static final /* synthetic */ Extractor[] lambda$static$0$AmrExtractor() {
+        return new Extractor[]{new AmrExtractor()};
+    }
+
+    static int frameSizeBytesByTypeNb(int frameType) {
+        return frameSizeBytesByTypeNb[frameType];
+    }
+
+    static int frameSizeBytesByTypeWb(int frameType) {
+        return frameSizeBytesByTypeWb[frameType];
+    }
+
+    static byte[] amrSignatureNb() {
+        byte[] bArr = amrSignatureNb;
+        return Arrays.copyOf(bArr, bArr.length);
+    }
+
+    static byte[] amrSignatureWb() {
+        byte[] bArr = amrSignatureWb;
+        return Arrays.copyOf(bArr, bArr.length);
+    }
+
+    private static int getBitrateFromFrameSize(int frameSize, long durationUsPerFrame) {
+        return (int) ((((long) (frameSize * 8)) * 1000000) / durationUsPerFrame);
     }
 
     public boolean sniff(ExtractorInput input) throws IOException, InterruptedException {
@@ -104,24 +123,6 @@ public final class AmrExtractor implements Extractor {
     }
 
     public void release() {
-    }
-
-    static int frameSizeBytesByTypeNb(int frameType) {
-        return frameSizeBytesByTypeNb[frameType];
-    }
-
-    static int frameSizeBytesByTypeWb(int frameType) {
-        return frameSizeBytesByTypeWb[frameType];
-    }
-
-    static byte[] amrSignatureNb() {
-        byte[] bArr = amrSignatureNb;
-        return Arrays.copyOf(bArr, bArr.length);
-    }
-
-    static byte[] amrSignatureWb() {
-        byte[] bArr = amrSignatureWb;
-        return Arrays.copyOf(bArr, bArr.length);
     }
 
     private boolean readAmrHeader(ExtractorInput input) throws IOException, InterruptedException {
@@ -238,7 +239,8 @@ public final class AmrExtractor implements Extractor {
         return new ConstantBitrateSeekMap(inputLength, this.firstSamplePosition, getBitrateFromFrameSize(this.firstSampleSize, 20000), this.firstSampleSize);
     }
 
-    private static int getBitrateFromFrameSize(int frameSize, long durationUsPerFrame) {
-        return (int) ((((long) (frameSize * 8)) * 1000000) / durationUsPerFrame);
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface Flags {
     }
 }

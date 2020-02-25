@@ -6,8 +6,9 @@ import android.os.ParcelFileDescriptor;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+
 import com.bumptech.glide.load.Options;
-import com.bumptech.glide.load.model.ModelLoader;
+
 import java.io.File;
 import java.io.InputStream;
 
@@ -16,18 +17,6 @@ public class StringLoader<Data> implements ModelLoader<String, Data> {
 
     public StringLoader(ModelLoader<Uri, Data> uriLoader2) {
         this.uriLoader = uriLoader2;
-    }
-
-    public ModelLoader.LoadData<Data> buildLoadData(@NonNull String model, int width, int height, @NonNull Options options) {
-        Uri uri = parseUri(model);
-        if (uri == null || !this.uriLoader.handles(uri)) {
-            return null;
-        }
-        return this.uriLoader.buildLoadData(uri, width, height, options);
-    }
-
-    public boolean handles(@NonNull String model) {
-        return true;
     }
 
     @Nullable
@@ -47,6 +36,18 @@ public class StringLoader<Data> implements ModelLoader<String, Data> {
 
     private static Uri toFileUri(String path) {
         return Uri.fromFile(new File(path));
+    }
+
+    public ModelLoader.LoadData<Data> buildLoadData(@NonNull String model, int width, int height, @NonNull Options options) {
+        Uri uri = parseUri(model);
+        if (uri == null || !this.uriLoader.handles(uri)) {
+            return null;
+        }
+        return this.uriLoader.buildLoadData(uri, width, height, options);
+    }
+
+    public boolean handles(@NonNull String model) {
+        return true;
     }
 
     public static class StreamFactory implements ModelLoaderFactory<String, InputStream> {

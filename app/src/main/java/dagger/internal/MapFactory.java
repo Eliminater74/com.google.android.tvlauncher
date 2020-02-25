@@ -1,12 +1,16 @@
 package dagger.internal;
 
-import dagger.internal.AbstractMapFactory;
 import java.util.Collections;
 import java.util.Map;
+
 import javax.inject.Provider;
 
 public final class MapFactory<K, V> extends AbstractMapFactory<K, V, V> {
     private static final Provider<Map<Object, Object>> EMPTY = InstanceFactory.create(Collections.emptyMap());
+
+    private MapFactory(Map<K, Provider<V>> map) {
+        super(map);
+    }
 
     public static <K, V> Builder<K, V> builder(int size) {
         return new Builder<>(size);
@@ -14,10 +18,6 @@ public final class MapFactory<K, V> extends AbstractMapFactory<K, V, V> {
 
     public static <K, V> Provider<Map<K, V>> emptyMapProvider() {
         return EMPTY;
-    }
-
-    private MapFactory(Map<K, Provider<V>> map) {
-        super(map);
     }
 
     public Map<K, V> get() {

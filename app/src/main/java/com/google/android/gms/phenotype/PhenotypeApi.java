@@ -8,26 +8,6 @@ import com.google.android.gms.common.api.Status;
 @Deprecated
 public interface PhenotypeApi {
 
-    public interface ConfigurationsResult extends Result {
-        Configurations getConfigurations();
-    }
-
-    public interface DogfoodsTokenResult extends Result {
-        DogfoodsToken getDogfoodsToken();
-    }
-
-    public interface ExperimentTokensResult extends Result {
-        ExperimentTokens getExperimentTokens();
-    }
-
-    public interface FlagOverridesResult extends Result {
-        FlagOverrides getFlagOverrides();
-    }
-
-    public interface FlagResult extends Result {
-        Flag getFlag();
-    }
-
     PendingResult<Status> commitToConfiguration(GoogleApiClient googleApiClient, String str);
 
     PendingResult<FlagOverridesResult> deleteFlagOverrides(GoogleApiClient googleApiClient, String str, String str2, String str3);
@@ -64,4 +44,24 @@ public interface PhenotypeApi {
     PendingResult<Status> unRegister(GoogleApiClient googleApiClient, String str);
 
     PendingResult<Status> weakRegister(GoogleApiClient googleApiClient, String str, int i, String[] strArr, int[] iArr, byte[] bArr);
+
+    public interface ConfigurationsResult extends Result {
+        Configurations getConfigurations();
+    }
+
+    public interface DogfoodsTokenResult extends Result {
+        DogfoodsToken getDogfoodsToken();
+    }
+
+    public interface ExperimentTokensResult extends Result {
+        ExperimentTokens getExperimentTokens();
+    }
+
+    public interface FlagOverridesResult extends Result {
+        FlagOverrides getFlagOverrides();
+    }
+
+    public interface FlagResult extends Result {
+        Flag getFlag();
+    }
 }

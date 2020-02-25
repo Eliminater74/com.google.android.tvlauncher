@@ -3,6 +3,7 @@ package com.google.android.gms.common;
 import android.content.Context;
 import android.os.RemoteException;
 import android.util.Log;
+
 import com.google.android.gms.common.internal.Hide;
 import com.google.android.gms.common.internal.zzae;
 import com.google.android.gms.common.internal.zzaf;
@@ -13,8 +14,8 @@ import com.google.android.gms.dynamite.DynamiteModule;
 @Hide
 /* compiled from: GoogleCertificates */
 final class zze {
-    private static volatile zzae zza;
     private static final Object zzb = new Object();
+    private static volatile zzae zza;
     private static Context zzc;
 
     /* JADX WARNING: Code restructure failed: missing block: B:13:0x0019, code lost:

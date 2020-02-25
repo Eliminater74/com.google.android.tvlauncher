@@ -3,10 +3,11 @@ package com.google.common.collect;
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.base.Preconditions;
-import java.io.Serializable;
-import java.lang.Comparable;
-import java.util.Collection;
+
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
+import java.io.Serializable;
+import java.util.Collection;
 
 @GwtCompatible(emulated = true)
 final class RegularContiguousSet<C extends Comparable> extends ContiguousSet<C> {
@@ -16,6 +17,11 @@ final class RegularContiguousSet<C extends Comparable> extends ContiguousSet<C> 
     RegularContiguousSet(Range<C> range2, DiscreteDomain<C> domain) {
         super(domain);
         this.range = range2;
+    }
+
+    /* access modifiers changed from: private */
+    public static boolean equalsOrThrow(Comparable<?> left, @NullableDecl Comparable<?> right) {
+        return right != null && Range.compareOrThrow(left, right) == 0;
     }
 
     private ContiguousSet<C> intersectionInCurrentDomain(Range<C> other) {
@@ -107,11 +113,6 @@ final class RegularContiguousSet<C extends Comparable> extends ContiguousSet<C> 
                 return RegularContiguousSet.this.domain.previous(previous);
             }
         };
-    }
-
-    /* access modifiers changed from: private */
-    public static boolean equalsOrThrow(Comparable<?> left, @NullableDecl Comparable<?> right) {
-        return right != null && Range.compareOrThrow(left, right) == 0;
     }
 
     /* access modifiers changed from: package-private */
@@ -251,6 +252,12 @@ final class RegularContiguousSet<C extends Comparable> extends ContiguousSet<C> 
         return Sets.hashCodeImpl(this);
     }
 
+    /* access modifiers changed from: package-private */
+    @GwtIncompatible
+    public Object writeReplace() {
+        return new SerializedForm(this.range, this.domain);
+    }
+
     @GwtIncompatible
     private static final class SerializedForm<C extends Comparable> implements Serializable {
         final DiscreteDomain<C> domain;
@@ -264,11 +271,5 @@ final class RegularContiguousSet<C extends Comparable> extends ContiguousSet<C> 
         private Object readResolve() {
             return new RegularContiguousSet(this.range, this.domain);
         }
-    }
-
-    /* access modifiers changed from: package-private */
-    @GwtIncompatible
-    public Object writeReplace() {
-        return new SerializedForm(this.range, this.domain);
     }
 }

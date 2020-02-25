@@ -12,6 +12,7 @@ import android.graphics.Rect;
 import android.graphics.Shader;
 import android.support.p001v4.view.ViewCompat;
 import android.util.AttributeSet;
+
 import androidx.leanback.C0364R;
 
 public class HorizontalGridView extends BaseGridView {
@@ -73,6 +74,10 @@ public class HorizontalGridView extends BaseGridView {
         requestLayout();
     }
 
+    public final boolean getFadingLeftEdge() {
+        return this.mFadingLowEdge;
+    }
+
     public final void setFadingLeftEdge(boolean fading) {
         if (this.mFadingLowEdge != fading) {
             this.mFadingLowEdge = fading;
@@ -84,8 +89,8 @@ public class HorizontalGridView extends BaseGridView {
         }
     }
 
-    public final boolean getFadingLeftEdge() {
-        return this.mFadingLowEdge;
+    public final int getFadingLeftEdgeLength() {
+        return this.mLowFadeShaderLength;
     }
 
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
@@ -109,8 +114,8 @@ public class HorizontalGridView extends BaseGridView {
         }
     }
 
-    public final int getFadingLeftEdgeLength() {
-        return this.mLowFadeShaderLength;
+    public final int getFadingLeftEdgeOffset() {
+        return this.mLowFadeShaderOffset;
     }
 
     public final void setFadingLeftEdgeOffset(int fadeOffset) {
@@ -120,8 +125,8 @@ public class HorizontalGridView extends BaseGridView {
         }
     }
 
-    public final int getFadingLeftEdgeOffset() {
-        return this.mLowFadeShaderOffset;
+    public final boolean getFadingRightEdge() {
+        return this.mFadingHighEdge;
     }
 
     public final void setFadingRightEdge(boolean fading) {
@@ -135,8 +140,8 @@ public class HorizontalGridView extends BaseGridView {
         }
     }
 
-    public final boolean getFadingRightEdge() {
-        return this.mFadingHighEdge;
+    public final int getFadingRightEdgeLength() {
+        return this.mHighFadeShaderLength;
     }
 
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
@@ -160,8 +165,8 @@ public class HorizontalGridView extends BaseGridView {
         }
     }
 
-    public final int getFadingRightEdgeLength() {
-        return this.mHighFadeShaderLength;
+    public final int getFadingRightEdgeOffset() {
+        return this.mHighFadeShaderOffset;
     }
 
     public final void setFadingRightEdgeOffset(int fadeOffset) {
@@ -169,10 +174,6 @@ public class HorizontalGridView extends BaseGridView {
             this.mHighFadeShaderOffset = fadeOffset;
             invalidate();
         }
-    }
-
-    public final int getFadingRightEdgeOffset() {
-        return this.mHighFadeShaderOffset;
     }
 
     private boolean needsFadingLowEdge() {

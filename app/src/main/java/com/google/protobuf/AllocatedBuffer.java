@@ -3,24 +3,6 @@ package com.google.protobuf;
 import java.nio.ByteBuffer;
 
 abstract class AllocatedBuffer {
-    public abstract byte[] array();
-
-    public abstract int arrayOffset();
-
-    public abstract boolean hasArray();
-
-    public abstract boolean hasNioBuffer();
-
-    public abstract int limit();
-
-    public abstract ByteBuffer nioBuffer();
-
-    public abstract int position();
-
-    public abstract AllocatedBuffer position(int i);
-
-    public abstract int remaining();
-
     AllocatedBuffer() {
     }
 
@@ -125,4 +107,22 @@ abstract class AllocatedBuffer {
             }
         };
     }
+
+    public abstract byte[] array();
+
+    public abstract int arrayOffset();
+
+    public abstract boolean hasArray();
+
+    public abstract boolean hasNioBuffer();
+
+    public abstract int limit();
+
+    public abstract ByteBuffer nioBuffer();
+
+    public abstract int position();
+
+    public abstract AllocatedBuffer position(int i);
+
+    public abstract int remaining();
 }

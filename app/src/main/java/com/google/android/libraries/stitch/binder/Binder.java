@@ -8,10 +8,12 @@ import android.support.annotation.Nullable;
 import android.support.p001v4.app.Fragment;
 import android.support.p001v4.p003os.TraceCompat;
 import android.util.Log;
+
 import com.google.android.libraries.stitch.flags.DebugFlag;
 import com.google.android.libraries.stitch.flags.Flags;
 import com.google.android.libraries.stitch.flags.TestFlag;
 import com.google.android.libraries.stitch.util.Preconditions;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -23,44 +25,27 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public final class Binder {
-    private static final TestFlag DETAIL_TRACE_ENABLED = new TestFlag("test.binder.detail_trace");
     static final DebugFlag EXTRA_VERIFICATION = new DebugFlag("debug.binder.verification");
+    private static final TestFlag DETAIL_TRACE_ENABLED = new TestFlag("test.binder.detail_trace");
     private static final boolean IS_STRICT_MODE_ALLOWED = Flags.get(new DebugFlag("debug.binder.strict_mode"));
     private static final int MAX_SECTION_NAME_LEN = 127;
     private static final String TAG = "Binder";
     private static final TestFlag TRACE_ENABLED = new TestFlag("test.binder.trace");
     private static final Object UNBOUND = new Object();
+    private static final BinderProvider rootBinderProvider = new BinderProvider(false, new RootBinderInitializer());
     private static boolean isModuleConfigureStrictModePolicySet;
     private static StrictMode.ThreadPolicy moduleConfigureStrictModePolicy;
-    private static final BinderProvider rootBinderProvider = new BinderProvider(false, new RootBinderInitializer());
-    private volatile BinderLocks binderLocks;
     private final Map<Object, Object> bindings;
-    private Context context;
     private final ThreadLocal<Boolean> isInternallyBinding;
     private final Map<Class<?>, Map<Object, Object>> keyBindings;
     private final Set<Class<?>> moduleMultiBindingsAdded;
     private final CopyOnWriteArrayList<Module> modules;
     private final Map<Object, List<?>> multiBindings;
+    private volatile BinderLocks binderLocks;
+    private Context context;
     private Binder parent;
     private volatile boolean sealed;
     private String tag;
-
-    static final class DuplicateBindingException extends RuntimeException {
-        public DuplicateBindingException(String msg) {
-            super(msg);
-        }
-    }
-
-    static final class LateBindingException extends RuntimeException {
-        public LateBindingException(String msg) {
-            super(msg);
-        }
-    }
-
-    public static void setStrictModePolicy(StrictMode.ThreadPolicy policy) {
-        moduleConfigureStrictModePolicy = policy;
-        isModuleConfigureStrictModePolicySet = policy != null;
-    }
 
     public Binder(Context context2) {
         this(context2, null);
@@ -87,6 +72,157 @@ public final class Binder {
         this.modules = new CopyOnWriteArrayList<>();
         this.isInternallyBinding = new ThreadLocal<>();
         this.binderLocks = new SingleBinderLock();
+    }
+
+    public static void setStrictModePolicy(StrictMode.ThreadPolicy policy) {
+        moduleConfigureStrictModePolicy = policy;
+        isModuleConfigureStrictModePolicySet = policy != null;
+    }
+
+    @NonNull
+    public static <T> T get(Context context2, Class<T> type) {
+        return findBinder(context2).get(type);
+    }
+
+    @NonNull
+    public static <T> T get(Context context2, Class<T> type, Object key) {
+        return findBinder(context2).get(type, key);
+    }
+
+    @Nullable
+    public static <T> T getOptional(Context context2, Class<T> type, Object key) {
+        return findBinder(context2).getOptional(type, key);
+    }
+
+    @Nullable
+    public static <T> T getOptional(Context context2, Class<T> type) {
+        return findBinder(context2).getOptional(type);
+    }
+
+    public static <T> List<T> getAll(Context context2, Class<T> type) {
+        return findBinder(context2).getAll(type);
+    }
+
+    public static String getString(Context context2, String key, String defaultValue) {
+        return (String) findBinder(context2).getConstant(key, defaultValue);
+    }
+
+    public static int getInt(Context context2, String key, int defaultValue) {
+        return ((Integer) findBinder(context2).getConstant(key, Integer.valueOf(defaultValue))).intValue();
+    }
+
+    public static long getLong(Context context2, String key, long defaultValue) {
+        return ((Long) findBinder(context2).getConstant(key, Long.valueOf(defaultValue))).longValue();
+    }
+
+    public static boolean getBoolean(Context context2, String key, boolean defaultValue) {
+        return ((Boolean) findBinder(context2).getConstant(key, Boolean.valueOf(defaultValue))).booleanValue();
+    }
+
+    public static <T> List<T> getChain(Context context2, Class<T> type) {
+        return findBinder(context2).getChain(type);
+    }
+
+    public static Binder findBinder(Context context2, Fragment fragment) {
+        while (fragment != null) {
+            Binder binder = tryGetBinder(fragment);
+            if (binder != null) {
+                return binder;
+            }
+            fragment = fragment.getParentFragment();
+        }
+        return findBinder(context2);
+    }
+
+    public static Binder findBinder(Context context2) {
+        Context applicationContext = context2.getApplicationContext();
+        boolean applicationContextVisited = false;
+        do {
+            Binder binder = tryGetBinder(context2);
+            if (binder != null) {
+                return binder;
+            }
+            applicationContextVisited |= context2 == applicationContext;
+            if (context2 instanceof ContextWrapper) {
+                context2 = ((ContextWrapper) context2).getBaseContext();
+                if (context2 == null) {
+                    throw new IllegalStateException("Invalid ContextWrapper -- If this is a Robolectric test, have you called ActivityController.create()?");
+                }
+            } else if (!applicationContextVisited) {
+                context2 = applicationContext;
+                continue;
+            } else {
+                context2 = null;
+                continue;
+            }
+        } while (context2 != null);
+        return getRootBinder(applicationContext);
+    }
+
+    public static Binder getRootBinder(Context context2) {
+        return rootBinderProvider.get(context2.getApplicationContext());
+    }
+
+    private static Binder tryGetBinder(Object object) {
+        if (!(object instanceof BinderContext)) {
+            return null;
+        }
+        Binder binder = ((BinderContext) object).getBinder();
+        if (binder != null) {
+            return binder;
+        }
+        String valueOf = String.valueOf(object);
+        StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 43);
+        sb.append("BinderContext must not return null Binder: ");
+        sb.append(valueOf);
+        throw new IllegalStateException(sb.toString());
+    }
+
+    private static void beginTrace(String method, Class<?> type) {
+        if (isTracingEnabled()) {
+            beginTrace(method, type.getSimpleName(), new Object[0]);
+        }
+    }
+
+    private static void beginTrace(String method, Class<?> type, Object key) {
+        if (isTracingEnabled()) {
+            beginTrace(method, "%s %s", type.getSimpleName(), key);
+        }
+    }
+
+    private static void beginTrace(String method, Module module, Class<?> type, Object key) {
+        if (isTracingEnabled()) {
+            beginTrace(method, "%s %s %s", module.getClass().getSimpleName(), type.getSimpleName(), key);
+        }
+    }
+
+    private static void beginTrace(String method, String label, Object... formatArgs) {
+        String traceSectionName = null;
+        if (Flags.get(DETAIL_TRACE_ENABLED)) {
+            String format = String.format(label, formatArgs);
+            StringBuilder sb = new StringBuilder(String.valueOf(method).length() + 10 + String.valueOf(format).length());
+            sb.append("Binder.");
+            sb.append(method);
+            sb.append(" - ");
+            sb.append(format);
+            traceSectionName = sb.toString();
+        } else if (Flags.get(TRACE_ENABLED)) {
+            String valueOf = String.valueOf(method);
+            traceSectionName = valueOf.length() != 0 ? "Binder.".concat(valueOf) : new String("Binder.");
+        }
+        if (traceSectionName != null) {
+            TraceCompat.beginSection(traceSectionName.substring(0, Math.min(traceSectionName.length(), 127)));
+        }
+    }
+
+    private static void endTrace() {
+        if (isTracingEnabled()) {
+            TraceCompat.endSection();
+        }
+    }
+
+    private static boolean isTracingEnabled() {
+        return Flags.get(DETAIL_TRACE_ENABLED) || Flags.get(TRACE_ENABLED);
     }
 
     public void attachContext(Context context2) {
@@ -178,16 +314,6 @@ public final class Binder {
     }
 
     @NonNull
-    public static <T> T get(Context context2, Class<T> type) {
-        return findBinder(context2).get(type);
-    }
-
-    @NonNull
-    public static <T> T get(Context context2, Class<T> type, Object key) {
-        return findBinder(context2).get(type, key);
-    }
-
-    @NonNull
     public <T> T get(Class<T> type) {
         beginTrace("Get", type);
         try {
@@ -245,16 +371,6 @@ public final class Binder {
             }
             sb.append(" ->\n");
         }
-    }
-
-    @Nullable
-    public static <T> T getOptional(Context context2, Class<T> type, Object key) {
-        return findBinder(context2).getOptional(type, key);
-    }
-
-    @Nullable
-    public static <T> T getOptional(Context context2, Class<T> type) {
-        return findBinder(context2).getOptional(type);
     }
 
     @Nullable
@@ -1029,133 +1145,19 @@ public final class Binder {
         return this.parent;
     }
 
-    public static <T> List<T> getAll(Context context2, Class<T> type) {
-        return findBinder(context2).getAll(type);
-    }
-
-    public static String getString(Context context2, String key, String defaultValue) {
-        return (String) findBinder(context2).getConstant(key, defaultValue);
-    }
-
-    public static int getInt(Context context2, String key, int defaultValue) {
-        return ((Integer) findBinder(context2).getConstant(key, Integer.valueOf(defaultValue))).intValue();
-    }
-
-    public static long getLong(Context context2, String key, long defaultValue) {
-        return ((Long) findBinder(context2).getConstant(key, Long.valueOf(defaultValue))).longValue();
-    }
-
-    public static boolean getBoolean(Context context2, String key, boolean defaultValue) {
-        return ((Boolean) findBinder(context2).getConstant(key, Boolean.valueOf(defaultValue))).booleanValue();
-    }
-
-    public static <T> List<T> getChain(Context context2, Class<T> type) {
-        return findBinder(context2).getChain(type);
-    }
-
-    public static Binder findBinder(Context context2, Fragment fragment) {
-        while (fragment != null) {
-            Binder binder = tryGetBinder(fragment);
-            if (binder != null) {
-                return binder;
-            }
-            fragment = fragment.getParentFragment();
-        }
-        return findBinder(context2);
-    }
-
-    public static Binder findBinder(Context context2) {
-        Context applicationContext = context2.getApplicationContext();
-        boolean applicationContextVisited = false;
-        do {
-            Binder binder = tryGetBinder(context2);
-            if (binder != null) {
-                return binder;
-            }
-            applicationContextVisited |= context2 == applicationContext;
-            if (context2 instanceof ContextWrapper) {
-                context2 = ((ContextWrapper) context2).getBaseContext();
-                if (context2 == null) {
-                    throw new IllegalStateException("Invalid ContextWrapper -- If this is a Robolectric test, have you called ActivityController.create()?");
-                }
-            } else if (!applicationContextVisited) {
-                context2 = applicationContext;
-                continue;
-            } else {
-                context2 = null;
-                continue;
-            }
-        } while (context2 != null);
-        return getRootBinder(applicationContext);
-    }
-
-    public static Binder getRootBinder(Context context2) {
-        return rootBinderProvider.get(context2.getApplicationContext());
-    }
-
     public void setTag(String tag2) {
         this.tag = tag2;
     }
 
-    private static Binder tryGetBinder(Object object) {
-        if (!(object instanceof BinderContext)) {
-            return null;
-        }
-        Binder binder = ((BinderContext) object).getBinder();
-        if (binder != null) {
-            return binder;
-        }
-        String valueOf = String.valueOf(object);
-        StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 43);
-        sb.append("BinderContext must not return null Binder: ");
-        sb.append(valueOf);
-        throw new IllegalStateException(sb.toString());
-    }
-
-    private static void beginTrace(String method, Class<?> type) {
-        if (isTracingEnabled()) {
-            beginTrace(method, type.getSimpleName(), new Object[0]);
+    static final class DuplicateBindingException extends RuntimeException {
+        public DuplicateBindingException(String msg) {
+            super(msg);
         }
     }
 
-    private static void beginTrace(String method, Class<?> type, Object key) {
-        if (isTracingEnabled()) {
-            beginTrace(method, "%s %s", type.getSimpleName(), key);
+    static final class LateBindingException extends RuntimeException {
+        public LateBindingException(String msg) {
+            super(msg);
         }
-    }
-
-    private static void beginTrace(String method, Module module, Class<?> type, Object key) {
-        if (isTracingEnabled()) {
-            beginTrace(method, "%s %s %s", module.getClass().getSimpleName(), type.getSimpleName(), key);
-        }
-    }
-
-    private static void beginTrace(String method, String label, Object... formatArgs) {
-        String traceSectionName = null;
-        if (Flags.get(DETAIL_TRACE_ENABLED)) {
-            String format = String.format(label, formatArgs);
-            StringBuilder sb = new StringBuilder(String.valueOf(method).length() + 10 + String.valueOf(format).length());
-            sb.append("Binder.");
-            sb.append(method);
-            sb.append(" - ");
-            sb.append(format);
-            traceSectionName = sb.toString();
-        } else if (Flags.get(TRACE_ENABLED)) {
-            String valueOf = String.valueOf(method);
-            traceSectionName = valueOf.length() != 0 ? "Binder.".concat(valueOf) : new String("Binder.");
-        }
-        if (traceSectionName != null) {
-            TraceCompat.beginSection(traceSectionName.substring(0, Math.min(traceSectionName.length(), 127)));
-        }
-    }
-
-    private static void endTrace() {
-        if (isTracingEnabled()) {
-            TraceCompat.endSection();
-        }
-    }
-
-    private static boolean isTracingEnabled() {
-        return Flags.get(DETAIL_TRACE_ENABLED) || Flags.get(TRACE_ENABLED);
     }
 }

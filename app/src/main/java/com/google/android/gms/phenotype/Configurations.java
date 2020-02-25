@@ -3,8 +3,10 @@ package com.google.android.gms.phenotype;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Base64;
+
 import com.google.android.gms.internal.zzbkv;
 import com.google.android.gms.internal.zzbky;
+
 import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeMap;

@@ -10,8 +10,8 @@ public final class zzak {
     private static final Comparator<byte[]> zze = new zzal();
     private final List<byte[]> zza = new LinkedList();
     private final List<byte[]> zzb = new ArrayList(64);
-    private int zzc = 0;
     private final int zzd = 4096;
+    private int zzc = 0;
 
     public zzak(int i) {
     }

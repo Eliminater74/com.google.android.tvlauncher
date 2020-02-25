@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.support.p001v4.graphics.drawable.DrawableCompat;
 import android.util.AttributeSet;
 import android.widget.Button;
+
 import com.google.android.gms.base.C0946R;
 import com.google.android.gms.common.util.zzi;
 
@@ -20,6 +21,22 @@ public final class zzbc extends Button {
 
     private zzbc(Context context, AttributeSet attributeSet) {
         super(context, null, 16842824);
+    }
+
+    private static int zza(int i, int i2, int i3, int i4) {
+        if (i == 0) {
+            return i2;
+        }
+        if (i == 1) {
+            return i3;
+        }
+        if (i == 2) {
+            return i4;
+        }
+        StringBuilder sb = new StringBuilder(33);
+        sb.append("Unknown color scheme: ");
+        sb.append(i);
+        throw new IllegalStateException(sb.toString());
     }
 
     public final void zza(Resources resources, int i, int i2) {
@@ -59,21 +76,5 @@ public final class zzbc extends Button {
         if (zzi.zza(getContext())) {
             setGravity(19);
         }
-    }
-
-    private static int zza(int i, int i2, int i3, int i4) {
-        if (i == 0) {
-            return i2;
-        }
-        if (i == 1) {
-            return i3;
-        }
-        if (i == 2) {
-            return i4;
-        }
-        StringBuilder sb = new StringBuilder(33);
-        sb.append("Unknown color scheme: ");
-        sb.append(i);
-        throw new IllegalStateException(sb.toString());
     }
 }

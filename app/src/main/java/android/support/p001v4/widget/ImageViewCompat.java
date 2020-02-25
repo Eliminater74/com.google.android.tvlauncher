@@ -10,6 +10,9 @@ import android.widget.ImageView;
 
 /* renamed from: android.support.v4.widget.ImageViewCompat */
 public class ImageViewCompat {
+    private ImageViewCompat() {
+    }
+
     @Nullable
     public static ColorStateList getImageTintList(@NonNull ImageView view) {
         if (Build.VERSION.SDK_INT >= 21) {
@@ -60,8 +63,5 @@ public class ImageViewCompat {
         } else if (view instanceof TintableImageSourceView) {
             ((TintableImageSourceView) view).setSupportImageTintMode(mode);
         }
-    }
-
-    private ImageViewCompat() {
     }
 }

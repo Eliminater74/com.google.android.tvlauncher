@@ -3,7 +3,9 @@ package com.google.android.libraries.performance.primes.metriccapture;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+
 import com.google.android.libraries.performance.primes.PrimesLog;
+
 import logs.proto.wireless.performance.mobile.NetworkMetric;
 
 public final class NetworkCapture {

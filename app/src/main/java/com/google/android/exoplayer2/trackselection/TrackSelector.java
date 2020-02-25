@@ -1,6 +1,7 @@
 package com.google.android.exoplayer2.trackselection;
 
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.RendererCapabilities;
 import com.google.android.exoplayer2.Timeline;
@@ -14,10 +15,6 @@ public abstract class TrackSelector {
     private BandwidthMeter bandwidthMeter;
     @Nullable
     private InvalidationListener listener;
-
-    public interface InvalidationListener {
-        void onTrackSelectionsInvalidated();
-    }
 
     public abstract void onSelectionActivated(Object obj);
 
@@ -39,5 +36,9 @@ public abstract class TrackSelector {
     /* access modifiers changed from: protected */
     public final BandwidthMeter getBandwidthMeter() {
         return (BandwidthMeter) Assertions.checkNotNull(this.bandwidthMeter);
+    }
+
+    public interface InvalidationListener {
+        void onTrackSelectionsInvalidated();
     }
 }

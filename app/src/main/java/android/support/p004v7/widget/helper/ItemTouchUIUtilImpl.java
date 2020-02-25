@@ -14,16 +14,6 @@ class ItemTouchUIUtilImpl implements ItemTouchUIUtil {
     ItemTouchUIUtilImpl() {
     }
 
-    public void onDraw(Canvas c, RecyclerView recyclerView, View view, float dX, float dY, int actionState, boolean isCurrentlyActive) {
-        if (Build.VERSION.SDK_INT >= 21 && isCurrentlyActive && view.getTag(C0239R.C0240id.item_touch_helper_previous_elevation) == null) {
-            Object originalElevation = Float.valueOf(ViewCompat.getElevation(view));
-            ViewCompat.setElevation(view, findMaxElevation(recyclerView, view) + 1.0f);
-            view.setTag(C0239R.C0240id.item_touch_helper_previous_elevation, originalElevation);
-        }
-        view.setTranslationX(dX);
-        view.setTranslationY(dY);
-    }
-
     private static float findMaxElevation(RecyclerView recyclerView, View itemView) {
         int childCount = recyclerView.getChildCount();
         float max = 0.0f;
@@ -37,6 +27,16 @@ class ItemTouchUIUtilImpl implements ItemTouchUIUtil {
             }
         }
         return max;
+    }
+
+    public void onDraw(Canvas c, RecyclerView recyclerView, View view, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+        if (Build.VERSION.SDK_INT >= 21 && isCurrentlyActive && view.getTag(C0239R.C0240id.item_touch_helper_previous_elevation) == null) {
+            Object originalElevation = Float.valueOf(ViewCompat.getElevation(view));
+            ViewCompat.setElevation(view, findMaxElevation(recyclerView, view) + 1.0f);
+            view.setTag(C0239R.C0240id.item_touch_helper_previous_elevation, originalElevation);
+        }
+        view.setTranslationX(dX);
+        view.setTranslationY(dY);
     }
 
     public void onDrawOver(Canvas c, RecyclerView recyclerView, View view, float dX, float dY, int actionState, boolean isCurrentlyActive) {

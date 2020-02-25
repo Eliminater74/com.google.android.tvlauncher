@@ -1,6 +1,7 @@
 package com.google.android.exoplayer2;
 
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.source.ClippingMediaPeriod;
 import com.google.android.exoplayer2.source.EmptySampleStream;
 import com.google.android.exoplayer2.source.MediaPeriod;
@@ -17,23 +18,23 @@ import com.google.android.exoplayer2.util.Log;
 
 final class MediaPeriodHolder {
     private static final String TAG = "MediaPeriodHolder";
+    public final MediaPeriod mediaPeriod;
+    public final SampleStream[] sampleStreams;
+    public final Object uid;
+    private final boolean[] mayRetainStreamFlags;
+    private final MediaSource mediaSource;
+    private final RendererCapabilities[] rendererCapabilities;
+    private final TrackSelector trackSelector;
     public boolean hasEnabledTracks;
     public MediaPeriodInfo info;
-    private final boolean[] mayRetainStreamFlags;
-    public final MediaPeriod mediaPeriod;
-    private final MediaSource mediaSource;
+    public boolean prepared;
     @Nullable
     private MediaPeriodHolder next;
-    public boolean prepared;
-    private final RendererCapabilities[] rendererCapabilities;
     private long rendererPositionOffsetUs;
-    public final SampleStream[] sampleStreams;
     @Nullable
     private TrackGroupArray trackGroups;
-    private final TrackSelector trackSelector;
     @Nullable
     private TrackSelectorResult trackSelectorResult;
-    public final Object uid;
 
     public MediaPeriodHolder(RendererCapabilities[] rendererCapabilities2, long rendererPositionOffsetUs2, TrackSelector trackSelector2, Allocator allocator, MediaSource mediaSource2, MediaPeriodInfo info2) {
         this.rendererCapabilities = rendererCapabilities2;
@@ -45,6 +46,26 @@ final class MediaPeriodHolder {
         this.sampleStreams = new SampleStream[rendererCapabilities2.length];
         this.mayRetainStreamFlags = new boolean[rendererCapabilities2.length];
         this.mediaPeriod = createMediaPeriod(info2.f73id, mediaSource2, allocator, info2.startPositionUs, info2.endPositionUs);
+    }
+
+    private static MediaPeriod createMediaPeriod(MediaSource.MediaPeriodId id, MediaSource mediaSource2, Allocator allocator, long startPositionUs, long endPositionUs) {
+        MediaPeriod mediaPeriod2 = mediaSource2.createPeriod(id, allocator, startPositionUs);
+        if (endPositionUs == C0841C.TIME_UNSET || endPositionUs == Long.MIN_VALUE) {
+            return mediaPeriod2;
+        }
+        return new ClippingMediaPeriod(mediaPeriod2, true, 0, endPositionUs);
+    }
+
+    private static void releaseMediaPeriod(long endPositionUs, MediaSource mediaSource2, MediaPeriod mediaPeriod2) {
+        if (endPositionUs == C0841C.TIME_UNSET || endPositionUs == Long.MIN_VALUE) {
+            mediaSource2.releasePeriod(mediaPeriod2);
+            return;
+        }
+        try {
+            mediaSource2.releasePeriod(((ClippingMediaPeriod) mediaPeriod2).mediaPeriod);
+        } catch (RuntimeException e) {
+            Log.m27e(TAG, "Period release failed.", e);
+        }
     }
 
     public long toRendererTime(long periodTimeUs) {
@@ -167,17 +188,17 @@ final class MediaPeriodHolder {
         releaseMediaPeriod(this.info.endPositionUs, this.mediaSource, this.mediaPeriod);
     }
 
+    @Nullable
+    public MediaPeriodHolder getNext() {
+        return this.next;
+    }
+
     public void setNext(@Nullable MediaPeriodHolder nextMediaPeriodHolder) {
         if (nextMediaPeriodHolder != this.next) {
             disableTrackSelectionsInResult();
             this.next = nextMediaPeriodHolder;
             enableTrackSelectionsInResult();
         }
-    }
-
-    @Nullable
-    public MediaPeriodHolder getNext() {
-        return this.next;
     }
 
     public TrackGroupArray getTrackGroups() {
@@ -247,25 +268,5 @@ final class MediaPeriodHolder {
 
     private boolean isLoadingMediaPeriod() {
         return this.next == null;
-    }
-
-    private static MediaPeriod createMediaPeriod(MediaSource.MediaPeriodId id, MediaSource mediaSource2, Allocator allocator, long startPositionUs, long endPositionUs) {
-        MediaPeriod mediaPeriod2 = mediaSource2.createPeriod(id, allocator, startPositionUs);
-        if (endPositionUs == C0841C.TIME_UNSET || endPositionUs == Long.MIN_VALUE) {
-            return mediaPeriod2;
-        }
-        return new ClippingMediaPeriod(mediaPeriod2, true, 0, endPositionUs);
-    }
-
-    private static void releaseMediaPeriod(long endPositionUs, MediaSource mediaSource2, MediaPeriod mediaPeriod2) {
-        if (endPositionUs == C0841C.TIME_UNSET || endPositionUs == Long.MIN_VALUE) {
-            mediaSource2.releasePeriod(mediaPeriod2);
-            return;
-        }
-        try {
-            mediaSource2.releasePeriod(((ClippingMediaPeriod) mediaPeriod2).mediaPeriod);
-        } catch (RuntimeException e) {
-            Log.m27e(TAG, "Period release failed.", e);
-        }
     }
 }

@@ -2,6 +2,7 @@ package com.google.android.tvlauncher.appsview;
 
 import android.content.Intent;
 import android.view.View;
+
 import com.google.android.libraries.social.analytics.visualelement.VisualElementTag;
 
 public interface OnAppsViewActionListener {

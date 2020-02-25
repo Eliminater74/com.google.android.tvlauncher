@@ -10,6 +10,10 @@ abstract class zzaz implements Runnable {
         this.zza = zzap;
     }
 
+    /* synthetic */ zzaz(zzap zzap, zzaq zzaq) {
+        this(zzap);
+    }
+
     /* access modifiers changed from: protected */
     @WorkerThread
     public abstract void zza();
@@ -27,9 +31,5 @@ abstract class zzaz implements Runnable {
         } finally {
             this.zza.zzb.unlock();
         }
-    }
-
-    /* synthetic */ zzaz(zzap zzap, zzaq zzaq) {
-        this(zzap);
     }
 }

@@ -10,11 +10,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RestrictTo;
 import android.support.p001v4.view.accessibility.AccessibilityNodeInfoCompat;
-import android.support.p004v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
@@ -22,47 +22,47 @@ import java.util.List;
 
 /* renamed from: android.support.v7.widget.StaggeredGridLayoutManager */
 public class StaggeredGridLayoutManager extends RecyclerView.LayoutManager implements RecyclerView.SmoothScroller.ScrollVectorProvider {
-    static final boolean DEBUG = false;
     @Deprecated
     public static final int GAP_HANDLING_LAZY = 1;
     public static final int GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS = 2;
     public static final int GAP_HANDLING_NONE = 0;
     public static final int HORIZONTAL = 0;
+    public static final int VERTICAL = 1;
+    static final boolean DEBUG = false;
     static final int INVALID_OFFSET = Integer.MIN_VALUE;
     private static final float MAX_SCROLL_FACTOR = 0.33333334f;
     private static final String TAG = "StaggeredGridLManager";
-    public static final int VERTICAL = 1;
     private final AnchorInfo mAnchorInfo = new AnchorInfo();
-    private final Runnable mCheckForGapsRunnable = new Runnable() {
-        public void run() {
-            StaggeredGridLayoutManager.this.checkForGaps();
-        }
-    };
+    @NonNull
+    private final LayoutState mLayoutState;
+    private final Rect mTmpRect = new Rect();
+    LazySpanLookup mLazySpanLookup = new LazySpanLookup();
+    int mPendingScrollPosition = -1;
+    int mPendingScrollPositionOffset = Integer.MIN_VALUE;
+    @NonNull
+    OrientationHelper mPrimaryOrientation;
+    boolean mReverseLayout = false;
+    @NonNull
+    OrientationHelper mSecondaryOrientation;
+    boolean mShouldReverseLayout = false;
+    Span[] mSpans;
     private int mFullSizeSpec;
     private int mGapStrategy = 2;
     private boolean mLaidOutInvalidFullSpan = false;
     private boolean mLastLayoutFromEnd;
     private boolean mLastLayoutRTL;
-    @NonNull
-    private final LayoutState mLayoutState;
-    LazySpanLookup mLazySpanLookup = new LazySpanLookup();
     private int mOrientation;
     private SavedState mPendingSavedState;
-    int mPendingScrollPosition = -1;
-    int mPendingScrollPositionOffset = Integer.MIN_VALUE;
     private int[] mPrefetchDistances;
-    @NonNull
-    OrientationHelper mPrimaryOrientation;
     private BitSet mRemainingSpans;
-    boolean mReverseLayout = false;
-    @NonNull
-    OrientationHelper mSecondaryOrientation;
-    boolean mShouldReverseLayout = false;
     private int mSizePerSpan;
     private boolean mSmoothScrollbarEnabled = true;
     private int mSpanCount = -1;
-    Span[] mSpans;
-    private final Rect mTmpRect = new Rect();
+    private final Runnable mCheckForGapsRunnable = new Runnable() {
+        public void run() {
+            StaggeredGridLayoutManager.this.checkForGaps();
+        }
+    };
 
     public StaggeredGridLayoutManager(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         RecyclerView.LayoutManager.Properties properties = getProperties(context, attrs, defStyleAttr, defStyleRes);
@@ -218,46 +218,6 @@ public class StaggeredGridLayoutManager extends RecyclerView.LayoutManager imple
         return false;
     }
 
-    public void setSpanCount(int spanCount) {
-        assertNotInLayoutOrScroll(null);
-        if (spanCount != this.mSpanCount) {
-            invalidateSpanAssignments();
-            this.mSpanCount = spanCount;
-            this.mRemainingSpans = new BitSet(this.mSpanCount);
-            this.mSpans = new Span[this.mSpanCount];
-            for (int i = 0; i < this.mSpanCount; i++) {
-                this.mSpans[i] = new Span(i);
-            }
-            requestLayout();
-        }
-    }
-
-    public void setOrientation(int orientation) {
-        if (orientation == 0 || orientation == 1) {
-            assertNotInLayoutOrScroll(null);
-            if (orientation != this.mOrientation) {
-                this.mOrientation = orientation;
-                OrientationHelper tmp = this.mPrimaryOrientation;
-                this.mPrimaryOrientation = this.mSecondaryOrientation;
-                this.mSecondaryOrientation = tmp;
-                requestLayout();
-                return;
-            }
-            return;
-        }
-        throw new IllegalArgumentException("invalid orientation.");
-    }
-
-    public void setReverseLayout(boolean reverseLayout) {
-        assertNotInLayoutOrScroll(null);
-        SavedState savedState = this.mPendingSavedState;
-        if (!(savedState == null || savedState.mReverseLayout == reverseLayout)) {
-            this.mPendingSavedState.mReverseLayout = reverseLayout;
-        }
-        this.mReverseLayout = reverseLayout;
-        requestLayout();
-    }
-
     public int getGapStrategy() {
         return this.mGapStrategy;
     }
@@ -284,6 +244,20 @@ public class StaggeredGridLayoutManager extends RecyclerView.LayoutManager imple
         return this.mSpanCount;
     }
 
+    public void setSpanCount(int spanCount) {
+        assertNotInLayoutOrScroll(null);
+        if (spanCount != this.mSpanCount) {
+            invalidateSpanAssignments();
+            this.mSpanCount = spanCount;
+            this.mRemainingSpans = new BitSet(this.mSpanCount);
+            this.mSpans = new Span[this.mSpanCount];
+            for (int i = 0; i < this.mSpanCount; i++) {
+                this.mSpans[i] = new Span(i);
+            }
+            requestLayout();
+        }
+    }
+
     public void invalidateSpanAssignments() {
         this.mLazySpanLookup.clear();
         requestLayout();
@@ -304,6 +278,16 @@ public class StaggeredGridLayoutManager extends RecyclerView.LayoutManager imple
 
     public boolean getReverseLayout() {
         return this.mReverseLayout;
+    }
+
+    public void setReverseLayout(boolean reverseLayout) {
+        assertNotInLayoutOrScroll(null);
+        SavedState savedState = this.mPendingSavedState;
+        if (!(savedState == null || savedState.mReverseLayout == reverseLayout)) {
+            this.mPendingSavedState.mReverseLayout = reverseLayout;
+        }
+        this.mReverseLayout = reverseLayout;
+        requestLayout();
     }
 
     public void setMeasuredDimension(Rect childrenBounds, int wSpec, int hSpec) {
@@ -1065,7 +1049,7 @@ public class StaggeredGridLayoutManager extends RecyclerView.LayoutManager imple
         int start2;
         RecyclerView.Recycler recycler2 = recycler;
         LayoutState layoutState2 = layoutState;
-        ? r9 = 0;
+        ?r9 = 0;
         boolean z = true;
         this.mRemainingSpans.set(0, this.mSpanCount, true);
         if (this.mLayoutState.mInfinite) {
@@ -1704,6 +1688,22 @@ public class StaggeredGridLayoutManager extends RecyclerView.LayoutManager imple
         return this.mOrientation;
     }
 
+    public void setOrientation(int orientation) {
+        if (orientation == 0 || orientation == 1) {
+            assertNotInLayoutOrScroll(null);
+            if (orientation != this.mOrientation) {
+                this.mOrientation = orientation;
+                OrientationHelper tmp = this.mPrimaryOrientation;
+                this.mPrimaryOrientation = this.mSecondaryOrientation;
+                this.mSecondaryOrientation = tmp;
+                requestLayout();
+                return;
+            }
+            return;
+        }
+        throw new IllegalArgumentException("invalid orientation.");
+    }
+
     @Nullable
     public View onFocusSearchFailed(View focused, int direction, RecyclerView.Recycler recycler, RecyclerView.State state) {
         View directChild;
@@ -1865,12 +1865,12 @@ public class StaggeredGridLayoutManager extends RecyclerView.LayoutManager imple
             super(source);
         }
 
-        public void setFullSpan(boolean fullSpan) {
-            this.mFullSpan = fullSpan;
-        }
-
         public boolean isFullSpan() {
             return this.mFullSpan;
+        }
+
+        public void setFullSpan(boolean fullSpan) {
+            this.mFullSpan = fullSpan;
         }
 
         public final int getSpanIndex() {
@@ -1879,315 +1879,6 @@ public class StaggeredGridLayoutManager extends RecyclerView.LayoutManager imple
                 return -1;
             }
             return span.mIndex;
-        }
-    }
-
-    /* renamed from: android.support.v7.widget.StaggeredGridLayoutManager$Span */
-    class Span {
-        static final int INVALID_LINE = Integer.MIN_VALUE;
-        int mCachedEnd = Integer.MIN_VALUE;
-        int mCachedStart = Integer.MIN_VALUE;
-        int mDeletedSize = 0;
-        final int mIndex;
-        ArrayList<View> mViews = new ArrayList<>();
-
-        Span(int index) {
-            this.mIndex = index;
-        }
-
-        /* access modifiers changed from: package-private */
-        public int getStartLine(int def) {
-            int i = this.mCachedStart;
-            if (i != Integer.MIN_VALUE) {
-                return i;
-            }
-            if (this.mViews.size() == 0) {
-                return def;
-            }
-            calculateCachedStart();
-            return this.mCachedStart;
-        }
-
-        /* access modifiers changed from: package-private */
-        public void calculateCachedStart() {
-            LazySpanLookup.FullSpanItem fsi;
-            View startView = this.mViews.get(0);
-            LayoutParams lp = getLayoutParams(startView);
-            this.mCachedStart = StaggeredGridLayoutManager.this.mPrimaryOrientation.getDecoratedStart(startView);
-            if (lp.mFullSpan && (fsi = StaggeredGridLayoutManager.this.mLazySpanLookup.getFullSpanItem(lp.getViewLayoutPosition())) != null && fsi.mGapDir == -1) {
-                this.mCachedStart -= fsi.getGapForSpan(this.mIndex);
-            }
-        }
-
-        /* access modifiers changed from: package-private */
-        public int getStartLine() {
-            int i = this.mCachedStart;
-            if (i != Integer.MIN_VALUE) {
-                return i;
-            }
-            calculateCachedStart();
-            return this.mCachedStart;
-        }
-
-        /* access modifiers changed from: package-private */
-        public int getEndLine(int def) {
-            int i = this.mCachedEnd;
-            if (i != Integer.MIN_VALUE) {
-                return i;
-            }
-            if (this.mViews.size() == 0) {
-                return def;
-            }
-            calculateCachedEnd();
-            return this.mCachedEnd;
-        }
-
-        /* access modifiers changed from: package-private */
-        public void calculateCachedEnd() {
-            LazySpanLookup.FullSpanItem fsi;
-            ArrayList<View> arrayList = this.mViews;
-            View endView = arrayList.get(arrayList.size() - 1);
-            LayoutParams lp = getLayoutParams(endView);
-            this.mCachedEnd = StaggeredGridLayoutManager.this.mPrimaryOrientation.getDecoratedEnd(endView);
-            if (lp.mFullSpan && (fsi = StaggeredGridLayoutManager.this.mLazySpanLookup.getFullSpanItem(lp.getViewLayoutPosition())) != null && fsi.mGapDir == 1) {
-                this.mCachedEnd += fsi.getGapForSpan(this.mIndex);
-            }
-        }
-
-        /* access modifiers changed from: package-private */
-        public int getEndLine() {
-            int i = this.mCachedEnd;
-            if (i != Integer.MIN_VALUE) {
-                return i;
-            }
-            calculateCachedEnd();
-            return this.mCachedEnd;
-        }
-
-        /* access modifiers changed from: package-private */
-        public void prependToSpan(View view) {
-            LayoutParams lp = getLayoutParams(view);
-            lp.mSpan = this;
-            this.mViews.add(0, view);
-            this.mCachedStart = Integer.MIN_VALUE;
-            if (this.mViews.size() == 1) {
-                this.mCachedEnd = Integer.MIN_VALUE;
-            }
-            if (lp.isItemRemoved() || lp.isItemChanged()) {
-                this.mDeletedSize += StaggeredGridLayoutManager.this.mPrimaryOrientation.getDecoratedMeasurement(view);
-            }
-        }
-
-        /* access modifiers changed from: package-private */
-        public void appendToSpan(View view) {
-            LayoutParams lp = getLayoutParams(view);
-            lp.mSpan = this;
-            this.mViews.add(view);
-            this.mCachedEnd = Integer.MIN_VALUE;
-            if (this.mViews.size() == 1) {
-                this.mCachedStart = Integer.MIN_VALUE;
-            }
-            if (lp.isItemRemoved() || lp.isItemChanged()) {
-                this.mDeletedSize += StaggeredGridLayoutManager.this.mPrimaryOrientation.getDecoratedMeasurement(view);
-            }
-        }
-
-        /* access modifiers changed from: package-private */
-        public void cacheReferenceLineAndClear(boolean reverseLayout, int offset) {
-            int reference;
-            if (reverseLayout) {
-                reference = getEndLine(Integer.MIN_VALUE);
-            } else {
-                reference = getStartLine(Integer.MIN_VALUE);
-            }
-            clear();
-            if (reference != Integer.MIN_VALUE) {
-                if (reverseLayout && reference < StaggeredGridLayoutManager.this.mPrimaryOrientation.getEndAfterPadding()) {
-                    return;
-                }
-                if (reverseLayout || reference <= StaggeredGridLayoutManager.this.mPrimaryOrientation.getStartAfterPadding()) {
-                    if (offset != Integer.MIN_VALUE) {
-                        reference += offset;
-                    }
-                    this.mCachedEnd = reference;
-                    this.mCachedStart = reference;
-                }
-            }
-        }
-
-        /* access modifiers changed from: package-private */
-        public void clear() {
-            this.mViews.clear();
-            invalidateCache();
-            this.mDeletedSize = 0;
-        }
-
-        /* access modifiers changed from: package-private */
-        public void invalidateCache() {
-            this.mCachedStart = Integer.MIN_VALUE;
-            this.mCachedEnd = Integer.MIN_VALUE;
-        }
-
-        /* access modifiers changed from: package-private */
-        public void setLine(int line) {
-            this.mCachedStart = line;
-            this.mCachedEnd = line;
-        }
-
-        /* access modifiers changed from: package-private */
-        public void popEnd() {
-            int size = this.mViews.size();
-            View end = this.mViews.remove(size - 1);
-            LayoutParams lp = getLayoutParams(end);
-            lp.mSpan = null;
-            if (lp.isItemRemoved() || lp.isItemChanged()) {
-                this.mDeletedSize -= StaggeredGridLayoutManager.this.mPrimaryOrientation.getDecoratedMeasurement(end);
-            }
-            if (size == 1) {
-                this.mCachedStart = Integer.MIN_VALUE;
-            }
-            this.mCachedEnd = Integer.MIN_VALUE;
-        }
-
-        /* access modifiers changed from: package-private */
-        public void popStart() {
-            View start = this.mViews.remove(0);
-            LayoutParams lp = getLayoutParams(start);
-            lp.mSpan = null;
-            if (this.mViews.size() == 0) {
-                this.mCachedEnd = Integer.MIN_VALUE;
-            }
-            if (lp.isItemRemoved() || lp.isItemChanged()) {
-                this.mDeletedSize -= StaggeredGridLayoutManager.this.mPrimaryOrientation.getDecoratedMeasurement(start);
-            }
-            this.mCachedStart = Integer.MIN_VALUE;
-        }
-
-        public int getDeletedSize() {
-            return this.mDeletedSize;
-        }
-
-        /* access modifiers changed from: package-private */
-        public LayoutParams getLayoutParams(View view) {
-            return (LayoutParams) view.getLayoutParams();
-        }
-
-        /* access modifiers changed from: package-private */
-        public void onOffset(int dt) {
-            int i = this.mCachedStart;
-            if (i != Integer.MIN_VALUE) {
-                this.mCachedStart = i + dt;
-            }
-            int i2 = this.mCachedEnd;
-            if (i2 != Integer.MIN_VALUE) {
-                this.mCachedEnd = i2 + dt;
-            }
-        }
-
-        public int findFirstVisibleItemPosition() {
-            if (StaggeredGridLayoutManager.this.mReverseLayout) {
-                return findOneVisibleChild(this.mViews.size() - 1, -1, false);
-            }
-            return findOneVisibleChild(0, this.mViews.size(), false);
-        }
-
-        public int findFirstPartiallyVisibleItemPosition() {
-            if (StaggeredGridLayoutManager.this.mReverseLayout) {
-                return findOnePartiallyVisibleChild(this.mViews.size() - 1, -1, true);
-            }
-            return findOnePartiallyVisibleChild(0, this.mViews.size(), true);
-        }
-
-        public int findFirstCompletelyVisibleItemPosition() {
-            if (StaggeredGridLayoutManager.this.mReverseLayout) {
-                return findOneVisibleChild(this.mViews.size() - 1, -1, true);
-            }
-            return findOneVisibleChild(0, this.mViews.size(), true);
-        }
-
-        public int findLastVisibleItemPosition() {
-            if (StaggeredGridLayoutManager.this.mReverseLayout) {
-                return findOneVisibleChild(0, this.mViews.size(), false);
-            }
-            return findOneVisibleChild(this.mViews.size() - 1, -1, false);
-        }
-
-        public int findLastPartiallyVisibleItemPosition() {
-            if (StaggeredGridLayoutManager.this.mReverseLayout) {
-                return findOnePartiallyVisibleChild(0, this.mViews.size(), true);
-            }
-            return findOnePartiallyVisibleChild(this.mViews.size() - 1, -1, true);
-        }
-
-        public int findLastCompletelyVisibleItemPosition() {
-            if (StaggeredGridLayoutManager.this.mReverseLayout) {
-                return findOneVisibleChild(0, this.mViews.size(), true);
-            }
-            return findOneVisibleChild(this.mViews.size() - 1, -1, true);
-        }
-
-        /* access modifiers changed from: package-private */
-        public int findOnePartiallyOrCompletelyVisibleChild(int fromIndex, int toIndex, boolean completelyVisible, boolean acceptCompletelyVisible, boolean acceptEndPointInclusion) {
-            int i = toIndex;
-            int start = StaggeredGridLayoutManager.this.mPrimaryOrientation.getStartAfterPadding();
-            int end = StaggeredGridLayoutManager.this.mPrimaryOrientation.getEndAfterPadding();
-            int next = i > fromIndex ? 1 : -1;
-            for (int i2 = fromIndex; i2 != i; i2 += next) {
-                View child = this.mViews.get(i2);
-                int childStart = StaggeredGridLayoutManager.this.mPrimaryOrientation.getDecoratedStart(child);
-                int childEnd = StaggeredGridLayoutManager.this.mPrimaryOrientation.getDecoratedEnd(child);
-                boolean childEndInclusion = false;
-                boolean childStartInclusion = !acceptEndPointInclusion ? childStart < end : childStart <= end;
-                if (!acceptEndPointInclusion ? childEnd > start : childEnd >= start) {
-                    childEndInclusion = true;
-                }
-                if (childStartInclusion && childEndInclusion) {
-                    if (!completelyVisible || !acceptCompletelyVisible) {
-                        if (acceptCompletelyVisible) {
-                            return StaggeredGridLayoutManager.this.getPosition(child);
-                        }
-                        if (childStart < start || childEnd > end) {
-                            return StaggeredGridLayoutManager.this.getPosition(child);
-                        }
-                    } else if (childStart >= start && childEnd <= end) {
-                        return StaggeredGridLayoutManager.this.getPosition(child);
-                    }
-                }
-            }
-            return -1;
-        }
-
-        /* access modifiers changed from: package-private */
-        public int findOneVisibleChild(int fromIndex, int toIndex, boolean completelyVisible) {
-            return findOnePartiallyOrCompletelyVisibleChild(fromIndex, toIndex, completelyVisible, true, false);
-        }
-
-        /* access modifiers changed from: package-private */
-        public int findOnePartiallyVisibleChild(int fromIndex, int toIndex, boolean acceptEndPointInclusion) {
-            return findOnePartiallyOrCompletelyVisibleChild(fromIndex, toIndex, false, false, acceptEndPointInclusion);
-        }
-
-        public View getFocusableViewAfter(int referenceChildPosition, int layoutDir) {
-            View candidate = null;
-            if (layoutDir != -1) {
-                for (int i = this.mViews.size() - 1; i >= 0; i--) {
-                    View view = this.mViews.get(i);
-                    if ((StaggeredGridLayoutManager.this.mReverseLayout && StaggeredGridLayoutManager.this.getPosition(view) >= referenceChildPosition) || ((!StaggeredGridLayoutManager.this.mReverseLayout && StaggeredGridLayoutManager.this.getPosition(view) <= referenceChildPosition) || !view.hasFocusable())) {
-                        break;
-                    }
-                    candidate = view;
-                }
-            } else {
-                int limit = this.mViews.size();
-                for (int i2 = 0; i2 < limit; i2++) {
-                    View view2 = this.mViews.get(i2);
-                    if ((StaggeredGridLayoutManager.this.mReverseLayout && StaggeredGridLayoutManager.this.getPosition(view2) <= referenceChildPosition) || ((!StaggeredGridLayoutManager.this.mReverseLayout && StaggeredGridLayoutManager.this.getPosition(view2) >= referenceChildPosition) || !view2.hasFocusable())) {
-                        break;
-                    }
-                    candidate = view2;
-                }
-            }
-            return candidate;
         }
     }
 
@@ -2570,6 +2261,315 @@ public class StaggeredGridLayoutManager extends RecyclerView.LayoutManager imple
             dest.writeInt(this.mAnchorLayoutFromEnd ? 1 : 0);
             dest.writeInt(this.mLastLayoutRTL ? 1 : 0);
             dest.writeList(this.mFullSpanItems);
+        }
+    }
+
+    /* renamed from: android.support.v7.widget.StaggeredGridLayoutManager$Span */
+    class Span {
+        static final int INVALID_LINE = Integer.MIN_VALUE;
+        final int mIndex;
+        int mCachedEnd = Integer.MIN_VALUE;
+        int mCachedStart = Integer.MIN_VALUE;
+        int mDeletedSize = 0;
+        ArrayList<View> mViews = new ArrayList<>();
+
+        Span(int index) {
+            this.mIndex = index;
+        }
+
+        /* access modifiers changed from: package-private */
+        public int getStartLine(int def) {
+            int i = this.mCachedStart;
+            if (i != Integer.MIN_VALUE) {
+                return i;
+            }
+            if (this.mViews.size() == 0) {
+                return def;
+            }
+            calculateCachedStart();
+            return this.mCachedStart;
+        }
+
+        /* access modifiers changed from: package-private */
+        public void calculateCachedStart() {
+            LazySpanLookup.FullSpanItem fsi;
+            View startView = this.mViews.get(0);
+            LayoutParams lp = getLayoutParams(startView);
+            this.mCachedStart = StaggeredGridLayoutManager.this.mPrimaryOrientation.getDecoratedStart(startView);
+            if (lp.mFullSpan && (fsi = StaggeredGridLayoutManager.this.mLazySpanLookup.getFullSpanItem(lp.getViewLayoutPosition())) != null && fsi.mGapDir == -1) {
+                this.mCachedStart -= fsi.getGapForSpan(this.mIndex);
+            }
+        }
+
+        /* access modifiers changed from: package-private */
+        public int getStartLine() {
+            int i = this.mCachedStart;
+            if (i != Integer.MIN_VALUE) {
+                return i;
+            }
+            calculateCachedStart();
+            return this.mCachedStart;
+        }
+
+        /* access modifiers changed from: package-private */
+        public int getEndLine(int def) {
+            int i = this.mCachedEnd;
+            if (i != Integer.MIN_VALUE) {
+                return i;
+            }
+            if (this.mViews.size() == 0) {
+                return def;
+            }
+            calculateCachedEnd();
+            return this.mCachedEnd;
+        }
+
+        /* access modifiers changed from: package-private */
+        public void calculateCachedEnd() {
+            LazySpanLookup.FullSpanItem fsi;
+            ArrayList<View> arrayList = this.mViews;
+            View endView = arrayList.get(arrayList.size() - 1);
+            LayoutParams lp = getLayoutParams(endView);
+            this.mCachedEnd = StaggeredGridLayoutManager.this.mPrimaryOrientation.getDecoratedEnd(endView);
+            if (lp.mFullSpan && (fsi = StaggeredGridLayoutManager.this.mLazySpanLookup.getFullSpanItem(lp.getViewLayoutPosition())) != null && fsi.mGapDir == 1) {
+                this.mCachedEnd += fsi.getGapForSpan(this.mIndex);
+            }
+        }
+
+        /* access modifiers changed from: package-private */
+        public int getEndLine() {
+            int i = this.mCachedEnd;
+            if (i != Integer.MIN_VALUE) {
+                return i;
+            }
+            calculateCachedEnd();
+            return this.mCachedEnd;
+        }
+
+        /* access modifiers changed from: package-private */
+        public void prependToSpan(View view) {
+            LayoutParams lp = getLayoutParams(view);
+            lp.mSpan = this;
+            this.mViews.add(0, view);
+            this.mCachedStart = Integer.MIN_VALUE;
+            if (this.mViews.size() == 1) {
+                this.mCachedEnd = Integer.MIN_VALUE;
+            }
+            if (lp.isItemRemoved() || lp.isItemChanged()) {
+                this.mDeletedSize += StaggeredGridLayoutManager.this.mPrimaryOrientation.getDecoratedMeasurement(view);
+            }
+        }
+
+        /* access modifiers changed from: package-private */
+        public void appendToSpan(View view) {
+            LayoutParams lp = getLayoutParams(view);
+            lp.mSpan = this;
+            this.mViews.add(view);
+            this.mCachedEnd = Integer.MIN_VALUE;
+            if (this.mViews.size() == 1) {
+                this.mCachedStart = Integer.MIN_VALUE;
+            }
+            if (lp.isItemRemoved() || lp.isItemChanged()) {
+                this.mDeletedSize += StaggeredGridLayoutManager.this.mPrimaryOrientation.getDecoratedMeasurement(view);
+            }
+        }
+
+        /* access modifiers changed from: package-private */
+        public void cacheReferenceLineAndClear(boolean reverseLayout, int offset) {
+            int reference;
+            if (reverseLayout) {
+                reference = getEndLine(Integer.MIN_VALUE);
+            } else {
+                reference = getStartLine(Integer.MIN_VALUE);
+            }
+            clear();
+            if (reference != Integer.MIN_VALUE) {
+                if (reverseLayout && reference < StaggeredGridLayoutManager.this.mPrimaryOrientation.getEndAfterPadding()) {
+                    return;
+                }
+                if (reverseLayout || reference <= StaggeredGridLayoutManager.this.mPrimaryOrientation.getStartAfterPadding()) {
+                    if (offset != Integer.MIN_VALUE) {
+                        reference += offset;
+                    }
+                    this.mCachedEnd = reference;
+                    this.mCachedStart = reference;
+                }
+            }
+        }
+
+        /* access modifiers changed from: package-private */
+        public void clear() {
+            this.mViews.clear();
+            invalidateCache();
+            this.mDeletedSize = 0;
+        }
+
+        /* access modifiers changed from: package-private */
+        public void invalidateCache() {
+            this.mCachedStart = Integer.MIN_VALUE;
+            this.mCachedEnd = Integer.MIN_VALUE;
+        }
+
+        /* access modifiers changed from: package-private */
+        public void setLine(int line) {
+            this.mCachedStart = line;
+            this.mCachedEnd = line;
+        }
+
+        /* access modifiers changed from: package-private */
+        public void popEnd() {
+            int size = this.mViews.size();
+            View end = this.mViews.remove(size - 1);
+            LayoutParams lp = getLayoutParams(end);
+            lp.mSpan = null;
+            if (lp.isItemRemoved() || lp.isItemChanged()) {
+                this.mDeletedSize -= StaggeredGridLayoutManager.this.mPrimaryOrientation.getDecoratedMeasurement(end);
+            }
+            if (size == 1) {
+                this.mCachedStart = Integer.MIN_VALUE;
+            }
+            this.mCachedEnd = Integer.MIN_VALUE;
+        }
+
+        /* access modifiers changed from: package-private */
+        public void popStart() {
+            View start = this.mViews.remove(0);
+            LayoutParams lp = getLayoutParams(start);
+            lp.mSpan = null;
+            if (this.mViews.size() == 0) {
+                this.mCachedEnd = Integer.MIN_VALUE;
+            }
+            if (lp.isItemRemoved() || lp.isItemChanged()) {
+                this.mDeletedSize -= StaggeredGridLayoutManager.this.mPrimaryOrientation.getDecoratedMeasurement(start);
+            }
+            this.mCachedStart = Integer.MIN_VALUE;
+        }
+
+        public int getDeletedSize() {
+            return this.mDeletedSize;
+        }
+
+        /* access modifiers changed from: package-private */
+        public LayoutParams getLayoutParams(View view) {
+            return (LayoutParams) view.getLayoutParams();
+        }
+
+        /* access modifiers changed from: package-private */
+        public void onOffset(int dt) {
+            int i = this.mCachedStart;
+            if (i != Integer.MIN_VALUE) {
+                this.mCachedStart = i + dt;
+            }
+            int i2 = this.mCachedEnd;
+            if (i2 != Integer.MIN_VALUE) {
+                this.mCachedEnd = i2 + dt;
+            }
+        }
+
+        public int findFirstVisibleItemPosition() {
+            if (StaggeredGridLayoutManager.this.mReverseLayout) {
+                return findOneVisibleChild(this.mViews.size() - 1, -1, false);
+            }
+            return findOneVisibleChild(0, this.mViews.size(), false);
+        }
+
+        public int findFirstPartiallyVisibleItemPosition() {
+            if (StaggeredGridLayoutManager.this.mReverseLayout) {
+                return findOnePartiallyVisibleChild(this.mViews.size() - 1, -1, true);
+            }
+            return findOnePartiallyVisibleChild(0, this.mViews.size(), true);
+        }
+
+        public int findFirstCompletelyVisibleItemPosition() {
+            if (StaggeredGridLayoutManager.this.mReverseLayout) {
+                return findOneVisibleChild(this.mViews.size() - 1, -1, true);
+            }
+            return findOneVisibleChild(0, this.mViews.size(), true);
+        }
+
+        public int findLastVisibleItemPosition() {
+            if (StaggeredGridLayoutManager.this.mReverseLayout) {
+                return findOneVisibleChild(0, this.mViews.size(), false);
+            }
+            return findOneVisibleChild(this.mViews.size() - 1, -1, false);
+        }
+
+        public int findLastPartiallyVisibleItemPosition() {
+            if (StaggeredGridLayoutManager.this.mReverseLayout) {
+                return findOnePartiallyVisibleChild(0, this.mViews.size(), true);
+            }
+            return findOnePartiallyVisibleChild(this.mViews.size() - 1, -1, true);
+        }
+
+        public int findLastCompletelyVisibleItemPosition() {
+            if (StaggeredGridLayoutManager.this.mReverseLayout) {
+                return findOneVisibleChild(0, this.mViews.size(), true);
+            }
+            return findOneVisibleChild(this.mViews.size() - 1, -1, true);
+        }
+
+        /* access modifiers changed from: package-private */
+        public int findOnePartiallyOrCompletelyVisibleChild(int fromIndex, int toIndex, boolean completelyVisible, boolean acceptCompletelyVisible, boolean acceptEndPointInclusion) {
+            int i = toIndex;
+            int start = StaggeredGridLayoutManager.this.mPrimaryOrientation.getStartAfterPadding();
+            int end = StaggeredGridLayoutManager.this.mPrimaryOrientation.getEndAfterPadding();
+            int next = i > fromIndex ? 1 : -1;
+            for (int i2 = fromIndex; i2 != i; i2 += next) {
+                View child = this.mViews.get(i2);
+                int childStart = StaggeredGridLayoutManager.this.mPrimaryOrientation.getDecoratedStart(child);
+                int childEnd = StaggeredGridLayoutManager.this.mPrimaryOrientation.getDecoratedEnd(child);
+                boolean childEndInclusion = false;
+                boolean childStartInclusion = !acceptEndPointInclusion ? childStart < end : childStart <= end;
+                if (!acceptEndPointInclusion ? childEnd > start : childEnd >= start) {
+                    childEndInclusion = true;
+                }
+                if (childStartInclusion && childEndInclusion) {
+                    if (!completelyVisible || !acceptCompletelyVisible) {
+                        if (acceptCompletelyVisible) {
+                            return StaggeredGridLayoutManager.this.getPosition(child);
+                        }
+                        if (childStart < start || childEnd > end) {
+                            return StaggeredGridLayoutManager.this.getPosition(child);
+                        }
+                    } else if (childStart >= start && childEnd <= end) {
+                        return StaggeredGridLayoutManager.this.getPosition(child);
+                    }
+                }
+            }
+            return -1;
+        }
+
+        /* access modifiers changed from: package-private */
+        public int findOneVisibleChild(int fromIndex, int toIndex, boolean completelyVisible) {
+            return findOnePartiallyOrCompletelyVisibleChild(fromIndex, toIndex, completelyVisible, true, false);
+        }
+
+        /* access modifiers changed from: package-private */
+        public int findOnePartiallyVisibleChild(int fromIndex, int toIndex, boolean acceptEndPointInclusion) {
+            return findOnePartiallyOrCompletelyVisibleChild(fromIndex, toIndex, false, false, acceptEndPointInclusion);
+        }
+
+        public View getFocusableViewAfter(int referenceChildPosition, int layoutDir) {
+            View candidate = null;
+            if (layoutDir != -1) {
+                for (int i = this.mViews.size() - 1; i >= 0; i--) {
+                    View view = this.mViews.get(i);
+                    if ((StaggeredGridLayoutManager.this.mReverseLayout && StaggeredGridLayoutManager.this.getPosition(view) >= referenceChildPosition) || ((!StaggeredGridLayoutManager.this.mReverseLayout && StaggeredGridLayoutManager.this.getPosition(view) <= referenceChildPosition) || !view.hasFocusable())) {
+                        break;
+                    }
+                    candidate = view;
+                }
+            } else {
+                int limit = this.mViews.size();
+                for (int i2 = 0; i2 < limit; i2++) {
+                    View view2 = this.mViews.get(i2);
+                    if ((StaggeredGridLayoutManager.this.mReverseLayout && StaggeredGridLayoutManager.this.getPosition(view2) <= referenceChildPosition) || ((!StaggeredGridLayoutManager.this.mReverseLayout && StaggeredGridLayoutManager.this.getPosition(view2) >= referenceChildPosition) || !view2.hasFocusable())) {
+                        break;
+                    }
+                    candidate = view2;
+                }
+            }
+            return candidate;
         }
     }
 

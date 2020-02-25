@@ -7,6 +7,7 @@ import android.support.annotation.RestrictTo;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
+
 import androidx.preference.C0731R;
 
 @SuppressLint({"AppCompatCustomView"})
@@ -33,22 +34,22 @@ public class PreferenceImageView extends ImageView {
         a.recycle();
     }
 
+    public int getMaxWidth() {
+        return this.mMaxWidth;
+    }
+
     public void setMaxWidth(int maxWidth) {
         this.mMaxWidth = maxWidth;
         super.setMaxWidth(maxWidth);
     }
 
-    public int getMaxWidth() {
-        return this.mMaxWidth;
+    public int getMaxHeight() {
+        return this.mMaxHeight;
     }
 
     public void setMaxHeight(int maxHeight) {
         this.mMaxHeight = maxHeight;
         super.setMaxHeight(maxHeight);
-    }
-
-    public int getMaxHeight() {
-        return this.mMaxHeight;
     }
 
     /* JADX INFO: Multiple debug info for r3v0 int: [D('heightMode' int), D('widthSize' int)] */

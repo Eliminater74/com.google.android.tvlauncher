@@ -2,12 +2,12 @@ package com.google.android.exoplayer2.analytics;
 
 import android.support.annotation.Nullable;
 import android.view.Surface;
+
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.Timeline;
-import com.google.android.exoplayer2.analytics.AnalyticsListener;
 import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.audio.AudioListener;
 import com.google.android.exoplayer2.audio.AudioRendererEventListener;
@@ -24,6 +24,9 @@ import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Clock;
 import com.google.android.exoplayer2.video.VideoListener;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
+
+import org.checkerframework.checker.nullness.qual.RequiresNonNull;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,20 +34,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
-import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 public class AnalyticsCollector implements Player.EventListener, MetadataOutput, AudioRendererEventListener, VideoRendererEventListener, MediaSourceEventListener, BandwidthMeter.EventListener, DefaultDrmSessionEventListener, VideoListener, AudioListener {
     private final Clock clock;
     private final CopyOnWriteArraySet<AnalyticsListener> listeners;
     private final MediaPeriodQueueTracker mediaPeriodQueueTracker;
-    private Player player;
     private final Timeline.Window window;
-
-    public static class Factory {
-        public AnalyticsCollector createAnalyticsCollector(@Nullable Player player, Clock clock) {
-            return new AnalyticsCollector(player, clock);
-        }
-    }
+    private Player player;
 
     protected AnalyticsCollector(@Nullable Player player2, Clock clock2) {
         if (player2 != null) {
@@ -527,14 +523,20 @@ public class AnalyticsCollector implements Player.EventListener, MetadataOutput,
         return generateEventTime(windowIndex < timeline.getWindowCount() ? timeline : Timeline.EMPTY, windowIndex, null);
     }
 
+    public static class Factory {
+        public AnalyticsCollector createAnalyticsCollector(@Nullable Player player, Clock clock) {
+            return new AnalyticsCollector(player, clock);
+        }
+    }
+
     private static final class MediaPeriodQueueTracker {
+        /* access modifiers changed from: private */
+        public final ArrayList<MediaPeriodInfo> mediaPeriodInfoQueue = new ArrayList<>();
+        private final HashMap<MediaSource.MediaPeriodId, MediaPeriodInfo> mediaPeriodIdToInfo = new HashMap<>();
+        private final Timeline.Period period = new Timeline.Period();
         private boolean isSeeking;
         @Nullable
         private MediaPeriodInfo lastReportedPlayingMediaPeriod;
-        private final HashMap<MediaSource.MediaPeriodId, MediaPeriodInfo> mediaPeriodIdToInfo = new HashMap<>();
-        /* access modifiers changed from: private */
-        public final ArrayList<MediaPeriodInfo> mediaPeriodInfoQueue = new ArrayList<>();
-        private final Timeline.Period period = new Timeline.Period();
         @Nullable
         private MediaPeriodInfo readingMediaPeriod;
         private Timeline timeline = Timeline.EMPTY;

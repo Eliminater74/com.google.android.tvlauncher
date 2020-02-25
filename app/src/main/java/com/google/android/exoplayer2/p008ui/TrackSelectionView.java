@@ -12,39 +12,37 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckedTextView;
 import android.widget.LinearLayout;
+
 import com.google.android.exoplayer2.source.TrackGroup;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.util.Assertions;
+
+import org.checkerframework.checker.nullness.qual.RequiresNonNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 /* renamed from: com.google.android.exoplayer2.ui.TrackSelectionView */
 public class TrackSelectionView extends LinearLayout {
-    private boolean allowAdaptiveSelections;
-    private boolean allowMultipleOverrides;
     private final ComponentListener componentListener;
     private final CheckedTextView defaultView;
     private final CheckedTextView disableView;
     private final LayoutInflater inflater;
+    private final SparseArray<DefaultTrackSelector.SelectionOverride> overrides;
+    private final int selectableItemBackgroundResourceId;
+    private boolean allowAdaptiveSelections;
+    private boolean allowMultipleOverrides;
     private boolean isDisabled;
     @Nullable
     private TrackSelectionListener listener;
     private MappingTrackSelector.MappedTrackInfo mappedTrackInfo;
-    private final SparseArray<DefaultTrackSelector.SelectionOverride> overrides;
     private int rendererIndex;
-    private final int selectableItemBackgroundResourceId;
     private TrackGroupArray trackGroups;
     private TrackNameProvider trackNameProvider;
     private CheckedTextView[][] trackViews;
-
-    /* renamed from: com.google.android.exoplayer2.ui.TrackSelectionView$TrackSelectionListener */
-    public interface TrackSelectionListener {
-        void onTrackSelectionChanged(boolean z, List<DefaultTrackSelector.SelectionOverride> list);
-    }
 
     public TrackSelectionView(Context context) {
         this(context, null);
@@ -88,6 +86,24 @@ public class TrackSelectionView extends LinearLayout {
         this.defaultView.setFocusable(true);
         this.defaultView.setOnClickListener(this.componentListener);
         addView(this.defaultView);
+    }
+
+    private static int[] getTracksAdding(int[] tracks, int addedTrack) {
+        int[] tracks2 = Arrays.copyOf(tracks, tracks.length + 1);
+        tracks2[tracks2.length - 1] = addedTrack;
+        return tracks2;
+    }
+
+    private static int[] getTracksRemoving(int[] tracks, int removedTrack) {
+        int[] newTracks = new int[(tracks.length - 1)];
+        int trackCount = 0;
+        for (int track : tracks) {
+            if (track != removedTrack) {
+                newTracks[trackCount] = track;
+                trackCount++;
+            }
+        }
+        return newTracks;
     }
 
     public void setAllowAdaptiveSelections(boolean allowAdaptiveSelections2) {
@@ -291,22 +307,9 @@ public class TrackSelectionView extends LinearLayout {
         return this.allowMultipleOverrides && this.trackGroups.length > 1;
     }
 
-    private static int[] getTracksAdding(int[] tracks, int addedTrack) {
-        int[] tracks2 = Arrays.copyOf(tracks, tracks.length + 1);
-        tracks2[tracks2.length - 1] = addedTrack;
-        return tracks2;
-    }
-
-    private static int[] getTracksRemoving(int[] tracks, int removedTrack) {
-        int[] newTracks = new int[(tracks.length - 1)];
-        int trackCount = 0;
-        for (int track : tracks) {
-            if (track != removedTrack) {
-                newTracks[trackCount] = track;
-                trackCount++;
-            }
-        }
-        return newTracks;
+    /* renamed from: com.google.android.exoplayer2.ui.TrackSelectionView$TrackSelectionListener */
+    public interface TrackSelectionListener {
+        void onTrackSelectionChanged(boolean z, List<DefaultTrackSelector.SelectionOverride> list);
     }
 
     /* renamed from: com.google.android.exoplayer2.ui.TrackSelectionView$ComponentListener */

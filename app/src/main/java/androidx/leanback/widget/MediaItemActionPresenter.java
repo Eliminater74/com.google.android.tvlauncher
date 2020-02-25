@@ -4,25 +4,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
 import androidx.leanback.C0364R;
-import androidx.leanback.widget.MultiActionsProvider;
-import androidx.leanback.widget.Presenter;
 
 class MediaItemActionPresenter extends Presenter {
     MediaItemActionPresenter() {
-    }
-
-    static class ViewHolder extends Presenter.ViewHolder {
-        final ImageView mIcon;
-
-        public ViewHolder(View view) {
-            super(view);
-            this.mIcon = (ImageView) view.findViewById(C0364R.C0366id.actionIcon);
-        }
-
-        public ImageView getIcon() {
-            return this.mIcon;
-        }
     }
 
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
@@ -40,5 +26,18 @@ class MediaItemActionPresenter extends Presenter {
     }
 
     public void onUnbindViewHolder(Presenter.ViewHolder viewHolder) {
+    }
+
+    static class ViewHolder extends Presenter.ViewHolder {
+        final ImageView mIcon;
+
+        public ViewHolder(View view) {
+            super(view);
+            this.mIcon = (ImageView) view.findViewById(C0364R.C0366id.actionIcon);
+        }
+
+        public ImageView getIcon() {
+            return this.mIcon;
+        }
     }
 }

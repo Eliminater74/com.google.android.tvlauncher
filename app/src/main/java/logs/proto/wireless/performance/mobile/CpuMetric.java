@@ -15,6 +15,7 @@ import com.google.protobuf.ProtoMessage;
 import com.google.protobuf.ProtoPresenceBits;
 import com.google.protobuf.ProtoPresenceCheckedField;
 import com.google.protobuf.ProtoSyntax;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -22,6 +23,12 @@ import java.util.Collections;
 import java.util.List;
 
 public final class CpuMetric {
+
+    private CpuMetric() {
+    }
+
+    public static void registerAllExtensions(ExtensionRegistryLite registry) {
+    }
 
     public interface CpuUsageMetricOrBuilder extends MessageLiteOrBuilder {
         StackTrace getStackTraces(int i);
@@ -47,22 +54,85 @@ public final class CpuMetric {
         List<StackElement> getStackElementsList();
     }
 
-    private CpuMetric() {
-    }
-
-    public static void registerAllExtensions(ExtensionRegistryLite registry) {
-    }
-
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
     public static final class CpuUsageMetric extends GeneratedMessageLite<CpuUsageMetric, Builder> implements CpuUsageMetricOrBuilder {
         /* access modifiers changed from: private */
         public static final CpuUsageMetric DEFAULT_INSTANCE = new CpuUsageMetric();
-        private static volatile Parser<CpuUsageMetric> PARSER = null;
         public static final int STACK_TRACES_FIELD_NUMBER = 1;
+        private static volatile Parser<CpuUsageMetric> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(CpuUsageMetric.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoField(fieldNumber = 1, type = FieldType.MESSAGE_LIST)
         private Internal.ProtobufList<StackTrace> stackTraces_ = emptyProtobufList();
 
         private CpuUsageMetric() {
+        }
+
+        public static CpuUsageMetric parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (CpuUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static CpuUsageMetric parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (CpuUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static CpuUsageMetric parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (CpuUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static CpuUsageMetric parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (CpuUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static CpuUsageMetric parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (CpuUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static CpuUsageMetric parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (CpuUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static CpuUsageMetric parseFrom(InputStream input) throws IOException {
+            return (CpuUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static CpuUsageMetric parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (CpuUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static CpuUsageMetric parseDelimitedFrom(InputStream input) throws IOException {
+            return (CpuUsageMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static CpuUsageMetric parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (CpuUsageMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static CpuUsageMetric parseFrom(CodedInputStream input) throws IOException {
+            return (CpuUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static CpuUsageMetric parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (CpuUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(CpuUsageMetric prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static CpuUsageMetric getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<CpuUsageMetric> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public List<StackTrace> getStackTracesList() {
@@ -162,60 +232,36 @@ public final class CpuMetric {
             this.stackTraces_.remove(index);
         }
 
-        public static CpuUsageMetric parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (CpuUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static CpuUsageMetric parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (CpuUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static CpuUsageMetric parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (CpuUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static CpuUsageMetric parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (CpuUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static CpuUsageMetric parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (CpuUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static CpuUsageMetric parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (CpuUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static CpuUsageMetric parseFrom(InputStream input) throws IOException {
-            return (CpuUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static CpuUsageMetric parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (CpuUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static CpuUsageMetric parseDelimitedFrom(InputStream input) throws IOException {
-            return (CpuUsageMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static CpuUsageMetric parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (CpuUsageMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static CpuUsageMetric parseFrom(CodedInputStream input) throws IOException {
-            return (CpuUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static CpuUsageMetric parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (CpuUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(CpuUsageMetric prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new CpuUsageMetric();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0001\u0000\u0000\u0001\u0001\u0001\u0000\u0001\u0000\u0001\u001b", new Object[]{"stackTraces_", StackTrace.class});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<CpuUsageMetric> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (CpuUsageMetric.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<CpuUsageMetric, Builder> implements CpuUsageMetricOrBuilder {
@@ -289,62 +335,87 @@ public final class CpuMetric {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new CpuUsageMetric();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0001\u0000\u0000\u0001\u0001\u0001\u0000\u0001\u0000\u0001\u001b", new Object[]{"stackTraces_", StackTrace.class});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<CpuUsageMetric> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (CpuUsageMetric.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(CpuUsageMetric.class, DEFAULT_INSTANCE);
-        }
-
-        public static CpuUsageMetric getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<CpuUsageMetric> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
     public static final class StackTrace extends GeneratedMessageLite<StackTrace, Builder> implements StackTraceOrBuilder {
         /* access modifiers changed from: private */
         public static final StackTrace DEFAULT_INSTANCE = new StackTrace();
-        private static volatile Parser<StackTrace> PARSER = null;
         public static final int STACK_ELEMENTS_FIELD_NUMBER = 1;
+        private static volatile Parser<StackTrace> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(StackTrace.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoField(fieldNumber = 1, type = FieldType.MESSAGE_LIST)
         private Internal.ProtobufList<StackElement> stackElements_ = emptyProtobufList();
 
         private StackTrace() {
+        }
+
+        public static StackTrace parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (StackTrace) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static StackTrace parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (StackTrace) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static StackTrace parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (StackTrace) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static StackTrace parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (StackTrace) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static StackTrace parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (StackTrace) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static StackTrace parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (StackTrace) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static StackTrace parseFrom(InputStream input) throws IOException {
+            return (StackTrace) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static StackTrace parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (StackTrace) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static StackTrace parseDelimitedFrom(InputStream input) throws IOException {
+            return (StackTrace) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static StackTrace parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (StackTrace) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static StackTrace parseFrom(CodedInputStream input) throws IOException {
+            return (StackTrace) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static StackTrace parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (StackTrace) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(StackTrace prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static StackTrace getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<StackTrace> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public List<StackElement> getStackElementsList() {
@@ -444,60 +515,36 @@ public final class CpuMetric {
             this.stackElements_.remove(index);
         }
 
-        public static StackTrace parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (StackTrace) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static StackTrace parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (StackTrace) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static StackTrace parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (StackTrace) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static StackTrace parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (StackTrace) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static StackTrace parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (StackTrace) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static StackTrace parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (StackTrace) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static StackTrace parseFrom(InputStream input) throws IOException {
-            return (StackTrace) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static StackTrace parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (StackTrace) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static StackTrace parseDelimitedFrom(InputStream input) throws IOException {
-            return (StackTrace) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static StackTrace parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (StackTrace) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static StackTrace parseFrom(CodedInputStream input) throws IOException {
-            return (StackTrace) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static StackTrace parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (StackTrace) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(StackTrace prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new StackTrace();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0001\u0000\u0000\u0001\u0001\u0001\u0000\u0001\u0000\u0001\u001b", new Object[]{"stackElements_", StackElement.class});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<StackTrace> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (StackTrace.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<StackTrace, Builder> implements StackTraceOrBuilder {
@@ -571,50 +618,6 @@ public final class CpuMetric {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new StackTrace();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0001\u0000\u0000\u0001\u0001\u0001\u0000\u0001\u0000\u0001\u001b", new Object[]{"stackElements_", StackElement.class});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<StackTrace> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (StackTrace.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(StackTrace.class, DEFAULT_INSTANCE);
-        }
-
-        public static StackTrace getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<StackTrace> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -623,6 +626,11 @@ public final class CpuMetric {
         public static final StackElement DEFAULT_INSTANCE = new StackElement();
         public static final int FUNCTION_NAME_FIELD_NUMBER = 1;
         private static volatile Parser<StackElement> PARSER;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(StackElement.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 1, isEnforceUtf8 = false, isRequired = false, type = FieldType.STRING)
@@ -630,44 +638,6 @@ public final class CpuMetric {
         private String functionName_ = "";
 
         private StackElement() {
-        }
-
-        public boolean hasFunctionName() {
-            return (this.bitField0_ & 1) != 0;
-        }
-
-        public String getFunctionName() {
-            return this.functionName_;
-        }
-
-        public ByteString getFunctionNameBytes() {
-            return ByteString.copyFromUtf8(this.functionName_);
-        }
-
-        /* access modifiers changed from: private */
-        public void setFunctionName(String value) {
-            if (value != null) {
-                this.bitField0_ |= 1;
-                this.functionName_ = value;
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        /* access modifiers changed from: private */
-        public void clearFunctionName() {
-            this.bitField0_ &= -2;
-            this.functionName_ = getDefaultInstance().getFunctionName();
-        }
-
-        /* access modifiers changed from: private */
-        public void setFunctionNameBytes(ByteString value) {
-            if (value != null) {
-                this.bitField0_ |= 1;
-                this.functionName_ = value.toStringUtf8();
-                return;
-            }
-            throw new NullPointerException();
         }
 
         public static StackElement parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
@@ -726,40 +696,50 @@ public final class CpuMetric {
             return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
         }
 
-        public static final class Builder extends GeneratedMessageLite.Builder<StackElement, Builder> implements StackElementOrBuilder {
-            private Builder() {
-                super(StackElement.DEFAULT_INSTANCE);
-            }
+        public static StackElement getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
 
-            public boolean hasFunctionName() {
-                return ((StackElement) this.instance).hasFunctionName();
-            }
+        public static Parser<StackElement> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
+        }
 
-            public String getFunctionName() {
-                return ((StackElement) this.instance).getFunctionName();
-            }
+        public boolean hasFunctionName() {
+            return (this.bitField0_ & 1) != 0;
+        }
 
-            public ByteString getFunctionNameBytes() {
-                return ((StackElement) this.instance).getFunctionNameBytes();
-            }
+        public String getFunctionName() {
+            return this.functionName_;
+        }
 
-            public Builder setFunctionName(String value) {
-                copyOnWrite();
-                ((StackElement) this.instance).setFunctionName(value);
-                return this;
+        /* access modifiers changed from: private */
+        public void setFunctionName(String value) {
+            if (value != null) {
+                this.bitField0_ |= 1;
+                this.functionName_ = value;
+                return;
             }
+            throw new NullPointerException();
+        }
 
-            public Builder clearFunctionName() {
-                copyOnWrite();
-                ((StackElement) this.instance).clearFunctionName();
-                return this;
-            }
+        public ByteString getFunctionNameBytes() {
+            return ByteString.copyFromUtf8(this.functionName_);
+        }
 
-            public Builder setFunctionNameBytes(ByteString value) {
-                copyOnWrite();
-                ((StackElement) this.instance).setFunctionNameBytes(value);
-                return this;
+        /* access modifiers changed from: private */
+        public void setFunctionNameBytes(ByteString value) {
+            if (value != null) {
+                this.bitField0_ |= 1;
+                this.functionName_ = value.toStringUtf8();
+                return;
             }
+            throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearFunctionName() {
+            this.bitField0_ &= -2;
+            this.functionName_ = getDefaultInstance().getFunctionName();
         }
 
         /* access modifiers changed from: protected */
@@ -794,16 +774,40 @@ public final class CpuMetric {
             }
         }
 
-        static {
-            GeneratedMessageLite.registerDefaultInstance(StackElement.class, DEFAULT_INSTANCE);
-        }
+        public static final class Builder extends GeneratedMessageLite.Builder<StackElement, Builder> implements StackElementOrBuilder {
+            private Builder() {
+                super(StackElement.DEFAULT_INSTANCE);
+            }
 
-        public static StackElement getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
+            public boolean hasFunctionName() {
+                return ((StackElement) this.instance).hasFunctionName();
+            }
 
-        public static Parser<StackElement> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
+            public String getFunctionName() {
+                return ((StackElement) this.instance).getFunctionName();
+            }
+
+            public Builder setFunctionName(String value) {
+                copyOnWrite();
+                ((StackElement) this.instance).setFunctionName(value);
+                return this;
+            }
+
+            public ByteString getFunctionNameBytes() {
+                return ((StackElement) this.instance).getFunctionNameBytes();
+            }
+
+            public Builder setFunctionNameBytes(ByteString value) {
+                copyOnWrite();
+                ((StackElement) this.instance).setFunctionNameBytes(value);
+                return this;
+            }
+
+            public Builder clearFunctionName() {
+                copyOnWrite();
+                ((StackElement) this.instance).clearFunctionName();
+                return this;
+            }
         }
     }
 }

@@ -1,27 +1,22 @@
 package com.google.protobuf;
 
-import com.google.protobuf.ArrayDecoders;
-import com.google.protobuf.ByteString;
-import com.google.protobuf.Internal;
-import com.google.protobuf.MapEntryLite;
-import com.google.protobuf.WireFormat;
-import com.google.protobuf.Writer;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import sun.misc.Unsafe;
 
 final class MessageSchema<T> implements Schema<T> {
+    static final int ONEOF_TYPE_OFFSET = 51;
     private static final int[] EMPTY_INT_ARRAY = new int[0];
     private static final int ENFORCE_UTF8_MASK = 536870912;
     private static final int FIELD_TYPE_MASK = 267386880;
     private static final int INTS_PER_FIELD = 3;
     private static final int OFFSET_BITS = 20;
     private static final int OFFSET_MASK = 1048575;
-    static final int ONEOF_TYPE_OFFSET = 51;
     private static final int REQUIRED_MASK = 268435456;
     private static final Unsafe UNSAFE = UnsafeUtil.getUnsafe();
     private final int[] buffer;
@@ -941,6 +936,80 @@ final class MessageSchema<T> implements Schema<T> {
         } else if (fi.getEnumVerifier() != null) {
             objects2[((bufferIndex / 3) * 2) + 1] = fi.getEnumVerifier();
         }
+    }
+
+    private static List<?> listAt(Object message, long offset) {
+        return (List) UnsafeUtil.getObject(message, offset);
+    }
+
+    static UnknownFieldSetLite getMutableUnknownFields(Object message) {
+        UnknownFieldSetLite unknownFields = ((GeneratedMessageLite) message).unknownFields;
+        if (unknownFields != UnknownFieldSetLite.getDefaultInstance()) {
+            return unknownFields;
+        }
+        UnknownFieldSetLite unknownFields2 = UnknownFieldSetLite.newInstance();
+        ((GeneratedMessageLite) message).unknownFields = unknownFields2;
+        return unknownFields2;
+    }
+
+    private static boolean isInitialized(Object message, int typeAndOffset, Schema schema) {
+        return schema.isInitialized(UnsafeUtil.getObject(message, offset(typeAndOffset)));
+    }
+
+    private static int type(int value) {
+        return (FIELD_TYPE_MASK & value) >>> 20;
+    }
+
+    private static boolean isRequired(int value) {
+        return (268435456 & value) != 0;
+    }
+
+    private static boolean isEnforceUtf8(int value) {
+        return (536870912 & value) != 0;
+    }
+
+    private static long offset(int value) {
+        return (long) (OFFSET_MASK & value);
+    }
+
+    private static <T> double doubleAt(T message, long offset) {
+        return UnsafeUtil.getDouble(message, offset);
+    }
+
+    private static <T> float floatAt(T message, long offset) {
+        return UnsafeUtil.getFloat(message, offset);
+    }
+
+    private static <T> int intAt(T message, long offset) {
+        return UnsafeUtil.getInt(message, offset);
+    }
+
+    private static <T> long longAt(T message, long offset) {
+        return UnsafeUtil.getLong(message, offset);
+    }
+
+    private static <T> boolean booleanAt(T message, long offset) {
+        return UnsafeUtil.getBoolean(message, offset);
+    }
+
+    private static <T> double oneofDoubleAt(T message, long offset) {
+        return ((Double) UnsafeUtil.getObject(message, offset)).doubleValue();
+    }
+
+    private static <T> float oneofFloatAt(T message, long offset) {
+        return ((Float) UnsafeUtil.getObject(message, offset)).floatValue();
+    }
+
+    private static <T> int oneofIntAt(T message, long offset) {
+        return ((Integer) UnsafeUtil.getObject(message, offset)).intValue();
+    }
+
+    private static <T> long oneofLongAt(T message, long offset) {
+        return ((Long) UnsafeUtil.getObject(message, offset)).longValue();
+    }
+
+    private static <T> boolean oneofBooleanAt(T message, long offset) {
+        return ((Boolean) UnsafeUtil.getObject(message, offset)).booleanValue();
     }
 
     public T newInstance() {
@@ -2716,10 +2785,6 @@ final class MessageSchema<T> implements Schema<T> {
 
     private <UT, UB> int getUnknownFieldsSerializedSize(UnknownFieldSchema<UT, UB> schema, T message) {
         return schema.getSerializedSize(schema.getFromMessage(message));
-    }
-
-    private static List<?> listAt(Object message, long offset) {
-        return (List) UnsafeUtil.getObject(message, offset);
     }
 
     public void writeTo(T message, Writer writer) throws IOException {
@@ -4930,16 +4995,6 @@ final class MessageSchema<T> implements Schema<T> {
             return
         */
         throw new UnsupportedOperationException("Method not decompiled: com.google.protobuf.MessageSchema.mergeFromHelper(com.google.protobuf.UnknownFieldSchema, com.google.protobuf.ExtensionSchema, java.lang.Object, com.google.protobuf.Reader, com.google.protobuf.ExtensionRegistryLite):void");
-    }
-
-    static UnknownFieldSetLite getMutableUnknownFields(Object message) {
-        UnknownFieldSetLite unknownFields = ((GeneratedMessageLite) message).unknownFields;
-        if (unknownFields != UnknownFieldSetLite.getDefaultInstance()) {
-            return unknownFields;
-        }
-        UnknownFieldSetLite unknownFields2 = UnknownFieldSetLite.newInstance();
-        ((GeneratedMessageLite) message).unknownFields = unknownFields2;
-        return unknownFields2;
     }
 
     private int decodeMapEntryValue(byte[] data, int position, int limit, WireFormat.FieldType fieldType, Class<?> messageType, ArrayDecoders.Registers registers) throws IOException {
@@ -7368,10 +7423,6 @@ final class MessageSchema<T> implements Schema<T> {
         return this.hasExtensions == 0 || this.extensionSchema.getExtensions(message).isInitialized();
     }
 
-    private static boolean isInitialized(Object message, int typeAndOffset, Schema schema) {
-        return schema.isInitialized(UnsafeUtil.getObject(message, offset(typeAndOffset)));
-    }
-
     private <N> boolean isListInitialized(Object message, int typeAndOffset, int pos) {
         List<N> list = (List) UnsafeUtil.getObject(message, offset(typeAndOffset));
         if (list.isEmpty()) {
@@ -7450,62 +7501,6 @@ final class MessageSchema<T> implements Schema<T> {
 
     private int presenceMaskAndOffsetAt(int pos) {
         return this.buffer[pos + 2];
-    }
-
-    private static int type(int value) {
-        return (FIELD_TYPE_MASK & value) >>> 20;
-    }
-
-    private static boolean isRequired(int value) {
-        return (268435456 & value) != 0;
-    }
-
-    private static boolean isEnforceUtf8(int value) {
-        return (536870912 & value) != 0;
-    }
-
-    private static long offset(int value) {
-        return (long) (OFFSET_MASK & value);
-    }
-
-    private static <T> double doubleAt(T message, long offset) {
-        return UnsafeUtil.getDouble(message, offset);
-    }
-
-    private static <T> float floatAt(T message, long offset) {
-        return UnsafeUtil.getFloat(message, offset);
-    }
-
-    private static <T> int intAt(T message, long offset) {
-        return UnsafeUtil.getInt(message, offset);
-    }
-
-    private static <T> long longAt(T message, long offset) {
-        return UnsafeUtil.getLong(message, offset);
-    }
-
-    private static <T> boolean booleanAt(T message, long offset) {
-        return UnsafeUtil.getBoolean(message, offset);
-    }
-
-    private static <T> double oneofDoubleAt(T message, long offset) {
-        return ((Double) UnsafeUtil.getObject(message, offset)).doubleValue();
-    }
-
-    private static <T> float oneofFloatAt(T message, long offset) {
-        return ((Float) UnsafeUtil.getObject(message, offset)).floatValue();
-    }
-
-    private static <T> int oneofIntAt(T message, long offset) {
-        return ((Integer) UnsafeUtil.getObject(message, offset)).intValue();
-    }
-
-    private static <T> long oneofLongAt(T message, long offset) {
-        return ((Long) UnsafeUtil.getObject(message, offset)).longValue();
-    }
-
-    private static <T> boolean oneofBooleanAt(T message, long offset) {
-        return ((Boolean) UnsafeUtil.getObject(message, offset)).booleanValue();
     }
 
     private boolean arePresentForEquals(T message, T other, int pos) {

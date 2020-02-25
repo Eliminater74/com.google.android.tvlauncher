@@ -14,8 +14,8 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.p001v4.app.NotificationCompat;
 import android.support.p001v4.app.NotificationManagerCompat;
-import android.support.p001v4.media.app.NotificationCompat;
 import android.support.p001v4.media.session.MediaSessionCompat;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.ControlDispatcher;
 import com.google.android.exoplayer2.DefaultControlDispatcher;
@@ -31,6 +31,9 @@ import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.NotificationUtil;
 import com.google.android.exoplayer2.util.Util;
+
+import org.checkerframework.checker.nullness.qual.RequiresNonNull;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -40,11 +43,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 /* renamed from: com.google.android.exoplayer2.ui.PlayerNotificationManager */
 public class PlayerNotificationManager {
-    private static final String ACTION_DISMISS = "com.google.android.exoplayer.dismiss";
     public static final String ACTION_FAST_FORWARD = "com.google.android.exoplayer.ffwd";
     public static final String ACTION_NEXT = "com.google.android.exoplayer.next";
     public static final String ACTION_PAUSE = "com.google.android.exoplayer.pause";
@@ -55,54 +56,58 @@ public class PlayerNotificationManager {
     public static final int DEFAULT_FAST_FORWARD_MS = 15000;
     public static final int DEFAULT_REWIND_MS = 5000;
     public static final String EXTRA_INSTANCE_ID = "INSTANCE_ID";
+    private static final String ACTION_DISMISS = "com.google.android.exoplayer.dismiss";
     private static final long MAX_POSITION_FOR_SEEK_TO_PREVIOUS = 3000;
     private static int instanceIdCounter;
-    private int badgeIconType;
-    @Nullable
-    private NotificationCompat.Builder builder;
-    @Nullable
-    private ArrayList<NotificationCompat.Action> builderActions;
-    private final String channelId;
-    private int color;
-    private boolean colorized;
-    private final Context context;
-    /* access modifiers changed from: private */
-    public ControlDispatcher controlDispatcher;
-    /* access modifiers changed from: private */
-    public int currentNotificationTag;
     /* access modifiers changed from: private */
     @Nullable
     public final CustomActionReceiver customActionReceiver;
     /* access modifiers changed from: private */
     public final Map<String, NotificationCompat.Action> customActions;
-    private int defaults;
-    private final PendingIntent dismissPendingIntent;
-    private long fastForwardMs;
     /* access modifiers changed from: private */
     public final int instanceId;
+    /* access modifiers changed from: private */
+    public final Handler mainHandler;
+    private final String channelId;
+    private final Context context;
+    private final PendingIntent dismissPendingIntent;
     private final IntentFilter intentFilter;
+    private final MediaDescriptionAdapter mediaDescriptionAdapter;
+    private final NotificationBroadcastReceiver notificationBroadcastReceiver;
+    private final int notificationId;
+    private final NotificationManagerCompat notificationManager;
+    private final Map<String, NotificationCompat.Action> playbackActions;
+    private final Player.EventListener playerListener;
+    private final Timeline.Window window;
+    /* access modifiers changed from: private */
+    public ControlDispatcher controlDispatcher;
+    /* access modifiers changed from: private */
+    public int currentNotificationTag;
     /* access modifiers changed from: private */
     public boolean isNotificationStarted;
     /* access modifiers changed from: private */
     public int lastPlaybackState;
-    /* access modifiers changed from: private */
-    public final Handler mainHandler;
-    private final MediaDescriptionAdapter mediaDescriptionAdapter;
-    @Nullable
-    private MediaSessionCompat.Token mediaSessionToken;
-    private final NotificationBroadcastReceiver notificationBroadcastReceiver;
-    private final int notificationId;
-    @Nullable
-    private NotificationListener notificationListener;
-    private final NotificationManagerCompat notificationManager;
-    private final Map<String, NotificationCompat.Action> playbackActions;
     /* access modifiers changed from: private */
     @Nullable
     public PlaybackPreparer playbackPreparer;
     /* access modifiers changed from: private */
     @Nullable
     public Player player;
-    private final Player.EventListener playerListener;
+    /* access modifiers changed from: private */
+    public boolean wasPlayWhenReady;
+    private int badgeIconType;
+    @Nullable
+    private NotificationCompat.Builder builder;
+    @Nullable
+    private ArrayList<NotificationCompat.Action> builderActions;
+    private int color;
+    private boolean colorized;
+    private int defaults;
+    private long fastForwardMs;
+    @Nullable
+    private MediaSessionCompat.Token mediaSessionToken;
+    @Nullable
+    private NotificationListener notificationListener;
     private int priority;
     private long rewindMs;
     @DrawableRes
@@ -113,92 +118,6 @@ public class PlayerNotificationManager {
     private boolean usePlayPauseActions;
     private boolean useStopAction;
     private int visibility;
-    /* access modifiers changed from: private */
-    public boolean wasPlayWhenReady;
-    private final Timeline.Window window;
-
-    /* renamed from: com.google.android.exoplayer2.ui.PlayerNotificationManager$CustomActionReceiver */
-    public interface CustomActionReceiver {
-        Map<String, NotificationCompat.Action> createCustomActions(Context context, int i);
-
-        List<String> getCustomActions(Player player);
-
-        void onCustomAction(Player player, String str, Intent intent);
-    }
-
-    /* renamed from: com.google.android.exoplayer2.ui.PlayerNotificationManager$MediaDescriptionAdapter */
-    public interface MediaDescriptionAdapter {
-        @Nullable
-        PendingIntent createCurrentContentIntent(Player player);
-
-        @Nullable
-        String getCurrentContentText(Player player);
-
-        String getCurrentContentTitle(Player player);
-
-        @Nullable
-        Bitmap getCurrentLargeIcon(Player player, BitmapCallback bitmapCallback);
-
-        @Nullable
-        String getCurrentSubText(Player player);
-    }
-
-    /* renamed from: com.google.android.exoplayer2.ui.PlayerNotificationManager$NotificationListener */
-    public interface NotificationListener {
-        @Deprecated
-        void onNotificationCancelled(int i);
-
-        void onNotificationCancelled(int i, boolean z);
-
-        void onNotificationPosted(int i, Notification notification, boolean z);
-
-        @Deprecated
-        void onNotificationStarted(int i, Notification notification);
-    }
-
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    /* renamed from: com.google.android.exoplayer2.ui.PlayerNotificationManager$Priority */
-    public @interface Priority {
-    }
-
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    /* renamed from: com.google.android.exoplayer2.ui.PlayerNotificationManager$Visibility */
-    public @interface Visibility {
-    }
-
-    /* renamed from: com.google.android.exoplayer2.ui.PlayerNotificationManager$BitmapCallback */
-    public final class BitmapCallback {
-        private final int notificationTag;
-
-        private BitmapCallback(int notificationTag2) {
-            this.notificationTag = notificationTag2;
-        }
-
-        public void onBitmap(Bitmap bitmap) {
-            if (bitmap != null) {
-                PlayerNotificationManager.this.mainHandler.post(new PlayerNotificationManager$BitmapCallback$$Lambda$0(this, bitmap));
-            }
-        }
-
-        /* access modifiers changed from: package-private */
-        public final /* synthetic */ void lambda$onBitmap$0$PlayerNotificationManager$BitmapCallback(Bitmap bitmap) {
-            if (PlayerNotificationManager.this.player != null && this.notificationTag == PlayerNotificationManager.this.currentNotificationTag && PlayerNotificationManager.this.isNotificationStarted) {
-                Notification unused = PlayerNotificationManager.this.startOrUpdateNotification(bitmap);
-            }
-        }
-    }
-
-    public static PlayerNotificationManager createWithNotificationChannel(Context context2, String channelId2, @StringRes int channelName, int notificationId2, MediaDescriptionAdapter mediaDescriptionAdapter2) {
-        NotificationUtil.createNotificationChannel(context2, channelId2, channelName, 2);
-        return new PlayerNotificationManager(context2, channelId2, notificationId2, mediaDescriptionAdapter2);
-    }
-
-    public static PlayerNotificationManager createWithNotificationChannel(Context context2, String channelId2, @StringRes int channelName, int notificationId2, MediaDescriptionAdapter mediaDescriptionAdapter2, @Nullable NotificationListener notificationListener2) {
-        NotificationUtil.createNotificationChannel(context2, channelId2, channelName, 2);
-        return new PlayerNotificationManager(context2, channelId2, notificationId2, mediaDescriptionAdapter2, notificationListener2);
-    }
 
     public PlayerNotificationManager(Context context2, String channelId2, int notificationId2, MediaDescriptionAdapter mediaDescriptionAdapter2) {
         this(context2, channelId2, notificationId2, mediaDescriptionAdapter2, null, null);
@@ -258,6 +177,38 @@ public class PlayerNotificationManager {
         }
         this.dismissPendingIntent = createBroadcastIntent(ACTION_DISMISS, context3, this.instanceId);
         this.intentFilter.addAction(ACTION_DISMISS);
+    }
+
+    public static PlayerNotificationManager createWithNotificationChannel(Context context2, String channelId2, @StringRes int channelName, int notificationId2, MediaDescriptionAdapter mediaDescriptionAdapter2) {
+        NotificationUtil.createNotificationChannel(context2, channelId2, channelName, 2);
+        return new PlayerNotificationManager(context2, channelId2, notificationId2, mediaDescriptionAdapter2);
+    }
+
+    public static PlayerNotificationManager createWithNotificationChannel(Context context2, String channelId2, @StringRes int channelName, int notificationId2, MediaDescriptionAdapter mediaDescriptionAdapter2, @Nullable NotificationListener notificationListener2) {
+        NotificationUtil.createNotificationChannel(context2, channelId2, channelName, 2);
+        return new PlayerNotificationManager(context2, channelId2, notificationId2, mediaDescriptionAdapter2, notificationListener2);
+    }
+
+    private static Map<String, NotificationCompat.Action> createPlaybackActions(Context context2, int instanceId2) {
+        Map<String, NotificationCompat.Action> actions = new HashMap<>();
+        actions.put(ACTION_PLAY, new NotificationCompat.Action(C0931R.C0932drawable.exo_notification_play, context2.getString(C0931R.string.exo_controls_play_description), createBroadcastIntent(ACTION_PLAY, context2, instanceId2)));
+        actions.put(ACTION_PAUSE, new NotificationCompat.Action(C0931R.C0932drawable.exo_notification_pause, context2.getString(C0931R.string.exo_controls_pause_description), createBroadcastIntent(ACTION_PAUSE, context2, instanceId2)));
+        actions.put(ACTION_STOP, new NotificationCompat.Action(C0931R.C0932drawable.exo_notification_stop, context2.getString(C0931R.string.exo_controls_stop_description), createBroadcastIntent(ACTION_STOP, context2, instanceId2)));
+        actions.put(ACTION_REWIND, new NotificationCompat.Action(C0931R.C0932drawable.exo_notification_rewind, context2.getString(C0931R.string.exo_controls_rewind_description), createBroadcastIntent(ACTION_REWIND, context2, instanceId2)));
+        actions.put(ACTION_FAST_FORWARD, new NotificationCompat.Action(C0931R.C0932drawable.exo_notification_fastforward, context2.getString(C0931R.string.exo_controls_fastforward_description), createBroadcastIntent(ACTION_FAST_FORWARD, context2, instanceId2)));
+        actions.put(ACTION_PREVIOUS, new NotificationCompat.Action(C0931R.C0932drawable.exo_notification_previous, context2.getString(C0931R.string.exo_controls_previous_description), createBroadcastIntent(ACTION_PREVIOUS, context2, instanceId2)));
+        actions.put(ACTION_NEXT, new NotificationCompat.Action(C0931R.C0932drawable.exo_notification_next, context2.getString(C0931R.string.exo_controls_next_description), createBroadcastIntent(ACTION_NEXT, context2, instanceId2)));
+        return actions;
+    }
+
+    private static PendingIntent createBroadcastIntent(String action, Context context2, int instanceId2) {
+        Intent intent = new Intent(action).setPackage(context2.getPackageName());
+        intent.putExtra(EXTRA_INSTANCE_ID, instanceId2);
+        return PendingIntent.getBroadcast(context2, instanceId2, intent, 134217728);
+    }
+
+    private static void setLargeIcon(NotificationCompat.Builder builder2, @Nullable Bitmap largeIcon) {
+        builder2.setLargeIcon(largeIcon);
     }
 
     public final void setPlayer(@Nullable Player player2) {
@@ -694,30 +645,84 @@ public class PlayerNotificationManager {
         return true;
     }
 
-    private static Map<String, NotificationCompat.Action> createPlaybackActions(Context context2, int instanceId2) {
-        Map<String, NotificationCompat.Action> actions = new HashMap<>();
-        actions.put(ACTION_PLAY, new NotificationCompat.Action(C0931R.C0932drawable.exo_notification_play, context2.getString(C0931R.string.exo_controls_play_description), createBroadcastIntent(ACTION_PLAY, context2, instanceId2)));
-        actions.put(ACTION_PAUSE, new NotificationCompat.Action(C0931R.C0932drawable.exo_notification_pause, context2.getString(C0931R.string.exo_controls_pause_description), createBroadcastIntent(ACTION_PAUSE, context2, instanceId2)));
-        actions.put(ACTION_STOP, new NotificationCompat.Action(C0931R.C0932drawable.exo_notification_stop, context2.getString(C0931R.string.exo_controls_stop_description), createBroadcastIntent(ACTION_STOP, context2, instanceId2)));
-        actions.put(ACTION_REWIND, new NotificationCompat.Action(C0931R.C0932drawable.exo_notification_rewind, context2.getString(C0931R.string.exo_controls_rewind_description), createBroadcastIntent(ACTION_REWIND, context2, instanceId2)));
-        actions.put(ACTION_FAST_FORWARD, new NotificationCompat.Action(C0931R.C0932drawable.exo_notification_fastforward, context2.getString(C0931R.string.exo_controls_fastforward_description), createBroadcastIntent(ACTION_FAST_FORWARD, context2, instanceId2)));
-        actions.put(ACTION_PREVIOUS, new NotificationCompat.Action(C0931R.C0932drawable.exo_notification_previous, context2.getString(C0931R.string.exo_controls_previous_description), createBroadcastIntent(ACTION_PREVIOUS, context2, instanceId2)));
-        actions.put(ACTION_NEXT, new NotificationCompat.Action(C0931R.C0932drawable.exo_notification_next, context2.getString(C0931R.string.exo_controls_next_description), createBroadcastIntent(ACTION_NEXT, context2, instanceId2)));
-        return actions;
+    /* renamed from: com.google.android.exoplayer2.ui.PlayerNotificationManager$CustomActionReceiver */
+    public interface CustomActionReceiver {
+        Map<String, NotificationCompat.Action> createCustomActions(Context context, int i);
+
+        List<String> getCustomActions(Player player);
+
+        void onCustomAction(Player player, String str, Intent intent);
     }
 
-    private static PendingIntent createBroadcastIntent(String action, Context context2, int instanceId2) {
-        Intent intent = new Intent(action).setPackage(context2.getPackageName());
-        intent.putExtra(EXTRA_INSTANCE_ID, instanceId2);
-        return PendingIntent.getBroadcast(context2, instanceId2, intent, 134217728);
+    /* renamed from: com.google.android.exoplayer2.ui.PlayerNotificationManager$MediaDescriptionAdapter */
+    public interface MediaDescriptionAdapter {
+        @Nullable
+        PendingIntent createCurrentContentIntent(Player player);
+
+        @Nullable
+        String getCurrentContentText(Player player);
+
+        String getCurrentContentTitle(Player player);
+
+        @Nullable
+        Bitmap getCurrentLargeIcon(Player player, BitmapCallback bitmapCallback);
+
+        @Nullable
+        String getCurrentSubText(Player player);
     }
 
-    private static void setLargeIcon(NotificationCompat.Builder builder2, @Nullable Bitmap largeIcon) {
-        builder2.setLargeIcon(largeIcon);
+    /* renamed from: com.google.android.exoplayer2.ui.PlayerNotificationManager$NotificationListener */
+    public interface NotificationListener {
+        @Deprecated
+        void onNotificationCancelled(int i);
+
+        void onNotificationCancelled(int i, boolean z);
+
+        void onNotificationPosted(int i, Notification notification, boolean z);
+
+        @Deprecated
+        void onNotificationStarted(int i, Notification notification);
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    /* renamed from: com.google.android.exoplayer2.ui.PlayerNotificationManager$Priority */
+    public @interface Priority {
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    /* renamed from: com.google.android.exoplayer2.ui.PlayerNotificationManager$Visibility */
+    public @interface Visibility {
+    }
+
+    /* renamed from: com.google.android.exoplayer2.ui.PlayerNotificationManager$BitmapCallback */
+    public final class BitmapCallback {
+        private final int notificationTag;
+
+        private BitmapCallback(int notificationTag2) {
+            this.notificationTag = notificationTag2;
+        }
+
+        public void onBitmap(Bitmap bitmap) {
+            if (bitmap != null) {
+                PlayerNotificationManager.this.mainHandler.post(new PlayerNotificationManager$BitmapCallback$$Lambda$0(this, bitmap));
+            }
+        }
+
+        /* access modifiers changed from: package-private */
+        public final /* synthetic */ void lambda$onBitmap$0$PlayerNotificationManager$BitmapCallback(Bitmap bitmap) {
+            if (PlayerNotificationManager.this.player != null && this.notificationTag == PlayerNotificationManager.this.currentNotificationTag && PlayerNotificationManager.this.isNotificationStarted) {
+                Notification unused = PlayerNotificationManager.this.startOrUpdateNotification(bitmap);
+            }
+        }
     }
 
     /* renamed from: com.google.android.exoplayer2.ui.PlayerNotificationManager$PlayerListener */
     private class PlayerListener implements Player.EventListener {
+        private PlayerListener() {
+        }
+
         public void onLoadingChanged(boolean z) {
             Player$EventListener$$CC.onLoadingChanged$$dflt$$(this, z);
         }
@@ -736,9 +741,6 @@ public class PlayerNotificationManager {
 
         public void onTracksChanged(TrackGroupArray trackGroupArray, TrackSelectionArray trackSelectionArray) {
             Player$EventListener$$CC.onTracksChanged$$dflt$$(this, trackGroupArray, trackSelectionArray);
-        }
-
-        private PlayerListener() {
         }
 
         public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {

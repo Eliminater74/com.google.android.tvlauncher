@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import com.google.android.exoplayer2.p008ui.spherical.OrientationListener;
 
 /* renamed from: com.google.android.exoplayer2.ui.spherical.TouchTracker */
 class TouchTracker extends GestureDetector.SimpleOnGestureListener implements View.OnTouchListener, OrientationListener.Listener {
@@ -20,11 +19,6 @@ class TouchTracker extends GestureDetector.SimpleOnGestureListener implements Vi
     private volatile float roll;
     @Nullable
     private SingleTapListener singleTapListener;
-
-    /* renamed from: com.google.android.exoplayer2.ui.spherical.TouchTracker$Listener */
-    interface Listener {
-        void onScrollChange(PointF pointF);
-    }
 
     public TouchTracker(Context context, Listener listener2, float pxPerDegrees2) {
         this.listener = listener2;
@@ -80,5 +74,10 @@ class TouchTracker extends GestureDetector.SimpleOnGestureListener implements Vi
     @BinderThread
     public void onOrientationChange(float[] deviceOrientationMatrix, float roll2) {
         this.roll = -roll2;
+    }
+
+    /* renamed from: com.google.android.exoplayer2.ui.spherical.TouchTracker$Listener */
+    interface Listener {
+        void onScrollChange(PointF pointF);
     }
 }

@@ -1,6 +1,7 @@
 package com.google.android.exoplayer2.source.smoothstreaming.manifest;
 
 import android.net.Uri;
+
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.extractor.mp4.TrackEncryptionBox;
 import com.google.android.exoplayer2.offline.FilterableManifest;
@@ -8,6 +9,7 @@ import com.google.android.exoplayer2.offline.StreamKey;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.UriUtil;
 import com.google.android.exoplayer2.util.Util;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -23,105 +25,6 @@ public class SsManifest implements FilterableManifest<SsManifest> {
     public final int minorVersion;
     public final ProtectionElement protectionElement;
     public final StreamElement[] streamElements;
-
-    public static class ProtectionElement {
-        public final byte[] data;
-        public final TrackEncryptionBox[] trackEncryptionBoxes;
-        public final UUID uuid;
-
-        public ProtectionElement(UUID uuid2, byte[] data2, TrackEncryptionBox[] trackEncryptionBoxes2) {
-            this.uuid = uuid2;
-            this.data = data2;
-            this.trackEncryptionBoxes = trackEncryptionBoxes2;
-        }
-    }
-
-    public static class StreamElement {
-        private static final String URL_PLACEHOLDER_BITRATE_1 = "{bitrate}";
-        private static final String URL_PLACEHOLDER_BITRATE_2 = "{Bitrate}";
-        private static final String URL_PLACEHOLDER_START_TIME_1 = "{start time}";
-        private static final String URL_PLACEHOLDER_START_TIME_2 = "{start_time}";
-        private final String baseUri;
-        public final int chunkCount;
-        private final List<Long> chunkStartTimes;
-        private final long[] chunkStartTimesUs;
-        private final String chunkTemplate;
-        public final int displayHeight;
-        public final int displayWidth;
-        public final Format[] formats;
-        public final String language;
-        private final long lastChunkDurationUs;
-        public final int maxHeight;
-        public final int maxWidth;
-        public final String name;
-        public final String subType;
-        public final long timescale;
-        public final int type;
-
-        public StreamElement(String baseUri2, String chunkTemplate2, int type2, String subType2, long timescale2, String name2, int maxWidth2, int maxHeight2, int displayWidth2, int displayHeight2, String language2, Format[] formats2, List<Long> chunkStartTimes2, long lastChunkDuration) {
-            this(baseUri2, chunkTemplate2, type2, subType2, timescale2, name2, maxWidth2, maxHeight2, displayWidth2, displayHeight2, language2, formats2, chunkStartTimes2, Util.scaleLargeTimestamps(chunkStartTimes2, 1000000, timescale2), Util.scaleLargeTimestamp(lastChunkDuration, 1000000, timescale2));
-        }
-
-        private StreamElement(String baseUri2, String chunkTemplate2, int type2, String subType2, long timescale2, String name2, int maxWidth2, int maxHeight2, int displayWidth2, int displayHeight2, String language2, Format[] formats2, List<Long> chunkStartTimes2, long[] chunkStartTimesUs2, long lastChunkDurationUs2) {
-            this.baseUri = baseUri2;
-            this.chunkTemplate = chunkTemplate2;
-            this.type = type2;
-            this.subType = subType2;
-            this.timescale = timescale2;
-            this.name = name2;
-            this.maxWidth = maxWidth2;
-            this.maxHeight = maxHeight2;
-            this.displayWidth = displayWidth2;
-            this.displayHeight = displayHeight2;
-            this.language = language2;
-            this.formats = formats2;
-            this.chunkStartTimes = chunkStartTimes2;
-            this.chunkStartTimesUs = chunkStartTimesUs2;
-            this.lastChunkDurationUs = lastChunkDurationUs2;
-            this.chunkCount = chunkStartTimes2.size();
-        }
-
-        public StreamElement copy(Format[] formats2) {
-            String str = this.baseUri;
-            return new StreamElement(str, this.chunkTemplate, this.type, this.subType, this.timescale, this.name, this.maxWidth, this.maxHeight, this.displayWidth, this.displayHeight, this.language, formats2, this.chunkStartTimes, this.chunkStartTimesUs, this.lastChunkDurationUs);
-        }
-
-        /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-         method: com.google.android.exoplayer2.util.Util.binarySearchFloor(long[], long, boolean, boolean):int
-         arg types: [long[], long, int, int]
-         candidates:
-          com.google.android.exoplayer2.util.Util.binarySearchFloor(java.util.List, java.lang.Comparable, boolean, boolean):int
-          com.google.android.exoplayer2.util.Util.binarySearchFloor(int[], int, boolean, boolean):int
-          com.google.android.exoplayer2.util.Util.binarySearchFloor(long[], long, boolean, boolean):int */
-        public int getChunkIndex(long timeUs) {
-            return Util.binarySearchFloor(this.chunkStartTimesUs, timeUs, true, true);
-        }
-
-        public long getStartTimeUs(int chunkIndex) {
-            return this.chunkStartTimesUs[chunkIndex];
-        }
-
-        public long getChunkDurationUs(int chunkIndex) {
-            if (chunkIndex == this.chunkCount - 1) {
-                return this.lastChunkDurationUs;
-            }
-            long[] jArr = this.chunkStartTimesUs;
-            return jArr[chunkIndex + 1] - jArr[chunkIndex];
-        }
-
-        public Uri buildRequestUri(int track, int chunkIndex) {
-            boolean z = true;
-            Assertions.checkState(this.formats != null);
-            Assertions.checkState(this.chunkStartTimes != null);
-            if (chunkIndex >= this.chunkStartTimes.size()) {
-                z = false;
-            }
-            Assertions.checkState(z);
-            String bitrateString = Integer.toString(this.formats[track].bitrate);
-            String startTimeString = this.chunkStartTimes.get(chunkIndex).toString();
-            return UriUtil.resolveToUri(this.baseUri, this.chunkTemplate.replace(URL_PLACEHOLDER_BITRATE_1, bitrateString).replace(URL_PLACEHOLDER_BITRATE_2, bitrateString).replace(URL_PLACEHOLDER_START_TIME_1, startTimeString).replace(URL_PLACEHOLDER_START_TIME_2, startTimeString));
-        }
-    }
 
     /* JADX WARNING: Illegal instructions before constructor call */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -196,5 +99,104 @@ public class SsManifest implements FilterableManifest<SsManifest> {
             copiedStreamElements.add(currentStreamElement.copy((Format[]) copiedFormats.toArray(new Format[0])));
         }
         return new SsManifest(this.majorVersion, this.minorVersion, this.durationUs, this.dvrWindowLengthUs, this.lookAheadCount, this.isLive, this.protectionElement, (StreamElement[]) copiedStreamElements.toArray(new StreamElement[0]));
+    }
+
+    public static class ProtectionElement {
+        public final byte[] data;
+        public final TrackEncryptionBox[] trackEncryptionBoxes;
+        public final UUID uuid;
+
+        public ProtectionElement(UUID uuid2, byte[] data2, TrackEncryptionBox[] trackEncryptionBoxes2) {
+            this.uuid = uuid2;
+            this.data = data2;
+            this.trackEncryptionBoxes = trackEncryptionBoxes2;
+        }
+    }
+
+    public static class StreamElement {
+        private static final String URL_PLACEHOLDER_BITRATE_1 = "{bitrate}";
+        private static final String URL_PLACEHOLDER_BITRATE_2 = "{Bitrate}";
+        private static final String URL_PLACEHOLDER_START_TIME_1 = "{start time}";
+        private static final String URL_PLACEHOLDER_START_TIME_2 = "{start_time}";
+        public final int chunkCount;
+        public final int displayHeight;
+        public final int displayWidth;
+        public final Format[] formats;
+        public final String language;
+        public final int maxHeight;
+        public final int maxWidth;
+        public final String name;
+        public final String subType;
+        public final long timescale;
+        public final int type;
+        private final String baseUri;
+        private final List<Long> chunkStartTimes;
+        private final long[] chunkStartTimesUs;
+        private final String chunkTemplate;
+        private final long lastChunkDurationUs;
+
+        public StreamElement(String baseUri2, String chunkTemplate2, int type2, String subType2, long timescale2, String name2, int maxWidth2, int maxHeight2, int displayWidth2, int displayHeight2, String language2, Format[] formats2, List<Long> chunkStartTimes2, long lastChunkDuration) {
+            this(baseUri2, chunkTemplate2, type2, subType2, timescale2, name2, maxWidth2, maxHeight2, displayWidth2, displayHeight2, language2, formats2, chunkStartTimes2, Util.scaleLargeTimestamps(chunkStartTimes2, 1000000, timescale2), Util.scaleLargeTimestamp(lastChunkDuration, 1000000, timescale2));
+        }
+
+        private StreamElement(String baseUri2, String chunkTemplate2, int type2, String subType2, long timescale2, String name2, int maxWidth2, int maxHeight2, int displayWidth2, int displayHeight2, String language2, Format[] formats2, List<Long> chunkStartTimes2, long[] chunkStartTimesUs2, long lastChunkDurationUs2) {
+            this.baseUri = baseUri2;
+            this.chunkTemplate = chunkTemplate2;
+            this.type = type2;
+            this.subType = subType2;
+            this.timescale = timescale2;
+            this.name = name2;
+            this.maxWidth = maxWidth2;
+            this.maxHeight = maxHeight2;
+            this.displayWidth = displayWidth2;
+            this.displayHeight = displayHeight2;
+            this.language = language2;
+            this.formats = formats2;
+            this.chunkStartTimes = chunkStartTimes2;
+            this.chunkStartTimesUs = chunkStartTimesUs2;
+            this.lastChunkDurationUs = lastChunkDurationUs2;
+            this.chunkCount = chunkStartTimes2.size();
+        }
+
+        public StreamElement copy(Format[] formats2) {
+            String str = this.baseUri;
+            return new StreamElement(str, this.chunkTemplate, this.type, this.subType, this.timescale, this.name, this.maxWidth, this.maxHeight, this.displayWidth, this.displayHeight, this.language, formats2, this.chunkStartTimes, this.chunkStartTimesUs, this.lastChunkDurationUs);
+        }
+
+        /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+         method: com.google.android.exoplayer2.util.Util.binarySearchFloor(long[], long, boolean, boolean):int
+         arg types: [long[], long, int, int]
+         candidates:
+          com.google.android.exoplayer2.util.Util.binarySearchFloor(java.util.List, java.lang.Comparable, boolean, boolean):int
+          com.google.android.exoplayer2.util.Util.binarySearchFloor(int[], int, boolean, boolean):int
+          com.google.android.exoplayer2.util.Util.binarySearchFloor(long[], long, boolean, boolean):int */
+        public int getChunkIndex(long timeUs) {
+            return Util.binarySearchFloor(this.chunkStartTimesUs, timeUs, true, true);
+        }
+
+        public long getStartTimeUs(int chunkIndex) {
+            return this.chunkStartTimesUs[chunkIndex];
+        }
+
+        public long getChunkDurationUs(int chunkIndex) {
+            if (chunkIndex == this.chunkCount - 1) {
+                return this.lastChunkDurationUs;
+            }
+            long[] jArr = this.chunkStartTimesUs;
+            return jArr[chunkIndex + 1] - jArr[chunkIndex];
+        }
+
+        public Uri buildRequestUri(int track, int chunkIndex) {
+            boolean z = true;
+            Assertions.checkState(this.formats != null);
+            Assertions.checkState(this.chunkStartTimes != null);
+            if (chunkIndex >= this.chunkStartTimes.size()) {
+                z = false;
+            }
+            Assertions.checkState(z);
+            String bitrateString = Integer.toString(this.formats[track].bitrate);
+            String startTimeString = this.chunkStartTimes.get(chunkIndex).toString();
+            return UriUtil.resolveToUri(this.baseUri, this.chunkTemplate.replace(URL_PLACEHOLDER_BITRATE_1, bitrateString).replace(URL_PLACEHOLDER_BITRATE_2, bitrateString).replace(URL_PLACEHOLDER_START_TIME_1, startTimeString).replace(URL_PLACEHOLDER_START_TIME_2, startTimeString));
+        }
     }
 }

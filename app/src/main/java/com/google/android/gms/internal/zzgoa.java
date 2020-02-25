@@ -1,7 +1,5 @@
 package com.google.android.gms.internal;
 
-import com.google.android.gms.internal.zzgoc;
-import com.google.android.gms.internal.zzgoj;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -24,83 +22,6 @@ final class zzgoa<FieldDescriptorType extends zzgoc<FieldDescriptorType>> {
 
     public static <T extends zzgoc<T>> zzgoa<T> zza() {
         return zzd;
-    }
-
-    /* access modifiers changed from: package-private */
-    public final boolean zzb() {
-        return this.zza.isEmpty();
-    }
-
-    public final void zzc() {
-        if (!this.zzb) {
-            this.zza.zza();
-            this.zzb = true;
-        }
-    }
-
-    public final boolean zzd() {
-        return this.zzb;
-    }
-
-    public final boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof zzgoa)) {
-            return false;
-        }
-        return this.zza.equals(((zzgoa) obj).zza);
-    }
-
-    public final int hashCode() {
-        return this.zza.hashCode();
-    }
-
-    public final Iterator<Map.Entry<FieldDescriptorType, Object>> zze() {
-        if (this.zzc) {
-            return new zzgoz(this.zza.entrySet().iterator());
-        }
-        return this.zza.entrySet().iterator();
-    }
-
-    /* access modifiers changed from: package-private */
-    public final Iterator<Map.Entry<FieldDescriptorType, Object>> zzf() {
-        if (this.zzc) {
-            return new zzgoz(this.zza.zze().iterator());
-        }
-        return this.zza.zze().iterator();
-    }
-
-    public final Object zza(zzgoj.zze zze) {
-        Object obj = this.zza.get(zze);
-        if (obj instanceof zzgow) {
-            return zzgow.zza();
-        }
-        return obj;
-    }
-
-    public final void zza(zzgoj.zze zze, Object obj) {
-        if (!zze.zzd()) {
-            zza(zze.zzb(), obj);
-        } else if (obj instanceof List) {
-            ArrayList arrayList = new ArrayList();
-            arrayList.addAll((List) obj);
-            ArrayList arrayList2 = arrayList;
-            int size = arrayList2.size();
-            int i = 0;
-            while (i < size) {
-                Object obj2 = arrayList2.get(i);
-                i++;
-                zza(zze.zzb(), obj2);
-            }
-            obj = arrayList;
-        } else {
-            throw new IllegalArgumentException("Wrong object type used with protocol message reflection.");
-        }
-        if (obj instanceof zzgow) {
-            this.zzc = true;
-        }
-        this.zza.put(zze, obj);
     }
 
     private static void zza(zzgrr zzgrr, Object obj) {
@@ -146,20 +67,6 @@ final class zzgoa<FieldDescriptorType extends zzgoc<FieldDescriptorType>> {
         }
     }
 
-    public final boolean zzg() {
-        for (int i = 0; i < this.zza.zzc(); i++) {
-            if (!zza((Map.Entry<zzgoj.zze, Object>) this.zza.zzb(i))) {
-                return false;
-            }
-        }
-        for (Map.Entry<FieldDescriptorType, Object> entry : this.zza.zzd()) {
-            if (!zza((Map.Entry<zzgoj.zze, Object>) entry)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     private static boolean zza(Map.Entry<zzgoj.zze, Object> entry) {
         zzgoc key = entry.getKey();
         if (key.zzc() == zzgrw.MESSAGE) {
@@ -185,15 +92,6 @@ final class zzgoa<FieldDescriptorType extends zzgoc<FieldDescriptorType>> {
         return true;
     }
 
-    public final void zza(zzgoa<zzgoj.zze> zzgoa) {
-        for (int i = 0; i < zzgoa.zza.zzc(); i++) {
-            zzb(zzgoa.zza.zzb(i));
-        }
-        for (Map.Entry<FieldDescriptorType, Object> zzb2 : zzgoa.zza.zzd()) {
-            zzb(zzb2);
-        }
-    }
-
     private static Object zza(Object obj) {
         if (obj instanceof zzgqa) {
             return ((zzgqa) obj).zzb();
@@ -205,39 +103,6 @@ final class zzgoa<FieldDescriptorType extends zzgoc<FieldDescriptorType>> {
         byte[] bArr2 = new byte[bArr.length];
         System.arraycopy(bArr, 0, bArr2, 0, bArr.length);
         return bArr2;
-    }
-
-    private final void zzb(Map.Entry<FieldDescriptorType, Object> entry) {
-        Object obj;
-        zzgoc zzgoc = (zzgoc) entry.getKey();
-        Object value = entry.getValue();
-        if (value instanceof zzgow) {
-            value = zzgow.zza();
-        }
-        if (zzgoc.zzd()) {
-            Object zza2 = zza((zzgoj.zze) zzgoc);
-            if (zza2 == null) {
-                zza2 = new ArrayList();
-            }
-            for (Object zza3 : (List) value) {
-                ((List) zza2).add(zza(zza3));
-            }
-            this.zza.put(zzgoc, zza2);
-        } else if (zzgoc.zzc() == zzgrw.MESSAGE) {
-            Object zza4 = zza((zzgoj.zze) zzgoc);
-            if (zza4 == null) {
-                this.zza.put(zzgoc, zza(value));
-                return;
-            }
-            if (zza4 instanceof zzgqa) {
-                obj = zzgoc.zza((zzgqa) zza4, (zzgqa) value);
-            } else {
-                obj = zzgoc.zza(((zzgpt) zza4).zzp(), (zzgpt) value).zzf();
-            }
-            this.zza.put(zzgoc, obj);
-        } else {
-            this.zza.put(zzgoc, zza(value));
-        }
     }
 
     static void zza(zzgnp zzgnp, zzgrr zzgrr, int i, Object obj) throws IOException {
@@ -354,29 +219,6 @@ final class zzgoa<FieldDescriptorType extends zzgoc<FieldDescriptorType>> {
         }
     }
 
-    public final int zzh() {
-        int i = 0;
-        for (int i2 = 0; i2 < this.zza.zzc(); i2++) {
-            Map.Entry<FieldDescriptorType, Object> zzb2 = this.zza.zzb(i2);
-            i += zzb((zzgoc) zzb2.getKey(), zzb2.getValue());
-        }
-        for (Map.Entry next : this.zza.zzd()) {
-            i += zzb((zzgoc) next.getKey(), next.getValue());
-        }
-        return i;
-    }
-
-    public final int zzi() {
-        int i = 0;
-        for (int i2 = 0; i2 < this.zza.zzc(); i2++) {
-            i += zzc(this.zza.zzb(i2));
-        }
-        for (Map.Entry<FieldDescriptorType, Object> zzc2 : this.zza.zzd()) {
-            i += zzc(zzc2);
-        }
-        return i;
-    }
-
     private static int zzc(Map.Entry<FieldDescriptorType, Object> entry) {
         zzgoc zzgoc = (zzgoc) entry.getKey();
         Object value = entry.getValue();
@@ -468,6 +310,162 @@ final class zzgoa<FieldDescriptorType extends zzgoc<FieldDescriptorType>> {
         }
         for (Object zza3 : (List) obj) {
             i += zza(zzb2, zza2, zza3);
+        }
+        return i;
+    }
+
+    /* access modifiers changed from: package-private */
+    public final boolean zzb() {
+        return this.zza.isEmpty();
+    }
+
+    public final void zzc() {
+        if (!this.zzb) {
+            this.zza.zza();
+            this.zzb = true;
+        }
+    }
+
+    public final boolean zzd() {
+        return this.zzb;
+    }
+
+    public final boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof zzgoa)) {
+            return false;
+        }
+        return this.zza.equals(((zzgoa) obj).zza);
+    }
+
+    public final int hashCode() {
+        return this.zza.hashCode();
+    }
+
+    public final Iterator<Map.Entry<FieldDescriptorType, Object>> zze() {
+        if (this.zzc) {
+            return new zzgoz(this.zza.entrySet().iterator());
+        }
+        return this.zza.entrySet().iterator();
+    }
+
+    /* access modifiers changed from: package-private */
+    public final Iterator<Map.Entry<FieldDescriptorType, Object>> zzf() {
+        if (this.zzc) {
+            return new zzgoz(this.zza.zze().iterator());
+        }
+        return this.zza.zze().iterator();
+    }
+
+    public final Object zza(zzgoj.zze zze) {
+        Object obj = this.zza.get(zze);
+        if (obj instanceof zzgow) {
+            return zzgow.zza();
+        }
+        return obj;
+    }
+
+    public final void zza(zzgoj.zze zze, Object obj) {
+        if (!zze.zzd()) {
+            zza(zze.zzb(), obj);
+        } else if (obj instanceof List) {
+            ArrayList arrayList = new ArrayList();
+            arrayList.addAll((List) obj);
+            ArrayList arrayList2 = arrayList;
+            int size = arrayList2.size();
+            int i = 0;
+            while (i < size) {
+                Object obj2 = arrayList2.get(i);
+                i++;
+                zza(zze.zzb(), obj2);
+            }
+            obj = arrayList;
+        } else {
+            throw new IllegalArgumentException("Wrong object type used with protocol message reflection.");
+        }
+        if (obj instanceof zzgow) {
+            this.zzc = true;
+        }
+        this.zza.put(zze, obj);
+    }
+
+    public final boolean zzg() {
+        for (int i = 0; i < this.zza.zzc(); i++) {
+            if (!zza((Map.Entry<zzgoj.zze, Object>) this.zza.zzb(i))) {
+                return false;
+            }
+        }
+        for (Map.Entry<FieldDescriptorType, Object> entry : this.zza.zzd()) {
+            if (!zza((Map.Entry<zzgoj.zze, Object>) entry)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public final void zza(zzgoa<zzgoj.zze> zzgoa) {
+        for (int i = 0; i < zzgoa.zza.zzc(); i++) {
+            zzb(zzgoa.zza.zzb(i));
+        }
+        for (Map.Entry<FieldDescriptorType, Object> zzb2 : zzgoa.zza.zzd()) {
+            zzb(zzb2);
+        }
+    }
+
+    private final void zzb(Map.Entry<FieldDescriptorType, Object> entry) {
+        Object obj;
+        zzgoc zzgoc = (zzgoc) entry.getKey();
+        Object value = entry.getValue();
+        if (value instanceof zzgow) {
+            value = zzgow.zza();
+        }
+        if (zzgoc.zzd()) {
+            Object zza2 = zza((zzgoj.zze) zzgoc);
+            if (zza2 == null) {
+                zza2 = new ArrayList();
+            }
+            for (Object zza3 : (List) value) {
+                ((List) zza2).add(zza(zza3));
+            }
+            this.zza.put(zzgoc, zza2);
+        } else if (zzgoc.zzc() == zzgrw.MESSAGE) {
+            Object zza4 = zza((zzgoj.zze) zzgoc);
+            if (zza4 == null) {
+                this.zza.put(zzgoc, zza(value));
+                return;
+            }
+            if (zza4 instanceof zzgqa) {
+                obj = zzgoc.zza((zzgqa) zza4, (zzgqa) value);
+            } else {
+                obj = zzgoc.zza(((zzgpt) zza4).zzp(), (zzgpt) value).zzf();
+            }
+            this.zza.put(zzgoc, obj);
+        } else {
+            this.zza.put(zzgoc, zza(value));
+        }
+    }
+
+    public final int zzh() {
+        int i = 0;
+        for (int i2 = 0; i2 < this.zza.zzc(); i2++) {
+            Map.Entry<FieldDescriptorType, Object> zzb2 = this.zza.zzb(i2);
+            i += zzb((zzgoc) zzb2.getKey(), zzb2.getValue());
+        }
+        for (Map.Entry next : this.zza.zzd()) {
+            i += zzb((zzgoc) next.getKey(), next.getValue());
+        }
+        return i;
+    }
+
+    public final int zzi() {
+        int i = 0;
+        for (int i2 = 0; i2 < this.zza.zzc(); i2++) {
+            i += zzc(this.zza.zzb(i2));
+        }
+        for (Map.Entry<FieldDescriptorType, Object> zzc2 : this.zza.zzd()) {
+            i += zzc(zzc2);
         }
         return i;
     }

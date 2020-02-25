@@ -16,6 +16,7 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 import android.util.Log;
+
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
@@ -30,30 +31,32 @@ class InstallingLaunchItemsDbHelper extends SQLiteOpenHelper {
     static final int COLUMN_PACKAGE_NAME_INDEX = 0;
     @VisibleForTesting(otherwise = 2)
     static final String COLUMN_PROMISE_ICON = "promise_icon";
-    @VisibleForTesting(otherwise = 2)
-    static final int COLUMN_PROMISE_ICON_INDEX = 2;
-    private static final String DATABASE_NAME = "InstallingApps.db";
-    private static final int DATABASE_VERSION = 1;
-    @VisibleForTesting(otherwise = 2)
-    static final String PACKAGE_NAME_SELECTION = "package_name LIKE ?";
     /* access modifiers changed from: private */
     public static final String[] READ_ALL_ITEMS_PROJECTION = {"package_name", COLUMN_IS_GAME, COLUMN_PROMISE_ICON};
-    private static final String SQL_CREATE_INSTALLING_APP = "CREATE TABLE IF NOT EXISTS installing_apps (package_name TEXT PRIMARY KEY,is_game INTEGER NOT NULL,promise_icon BLOB NOT NULL)";
-    private static final String SQL_DELETE_INSTALLING_APP = "DROP TABLE IF EXISTS installing_apps";
+    @VisibleForTesting(otherwise = 2)
+    static final int COLUMN_PROMISE_ICON_INDEX = 2;
+    @VisibleForTesting(otherwise = 2)
+    static final String PACKAGE_NAME_SELECTION = "package_name LIKE ?";
     @VisibleForTesting(otherwise = 2)
     static final String TABLE_NAME = "installing_apps";
+    private static final String DATABASE_NAME = "InstallingApps.db";
+    private static final int DATABASE_VERSION = 1;
+    private static final String SQL_CREATE_INSTALLING_APP = "CREATE TABLE IF NOT EXISTS installing_apps (package_name TEXT PRIMARY KEY,is_game INTEGER NOT NULL,promise_icon BLOB NOT NULL)";
+    private static final String SQL_DELETE_INSTALLING_APP = "DROP TABLE IF EXISTS installing_apps";
     private static final String TAG = "InstallingLaunchItemsDbHelper";
     @SuppressLint({"StaticFieldLeak"})
     private static InstallingLaunchItemsDbHelper sInstallingLaunchItemsDbHelper = null;
     /* access modifiers changed from: private */
     public final Context mContext;
 
-    interface OnInstallingAppsReadListener {
-        void onInstallingAppsRead(ArrayList<InstallingAppStoredData> arrayList);
+    private InstallingLaunchItemsDbHelper(Context context) {
+        this(context, DATABASE_NAME);
     }
 
-    interface OnTaskCompletedListener {
-        void onTaskCompleted();
+    @VisibleForTesting
+    InstallingLaunchItemsDbHelper(Context context, String databaseName) {
+        super(context, databaseName, (SQLiteDatabase.CursorFactory) null, 1);
+        this.mContext = context;
     }
 
     @VisibleForTesting
@@ -95,16 +98,6 @@ class InstallingLaunchItemsDbHelper extends SQLiteOpenHelper {
         return sInstallingLaunchItemsDbHelper;
     }
 
-    private InstallingLaunchItemsDbHelper(Context context) {
-        this(context, DATABASE_NAME);
-    }
-
-    @VisibleForTesting
-    InstallingLaunchItemsDbHelper(Context context, String databaseName) {
-        super(context, databaseName, (SQLiteDatabase.CursorFactory) null, 1);
-        this.mContext = context;
-    }
-
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SQL_CREATE_INSTALLING_APP);
     }
@@ -137,6 +130,38 @@ class InstallingLaunchItemsDbHelper extends SQLiteOpenHelper {
     /* access modifiers changed from: package-private */
     public void readAllInstallingItems(@NonNull OnInstallingAppsReadListener onInstallingAppsReadListener) {
         new ReadAllInstallingItemsTask(onInstallingAppsReadListener).execute(new Void[0]);
+    }
+
+    interface OnInstallingAppsReadListener {
+        void onInstallingAppsRead(ArrayList<InstallingAppStoredData> arrayList);
+    }
+
+    interface OnTaskCompletedListener {
+        void onTaskCompleted();
+    }
+
+    static final class InstallingAppStoredData {
+        private final Drawable mIcon;
+        private final boolean mIsGame;
+        private final String mPkgName;
+
+        InstallingAppStoredData(String pkgName, boolean isGame, Drawable icon) {
+            this.mPkgName = pkgName;
+            this.mIsGame = isGame;
+            this.mIcon = icon;
+        }
+
+        public String getPackageName() {
+            return this.mPkgName;
+        }
+
+        public boolean isGame() {
+            return this.mIsGame;
+        }
+
+        public Drawable getIcon() {
+            return this.mIcon;
+        }
     }
 
     private class InsertInstallingItemTask extends AsyncTask<Void, Void, Void> {
@@ -271,13 +296,13 @@ class InstallingLaunchItemsDbHelper extends SQLiteOpenHelper {
     private class ReadAllInstallingItemsTask extends AsyncTask<Void, Void, ArrayList<InstallingAppStoredData>> {
         private final OnInstallingAppsReadListener mOnInstallingAppsReadListener;
 
+        public ReadAllInstallingItemsTask(OnInstallingAppsReadListener onInstallingAppsReadListener) {
+            this.mOnInstallingAppsReadListener = onInstallingAppsReadListener;
+        }
+
         /* access modifiers changed from: protected */
         public /* bridge */ /* synthetic */ void onPostExecute(Object obj) {
             onPostExecute((ArrayList<InstallingAppStoredData>) ((ArrayList) obj));
-        }
-
-        public ReadAllInstallingItemsTask(OnInstallingAppsReadListener onInstallingAppsReadListener) {
-            this.mOnInstallingAppsReadListener = onInstallingAppsReadListener;
         }
 
         /* access modifiers changed from: protected */
@@ -300,30 +325,6 @@ class InstallingLaunchItemsDbHelper extends SQLiteOpenHelper {
         /* access modifiers changed from: protected */
         public void onPostExecute(ArrayList<InstallingAppStoredData> installingAppStoredData) {
             this.mOnInstallingAppsReadListener.onInstallingAppsRead(installingAppStoredData);
-        }
-    }
-
-    static final class InstallingAppStoredData {
-        private final Drawable mIcon;
-        private final boolean mIsGame;
-        private final String mPkgName;
-
-        InstallingAppStoredData(String pkgName, boolean isGame, Drawable icon) {
-            this.mPkgName = pkgName;
-            this.mIsGame = isGame;
-            this.mIcon = icon;
-        }
-
-        public String getPackageName() {
-            return this.mPkgName;
-        }
-
-        public boolean isGame() {
-            return this.mIsGame;
-        }
-
-        public Drawable getIcon() {
-            return this.mIcon;
         }
     }
 }

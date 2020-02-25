@@ -2,6 +2,7 @@ package androidx.leanback.widget;
 
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
+
 import java.util.ArrayList;
 
 public class Action {
@@ -33,36 +34,36 @@ public class Action {
         setIcon(icon);
     }
 
-    public final void setId(long id) {
-        this.mId = id;
-    }
-
     public final long getId() {
         return this.mId;
     }
 
-    public final void setLabel1(CharSequence label) {
-        this.mLabel1 = label;
+    public final void setId(long id) {
+        this.mId = id;
     }
 
     public final CharSequence getLabel1() {
         return this.mLabel1;
     }
 
-    public final void setLabel2(CharSequence label) {
-        this.mLabel2 = label;
+    public final void setLabel1(CharSequence label) {
+        this.mLabel1 = label;
     }
 
     public final CharSequence getLabel2() {
         return this.mLabel2;
     }
 
-    public final void setIcon(Drawable icon) {
-        this.mIcon = icon;
+    public final void setLabel2(CharSequence label) {
+        this.mLabel2 = label;
     }
 
     public final Drawable getIcon() {
         return this.mIcon;
+    }
+
+    public final void setIcon(Drawable icon) {
+        this.mIcon = icon;
     }
 
     public final void addKeyCode(int keyCode) {

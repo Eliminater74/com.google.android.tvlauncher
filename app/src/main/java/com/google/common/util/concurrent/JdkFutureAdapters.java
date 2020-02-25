@@ -3,6 +3,7 @@ package com.google.common.util.concurrent;
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.base.Preconditions;
+
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -12,6 +13,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @GwtIncompatible
 @Beta
 public final class JdkFutureAdapters {
+    private JdkFutureAdapters() {
+    }
+
     public static <V> ListenableFuture<V> listenInPoolThread(Future<V> future) {
         if (future instanceof ListenableFuture) {
             return (ListenableFuture) future;
@@ -28,13 +32,13 @@ public final class JdkFutureAdapters {
     }
 
     private static class ListenableFutureAdapter<V> extends ForwardingFuture<V> implements ListenableFuture<V> {
-        private static final Executor defaultAdapterExecutor = Executors.newCachedThreadPool(threadFactory);
         private static final ThreadFactory threadFactory = new ThreadFactoryBuilder().setDaemon(true).setNameFormat("ListenableFutureAdapter-thread-%d").build();
-        private final Executor adapterExecutor;
+        private static final Executor defaultAdapterExecutor = Executors.newCachedThreadPool(threadFactory);
         /* access modifiers changed from: private */
         public final Future<V> delegate;
         /* access modifiers changed from: private */
         public final ExecutionList executionList;
+        private final Executor adapterExecutor;
         private final AtomicBoolean hasListeners;
 
         ListenableFutureAdapter(Future<V> delegate2) {
@@ -72,8 +76,5 @@ public final class JdkFutureAdapters {
                 });
             }
         }
-    }
-
-    private JdkFutureAdapters() {
     }
 }

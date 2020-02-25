@@ -1,6 +1,7 @@
 package com.google.android.libraries.performance.primes;
 
 import android.support.annotation.Nullable;
+
 import com.google.common.base.Optional;
 
 public class PrimesNetworkConfigurations {
@@ -56,6 +57,10 @@ public class PrimesNetworkConfigurations {
         this.metricExtensionProvider = metricExtensionProvider2;
     }
 
+    public static Builder newBuilder() {
+        return new Builder();
+    }
+
     public boolean isEnabled() {
         return this.enabled;
     }
@@ -85,10 +90,6 @@ public class PrimesNetworkConfigurations {
         int unused4 = builder.batchSize = this.batchSize;
         Optional unused5 = builder.metricExtensionProvider = this.metricExtensionProvider;
         return builder;
-    }
-
-    public static Builder newBuilder() {
-        return new Builder();
     }
 
     public static final class Builder {

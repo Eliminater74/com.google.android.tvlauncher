@@ -6,9 +6,11 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.p001v4.content.ContextCompat;
+
 import androidx.leanback.preference.LeanbackPreferenceFragment;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceScreen;
+
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.tvlauncher.C1188R;
@@ -17,24 +19,28 @@ import com.google.android.tvlauncher.analytics.FragmentEventLogger;
 import com.google.android.tvlauncher.analytics.UserActionEvent;
 import com.google.android.tvlauncher.data.TvDataManager;
 import com.google.android.tvlauncher.home.WatchNextPrefs;
-import com.google.android.tvlauncher.settings.AppModel;
 import com.google.android.tvlauncher.util.AddBackgroundColorTransformation;
 import com.google.android.tvlauncher.util.OemConfiguration;
 import com.google.android.tvrecommendations.shared.util.Constants;
+
 import java.util.Comparator;
 import java.util.List;
 
 public class ConfigureChannelsFragment extends LeanbackPreferenceFragment implements AppModel.LoadAppsCallback, Preference.OnPreferenceChangeListener {
-    private SummaryPreferenceCategory mAppChannelsGroup;
-    Comparator<AppModel.AppInfo> mAppInfoComparator = new ConfigureChannelsFragment$$Lambda$0(this);
-    private AppModel mAppModel;
     private final FragmentEventLogger mEventLogger = new FragmentEventLogger(this);
+    Comparator<AppModel.AppInfo> mAppInfoComparator = new ConfigureChannelsFragment$$Lambda$0(this);
+    private SummaryPreferenceCategory mAppChannelsGroup;
+    private AppModel mAppModel;
     private int mMaxIconHeight;
     private int mMaxIconWidth;
     private String mOemFirstApp = null;
     private RequestOptions mRequestOptions;
     private TvDataManager mTvDataManager;
     private TvDataManager.Provider mTvDataManagerProvider = TvDataManager.PROVIDER;
+
+    public static Fragment newInstance() {
+        return new ConfigureChannelsFragment();
+    }
 
     /* access modifiers changed from: package-private */
     public final /* synthetic */ int lambda$new$0$ConfigureChannelsFragment(AppModel.AppInfo o1, AppModel.AppInfo o2) {
@@ -72,10 +78,6 @@ public class ConfigureChannelsFragment extends LeanbackPreferenceFragment implem
                 return o1.mTitle.toString().compareToIgnoreCase(o2.mTitle.toString());
             }
         }
-    }
-
-    public static Fragment newInstance() {
-        return new ConfigureChannelsFragment();
     }
 
     public void onCreate(Bundle savedInstanceState) {

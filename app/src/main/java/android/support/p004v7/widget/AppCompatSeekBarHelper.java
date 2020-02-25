@@ -13,12 +13,12 @@ import android.widget.SeekBar;
 
 /* renamed from: android.support.v7.widget.AppCompatSeekBarHelper */
 class AppCompatSeekBarHelper extends AppCompatProgressBarHelper {
+    private final SeekBar mView;
     private boolean mHasTickMarkTint = false;
     private boolean mHasTickMarkTintMode = false;
     private Drawable mTickMark;
     private ColorStateList mTickMarkTintList = null;
     private PorterDuff.Mode mTickMarkTintMode = null;
-    private final SeekBar mView;
 
     AppCompatSeekBarHelper(SeekBar view) {
         super(view);
@@ -47,6 +47,12 @@ class AppCompatSeekBarHelper extends AppCompatProgressBarHelper {
     }
 
     /* access modifiers changed from: package-private */
+    @Nullable
+    public Drawable getTickMark() {
+        return this.mTickMark;
+    }
+
+    /* access modifiers changed from: package-private */
     public void setTickMark(@Nullable Drawable tickMark) {
         Drawable drawable = this.mTickMark;
         if (drawable != null) {
@@ -66,8 +72,8 @@ class AppCompatSeekBarHelper extends AppCompatProgressBarHelper {
 
     /* access modifiers changed from: package-private */
     @Nullable
-    public Drawable getTickMark() {
-        return this.mTickMark;
+    public ColorStateList getTickMarkTintList() {
+        return this.mTickMarkTintList;
     }
 
     /* access modifiers changed from: package-private */
@@ -79,8 +85,8 @@ class AppCompatSeekBarHelper extends AppCompatProgressBarHelper {
 
     /* access modifiers changed from: package-private */
     @Nullable
-    public ColorStateList getTickMarkTintList() {
-        return this.mTickMarkTintList;
+    public PorterDuff.Mode getTickMarkTintMode() {
+        return this.mTickMarkTintMode;
     }
 
     /* access modifiers changed from: package-private */
@@ -88,12 +94,6 @@ class AppCompatSeekBarHelper extends AppCompatProgressBarHelper {
         this.mTickMarkTintMode = tintMode;
         this.mHasTickMarkTintMode = true;
         applyTickMarkTint();
-    }
-
-    /* access modifiers changed from: package-private */
-    @Nullable
-    public PorterDuff.Mode getTickMarkTintMode() {
-        return this.mTickMarkTintMode;
     }
 
     private void applyTickMarkTint() {

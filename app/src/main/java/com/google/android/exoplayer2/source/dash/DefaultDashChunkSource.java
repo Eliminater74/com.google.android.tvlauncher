@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.os.SystemClock;
 import android.support.annotation.CheckResult;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.SeekParameters;
@@ -24,8 +25,6 @@ import com.google.android.exoplayer2.source.chunk.InitializationChunk;
 import com.google.android.exoplayer2.source.chunk.MediaChunk;
 import com.google.android.exoplayer2.source.chunk.MediaChunkIterator;
 import com.google.android.exoplayer2.source.chunk.SingleSampleMediaChunk;
-import com.google.android.exoplayer2.source.dash.DashChunkSource;
-import com.google.android.exoplayer2.source.dash.PlayerEmsgHandler;
 import com.google.android.exoplayer2.source.dash.manifest.AdaptationSet;
 import com.google.android.exoplayer2.source.dash.manifest.DashManifest;
 import com.google.android.exoplayer2.source.dash.manifest.RangedUri;
@@ -38,49 +37,27 @@ import com.google.android.exoplayer2.upstream.LoaderErrorThrower;
 import com.google.android.exoplayer2.upstream.TransferListener;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DefaultDashChunkSource implements DashChunkSource {
+    protected final RepresentationHolder[] representationHolders;
     private final int[] adaptationSetIndices;
     private final DataSource dataSource;
     private final long elapsedRealtimeOffsetMs;
+    private final LoaderErrorThrower manifestLoaderErrorThrower;
+    private final int maxSegmentsPerLoad;
+    @Nullable
+    private final PlayerEmsgHandler.PlayerTrackEmsgHandler playerTrackEmsgHandler;
+    private final TrackSelection trackSelection;
+    private final int trackType;
     private IOException fatalError;
     private long liveEdgeTimeUs = C0841C.TIME_UNSET;
     private DashManifest manifest;
-    private final LoaderErrorThrower manifestLoaderErrorThrower;
-    private final int maxSegmentsPerLoad;
     private boolean missingLastSegment;
     private int periodIndex;
-    @Nullable
-    private final PlayerEmsgHandler.PlayerTrackEmsgHandler playerTrackEmsgHandler;
-    protected final RepresentationHolder[] representationHolders;
-    private final TrackSelection trackSelection;
-    private final int trackType;
-
-    public static final class Factory implements DashChunkSource.Factory {
-        private final DataSource.Factory dataSourceFactory;
-        private final int maxSegmentsPerLoad;
-
-        public Factory(DataSource.Factory dataSourceFactory2) {
-            this(dataSourceFactory2, 1);
-        }
-
-        public Factory(DataSource.Factory dataSourceFactory2, int maxSegmentsPerLoad2) {
-            this.dataSourceFactory = dataSourceFactory2;
-            this.maxSegmentsPerLoad = maxSegmentsPerLoad2;
-        }
-
-        public DashChunkSource createDashChunkSource(LoaderErrorThrower manifestLoaderErrorThrower, DashManifest manifest, int periodIndex, int[] adaptationSetIndices, TrackSelection trackSelection, int trackType, long elapsedRealtimeOffsetMs, boolean enableEventMessageTrack, List<Format> closedCaptionFormats, @Nullable PlayerEmsgHandler.PlayerTrackEmsgHandler playerEmsgHandler, @Nullable TransferListener transferListener) {
-            TransferListener transferListener2 = transferListener;
-            DataSource dataSource = this.dataSourceFactory.createDataSource();
-            if (transferListener2 != null) {
-                dataSource.addTransferListener(transferListener2);
-            }
-            return new DefaultDashChunkSource(manifestLoaderErrorThrower, manifest, periodIndex, adaptationSetIndices, trackSelection, trackType, dataSource, elapsedRealtimeOffsetMs, this.maxSegmentsPerLoad, enableEventMessageTrack, closedCaptionFormats, playerEmsgHandler);
-        }
-    }
 
     public DefaultDashChunkSource(LoaderErrorThrower manifestLoaderErrorThrower2, DashManifest manifest2, int periodIndex2, int[] adaptationSetIndices2, TrackSelection trackSelection2, int trackType2, DataSource dataSource2, long elapsedRealtimeOffsetMs2, int maxSegmentsPerLoad2, boolean enableEventMessageTrack, List<Format> closedCaptionFormats, @Nullable PlayerEmsgHandler.PlayerTrackEmsgHandler playerTrackEmsgHandler2) {
         TrackSelection trackSelection3 = trackSelection2;
@@ -387,6 +364,29 @@ public class DefaultDashChunkSource implements DashChunkSource {
         return new ContainerMediaChunk(dataSource2, new DataSpec(segmentUri.resolveUri(baseUrl2), segmentUri.start, segmentUri.length, representation2.getCacheKey()), trackFormat, trackSelectionReason, trackSelectionData, startTimeUs, endTimeUs, seekTimeUs, clippedEndTimeUs, firstSegmentNum, segmentCount, -representation2.presentationTimeOffsetUs, representationHolder2.extractorWrapper);
     }
 
+    public static final class Factory implements DashChunkSource.Factory {
+        private final DataSource.Factory dataSourceFactory;
+        private final int maxSegmentsPerLoad;
+
+        public Factory(DataSource.Factory dataSourceFactory2) {
+            this(dataSourceFactory2, 1);
+        }
+
+        public Factory(DataSource.Factory dataSourceFactory2, int maxSegmentsPerLoad2) {
+            this.dataSourceFactory = dataSourceFactory2;
+            this.maxSegmentsPerLoad = maxSegmentsPerLoad2;
+        }
+
+        public DashChunkSource createDashChunkSource(LoaderErrorThrower manifestLoaderErrorThrower, DashManifest manifest, int periodIndex, int[] adaptationSetIndices, TrackSelection trackSelection, int trackType, long elapsedRealtimeOffsetMs, boolean enableEventMessageTrack, List<Format> closedCaptionFormats, @Nullable PlayerEmsgHandler.PlayerTrackEmsgHandler playerEmsgHandler, @Nullable TransferListener transferListener) {
+            TransferListener transferListener2 = transferListener;
+            DataSource dataSource = this.dataSourceFactory.createDataSource();
+            if (transferListener2 != null) {
+                dataSource.addTransferListener(transferListener2);
+            }
+            return new DefaultDashChunkSource(manifestLoaderErrorThrower, manifest, periodIndex, adaptationSetIndices, trackSelection, trackType, dataSource, elapsedRealtimeOffsetMs, this.maxSegmentsPerLoad, enableEventMessageTrack, closedCaptionFormats, playerEmsgHandler);
+        }
+    }
+
     protected static final class RepresentationSegmentIterator extends BaseMediaChunkIterator {
         private final RepresentationHolder representationHolder;
 
@@ -415,13 +415,13 @@ public class DefaultDashChunkSource implements DashChunkSource {
     }
 
     protected static final class RepresentationHolder {
-        @Nullable
-        final ChunkExtractorWrapper extractorWrapper;
         /* access modifiers changed from: private */
         public final long periodDurationUs;
         public final Representation representation;
         @Nullable
         public final DashSegmentIndex segmentIndex;
+        @Nullable
+        final ChunkExtractorWrapper extractorWrapper;
         private final long segmentNumShift;
 
         RepresentationHolder(long periodDurationUs2, int trackType, Representation representation2, boolean enableEventMessageTrack, List<Format> closedCaptionFormats, TrackOutput playerEmsgTrackOutput) {
@@ -434,6 +434,35 @@ public class DefaultDashChunkSource implements DashChunkSource {
             this.segmentNumShift = segmentNumShift2;
             this.extractorWrapper = extractorWrapper2;
             this.segmentIndex = segmentIndex2;
+        }
+
+        private static boolean mimeTypeIsWebm(String mimeType) {
+            return mimeType.startsWith(MimeTypes.VIDEO_WEBM) || mimeType.startsWith(MimeTypes.AUDIO_WEBM) || mimeType.startsWith(MimeTypes.APPLICATION_WEBM);
+        }
+
+        private static boolean mimeTypeIsRawText(String mimeType) {
+            return MimeTypes.isText(mimeType) || MimeTypes.APPLICATION_TTML.equals(mimeType);
+        }
+
+        @Nullable
+        private static ChunkExtractorWrapper createExtractorWrapper(int trackType, Representation representation2, boolean enableEventMessageTrack, List<Format> closedCaptionFormats, TrackOutput playerEmsgTrackOutput) {
+            Extractor extractor;
+            String containerMimeType = representation2.format.containerMimeType;
+            if (mimeTypeIsRawText(containerMimeType)) {
+                return null;
+            }
+            if (MimeTypes.APPLICATION_RAWCC.equals(containerMimeType)) {
+                extractor = new RawCcExtractor(representation2.format);
+            } else if (mimeTypeIsWebm(containerMimeType)) {
+                extractor = new MatroskaExtractor(1);
+            } else {
+                int flags = 0;
+                if (enableEventMessageTrack) {
+                    flags = 0 | 4;
+                }
+                extractor = new FragmentedMp4Extractor(flags, null, null, null, closedCaptionFormats, playerEmsgTrackOutput);
+            }
+            return new ChunkExtractorWrapper(extractor, trackType, representation2.format);
         }
 
         /* access modifiers changed from: package-private */
@@ -512,35 +541,6 @@ public class DefaultDashChunkSource implements DashChunkSource {
                 return getSegmentNum((nowUnixTimeUs - C0841C.msToUs(manifest.availabilityStartTimeMs)) - C0841C.msToUs(manifest.getPeriod(periodIndex).startMs)) - 1;
             }
             return (getFirstSegmentNum() + ((long) availableSegmentCount)) - 1;
-        }
-
-        private static boolean mimeTypeIsWebm(String mimeType) {
-            return mimeType.startsWith(MimeTypes.VIDEO_WEBM) || mimeType.startsWith(MimeTypes.AUDIO_WEBM) || mimeType.startsWith(MimeTypes.APPLICATION_WEBM);
-        }
-
-        private static boolean mimeTypeIsRawText(String mimeType) {
-            return MimeTypes.isText(mimeType) || MimeTypes.APPLICATION_TTML.equals(mimeType);
-        }
-
-        @Nullable
-        private static ChunkExtractorWrapper createExtractorWrapper(int trackType, Representation representation2, boolean enableEventMessageTrack, List<Format> closedCaptionFormats, TrackOutput playerEmsgTrackOutput) {
-            Extractor extractor;
-            String containerMimeType = representation2.format.containerMimeType;
-            if (mimeTypeIsRawText(containerMimeType)) {
-                return null;
-            }
-            if (MimeTypes.APPLICATION_RAWCC.equals(containerMimeType)) {
-                extractor = new RawCcExtractor(representation2.format);
-            } else if (mimeTypeIsWebm(containerMimeType)) {
-                extractor = new MatroskaExtractor(1);
-            } else {
-                int flags = 0;
-                if (enableEventMessageTrack) {
-                    flags = 0 | 4;
-                }
-                extractor = new FragmentedMp4Extractor(flags, null, null, null, closedCaptionFormats, playerEmsgTrackOutput);
-            }
-            return new ChunkExtractorWrapper(extractor, trackType, representation2.format);
         }
     }
 }

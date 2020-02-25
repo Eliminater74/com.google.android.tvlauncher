@@ -1,7 +1,5 @@
 package com.google.protobuf;
 
-import com.google.protobuf.GeneratedMessageLite;
-
 final class NewInstanceSchemaLite implements NewInstanceSchema {
     NewInstanceSchemaLite() {
     }

@@ -11,6 +11,9 @@ import com.google.common.collect.MapMaker;
 import com.google.common.collect.Sets;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.j2objc.annotations.Weak;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -21,12 +24,13 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtIncompatible
 @CanIgnoreReturnValue
 @Beta
 public class CycleDetectingLockFactory {
+    /* access modifiers changed from: private */
+    public static final Logger logger = Logger.getLogger(CycleDetectingLockFactory.class.getName());
     private static final ThreadLocal<ArrayList<LockGraphNode>> acquiredLocks = new ThreadLocal<ArrayList<LockGraphNode>>() {
         /* access modifiers changed from: protected */
         public ArrayList<LockGraphNode> initialValue() {
@@ -34,71 +38,14 @@ public class CycleDetectingLockFactory {
         }
     };
     private static final ConcurrentMap<Class<? extends Enum>, Map<? extends Enum, LockGraphNode>> lockGraphNodesPerType = new MapMaker().weakKeys().makeMap();
-    /* access modifiers changed from: private */
-    public static final Logger logger = Logger.getLogger(CycleDetectingLockFactory.class.getName());
     final Policy policy;
 
-    private interface CycleDetectingLock {
-        LockGraphNode getLockGraphNode();
-
-        boolean isAcquiredByCurrentThread();
-    }
-
-    @Beta
-    public enum Policies implements Policy {
-        THROW {
-            public void handlePotentialDeadlock(PotentialDeadlockException e) {
-                throw e;
-            }
-        },
-        WARN {
-            /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-             method: ClspMth{java.util.logging.Logger.logp(java.util.logging.Level, java.lang.String, java.lang.String, java.lang.String, java.lang.Throwable):void}
-             arg types: [java.util.logging.Level, java.lang.String, java.lang.String, java.lang.String, com.google.common.util.concurrent.CycleDetectingLockFactory$PotentialDeadlockException]
-             candidates:
-              ClspMth{java.util.logging.Logger.logp(java.util.logging.Level, java.lang.String, java.lang.String, java.lang.Throwable, java.util.function.Supplier<java.lang.String>):void}
-              ClspMth{java.util.logging.Logger.logp(java.util.logging.Level, java.lang.String, java.lang.String, java.lang.String, java.lang.Object[]):void}
-              ClspMth{java.util.logging.Logger.logp(java.util.logging.Level, java.lang.String, java.lang.String, java.lang.String, java.lang.Object):void}
-              ClspMth{java.util.logging.Logger.logp(java.util.logging.Level, java.lang.String, java.lang.String, java.lang.String, java.lang.Throwable):void} */
-            public void handlePotentialDeadlock(PotentialDeadlockException e) {
-                CycleDetectingLockFactory.logger.logp(Level.SEVERE, "com.google.common.util.concurrent.CycleDetectingLockFactory$Policies$2", "handlePotentialDeadlock", "Detected potential deadlock", (Throwable) e);
-            }
-        },
-        DISABLED {
-            public void handlePotentialDeadlock(PotentialDeadlockException e) {
-            }
-        }
-    }
-
-    @Beta
-    public interface Policy {
-        void handlePotentialDeadlock(PotentialDeadlockException potentialDeadlockException);
+    private CycleDetectingLockFactory(Policy policy2) {
+        this.policy = (Policy) Preconditions.checkNotNull(policy2);
     }
 
     public static CycleDetectingLockFactory newInstance(Policy policy2) {
         return new CycleDetectingLockFactory(policy2);
-    }
-
-    public ReentrantLock newReentrantLock(String lockName) {
-        return newReentrantLock(lockName, false);
-    }
-
-    public ReentrantLock newReentrantLock(String lockName, boolean fair) {
-        if (this.policy == Policies.DISABLED) {
-            return new ReentrantLock(fair);
-        }
-        return new CycleDetectingReentrantLock(new LockGraphNode(lockName), fair);
-    }
-
-    public ReentrantReadWriteLock newReentrantReadWriteLock(String lockName) {
-        return newReentrantReadWriteLock(lockName, false);
-    }
-
-    public ReentrantReadWriteLock newReentrantReadWriteLock(String lockName, boolean fair) {
-        if (this.policy == Policies.DISABLED) {
-            return new ReentrantReadWriteLock(fair);
-        }
-        return new CycleDetectingReentrantReadWriteLock(new LockGraphNode(lockName), fair);
     }
 
     public static <E extends Enum<E>> WithExplicitOrdering<E> newInstanceWithExplicitOrdering(Class<E> enumClass, Policy policy2) {
@@ -189,6 +136,89 @@ public class CycleDetectingLockFactory {
         return sb.toString();
     }
 
+    /* access modifiers changed from: private */
+    public static void lockStateChanged(CycleDetectingLock lock) {
+        if (!lock.isAcquiredByCurrentThread()) {
+            ArrayList<LockGraphNode> acquiredLockList = acquiredLocks.get();
+            LockGraphNode node = lock.getLockGraphNode();
+            for (int i = acquiredLockList.size() - 1; i >= 0; i--) {
+                if (acquiredLockList.get(i) == node) {
+                    acquiredLockList.remove(i);
+                    return;
+                }
+            }
+        }
+    }
+
+    public ReentrantLock newReentrantLock(String lockName) {
+        return newReentrantLock(lockName, false);
+    }
+
+    public ReentrantLock newReentrantLock(String lockName, boolean fair) {
+        if (this.policy == Policies.DISABLED) {
+            return new ReentrantLock(fair);
+        }
+        return new CycleDetectingReentrantLock(new LockGraphNode(lockName), fair);
+    }
+
+    public ReentrantReadWriteLock newReentrantReadWriteLock(String lockName) {
+        return newReentrantReadWriteLock(lockName, false);
+    }
+
+    public ReentrantReadWriteLock newReentrantReadWriteLock(String lockName, boolean fair) {
+        if (this.policy == Policies.DISABLED) {
+            return new ReentrantReadWriteLock(fair);
+        }
+        return new CycleDetectingReentrantReadWriteLock(new LockGraphNode(lockName), fair);
+    }
+
+    /* access modifiers changed from: private */
+    public void aboutToAcquire(CycleDetectingLock lock) {
+        if (!lock.isAcquiredByCurrentThread()) {
+            ArrayList<LockGraphNode> acquiredLockList = acquiredLocks.get();
+            LockGraphNode node = lock.getLockGraphNode();
+            node.checkAcquiredLocks(this.policy, acquiredLockList);
+            acquiredLockList.add(node);
+        }
+    }
+
+    @Beta
+    public enum Policies implements Policy {
+        THROW {
+            public void handlePotentialDeadlock(PotentialDeadlockException e) {
+                throw e;
+            }
+        },
+        WARN {
+            /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+             method: ClspMth{java.util.logging.Logger.logp(java.util.logging.Level, java.lang.String, java.lang.String, java.lang.String, java.lang.Throwable):void}
+             arg types: [java.util.logging.Level, java.lang.String, java.lang.String, java.lang.String, com.google.common.util.concurrent.CycleDetectingLockFactory$PotentialDeadlockException]
+             candidates:
+              ClspMth{java.util.logging.Logger.logp(java.util.logging.Level, java.lang.String, java.lang.String, java.lang.Throwable, java.util.function.Supplier<java.lang.String>):void}
+              ClspMth{java.util.logging.Logger.logp(java.util.logging.Level, java.lang.String, java.lang.String, java.lang.String, java.lang.Object[]):void}
+              ClspMth{java.util.logging.Logger.logp(java.util.logging.Level, java.lang.String, java.lang.String, java.lang.String, java.lang.Object):void}
+              ClspMth{java.util.logging.Logger.logp(java.util.logging.Level, java.lang.String, java.lang.String, java.lang.String, java.lang.Throwable):void} */
+            public void handlePotentialDeadlock(PotentialDeadlockException e) {
+                CycleDetectingLockFactory.logger.logp(Level.SEVERE, "com.google.common.util.concurrent.CycleDetectingLockFactory$Policies$2", "handlePotentialDeadlock", "Detected potential deadlock", (Throwable) e);
+            }
+        },
+        DISABLED {
+            public void handlePotentialDeadlock(PotentialDeadlockException e) {
+            }
+        }
+    }
+
+    private interface CycleDetectingLock {
+        LockGraphNode getLockGraphNode();
+
+        boolean isAcquiredByCurrentThread();
+    }
+
+    @Beta
+    public interface Policy {
+        void handlePotentialDeadlock(PotentialDeadlockException potentialDeadlockException);
+    }
+
     @Beta
     public static final class WithExplicitOrdering<E extends Enum<E>> extends CycleDetectingLockFactory {
         private final Map<E, LockGraphNode> lockGraphNodes;
@@ -232,10 +262,6 @@ public class CycleDetectingLockFactory {
             }
             return new CycleDetectingReentrantReadWriteLock(this.lockGraphNodes.get(rank), fair);
         }
-    }
-
-    private CycleDetectingLockFactory(Policy policy2) {
-        this.policy = (Policy) Preconditions.checkNotNull(policy2);
     }
 
     private static class ExampleStackTrace extends IllegalStateException {
@@ -383,30 +409,6 @@ public class CycleDetectingLockFactory {
                 }
             }
             return null;
-        }
-    }
-
-    /* access modifiers changed from: private */
-    public void aboutToAcquire(CycleDetectingLock lock) {
-        if (!lock.isAcquiredByCurrentThread()) {
-            ArrayList<LockGraphNode> acquiredLockList = acquiredLocks.get();
-            LockGraphNode node = lock.getLockGraphNode();
-            node.checkAcquiredLocks(this.policy, acquiredLockList);
-            acquiredLockList.add(node);
-        }
-    }
-
-    /* access modifiers changed from: private */
-    public static void lockStateChanged(CycleDetectingLock lock) {
-        if (!lock.isAcquiredByCurrentThread()) {
-            ArrayList<LockGraphNode> acquiredLockList = acquiredLocks.get();
-            LockGraphNode node = lock.getLockGraphNode();
-            for (int i = acquiredLockList.size() - 1; i >= 0; i--) {
-                if (acquiredLockList.get(i) == node) {
-                    acquiredLockList.remove(i);
-                    return;
-                }
-            }
         }
     }
 

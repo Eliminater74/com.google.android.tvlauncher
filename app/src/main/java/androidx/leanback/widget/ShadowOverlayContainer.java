@@ -9,6 +9,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+
 import androidx.leanback.C0364R;
 
 public class ShadowOverlayContainer extends FrameLayout {
@@ -16,9 +17,9 @@ public class ShadowOverlayContainer extends FrameLayout {
     public static final int SHADOW_NONE = 1;
     public static final int SHADOW_STATIC = 2;
     private static final Rect sTempRect = new Rect();
+    int mOverlayColor;
     private float mFocusedZ;
     private boolean mInitialized;
-    int mOverlayColor;
     private Paint mOverlayPaint;
     private int mRoundedCornerRadius;
     private boolean mRoundedCorners;

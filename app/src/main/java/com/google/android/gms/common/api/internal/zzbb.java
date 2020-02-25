@@ -6,6 +6,7 @@ import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.p001v4.app.FragmentActivity;
 import android.util.Log;
+
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -23,6 +24,7 @@ import com.google.android.gms.common.internal.zzp;
 import com.google.android.gms.internal.zzblc;
 import com.google.android.gms.signin.SignInOptions;
 import com.google.android.gms.signin.zzd;
+
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -39,32 +41,32 @@ import java.util.concurrent.locks.Lock;
 
 /* compiled from: GoogleApiClientImpl */
 public final class zzbb extends GoogleApiClient implements zzcd {
-    final Queue<zzn<?, ?>> zza = new LinkedList();
-    final Map<Api.zzc<?>, Api.Client> zzb;
-    Set<Scope> zzc = new HashSet();
-    Set<zzdo> zzd = null;
-    final zzdr zze;
-    private final Lock zzf;
-    private boolean zzg;
-    private final zzo zzh;
-    private zzcc zzi = null;
-    private final int zzj;
     /* access modifiers changed from: private */
     public final Context zzk;
+    final Queue<zzn<?, ?>> zza = new LinkedList();
+    final Map<Api.zzc<?>, Api.Client> zzb;
+    final zzdr zze;
+    private final Lock zzf;
+    private final zzo zzh;
+    private final int zzj;
     private final Looper zzl;
-    private volatile boolean zzm;
-    private long zzn = 120000;
-    private long zzo = DefaultRenderersFactory.DEFAULT_ALLOWED_VIDEO_JOINING_TIME_MS;
     private final zzbg zzp;
     private final GoogleApiAvailability zzq;
-    private zzby zzr;
     private final ClientSettings zzs;
     private final Map<Api<?>, Boolean> zzt;
     private final Api.zza<? extends zzd, SignInOptions> zzu;
     private final zzcn zzv = new zzcn();
     private final ArrayList<zzu> zzw;
-    private Integer zzx = null;
     private final zzp zzy = new zzbc(this);
+    Set<Scope> zzc = new HashSet();
+    Set<zzdo> zzd = null;
+    private boolean zzg;
+    private zzcc zzi = null;
+    private volatile boolean zzm;
+    private long zzn = 120000;
+    private long zzo = DefaultRenderersFactory.DEFAULT_ALLOWED_VIDEO_JOINING_TIME_MS;
+    private zzby zzr;
+    private Integer zzx = null;
 
     public zzbb(Context context, Lock lock, Looper looper, ClientSettings clientSettings, GoogleApiAvailability googleApiAvailability, Api.zza<? extends zzd, SignInOptions> zza2, Map<Api<?>, Boolean> map, List<GoogleApiClient.ConnectionCallbacks> list, List<GoogleApiClient.OnConnectionFailedListener> list2, Map<Api.zzc<?>, Api.Client> map2, int i, int i2, ArrayList<zzu> arrayList, boolean z) {
         this.zzk = context;
@@ -90,6 +92,39 @@ public final class zzbb extends GoogleApiClient implements zzcd {
         }
         this.zzs = clientSettings;
         this.zzu = zza2;
+    }
+
+    public static int zza(Iterable<Api.Client> iterable, boolean z) {
+        boolean z2 = false;
+        boolean z3 = false;
+        for (Api.Client next : iterable) {
+            if (next.requiresSignIn()) {
+                z2 = true;
+            }
+            if (next.providesSignIn()) {
+                z3 = true;
+            }
+        }
+        if (!z2) {
+            return 3;
+        }
+        if (!z3 || !z) {
+            return 1;
+        }
+        return 2;
+    }
+
+    private static String zzb(int i) {
+        if (i == 1) {
+            return "SIGN_IN_MODE_REQUIRED";
+        }
+        if (i == 2) {
+            return "SIGN_IN_MODE_OPTIONAL";
+        }
+        if (i != 3) {
+            return "UNKNOWN";
+        }
+        return "SIGN_IN_MODE_NONE";
     }
 
     public final <A extends Api.zzb, R extends Result, T extends zzn<R, A>> T zza(@NonNull T t) {
@@ -659,38 +694,5 @@ public final class zzbb extends GoogleApiClient implements zzcd {
         if (zzcc != null) {
             zzcc.zza(str, fileDescriptor, printWriter, strArr);
         }
-    }
-
-    public static int zza(Iterable<Api.Client> iterable, boolean z) {
-        boolean z2 = false;
-        boolean z3 = false;
-        for (Api.Client next : iterable) {
-            if (next.requiresSignIn()) {
-                z2 = true;
-            }
-            if (next.providesSignIn()) {
-                z3 = true;
-            }
-        }
-        if (!z2) {
-            return 3;
-        }
-        if (!z3 || !z) {
-            return 1;
-        }
-        return 2;
-    }
-
-    private static String zzb(int i) {
-        if (i == 1) {
-            return "SIGN_IN_MODE_REQUIRED";
-        }
-        if (i == 2) {
-            return "SIGN_IN_MODE_OPTIONAL";
-        }
-        if (i != 3) {
-            return "UNKNOWN";
-        }
-        return "SIGN_IN_MODE_NONE";
     }
 }

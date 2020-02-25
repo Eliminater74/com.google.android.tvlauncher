@@ -3,6 +3,7 @@ package com.google.android.gms.common.api.internal;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import com.google.android.gms.common.ConnectionResult;
 
 /* compiled from: CompositeGoogleApiClient */
@@ -11,6 +12,10 @@ final class zzz implements zzcd {
 
     private zzz(zzw zzw) {
         this.zza = zzw;
+    }
+
+    /* synthetic */ zzz(zzw zzw, zzx zzx) {
+        this(zzw);
     }
 
     public final void zza(@Nullable Bundle bundle) {
@@ -57,9 +62,5 @@ final class zzz implements zzcd {
         } finally {
             this.zza.zzm.unlock();
         }
-    }
-
-    /* synthetic */ zzz(zzw zzw, zzx zzx) {
-        this(zzw);
     }
 }

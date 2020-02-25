@@ -1,7 +1,5 @@
 package com.google.android.libraries.performance.primes.hprof;
 
-import com.google.android.libraries.performance.primes.hprof.Hprofs;
-
 final /* synthetic */ class ParseContext$$Lambda$0 implements Hprofs.RootTagSizeMapper {
     private final ParseContext arg$1;
 

@@ -3,6 +3,7 @@ package com.google.android.tvlauncher;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+
 import com.google.android.libraries.social.analytics.visualelement.VisualElementTag;
 import com.google.android.tvlauncher.analytics.LoggingActivity;
 import com.google.android.tvlauncher.appsview.data.LaunchItemsManagerProvider;
@@ -10,15 +11,15 @@ import com.google.android.tvlauncher.util.OemConfiguration;
 
 public abstract class BlockForDataLauncherActivity extends LoggingActivity {
     private static final String BLOCKING_FRAGMENT_TAG = "blocking_fragment_tag";
-    private boolean mContentFragmentAdded;
     protected boolean mIsBlockedForData;
+    private boolean mContentFragmentAdded;
     private OemConfiguration.OnDataLoadedListener mOnDataLoadedListener;
-
-    public abstract void onCreateAddContent(Bundle bundle);
 
     public BlockForDataLauncherActivity(String name, VisualElementTag visualElementTag) {
         super(name, visualElementTag);
     }
+
+    public abstract void onCreateAddContent(Bundle bundle);
 
     /* access modifiers changed from: protected */
     public void onCreate(@Nullable Bundle savedInstanceState) {

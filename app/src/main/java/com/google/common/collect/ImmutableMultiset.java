@@ -3,17 +3,17 @@ package com.google.common.collect;
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.Multiset;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.concurrent.LazyInit;
+
+import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
-import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible(emulated = true, serializable = true)
 public abstract class ImmutableMultiset<E> extends ImmutableMultisetGwtSerializationDependencies<E> implements Multiset<E> {
@@ -22,14 +22,8 @@ public abstract class ImmutableMultiset<E> extends ImmutableMultisetGwtSerializa
     @LazyInit
     private transient ImmutableSet<Multiset.Entry<E>> entrySet;
 
-    public abstract ImmutableSet<E> elementSet();
-
-    /* access modifiers changed from: package-private */
-    public abstract Multiset.Entry<E> getEntry(int i);
-
-    /* access modifiers changed from: package-private */
-    @GwtIncompatible
-    public abstract Object writeReplace();
+    ImmutableMultiset() {
+    }
 
     /* renamed from: of */
     public static <E> ImmutableMultiset<E> m138of() {
@@ -98,8 +92,18 @@ public abstract class ImmutableMultiset<E> extends ImmutableMultisetGwtSerializa
         return builder.build();
     }
 
-    ImmutableMultiset() {
+    public static <E> Builder<E> builder() {
+        return new Builder<>();
     }
+
+    public abstract ImmutableSet<E> elementSet();
+
+    /* access modifiers changed from: package-private */
+    public abstract Multiset.Entry<E> getEntry(int i);
+
+    /* access modifiers changed from: package-private */
+    @GwtIncompatible
+    public abstract Object writeReplace();
 
     public UnmodifiableIterator<E> iterator() {
         final Iterator<Multiset.Entry<E>> entryIterator = entrySet().iterator();
@@ -200,48 +204,6 @@ public abstract class ImmutableMultiset<E> extends ImmutableMultisetGwtSerializa
         return isEmpty() ? ImmutableSet.m149of() : new EntrySet();
     }
 
-    private final class EntrySet extends IndexedImmutableSet<Multiset.Entry<E>> {
-        private static final long serialVersionUID = 0;
-
-        private EntrySet() {
-        }
-
-        /* access modifiers changed from: package-private */
-        public boolean isPartialView() {
-            return ImmutableMultiset.this.isPartialView();
-        }
-
-        /* access modifiers changed from: package-private */
-        public Multiset.Entry<E> get(int index) {
-            return ImmutableMultiset.this.getEntry(index);
-        }
-
-        public int size() {
-            return ImmutableMultiset.this.elementSet().size();
-        }
-
-        public boolean contains(Object o) {
-            if (!(o instanceof Multiset.Entry)) {
-                return false;
-            }
-            Multiset.Entry<?> entry = (Multiset.Entry) o;
-            if (entry.getCount() > 0 && ImmutableMultiset.this.count(entry.getElement()) == entry.getCount()) {
-                return true;
-            }
-            return false;
-        }
-
-        public int hashCode() {
-            return ImmutableMultiset.this.hashCode();
-        }
-
-        /* access modifiers changed from: package-private */
-        @GwtIncompatible
-        public Object writeReplace() {
-            return new EntrySetSerializedForm(ImmutableMultiset.this);
-        }
-    }
-
     @GwtIncompatible
     static class EntrySetSerializedForm<E> implements Serializable {
         final ImmutableMultiset<E> multiset;
@@ -254,10 +216,6 @@ public abstract class ImmutableMultiset<E> extends ImmutableMultisetGwtSerializa
         public Object readResolve() {
             return this.multiset.entrySet();
         }
-    }
-
-    public static <E> Builder<E> builder() {
-        return new Builder<>();
     }
 
     public static class Builder<E> extends ImmutableCollection.Builder<E> {
@@ -279,6 +237,17 @@ public abstract class ImmutableMultiset<E> extends ImmutableMultisetGwtSerializa
             this.buildInvoked = false;
             this.isLinkedHash = false;
             this.contents = null;
+        }
+
+        @NullableDecl
+        static <T> ObjectCountHashMap<T> tryGetMap(Iterable<T> multiset) {
+            if (multiset instanceof RegularImmutableMultiset) {
+                return ((RegularImmutableMultiset) multiset).contents;
+            }
+            if (multiset instanceof AbstractMapBasedMultiset) {
+                return ((AbstractMapBasedMultiset) multiset).backingMap;
+            }
+            return null;
         }
 
         @CanIgnoreReturnValue
@@ -358,17 +327,6 @@ public abstract class ImmutableMultiset<E> extends ImmutableMultisetGwtSerializa
             return this;
         }
 
-        @NullableDecl
-        static <T> ObjectCountHashMap<T> tryGetMap(Iterable<T> multiset) {
-            if (multiset instanceof RegularImmutableMultiset) {
-                return ((RegularImmutableMultiset) multiset).contents;
-            }
-            if (multiset instanceof AbstractMapBasedMultiset) {
-                return ((AbstractMapBasedMultiset) multiset).backingMap;
-            }
-            return null;
-        }
-
         public ImmutableMultiset<E> build() {
             if (this.contents.size() == 0) {
                 return ImmutableMultiset.m138of();
@@ -379,6 +337,48 @@ public abstract class ImmutableMultiset<E> extends ImmutableMultisetGwtSerializa
             }
             this.buildInvoked = true;
             return new RegularImmutableMultiset(this.contents);
+        }
+    }
+
+    private final class EntrySet extends IndexedImmutableSet<Multiset.Entry<E>> {
+        private static final long serialVersionUID = 0;
+
+        private EntrySet() {
+        }
+
+        /* access modifiers changed from: package-private */
+        public boolean isPartialView() {
+            return ImmutableMultiset.this.isPartialView();
+        }
+
+        /* access modifiers changed from: package-private */
+        public Multiset.Entry<E> get(int index) {
+            return ImmutableMultiset.this.getEntry(index);
+        }
+
+        public int size() {
+            return ImmutableMultiset.this.elementSet().size();
+        }
+
+        public boolean contains(Object o) {
+            if (!(o instanceof Multiset.Entry)) {
+                return false;
+            }
+            Multiset.Entry<?> entry = (Multiset.Entry) o;
+            if (entry.getCount() > 0 && ImmutableMultiset.this.count(entry.getElement()) == entry.getCount()) {
+                return true;
+            }
+            return false;
+        }
+
+        public int hashCode() {
+            return ImmutableMultiset.this.hashCode();
+        }
+
+        /* access modifiers changed from: package-private */
+        @GwtIncompatible
+        public Object writeReplace() {
+            return new EntrySetSerializedForm(ImmutableMultiset.this);
         }
     }
 }

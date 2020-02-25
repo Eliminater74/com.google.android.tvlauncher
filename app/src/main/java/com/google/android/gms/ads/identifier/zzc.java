@@ -1,8 +1,7 @@
 package com.google.android.gms.ads.identifier;
 
 import android.os.Bundle;
-import com.google.android.gms.ads.identifier.AdvertisingIdClient;
-import com.google.android.gms.ads.identifier.AdvertisingIdListenerService;
+
 import com.google.android.tvrecommendations.shared.util.Constants;
 
 /* compiled from: AdvertisingIdListenerService */

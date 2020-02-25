@@ -15,6 +15,14 @@ public final class EdgeEffectCompat {
         this.mEdgeEffect = new EdgeEffect(context);
     }
 
+    public static void onPull(@NonNull EdgeEffect edgeEffect, float deltaDistance, float displacement) {
+        if (Build.VERSION.SDK_INT >= 21) {
+            edgeEffect.onPull(deltaDistance, displacement);
+        } else {
+            edgeEffect.onPull(deltaDistance);
+        }
+    }
+
     @Deprecated
     public void setSize(int width, int height) {
         this.mEdgeEffect.setSize(width, height);
@@ -40,14 +48,6 @@ public final class EdgeEffectCompat {
     public boolean onPull(float deltaDistance, float displacement) {
         onPull(this.mEdgeEffect, deltaDistance, displacement);
         return true;
-    }
-
-    public static void onPull(@NonNull EdgeEffect edgeEffect, float deltaDistance, float displacement) {
-        if (Build.VERSION.SDK_INT >= 21) {
-            edgeEffect.onPull(deltaDistance, displacement);
-        } else {
-            edgeEffect.onPull(deltaDistance);
-        }
     }
 
     @Deprecated

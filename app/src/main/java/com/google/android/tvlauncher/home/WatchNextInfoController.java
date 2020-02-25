@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.google.android.tvlauncher.C1188R;
 import com.google.android.tvlauncher.home.util.ProgramSettings;
 import com.google.android.tvlauncher.home.util.ProgramStateUtil;
@@ -14,8 +15,14 @@ import com.google.android.tvlauncher.home.view.WatchNextInfoView;
 import com.google.android.tvlauncher.util.Util;
 
 class WatchNextInfoController {
-    private View mContainer = this.mView.getContainer();
     private final float mContentContainerFocusedScale;
+    private final int mDimmedColor;
+    private final int mFocusedColor;
+    private final float mIconDimmedAlpha;
+    private final float mIconFocusedAlpha;
+    private final float mIconUnfocusedAlpha;
+    private final ProgramSettings mProgramSettings;
+    private final int mUnfocusedColor;
     private int mDefaultContainerMarginHorizontal;
     private int mDefaultIconSize;
     private int mDefaultMessageMarginTop;
@@ -23,15 +30,7 @@ class WatchNextInfoController {
     private int mDefaultTitleMarginStart;
     private float mDefaultTitleTextSize;
     private int mDefaultTitleWidth;
-    private final int mDimmedColor;
-    private final int mFocusedColor;
-    private ImageView mIcon = this.mView.getIcon();
-    private final float mIconDimmedAlpha;
-    private final float mIconFocusedAlpha;
-    private final float mIconUnfocusedAlpha;
     private boolean mIsItemSelected;
-    private TextView mMessage = this.mView.getMessage();
-    private final ProgramSettings mProgramSettings;
     private int mProgramState;
     private int mSelectedChannelContainerVisualOffset;
     private int mSelectedChannelIconSize;
@@ -41,9 +40,11 @@ class WatchNextInfoController {
     private int mSelectedChannelTitleMarginStart;
     private float mSelectedChannelTitleTextSize;
     private int mSelectedChannelTitleWidth;
-    private TextView mTitle = this.mView.getTitle();
-    private final int mUnfocusedColor;
     private WatchNextInfoView mView;
+    private View mContainer = this.mView.getContainer();
+    private ImageView mIcon = this.mView.getIcon();
+    private TextView mMessage = this.mView.getMessage();
+    private TextView mTitle = this.mView.getTitle();
     private int mZoomedOutIconSize;
     private int mZoomedOutMessageMarginTop;
     private int mZoomedOutMessageWidth;

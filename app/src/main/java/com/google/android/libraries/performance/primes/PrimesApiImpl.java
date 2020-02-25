@@ -7,13 +7,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
-import com.google.android.libraries.performance.primes.AppLifecycleListener;
-import com.google.android.libraries.performance.primes.TimerEvent;
+
 import com.google.android.libraries.performance.primes.scenario.ScenarioEvent;
 import com.google.android.libraries.performance.primes.transmitter.MetricTransmitter;
 import com.google.android.libraries.stitch.util.Preconditions;
 import com.google.common.base.Optional;
-import java.lang.Thread;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -23,18 +22,19 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+
 import logs.proto.wireless.performance.mobile.ExtensionMetric;
 import logs.proto.wireless.performance.mobile.PrimesTraceOuterClass;
 
 final class PrimesApiImpl implements PrimesApi {
-    private static final String TAG = "Primes";
     @VisibleForTesting(otherwise = 2)
     static final AtomicInteger instanceCounter = new AtomicInteger();
+    private static final String TAG = "Primes";
+    /* access modifiers changed from: private */
+    public final CountDownLatch initializationDoneSignal = new CountDownLatch(1);
     private final Application application;
     private final AtomicBoolean crashMonitorStarted = new AtomicBoolean();
     private final Supplier<ScheduledExecutorService> executorServiceSupplier;
-    /* access modifiers changed from: private */
-    public final CountDownLatch initializationDoneSignal = new CountDownLatch(1);
     private final AtomicReference<PrimesApi> primesApiRef = new AtomicReference<>();
 
     PrimesApiImpl(Application application2, Supplier<ScheduledExecutorService> executorServiceSupplier2, boolean earlyTimerSupport) {
@@ -43,126 +43,6 @@ final class PrimesApiImpl implements PrimesApi {
         this.executorServiceSupplier = (Supplier) Preconditions.checkNotNull(executorServiceSupplier2);
         instanceCounter.incrementAndGet();
         this.primesApiRef.set(new PreInitPrimesApi(earlyTimerSupport));
-    }
-
-    /* access modifiers changed from: package-private */
-    @VisibleForTesting
-    public PrimesApi api() {
-        return this.primesApiRef.get();
-    }
-
-    @VisibleForTesting
-    static class FirstActivityCreateListener implements AppLifecycleListener.OnActivityCreated, ShutdownListener {
-        private boolean activityCreated;
-        private final AppLifecycleMonitor appLifecycleMonitor;
-        private final List<PrimesStartupListener> startupListeners = new ArrayList();
-
-        FirstActivityCreateListener(AppLifecycleMonitor appLifecycleMonitor2) {
-            this.appLifecycleMonitor = appLifecycleMonitor2;
-            appLifecycleMonitor2.register(this);
-        }
-
-        public void onShutdown() {
-            this.appLifecycleMonitor.unregister(this);
-        }
-
-        public void onActivityCreated(Activity activity, Bundle bundle) {
-            synchronized (this) {
-                this.activityCreated = true;
-            }
-            this.appLifecycleMonitor.unregister(this);
-            for (PrimesStartupListener listener : this.startupListeners) {
-                listener.onFirstActivityCreated();
-            }
-        }
-
-        /* access modifiers changed from: package-private */
-        public void registerOrRun(PrimesStartupListener launchListener) {
-            synchronized (this) {
-                if (!this.activityCreated) {
-                    this.startupListeners.add(launchListener);
-                } else {
-                    launchListener.onFirstActivityCreated();
-                }
-            }
-        }
-    }
-
-    @VisibleForTesting
-    static class FirstAppToBackgroundListener implements AppLifecycleListener.OnAppToBackground, ShutdownListener {
-        private final AppLifecycleMonitor appLifecycleMonitor;
-        private boolean appToBackground;
-        private final Supplier<ScheduledExecutorService> executorServiceSupplier;
-        private final ArrayList<Runnable> firstToBackgroundTasks = new ArrayList<>();
-
-        FirstAppToBackgroundListener(AppLifecycleMonitor appLifecycleMonitor2, Supplier<ScheduledExecutorService> executorServiceSupplier2) {
-            this.appLifecycleMonitor = appLifecycleMonitor2;
-            this.executorServiceSupplier = executorServiceSupplier2;
-            appLifecycleMonitor2.register(this);
-        }
-
-        public void onShutdown() {
-            this.appLifecycleMonitor.unregister(this);
-        }
-
-        public void onAppToBackground(Activity activity) {
-            synchronized (this.firstToBackgroundTasks) {
-                if (!this.appToBackground) {
-                    this.appToBackground = true;
-                    this.appLifecycleMonitor.unregister(this);
-                    Iterator<Runnable> it = this.firstToBackgroundTasks.iterator();
-                    while (it.hasNext()) {
-                        PrimesExecutors.handleFuture(this.executorServiceSupplier.get().submit(it.next()));
-                    }
-                    this.firstToBackgroundTasks.clear();
-                }
-            }
-        }
-
-        /* access modifiers changed from: package-private */
-        public void registerTask(Runnable task) {
-            synchronized (this.firstToBackgroundTasks) {
-                if (this.appToBackground) {
-                    PrimesExecutors.handleFuture(this.executorServiceSupplier.get().submit(task));
-                } else {
-                    this.firstToBackgroundTasks.add(task);
-                }
-            }
-        }
-    }
-
-    /* access modifiers changed from: package-private */
-    public Runnable createInitTriggerTask(ExecutorService initExecutor, PrimesConfigurationsProvider configurationsProvider, Supplier<PrimesFlags> flagsSupplier, Supplier<SharedPreferences> sharedPreferencesSupplier, Supplier<Shutdown> shutdownSupplier, boolean shutdownInitExecutor) {
-        return wrapInitTask(initExecutor, createInitTask(this, configurationsProvider, flagsSupplier, sharedPreferencesSupplier, shutdownSupplier), shutdownInitExecutor);
-    }
-
-    private Runnable wrapInitTask(final ExecutorService initExecutor, final Runnable initTask, final boolean shutdownInitExecutor) {
-        return oneOffRunnable(new Runnable() {
-            public void run() {
-                PrimesApiImpl.scheduleInitialization(initExecutor, PrimesApiImpl.this, initTask);
-                if (shutdownInitExecutor) {
-                    initExecutor.shutdown();
-                }
-            }
-        });
-    }
-
-    /* access modifiers changed from: package-private */
-    public Runnable createAndRegisterInitTriggerTask(ExecutorService initExecutor, PrimesConfigurationsProvider configurationsProvider, Supplier<PrimesFlags> flagsSupplier, Supplier<SharedPreferences> sharedPreferencesSupplier, Supplier<Shutdown> shutdownSupplier, boolean shutdownInitExecutor) {
-        Runnable initTask = createInitTask(this, configurationsProvider, flagsSupplier, sharedPreferencesSupplier, shutdownSupplier);
-        registerInitTask(initTask);
-        return wrapInitTask(initExecutor, initTask, shutdownInitExecutor);
-    }
-
-    /* access modifiers changed from: package-private */
-    public void registerInitTask(Runnable initTask) {
-        PrimesApi currentApi = api();
-        if (currentApi instanceof PreInitPrimesApi) {
-            ((PreInitPrimesApi) currentApi).setPrimesInitTask(initTask, this.initializationDoneSignal);
-            PrimesLog.m50i(TAG, "init task registered", new Object[0]);
-            return;
-        }
-        PrimesLog.m54w(TAG, "could not register init task - current api: %s", currentApi);
     }
 
     /* access modifiers changed from: private */
@@ -286,6 +166,54 @@ final class PrimesApiImpl implements PrimesApi {
         }
     }
 
+    static boolean isPrimesSupported() {
+        if (Build.VERSION.SDK_INT >= 16) {
+            return true;
+        }
+        PrimesLog.m54w(TAG, "Primes calls will be ignored. API's < 16 are not supported.", new Object[0]);
+        return false;
+    }
+
+    /* access modifiers changed from: package-private */
+    @VisibleForTesting
+    public PrimesApi api() {
+        return this.primesApiRef.get();
+    }
+
+    /* access modifiers changed from: package-private */
+    public Runnable createInitTriggerTask(ExecutorService initExecutor, PrimesConfigurationsProvider configurationsProvider, Supplier<PrimesFlags> flagsSupplier, Supplier<SharedPreferences> sharedPreferencesSupplier, Supplier<Shutdown> shutdownSupplier, boolean shutdownInitExecutor) {
+        return wrapInitTask(initExecutor, createInitTask(this, configurationsProvider, flagsSupplier, sharedPreferencesSupplier, shutdownSupplier), shutdownInitExecutor);
+    }
+
+    private Runnable wrapInitTask(final ExecutorService initExecutor, final Runnable initTask, final boolean shutdownInitExecutor) {
+        return oneOffRunnable(new Runnable() {
+            public void run() {
+                PrimesApiImpl.scheduleInitialization(initExecutor, PrimesApiImpl.this, initTask);
+                if (shutdownInitExecutor) {
+                    initExecutor.shutdown();
+                }
+            }
+        });
+    }
+
+    /* access modifiers changed from: package-private */
+    public Runnable createAndRegisterInitTriggerTask(ExecutorService initExecutor, PrimesConfigurationsProvider configurationsProvider, Supplier<PrimesFlags> flagsSupplier, Supplier<SharedPreferences> sharedPreferencesSupplier, Supplier<Shutdown> shutdownSupplier, boolean shutdownInitExecutor) {
+        Runnable initTask = createInitTask(this, configurationsProvider, flagsSupplier, sharedPreferencesSupplier, shutdownSupplier);
+        registerInitTask(initTask);
+        return wrapInitTask(initExecutor, initTask, shutdownInitExecutor);
+    }
+
+    /* access modifiers changed from: package-private */
+    public void registerInitTask(Runnable initTask) {
+        PrimesApi currentApi = api();
+        if (currentApi instanceof PreInitPrimesApi) {
+            ((PreInitPrimesApi) currentApi).setPrimesInitTask(initTask, this.initializationDoneSignal);
+            PrimesLog.m50i(TAG, "init task registered", new Object[0]);
+            return;
+        }
+        PrimesLog.m54w(TAG, "could not register init task - current api: %s", currentApi);
+    }
+
     public void shutdown() {
         this.primesApiRef.getAndSet(new NoopPrimesApi()).shutdown();
         try {
@@ -293,14 +221,6 @@ final class PrimesApiImpl implements PrimesApi {
         } catch (RuntimeException e) {
             PrimesLog.m54w(TAG, "Failed to shutdown app lifecycle monitor", new Object[0]);
         }
-    }
-
-    static boolean isPrimesSupported() {
-        if (Build.VERSION.SDK_INT >= 16) {
-            return true;
-        }
-        PrimesLog.m54w(TAG, "Primes calls will be ignored. API's < 16 are not supported.", new Object[0]);
-        return false;
     }
 
     public boolean registerShutdownListener(ShutdownListener shutdownListener) {
@@ -484,5 +404,85 @@ final class PrimesApiImpl implements PrimesApi {
 
     public void sendCustomLaunchedEvent() {
         api().sendCustomLaunchedEvent();
+    }
+
+    @VisibleForTesting
+    static class FirstActivityCreateListener implements AppLifecycleListener.OnActivityCreated, ShutdownListener {
+        private final AppLifecycleMonitor appLifecycleMonitor;
+        private final List<PrimesStartupListener> startupListeners = new ArrayList();
+        private boolean activityCreated;
+
+        FirstActivityCreateListener(AppLifecycleMonitor appLifecycleMonitor2) {
+            this.appLifecycleMonitor = appLifecycleMonitor2;
+            appLifecycleMonitor2.register(this);
+        }
+
+        public void onShutdown() {
+            this.appLifecycleMonitor.unregister(this);
+        }
+
+        public void onActivityCreated(Activity activity, Bundle bundle) {
+            synchronized (this) {
+                this.activityCreated = true;
+            }
+            this.appLifecycleMonitor.unregister(this);
+            for (PrimesStartupListener listener : this.startupListeners) {
+                listener.onFirstActivityCreated();
+            }
+        }
+
+        /* access modifiers changed from: package-private */
+        public void registerOrRun(PrimesStartupListener launchListener) {
+            synchronized (this) {
+                if (!this.activityCreated) {
+                    this.startupListeners.add(launchListener);
+                } else {
+                    launchListener.onFirstActivityCreated();
+                }
+            }
+        }
+    }
+
+    @VisibleForTesting
+    static class FirstAppToBackgroundListener implements AppLifecycleListener.OnAppToBackground, ShutdownListener {
+        private final AppLifecycleMonitor appLifecycleMonitor;
+        private final Supplier<ScheduledExecutorService> executorServiceSupplier;
+        private final ArrayList<Runnable> firstToBackgroundTasks = new ArrayList<>();
+        private boolean appToBackground;
+
+        FirstAppToBackgroundListener(AppLifecycleMonitor appLifecycleMonitor2, Supplier<ScheduledExecutorService> executorServiceSupplier2) {
+            this.appLifecycleMonitor = appLifecycleMonitor2;
+            this.executorServiceSupplier = executorServiceSupplier2;
+            appLifecycleMonitor2.register(this);
+        }
+
+        public void onShutdown() {
+            this.appLifecycleMonitor.unregister(this);
+        }
+
+        public void onAppToBackground(Activity activity) {
+            synchronized (this.firstToBackgroundTasks) {
+                if (!this.appToBackground) {
+                    this.appToBackground = true;
+                    this.appLifecycleMonitor.unregister(this);
+                    Iterator<Runnable> it = this.firstToBackgroundTasks.iterator();
+                    while (it.hasNext()) {
+                        PrimesExecutors.handleFuture(this.executorServiceSupplier.get().submit(it.next()));
+                    }
+                    this.firstToBackgroundTasks.clear();
+                }
+            }
+        }
+
+        /* access modifiers changed from: package-private */
+        public void registerTask(Runnable task) {
+            synchronized (this.firstToBackgroundTasks) {
+                if (this.appToBackground) {
+                    PrimesExecutors.handleFuture(this.executorServiceSupplier.get().submit(task));
+                } else {
+                    this.firstToBackgroundTasks.add(task);
+                }
+            }
+        }
     }
 }

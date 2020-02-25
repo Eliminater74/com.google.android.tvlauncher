@@ -21,23 +21,13 @@ import android.widget.PopupWindow;
 
 /* renamed from: android.support.v7.widget.PopupMenu */
 public class PopupMenu {
+    final MenuPopupHelper mPopup;
     private final View mAnchor;
     private final Context mContext;
-    private View.OnTouchListener mDragListener;
     private final MenuBuilder mMenu;
     OnMenuItemClickListener mMenuItemClickListener;
     OnDismissListener mOnDismissListener;
-    final MenuPopupHelper mPopup;
-
-    /* renamed from: android.support.v7.widget.PopupMenu$OnDismissListener */
-    public interface OnDismissListener {
-        void onDismiss(PopupMenu popupMenu);
-    }
-
-    /* renamed from: android.support.v7.widget.PopupMenu$OnMenuItemClickListener */
-    public interface OnMenuItemClickListener {
-        boolean onMenuItemClick(MenuItem menuItem);
-    }
+    private View.OnTouchListener mDragListener;
 
     public PopupMenu(@NonNull Context context, @NonNull View anchor) {
         this(context, anchor, 0);
@@ -73,12 +63,12 @@ public class PopupMenu {
         });
     }
 
-    public void setGravity(int gravity) {
-        this.mPopup.setGravity(gravity);
-    }
-
     public int getGravity() {
         return this.mPopup.getGravity();
+    }
+
+    public void setGravity(int gravity) {
+        this.mPopup.setGravity(gravity);
     }
 
     @NonNull
@@ -142,5 +132,15 @@ public class PopupMenu {
             return null;
         }
         return this.mPopup.getListView();
+    }
+
+    /* renamed from: android.support.v7.widget.PopupMenu$OnDismissListener */
+    public interface OnDismissListener {
+        void onDismiss(PopupMenu popupMenu);
+    }
+
+    /* renamed from: android.support.v7.widget.PopupMenu$OnMenuItemClickListener */
+    public interface OnMenuItemClickListener {
+        boolean onMenuItemClick(MenuItem menuItem);
     }
 }

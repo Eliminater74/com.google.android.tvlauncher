@@ -11,10 +11,10 @@ public interface TintableImageSourceView {
     @Nullable
     ColorStateList getSupportImageTintList();
 
+    void setSupportImageTintList(@Nullable ColorStateList colorStateList);
+
     @Nullable
     PorterDuff.Mode getSupportImageTintMode();
-
-    void setSupportImageTintList(@Nullable ColorStateList colorStateList);
 
     void setSupportImageTintMode(@Nullable PorterDuff.Mode mode);
 }

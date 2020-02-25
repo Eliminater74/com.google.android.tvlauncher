@@ -2,7 +2,6 @@ package androidx.leanback.widget;
 
 import android.view.View;
 import android.view.ViewGroup;
-import androidx.leanback.widget.Presenter;
 
 public abstract class PresenterSwitcher {
     private Presenter mCurrentPresenter;

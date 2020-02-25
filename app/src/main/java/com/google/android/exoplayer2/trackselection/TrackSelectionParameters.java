@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+
 import com.google.android.exoplayer2.util.Util;
 
 public class TrackSelectionParameters implements Parcelable {
@@ -23,50 +24,6 @@ public class TrackSelectionParameters implements Parcelable {
     @Nullable
     public final String preferredTextLanguage;
     public final boolean selectUndeterminedTextLanguage;
-
-    public static class Builder {
-        int disabledTextTrackSelectionFlags;
-        @Nullable
-        String preferredAudioLanguage;
-        @Nullable
-        String preferredTextLanguage;
-        boolean selectUndeterminedTextLanguage;
-
-        public Builder() {
-            this(TrackSelectionParameters.DEFAULT);
-        }
-
-        Builder(TrackSelectionParameters initialValues) {
-            this.preferredAudioLanguage = initialValues.preferredAudioLanguage;
-            this.preferredTextLanguage = initialValues.preferredTextLanguage;
-            this.selectUndeterminedTextLanguage = initialValues.selectUndeterminedTextLanguage;
-            this.disabledTextTrackSelectionFlags = initialValues.disabledTextTrackSelectionFlags;
-        }
-
-        public Builder setPreferredAudioLanguage(@Nullable String preferredAudioLanguage2) {
-            this.preferredAudioLanguage = preferredAudioLanguage2;
-            return this;
-        }
-
-        public Builder setPreferredTextLanguage(@Nullable String preferredTextLanguage2) {
-            this.preferredTextLanguage = preferredTextLanguage2;
-            return this;
-        }
-
-        public Builder setSelectUndeterminedTextLanguage(boolean selectUndeterminedTextLanguage2) {
-            this.selectUndeterminedTextLanguage = selectUndeterminedTextLanguage2;
-            return this;
-        }
-
-        public Builder setDisabledTextTrackSelectionFlags(int disabledTextTrackSelectionFlags2) {
-            this.disabledTextTrackSelectionFlags = disabledTextTrackSelectionFlags2;
-            return this;
-        }
-
-        public TrackSelectionParameters build() {
-            return new TrackSelectionParameters(this.preferredAudioLanguage, this.preferredTextLanguage, this.selectUndeterminedTextLanguage, this.disabledTextTrackSelectionFlags);
-        }
-    }
 
     TrackSelectionParameters() {
         this(null, null, false, 0);
@@ -125,5 +82,49 @@ public class TrackSelectionParameters implements Parcelable {
         dest.writeString(this.preferredTextLanguage);
         Util.writeBoolean(dest, this.selectUndeterminedTextLanguage);
         dest.writeInt(this.disabledTextTrackSelectionFlags);
+    }
+
+    public static class Builder {
+        int disabledTextTrackSelectionFlags;
+        @Nullable
+        String preferredAudioLanguage;
+        @Nullable
+        String preferredTextLanguage;
+        boolean selectUndeterminedTextLanguage;
+
+        public Builder() {
+            this(TrackSelectionParameters.DEFAULT);
+        }
+
+        Builder(TrackSelectionParameters initialValues) {
+            this.preferredAudioLanguage = initialValues.preferredAudioLanguage;
+            this.preferredTextLanguage = initialValues.preferredTextLanguage;
+            this.selectUndeterminedTextLanguage = initialValues.selectUndeterminedTextLanguage;
+            this.disabledTextTrackSelectionFlags = initialValues.disabledTextTrackSelectionFlags;
+        }
+
+        public Builder setPreferredAudioLanguage(@Nullable String preferredAudioLanguage2) {
+            this.preferredAudioLanguage = preferredAudioLanguage2;
+            return this;
+        }
+
+        public Builder setPreferredTextLanguage(@Nullable String preferredTextLanguage2) {
+            this.preferredTextLanguage = preferredTextLanguage2;
+            return this;
+        }
+
+        public Builder setSelectUndeterminedTextLanguage(boolean selectUndeterminedTextLanguage2) {
+            this.selectUndeterminedTextLanguage = selectUndeterminedTextLanguage2;
+            return this;
+        }
+
+        public Builder setDisabledTextTrackSelectionFlags(int disabledTextTrackSelectionFlags2) {
+            this.disabledTextTrackSelectionFlags = disabledTextTrackSelectionFlags2;
+            return this;
+        }
+
+        public TrackSelectionParameters build() {
+            return new TrackSelectionParameters(this.preferredAudioLanguage, this.preferredTextLanguage, this.selectUndeterminedTextLanguage, this.disabledTextTrackSelectionFlags);
+        }
     }
 }

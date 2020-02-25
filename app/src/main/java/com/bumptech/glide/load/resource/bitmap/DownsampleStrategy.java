@@ -12,14 +12,14 @@ public abstract class DownsampleStrategy {
     public static final DownsampleStrategy NONE = new None();
     public static final Option<DownsampleStrategy> OPTION = Option.memory("com.bumptech.glide.load.resource.bitmap.Downsampler.DownsampleStrategy", DEFAULT);
 
+    public abstract SampleSizeRounding getSampleSizeRounding(int i, int i2, int i3, int i4);
+
+    public abstract float getScaleFactor(int i, int i2, int i3, int i4);
+
     public enum SampleSizeRounding {
         MEMORY,
         QUALITY
     }
-
-    public abstract SampleSizeRounding getSampleSizeRounding(int i, int i2, int i3, int i4);
-
-    public abstract float getScaleFactor(int i, int i2, int i3, int i4);
 
     private static class FitCenter extends DownsampleStrategy {
         FitCenter() {

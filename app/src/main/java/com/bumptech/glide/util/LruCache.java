@@ -2,14 +2,15 @@ package com.bumptech.glide.util;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class LruCache<T, Y> {
     private final Map<T, Y> cache = new LinkedHashMap(100, 0.75f, true);
-    private long currentSize;
     private final long initialMaxSize;
+    private long currentSize;
     private long maxSize;
 
     public LruCache(long size) {

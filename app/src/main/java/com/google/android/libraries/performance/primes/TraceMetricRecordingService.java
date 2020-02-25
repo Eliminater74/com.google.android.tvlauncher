@@ -2,10 +2,12 @@ package com.google.android.libraries.performance.primes;
 
 import android.app.Application;
 import android.support.annotation.Nullable;
-import com.google.android.libraries.performance.primes.MetricRecorder;
+
 import com.google.android.libraries.performance.primes.transmitter.MetricTransmitter;
+
 import java.io.Serializable;
 import java.util.concurrent.ScheduledExecutorService;
+
 import logs.proto.wireless.performance.mobile.ExtensionMetric;
 import logs.proto.wireless.performance.mobile.PrimesTraceOuterClass;
 import logs.proto.wireless.performance.mobile.SystemHealthProto;
@@ -13,16 +15,16 @@ import logs.proto.wireless.performance.mobile.SystemHealthProto;
 class TraceMetricRecordingService extends AbstractMetricService {
     private static final String TAG = "BaseTraceMetricService";
 
+    TraceMetricRecordingService(MetricTransmitter transmitter, Application application, Supplier<MetricStamper> metricStamperSupplier, Supplier<ScheduledExecutorService> executorServiceSupplier) {
+        super(transmitter, application, metricStamperSupplier, executorServiceSupplier, MetricRecorder.RunIn.BACKGROUND_THREAD);
+    }
+
     static synchronized TraceMetricRecordingService createService(MetricTransmitter transmitter, Application application, Supplier<MetricStamper> metricStamperSupplier, Supplier<ScheduledExecutorService> executorServiceSupplier) {
         TraceMetricRecordingService traceMetricRecordingService;
         synchronized (TraceMetricRecordingService.class) {
             traceMetricRecordingService = new TraceMetricRecordingService(transmitter, application, metricStamperSupplier, executorServiceSupplier);
         }
         return traceMetricRecordingService;
-    }
-
-    TraceMetricRecordingService(MetricTransmitter transmitter, Application application, Supplier<MetricStamper> metricStamperSupplier, Supplier<ScheduledExecutorService> executorServiceSupplier) {
-        super(transmitter, application, metricStamperSupplier, executorServiceSupplier, MetricRecorder.RunIn.BACKGROUND_THREAD);
     }
 
     /* access modifiers changed from: package-private */

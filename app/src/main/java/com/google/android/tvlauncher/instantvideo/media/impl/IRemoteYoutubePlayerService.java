@@ -6,10 +6,10 @@ import android.os.IInterface;
 import android.os.Parcel;
 import android.os.RemoteException;
 import android.view.Surface;
+
 import com.google.android.aidl.BaseProxy;
 import com.google.android.aidl.BaseStub;
 import com.google.android.aidl.Codecs;
-import com.google.android.tvlauncher.instantvideo.media.impl.IRemoteYoutubePlayerClient;
 
 public interface IRemoteYoutubePlayerService extends IInterface {
     void createSession(Surface surface, int i, int i2, IRemoteYoutubePlayerClient iRemoteYoutubePlayerClient) throws RemoteException;
@@ -23,12 +23,12 @@ public interface IRemoteYoutubePlayerService extends IInterface {
     void start(String str, Uri uri, float f) throws RemoteException;
 
     public static abstract class Stub extends BaseStub implements IRemoteYoutubePlayerService {
-        private static final String DESCRIPTOR = "com.google.android.tvlauncher.instantvideo.media.impl.IRemoteYoutubePlayerService";
         static final int TRANSACTION_createSession = 1;
         static final int TRANSACTION_destroySession = 2;
         static final int TRANSACTION_setSize = 5;
         static final int TRANSACTION_setVolume = 4;
         static final int TRANSACTION_start = 3;
+        private static final String DESCRIPTOR = "com.google.android.tvlauncher.instantvideo.media.impl.IRemoteYoutubePlayerService";
 
         public Stub() {
             super(DESCRIPTOR);

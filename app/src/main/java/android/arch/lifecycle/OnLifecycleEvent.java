@@ -1,6 +1,5 @@
 package android.arch.lifecycle;
 
-import android.arch.lifecycle.Lifecycle;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

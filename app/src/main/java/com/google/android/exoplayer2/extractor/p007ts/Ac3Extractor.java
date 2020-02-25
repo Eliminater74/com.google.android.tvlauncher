@@ -8,15 +8,15 @@ import com.google.android.exoplayer2.extractor.ExtractorOutput;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
 import com.google.android.exoplayer2.extractor.PositionHolder;
 import com.google.android.exoplayer2.extractor.SeekMap;
-import com.google.android.exoplayer2.extractor.p007ts.TsPayloadReader;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.IOException;
 
 /* renamed from: com.google.android.exoplayer2.extractor.ts.Ac3Extractor */
 public final class Ac3Extractor implements Extractor {
-    private static final int AC3_SYNC_WORD = 2935;
     public static final ExtractorsFactory FACTORY = Ac3Extractor$$Lambda$0.$instance;
+    private static final int AC3_SYNC_WORD = 2935;
     private static final int ID3_TAG = Util.getIntegerCodeForString("ID3");
     private static final int MAX_SNIFF_BYTES = 8192;
     private static final int MAX_SYNC_FRAME_SIZE = 2786;
@@ -24,10 +24,6 @@ public final class Ac3Extractor implements Extractor {
     private final Ac3Reader reader;
     private final ParsableByteArray sampleData;
     private boolean startedPacket;
-
-    static final /* synthetic */ Extractor[] lambda$static$0$Ac3Extractor() {
-        return new Extractor[]{new Ac3Extractor()};
-    }
 
     public Ac3Extractor() {
         this(0);
@@ -37,6 +33,10 @@ public final class Ac3Extractor implements Extractor {
         this.firstSampleTimestampUs = firstSampleTimestampUs2;
         this.reader = new Ac3Reader();
         this.sampleData = new ParsableByteArray((int) MAX_SYNC_FRAME_SIZE);
+    }
+
+    static final /* synthetic */ Extractor[] lambda$static$0$Ac3Extractor() {
+        return new Extractor[]{new Ac3Extractor()};
     }
 
     public boolean sniff(ExtractorInput input) throws IOException, InterruptedException {

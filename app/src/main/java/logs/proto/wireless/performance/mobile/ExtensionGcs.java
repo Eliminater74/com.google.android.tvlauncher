@@ -13,11 +13,18 @@ import com.google.protobuf.ProtoMessage;
 import com.google.protobuf.ProtoPresenceBits;
 import com.google.protobuf.ProtoPresenceCheckedField;
 import com.google.protobuf.ProtoSyntax;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 public final class ExtensionGcs {
+
+    private ExtensionGcs() {
+    }
+
+    public static void registerAllExtensions(ExtensionRegistryLite registry) {
+    }
 
     public interface GcsExtensionOrBuilder extends MessageLiteOrBuilder {
         int getBondingSpecId();
@@ -29,12 +36,6 @@ public final class ExtensionGcs {
         boolean hasIsVpnModeBridge();
     }
 
-    private ExtensionGcs() {
-    }
-
-    public static void registerAllExtensions(ExtensionRegistryLite registry) {
-    }
-
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
     public static final class GcsExtension extends GeneratedMessageLite<GcsExtension, Builder> implements GcsExtensionOrBuilder {
         public static final int BONDING_SPEC_ID_FIELD_NUMBER = 2;
@@ -42,6 +43,11 @@ public final class ExtensionGcs {
         public static final GcsExtension DEFAULT_INSTANCE = new GcsExtension();
         public static final int IS_VPN_MODE_BRIDGE_FIELD_NUMBER = 1;
         private static volatile Parser<GcsExtension> PARSER;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(GcsExtension.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 2, isRequired = false, type = FieldType.UINT32)
@@ -52,46 +58,6 @@ public final class ExtensionGcs {
         private boolean isVpnModeBridge_;
 
         private GcsExtension() {
-        }
-
-        public boolean hasIsVpnModeBridge() {
-            return (this.bitField0_ & 1) != 0;
-        }
-
-        public boolean getIsVpnModeBridge() {
-            return this.isVpnModeBridge_;
-        }
-
-        /* access modifiers changed from: private */
-        public void setIsVpnModeBridge(boolean value) {
-            this.bitField0_ |= 1;
-            this.isVpnModeBridge_ = value;
-        }
-
-        /* access modifiers changed from: private */
-        public void clearIsVpnModeBridge() {
-            this.bitField0_ &= -2;
-            this.isVpnModeBridge_ = false;
-        }
-
-        public boolean hasBondingSpecId() {
-            return (this.bitField0_ & 2) != 0;
-        }
-
-        public int getBondingSpecId() {
-            return this.bondingSpecId_;
-        }
-
-        /* access modifiers changed from: private */
-        public void setBondingSpecId(int value) {
-            this.bitField0_ |= 2;
-            this.bondingSpecId_ = value;
-        }
-
-        /* access modifiers changed from: private */
-        public void clearBondingSpecId() {
-            this.bitField0_ &= -3;
-            this.bondingSpecId_ = 0;
         }
 
         public static GcsExtension parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
@@ -150,6 +116,86 @@ public final class ExtensionGcs {
             return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
         }
 
+        public static GcsExtension getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<GcsExtension> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
+        }
+
+        public boolean hasIsVpnModeBridge() {
+            return (this.bitField0_ & 1) != 0;
+        }
+
+        public boolean getIsVpnModeBridge() {
+            return this.isVpnModeBridge_;
+        }
+
+        /* access modifiers changed from: private */
+        public void setIsVpnModeBridge(boolean value) {
+            this.bitField0_ |= 1;
+            this.isVpnModeBridge_ = value;
+        }
+
+        /* access modifiers changed from: private */
+        public void clearIsVpnModeBridge() {
+            this.bitField0_ &= -2;
+            this.isVpnModeBridge_ = false;
+        }
+
+        public boolean hasBondingSpecId() {
+            return (this.bitField0_ & 2) != 0;
+        }
+
+        public int getBondingSpecId() {
+            return this.bondingSpecId_;
+        }
+
+        /* access modifiers changed from: private */
+        public void setBondingSpecId(int value) {
+            this.bitField0_ |= 2;
+            this.bondingSpecId_ = value;
+        }
+
+        /* access modifiers changed from: private */
+        public void clearBondingSpecId() {
+            this.bitField0_ &= -3;
+            this.bondingSpecId_ = 0;
+        }
+
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new GcsExtension();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0000\u0000\u0001\u0007\u0000\u0002\u000b\u0001", new Object[]{"bitField0_", "isVpnModeBridge_", "bondingSpecId_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<GcsExtension> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (GcsExtension.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
+        }
+
         public static final class Builder extends GeneratedMessageLite.Builder<GcsExtension, Builder> implements GcsExtensionOrBuilder {
             private Builder() {
                 super(GcsExtension.DEFAULT_INSTANCE);
@@ -194,50 +240,6 @@ public final class ExtensionGcs {
                 ((GcsExtension) this.instance).clearBondingSpecId();
                 return this;
             }
-        }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new GcsExtension();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0000\u0000\u0001\u0007\u0000\u0002\u000b\u0001", new Object[]{"bitField0_", "isVpnModeBridge_", "bondingSpecId_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<GcsExtension> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (GcsExtension.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(GcsExtension.class, DEFAULT_INSTANCE);
-        }
-
-        public static GcsExtension getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<GcsExtension> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
         }
     }
 }

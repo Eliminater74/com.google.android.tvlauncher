@@ -2,6 +2,7 @@ package com.bumptech.glide.load.engine.executor;
 
 import android.os.Build;
 import android.os.StrictMode;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.regex.Pattern;

@@ -6,15 +6,15 @@ import android.support.annotation.Nullable;
 /* renamed from: android.support.v4.util.Pools */
 public final class Pools {
 
+    private Pools() {
+    }
+
     /* renamed from: android.support.v4.util.Pools$Pool */
     public interface Pool<T> {
         @Nullable
         T acquire();
 
         boolean release(@NonNull T t);
-    }
-
-    private Pools() {
     }
 
     /* renamed from: android.support.v4.util.Pools$SimplePool */

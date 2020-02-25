@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.View;
 import android.widget.ImageView;
+
 import java.util.List;
 import java.util.Map;
 
@@ -23,9 +24,37 @@ public abstract class SharedElementCallback {
     private static final int MAX_IMAGE_SIZE = 1048576;
     private Matrix mTempMatrix;
 
-    /* renamed from: android.support.v4.app.SharedElementCallback$OnSharedElementsReadyListener */
-    public interface OnSharedElementsReadyListener {
-        void onSharedElementsReady();
+    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+     method: ClspMth{java.lang.Math.min(float, float):float}
+     arg types: [int, float]
+     candidates:
+      ClspMth{java.lang.Math.min(double, double):double}
+      ClspMth{java.lang.Math.min(long, long):long}
+      ClspMth{java.lang.Math.min(int, int):int}
+      ClspMth{java.lang.Math.min(float, float):float} */
+    private static Bitmap createDrawableBitmap(Drawable drawable) {
+        int width = drawable.getIntrinsicWidth();
+        int height = drawable.getIntrinsicHeight();
+        if (width <= 0 || height <= 0) {
+            return null;
+        }
+        float scale = Math.min(1.0f, 1048576.0f / ((float) (width * height)));
+        if ((drawable instanceof BitmapDrawable) && scale == 1.0f) {
+            return ((BitmapDrawable) drawable).getBitmap();
+        }
+        int bitmapWidth = (int) (((float) width) * scale);
+        int bitmapHeight = (int) (((float) height) * scale);
+        Bitmap bitmap = Bitmap.createBitmap(bitmapWidth, bitmapHeight, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        Rect existingBounds = drawable.getBounds();
+        int left = existingBounds.left;
+        int top = existingBounds.top;
+        int right = existingBounds.right;
+        int bottom = existingBounds.bottom;
+        drawable.setBounds(0, 0, bitmapWidth, bitmapHeight);
+        drawable.draw(canvas);
+        drawable.setBounds(left, top, right, bottom);
+        return bitmap;
     }
 
     public void onSharedElementStart(List<String> list, List<View> list2, List<View> list3) {
@@ -87,39 +116,6 @@ public abstract class SharedElementCallback {
         return bitmap2;
     }
 
-    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-     method: ClspMth{java.lang.Math.min(float, float):float}
-     arg types: [int, float]
-     candidates:
-      ClspMth{java.lang.Math.min(double, double):double}
-      ClspMth{java.lang.Math.min(long, long):long}
-      ClspMth{java.lang.Math.min(int, int):int}
-      ClspMth{java.lang.Math.min(float, float):float} */
-    private static Bitmap createDrawableBitmap(Drawable drawable) {
-        int width = drawable.getIntrinsicWidth();
-        int height = drawable.getIntrinsicHeight();
-        if (width <= 0 || height <= 0) {
-            return null;
-        }
-        float scale = Math.min(1.0f, 1048576.0f / ((float) (width * height)));
-        if ((drawable instanceof BitmapDrawable) && scale == 1.0f) {
-            return ((BitmapDrawable) drawable).getBitmap();
-        }
-        int bitmapWidth = (int) (((float) width) * scale);
-        int bitmapHeight = (int) (((float) height) * scale);
-        Bitmap bitmap = Bitmap.createBitmap(bitmapWidth, bitmapHeight, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        Rect existingBounds = drawable.getBounds();
-        int left = existingBounds.left;
-        int top = existingBounds.top;
-        int right = existingBounds.right;
-        int bottom = existingBounds.bottom;
-        drawable.setBounds(0, 0, bitmapWidth, bitmapHeight);
-        drawable.draw(canvas);
-        drawable.setBounds(left, top, right, bottom);
-        return bitmap;
-    }
-
     public View onCreateSnapshotView(Context context, Parcelable snapshot) {
         if (snapshot instanceof Bundle) {
             Bundle bundle = (Bundle) snapshot;
@@ -150,5 +146,10 @@ public abstract class SharedElementCallback {
 
     public void onSharedElementsArrived(List<String> list, List<View> list2, OnSharedElementsReadyListener listener) {
         listener.onSharedElementsReady();
+    }
+
+    /* renamed from: android.support.v4.app.SharedElementCallback$OnSharedElementsReadyListener */
+    public interface OnSharedElementsReadyListener {
+        void onSharedElementsReady();
     }
 }

@@ -2,10 +2,10 @@ package com.google.android.gms.internal;
 
 /* compiled from: DefaultRetryPolicy */
 public final class zzh implements zzab {
-    private int zza;
-    private int zzb;
     private final int zzc;
     private final float zzd;
+    private int zza;
+    private int zzb;
 
     public zzh() {
         this(2500, 1, 1.0f);

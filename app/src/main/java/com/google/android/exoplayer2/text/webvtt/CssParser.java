@@ -1,9 +1,11 @@
 package com.google.android.exoplayer2.text.webvtt;
 
 import android.text.TextUtils;
+
 import com.google.android.exoplayer2.util.ColorParser;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.Util;
+
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,35 +24,6 @@ final class CssParser {
     private static final Pattern VOICE_NAME_PATTERN = Pattern.compile("\\[voice=\"([^\"]*)\"\\]");
     private final StringBuilder stringBuilder = new StringBuilder();
     private final ParsableByteArray styleInput = new ParsableByteArray();
-
-    public WebvttCssStyle parseBlock(ParsableByteArray input) {
-        this.stringBuilder.setLength(0);
-        int initialInputPosition = input.getPosition();
-        skipStyleBlock(input);
-        this.styleInput.reset(input.data, input.getPosition());
-        this.styleInput.setPosition(initialInputPosition);
-        String selector = parseSelector(this.styleInput, this.stringBuilder);
-        if (selector == null || !BLOCK_START.equals(parseNextToken(this.styleInput, this.stringBuilder))) {
-            return null;
-        }
-        WebvttCssStyle style = new WebvttCssStyle();
-        applySelectorToStyle(style, selector);
-        String token = null;
-        boolean blockEndFound = false;
-        while (!blockEndFound) {
-            int position = this.styleInput.getPosition();
-            token = parseNextToken(this.styleInput, this.stringBuilder);
-            blockEndFound = token == null || BLOCK_END.equals(token);
-            if (!blockEndFound) {
-                this.styleInput.setPosition(position);
-                parseStyleDeclaration(this.styleInput, style, this.stringBuilder);
-            }
-        }
-        if (BLOCK_END.equals(token)) {
-            return style;
-        }
-        return null;
-    }
 
     private static String parseSelector(ParsableByteArray input, StringBuilder stringBuilder2) {
         skipWhitespaceAndComments(input);
@@ -229,6 +202,35 @@ final class CssParser {
         }
         input.skipBytes(position - input.getPosition());
         return stringBuilder2.toString();
+    }
+
+    public WebvttCssStyle parseBlock(ParsableByteArray input) {
+        this.stringBuilder.setLength(0);
+        int initialInputPosition = input.getPosition();
+        skipStyleBlock(input);
+        this.styleInput.reset(input.data, input.getPosition());
+        this.styleInput.setPosition(initialInputPosition);
+        String selector = parseSelector(this.styleInput, this.stringBuilder);
+        if (selector == null || !BLOCK_START.equals(parseNextToken(this.styleInput, this.stringBuilder))) {
+            return null;
+        }
+        WebvttCssStyle style = new WebvttCssStyle();
+        applySelectorToStyle(style, selector);
+        String token = null;
+        boolean blockEndFound = false;
+        while (!blockEndFound) {
+            int position = this.styleInput.getPosition();
+            token = parseNextToken(this.styleInput, this.stringBuilder);
+            blockEndFound = token == null || BLOCK_END.equals(token);
+            if (!blockEndFound) {
+                this.styleInput.setPosition(position);
+                parseStyleDeclaration(this.styleInput, style, this.stringBuilder);
+            }
+        }
+        if (BLOCK_END.equals(token)) {
+            return style;
+        }
+        return null;
     }
 
     private void applySelectorToStyle(WebvttCssStyle style, String selector) {

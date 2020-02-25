@@ -1,7 +1,5 @@
 package android.arch.lifecycle;
 
-import android.arch.lifecycle.Lifecycle;
-
 class FullLifecycleObserverAdapter implements GenericLifecycleObserver {
     private final FullLifecycleObserver mObserver;
 

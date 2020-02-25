@@ -12,7 +12,6 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.p001v4.view.GravityCompat;
 import android.support.p001v4.widget.DrawerLayout;
-import android.support.p004v7.app.ActionBarDrawerToggleHoneycomb;
 import android.support.p004v7.graphics.drawable.DrawerArrowDrawable;
 import android.support.p004v7.widget.Toolbar;
 import android.util.Log;
@@ -23,34 +22,15 @@ import android.view.View;
 public class ActionBarDrawerToggle implements DrawerLayout.DrawerListener {
     private final Delegate mActivityImpl;
     private final int mCloseDrawerContentDescRes;
-    boolean mDrawerIndicatorEnabled;
     private final DrawerLayout mDrawerLayout;
+    private final int mOpenDrawerContentDescRes;
+    boolean mDrawerIndicatorEnabled;
+    View.OnClickListener mToolbarNavigationClickListener;
     private boolean mDrawerSlideAnimationEnabled;
     private boolean mHasCustomUpIndicator;
     private Drawable mHomeAsUpIndicator;
-    private final int mOpenDrawerContentDescRes;
     private DrawerArrowDrawable mSlider;
-    View.OnClickListener mToolbarNavigationClickListener;
     private boolean mWarnedForDisplayHomeAsUp;
-
-    /* renamed from: android.support.v7.app.ActionBarDrawerToggle$Delegate */
-    public interface Delegate {
-        Context getActionBarThemedContext();
-
-        Drawable getThemeUpIndicator();
-
-        boolean isNavigationVisible();
-
-        void setActionBarDescription(@StringRes int i);
-
-        void setActionBarUpIndicator(Drawable drawable, @StringRes int i);
-    }
-
-    /* renamed from: android.support.v7.app.ActionBarDrawerToggle$DelegateProvider */
-    public interface DelegateProvider {
-        @Nullable
-        Delegate getDrawerToggleDelegate();
-    }
 
     public ActionBarDrawerToggle(Activity activity, DrawerLayout drawerLayout, @StringRes int openDrawerContentDescRes, @StringRes int closeDrawerContentDescRes) {
         this(activity, null, drawerLayout, null, openDrawerContentDescRes, closeDrawerContentDescRes);
@@ -173,15 +153,15 @@ public class ActionBarDrawerToggle implements DrawerLayout.DrawerListener {
         syncState();
     }
 
+    public boolean isDrawerSlideAnimationEnabled() {
+        return this.mDrawerSlideAnimationEnabled;
+    }
+
     public void setDrawerSlideAnimationEnabled(boolean enabled) {
         this.mDrawerSlideAnimationEnabled = enabled;
         if (!enabled) {
             setPosition(0.0f);
         }
-    }
-
-    public boolean isDrawerSlideAnimationEnabled() {
-        return this.mDrawerSlideAnimationEnabled;
     }
 
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
@@ -259,6 +239,25 @@ public class ActionBarDrawerToggle implements DrawerLayout.DrawerListener {
             this.mSlider.setVerticalMirror(false);
         }
         this.mSlider.setProgress(position);
+    }
+
+    /* renamed from: android.support.v7.app.ActionBarDrawerToggle$Delegate */
+    public interface Delegate {
+        Context getActionBarThemedContext();
+
+        Drawable getThemeUpIndicator();
+
+        boolean isNavigationVisible();
+
+        void setActionBarDescription(@StringRes int i);
+
+        void setActionBarUpIndicator(Drawable drawable, @StringRes int i);
+    }
+
+    /* renamed from: android.support.v7.app.ActionBarDrawerToggle$DelegateProvider */
+    public interface DelegateProvider {
+        @Nullable
+        Delegate getDrawerToggleDelegate();
     }
 
     /* renamed from: android.support.v7.app.ActionBarDrawerToggle$FrameworkActionBarDelegate */

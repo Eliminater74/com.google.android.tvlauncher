@@ -2,6 +2,7 @@ package com.google.analytics.config.protoverifier.proto;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.MessageLiteOrBuilder;
+
 import java.util.List;
 
 public interface RulesOrBuilder extends MessageLiteOrBuilder {

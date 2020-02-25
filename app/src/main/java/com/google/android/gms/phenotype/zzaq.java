@@ -2,7 +2,6 @@ package com.google.android.gms.phenotype;
 
 import android.content.SharedPreferences;
 import android.util.Log;
-import com.google.android.gms.phenotype.PhenotypeFlag;
 
 /* compiled from: PhenotypeFlag */
 final class zzaq extends PhenotypeFlag<Float> {

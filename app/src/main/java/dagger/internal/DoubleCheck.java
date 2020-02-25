@@ -1,7 +1,8 @@
 package dagger.internal;
 
-import dagger.Lazy;
 import javax.inject.Provider;
+
+import dagger.Lazy;
 
 public final class DoubleCheck<T> implements Provider<T>, Lazy<T> {
     static final /* synthetic */ boolean $assertionsDisabled = false;
@@ -11,21 +12,6 @@ public final class DoubleCheck<T> implements Provider<T>, Lazy<T> {
 
     private DoubleCheck(Provider<T> provider2) {
         this.provider = provider2;
-    }
-
-    public T get() {
-        Object result = this.instance;
-        if (result == UNINITIALIZED) {
-            synchronized (this) {
-                result = this.instance;
-                if (result == UNINITIALIZED) {
-                    result = this.provider.get();
-                    this.instance = reentrantCheck(this.instance, result);
-                    this.provider = null;
-                }
-            }
-        }
-        return result;
     }
 
     public static Object reentrantCheck(Object currentInstance, Object newInstance) {
@@ -56,5 +42,20 @@ public final class DoubleCheck<T> implements Provider<T>, Lazy<T> {
             return (Lazy) provider2;
         }
         return new DoubleCheck((Provider) Preconditions.checkNotNull(provider2));
+    }
+
+    public T get() {
+        Object result = this.instance;
+        if (result == UNINITIALIZED) {
+            synchronized (this) {
+                result = this.instance;
+                if (result == UNINITIALIZED) {
+                    result = this.provider.get();
+                    this.instance = reentrantCheck(this.instance, result);
+                    this.provider = null;
+                }
+            }
+        }
+        return result;
     }
 }

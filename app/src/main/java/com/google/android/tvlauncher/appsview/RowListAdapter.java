@@ -19,16 +19,16 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.leanback.widget.FacetProvider;
 import androidx.leanback.widget.HorizontalGridView;
+
 import com.google.android.tvlauncher.C1188R;
 import com.google.android.tvlauncher.TvlauncherLogEnum;
 import com.google.android.tvlauncher.analytics.EventLogger;
 import com.google.android.tvlauncher.analytics.LogEvent;
 import com.google.android.tvlauncher.analytics.LogEventParameters;
 import com.google.android.tvlauncher.analytics.UserActionEvent;
-import com.google.android.tvlauncher.appsview.AppsViewFragment;
-import com.google.android.tvlauncher.appsview.BannerView;
 import com.google.android.tvlauncher.appsview.data.LaunchItemImageDataSource;
 import com.google.android.tvlauncher.appsview.data.LaunchItemsManager;
 import com.google.android.tvlauncher.appsview.data.PackageImageDataSource;
@@ -42,6 +42,7 @@ import com.google.android.tvlauncher.util.OemPromotionApp;
 import com.google.android.tvlauncher.util.Util;
 import com.google.android.tvrecommendations.shared.util.AppUtil;
 import com.google.logs.tvlauncher.config.TvLauncherConstants;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -51,11 +52,11 @@ import java.util.List;
 import java.util.Set;
 
 class RowListAdapter extends RecyclerView.Adapter<BaseViewHolder> implements LaunchItemsManager.AppsViewChangeListener, OemAppPromotions.OnAppPromotionsLoadedListener {
+    static final int ROW_TYPE_STORE = 3;
+    static final int ROW_TYPE_TITLE = 5;
     private static final int ROW_TYPE_APPS = 1;
     private static final int ROW_TYPE_GAMES = 2;
     private static final int ROW_TYPE_PROMOTIONS = 4;
-    static final int ROW_TYPE_STORE = 3;
-    static final int ROW_TYPE_TITLE = 5;
     private static final String TAG = "RowListAdapter";
     /* access modifiers changed from: private */
     public final LaunchItemsHolder appLaunchItems = new LaunchItemsHolder();
@@ -67,44 +68,40 @@ class RowListAdapter extends RecyclerView.Adapter<BaseViewHolder> implements Lau
     public final int bannerMarginEnd;
     /* access modifiers changed from: private */
     public final int bannerWidth;
-    private final Handler changeHandler = new Handler();
     /* access modifiers changed from: private */
     public final Drawable defaultAppStoreIcon;
     /* access modifiers changed from: private */
     public final Drawable defaultGameStoreIcon;
-    private final List<Integer> enabledRowOrder = new ArrayList(3);
-    private final Set<Integer> enabledRowTypes = new HashSet(3);
     /* access modifiers changed from: private */
     public final EventLogger eventLogger;
     /* access modifiers changed from: private */
     public final LaunchItemsHolder gameLaunchItems = new LaunchItemsHolder();
     /* access modifiers changed from: private */
     public final String gameStoreTitle;
+    /* access modifiers changed from: private */
+    public final LaunchItemsManager launchItemsManager;
+    /* access modifiers changed from: private */
+    public final Drawable placeholderBanner;
+    /* access modifiers changed from: private */
+    public final ArrayList<Integer> rows = new ArrayList<>();
+    /* access modifiers changed from: private */
+    public final int storeKeylineOffset;
+    private final Handler changeHandler = new Handler();
+    private final List<Integer> enabledRowOrder = new ArrayList(3);
+    private final Set<Integer> enabledRowTypes = new HashSet(3);
     private final int keylineLastRow;
     private final int keylineRowOne;
     private final int keylineRowOneTitleAbove;
     private final int keylineRowThree;
     private final int keylineRowTwo;
     private final int keylineRowTwoTitleAbove;
-    /* access modifiers changed from: private */
-    public final LaunchItemsManager launchItemsManager;
+    private final ArrayList<LaunchItem> storeLaunchItems = new ArrayList<>();
     /* access modifiers changed from: private */
     public OnAppsViewActionListener onAppsViewActionListener;
-    private AppsViewFragment.OnEditModeOrderChangeCallback onEditModeOrderChangeCallback;
-    /* access modifiers changed from: private */
-    public final Drawable placeholderBanner;
     /* access modifiers changed from: private */
     public List<OemPromotionApp> promotions = new ArrayList();
+    private AppsViewFragment.OnEditModeOrderChangeCallback onEditModeOrderChangeCallback;
     private boolean resetPositions;
-    /* access modifiers changed from: private */
-    public final ArrayList<Integer> rows = new ArrayList<>();
-    /* access modifiers changed from: private */
-    public final int storeKeylineOffset;
-    private final ArrayList<LaunchItem> storeLaunchItems = new ArrayList<>();
-
-    public /* bridge */ /* synthetic */ void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i, @NonNull List list) {
-        onBindViewHolder((BaseViewHolder) viewHolder, i, (List<Object>) list);
-    }
 
     RowListAdapter(Context context, EventLogger eventLogger2, LaunchItemsManager manager) {
         this.eventLogger = eventLogger2;
@@ -126,6 +123,10 @@ class RowListAdapter extends RecyclerView.Adapter<BaseViewHolder> implements Lau
         this.defaultGameStoreIcon = context.getDrawable(C1188R.C1189drawable.product_logo_play_games_color_36);
         this.launchItemsManager = manager;
         setEnabledRows(OemConfiguration.get(context).getAppsViewLayoutOption());
+    }
+
+    public /* bridge */ /* synthetic */ void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i, @NonNull List list) {
+        onBindViewHolder((BaseViewHolder) viewHolder, i, (List<Object>) list);
     }
 
     public void onAppPromotionsLoaded(List<OemPromotionApp> promotions2) {
@@ -304,6 +305,333 @@ class RowListAdapter extends RecyclerView.Adapter<BaseViewHolder> implements Lau
         }
     }
 
+    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+     method: ClspMth{android.view.LayoutInflater.inflate(int, android.view.ViewGroup, boolean):android.view.View}
+     arg types: [int, android.view.ViewGroup, int]
+     candidates:
+      ClspMth{android.view.LayoutInflater.inflate(org.xmlpull.v1.XmlPullParser, android.view.ViewGroup, boolean):android.view.View}
+      ClspMth{android.view.LayoutInflater.inflate(int, android.view.ViewGroup, boolean):android.view.View} */
+    @NonNull
+    public BaseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        if (viewType == 1 || viewType == 2) {
+            return new AppViewHolder(LayoutInflater.from(parent.getContext()).inflate(C1188R.layout.apps_view_base_row_view, parent, false), this.eventLogger);
+        }
+        if (viewType == 3) {
+            return new StoreViewHolder(LayoutInflater.from(parent.getContext()).inflate(C1188R.layout.apps_view_store_row_view, parent, false), this.eventLogger);
+        }
+        if (viewType == 4) {
+            return new PromotionRowViewHolder(LayoutInflater.from(parent.getContext()).inflate(C1188R.layout.apps_promotion_row, parent, false), this.eventLogger);
+        }
+        if (viewType == 5) {
+            return new TitleViewHolder(LayoutInflater.from(parent.getContext()).inflate(C1188R.layout.title_row_view, parent, false), this.eventLogger);
+        }
+        StringBuilder sb = new StringBuilder(33);
+        sb.append("Unexpected row type : ");
+        sb.append(viewType);
+        throw new IllegalArgumentException(sb.toString());
+    }
+
+    public void onBindViewHolder(@NonNull BaseViewHolder holder, int position) {
+        if (holder instanceof StoreViewHolder) {
+            ((StoreViewHolder) holder).addStoreItems(this.storeLaunchItems);
+        }
+        if (holder instanceof AppViewHolder) {
+            addLaunchItemsToViewHolder(holder, position);
+        }
+        if (holder instanceof TitleViewHolder) {
+            int titleContentPosition = position + 1;
+            if (titleContentPosition >= this.rows.size()) {
+                ((TitleViewHolder) holder).setTitle("");
+            } else {
+                Resources res = holder.itemView.getContext().getResources();
+                int intValue = this.rows.get(titleContentPosition).intValue();
+                if (intValue == 1) {
+                    ((TitleViewHolder) holder).setTitle(res.getString(C1188R.string.app_folder_title));
+                } else if (intValue == 2) {
+                    ((TitleViewHolder) holder).setTitle(res.getString(C1188R.string.game_folder_title));
+                } else if (intValue != 4) {
+                    ((TitleViewHolder) holder).setTitle("");
+                } else {
+                    ((TitleViewHolder) holder).setTitle(OemAppPromotions.get(holder.itemView.getContext()).getAppsPromotionRowTitle());
+                    ((TitleViewHolder) holder).setBackgroundColor(res.getColor(C1188R.color.reference_white_10, null));
+                }
+            }
+        }
+        holder.set();
+        if (this.resetPositions) {
+            holder.resetPositions();
+        }
+    }
+
+    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+     method: android.support.v7.widget.RecyclerView.Adapter.onBindViewHolder(android.support.v7.widget.RecyclerView$ViewHolder, int, java.util.List<java.lang.Object>):void
+     arg types: [com.google.android.tvlauncher.appsview.RowListAdapter$BaseViewHolder, int, java.util.List<java.lang.Object>]
+     candidates:
+      com.google.android.tvlauncher.appsview.RowListAdapter.onBindViewHolder(com.google.android.tvlauncher.appsview.RowListAdapter$BaseViewHolder, int, java.util.List<java.lang.Object>):void
+      android.support.v7.widget.RecyclerView.Adapter.onBindViewHolder(android.support.v7.widget.RecyclerView$ViewHolder, int, java.util.List<java.lang.Object>):void */
+    public void onBindViewHolder(@NonNull BaseViewHolder holder, int position, @NonNull List<Object> payloads) {
+        if (!(holder instanceof AppViewHolder) || payloads.isEmpty() || !(payloads.get(0) instanceof Integer)) {
+            super.onBindViewHolder((RecyclerView.ViewHolder) holder, position, payloads);
+        } else {
+            ((AppViewHolder) holder).setItemAt(((Integer) payloads.get(0)).intValue());
+        }
+    }
+
+    public void onViewRecycled(@NonNull BaseViewHolder holder) {
+        super.onViewRecycled((RecyclerView.ViewHolder) holder);
+        holder.recycle();
+    }
+
+    private void addLaunchItemsToViewHolder(BaseViewHolder holder, int position) {
+        List<LaunchItem> items;
+        int rowType = this.rows.get(position).intValue();
+        int titleRelativePosition = getPositionRelativeToTitle(position);
+        if (titleRelativePosition < 0 || titleRelativePosition >= this.rows.size()) {
+            StringBuilder sb = new StringBuilder(103);
+            sb.append("RowListAdapter: Title relative position was out of bounds : ");
+            sb.append(titleRelativePosition);
+            sb.append(", in addLaunchItemToViewHolder()");
+            Log.e(TAG, sb.toString());
+            return;
+        }
+        if (rowType == 1) {
+            items = this.appLaunchItems.getRowData(titleRelativePosition);
+        } else if (rowType == 2) {
+            items = this.gameLaunchItems.getRowData(titleRelativePosition);
+        } else {
+            return;
+        }
+        if (holder instanceof AppViewHolder) {
+            ((AppViewHolder) holder).addAllLaunchItems(items);
+        }
+    }
+
+    private int getPositionRelativeToTitle(int position) {
+        for (int i = position; i >= 0; i--) {
+            if (this.rows.get(i).intValue() == 5) {
+                return (position - i) - 1;
+            }
+        }
+        return -1;
+    }
+
+    public int getItemCount() {
+        return this.rows.size();
+    }
+
+    public int getItemViewType(int position) {
+        return this.rows.get(position).intValue();
+    }
+
+    /* access modifiers changed from: package-private */
+    public void setDataInRows() {
+        this.appLaunchItems.clear();
+        this.gameLaunchItems.clear();
+        this.storeLaunchItems.clear();
+        if (isRowTypeEnabled(2)) {
+            this.appLaunchItems.setData(this.launchItemsManager.getAppLaunchItems());
+            this.gameLaunchItems.setData(this.launchItemsManager.getGameLaunchItems());
+        } else {
+            this.appLaunchItems.setData(this.launchItemsManager.getAllLaunchItemsWithSorting());
+        }
+        this.storeLaunchItems.add(this.launchItemsManager.getAppStoreLaunchItem());
+        this.storeLaunchItems.add(this.launchItemsManager.getGameStoreLaunchItem());
+        this.storeLaunchItems.removeAll(Collections.singleton(null));
+    }
+
+    /* access modifiers changed from: package-private */
+    public void setResetViewHolderPositions(boolean resetPositions2) {
+        this.resetPositions = resetPositions2;
+    }
+
+    /* access modifiers changed from: package-private */
+    public void initRows() {
+        if (this.launchItemsManager.areItemsLoaded()) {
+            this.rows.clear();
+            if (!this.storeLaunchItems.isEmpty()) {
+                this.rows.add(3);
+            }
+            for (Integer intValue : this.enabledRowOrder) {
+                int rowType = intValue.intValue();
+                if (rowType != 1) {
+                    if (rowType != 2) {
+                        if (rowType == 4 && !this.promotions.isEmpty() && isRowTypeEnabled(4)) {
+                            this.rows.add(5);
+                            this.rows.add(4);
+                        }
+                    } else if (this.gameLaunchItems.size() > 0) {
+                        this.rows.add(5);
+                        for (int i = 0; i < this.gameLaunchItems.getNumRows(); i++) {
+                            this.rows.add(2);
+                        }
+                    }
+                } else if (this.appLaunchItems.size() > 0) {
+                    this.rows.add(5);
+                    for (int i2 = 0; i2 < this.appLaunchItems.getNumRows(); i2++) {
+                        this.rows.add(1);
+                    }
+                }
+            }
+            notifyDataSetChanged();
+        }
+    }
+
+    /* access modifiers changed from: package-private */
+    public void setOnAppsViewActionListener(OnAppsViewActionListener listener) {
+        this.onAppsViewActionListener = listener;
+    }
+
+    /* access modifiers changed from: package-private */
+    public void setOnEditModeOrderChangeCallback(AppsViewFragment.OnEditModeOrderChangeCallback callback) {
+        this.onEditModeOrderChangeCallback = callback;
+    }
+
+    /* access modifiers changed from: package-private */
+    public int getTopKeylineForEditMode(int editModeType) {
+        if (editModeType != 1 || !isRowTypeEnabled(2)) {
+            return getKeylineForPosition(this.rows.indexOf(1));
+        }
+        return getKeylineForPosition(this.rows.indexOf(2));
+    }
+
+    /* access modifiers changed from: package-private */
+    public int getBottomKeylineForEditMode(int editModeType) {
+        if (editModeType != 1 || !isRowTypeEnabled(2)) {
+            return getKeylineForPosition(this.rows.lastIndexOf(1));
+        }
+        return getKeylineForPosition(this.rows.lastIndexOf(2));
+    }
+
+    /* access modifiers changed from: package-private */
+    @VisibleForTesting
+    public List<OemPromotionApp> getPromotions() {
+        return this.promotions;
+    }
+
+    /* access modifiers changed from: package-private */
+    @VisibleForTesting
+    public List<LaunchItem> getStoreItems() {
+        return this.storeLaunchItems;
+    }
+
+    /* access modifiers changed from: package-private */
+    @VisibleForTesting
+    public void setEnabledRows(OemConfiguration.LayoutOrderOptions options) {
+        this.enabledRowOrder.clear();
+        this.enabledRowTypes.clear();
+        this.enabledRowTypes.add(1);
+        if (options == null) {
+            options = OemConfiguration.LayoutOrderOptions.APPS_OEM_GAMES;
+        }
+        int i = C12283.f133x70c2e182[options.ordinal()];
+        if (i == 1) {
+            this.enabledRowTypes.add(4);
+            this.enabledRowTypes.add(2);
+            this.enabledRowOrder.addAll(Arrays.asList(1, 4, 2));
+        } else if (i == 2) {
+            this.enabledRowTypes.add(4);
+            this.enabledRowTypes.add(2);
+            this.enabledRowOrder.addAll(Arrays.asList(1, 2, 4));
+        } else if (i == 3) {
+            this.enabledRowTypes.add(4);
+            this.enabledRowTypes.add(2);
+            this.enabledRowOrder.addAll(Arrays.asList(2, 1, 4));
+        } else if (i == 4) {
+            this.enabledRowTypes.add(4);
+            this.enabledRowOrder.addAll(Arrays.asList(1, 4));
+        }
+    }
+
+    /* access modifiers changed from: private */
+    public int getKeylineForPosition(int position) {
+        if (position < 0 || position > this.rows.size() - 1) {
+            return this.keylineRowOne;
+        }
+        int itemCount = getItemCount();
+        int nonTitleNonStoreRowsCount = getNonTitleNonStoreRowsCount();
+        if (nonTitleNonStoreRowsCount == 1) {
+            return this.keylineRowOne;
+        }
+        if (nonTitleNonStoreRowsCount != 2) {
+            if (nonTitleNonStoreRowsCount != 3) {
+                if (position == itemCount - 1) {
+                    return this.keylineLastRow;
+                }
+                if (position == itemCount - 2) {
+                    return this.keylineRowTwoTitleAbove;
+                }
+                if (position == itemCount - 3 && this.rows.get(position + 1).intValue() == 5) {
+                    return this.keylineRowTwo;
+                }
+                if (position == itemCount - 3) {
+                    return this.keylineRowOneTitleAbove;
+                }
+            } else if (position == itemCount - 1 && (this.rows.get(position - 1).intValue() == 5 || this.rows.get(position - 2).intValue() == 5)) {
+                return this.keylineLastRow;
+            } else {
+                if (position == itemCount - 1) {
+                    return this.keylineRowThree;
+                }
+                if (position == itemCount - 2 && this.rows.get(position - 1).intValue() == 5) {
+                    return this.keylineRowTwoTitleAbove;
+                }
+                if (position == itemCount - 2) {
+                    return this.keylineRowTwo;
+                }
+                if (position == itemCount - 3 && this.rows.get(position + 1).intValue() == 5) {
+                    return this.keylineRowTwo;
+                }
+            }
+        } else if (position == itemCount - 1 && this.rows.get(position - 1).intValue() == 5) {
+            return this.keylineRowTwoTitleAbove;
+        } else {
+            if (position == itemCount - 1) {
+                return this.keylineRowTwo;
+            }
+        }
+        return this.keylineRowOne;
+    }
+
+    private int getNonTitleNonStoreRowsCount() {
+        return this.appLaunchItems.getNumRows() + this.gameLaunchItems.getNumRows() + (this.promotions.isEmpty() ^ true ? 1 : 0);
+    }
+
+    /* access modifiers changed from: private */
+    public boolean isRowTypeEnabled(int rowType) {
+        return this.enabledRowTypes.contains(Integer.valueOf(rowType));
+    }
+
+    /* access modifiers changed from: private */
+    public int getRowIndexForRowType(int rowType) {
+        int orderIndex = this.enabledRowOrder.indexOf(Integer.valueOf(rowType));
+        for (int i = orderIndex - 1; i >= 0; i--) {
+            int lastIndexOfTypeBefore = this.rows.lastIndexOf(Integer.valueOf(this.enabledRowOrder.get(i).intValue()));
+            if (lastIndexOfTypeBefore != -1) {
+                return lastIndexOfTypeBefore + 1;
+            }
+        }
+        for (int i2 = orderIndex + 1; i2 < this.enabledRowOrder.size(); i2++) {
+            int firstIndexOfTypeAfter = this.rows.indexOf(Integer.valueOf(this.enabledRowOrder.get(i2).intValue()));
+            if (firstIndexOfTypeAfter != -1) {
+                return firstIndexOfTypeAfter - 1;
+            }
+        }
+        return this.rows.size();
+    }
+
+    /* access modifiers changed from: private */
+    public int getOrderedPosition(LaunchItem item) {
+        List<LaunchItem> launchItemList;
+        if (!isRowTypeEnabled(2)) {
+            launchItemList = this.launchItemsManager.getAllLaunchItemsWithSorting();
+        } else if (item.isGame()) {
+            launchItemList = this.launchItemsManager.getGameLaunchItems();
+        } else {
+            launchItemList = this.launchItemsManager.getAppLaunchItems();
+        }
+        return launchItemList.indexOf(item);
+    }
+
     static class BaseViewHolder extends RecyclerView.ViewHolder implements FacetProvider, EventLogger {
         private final EventLogger eventLogger;
 
@@ -338,19 +666,74 @@ class RowListAdapter extends RecyclerView.Adapter<BaseViewHolder> implements Lau
         }
     }
 
+    private static class TitleViewHolder extends BaseViewHolder {
+        @ColorInt
+        private int backgroundColor;
+        private String title;
+
+        TitleViewHolder(View itemView, EventLogger eventLogger) {
+            super(itemView, eventLogger);
+        }
+
+        public void setTitle(String title2) {
+            this.title = title2;
+        }
+
+        public void setBackgroundColor(@ColorInt int color) {
+            this.backgroundColor = color;
+        }
+
+        public void set() {
+            ((TextView) this.itemView).setText(this.title);
+            this.itemView.setBackgroundColor(this.backgroundColor);
+        }
+
+        public void recycle() {
+            super.recycle();
+            this.title = "";
+            this.backgroundColor = 0;
+        }
+    }
+
+    /* renamed from: com.google.android.tvlauncher.appsview.RowListAdapter$3 */
+    static /* synthetic */ class C12283 {
+
+        /* renamed from: $SwitchMap$com$google$android$tvlauncher$util$OemConfiguration$LayoutOrderOptions */
+        static final /* synthetic */ int[] f133x70c2e182 = new int[OemConfiguration.LayoutOrderOptions.values().length];
+
+        static {
+            try {
+                f133x70c2e182[OemConfiguration.LayoutOrderOptions.APPS_OEM_GAMES.ordinal()] = 1;
+            } catch (NoSuchFieldError e) {
+            }
+            try {
+                f133x70c2e182[OemConfiguration.LayoutOrderOptions.APPS_GAMES_OEM.ordinal()] = 2;
+            } catch (NoSuchFieldError e2) {
+            }
+            try {
+                f133x70c2e182[OemConfiguration.LayoutOrderOptions.GAMES_APPS_OEM.ordinal()] = 3;
+            } catch (NoSuchFieldError e3) {
+            }
+            try {
+                f133x70c2e182[OemConfiguration.LayoutOrderOptions.APPS_OEM.ordinal()] = 4;
+            } catch (NoSuchFieldError e4) {
+            }
+        }
+    }
+
     private class AppViewHolder extends BaseViewHolder implements View.OnClickListener, View.OnLongClickListener, View.OnFocusChangeListener, BannerView.OnWindowVisibilityChangedListener, EventLogger {
         private static final int MENU_FAVORITE = 2;
         private static final int MENU_INFO = 3;
         private static final int MENU_MOVE = 1;
         private static final int MENU_PRIMARY_ACTION = 0;
         private static final int MENU_UNINSTALL = 4;
-        private ContextMenu contextMenu;
         private final Drawable favoriteIcon;
         private final String favoriteText;
         private final ArrayList<LaunchItem> launchItems = new ArrayList<>();
         private final LaunchItemsRowView rowView;
         private final Drawable unfavoriteIcon;
         private final String unfavoriteText;
+        private ContextMenu contextMenu;
 
         AppViewHolder(View itemView, EventLogger eventLogger) {
             super(itemView, eventLogger);
@@ -750,387 +1133,5 @@ class RowListAdapter extends RecyclerView.Adapter<BaseViewHolder> implements Lau
         public int calculateOffset() {
             return RowListAdapter.this.getKeylineForPosition(getAdapterPosition());
         }
-    }
-
-    private static class TitleViewHolder extends BaseViewHolder {
-        @ColorInt
-        private int backgroundColor;
-        private String title;
-
-        TitleViewHolder(View itemView, EventLogger eventLogger) {
-            super(itemView, eventLogger);
-        }
-
-        public void setTitle(String title2) {
-            this.title = title2;
-        }
-
-        public void setBackgroundColor(@ColorInt int color) {
-            this.backgroundColor = color;
-        }
-
-        public void set() {
-            ((TextView) this.itemView).setText(this.title);
-            this.itemView.setBackgroundColor(this.backgroundColor);
-        }
-
-        public void recycle() {
-            super.recycle();
-            this.title = "";
-            this.backgroundColor = 0;
-        }
-    }
-
-    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-     method: ClspMth{android.view.LayoutInflater.inflate(int, android.view.ViewGroup, boolean):android.view.View}
-     arg types: [int, android.view.ViewGroup, int]
-     candidates:
-      ClspMth{android.view.LayoutInflater.inflate(org.xmlpull.v1.XmlPullParser, android.view.ViewGroup, boolean):android.view.View}
-      ClspMth{android.view.LayoutInflater.inflate(int, android.view.ViewGroup, boolean):android.view.View} */
-    @NonNull
-    public BaseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        if (viewType == 1 || viewType == 2) {
-            return new AppViewHolder(LayoutInflater.from(parent.getContext()).inflate(C1188R.layout.apps_view_base_row_view, parent, false), this.eventLogger);
-        }
-        if (viewType == 3) {
-            return new StoreViewHolder(LayoutInflater.from(parent.getContext()).inflate(C1188R.layout.apps_view_store_row_view, parent, false), this.eventLogger);
-        }
-        if (viewType == 4) {
-            return new PromotionRowViewHolder(LayoutInflater.from(parent.getContext()).inflate(C1188R.layout.apps_promotion_row, parent, false), this.eventLogger);
-        }
-        if (viewType == 5) {
-            return new TitleViewHolder(LayoutInflater.from(parent.getContext()).inflate(C1188R.layout.title_row_view, parent, false), this.eventLogger);
-        }
-        StringBuilder sb = new StringBuilder(33);
-        sb.append("Unexpected row type : ");
-        sb.append(viewType);
-        throw new IllegalArgumentException(sb.toString());
-    }
-
-    public void onBindViewHolder(@NonNull BaseViewHolder holder, int position) {
-        if (holder instanceof StoreViewHolder) {
-            ((StoreViewHolder) holder).addStoreItems(this.storeLaunchItems);
-        }
-        if (holder instanceof AppViewHolder) {
-            addLaunchItemsToViewHolder(holder, position);
-        }
-        if (holder instanceof TitleViewHolder) {
-            int titleContentPosition = position + 1;
-            if (titleContentPosition >= this.rows.size()) {
-                ((TitleViewHolder) holder).setTitle("");
-            } else {
-                Resources res = holder.itemView.getContext().getResources();
-                int intValue = this.rows.get(titleContentPosition).intValue();
-                if (intValue == 1) {
-                    ((TitleViewHolder) holder).setTitle(res.getString(C1188R.string.app_folder_title));
-                } else if (intValue == 2) {
-                    ((TitleViewHolder) holder).setTitle(res.getString(C1188R.string.game_folder_title));
-                } else if (intValue != 4) {
-                    ((TitleViewHolder) holder).setTitle("");
-                } else {
-                    ((TitleViewHolder) holder).setTitle(OemAppPromotions.get(holder.itemView.getContext()).getAppsPromotionRowTitle());
-                    ((TitleViewHolder) holder).setBackgroundColor(res.getColor(C1188R.color.reference_white_10, null));
-                }
-            }
-        }
-        holder.set();
-        if (this.resetPositions) {
-            holder.resetPositions();
-        }
-    }
-
-    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-     method: android.support.v7.widget.RecyclerView.Adapter.onBindViewHolder(android.support.v7.widget.RecyclerView$ViewHolder, int, java.util.List<java.lang.Object>):void
-     arg types: [com.google.android.tvlauncher.appsview.RowListAdapter$BaseViewHolder, int, java.util.List<java.lang.Object>]
-     candidates:
-      com.google.android.tvlauncher.appsview.RowListAdapter.onBindViewHolder(com.google.android.tvlauncher.appsview.RowListAdapter$BaseViewHolder, int, java.util.List<java.lang.Object>):void
-      android.support.v7.widget.RecyclerView.Adapter.onBindViewHolder(android.support.v7.widget.RecyclerView$ViewHolder, int, java.util.List<java.lang.Object>):void */
-    public void onBindViewHolder(@NonNull BaseViewHolder holder, int position, @NonNull List<Object> payloads) {
-        if (!(holder instanceof AppViewHolder) || payloads.isEmpty() || !(payloads.get(0) instanceof Integer)) {
-            super.onBindViewHolder((RecyclerView.ViewHolder) holder, position, payloads);
-        } else {
-            ((AppViewHolder) holder).setItemAt(((Integer) payloads.get(0)).intValue());
-        }
-    }
-
-    public void onViewRecycled(@NonNull BaseViewHolder holder) {
-        super.onViewRecycled((RecyclerView.ViewHolder) holder);
-        holder.recycle();
-    }
-
-    private void addLaunchItemsToViewHolder(BaseViewHolder holder, int position) {
-        List<LaunchItem> items;
-        int rowType = this.rows.get(position).intValue();
-        int titleRelativePosition = getPositionRelativeToTitle(position);
-        if (titleRelativePosition < 0 || titleRelativePosition >= this.rows.size()) {
-            StringBuilder sb = new StringBuilder(103);
-            sb.append("RowListAdapter: Title relative position was out of bounds : ");
-            sb.append(titleRelativePosition);
-            sb.append(", in addLaunchItemToViewHolder()");
-            Log.e(TAG, sb.toString());
-            return;
-        }
-        if (rowType == 1) {
-            items = this.appLaunchItems.getRowData(titleRelativePosition);
-        } else if (rowType == 2) {
-            items = this.gameLaunchItems.getRowData(titleRelativePosition);
-        } else {
-            return;
-        }
-        if (holder instanceof AppViewHolder) {
-            ((AppViewHolder) holder).addAllLaunchItems(items);
-        }
-    }
-
-    private int getPositionRelativeToTitle(int position) {
-        for (int i = position; i >= 0; i--) {
-            if (this.rows.get(i).intValue() == 5) {
-                return (position - i) - 1;
-            }
-        }
-        return -1;
-    }
-
-    public int getItemCount() {
-        return this.rows.size();
-    }
-
-    public int getItemViewType(int position) {
-        return this.rows.get(position).intValue();
-    }
-
-    /* access modifiers changed from: package-private */
-    public void setDataInRows() {
-        this.appLaunchItems.clear();
-        this.gameLaunchItems.clear();
-        this.storeLaunchItems.clear();
-        if (isRowTypeEnabled(2)) {
-            this.appLaunchItems.setData(this.launchItemsManager.getAppLaunchItems());
-            this.gameLaunchItems.setData(this.launchItemsManager.getGameLaunchItems());
-        } else {
-            this.appLaunchItems.setData(this.launchItemsManager.getAllLaunchItemsWithSorting());
-        }
-        this.storeLaunchItems.add(this.launchItemsManager.getAppStoreLaunchItem());
-        this.storeLaunchItems.add(this.launchItemsManager.getGameStoreLaunchItem());
-        this.storeLaunchItems.removeAll(Collections.singleton(null));
-    }
-
-    /* access modifiers changed from: package-private */
-    public void setResetViewHolderPositions(boolean resetPositions2) {
-        this.resetPositions = resetPositions2;
-    }
-
-    /* access modifiers changed from: package-private */
-    public void initRows() {
-        if (this.launchItemsManager.areItemsLoaded()) {
-            this.rows.clear();
-            if (!this.storeLaunchItems.isEmpty()) {
-                this.rows.add(3);
-            }
-            for (Integer intValue : this.enabledRowOrder) {
-                int rowType = intValue.intValue();
-                if (rowType != 1) {
-                    if (rowType != 2) {
-                        if (rowType == 4 && !this.promotions.isEmpty() && isRowTypeEnabled(4)) {
-                            this.rows.add(5);
-                            this.rows.add(4);
-                        }
-                    } else if (this.gameLaunchItems.size() > 0) {
-                        this.rows.add(5);
-                        for (int i = 0; i < this.gameLaunchItems.getNumRows(); i++) {
-                            this.rows.add(2);
-                        }
-                    }
-                } else if (this.appLaunchItems.size() > 0) {
-                    this.rows.add(5);
-                    for (int i2 = 0; i2 < this.appLaunchItems.getNumRows(); i2++) {
-                        this.rows.add(1);
-                    }
-                }
-            }
-            notifyDataSetChanged();
-        }
-    }
-
-    /* access modifiers changed from: package-private */
-    public void setOnAppsViewActionListener(OnAppsViewActionListener listener) {
-        this.onAppsViewActionListener = listener;
-    }
-
-    /* access modifiers changed from: package-private */
-    public void setOnEditModeOrderChangeCallback(AppsViewFragment.OnEditModeOrderChangeCallback callback) {
-        this.onEditModeOrderChangeCallback = callback;
-    }
-
-    /* access modifiers changed from: package-private */
-    public int getTopKeylineForEditMode(int editModeType) {
-        if (editModeType != 1 || !isRowTypeEnabled(2)) {
-            return getKeylineForPosition(this.rows.indexOf(1));
-        }
-        return getKeylineForPosition(this.rows.indexOf(2));
-    }
-
-    /* access modifiers changed from: package-private */
-    public int getBottomKeylineForEditMode(int editModeType) {
-        if (editModeType != 1 || !isRowTypeEnabled(2)) {
-            return getKeylineForPosition(this.rows.lastIndexOf(1));
-        }
-        return getKeylineForPosition(this.rows.lastIndexOf(2));
-    }
-
-    /* access modifiers changed from: package-private */
-    @VisibleForTesting
-    public List<OemPromotionApp> getPromotions() {
-        return this.promotions;
-    }
-
-    /* access modifiers changed from: package-private */
-    @VisibleForTesting
-    public List<LaunchItem> getStoreItems() {
-        return this.storeLaunchItems;
-    }
-
-    /* access modifiers changed from: package-private */
-    @VisibleForTesting
-    public void setEnabledRows(OemConfiguration.LayoutOrderOptions options) {
-        this.enabledRowOrder.clear();
-        this.enabledRowTypes.clear();
-        this.enabledRowTypes.add(1);
-        if (options == null) {
-            options = OemConfiguration.LayoutOrderOptions.APPS_OEM_GAMES;
-        }
-        int i = C12283.f133x70c2e182[options.ordinal()];
-        if (i == 1) {
-            this.enabledRowTypes.add(4);
-            this.enabledRowTypes.add(2);
-            this.enabledRowOrder.addAll(Arrays.asList(1, 4, 2));
-        } else if (i == 2) {
-            this.enabledRowTypes.add(4);
-            this.enabledRowTypes.add(2);
-            this.enabledRowOrder.addAll(Arrays.asList(1, 2, 4));
-        } else if (i == 3) {
-            this.enabledRowTypes.add(4);
-            this.enabledRowTypes.add(2);
-            this.enabledRowOrder.addAll(Arrays.asList(2, 1, 4));
-        } else if (i == 4) {
-            this.enabledRowTypes.add(4);
-            this.enabledRowOrder.addAll(Arrays.asList(1, 4));
-        }
-    }
-
-    /* renamed from: com.google.android.tvlauncher.appsview.RowListAdapter$3 */
-    static /* synthetic */ class C12283 {
-
-        /* renamed from: $SwitchMap$com$google$android$tvlauncher$util$OemConfiguration$LayoutOrderOptions */
-        static final /* synthetic */ int[] f133x70c2e182 = new int[OemConfiguration.LayoutOrderOptions.values().length];
-
-        static {
-            try {
-                f133x70c2e182[OemConfiguration.LayoutOrderOptions.APPS_OEM_GAMES.ordinal()] = 1;
-            } catch (NoSuchFieldError e) {
-            }
-            try {
-                f133x70c2e182[OemConfiguration.LayoutOrderOptions.APPS_GAMES_OEM.ordinal()] = 2;
-            } catch (NoSuchFieldError e2) {
-            }
-            try {
-                f133x70c2e182[OemConfiguration.LayoutOrderOptions.GAMES_APPS_OEM.ordinal()] = 3;
-            } catch (NoSuchFieldError e3) {
-            }
-            try {
-                f133x70c2e182[OemConfiguration.LayoutOrderOptions.APPS_OEM.ordinal()] = 4;
-            } catch (NoSuchFieldError e4) {
-            }
-        }
-    }
-
-    /* access modifiers changed from: private */
-    public int getKeylineForPosition(int position) {
-        if (position < 0 || position > this.rows.size() - 1) {
-            return this.keylineRowOne;
-        }
-        int itemCount = getItemCount();
-        int nonTitleNonStoreRowsCount = getNonTitleNonStoreRowsCount();
-        if (nonTitleNonStoreRowsCount == 1) {
-            return this.keylineRowOne;
-        }
-        if (nonTitleNonStoreRowsCount != 2) {
-            if (nonTitleNonStoreRowsCount != 3) {
-                if (position == itemCount - 1) {
-                    return this.keylineLastRow;
-                }
-                if (position == itemCount - 2) {
-                    return this.keylineRowTwoTitleAbove;
-                }
-                if (position == itemCount - 3 && this.rows.get(position + 1).intValue() == 5) {
-                    return this.keylineRowTwo;
-                }
-                if (position == itemCount - 3) {
-                    return this.keylineRowOneTitleAbove;
-                }
-            } else if (position == itemCount - 1 && (this.rows.get(position - 1).intValue() == 5 || this.rows.get(position - 2).intValue() == 5)) {
-                return this.keylineLastRow;
-            } else {
-                if (position == itemCount - 1) {
-                    return this.keylineRowThree;
-                }
-                if (position == itemCount - 2 && this.rows.get(position - 1).intValue() == 5) {
-                    return this.keylineRowTwoTitleAbove;
-                }
-                if (position == itemCount - 2) {
-                    return this.keylineRowTwo;
-                }
-                if (position == itemCount - 3 && this.rows.get(position + 1).intValue() == 5) {
-                    return this.keylineRowTwo;
-                }
-            }
-        } else if (position == itemCount - 1 && this.rows.get(position - 1).intValue() == 5) {
-            return this.keylineRowTwoTitleAbove;
-        } else {
-            if (position == itemCount - 1) {
-                return this.keylineRowTwo;
-            }
-        }
-        return this.keylineRowOne;
-    }
-
-    private int getNonTitleNonStoreRowsCount() {
-        return this.appLaunchItems.getNumRows() + this.gameLaunchItems.getNumRows() + (this.promotions.isEmpty() ^ true ? 1 : 0);
-    }
-
-    /* access modifiers changed from: private */
-    public boolean isRowTypeEnabled(int rowType) {
-        return this.enabledRowTypes.contains(Integer.valueOf(rowType));
-    }
-
-    /* access modifiers changed from: private */
-    public int getRowIndexForRowType(int rowType) {
-        int orderIndex = this.enabledRowOrder.indexOf(Integer.valueOf(rowType));
-        for (int i = orderIndex - 1; i >= 0; i--) {
-            int lastIndexOfTypeBefore = this.rows.lastIndexOf(Integer.valueOf(this.enabledRowOrder.get(i).intValue()));
-            if (lastIndexOfTypeBefore != -1) {
-                return lastIndexOfTypeBefore + 1;
-            }
-        }
-        for (int i2 = orderIndex + 1; i2 < this.enabledRowOrder.size(); i2++) {
-            int firstIndexOfTypeAfter = this.rows.indexOf(Integer.valueOf(this.enabledRowOrder.get(i2).intValue()));
-            if (firstIndexOfTypeAfter != -1) {
-                return firstIndexOfTypeAfter - 1;
-            }
-        }
-        return this.rows.size();
-    }
-
-    /* access modifiers changed from: private */
-    public int getOrderedPosition(LaunchItem item) {
-        List<LaunchItem> launchItemList;
-        if (!isRowTypeEnabled(2)) {
-            launchItemList = this.launchItemsManager.getAllLaunchItemsWithSorting();
-        } else if (item.isGame()) {
-            launchItemList = this.launchItemsManager.getGameLaunchItems();
-        } else {
-            launchItemList = this.launchItemsManager.getAppLaunchItems();
-        }
-        return launchItemList.indexOf(item);
     }
 }

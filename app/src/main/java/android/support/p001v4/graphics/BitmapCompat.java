@@ -6,6 +6,9 @@ import android.support.annotation.NonNull;
 
 /* renamed from: android.support.v4.graphics.BitmapCompat */
 public final class BitmapCompat {
+    private BitmapCompat() {
+    }
+
     public static boolean hasMipMap(@NonNull Bitmap bitmap) {
         if (Build.VERSION.SDK_INT >= 18) {
             return bitmap.hasMipMap();
@@ -24,8 +27,5 @@ public final class BitmapCompat {
             return bitmap.getAllocationByteCount();
         }
         return bitmap.getByteCount();
-    }
-
-    private BitmapCompat() {
     }
 }

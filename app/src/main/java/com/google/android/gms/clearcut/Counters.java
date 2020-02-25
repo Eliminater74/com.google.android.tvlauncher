@@ -1,18 +1,18 @@
 package com.google.android.gms.clearcut;
 
 import android.util.Log;
-import com.google.android.gms.clearcut.ClearcutLogger;
+
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.PendingResults;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.common.internal.zzau;
 import com.google.android.gms.common.util.Clock;
-import com.google.android.gms.common.util.zzh;
 import com.google.android.gms.internal.zzgsh;
 import com.google.android.gms.internal.zzgtg;
 import com.google.android.gms.internal.zzgth;
 import com.google.android.gms.internal.zzgti;
+
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
@@ -32,29 +32,28 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class Counters {
     public static final Alias IDENTITY = new BucketAlias(1);
-    private static final Charset zza = Charset.forName("UTF-8");
     /* access modifiers changed from: private */
     public static final long[] zzb = new long[0];
+    private static final Charset zza = Charset.forName("UTF-8");
     private static final Comparator zzs = new zzp();
-    private final String zzc;
     /* access modifiers changed from: private */
     public final int zzd;
     /* access modifiers changed from: private */
     public final Clock zze;
+    /* access modifiers changed from: private */
+    public final ReentrantReadWriteLock zzm;
+    private final String zzc;
+    private final ClearcutLogger zzl;
     /* access modifiers changed from: private */
     public LogEventModifier zzf;
     /* access modifiers changed from: private */
     public boolean zzg;
     /* access modifiers changed from: private */
     public volatile int zzh;
-    private ScheduledExecutorService zzi;
     /* access modifiers changed from: private */
     public volatile Future<?> zzj;
     /* access modifiers changed from: private */
     public long zzk;
-    private final ClearcutLogger zzl;
-    /* access modifiers changed from: private */
-    public final ReentrantReadWriteLock zzm;
     /* access modifiers changed from: private */
     public Map<String, AbstractCounter> zzn;
     /* access modifiers changed from: private */
@@ -63,249 +62,11 @@ public class Counters {
     public Integer zzp;
     /* access modifiers changed from: private */
     public TreeMap<byte[], Integer> zzq;
+    private ScheduledExecutorService zzi;
     private LogCallback zzr;
-
-    public interface Alias {
-        long alias(long j);
-    }
-
-    public interface LogCallback {
-        void onLogged(Counters counters);
-    }
-
-    public interface LogEventModifier {
-        ClearcutLogger.LogEventBuilder modify(ClearcutLogger.LogEventBuilder logEventBuilder);
-    }
 
     public Counters(ClearcutLogger clearcutLogger, String str, int i) {
         this(clearcutLogger, str, i, zzh.zza());
-    }
-
-    public class BooleanHistogram extends AbstractCounter {
-        private BooleanHistogram(Counters counters, String str) {
-            super(str);
-        }
-
-        private BooleanHistogram(Counters counters, BooleanHistogram booleanHistogram, boolean z) {
-            super(counters, booleanHistogram, z);
-        }
-
-        public void increment(boolean z) {
-            incrementBase(z ? 1 : 0);
-        }
-
-        public long getCount(boolean z) {
-            return getCountBase(z ? 1 : 0);
-        }
-
-        /* synthetic */ BooleanHistogram(Counters counters, BooleanHistogram booleanHistogram, boolean z, zzp zzp) {
-            this(counters, booleanHistogram, z);
-        }
-
-        /* synthetic */ BooleanHistogram(Counters counters, String str, zzp zzp) {
-            this(counters, str);
-        }
-    }
-
-    public class Counter extends AbstractCounter {
-        private Counter(Counters counters, String str) {
-            super(str);
-        }
-
-        private Counter(Counters counters, Counter counter, boolean z) {
-            super(counters, counter, z);
-        }
-
-        public void increment() {
-            incrementBy(1);
-        }
-
-        public void incrementBy(long j) {
-            incrementBase(0, j);
-        }
-
-        public long getCount() {
-            return getCountBase(0);
-        }
-
-        /* synthetic */ Counter(Counters counters, Counter counter, boolean z, zzp zzp) {
-            this(counters, counter, z);
-        }
-
-        /* synthetic */ Counter(Counters counters, String str, zzp zzp) {
-            this(counters, str);
-        }
-    }
-
-    public class IntegerHistogram extends AbstractCounter {
-        private IntegerHistogram(Counters counters, String str) {
-            super(str);
-        }
-
-        private IntegerHistogram(Counters counters, IntegerHistogram integerHistogram, boolean z) {
-            super(counters, integerHistogram, z);
-        }
-
-        public void increment(int i) {
-            incrementBase((long) i);
-        }
-
-        public long getCount(int i) {
-            return getCountBase((long) i);
-        }
-
-        /* synthetic */ IntegerHistogram(Counters counters, IntegerHistogram integerHistogram, boolean z, zzp zzp) {
-            this(counters, integerHistogram, z);
-        }
-
-        /* synthetic */ IntegerHistogram(Counters counters, String str, zzp zzp) {
-            this(counters, str);
-        }
-    }
-
-    public class LongHistogram extends zza {
-        private LongHistogram(Counters counters, String str, Alias alias) {
-            super(counters, str, alias);
-        }
-
-        private LongHistogram(Counters counters, LongHistogram longHistogram, boolean z) {
-            super(counters, longHistogram, z);
-        }
-
-        public void increment(long j) {
-            super.increment(j);
-        }
-
-        public void incrementBy(long j, long j2) {
-            super.incrementBy(j, j2);
-        }
-
-        public void increment(long[] jArr) {
-            super.incrementBy(jArr, Counters.zzb);
-        }
-
-        public void incrementBy(long[] jArr, long[] jArr2) {
-            super.incrementBy(jArr, jArr2);
-        }
-
-        public long getCount(long j) {
-            return super.getCount(j);
-        }
-
-        /* synthetic */ LongHistogram(Counters counters, LongHistogram longHistogram, boolean z, zzp zzp) {
-            this(counters, longHistogram, z);
-        }
-
-        /* synthetic */ LongHistogram(Counters counters, String str, Alias alias, zzp zzp) {
-            this(counters, str, alias);
-        }
-    }
-
-    public final class Timer {
-        private long zza = Counters.this.zze.elapsedRealtime();
-
-        public Timer() {
-        }
-
-        public final long reset() {
-            long j = this.zza;
-            this.zza = Counters.this.zze.elapsedRealtime();
-            return j;
-        }
-
-        public final long getMilliseconds() {
-            return Counters.this.zze.elapsedRealtime() - this.zza;
-        }
-
-        public final void incrementTo(TimerHistogram timerHistogram) {
-            timerHistogram.increment(getMilliseconds());
-        }
-    }
-
-    public class TimerHistogram extends zza {
-        private TimerHistogram(String str, Alias alias) {
-            super(Counters.this, str, alias);
-        }
-
-        public class BoundTimer {
-            private long zza;
-            private final TimerHistogram zzb;
-
-            private BoundTimer(TimerHistogram timerHistogram) {
-                this.zzb = timerHistogram;
-                reset();
-            }
-
-            public void reset() {
-                this.zza = Counters.this.zze.elapsedRealtime();
-            }
-
-            public long getMilliseconds() {
-                return Counters.this.zze.elapsedRealtime() - this.zza;
-            }
-
-            public void incrementTo() {
-                this.zzb.increment(getMilliseconds());
-            }
-
-            /* synthetic */ BoundTimer(TimerHistogram timerHistogram, TimerHistogram timerHistogram2, zzp zzp) {
-                this(timerHistogram2);
-            }
-        }
-
-        private TimerHistogram(TimerHistogram timerHistogram, boolean z) {
-            super(Counters.this, timerHistogram, z);
-        }
-
-        public long getCount(long j) {
-            return super.getCount(j);
-        }
-
-        public BoundTimer newTimer() {
-            return new BoundTimer(this, this, null);
-        }
-
-        /* synthetic */ TimerHistogram(Counters counters, TimerHistogram timerHistogram, boolean z, zzp zzp) {
-            this(timerHistogram, z);
-        }
-
-        /* synthetic */ TimerHistogram(Counters counters, String str, Alias alias, zzp zzp) {
-            this(str, alias);
-        }
-    }
-
-    public class zza extends AbstractCounter {
-        final Alias zzb;
-
-        protected zza(Counters counters, String str, Alias alias) {
-            super(str);
-            this.zzb = alias;
-        }
-
-        protected zza(Counters counters, zza zza, boolean z) {
-            super(counters, zza, z);
-            this.zzb = zza.zzb;
-        }
-
-        /* access modifiers changed from: protected */
-        public void increment(long j) {
-            incrementBase(this.zzb.alias(j), 1);
-        }
-
-        /* access modifiers changed from: protected */
-        public void incrementBy(long j, long j2) {
-            incrementBase(this.zzb.alias(j), j2);
-        }
-
-        /* access modifiers changed from: protected */
-        public void incrementBy(long[] jArr, long[] jArr2) {
-            incrementBase(jArr, jArr2, this.zzb);
-        }
-
-        /* access modifiers changed from: protected */
-        public long getCount(long j) {
-            return getCountBase(this.zzb.alias(j));
-        }
     }
 
     private Counters(Counters counters, boolean z) {
@@ -337,6 +98,467 @@ public class Counters {
         } finally {
             writeLock.unlock();
         }
+    }
+
+    public Counters(ClearcutLogger clearcutLogger, String str, int i, Clock clock) {
+        this.zzm = new ReentrantReadWriteLock();
+        this.zzn = new TreeMap();
+        this.zzo = null;
+        this.zzp = null;
+        this.zzq = new TreeMap<>(zzs);
+        this.zzr = null;
+        zzau.zza(clearcutLogger);
+        zzau.zza((Object) str);
+        zzau.zzb(i > 0);
+        zzau.zza(clock);
+        this.zzl = clearcutLogger;
+        this.zzc = str;
+        this.zzd = i;
+        this.zze = clock;
+        this.zzk = clock.elapsedRealtime();
+    }
+
+    public static long umaMetricHash(String str) {
+        try {
+            MessageDigest instance = MessageDigest.getInstance("MD5");
+            instance.update(str.getBytes(zza));
+            return ByteBuffer.wrap(instance.digest()).getLong();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Deprecated
+    public void setAutoLogAsync(GoogleApiClient googleApiClient) {
+        setAutoLogAsync();
+    }
+
+    public void setAutoLogAsync() {
+        this.zzm.writeLock().lock();
+        try {
+            this.zzg = true;
+        } finally {
+            this.zzm.writeLock().unlock();
+        }
+    }
+
+    public void setAutoLogMillis(ScheduledExecutorService scheduledExecutorService, int i) {
+        this.zzm.writeLock().lock();
+        try {
+            this.zzi = scheduledExecutorService;
+            if (this.zzi != null) {
+                this.zzh = i;
+                zzc();
+            } else {
+                this.zzh = 0;
+            }
+        } finally {
+            this.zzm.writeLock().unlock();
+        }
+    }
+
+    /* access modifiers changed from: private */
+    public final void zzc() {
+        this.zzm.writeLock().lock();
+        try {
+            if (this.zzj != null) {
+                this.zzj.cancel(false);
+            }
+            this.zzj = this.zzi.schedule(new zzo(this), (long) this.zzh, TimeUnit.MILLISECONDS);
+        } finally {
+            this.zzm.writeLock().unlock();
+        }
+    }
+
+    public void setLogEventModifier(LogEventModifier logEventModifier) {
+        this.zzm.writeLock().lock();
+        try {
+            this.zzf = logEventModifier;
+        } finally {
+            this.zzm.writeLock().unlock();
+        }
+    }
+
+    /* JADX INFO: finally extract failed */
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        this.zzm.readLock().lock();
+        try {
+            sb.append("{");
+            for (Map.Entry next : this.zzq.entrySet()) {
+                sb.append(next.getKey() == null ? "null" : new String((byte[]) next.getKey()));
+                sb.append(", ");
+            }
+            sb.append("}\n");
+            for (AbstractCounter abstractCounter : this.zzn.values()) {
+                sb.append(abstractCounter.toString());
+                sb.append("\n");
+            }
+            this.zzm.readLock().unlock();
+            return sb.toString();
+        } catch (Throwable th) {
+            this.zzm.readLock().unlock();
+            throw th;
+        }
+    }
+
+    private final AbstractCounter zza(AbstractCounter abstractCounter, boolean z) {
+        if (abstractCounter instanceof Counter) {
+            return new Counter(this, (Counter) abstractCounter, z, null);
+        }
+        if (abstractCounter instanceof TimerHistogram) {
+            return new TimerHistogram(this, (TimerHistogram) abstractCounter, z, (zzp) null);
+        }
+        if (abstractCounter instanceof IntegerHistogram) {
+            return new IntegerHistogram(this, (IntegerHistogram) abstractCounter, z, null);
+        }
+        if (abstractCounter instanceof LongHistogram) {
+            return new LongHistogram(this, (LongHistogram) abstractCounter, z, (zzp) null);
+        }
+        if (abstractCounter instanceof BooleanHistogram) {
+            return new BooleanHistogram(this, (BooleanHistogram) abstractCounter, z, null);
+        }
+        String valueOf = String.valueOf(abstractCounter);
+        StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 21);
+        sb.append("Unkown counter type: ");
+        sb.append(valueOf);
+        throw new IllegalArgumentException(sb.toString());
+    }
+
+    public void setLogCallback(LogCallback logCallback) {
+        this.zzr = logCallback;
+    }
+
+    public void setDimensionsInstance(byte[] bArr) {
+        this.zzm.writeLock().lock();
+        try {
+            this.zzo = bArr;
+            this.zzp = this.zzq.get(this.zzo);
+        } finally {
+            this.zzm.writeLock().unlock();
+        }
+    }
+
+    public Collection<byte[]> getDimensionsInstances() {
+        this.zzm.readLock().lock();
+        try {
+            return new ArrayList(this.zzq.keySet());
+        } finally {
+            this.zzm.readLock().unlock();
+        }
+    }
+
+    /* access modifiers changed from: private */
+    public final Integer zza(byte[] bArr) {
+        Integer num = this.zzq.get(bArr);
+        if (num != null) {
+            return num;
+        }
+        Integer valueOf = Integer.valueOf(this.zzq.size());
+        this.zzq.put(bArr, valueOf);
+        return valueOf;
+    }
+
+    public Counters snapshotAndReset() {
+        return new Counters(this, true);
+    }
+
+    public Counters snapshot() {
+        return new Counters(this, false);
+    }
+
+    public Timer newTimer() {
+        return new Timer();
+    }
+
+    public Counter newCounter(String str) {
+        this.zzm.writeLock().lock();
+        try {
+            return new Counter(this, str, (zzp) null);
+        } finally {
+            this.zzm.writeLock().unlock();
+        }
+    }
+
+    public BooleanHistogram newBooleanHistogram(String str) {
+        this.zzm.writeLock().lock();
+        try {
+            return new BooleanHistogram(this, str, (zzp) null);
+        } finally {
+            this.zzm.writeLock().unlock();
+        }
+    }
+
+    public IntegerHistogram newIntegerHistogram(String str) {
+        this.zzm.writeLock().lock();
+        try {
+            return new IntegerHistogram(this, str, (zzp) null);
+        } finally {
+            this.zzm.writeLock().unlock();
+        }
+    }
+
+    public LongHistogram newLongHistogram(String str) {
+        return newLongHistogram(str, IDENTITY);
+    }
+
+    public LongHistogram newLongHistogram(String str, Alias alias) {
+        this.zzm.writeLock().lock();
+        try {
+            return new LongHistogram(this, str, alias, (zzp) null);
+        } finally {
+            this.zzm.writeLock().unlock();
+        }
+    }
+
+    public TimerHistogram newTimerHistogram(String str) {
+        return new TimerHistogram(this, str, IDENTITY, (zzp) null);
+    }
+
+    public TimerHistogram newTimerHistogram(String str, Alias alias) {
+        this.zzm.writeLock().lock();
+        try {
+            return new TimerHistogram(this, str, alias, (zzp) null);
+        } finally {
+            this.zzm.writeLock().unlock();
+        }
+    }
+
+    public Counter getCounter(String str) {
+        this.zzm.writeLock().lock();
+        try {
+            AbstractCounter abstractCounter = this.zzn.get(str);
+            if (abstractCounter == null) {
+                Counter newCounter = newCounter(str);
+                this.zzm.writeLock().unlock();
+                return newCounter;
+            }
+            Counter counter = (Counter) abstractCounter;
+            this.zzm.writeLock().unlock();
+            return counter;
+        } catch (ClassCastException e) {
+            String valueOf = String.valueOf(str);
+            throw new IllegalArgumentException(valueOf.length() != 0 ? "another type of counter exists with name: ".concat(valueOf) : new String("another type of counter exists with name: "));
+        } catch (Throwable th) {
+            this.zzm.writeLock().unlock();
+            throw th;
+        }
+    }
+
+    public BooleanHistogram getBooleanHistogram(String str) {
+        this.zzm.writeLock().lock();
+        try {
+            AbstractCounter abstractCounter = this.zzn.get(str);
+            if (abstractCounter == null) {
+                BooleanHistogram newBooleanHistogram = newBooleanHistogram(str);
+                this.zzm.writeLock().unlock();
+                return newBooleanHistogram;
+            }
+            BooleanHistogram booleanHistogram = (BooleanHistogram) abstractCounter;
+            this.zzm.writeLock().unlock();
+            return booleanHistogram;
+        } catch (ClassCastException e) {
+            String valueOf = String.valueOf(str);
+            throw new IllegalArgumentException(valueOf.length() != 0 ? "another type of counter exists with name: ".concat(valueOf) : new String("another type of counter exists with name: "));
+        } catch (Throwable th) {
+            this.zzm.writeLock().unlock();
+            throw th;
+        }
+    }
+
+    public IntegerHistogram getIntegerHistogram(String str) {
+        this.zzm.writeLock().lock();
+        try {
+            AbstractCounter abstractCounter = this.zzn.get(str);
+            if (abstractCounter == null) {
+                IntegerHistogram newIntegerHistogram = newIntegerHistogram(str);
+                this.zzm.writeLock().unlock();
+                return newIntegerHistogram;
+            }
+            IntegerHistogram integerHistogram = (IntegerHistogram) abstractCounter;
+            this.zzm.writeLock().unlock();
+            return integerHistogram;
+        } catch (ClassCastException e) {
+            String valueOf = String.valueOf(str);
+            throw new IllegalArgumentException(valueOf.length() != 0 ? "another type of counter exists with name: ".concat(valueOf) : new String("another type of counter exists with name: "));
+        } catch (Throwable th) {
+            this.zzm.writeLock().unlock();
+            throw th;
+        }
+    }
+
+    public LongHistogram getLongHistogram(String str) {
+        return getLongHistogram(str, IDENTITY);
+    }
+
+    public LongHistogram getLongHistogram(String str, Alias alias) {
+        this.zzm.writeLock().lock();
+        try {
+            AbstractCounter abstractCounter = this.zzn.get(str);
+            if (abstractCounter == null) {
+                LongHistogram newLongHistogram = newLongHistogram(str, alias);
+                this.zzm.writeLock().unlock();
+                return newLongHistogram;
+            }
+            LongHistogram longHistogram = (LongHistogram) abstractCounter;
+            if (!alias.equals(longHistogram.zzb)) {
+                String valueOf = String.valueOf(str);
+                throw new IllegalArgumentException(valueOf.length() != 0 ? "alias mismatch: ".concat(valueOf) : new String("alias mismatch: "));
+            }
+            this.zzm.writeLock().unlock();
+            return longHistogram;
+        } catch (ClassCastException e) {
+            String valueOf2 = String.valueOf(str);
+            throw new IllegalArgumentException(valueOf2.length() != 0 ? "another type of counter exists with name: ".concat(valueOf2) : new String("another type of counter exists with name: "));
+        } catch (Throwable th) {
+            this.zzm.writeLock().unlock();
+            throw th;
+        }
+    }
+
+    public TimerHistogram getTimerHistogram(String str) {
+        return getTimerHistogram(str, IDENTITY);
+    }
+
+    public TimerHistogram getTimerHistogram(String str, Alias alias) {
+        this.zzm.writeLock().lock();
+        try {
+            AbstractCounter abstractCounter = this.zzn.get(str);
+            if (abstractCounter == null) {
+                TimerHistogram newTimerHistogram = newTimerHistogram(str, alias);
+                this.zzm.writeLock().unlock();
+                return newTimerHistogram;
+            }
+            TimerHistogram timerHistogram = (TimerHistogram) abstractCounter;
+            if (!alias.equals(timerHistogram.zzb)) {
+                String valueOf = String.valueOf(str);
+                throw new IllegalArgumentException(valueOf.length() != 0 ? "alias mismatch: ".concat(valueOf) : new String("alias mismatch: "));
+            }
+            this.zzm.writeLock().unlock();
+            return timerHistogram;
+        } catch (ClassCastException e) {
+            String valueOf2 = String.valueOf(str);
+            throw new IllegalArgumentException(valueOf2.length() != 0 ? "another type of counter exists with name: ".concat(valueOf2) : new String("another type of counter exists with name: "));
+        } catch (Throwable th) {
+            this.zzm.writeLock().unlock();
+            throw th;
+        }
+    }
+
+    public ClearcutLogger.MessageProducer makeProducer(byte[] bArr) {
+        return new zzb(bArr);
+    }
+
+    private final Counters zzd() {
+        LogCallback logCallback = this.zzr;
+        this.zzm.writeLock().lock();
+        if (logCallback != null) {
+            try {
+                logCallback.onLogged(this);
+            } catch (RuntimeException e) {
+                Log.i("Counters", "problem executing callback: ", e);
+            } catch (Throwable th) {
+                this.zzm.writeLock().unlock();
+                throw th;
+            }
+        }
+        Counters snapshotAndReset = snapshotAndReset();
+        this.zzm.writeLock().unlock();
+        return snapshotAndReset;
+    }
+
+    @Deprecated
+    public PendingResult<Status> logAll(GoogleApiClient googleApiClient) {
+        return logAll();
+    }
+
+    public PendingResult<Status> logAll() {
+        return logAll(this.zzf);
+    }
+
+    public PendingResult<Status> logAll(LogEventModifier logEventModifier) {
+        Counters zzd2 = zzd();
+        PendingResult<Status> pendingResult = null;
+        for (ClearcutLogger.MessageProducer protoBytes : zzd2.zze()) {
+            ClearcutLogger.LogEventBuilder logSourceName = zzd2.zzl.newEvent(protoBytes.toProtoBytes()).setLogSourceName(zzd2.zzc);
+            if (logEventModifier != null) {
+                logSourceName = logEventModifier.modify(logSourceName);
+            }
+            pendingResult = logSourceName.logAsync();
+        }
+        if (pendingResult != null) {
+            return pendingResult;
+        }
+        return PendingResults.zza(Status.zza, (GoogleApiClient) null);
+    }
+
+    @Deprecated
+    public PendingResult<Status> logAllAsync(GoogleApiClient googleApiClient) {
+        return zzd().zza((LogEventModifier) null);
+    }
+
+    public void logAllAsync() {
+        logAllAsync(this.zzf);
+    }
+
+    public void logAllAsync(LogEventModifier logEventModifier) {
+        zzd().zza(logEventModifier);
+    }
+
+    private final PendingResult<Status> zza(LogEventModifier logEventModifier) {
+        PendingResult<Status> pendingResult = null;
+        for (ClearcutLogger.MessageProducer newEvent : zze()) {
+            ClearcutLogger.LogEventBuilder logSourceName = this.zzl.newEvent(newEvent).setLogSourceName(this.zzc);
+            if (logEventModifier != null) {
+                logSourceName = logEventModifier.modify(logSourceName);
+            }
+            pendingResult = logSourceName.logAsync();
+        }
+        if (pendingResult != null) {
+            return pendingResult;
+        }
+        return PendingResults.zza(Status.zza, (GoogleApiClient) null);
+    }
+
+    public ClearcutLogger.MessageProducer[] getEventProducersForLogging() {
+        return zzd().zze();
+    }
+
+    private final ClearcutLogger.MessageProducer[] zze() {
+        Set<byte[]> keySet = this.zzq.keySet();
+        ClearcutLogger.MessageProducer[] messageProducerArr = new ClearcutLogger.MessageProducer[keySet.size()];
+        int i = 0;
+        for (byte[] makeProducer : keySet) {
+            messageProducerArr[i] = makeProducer(makeProducer);
+            i++;
+        }
+        return messageProducerArr;
+    }
+
+    /* JADX INFO: finally extract failed */
+    /* access modifiers changed from: package-private */
+    public final /* synthetic */ void zza() {
+        this.zzm.writeLock().lock();
+        try {
+            this.zzj = null;
+            this.zzm.writeLock().unlock();
+            logAllAsync();
+        } catch (Throwable th) {
+            this.zzm.writeLock().unlock();
+            throw th;
+        }
+    }
+
+    public interface Alias {
+        long alias(long j);
+    }
+
+    public interface LogCallback {
+        void onLogged(Counters counters);
+    }
+
+    public interface LogEventModifier {
+        ClearcutLogger.LogEventBuilder modify(ClearcutLogger.LogEventBuilder logEventBuilder);
     }
 
     public static class ClippedBucketAlias extends BucketAlias {
@@ -391,6 +613,233 @@ public class Counters {
                 return true;
             }
             return false;
+        }
+    }
+
+    public class BooleanHistogram extends AbstractCounter {
+        private BooleanHistogram(Counters counters, String str) {
+            super(str);
+        }
+
+        private BooleanHistogram(Counters counters, BooleanHistogram booleanHistogram, boolean z) {
+            super(counters, booleanHistogram, z);
+        }
+
+        /* synthetic */ BooleanHistogram(Counters counters, BooleanHistogram booleanHistogram, boolean z, zzp zzp) {
+            this(counters, booleanHistogram, z);
+        }
+
+        /* synthetic */ BooleanHistogram(Counters counters, String str, zzp zzp) {
+            this(counters, str);
+        }
+
+        public void increment(boolean z) {
+            incrementBase(z ? 1 : 0);
+        }
+
+        public long getCount(boolean z) {
+            return getCountBase(z ? 1 : 0);
+        }
+    }
+
+    public class Counter extends AbstractCounter {
+        private Counter(Counters counters, String str) {
+            super(str);
+        }
+
+        private Counter(Counters counters, Counter counter, boolean z) {
+            super(counters, counter, z);
+        }
+
+        /* synthetic */ Counter(Counters counters, Counter counter, boolean z, zzp zzp) {
+            this(counters, counter, z);
+        }
+
+        /* synthetic */ Counter(Counters counters, String str, zzp zzp) {
+            this(counters, str);
+        }
+
+        public void increment() {
+            incrementBy(1);
+        }
+
+        public void incrementBy(long j) {
+            incrementBase(0, j);
+        }
+
+        public long getCount() {
+            return getCountBase(0);
+        }
+    }
+
+    public class IntegerHistogram extends AbstractCounter {
+        private IntegerHistogram(Counters counters, String str) {
+            super(str);
+        }
+
+        private IntegerHistogram(Counters counters, IntegerHistogram integerHistogram, boolean z) {
+            super(counters, integerHistogram, z);
+        }
+
+        /* synthetic */ IntegerHistogram(Counters counters, IntegerHistogram integerHistogram, boolean z, zzp zzp) {
+            this(counters, integerHistogram, z);
+        }
+
+        /* synthetic */ IntegerHistogram(Counters counters, String str, zzp zzp) {
+            this(counters, str);
+        }
+
+        public void increment(int i) {
+            incrementBase((long) i);
+        }
+
+        public long getCount(int i) {
+            return getCountBase((long) i);
+        }
+    }
+
+    public class LongHistogram extends zza {
+        private LongHistogram(Counters counters, String str, Alias alias) {
+            super(counters, str, alias);
+        }
+
+        private LongHistogram(Counters counters, LongHistogram longHistogram, boolean z) {
+            super(counters, longHistogram, z);
+        }
+
+        /* synthetic */ LongHistogram(Counters counters, LongHistogram longHistogram, boolean z, zzp zzp) {
+            this(counters, longHistogram, z);
+        }
+
+        /* synthetic */ LongHistogram(Counters counters, String str, Alias alias, zzp zzp) {
+            this(counters, str, alias);
+        }
+
+        public void increment(long j) {
+            super.increment(j);
+        }
+
+        public void incrementBy(long j, long j2) {
+            super.incrementBy(j, j2);
+        }
+
+        public void increment(long[] jArr) {
+            super.incrementBy(jArr, Counters.zzb);
+        }
+
+        public void incrementBy(long[] jArr, long[] jArr2) {
+            super.incrementBy(jArr, jArr2);
+        }
+
+        public long getCount(long j) {
+            return super.getCount(j);
+        }
+    }
+
+    public final class Timer {
+        private long zza = Counters.this.zze.elapsedRealtime();
+
+        public Timer() {
+        }
+
+        public final long reset() {
+            long j = this.zza;
+            this.zza = Counters.this.zze.elapsedRealtime();
+            return j;
+        }
+
+        public final long getMilliseconds() {
+            return Counters.this.zze.elapsedRealtime() - this.zza;
+        }
+
+        public final void incrementTo(TimerHistogram timerHistogram) {
+            timerHistogram.increment(getMilliseconds());
+        }
+    }
+
+    public class TimerHistogram extends zza {
+        private TimerHistogram(String str, Alias alias) {
+            super(Counters.this, str, alias);
+        }
+
+        private TimerHistogram(TimerHistogram timerHistogram, boolean z) {
+            super(Counters.this, timerHistogram, z);
+        }
+
+        /* synthetic */ TimerHistogram(Counters counters, TimerHistogram timerHistogram, boolean z, zzp zzp) {
+            this(timerHistogram, z);
+        }
+
+        /* synthetic */ TimerHistogram(Counters counters, String str, Alias alias, zzp zzp) {
+            this(str, alias);
+        }
+
+        public long getCount(long j) {
+            return super.getCount(j);
+        }
+
+        public BoundTimer newTimer() {
+            return new BoundTimer(this, this, null);
+        }
+
+        public class BoundTimer {
+            private final TimerHistogram zzb;
+            private long zza;
+
+            private BoundTimer(TimerHistogram timerHistogram) {
+                this.zzb = timerHistogram;
+                reset();
+            }
+
+            /* synthetic */ BoundTimer(TimerHistogram timerHistogram, TimerHistogram timerHistogram2, zzp zzp) {
+                this(timerHistogram2);
+            }
+
+            public void reset() {
+                this.zza = Counters.this.zze.elapsedRealtime();
+            }
+
+            public long getMilliseconds() {
+                return Counters.this.zze.elapsedRealtime() - this.zza;
+            }
+
+            public void incrementTo() {
+                this.zzb.increment(getMilliseconds());
+            }
+        }
+    }
+
+    public class zza extends AbstractCounter {
+        final Alias zzb;
+
+        protected zza(Counters counters, String str, Alias alias) {
+            super(str);
+            this.zzb = alias;
+        }
+
+        protected zza(Counters counters, zza zza, boolean z) {
+            super(counters, zza, z);
+            this.zzb = zza.zzb;
+        }
+
+        /* access modifiers changed from: protected */
+        public void increment(long j) {
+            incrementBase(this.zzb.alias(j), 1);
+        }
+
+        /* access modifiers changed from: protected */
+        public void incrementBy(long j, long j2) {
+            incrementBase(this.zzb.alias(j), j2);
+        }
+
+        /* access modifiers changed from: protected */
+        public void incrementBy(long[] jArr, long[] jArr2) {
+            incrementBase(jArr, jArr2, this.zzb);
+        }
+
+        /* access modifiers changed from: protected */
+        public long getCount(long j) {
+            return getCountBase(this.zzb.alias(j));
         }
     }
 
@@ -471,12 +920,12 @@ public class Counters {
     }
 
     public abstract class AbstractCounter {
-        Map<Integer, Map<Long, long[]>> zza;
         /* access modifiers changed from: private */
         public final String zzb;
+        private final Object zze;
+        Map<Integer, Map<Long, long[]>> zza;
         private int zzc;
         private int zzd;
-        private final Object zze;
 
         protected AbstractCounter(Counters counters, AbstractCounter abstractCounter, boolean z) {
             this(abstractCounter.zzb);
@@ -500,6 +949,18 @@ public class Counters {
             }
         }
 
+        protected AbstractCounter(String str) {
+            this.zzd = Counters.this.zzd;
+            this.zza = new HashMap();
+            this.zze = new Object();
+            if (Counters.this.zzn.containsKey(str)) {
+                String valueOf = String.valueOf(str);
+                throw new IllegalStateException(valueOf.length() != 0 ? "counter/histogram already exists: ".concat(valueOf) : new String("counter/histogram already exists: "));
+            }
+            Counters.this.zzn.put(str, this);
+            this.zzb = str;
+        }
+
         public String toString() {
             StringBuilder sb = new StringBuilder();
             sb.append("AbstractCounter");
@@ -521,18 +982,6 @@ public class Counters {
             }
             sb.append("]");
             return sb.toString();
-        }
-
-        protected AbstractCounter(String str) {
-            this.zzd = Counters.this.zzd;
-            this.zza = new HashMap();
-            this.zze = new Object();
-            if (Counters.this.zzn.containsKey(str)) {
-                String valueOf = String.valueOf(str);
-                throw new IllegalStateException(valueOf.length() != 0 ? "counter/histogram already exists: ".concat(valueOf) : new String("counter/histogram already exists: "));
-            }
-            Counters.this.zzn.put(str, this);
-            this.zzb = str;
         }
 
         /* access modifiers changed from: protected */
@@ -880,455 +1329,6 @@ public class Counters {
             }
             zzau.zzb(z);
             this.zzd = i;
-        }
-    }
-
-    public Counters(ClearcutLogger clearcutLogger, String str, int i, Clock clock) {
-        this.zzm = new ReentrantReadWriteLock();
-        this.zzn = new TreeMap();
-        this.zzo = null;
-        this.zzp = null;
-        this.zzq = new TreeMap<>(zzs);
-        this.zzr = null;
-        zzau.zza(clearcutLogger);
-        zzau.zza((Object) str);
-        zzau.zzb(i > 0);
-        zzau.zza(clock);
-        this.zzl = clearcutLogger;
-        this.zzc = str;
-        this.zzd = i;
-        this.zze = clock;
-        this.zzk = clock.elapsedRealtime();
-    }
-
-    @Deprecated
-    public void setAutoLogAsync(GoogleApiClient googleApiClient) {
-        setAutoLogAsync();
-    }
-
-    public void setAutoLogAsync() {
-        this.zzm.writeLock().lock();
-        try {
-            this.zzg = true;
-        } finally {
-            this.zzm.writeLock().unlock();
-        }
-    }
-
-    public void setAutoLogMillis(ScheduledExecutorService scheduledExecutorService, int i) {
-        this.zzm.writeLock().lock();
-        try {
-            this.zzi = scheduledExecutorService;
-            if (this.zzi != null) {
-                this.zzh = i;
-                zzc();
-            } else {
-                this.zzh = 0;
-            }
-        } finally {
-            this.zzm.writeLock().unlock();
-        }
-    }
-
-    /* access modifiers changed from: private */
-    public final void zzc() {
-        this.zzm.writeLock().lock();
-        try {
-            if (this.zzj != null) {
-                this.zzj.cancel(false);
-            }
-            this.zzj = this.zzi.schedule(new zzo(this), (long) this.zzh, TimeUnit.MILLISECONDS);
-        } finally {
-            this.zzm.writeLock().unlock();
-        }
-    }
-
-    public void setLogEventModifier(LogEventModifier logEventModifier) {
-        this.zzm.writeLock().lock();
-        try {
-            this.zzf = logEventModifier;
-        } finally {
-            this.zzm.writeLock().unlock();
-        }
-    }
-
-    /* JADX INFO: finally extract failed */
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        this.zzm.readLock().lock();
-        try {
-            sb.append("{");
-            for (Map.Entry next : this.zzq.entrySet()) {
-                sb.append(next.getKey() == null ? "null" : new String((byte[]) next.getKey()));
-                sb.append(", ");
-            }
-            sb.append("}\n");
-            for (AbstractCounter abstractCounter : this.zzn.values()) {
-                sb.append(abstractCounter.toString());
-                sb.append("\n");
-            }
-            this.zzm.readLock().unlock();
-            return sb.toString();
-        } catch (Throwable th) {
-            this.zzm.readLock().unlock();
-            throw th;
-        }
-    }
-
-    private final AbstractCounter zza(AbstractCounter abstractCounter, boolean z) {
-        if (abstractCounter instanceof Counter) {
-            return new Counter(this, (Counter) abstractCounter, z, null);
-        }
-        if (abstractCounter instanceof TimerHistogram) {
-            return new TimerHistogram(this, (TimerHistogram) abstractCounter, z, (zzp) null);
-        }
-        if (abstractCounter instanceof IntegerHistogram) {
-            return new IntegerHistogram(this, (IntegerHistogram) abstractCounter, z, null);
-        }
-        if (abstractCounter instanceof LongHistogram) {
-            return new LongHistogram(this, (LongHistogram) abstractCounter, z, (zzp) null);
-        }
-        if (abstractCounter instanceof BooleanHistogram) {
-            return new BooleanHistogram(this, (BooleanHistogram) abstractCounter, z, null);
-        }
-        String valueOf = String.valueOf(abstractCounter);
-        StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 21);
-        sb.append("Unkown counter type: ");
-        sb.append(valueOf);
-        throw new IllegalArgumentException(sb.toString());
-    }
-
-    public void setLogCallback(LogCallback logCallback) {
-        this.zzr = logCallback;
-    }
-
-    public void setDimensionsInstance(byte[] bArr) {
-        this.zzm.writeLock().lock();
-        try {
-            this.zzo = bArr;
-            this.zzp = this.zzq.get(this.zzo);
-        } finally {
-            this.zzm.writeLock().unlock();
-        }
-    }
-
-    public Collection<byte[]> getDimensionsInstances() {
-        this.zzm.readLock().lock();
-        try {
-            return new ArrayList(this.zzq.keySet());
-        } finally {
-            this.zzm.readLock().unlock();
-        }
-    }
-
-    /* access modifiers changed from: private */
-    public final Integer zza(byte[] bArr) {
-        Integer num = this.zzq.get(bArr);
-        if (num != null) {
-            return num;
-        }
-        Integer valueOf = Integer.valueOf(this.zzq.size());
-        this.zzq.put(bArr, valueOf);
-        return valueOf;
-    }
-
-    public Counters snapshotAndReset() {
-        return new Counters(this, true);
-    }
-
-    public Counters snapshot() {
-        return new Counters(this, false);
-    }
-
-    public static long umaMetricHash(String str) {
-        try {
-            MessageDigest instance = MessageDigest.getInstance("MD5");
-            instance.update(str.getBytes(zza));
-            return ByteBuffer.wrap(instance.digest()).getLong();
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public Timer newTimer() {
-        return new Timer();
-    }
-
-    public Counter newCounter(String str) {
-        this.zzm.writeLock().lock();
-        try {
-            return new Counter(this, str, (zzp) null);
-        } finally {
-            this.zzm.writeLock().unlock();
-        }
-    }
-
-    public BooleanHistogram newBooleanHistogram(String str) {
-        this.zzm.writeLock().lock();
-        try {
-            return new BooleanHistogram(this, str, (zzp) null);
-        } finally {
-            this.zzm.writeLock().unlock();
-        }
-    }
-
-    public IntegerHistogram newIntegerHistogram(String str) {
-        this.zzm.writeLock().lock();
-        try {
-            return new IntegerHistogram(this, str, (zzp) null);
-        } finally {
-            this.zzm.writeLock().unlock();
-        }
-    }
-
-    public LongHistogram newLongHistogram(String str) {
-        return newLongHistogram(str, IDENTITY);
-    }
-
-    public LongHistogram newLongHistogram(String str, Alias alias) {
-        this.zzm.writeLock().lock();
-        try {
-            return new LongHistogram(this, str, alias, (zzp) null);
-        } finally {
-            this.zzm.writeLock().unlock();
-        }
-    }
-
-    public TimerHistogram newTimerHistogram(String str) {
-        return new TimerHistogram(this, str, IDENTITY, (zzp) null);
-    }
-
-    public TimerHistogram newTimerHistogram(String str, Alias alias) {
-        this.zzm.writeLock().lock();
-        try {
-            return new TimerHistogram(this, str, alias, (zzp) null);
-        } finally {
-            this.zzm.writeLock().unlock();
-        }
-    }
-
-    public Counter getCounter(String str) {
-        this.zzm.writeLock().lock();
-        try {
-            AbstractCounter abstractCounter = this.zzn.get(str);
-            if (abstractCounter == null) {
-                Counter newCounter = newCounter(str);
-                this.zzm.writeLock().unlock();
-                return newCounter;
-            }
-            Counter counter = (Counter) abstractCounter;
-            this.zzm.writeLock().unlock();
-            return counter;
-        } catch (ClassCastException e) {
-            String valueOf = String.valueOf(str);
-            throw new IllegalArgumentException(valueOf.length() != 0 ? "another type of counter exists with name: ".concat(valueOf) : new String("another type of counter exists with name: "));
-        } catch (Throwable th) {
-            this.zzm.writeLock().unlock();
-            throw th;
-        }
-    }
-
-    public BooleanHistogram getBooleanHistogram(String str) {
-        this.zzm.writeLock().lock();
-        try {
-            AbstractCounter abstractCounter = this.zzn.get(str);
-            if (abstractCounter == null) {
-                BooleanHistogram newBooleanHistogram = newBooleanHistogram(str);
-                this.zzm.writeLock().unlock();
-                return newBooleanHistogram;
-            }
-            BooleanHistogram booleanHistogram = (BooleanHistogram) abstractCounter;
-            this.zzm.writeLock().unlock();
-            return booleanHistogram;
-        } catch (ClassCastException e) {
-            String valueOf = String.valueOf(str);
-            throw new IllegalArgumentException(valueOf.length() != 0 ? "another type of counter exists with name: ".concat(valueOf) : new String("another type of counter exists with name: "));
-        } catch (Throwable th) {
-            this.zzm.writeLock().unlock();
-            throw th;
-        }
-    }
-
-    public IntegerHistogram getIntegerHistogram(String str) {
-        this.zzm.writeLock().lock();
-        try {
-            AbstractCounter abstractCounter = this.zzn.get(str);
-            if (abstractCounter == null) {
-                IntegerHistogram newIntegerHistogram = newIntegerHistogram(str);
-                this.zzm.writeLock().unlock();
-                return newIntegerHistogram;
-            }
-            IntegerHistogram integerHistogram = (IntegerHistogram) abstractCounter;
-            this.zzm.writeLock().unlock();
-            return integerHistogram;
-        } catch (ClassCastException e) {
-            String valueOf = String.valueOf(str);
-            throw new IllegalArgumentException(valueOf.length() != 0 ? "another type of counter exists with name: ".concat(valueOf) : new String("another type of counter exists with name: "));
-        } catch (Throwable th) {
-            this.zzm.writeLock().unlock();
-            throw th;
-        }
-    }
-
-    public LongHistogram getLongHistogram(String str) {
-        return getLongHistogram(str, IDENTITY);
-    }
-
-    public LongHistogram getLongHistogram(String str, Alias alias) {
-        this.zzm.writeLock().lock();
-        try {
-            AbstractCounter abstractCounter = this.zzn.get(str);
-            if (abstractCounter == null) {
-                LongHistogram newLongHistogram = newLongHistogram(str, alias);
-                this.zzm.writeLock().unlock();
-                return newLongHistogram;
-            }
-            LongHistogram longHistogram = (LongHistogram) abstractCounter;
-            if (!alias.equals(longHistogram.zzb)) {
-                String valueOf = String.valueOf(str);
-                throw new IllegalArgumentException(valueOf.length() != 0 ? "alias mismatch: ".concat(valueOf) : new String("alias mismatch: "));
-            }
-            this.zzm.writeLock().unlock();
-            return longHistogram;
-        } catch (ClassCastException e) {
-            String valueOf2 = String.valueOf(str);
-            throw new IllegalArgumentException(valueOf2.length() != 0 ? "another type of counter exists with name: ".concat(valueOf2) : new String("another type of counter exists with name: "));
-        } catch (Throwable th) {
-            this.zzm.writeLock().unlock();
-            throw th;
-        }
-    }
-
-    public TimerHistogram getTimerHistogram(String str) {
-        return getTimerHistogram(str, IDENTITY);
-    }
-
-    public TimerHistogram getTimerHistogram(String str, Alias alias) {
-        this.zzm.writeLock().lock();
-        try {
-            AbstractCounter abstractCounter = this.zzn.get(str);
-            if (abstractCounter == null) {
-                TimerHistogram newTimerHistogram = newTimerHistogram(str, alias);
-                this.zzm.writeLock().unlock();
-                return newTimerHistogram;
-            }
-            TimerHistogram timerHistogram = (TimerHistogram) abstractCounter;
-            if (!alias.equals(timerHistogram.zzb)) {
-                String valueOf = String.valueOf(str);
-                throw new IllegalArgumentException(valueOf.length() != 0 ? "alias mismatch: ".concat(valueOf) : new String("alias mismatch: "));
-            }
-            this.zzm.writeLock().unlock();
-            return timerHistogram;
-        } catch (ClassCastException e) {
-            String valueOf2 = String.valueOf(str);
-            throw new IllegalArgumentException(valueOf2.length() != 0 ? "another type of counter exists with name: ".concat(valueOf2) : new String("another type of counter exists with name: "));
-        } catch (Throwable th) {
-            this.zzm.writeLock().unlock();
-            throw th;
-        }
-    }
-
-    public ClearcutLogger.MessageProducer makeProducer(byte[] bArr) {
-        return new zzb(bArr);
-    }
-
-    private final Counters zzd() {
-        LogCallback logCallback = this.zzr;
-        this.zzm.writeLock().lock();
-        if (logCallback != null) {
-            try {
-                logCallback.onLogged(this);
-            } catch (RuntimeException e) {
-                Log.i("Counters", "problem executing callback: ", e);
-            } catch (Throwable th) {
-                this.zzm.writeLock().unlock();
-                throw th;
-            }
-        }
-        Counters snapshotAndReset = snapshotAndReset();
-        this.zzm.writeLock().unlock();
-        return snapshotAndReset;
-    }
-
-    @Deprecated
-    public PendingResult<Status> logAll(GoogleApiClient googleApiClient) {
-        return logAll();
-    }
-
-    public PendingResult<Status> logAll() {
-        return logAll(this.zzf);
-    }
-
-    public PendingResult<Status> logAll(LogEventModifier logEventModifier) {
-        Counters zzd2 = zzd();
-        PendingResult<Status> pendingResult = null;
-        for (ClearcutLogger.MessageProducer protoBytes : zzd2.zze()) {
-            ClearcutLogger.LogEventBuilder logSourceName = zzd2.zzl.newEvent(protoBytes.toProtoBytes()).setLogSourceName(zzd2.zzc);
-            if (logEventModifier != null) {
-                logSourceName = logEventModifier.modify(logSourceName);
-            }
-            pendingResult = logSourceName.logAsync();
-        }
-        if (pendingResult != null) {
-            return pendingResult;
-        }
-        return PendingResults.zza(Status.zza, (GoogleApiClient) null);
-    }
-
-    @Deprecated
-    public PendingResult<Status> logAllAsync(GoogleApiClient googleApiClient) {
-        return zzd().zza((LogEventModifier) null);
-    }
-
-    public void logAllAsync() {
-        logAllAsync(this.zzf);
-    }
-
-    public void logAllAsync(LogEventModifier logEventModifier) {
-        zzd().zza(logEventModifier);
-    }
-
-    private final PendingResult<Status> zza(LogEventModifier logEventModifier) {
-        PendingResult<Status> pendingResult = null;
-        for (ClearcutLogger.MessageProducer newEvent : zze()) {
-            ClearcutLogger.LogEventBuilder logSourceName = this.zzl.newEvent(newEvent).setLogSourceName(this.zzc);
-            if (logEventModifier != null) {
-                logSourceName = logEventModifier.modify(logSourceName);
-            }
-            pendingResult = logSourceName.logAsync();
-        }
-        if (pendingResult != null) {
-            return pendingResult;
-        }
-        return PendingResults.zza(Status.zza, (GoogleApiClient) null);
-    }
-
-    public ClearcutLogger.MessageProducer[] getEventProducersForLogging() {
-        return zzd().zze();
-    }
-
-    private final ClearcutLogger.MessageProducer[] zze() {
-        Set<byte[]> keySet = this.zzq.keySet();
-        ClearcutLogger.MessageProducer[] messageProducerArr = new ClearcutLogger.MessageProducer[keySet.size()];
-        int i = 0;
-        for (byte[] makeProducer : keySet) {
-            messageProducerArr[i] = makeProducer(makeProducer);
-            i++;
-        }
-        return messageProducerArr;
-    }
-
-    /* JADX INFO: finally extract failed */
-    /* access modifiers changed from: package-private */
-    public final /* synthetic */ void zza() {
-        this.zzm.writeLock().lock();
-        try {
-            this.zzj = null;
-            this.zzm.writeLock().unlock();
-            logAllAsync();
-        } catch (Throwable th) {
-            this.zzm.writeLock().unlock();
-            throw th;
         }
     }
 }

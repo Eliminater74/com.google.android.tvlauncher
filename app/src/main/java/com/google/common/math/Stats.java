@@ -7,11 +7,13 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.primitives.Doubles;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Iterator;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtIncompatible
 @Beta
@@ -65,6 +67,90 @@ public final class Stats implements Serializable {
         StatsAccumulator acummulator = new StatsAccumulator();
         acummulator.addAll(values);
         return acummulator.snapshot();
+    }
+
+    public static double meanOf(Iterable<? extends Number> values) {
+        return meanOf(values.iterator());
+    }
+
+    public static double meanOf(Iterator<? extends Number> values) {
+        Preconditions.checkArgument(values.hasNext());
+        long count2 = 1;
+        double mean2 = ((Number) values.next()).doubleValue();
+        while (values.hasNext()) {
+            double value = ((Number) values.next()).doubleValue();
+            count2++;
+            if (!Doubles.isFinite(value) || !Doubles.isFinite(mean2)) {
+                mean2 = StatsAccumulator.calculateNewMeanNonFinite(mean2, value);
+            } else {
+                double d = (double) count2;
+                Double.isNaN(d);
+                mean2 += (value - mean2) / d;
+            }
+        }
+        return mean2;
+    }
+
+    public static double meanOf(double... values) {
+        Preconditions.checkArgument(values.length > 0);
+        double mean2 = values[0];
+        for (int index = 1; index < values.length; index++) {
+            double value = values[index];
+            if (!Doubles.isFinite(value) || !Doubles.isFinite(mean2)) {
+                mean2 = StatsAccumulator.calculateNewMeanNonFinite(mean2, value);
+            } else {
+                double d = (double) (index + 1);
+                Double.isNaN(d);
+                mean2 += (value - mean2) / d;
+            }
+        }
+        return mean2;
+    }
+
+    public static double meanOf(int... values) {
+        Preconditions.checkArgument(values.length > 0);
+        double mean2 = (double) values[0];
+        for (int index = 1; index < values.length; index++) {
+            double value = (double) values[index];
+            if (!Doubles.isFinite(value) || !Doubles.isFinite(mean2)) {
+                mean2 = StatsAccumulator.calculateNewMeanNonFinite(mean2, value);
+            } else {
+                Double.isNaN(value);
+                double d = (double) (index + 1);
+                Double.isNaN(d);
+                mean2 += (value - mean2) / d;
+            }
+        }
+        return mean2;
+    }
+
+    public static double meanOf(long... values) {
+        Preconditions.checkArgument(values.length > 0);
+        double mean2 = (double) values[0];
+        for (int index = 1; index < values.length; index++) {
+            double value = (double) values[index];
+            if (!Doubles.isFinite(value) || !Doubles.isFinite(mean2)) {
+                mean2 = StatsAccumulator.calculateNewMeanNonFinite(mean2, value);
+            } else {
+                Double.isNaN(value);
+                double d = (double) (index + 1);
+                Double.isNaN(d);
+                mean2 += (value - mean2) / d;
+            }
+        }
+        return mean2;
+    }
+
+    public static Stats fromByteArray(byte[] byteArray) {
+        Preconditions.checkNotNull(byteArray);
+        Preconditions.checkArgument(byteArray.length == 40, "Expected Stats.BYTES = %s remaining , got %s", 40, byteArray.length);
+        return readFrom(ByteBuffer.wrap(byteArray).order(ByteOrder.LITTLE_ENDIAN));
+    }
+
+    static Stats readFrom(ByteBuffer buffer) {
+        Preconditions.checkNotNull(buffer);
+        Preconditions.checkArgument(buffer.remaining() >= 40, "Expected at least Stats.BYTES = %s remaining , got %s", 40, buffer.remaining());
+        return new Stats(buffer.getLong(), buffer.getDouble(), buffer.getDouble(), buffer.getDouble(), buffer.getDouble());
     }
 
     public long count() {
@@ -153,78 +239,6 @@ public final class Stats implements Serializable {
         return this.sumOfSquaresOfDeltas;
     }
 
-    public static double meanOf(Iterable<? extends Number> values) {
-        return meanOf(values.iterator());
-    }
-
-    public static double meanOf(Iterator<? extends Number> values) {
-        Preconditions.checkArgument(values.hasNext());
-        long count2 = 1;
-        double mean2 = ((Number) values.next()).doubleValue();
-        while (values.hasNext()) {
-            double value = ((Number) values.next()).doubleValue();
-            count2++;
-            if (!Doubles.isFinite(value) || !Doubles.isFinite(mean2)) {
-                mean2 = StatsAccumulator.calculateNewMeanNonFinite(mean2, value);
-            } else {
-                double d = (double) count2;
-                Double.isNaN(d);
-                mean2 += (value - mean2) / d;
-            }
-        }
-        return mean2;
-    }
-
-    public static double meanOf(double... values) {
-        Preconditions.checkArgument(values.length > 0);
-        double mean2 = values[0];
-        for (int index = 1; index < values.length; index++) {
-            double value = values[index];
-            if (!Doubles.isFinite(value) || !Doubles.isFinite(mean2)) {
-                mean2 = StatsAccumulator.calculateNewMeanNonFinite(mean2, value);
-            } else {
-                double d = (double) (index + 1);
-                Double.isNaN(d);
-                mean2 += (value - mean2) / d;
-            }
-        }
-        return mean2;
-    }
-
-    public static double meanOf(int... values) {
-        Preconditions.checkArgument(values.length > 0);
-        double mean2 = (double) values[0];
-        for (int index = 1; index < values.length; index++) {
-            double value = (double) values[index];
-            if (!Doubles.isFinite(value) || !Doubles.isFinite(mean2)) {
-                mean2 = StatsAccumulator.calculateNewMeanNonFinite(mean2, value);
-            } else {
-                Double.isNaN(value);
-                double d = (double) (index + 1);
-                Double.isNaN(d);
-                mean2 += (value - mean2) / d;
-            }
-        }
-        return mean2;
-    }
-
-    public static double meanOf(long... values) {
-        Preconditions.checkArgument(values.length > 0);
-        double mean2 = (double) values[0];
-        for (int index = 1; index < values.length; index++) {
-            double value = (double) values[index];
-            if (!Doubles.isFinite(value) || !Doubles.isFinite(mean2)) {
-                mean2 = StatsAccumulator.calculateNewMeanNonFinite(mean2, value);
-            } else {
-                Double.isNaN(value);
-                double d = (double) (index + 1);
-                Double.isNaN(d);
-                mean2 += (value - mean2) / d;
-            }
-        }
-        return mean2;
-    }
-
     public byte[] toByteArray() {
         ByteBuffer buff = ByteBuffer.allocate(40).order(ByteOrder.LITTLE_ENDIAN);
         writeTo(buff);
@@ -236,17 +250,5 @@ public final class Stats implements Serializable {
         Preconditions.checkNotNull(buffer);
         Preconditions.checkArgument(buffer.remaining() >= 40, "Expected at least Stats.BYTES = %s remaining , got %s", 40, buffer.remaining());
         buffer.putLong(this.count).putDouble(this.mean).putDouble(this.sumOfSquaresOfDeltas).putDouble(this.min).putDouble(this.max);
-    }
-
-    public static Stats fromByteArray(byte[] byteArray) {
-        Preconditions.checkNotNull(byteArray);
-        Preconditions.checkArgument(byteArray.length == 40, "Expected Stats.BYTES = %s remaining , got %s", 40, byteArray.length);
-        return readFrom(ByteBuffer.wrap(byteArray).order(ByteOrder.LITTLE_ENDIAN));
-    }
-
-    static Stats readFrom(ByteBuffer buffer) {
-        Preconditions.checkNotNull(buffer);
-        Preconditions.checkArgument(buffer.remaining() >= 40, "Expected at least Stats.BYTES = %s remaining , got %s", 40, buffer.remaining());
-        return new Stats(buffer.getLong(), buffer.getDouble(), buffer.getDouble(), buffer.getDouble(), buffer.getDouble());
     }
 }

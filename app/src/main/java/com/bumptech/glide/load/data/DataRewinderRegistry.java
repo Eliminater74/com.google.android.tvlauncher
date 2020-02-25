@@ -1,8 +1,9 @@
 package com.bumptech.glide.load.data;
 
 import android.support.annotation.NonNull;
-import com.bumptech.glide.load.data.DataRewinder;
+
 import com.bumptech.glide.util.Preconditions;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;

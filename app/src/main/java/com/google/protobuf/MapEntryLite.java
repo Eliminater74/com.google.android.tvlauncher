@@ -1,7 +1,5 @@
 package com.google.protobuf;
 
-import com.google.protobuf.MessageLite;
-import com.google.protobuf.WireFormat;
 import java.io.IOException;
 import java.util.AbstractMap;
 import java.util.Map;
@@ -12,20 +10,6 @@ public class MapEntryLite<K, V> {
     private final K key;
     private final Metadata<K, V> metadata;
     private final V value;
-
-    static class Metadata<K, V> {
-        public final K defaultKey;
-        public final V defaultValue;
-        public final WireFormat.FieldType keyType;
-        public final WireFormat.FieldType valueType;
-
-        public Metadata(WireFormat.FieldType keyType2, K defaultKey2, WireFormat.FieldType valueType2, V defaultValue2) {
-            this.keyType = keyType2;
-            this.defaultKey = defaultKey2;
-            this.valueType = valueType2;
-            this.defaultValue = defaultValue2;
-        }
-    }
 
     private MapEntryLite(WireFormat.FieldType keyType, K defaultKey, WireFormat.FieldType valueType, V defaultValue) {
         this.metadata = new Metadata<>(keyType, defaultKey, valueType, defaultValue);
@@ -39,14 +23,6 @@ public class MapEntryLite<K, V> {
         this.value = value2;
     }
 
-    public K getKey() {
-        return this.key;
-    }
-
-    public V getValue() {
-        return this.value;
-    }
-
     public static <K, V> MapEntryLite<K, V> newDefaultInstance(WireFormat.FieldType keyType, K defaultKey, WireFormat.FieldType valueType, V defaultValue) {
         return new MapEntryLite<>(keyType, defaultKey, valueType, defaultValue);
     }
@@ -58,26 +34,6 @@ public class MapEntryLite<K, V> {
 
     static <K, V> int computeSerializedSize(Metadata<K, V> metadata2, K key2, V value2) {
         return FieldSet.computeElementSize(metadata2.keyType, 1, key2) + FieldSet.computeElementSize(metadata2.valueType, 2, value2);
-    }
-
-    /* renamed from: com.google.protobuf.MapEntryLite$1 */
-    static /* synthetic */ class C18651 {
-        static final /* synthetic */ int[] $SwitchMap$com$google$protobuf$WireFormat$FieldType = new int[WireFormat.FieldType.values().length];
-
-        static {
-            try {
-                $SwitchMap$com$google$protobuf$WireFormat$FieldType[WireFormat.FieldType.MESSAGE.ordinal()] = 1;
-            } catch (NoSuchFieldError e) {
-            }
-            try {
-                $SwitchMap$com$google$protobuf$WireFormat$FieldType[WireFormat.FieldType.ENUM.ordinal()] = 2;
-            } catch (NoSuchFieldError e2) {
-            }
-            try {
-                $SwitchMap$com$google$protobuf$WireFormat$FieldType[WireFormat.FieldType.GROUP.ordinal()] = 3;
-            } catch (NoSuchFieldError e3) {
-            }
-        }
     }
 
     static <T> T parseField(CodedInputStream input, ExtensionRegistryLite extensionRegistry, WireFormat.FieldType type, T value2) throws IOException {
@@ -96,20 +52,6 @@ public class MapEntryLite<K, V> {
         }
     }
 
-    public void serializeTo(CodedOutputStream output, int fieldNumber, K key2, V value2) throws IOException {
-        output.writeTag(fieldNumber, 2);
-        output.writeUInt32NoTag(computeSerializedSize(this.metadata, key2, value2));
-        writeTo(output, this.metadata, key2, value2);
-    }
-
-    public int computeMessageSize(int fieldNumber, K key2, V value2) {
-        return CodedOutputStream.computeTagSize(fieldNumber) + CodedOutputStream.computeLengthDelimitedFieldSize(computeSerializedSize(this.metadata, key2, value2));
-    }
-
-    public Map.Entry<K, V> parseEntry(ByteString bytes, ExtensionRegistryLite extensionRegistry) throws IOException {
-        return parseEntry(bytes.newCodedInput(), this.metadata, extensionRegistry);
-    }
-
     static <K, V> Map.Entry<K, V> parseEntry(CodedInputStream input, Metadata<K, V> metadata2, ExtensionRegistryLite extensionRegistry) throws IOException {
         K key2 = metadata2.defaultKey;
         V value2 = metadata2.defaultValue;
@@ -126,6 +68,28 @@ public class MapEntryLite<K, V> {
             }
         }
         return new AbstractMap.SimpleImmutableEntry(key2, value2);
+    }
+
+    public K getKey() {
+        return this.key;
+    }
+
+    public V getValue() {
+        return this.value;
+    }
+
+    public void serializeTo(CodedOutputStream output, int fieldNumber, K key2, V value2) throws IOException {
+        output.writeTag(fieldNumber, 2);
+        output.writeUInt32NoTag(computeSerializedSize(this.metadata, key2, value2));
+        writeTo(output, this.metadata, key2, value2);
+    }
+
+    public int computeMessageSize(int fieldNumber, K key2, V value2) {
+        return CodedOutputStream.computeTagSize(fieldNumber) + CodedOutputStream.computeLengthDelimitedFieldSize(computeSerializedSize(this.metadata, key2, value2));
+    }
+
+    public Map.Entry<K, V> parseEntry(ByteString bytes, ExtensionRegistryLite extensionRegistry) throws IOException {
+        return parseEntry(bytes.newCodedInput(), this.metadata, extensionRegistry);
     }
 
     public void parseInto(MapFieldLite<K, V> map, CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
@@ -152,5 +116,39 @@ public class MapEntryLite<K, V> {
     /* access modifiers changed from: package-private */
     public Metadata<K, V> getMetadata() {
         return this.metadata;
+    }
+
+    static class Metadata<K, V> {
+        public final K defaultKey;
+        public final V defaultValue;
+        public final WireFormat.FieldType keyType;
+        public final WireFormat.FieldType valueType;
+
+        public Metadata(WireFormat.FieldType keyType2, K defaultKey2, WireFormat.FieldType valueType2, V defaultValue2) {
+            this.keyType = keyType2;
+            this.defaultKey = defaultKey2;
+            this.valueType = valueType2;
+            this.defaultValue = defaultValue2;
+        }
+    }
+
+    /* renamed from: com.google.protobuf.MapEntryLite$1 */
+    static /* synthetic */ class C18651 {
+        static final /* synthetic */ int[] $SwitchMap$com$google$protobuf$WireFormat$FieldType = new int[WireFormat.FieldType.values().length];
+
+        static {
+            try {
+                $SwitchMap$com$google$protobuf$WireFormat$FieldType[WireFormat.FieldType.MESSAGE.ordinal()] = 1;
+            } catch (NoSuchFieldError e) {
+            }
+            try {
+                $SwitchMap$com$google$protobuf$WireFormat$FieldType[WireFormat.FieldType.ENUM.ordinal()] = 2;
+            } catch (NoSuchFieldError e2) {
+            }
+            try {
+                $SwitchMap$com$google$protobuf$WireFormat$FieldType[WireFormat.FieldType.GROUP.ordinal()] = 3;
+            } catch (NoSuchFieldError e3) {
+            }
+        }
     }
 }

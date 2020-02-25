@@ -23,7 +23,7 @@ public final class CommonEnums {
         KIOSK_USER(9),
         ARC_CHILD_USER(10),
         ARC_OFFLINE_DEMO_MODE(11);
-        
+
         public static final int ARC_ACTIVE_DIRECTORY_VALUE = 3;
         public static final int ARC_CHILD_USER_VALUE = 10;
         public static final int ARC_KIOSK_VALUE = 2;
@@ -43,8 +43,8 @@ public final class CommonEnums {
         };
         private final int value;
 
-        public final int getNumber() {
-            return this.value;
+        private ProvisionMode(int value2) {
+            this.value = value2;
         }
 
         public static ProvisionMode forNumber(int value2) {
@@ -86,6 +86,10 @@ public final class CommonEnums {
             return ProvisionModeVerifier.INSTANCE;
         }
 
+        public final int getNumber() {
+            return this.value;
+        }
+
         private static final class ProvisionModeVerifier implements Internal.EnumVerifier {
             static final Internal.EnumVerifier INSTANCE = new ProvisionModeVerifier();
 
@@ -96,10 +100,6 @@ public final class CommonEnums {
                 return ProvisionMode.forNumber(number) != null;
             }
         }
-
-        private ProvisionMode(int value2) {
-            this.value = value2;
-        }
     }
 
     public enum EventState implements Internal.EnumLite {
@@ -108,7 +108,7 @@ public final class CommonEnums {
         FAILURE(2),
         TIMEOUT(3),
         START(4);
-        
+
         public static final int FAILURE_VALUE = 2;
         public static final int START_VALUE = 4;
         public static final int SUCCESS_VALUE = 1;
@@ -121,8 +121,8 @@ public final class CommonEnums {
         };
         private final int value;
 
-        public final int getNumber() {
-            return this.value;
+        private EventState(int value2) {
+            this.value = value2;
         }
 
         public static EventState forNumber(int value2) {
@@ -152,6 +152,10 @@ public final class CommonEnums {
             return EventStateVerifier.INSTANCE;
         }
 
+        public final int getNumber() {
+            return this.value;
+        }
+
         private static final class EventStateVerifier implements Internal.EnumVerifier {
             static final Internal.EnumVerifier INSTANCE = new EventStateVerifier();
 
@@ -162,17 +166,13 @@ public final class CommonEnums {
                 return EventState.forNumber(number) != null;
             }
         }
-
-        private EventState(int value2) {
-            this.value = value2;
-        }
     }
 
     public enum Mitigation implements Internal.EnumLite {
         UNSPECIFIED_MITIGATION(0),
         NO_MITIGATION(1),
         WIFI_NETWORK_MITIGATION(2);
-        
+
         public static final int NO_MITIGATION_VALUE = 1;
         public static final int UNSPECIFIED_MITIGATION_VALUE = 0;
         public static final int WIFI_NETWORK_MITIGATION_VALUE = 2;
@@ -183,8 +183,8 @@ public final class CommonEnums {
         };
         private final int value;
 
-        public final int getNumber() {
-            return this.value;
+        private Mitigation(int value2) {
+            this.value = value2;
         }
 
         public static Mitigation forNumber(int value2) {
@@ -208,6 +208,10 @@ public final class CommonEnums {
             return MitigationVerifier.INSTANCE;
         }
 
+        public final int getNumber() {
+            return this.value;
+        }
+
         private static final class MitigationVerifier implements Internal.EnumVerifier {
             static final Internal.EnumVerifier INSTANCE = new MitigationVerifier();
 
@@ -218,15 +222,11 @@ public final class CommonEnums {
                 return Mitigation.forNumber(number) != null;
             }
         }
-
-        private Mitigation(int value2) {
-            this.value = value2;
-        }
     }
 
     public enum MetricType implements Internal.EnumLite {
         APP_INSTALL_METRIC(0);
-        
+
         public static final int APP_INSTALL_METRIC_VALUE = 0;
         private static final Internal.EnumLiteMap<MetricType> internalValueMap = new Internal.EnumLiteMap<MetricType>() {
             public MetricType findValueByNumber(int number) {
@@ -235,8 +235,8 @@ public final class CommonEnums {
         };
         private final int value;
 
-        public final int getNumber() {
-            return this.value;
+        private MetricType(int value2) {
+            this.value = value2;
         }
 
         public static MetricType forNumber(int value2) {
@@ -254,6 +254,10 @@ public final class CommonEnums {
             return MetricTypeVerifier.INSTANCE;
         }
 
+        public final int getNumber() {
+            return this.value;
+        }
+
         private static final class MetricTypeVerifier implements Internal.EnumVerifier {
             static final Internal.EnumVerifier INSTANCE = new MetricTypeVerifier();
 
@@ -263,10 +267,6 @@ public final class CommonEnums {
             public boolean isInRange(int number) {
                 return MetricType.forNumber(number) != null;
             }
-        }
-
-        private MetricType(int value2) {
-            this.value = value2;
         }
     }
 
@@ -281,7 +281,7 @@ public final class CommonEnums {
         NOT_AVAILABLE_IN_COUNTRY_ERROR(7),
         NO_LICENSES_REMAINING_ERROR(8),
         NOT_ENROLLED_ERROR(9);
-        
+
         public static final int NOT_APPROVED_ERROR_VALUE = 5;
         public static final int NOT_AVAILABLE_IN_COUNTRY_ERROR_VALUE = 7;
         public static final int NOT_COMPATIBLE_WITH_DEVICE_ERROR_VALUE = 4;
@@ -299,8 +299,8 @@ public final class CommonEnums {
         };
         private final int value;
 
-        public final int getNumber() {
-            return this.value;
+        private InstallErrorReason(int value2) {
+            this.value = value2;
         }
 
         public static InstallErrorReason forNumber(int value2) {
@@ -338,6 +338,10 @@ public final class CommonEnums {
             return InstallErrorReasonVerifier.INSTANCE;
         }
 
+        public final int getNumber() {
+            return this.value;
+        }
+
         private static final class InstallErrorReasonVerifier implements Internal.EnumVerifier {
             static final Internal.EnumVerifier INSTANCE = new InstallErrorReasonVerifier();
 
@@ -347,10 +351,6 @@ public final class CommonEnums {
             public boolean isInRange(int number) {
                 return InstallErrorReason.forNumber(number) != null;
             }
-        }
-
-        private InstallErrorReason(int value2) {
-            this.value = value2;
         }
     }
 
@@ -380,7 +380,7 @@ public final class CommonEnums {
         FAILURE_REASON_QUARANTINE(12),
         FAILURE_REASON_JSON(22),
         FAILURE_REASON_INVALID_POLICY_STATE(18);
-        
+
         public static final int FAILURE_REASON_ACCOUNT_NOT_READY_VALUE = 3;
         public static final int FAILURE_REASON_ACCOUNT_NOT_WHITELISTED_VALUE = 19;
         public static final int FAILURE_REASON_ACCOUNT_VALUE = 1;
@@ -413,8 +413,8 @@ public final class CommonEnums {
         };
         private final int value;
 
-        public final int getNumber() {
-            return this.value;
+        private TaskFailureReason(int value2) {
+            this.value = value2;
         }
 
         public static TaskFailureReason forNumber(int value2) {
@@ -483,6 +483,10 @@ public final class CommonEnums {
             return TaskFailureReasonVerifier.INSTANCE;
         }
 
+        public final int getNumber() {
+            return this.value;
+        }
+
         private static final class TaskFailureReasonVerifier implements Internal.EnumVerifier {
             static final Internal.EnumVerifier INSTANCE = new TaskFailureReasonVerifier();
 
@@ -492,10 +496,6 @@ public final class CommonEnums {
             public boolean isInRange(int number) {
                 return TaskFailureReason.forNumber(number) != null;
             }
-        }
-
-        private TaskFailureReason(int value2) {
-            this.value = value2;
         }
     }
 
@@ -508,7 +508,7 @@ public final class CommonEnums {
         ERROR_NETWORK(5),
         ERROR_USER_CANCEL(6),
         ERROR_SETUP_ACTION(7);
-        
+
         public static final int ERROR_DEVICE_VALUE = 3;
         public static final int ERROR_NETWORK_VALUE = 5;
         public static final int ERROR_POLICY_VALUE = 4;
@@ -524,8 +524,8 @@ public final class CommonEnums {
         };
         private final int value;
 
-        public final int getNumber() {
-            return this.value;
+        private SetupTaskFailureType(int value2) {
+            this.value = value2;
         }
 
         public static SetupTaskFailureType forNumber(int value2) {
@@ -559,6 +559,10 @@ public final class CommonEnums {
             return SetupTaskFailureTypeVerifier.INSTANCE;
         }
 
+        public final int getNumber() {
+            return this.value;
+        }
+
         private static final class SetupTaskFailureTypeVerifier implements Internal.EnumVerifier {
             static final Internal.EnumVerifier INSTANCE = new SetupTaskFailureTypeVerifier();
 
@@ -568,10 +572,6 @@ public final class CommonEnums {
             public boolean isInRange(int number) {
                 return SetupTaskFailureType.forNumber(number) != null;
             }
-        }
-
-        private SetupTaskFailureType(int value2) {
-            this.value = value2;
         }
     }
 
@@ -586,7 +586,7 @@ public final class CommonEnums {
         MANUAL_START_CLOUDDPC(7),
         DPC_TRANSFER(8),
         ADMIN_INTEGRATED(9);
-        
+
         public static final int ADMIN_INTEGRATED_VALUE = 9;
         public static final int DPC_TRANSFER_VALUE = 8;
         public static final int EASY_WORK_SETUP_VALUE = 5;
@@ -604,8 +604,8 @@ public final class CommonEnums {
         };
         private final int value;
 
-        public final int getNumber() {
-            return this.value;
+        private ProvisionEntryPoint(int value2) {
+            this.value = value2;
         }
 
         public static ProvisionEntryPoint forNumber(int value2) {
@@ -643,6 +643,10 @@ public final class CommonEnums {
             return ProvisionEntryPointVerifier.INSTANCE;
         }
 
+        public final int getNumber() {
+            return this.value;
+        }
+
         private static final class ProvisionEntryPointVerifier implements Internal.EnumVerifier {
             static final Internal.EnumVerifier INSTANCE = new ProvisionEntryPointVerifier();
 
@@ -652,10 +656,6 @@ public final class CommonEnums {
             public boolean isInRange(int number) {
                 return ProvisionEntryPoint.forNumber(number) != null;
             }
-        }
-
-        private ProvisionEntryPoint(int value2) {
-            this.value = value2;
         }
     }
 
@@ -669,7 +669,7 @@ public final class CommonEnums {
         AUDIO(6),
         IMAGE_VIDEO(7),
         CONTACTS(8);
-        
+
         public static final int AUDIO_VALUE = 6;
         public static final int CAMERA_VALUE = 2;
         public static final int CONTACTS_VALUE = 8;
@@ -686,8 +686,8 @@ public final class CommonEnums {
         };
         private final int value;
 
-        public final int getNumber() {
-            return this.value;
+        private SmartSystemAppAction(int value2) {
+            this.value = value2;
         }
 
         public static SmartSystemAppAction forNumber(int value2) {
@@ -723,6 +723,10 @@ public final class CommonEnums {
             return SmartSystemAppActionVerifier.INSTANCE;
         }
 
+        public final int getNumber() {
+            return this.value;
+        }
+
         private static final class SmartSystemAppActionVerifier implements Internal.EnumVerifier {
             static final Internal.EnumVerifier INSTANCE = new SmartSystemAppActionVerifier();
 
@@ -732,10 +736,6 @@ public final class CommonEnums {
             public boolean isInRange(int number) {
                 return SmartSystemAppAction.forNumber(number) != null;
             }
-        }
-
-        private SmartSystemAppAction(int value2) {
-            this.value = value2;
         }
     }
 }

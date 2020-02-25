@@ -1,9 +1,12 @@
 package com.google.android.libraries.stitch.util;
 
 import android.util.Log;
+
 import com.google.android.gms.people.PeopleConstants;
 import com.google.devtools.build.android.desugar.runtime.ThrowableExtension;
+
 import java.lang.reflect.Method;
+
 import javax.annotation.Nullable;
 
 public final class SystemProperties {

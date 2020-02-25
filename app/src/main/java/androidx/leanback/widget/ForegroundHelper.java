@@ -5,6 +5,9 @@ import android.os.Build;
 import android.view.View;
 
 final class ForegroundHelper {
+    private ForegroundHelper() {
+    }
+
     static boolean supportsForeground() {
         return Build.VERSION.SDK_INT >= 23;
     }
@@ -20,8 +23,5 @@ final class ForegroundHelper {
         if (Build.VERSION.SDK_INT >= 23) {
             view.setForeground(drawable);
         }
-    }
-
-    private ForegroundHelper() {
     }
 }

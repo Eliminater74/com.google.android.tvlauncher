@@ -31,6 +31,7 @@ import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Field;
@@ -53,12 +54,6 @@ public final class TextViewCompat {
     private static boolean sMinModeFieldFetched;
     private static Field sMinimumField;
     private static boolean sMinimumFieldFetched;
-
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    @Retention(RetentionPolicy.SOURCE)
-    /* renamed from: android.support.v4.widget.TextViewCompat$AutoSizeTextType */
-    public @interface AutoSizeTextType {
-    }
 
     private TextViewCompat() {
     }
@@ -291,115 +286,6 @@ public final class TextViewCompat {
         return (Build.VERSION.SDK_INT < 26 || Build.VERSION.SDK_INT > 27 || (callback instanceof OreoCallback)) ? callback : new OreoCallback(callback, textView);
     }
 
-    @RequiresApi(26)
-    /* renamed from: android.support.v4.widget.TextViewCompat$OreoCallback */
-    private static class OreoCallback implements ActionMode.Callback {
-        private static final int MENU_ITEM_ORDER_PROCESS_TEXT_INTENT_ACTIONS_START = 100;
-        private final ActionMode.Callback mCallback;
-        private boolean mCanUseMenuBuilderReferences;
-        private boolean mInitializedMenuBuilderReferences = false;
-        private Class mMenuBuilderClass;
-        private Method mMenuBuilderRemoveItemAtMethod;
-        private final TextView mTextView;
-
-        OreoCallback(ActionMode.Callback callback, TextView textView) {
-            this.mCallback = callback;
-            this.mTextView = textView;
-        }
-
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            return this.mCallback.onCreateActionMode(mode, menu);
-        }
-
-        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            recomputeProcessTextMenuItems(menu);
-            return this.mCallback.onPrepareActionMode(mode, menu);
-        }
-
-        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            return this.mCallback.onActionItemClicked(mode, item);
-        }
-
-        public void onDestroyActionMode(ActionMode mode) {
-            this.mCallback.onDestroyActionMode(mode);
-        }
-
-        private void recomputeProcessTextMenuItems(Menu menu) {
-            Method removeItemAtMethod;
-            Context context = this.mTextView.getContext();
-            PackageManager packageManager = context.getPackageManager();
-            if (!this.mInitializedMenuBuilderReferences) {
-                this.mInitializedMenuBuilderReferences = true;
-                try {
-                    this.mMenuBuilderClass = Class.forName("com.android.internal.view.menu.MenuBuilder");
-                    this.mMenuBuilderRemoveItemAtMethod = this.mMenuBuilderClass.getDeclaredMethod("removeItemAt", Integer.TYPE);
-                    this.mCanUseMenuBuilderReferences = true;
-                } catch (ClassNotFoundException | NoSuchMethodException e) {
-                    this.mMenuBuilderClass = null;
-                    this.mMenuBuilderRemoveItemAtMethod = null;
-                    this.mCanUseMenuBuilderReferences = false;
-                }
-            }
-            try {
-                if (!this.mCanUseMenuBuilderReferences || !this.mMenuBuilderClass.isInstance(menu)) {
-                    removeItemAtMethod = menu.getClass().getDeclaredMethod("removeItemAt", Integer.TYPE);
-                } else {
-                    removeItemAtMethod = this.mMenuBuilderRemoveItemAtMethod;
-                }
-                for (int i = menu.size() - 1; i >= 0; i--) {
-                    MenuItem item = menu.getItem(i);
-                    if (item.getIntent() != null && "android.intent.action.PROCESS_TEXT".equals(item.getIntent().getAction())) {
-                        removeItemAtMethod.invoke(menu, Integer.valueOf(i));
-                    }
-                }
-                List<ResolveInfo> supportedActivities = getSupportedActivities(context, packageManager);
-                for (int i2 = 0; i2 < supportedActivities.size(); i2++) {
-                    ResolveInfo info = supportedActivities.get(i2);
-                    menu.add(0, 0, i2 + 100, info.loadLabel(packageManager)).setIntent(createProcessTextIntentForResolveInfo(info, this.mTextView)).setShowAsAction(1);
-                }
-            } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e2) {
-            }
-        }
-
-        private List<ResolveInfo> getSupportedActivities(Context context, PackageManager packageManager) {
-            List<ResolveInfo> supportedActivities = new ArrayList<>();
-            if (!(context instanceof Activity)) {
-                return supportedActivities;
-            }
-            for (ResolveInfo info : packageManager.queryIntentActivities(createProcessTextIntent(), 0)) {
-                if (isSupportedActivity(info, context)) {
-                    supportedActivities.add(info);
-                }
-            }
-            return supportedActivities;
-        }
-
-        private boolean isSupportedActivity(ResolveInfo info, Context context) {
-            if (context.getPackageName().equals(info.activityInfo.packageName)) {
-                return true;
-            }
-            if (!info.activityInfo.exported) {
-                return false;
-            }
-            if (info.activityInfo.permission == null || context.checkSelfPermission(info.activityInfo.permission) == 0) {
-                return true;
-            }
-            return false;
-        }
-
-        private Intent createProcessTextIntentForResolveInfo(ResolveInfo info, TextView textView11) {
-            return createProcessTextIntent().putExtra("android.intent.extra.PROCESS_TEXT_READONLY", !isEditable(textView11)).setClassName(info.activityInfo.packageName, info.activityInfo.name);
-        }
-
-        private boolean isEditable(TextView textView11) {
-            return (textView11 instanceof Editable) && textView11.onCheckIsTextEditor() && textView11.isEnabled();
-        }
-
-        private Intent createProcessTextIntent() {
-            return new Intent().setAction("android.intent.action.PROCESS_TEXT").setType("text/plain");
-        }
-    }
-
     public static void setFirstBaselineToTopHeight(@NonNull TextView textView, @C0013Px @IntRange(from = 0) int firstBaselineToTopHeight) {
         int fontMetricsTop;
         Preconditions.checkArgumentNonnegative(firstBaselineToTopHeight);
@@ -595,5 +481,120 @@ public final class TextViewCompat {
             return ((TintableCompoundDrawablesView) textView).getSupportCompoundDrawablesTintMode();
         }
         return null;
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    @Retention(RetentionPolicy.SOURCE)
+    /* renamed from: android.support.v4.widget.TextViewCompat$AutoSizeTextType */
+    public @interface AutoSizeTextType {
+    }
+
+    @RequiresApi(26)
+    /* renamed from: android.support.v4.widget.TextViewCompat$OreoCallback */
+    private static class OreoCallback implements ActionMode.Callback {
+        private static final int MENU_ITEM_ORDER_PROCESS_TEXT_INTENT_ACTIONS_START = 100;
+        private final ActionMode.Callback mCallback;
+        private final TextView mTextView;
+        private boolean mCanUseMenuBuilderReferences;
+        private boolean mInitializedMenuBuilderReferences = false;
+        private Class mMenuBuilderClass;
+        private Method mMenuBuilderRemoveItemAtMethod;
+
+        OreoCallback(ActionMode.Callback callback, TextView textView) {
+            this.mCallback = callback;
+            this.mTextView = textView;
+        }
+
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            return this.mCallback.onCreateActionMode(mode, menu);
+        }
+
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            recomputeProcessTextMenuItems(menu);
+            return this.mCallback.onPrepareActionMode(mode, menu);
+        }
+
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            return this.mCallback.onActionItemClicked(mode, item);
+        }
+
+        public void onDestroyActionMode(ActionMode mode) {
+            this.mCallback.onDestroyActionMode(mode);
+        }
+
+        private void recomputeProcessTextMenuItems(Menu menu) {
+            Method removeItemAtMethod;
+            Context context = this.mTextView.getContext();
+            PackageManager packageManager = context.getPackageManager();
+            if (!this.mInitializedMenuBuilderReferences) {
+                this.mInitializedMenuBuilderReferences = true;
+                try {
+                    this.mMenuBuilderClass = Class.forName("com.android.internal.view.menu.MenuBuilder");
+                    this.mMenuBuilderRemoveItemAtMethod = this.mMenuBuilderClass.getDeclaredMethod("removeItemAt", Integer.TYPE);
+                    this.mCanUseMenuBuilderReferences = true;
+                } catch (ClassNotFoundException | NoSuchMethodException e) {
+                    this.mMenuBuilderClass = null;
+                    this.mMenuBuilderRemoveItemAtMethod = null;
+                    this.mCanUseMenuBuilderReferences = false;
+                }
+            }
+            try {
+                if (!this.mCanUseMenuBuilderReferences || !this.mMenuBuilderClass.isInstance(menu)) {
+                    removeItemAtMethod = menu.getClass().getDeclaredMethod("removeItemAt", Integer.TYPE);
+                } else {
+                    removeItemAtMethod = this.mMenuBuilderRemoveItemAtMethod;
+                }
+                for (int i = menu.size() - 1; i >= 0; i--) {
+                    MenuItem item = menu.getItem(i);
+                    if (item.getIntent() != null && "android.intent.action.PROCESS_TEXT".equals(item.getIntent().getAction())) {
+                        removeItemAtMethod.invoke(menu, Integer.valueOf(i));
+                    }
+                }
+                List<ResolveInfo> supportedActivities = getSupportedActivities(context, packageManager);
+                for (int i2 = 0; i2 < supportedActivities.size(); i2++) {
+                    ResolveInfo info = supportedActivities.get(i2);
+                    menu.add(0, 0, i2 + 100, info.loadLabel(packageManager)).setIntent(createProcessTextIntentForResolveInfo(info, this.mTextView)).setShowAsAction(1);
+                }
+            } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e2) {
+            }
+        }
+
+        private List<ResolveInfo> getSupportedActivities(Context context, PackageManager packageManager) {
+            List<ResolveInfo> supportedActivities = new ArrayList<>();
+            if (!(context instanceof Activity)) {
+                return supportedActivities;
+            }
+            for (ResolveInfo info : packageManager.queryIntentActivities(createProcessTextIntent(), 0)) {
+                if (isSupportedActivity(info, context)) {
+                    supportedActivities.add(info);
+                }
+            }
+            return supportedActivities;
+        }
+
+        private boolean isSupportedActivity(ResolveInfo info, Context context) {
+            if (context.getPackageName().equals(info.activityInfo.packageName)) {
+                return true;
+            }
+            if (!info.activityInfo.exported) {
+                return false;
+            }
+            if (info.activityInfo.permission == null || context.checkSelfPermission(info.activityInfo.permission) == 0) {
+                return true;
+            }
+            return false;
+        }
+
+        private Intent createProcessTextIntentForResolveInfo(ResolveInfo info, TextView textView11) {
+            return createProcessTextIntent().putExtra("android.intent.extra.PROCESS_TEXT_READONLY", !isEditable(textView11)).setClassName(info.activityInfo.packageName, info.activityInfo.name);
+        }
+
+        private boolean isEditable(TextView textView11) {
+            return (textView11 instanceof Editable) && textView11.onCheckIsTextEditor() && textView11.isEnabled();
+        }
+
+        private Intent createProcessTextIntent() {
+            return new Intent().setAction("android.intent.action.PROCESS_TEXT").setType("text/plain");
+        }
     }
 }

@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewOutlineProvider;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.google.android.tvlauncher.C1188R;
 
 public class ConfigureChannelsRowView extends LinearLayout {

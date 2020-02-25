@@ -1,11 +1,12 @@
 package org.checkerframework.checker.nullness;
 
+import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
+
 import java.util.NoSuchElementException;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
 
 public final class Opt {
     private Opt() {

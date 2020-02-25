@@ -8,37 +8,12 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.p001v4.graphics.drawable.DrawableCompat;
 import android.util.Property;
-import androidx.leanback.graphics.BoundsRule;
+
 import java.util.ArrayList;
 
 public class CompositeDrawable extends Drawable implements Drawable.Callback {
     boolean mMutated;
     CompositeState mState;
-
-    static class CompositeState extends Drawable.ConstantState {
-        final ArrayList<ChildDrawable> mChildren;
-
-        CompositeState() {
-            this.mChildren = new ArrayList<>();
-        }
-
-        CompositeState(CompositeState other, CompositeDrawable parent, Resources res) {
-            int n = other.mChildren.size();
-            this.mChildren = new ArrayList<>(n);
-            for (int k = 0; k < n; k++) {
-                this.mChildren.add(new ChildDrawable(other.mChildren.get(k), parent, res));
-            }
-        }
-
-        @NonNull
-        public Drawable newDrawable() {
-            return new CompositeDrawable(this);
-        }
-
-        public int getChangingConfigurations() {
-            return 0;
-        }
-    }
 
     public CompositeDrawable() {
         this.mMutated = false;
@@ -129,19 +104,19 @@ public class CompositeDrawable extends Drawable implements Drawable.Callback {
         return 0;
     }
 
-    public void setAlpha(int alpha) {
-        ArrayList<ChildDrawable> children = this.mState.mChildren;
-        for (int i = 0; i < children.size(); i++) {
-            children.get(i).mDrawable.setAlpha(alpha);
-        }
-    }
-
     public int getAlpha() {
         Drawable dr = getFirstNonNullDrawable();
         if (dr != null) {
             return DrawableCompat.getAlpha(dr);
         }
         return 255;
+    }
+
+    public void setAlpha(int alpha) {
+        ArrayList<ChildDrawable> children = this.mState.mChildren;
+        for (int i = 0; i < children.size(); i++) {
+            children.get(i).mDrawable.setAlpha(alpha);
+        }
     }
 
     /* access modifiers changed from: package-private */
@@ -174,6 +149,31 @@ public class CompositeDrawable extends Drawable implements Drawable.Callback {
         ArrayList<ChildDrawable> children = this.mState.mChildren;
         for (int i = 0; i < children.size(); i++) {
             children.get(i).updateBounds(bounds);
+        }
+    }
+
+    static class CompositeState extends Drawable.ConstantState {
+        final ArrayList<ChildDrawable> mChildren;
+
+        CompositeState() {
+            this.mChildren = new ArrayList<>();
+        }
+
+        CompositeState(CompositeState other, CompositeDrawable parent, Resources res) {
+            int n = other.mChildren.size();
+            this.mChildren = new ArrayList<>(n);
+            for (int k = 0; k < n; k++) {
+                this.mChildren.add(new ChildDrawable(other.mChildren.get(k), parent, res));
+            }
+        }
+
+        @NonNull
+        public Drawable newDrawable() {
+            return new CompositeDrawable(this);
+        }
+
+        public int getChangingConfigurations() {
+            return 0;
         }
     }
 
@@ -314,10 +314,10 @@ public class CompositeDrawable extends Drawable implements Drawable.Callback {
                 return Float.valueOf(obj.getBoundsRule().top.getFraction());
             }
         };
-        private final Rect adjustedBounds = new Rect();
-        private final BoundsRule mBoundsRule;
         final Drawable mDrawable;
         final CompositeDrawable mParent;
+        private final Rect adjustedBounds = new Rect();
+        private final BoundsRule mBoundsRule;
 
         public ChildDrawable(Drawable drawable, CompositeDrawable parent) {
             this.mDrawable = drawable;

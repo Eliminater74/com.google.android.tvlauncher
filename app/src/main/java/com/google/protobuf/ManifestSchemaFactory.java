@@ -20,18 +20,6 @@ final class ManifestSchemaFactory implements SchemaFactory {
         this.messageInfoFactory = (MessageInfoFactory) Internal.checkNotNull(messageInfoFactory2, "messageInfoFactory");
     }
 
-    public <T> Schema<T> createSchema(Class<T> messageType) {
-        SchemaUtil.requireGeneratedMessage(messageType);
-        MessageInfo messageInfo = this.messageInfoFactory.messageInfoFor(messageType);
-        if (!messageInfo.isMessageSetWireFormat()) {
-            return newSchema(messageType, messageInfo);
-        }
-        if (GeneratedMessageLite.class.isAssignableFrom(messageType)) {
-            return MessageSetSchema.newSchema(SchemaUtil.unknownFieldSetLiteSchema(), ExtensionSchemas.lite(), messageInfo.getDefaultInstance());
-        }
-        return MessageSetSchema.newSchema(SchemaUtil.proto2UnknownFieldSetSchema(), ExtensionSchemas.full(), messageInfo.getDefaultInstance());
-    }
-
     private static <T> Schema<T> newSchema(Class<T> messageType, MessageInfo messageInfo) {
         if (GeneratedMessageLite.class.isAssignableFrom(messageType)) {
             if (isProto2(messageInfo)) {
@@ -51,6 +39,26 @@ final class ManifestSchemaFactory implements SchemaFactory {
 
     private static MessageInfoFactory getDefaultMessageInfoFactory() {
         return new CompositeMessageInfoFactory(GeneratedMessageInfoFactory.getInstance(), getDescriptorMessageInfoFactory());
+    }
+
+    private static MessageInfoFactory getDescriptorMessageInfoFactory() {
+        try {
+            return (MessageInfoFactory) Class.forName("com.google.protobuf.DescriptorMessageInfoFactory").getDeclaredMethod("getInstance", new Class[0]).invoke(null, new Object[0]);
+        } catch (Exception e) {
+            return EMPTY_FACTORY;
+        }
+    }
+
+    public <T> Schema<T> createSchema(Class<T> messageType) {
+        SchemaUtil.requireGeneratedMessage(messageType);
+        MessageInfo messageInfo = this.messageInfoFactory.messageInfoFor(messageType);
+        if (!messageInfo.isMessageSetWireFormat()) {
+            return newSchema(messageType, messageInfo);
+        }
+        if (GeneratedMessageLite.class.isAssignableFrom(messageType)) {
+            return MessageSetSchema.newSchema(SchemaUtil.unknownFieldSetLiteSchema(), ExtensionSchemas.lite(), messageInfo.getDefaultInstance());
+        }
+        return MessageSetSchema.newSchema(SchemaUtil.proto2UnknownFieldSetSchema(), ExtensionSchemas.full(), messageInfo.getDefaultInstance());
     }
 
     private static class CompositeMessageInfoFactory implements MessageInfoFactory {
@@ -77,14 +85,6 @@ final class ManifestSchemaFactory implements SchemaFactory {
             }
             String valueOf = String.valueOf(clazz.getName());
             throw new UnsupportedOperationException(valueOf.length() != 0 ? "No factory is available for message type: ".concat(valueOf) : new String("No factory is available for message type: "));
-        }
-    }
-
-    private static MessageInfoFactory getDescriptorMessageInfoFactory() {
-        try {
-            return (MessageInfoFactory) Class.forName("com.google.protobuf.DescriptorMessageInfoFactory").getDeclaredMethod("getInstance", new Class[0]).invoke(null, new Object[0]);
-        } catch (Exception e) {
-            return EMPTY_FACTORY;
         }
     }
 }

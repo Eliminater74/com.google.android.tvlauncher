@@ -8,10 +8,10 @@ public final class ImageType {
     public static final int TYPE_UNDETERMINED = 0;
     public static final int TYPE_UNKNOWN = -1;
 
-    public static boolean isPanorama(int imageType) {
-        return imageType == 4 || imageType == 3;
+    private ImageType() {
     }
 
-    private ImageType() {
+    public static boolean isPanorama(int imageType) {
+        return imageType == 4 || imageType == 3;
     }
 }

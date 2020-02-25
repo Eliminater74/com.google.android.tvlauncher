@@ -1,6 +1,7 @@
 package com.google.android.exoplayer2.extractor.mp3;
 
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.ParserException;
@@ -19,6 +20,7 @@ import com.google.android.exoplayer2.metadata.id3.Id3Decoder;
 import com.google.android.exoplayer2.metadata.id3.MlltFrame;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.EOFException;
 import java.io.IOException;
 import java.lang.annotation.Documented;
@@ -38,39 +40,20 @@ public final class Mp3Extractor implements Extractor {
     private static final int SEEK_HEADER_UNSET = 0;
     private static final int SEEK_HEADER_VBRI = Util.getIntegerCodeForString("VBRI");
     private static final int SEEK_HEADER_XING = Util.getIntegerCodeForString("Xing");
-    private long basisTimeUs;
-    private ExtractorOutput extractorOutput;
     private final int flags;
     private final long forcedFirstSampleTimestampUs;
     private final GaplessInfoHolder gaplessInfoHolder;
     private final Id3Peeker id3Peeker;
+    private final ParsableByteArray scratch;
+    private final MpegAudioHeader synchronizedHeader;
+    private long basisTimeUs;
+    private ExtractorOutput extractorOutput;
     private Metadata metadata;
     private int sampleBytesRemaining;
     private long samplesRead;
-    private final ParsableByteArray scratch;
     private Seeker seeker;
-    private final MpegAudioHeader synchronizedHeader;
     private int synchronizedHeaderData;
     private TrackOutput trackOutput;
-
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface Flags {
-    }
-
-    interface Seeker extends SeekMap {
-        long getDataEndPosition();
-
-        long getTimeUs(long j);
-    }
-
-    static final /* synthetic */ Extractor[] lambda$static$0$Mp3Extractor() {
-        return new Extractor[]{new Mp3Extractor()};
-    }
-
-    static final /* synthetic */ boolean lambda$static$1$Mp3Extractor(int majorVersion, int id0, int id1, int id2, int id3) {
-        return (id0 == 67 && id1 == 79 && id2 == 77 && (id3 == 77 || majorVersion == 2)) || (id0 == 77 && id1 == 76 && id2 == 76 && (id3 == 84 || majorVersion == 2));
-    }
 
     public Mp3Extractor() {
         this(0);
@@ -88,6 +71,53 @@ public final class Mp3Extractor implements Extractor {
         this.gaplessInfoHolder = new GaplessInfoHolder();
         this.basisTimeUs = C0841C.TIME_UNSET;
         this.id3Peeker = new Id3Peeker();
+    }
+
+    static final /* synthetic */ Extractor[] lambda$static$0$Mp3Extractor() {
+        return new Extractor[]{new Mp3Extractor()};
+    }
+
+    static final /* synthetic */ boolean lambda$static$1$Mp3Extractor(int majorVersion, int id0, int id1, int id2, int id3) {
+        return (id0 == 67 && id1 == 79 && id2 == 77 && (id3 == 77 || majorVersion == 2)) || (id0 == 77 && id1 == 76 && id2 == 76 && (id3 == 84 || majorVersion == 2));
+    }
+
+    private static boolean headersMatch(int headerA, long headerB) {
+        return ((long) (MPEG_AUDIO_HEADER_MASK & headerA)) == (-128000 & headerB);
+    }
+
+    private static int getSeekFrameHeader(ParsableByteArray frame, int xingBase) {
+        if (frame.limit() >= xingBase + 4) {
+            frame.setPosition(xingBase);
+            int headerData = frame.readInt();
+            if (headerData == SEEK_HEADER_XING || headerData == SEEK_HEADER_INFO) {
+                return headerData;
+            }
+        }
+        if (frame.limit() < 40) {
+            return 0;
+        }
+        frame.setPosition(36);
+        int readInt = frame.readInt();
+        int i = SEEK_HEADER_VBRI;
+        if (readInt == i) {
+            return i;
+        }
+        return 0;
+    }
+
+    @Nullable
+    private static MlltSeeker maybeHandleSeekMetadata(Metadata metadata2, long firstFramePosition) {
+        if (metadata2 == null) {
+            return null;
+        }
+        int length = metadata2.length();
+        for (int i = 0; i < length; i++) {
+            Metadata.Entry entry = metadata2.get(i);
+            if (entry instanceof MlltFrame) {
+                return MlltSeeker.create(firstFramePosition, (MlltFrame) entry);
+            }
+        }
+        return null;
     }
 
     public boolean sniff(ExtractorInput input) throws IOException, InterruptedException {
@@ -298,42 +328,14 @@ public final class Mp3Extractor implements Extractor {
         return new ConstantBitrateSeeker(input.getLength(), input.getPosition(), this.synchronizedHeader);
     }
 
-    private static boolean headersMatch(int headerA, long headerB) {
-        return ((long) (MPEG_AUDIO_HEADER_MASK & headerA)) == (-128000 & headerB);
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface Flags {
     }
 
-    private static int getSeekFrameHeader(ParsableByteArray frame, int xingBase) {
-        if (frame.limit() >= xingBase + 4) {
-            frame.setPosition(xingBase);
-            int headerData = frame.readInt();
-            if (headerData == SEEK_HEADER_XING || headerData == SEEK_HEADER_INFO) {
-                return headerData;
-            }
-        }
-        if (frame.limit() < 40) {
-            return 0;
-        }
-        frame.setPosition(36);
-        int readInt = frame.readInt();
-        int i = SEEK_HEADER_VBRI;
-        if (readInt == i) {
-            return i;
-        }
-        return 0;
-    }
+    interface Seeker extends SeekMap {
+        long getDataEndPosition();
 
-    @Nullable
-    private static MlltSeeker maybeHandleSeekMetadata(Metadata metadata2, long firstFramePosition) {
-        if (metadata2 == null) {
-            return null;
-        }
-        int length = metadata2.length();
-        for (int i = 0; i < length; i++) {
-            Metadata.Entry entry = metadata2.get(i);
-            if (entry instanceof MlltFrame) {
-                return MlltSeeker.create(firstFramePosition, (MlltFrame) entry);
-            }
-        }
-        return null;
+        long getTimeUs(long j);
     }
 }

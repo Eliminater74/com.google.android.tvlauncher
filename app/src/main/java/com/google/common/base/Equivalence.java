@@ -2,11 +2,24 @@ package com.google.common.base;
 
 import com.google.common.annotations.GwtCompatible;
 import com.google.errorprone.annotations.ForOverride;
-import java.io.Serializable;
+
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
+import java.io.Serializable;
 
 @GwtCompatible
 public abstract class Equivalence<T> {
+    protected Equivalence() {
+    }
+
+    public static Equivalence<Object> equals() {
+        return Equals.INSTANCE;
+    }
+
+    public static Equivalence<Object> identity() {
+        return Identity.INSTANCE;
+    }
+
     /* access modifiers changed from: protected */
     @ForOverride
     public abstract boolean doEquivalent(T t, T t2);
@@ -14,9 +27,6 @@ public abstract class Equivalence<T> {
     /* access modifiers changed from: protected */
     @ForOverride
     public abstract int doHash(T t);
-
-    protected Equivalence() {
-    }
 
     public final boolean equivalent(@NullableDecl T a, @NullableDecl T b) {
         if (a == b) {
@@ -41,6 +51,15 @@ public abstract class Equivalence<T> {
 
     public final <S extends T> Wrapper<S> wrap(@NullableDecl S reference) {
         return new Wrapper<>(reference);
+    }
+
+    @GwtCompatible(serializable = true)
+    public final <S extends T> Equivalence<Iterable<S>> pairwise() {
+        return new PairwiseEquivalence(this);
+    }
+
+    public final Predicate<T> equivalentTo(@NullableDecl T target) {
+        return new EquivalentToPredicate(this, target);
     }
 
     public static final class Wrapper<T> implements Serializable {
@@ -89,15 +108,6 @@ public abstract class Equivalence<T> {
         }
     }
 
-    @GwtCompatible(serializable = true)
-    public final <S extends T> Equivalence<Iterable<S>> pairwise() {
-        return new PairwiseEquivalence(this);
-    }
-
-    public final Predicate<T> equivalentTo(@NullableDecl T target) {
-        return new EquivalentToPredicate(this, target);
-    }
-
     private static final class EquivalentToPredicate<T> implements Predicate<T>, Serializable {
         private static final long serialVersionUID = 0;
         private final Equivalence<T> equivalence;
@@ -141,14 +151,6 @@ public abstract class Equivalence<T> {
             sb.append(")");
             return sb.toString();
         }
-    }
-
-    public static Equivalence<Object> equals() {
-        return Equals.INSTANCE;
-    }
-
-    public static Equivalence<Object> identity() {
-        return Identity.INSTANCE;
     }
 
     static final class Equals extends Equivalence<Object> implements Serializable {

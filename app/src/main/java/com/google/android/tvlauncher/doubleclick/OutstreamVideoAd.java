@@ -2,7 +2,9 @@ package com.google.android.tvlauncher.doubleclick;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import com.google.android.tvlauncher.doubleclick.proto.nano.AdConfig;
+
 import java.util.List;
 
 public abstract class OutstreamVideoAd {
@@ -13,9 +15,9 @@ public abstract class OutstreamVideoAd {
     private final String mImageUri;
     private final String mMarketUrl;
     private final String mPackageName;
-    private long mVideoDurationMillis;
     private final List<TrackingUrl> mVideoImpressionTrackingUrls;
     private final String mVideoUri;
+    private long mVideoDurationMillis;
 
     public OutstreamVideoAd(Builder builder) {
         this.mImageUri = builder.mImageUri;

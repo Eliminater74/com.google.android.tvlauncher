@@ -1,10 +1,10 @@
 package androidx.leanback.widget;
 
 public class HeaderItem {
-    private CharSequence mContentDescription;
-    private CharSequence mDescription;
     private final long mId;
     private final String mName;
+    private CharSequence mContentDescription;
+    private CharSequence mDescription;
 
     public HeaderItem(long id, String name) {
         this.mId = id;
@@ -31,11 +31,11 @@ public class HeaderItem {
         this.mContentDescription = contentDescription;
     }
 
-    public void setDescription(CharSequence description) {
-        this.mDescription = description;
-    }
-
     public CharSequence getDescription() {
         return this.mDescription;
+    }
+
+    public void setDescription(CharSequence description) {
+        this.mDescription = description;
     }
 }

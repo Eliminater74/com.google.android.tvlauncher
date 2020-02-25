@@ -1,9 +1,9 @@
 package com.google.android.exoplayer2.drm;
 
 import android.support.annotation.Nullable;
-import com.google.android.exoplayer2.drm.DrmSession;
-import com.google.android.exoplayer2.drm.ExoMediaCrypto;
+
 import com.google.android.exoplayer2.util.Assertions;
+
 import java.util.Map;
 
 public final class ErrorStateDrmSession<T extends ExoMediaCrypto> implements DrmSession<T> {

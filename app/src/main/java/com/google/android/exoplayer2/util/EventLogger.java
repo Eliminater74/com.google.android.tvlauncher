@@ -3,6 +3,7 @@ package com.google.android.exoplayer2.util;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.view.Surface;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.Format;
@@ -20,6 +21,7 @@ import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.gtalkservice.GTalkServiceConstants;
+
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -28,26 +30,19 @@ public class EventLogger implements AnalyticsListener {
     private static final String DEFAULT_TAG = "EventLogger";
     private static final int MAX_TIMELINE_ITEM_LINES = 3;
     private static final NumberFormat TIME_FORMAT = NumberFormat.getInstance(Locale.US);
-    private final Timeline.Period period;
-    private final long startTimeMs;
-    private final String tag;
-    @Nullable
-    private final MappingTrackSelector trackSelector;
-    private final Timeline.Window window;
-
-    public void onAudioAttributesChanged(AnalyticsListener.EventTime eventTime, AudioAttributes audioAttributes) {
-        AnalyticsListener$$CC.onAudioAttributesChanged$$dflt$$(this, eventTime, audioAttributes);
-    }
-
-    public void onVolumeChanged(AnalyticsListener.EventTime eventTime, float f) {
-        AnalyticsListener$$CC.onVolumeChanged$$dflt$$(this, eventTime, f);
-    }
 
     static {
         TIME_FORMAT.setMinimumFractionDigits(2);
         TIME_FORMAT.setMaximumFractionDigits(2);
         TIME_FORMAT.setGroupingUsed(false);
     }
+
+    private final Timeline.Period period;
+    private final long startTimeMs;
+    private final String tag;
+    @Nullable
+    private final MappingTrackSelector trackSelector;
+    private final Timeline.Window window;
 
     public EventLogger(@Nullable MappingTrackSelector trackSelector2) {
         this(trackSelector2, DEFAULT_TAG);
@@ -59,6 +54,150 @@ public class EventLogger implements AnalyticsListener {
         this.window = new Timeline.Window();
         this.period = new Timeline.Period();
         this.startTimeMs = SystemClock.elapsedRealtime();
+    }
+
+    private static String getTimeString(long timeMs) {
+        return timeMs == C0841C.TIME_UNSET ? "?" : TIME_FORMAT.format((double) (((float) timeMs) / 1000.0f));
+    }
+
+    private static String getStateString(int state) {
+        if (state == 1) {
+            return "IDLE";
+        }
+        if (state == 2) {
+            return "BUFFERING";
+        }
+        if (state == 3) {
+            return "READY";
+        }
+        if (state != 4) {
+            return "?";
+        }
+        return "ENDED";
+    }
+
+    private static String getFormatSupportString(int formatSupport) {
+        if (formatSupport == 0) {
+            return "NO";
+        }
+        if (formatSupport == 1) {
+            return "NO_UNSUPPORTED_TYPE";
+        }
+        if (formatSupport == 2) {
+            return "NO_UNSUPPORTED_DRM";
+        }
+        if (formatSupport == 3) {
+            return "NO_EXCEEDS_CAPABILITIES";
+        }
+        if (formatSupport != 4) {
+            return "?";
+        }
+        return "YES";
+    }
+
+    private static String getAdaptiveSupportString(int trackCount, int adaptiveSupport) {
+        if (trackCount < 2) {
+            return "N/A";
+        }
+        if (adaptiveSupport == 0) {
+            return "NO";
+        }
+        if (adaptiveSupport == 8) {
+            return "YES_NOT_SEAMLESS";
+        }
+        if (adaptiveSupport != 16) {
+            return "?";
+        }
+        return "YES";
+    }
+
+    private static String getTrackStatusString(@Nullable TrackSelection selection, TrackGroup group, int trackIndex) {
+        return getTrackStatusString((selection == null || selection.getTrackGroup() != group || selection.indexOf(trackIndex) == -1) ? false : true);
+    }
+
+    private static String getTrackStatusString(boolean enabled) {
+        return enabled ? "[X]" : "[ ]";
+    }
+
+    private static String getRepeatModeString(int repeatMode) {
+        if (repeatMode == 0) {
+            return "OFF";
+        }
+        if (repeatMode == 1) {
+            return "ONE";
+        }
+        if (repeatMode != 2) {
+            return "?";
+        }
+        return "ALL";
+    }
+
+    private static String getDiscontinuityReasonString(int reason) {
+        if (reason == 0) {
+            return "PERIOD_TRANSITION";
+        }
+        if (reason == 1) {
+            return "SEEK";
+        }
+        if (reason == 2) {
+            return "SEEK_ADJUSTMENT";
+        }
+        if (reason == 3) {
+            return "AD_INSERTION";
+        }
+        if (reason != 4) {
+            return "?";
+        }
+        return "INTERNAL";
+    }
+
+    private static String getTimelineChangeReasonString(int reason) {
+        if (reason == 0) {
+            return "PREPARED";
+        }
+        if (reason == 1) {
+            return "RESET";
+        }
+        if (reason != 2) {
+            return "?";
+        }
+        return "DYNAMIC";
+    }
+
+    private static String getTrackTypeString(int trackType) {
+        switch (trackType) {
+            case 0:
+                return "default";
+            case 1:
+                return "audio";
+            case 2:
+                return "video";
+            case 3:
+                return "text";
+            case 4:
+                return TtmlNode.TAG_METADATA;
+            case 5:
+                return "camera motion";
+            case 6:
+                return "none";
+            default:
+                if (trackType < 10000) {
+                    return "?";
+                }
+                StringBuilder sb = new StringBuilder(20);
+                sb.append("custom (");
+                sb.append(trackType);
+                sb.append(")");
+                return sb.toString();
+        }
+    }
+
+    public void onAudioAttributesChanged(AnalyticsListener.EventTime eventTime, AudioAttributes audioAttributes) {
+        AnalyticsListener$$CC.onAudioAttributesChanged$$dflt$$(this, eventTime, audioAttributes);
+    }
+
+    public void onVolumeChanged(AnalyticsListener.EventTime eventTime, float f) {
+        AnalyticsListener$$CC.onVolumeChanged$$dflt$$(this, eventTime, f);
     }
 
     public void onLoadingChanged(AnalyticsListener.EventTime eventTime, boolean isLoading) {
@@ -542,141 +681,5 @@ public class EventLogger implements AnalyticsListener {
         sb5.append(", ");
         sb5.append(windowPeriodString);
         return sb5.toString();
-    }
-
-    private static String getTimeString(long timeMs) {
-        return timeMs == C0841C.TIME_UNSET ? "?" : TIME_FORMAT.format((double) (((float) timeMs) / 1000.0f));
-    }
-
-    private static String getStateString(int state) {
-        if (state == 1) {
-            return "IDLE";
-        }
-        if (state == 2) {
-            return "BUFFERING";
-        }
-        if (state == 3) {
-            return "READY";
-        }
-        if (state != 4) {
-            return "?";
-        }
-        return "ENDED";
-    }
-
-    private static String getFormatSupportString(int formatSupport) {
-        if (formatSupport == 0) {
-            return "NO";
-        }
-        if (formatSupport == 1) {
-            return "NO_UNSUPPORTED_TYPE";
-        }
-        if (formatSupport == 2) {
-            return "NO_UNSUPPORTED_DRM";
-        }
-        if (formatSupport == 3) {
-            return "NO_EXCEEDS_CAPABILITIES";
-        }
-        if (formatSupport != 4) {
-            return "?";
-        }
-        return "YES";
-    }
-
-    private static String getAdaptiveSupportString(int trackCount, int adaptiveSupport) {
-        if (trackCount < 2) {
-            return "N/A";
-        }
-        if (adaptiveSupport == 0) {
-            return "NO";
-        }
-        if (adaptiveSupport == 8) {
-            return "YES_NOT_SEAMLESS";
-        }
-        if (adaptiveSupport != 16) {
-            return "?";
-        }
-        return "YES";
-    }
-
-    private static String getTrackStatusString(@Nullable TrackSelection selection, TrackGroup group, int trackIndex) {
-        return getTrackStatusString((selection == null || selection.getTrackGroup() != group || selection.indexOf(trackIndex) == -1) ? false : true);
-    }
-
-    private static String getTrackStatusString(boolean enabled) {
-        return enabled ? "[X]" : "[ ]";
-    }
-
-    private static String getRepeatModeString(int repeatMode) {
-        if (repeatMode == 0) {
-            return "OFF";
-        }
-        if (repeatMode == 1) {
-            return "ONE";
-        }
-        if (repeatMode != 2) {
-            return "?";
-        }
-        return "ALL";
-    }
-
-    private static String getDiscontinuityReasonString(int reason) {
-        if (reason == 0) {
-            return "PERIOD_TRANSITION";
-        }
-        if (reason == 1) {
-            return "SEEK";
-        }
-        if (reason == 2) {
-            return "SEEK_ADJUSTMENT";
-        }
-        if (reason == 3) {
-            return "AD_INSERTION";
-        }
-        if (reason != 4) {
-            return "?";
-        }
-        return "INTERNAL";
-    }
-
-    private static String getTimelineChangeReasonString(int reason) {
-        if (reason == 0) {
-            return "PREPARED";
-        }
-        if (reason == 1) {
-            return "RESET";
-        }
-        if (reason != 2) {
-            return "?";
-        }
-        return "DYNAMIC";
-    }
-
-    private static String getTrackTypeString(int trackType) {
-        switch (trackType) {
-            case 0:
-                return "default";
-            case 1:
-                return "audio";
-            case 2:
-                return "video";
-            case 3:
-                return "text";
-            case 4:
-                return TtmlNode.TAG_METADATA;
-            case 5:
-                return "camera motion";
-            case 6:
-                return "none";
-            default:
-                if (trackType < 10000) {
-                    return "?";
-                }
-                StringBuilder sb = new StringBuilder(20);
-                sb.append("custom (");
-                sb.append(trackType);
-                sb.append(")");
-                return sb.toString();
-        }
     }
 }

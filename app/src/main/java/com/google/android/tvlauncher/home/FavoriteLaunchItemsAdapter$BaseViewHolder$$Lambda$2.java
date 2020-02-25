@@ -1,7 +1,5 @@
 package com.google.android.tvlauncher.home;
 
-import com.google.android.tvlauncher.home.FavoriteLaunchItemsAdapter;
-
 final /* synthetic */ class FavoriteLaunchItemsAdapter$BaseViewHolder$$Lambda$2 implements Runnable {
     private final FavoriteLaunchItemsAdapter.BaseViewHolder arg$1;
     private final boolean arg$2;

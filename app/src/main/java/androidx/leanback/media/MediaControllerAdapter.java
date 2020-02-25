@@ -12,8 +12,13 @@ import android.support.p001v4.media.session.PlaybackStateCompat;
 public class MediaControllerAdapter extends PlayerAdapter {
     private static final boolean DEBUG = false;
     private static final String TAG = "MediaControllerAdapter";
-    private MediaControllerCompat mController;
     Handler mHandler = new Handler();
+    private final Runnable mPositionUpdaterRunnable = new Runnable() {
+        public void run() {
+            MediaControllerAdapter.this.getCallback().onCurrentPositionChanged(MediaControllerAdapter.this);
+            MediaControllerAdapter.this.mHandler.postDelayed(this, (long) MediaControllerAdapter.this.getUpdatePeriod());
+        }
+    };
     boolean mIsBuffering = false;
     MediaControllerCompat.Callback mMediaControllerCallback = new MediaControllerCompat.Callback() {
         public void onPlaybackStateChanged(PlaybackStateCompat state) {
@@ -56,17 +61,7 @@ public class MediaControllerAdapter extends PlayerAdapter {
             MediaControllerAdapter.this.getCallback().onMetadataChanged(MediaControllerAdapter.this);
         }
     };
-    private final Runnable mPositionUpdaterRunnable = new Runnable() {
-        public void run() {
-            MediaControllerAdapter.this.getCallback().onCurrentPositionChanged(MediaControllerAdapter.this);
-            MediaControllerAdapter.this.mHandler.postDelayed(this, (long) MediaControllerAdapter.this.getUpdatePeriod());
-        }
-    };
-
-    /* access modifiers changed from: package-private */
-    public int getUpdatePeriod() {
-        return 16;
-    }
+    private MediaControllerCompat mController;
 
     public MediaControllerAdapter(MediaControllerCompat controller) {
         if (controller != null) {
@@ -74,6 +69,11 @@ public class MediaControllerAdapter extends PlayerAdapter {
             return;
         }
         throw new NullPointerException("Object of MediaControllerCompat is null");
+    }
+
+    /* access modifiers changed from: package-private */
+    public int getUpdatePeriod() {
+        return 16;
     }
 
     public MediaControllerCompat getMediaController() {

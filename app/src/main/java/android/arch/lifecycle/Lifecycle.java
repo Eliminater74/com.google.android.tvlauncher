@@ -5,16 +5,6 @@ import android.support.annotation.NonNull;
 
 public abstract class Lifecycle {
 
-    public enum Event {
-        ON_CREATE,
-        ON_START,
-        ON_RESUME,
-        ON_PAUSE,
-        ON_STOP,
-        ON_DESTROY,
-        ON_ANY
-    }
-
     @MainThread
     public abstract void addObserver(@NonNull LifecycleObserver lifecycleObserver);
 
@@ -24,6 +14,16 @@ public abstract class Lifecycle {
 
     @MainThread
     public abstract void removeObserver(@NonNull LifecycleObserver lifecycleObserver);
+
+    public enum Event {
+        ON_CREATE,
+        ON_START,
+        ON_RESUME,
+        ON_PAUSE,
+        ON_STOP,
+        ON_DESTROY,
+        ON_ANY
+    }
 
     public enum State {
         DESTROYED,

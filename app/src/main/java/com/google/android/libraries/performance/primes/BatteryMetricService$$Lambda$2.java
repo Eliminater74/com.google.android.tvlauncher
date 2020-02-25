@@ -1,6 +1,7 @@
 package com.google.android.libraries.performance.primes;
 
 import java.util.concurrent.Callable;
+
 import logs.proto.wireless.performance.mobile.BatteryMetric;
 
 final /* synthetic */ class BatteryMetricService$$Lambda$2 implements Callable {

@@ -4,9 +4,11 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.annotation.VisibleForTesting;
+
 import com.google.android.libraries.performance.primes.PrimesLog;
 import com.google.android.libraries.performance.primes.trace.PrimesTrace;
 import com.google.android.libraries.stitch.util.ThreadUtil;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,6 +17,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
+
 import logs.proto.wireless.performance.mobile.SystemHealthProto;
 
 public final class DirStatsCapture {
@@ -86,58 +89,45 @@ public final class DirStatsCapture {
         return new Traversal(baseDir, dirStats, maxDepth, listFilesPatterns).scan();
     }
 
+    public static List<SystemHealthProto.PackageMetric.DirStats> getDirStats(Context context, int maxDirDepthForDirStats, Pattern... listFilesPatterns) {
+        List<SystemHealthProto.PackageMetric.DirStats> dirStats = new ArrayList<>();
+        File dataDir = null;
+        try {
+            PrimesTrace.beginSection("DirStatsCapture-getDirStats");
+            ThreadUtil.ensureBackgroundThread();
+            try {
+                dataDir = new File(context.getPackageManager().getApplicationInfo(context.getPackageName(), 0).dataDir);
+            } catch (PackageManager.NameNotFoundException e) {
+                PrimesLog.m54w(TAG, "Failed to use package manager getting data directory from context instead.", new Object[0]);
+                File filesDir = context.getFilesDir();
+                if (filesDir != null) {
+                    dataDir = filesDir.getParentFile();
+                }
+            }
+            if (dataDir == null) {
+                return Collections.emptyList();
+            }
+            collectDirStats(dataDir, dirStats, maxDirDepthForDirStats, listFilesPatterns);
+            PrimesTrace.endSection();
+            return dirStats;
+        } catch (Exception e2) {
+            String valueOf = String.valueOf(e2);
+            StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 29);
+            sb.append("Failed to retrieve DirStats: ");
+            sb.append(valueOf);
+            PrimesLog.m54w(TAG, sb.toString(), new Object[0]);
+            return Collections.emptyList();
+        } finally {
+            PrimesTrace.endSection();
+        }
+    }
+
     private static final class Traversal {
         /* access modifiers changed from: private */
         public final File baseDir;
         private final List<SystemHealthProto.PackageMetric.DirStats> dirStats;
         private final List<Pattern> listFilesPatterns;
         private final int maxDepth;
-
-        private final class Dir {
-            /* access modifiers changed from: private */
-            public final int depth;
-            /* access modifiers changed from: private */
-            public final String relativeDir;
-
-            private Dir() {
-                this.relativeDir = "";
-                this.depth = 0;
-            }
-
-            private Dir(Dir parent, String dir) {
-                String str;
-                if (parent.depth == 0) {
-                    str = dir;
-                } else {
-                    String str2 = parent.relativeDir;
-                    StringBuilder sb = new StringBuilder(String.valueOf(str2).length() + 1 + String.valueOf(dir).length());
-                    sb.append(str2);
-                    sb.append('/');
-                    sb.append(dir);
-                    str = sb.toString();
-                }
-                this.relativeDir = str;
-                this.depth = parent.depth + 1;
-            }
-
-            /* access modifiers changed from: private */
-            public File getFile() {
-                return new File(Traversal.this.baseDir, this.relativeDir);
-            }
-
-            /* access modifiers changed from: private */
-            public String relativePathToChild(String childName) {
-                if (this.depth == 0) {
-                    return childName;
-                }
-                String str = this.relativeDir;
-                StringBuilder sb = new StringBuilder(String.valueOf(str).length() + 1 + String.valueOf(childName).length());
-                sb.append(str);
-                sb.append('/');
-                sb.append(childName);
-                return sb.toString();
-            }
-        }
 
         private Traversal(File baseDir2, List<SystemHealthProto.PackageMetric.DirStats> dirStats2, int maxDepth2, Pattern... listFilesPatterns2) {
             List<Pattern> list;
@@ -209,38 +199,51 @@ public final class DirStatsCapture {
             this.dirStats.add((SystemHealthProto.PackageMetric.DirStats) stats.build());
             return dirSize;
         }
-    }
 
-    public static List<SystemHealthProto.PackageMetric.DirStats> getDirStats(Context context, int maxDirDepthForDirStats, Pattern... listFilesPatterns) {
-        List<SystemHealthProto.PackageMetric.DirStats> dirStats = new ArrayList<>();
-        File dataDir = null;
-        try {
-            PrimesTrace.beginSection("DirStatsCapture-getDirStats");
-            ThreadUtil.ensureBackgroundThread();
-            try {
-                dataDir = new File(context.getPackageManager().getApplicationInfo(context.getPackageName(), 0).dataDir);
-            } catch (PackageManager.NameNotFoundException e) {
-                PrimesLog.m54w(TAG, "Failed to use package manager getting data directory from context instead.", new Object[0]);
-                File filesDir = context.getFilesDir();
-                if (filesDir != null) {
-                    dataDir = filesDir.getParentFile();
+        private final class Dir {
+            /* access modifiers changed from: private */
+            public final int depth;
+            /* access modifiers changed from: private */
+            public final String relativeDir;
+
+            private Dir() {
+                this.relativeDir = "";
+                this.depth = 0;
+            }
+
+            private Dir(Dir parent, String dir) {
+                String str;
+                if (parent.depth == 0) {
+                    str = dir;
+                } else {
+                    String str2 = parent.relativeDir;
+                    StringBuilder sb = new StringBuilder(String.valueOf(str2).length() + 1 + String.valueOf(dir).length());
+                    sb.append(str2);
+                    sb.append('/');
+                    sb.append(dir);
+                    str = sb.toString();
                 }
+                this.relativeDir = str;
+                this.depth = parent.depth + 1;
             }
-            if (dataDir == null) {
-                return Collections.emptyList();
+
+            /* access modifiers changed from: private */
+            public File getFile() {
+                return new File(Traversal.this.baseDir, this.relativeDir);
             }
-            collectDirStats(dataDir, dirStats, maxDirDepthForDirStats, listFilesPatterns);
-            PrimesTrace.endSection();
-            return dirStats;
-        } catch (Exception e2) {
-            String valueOf = String.valueOf(e2);
-            StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 29);
-            sb.append("Failed to retrieve DirStats: ");
-            sb.append(valueOf);
-            PrimesLog.m54w(TAG, sb.toString(), new Object[0]);
-            return Collections.emptyList();
-        } finally {
-            PrimesTrace.endSection();
+
+            /* access modifiers changed from: private */
+            public String relativePathToChild(String childName) {
+                if (this.depth == 0) {
+                    return childName;
+                }
+                String str = this.relativeDir;
+                StringBuilder sb = new StringBuilder(String.valueOf(str).length() + 1 + String.valueOf(childName).length());
+                sb.append(str);
+                sb.append('/');
+                sb.append(childName);
+                return sb.toString();
+            }
         }
     }
 }

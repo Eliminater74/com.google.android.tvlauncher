@@ -1,6 +1,7 @@
 package com.google.common.util.concurrent;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;

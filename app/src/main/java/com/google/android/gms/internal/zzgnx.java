@@ -1,6 +1,5 @@
 package com.google.android.gms.internal;
 
-import com.google.android.gms.internal.zzgoj;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Map;

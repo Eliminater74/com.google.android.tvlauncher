@@ -3,6 +3,7 @@ package com.google.android.exoplayer2.extractor;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.EOFException;
 import java.io.IOException;
 import java.util.Arrays;
@@ -12,12 +13,12 @@ public final class DefaultExtractorInput implements ExtractorInput {
     private static final int PEEK_MIN_FREE_SPACE_AFTER_RESIZE = 65536;
     private static final int SCRATCH_SPACE_SIZE = 4096;
     private final DataSource dataSource;
+    private final byte[] scratchSpace = new byte[4096];
+    private final long streamLength;
     private byte[] peekBuffer = new byte[65536];
     private int peekBufferLength;
     private int peekBufferPosition;
     private long position;
-    private final byte[] scratchSpace = new byte[4096];
-    private final long streamLength;
 
     public DefaultExtractorInput(DataSource dataSource2, long position2, long length) {
         this.dataSource = dataSource2;

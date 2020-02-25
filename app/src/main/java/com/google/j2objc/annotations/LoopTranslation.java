@@ -9,10 +9,10 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 public @interface LoopTranslation {
 
+    LoopStyle value();
+
     public enum LoopStyle {
         JAVA_ITERATOR,
         FAST_ENUMERATION
     }
-
-    LoopStyle value();
 }

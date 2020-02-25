@@ -3,6 +3,7 @@ package com.google.android.exoplayer2.text;
 import android.graphics.Bitmap;
 import android.support.p001v4.view.ViewCompat;
 import android.text.Layout;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -32,21 +33,6 @@ public class Cue {
     public final int textSizeType;
     public final int windowColor;
     public final boolean windowColorSet;
-
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface AnchorType {
-    }
-
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface LineType {
-    }
-
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface TextSizeType {
-    }
 
     public Cue(Bitmap bitmap2, float horizontalPosition, int horizontalPositionAnchor, float verticalPosition, int verticalPositionAnchor, float width, float height) {
         this(null, null, bitmap2, verticalPosition, 0, verticalPositionAnchor, horizontalPosition, horizontalPositionAnchor, Integer.MIN_VALUE, Float.MIN_VALUE, width, height, false, ViewCompat.MEASURED_STATE_MASK);
@@ -89,5 +75,20 @@ public class Cue {
         this.windowColor = windowColor2;
         this.textSizeType = textSizeType2;
         this.textSize = textSize2;
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface AnchorType {
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface LineType {
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface TextSizeType {
     }
 }

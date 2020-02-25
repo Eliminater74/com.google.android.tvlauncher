@@ -2,8 +2,8 @@ package com.google.android.gms.common.api;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
+
 import com.google.android.gms.common.annotation.KeepForSdk;
-import com.google.android.gms.common.api.Result;
 import com.google.android.gms.common.internal.Hide;
 
 public abstract class ResultCallbacks<R extends Result> implements ResultCallback<R> {

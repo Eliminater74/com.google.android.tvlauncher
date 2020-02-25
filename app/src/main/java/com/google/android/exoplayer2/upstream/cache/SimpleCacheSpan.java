@@ -1,19 +1,25 @@
 package com.google.android.exoplayer2.upstream.cache;
 
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 final class SimpleCacheSpan extends CacheSpan {
+    static final String COMMON_SUFFIX = ".exo";
     private static final Pattern CACHE_FILE_PATTERN_V1 = Pattern.compile("^(.+)\\.(\\d+)\\.(\\d+)\\.v1\\.exo$", 32);
     private static final Pattern CACHE_FILE_PATTERN_V2 = Pattern.compile("^(.+)\\.(\\d+)\\.(\\d+)\\.v2\\.exo$", 32);
     private static final Pattern CACHE_FILE_PATTERN_V3 = Pattern.compile("^(\\d+)\\.(\\d+)\\.(\\d+)\\.v3\\.exo$", 32);
-    static final String COMMON_SUFFIX = ".exo";
     private static final String SUFFIX = ".v3.exo";
+
+    private SimpleCacheSpan(String key, long position, long length, long lastTouchTimestamp, @Nullable File file) {
+        super(key, position, length, lastTouchTimestamp, file);
+    }
 
     public static File getCacheFile(File cacheDir, int id, long position, long timestamp) {
         StringBuilder sb = new StringBuilder(60);
@@ -103,10 +109,6 @@ final class SimpleCacheSpan extends CacheSpan {
             return null;
         }
         return newCacheFile;
-    }
-
-    private SimpleCacheSpan(String key, long position, long length, long lastTouchTimestamp, @Nullable File file) {
-        super(key, position, length, lastTouchTimestamp, file);
     }
 
     public SimpleCacheSpan copyWithFileAndLastTouchTimestamp(File file, long lastTouchTimestamp) {

@@ -4,9 +4,9 @@ import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.PlaybackParameters;
 
 public final class StandaloneMediaClock implements MediaClock {
+    private final Clock clock;
     private long baseElapsedMs;
     private long baseUs;
-    private final Clock clock;
     private PlaybackParameters playbackParameters = PlaybackParameters.DEFAULT;
     private boolean started;
 

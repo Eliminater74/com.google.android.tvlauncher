@@ -7,7 +7,6 @@ import android.support.annotation.RestrictTo;
 import android.support.p001v4.view.GravityCompat;
 import android.support.p001v4.view.ViewCompat;
 import android.support.p004v7.appcompat.C0233R;
-import android.support.p004v7.widget.LinearLayoutCompat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +20,20 @@ public class AlertDialogLayout extends LinearLayoutCompat {
 
     public AlertDialogLayout(@Nullable Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+    }
+
+    private static int resolveMinimumHeight(View v) {
+        int minHeight = ViewCompat.getMinimumHeight(v);
+        if (minHeight > 0) {
+            return minHeight;
+        }
+        if (v instanceof ViewGroup) {
+            ViewGroup vg = (ViewGroup) v;
+            if (vg.getChildCount() == 1) {
+                return resolveMinimumHeight(vg.getChildAt(0));
+            }
+        }
+        return 0;
     }
 
     /* access modifiers changed from: protected */
@@ -143,20 +156,6 @@ public class AlertDialogLayout extends LinearLayoutCompat {
                 }
             }
         }
-    }
-
-    private static int resolveMinimumHeight(View v) {
-        int minHeight = ViewCompat.getMinimumHeight(v);
-        if (minHeight > 0) {
-            return minHeight;
-        }
-        if (v instanceof ViewGroup) {
-            ViewGroup vg = (ViewGroup) v;
-            if (vg.getChildCount() == 1) {
-                return resolveMinimumHeight(vg.getChildAt(0));
-            }
-        }
-        return 0;
     }
 
     /* access modifiers changed from: protected */

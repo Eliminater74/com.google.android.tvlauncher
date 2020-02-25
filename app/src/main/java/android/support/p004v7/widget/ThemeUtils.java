@@ -20,6 +20,9 @@ class ThemeUtils {
     private static final int[] TEMP_ARRAY = new int[1];
     private static final ThreadLocal<TypedValue> TL_TYPED_VALUE = new ThreadLocal<>();
 
+    private ThemeUtils() {
+    }
+
     public static ColorStateList createDisabledStateList(int textColor, int disabledTextColor) {
         int[][] states = new int[2][];
         int[] colors = new int[2];
@@ -77,8 +80,5 @@ class ThemeUtils {
     static int getThemeAttrColor(Context context, int attr, float alpha) {
         int color = getThemeAttrColor(context, attr);
         return ColorUtils.setAlphaComponent(color, Math.round(((float) Color.alpha(color)) * alpha));
-    }
-
-    private ThemeUtils() {
     }
 }

@@ -25,6 +25,8 @@ public class PagerTabStrip extends PagerTitleStrip {
     private static final int MIN_TEXT_SPACING = 64;
     private static final int TAB_PADDING = 16;
     private static final int TAB_SPACING = 32;
+    private final Paint mTabPaint;
+    private final Rect mTempRect;
     private boolean mDrawFullUnderline;
     private boolean mDrawFullUnderlineSet;
     private int mFullUnderlineHeight;
@@ -38,8 +40,6 @@ public class PagerTabStrip extends PagerTitleStrip {
     private int mMinTextSpacing;
     private int mTabAlpha;
     private int mTabPadding;
-    private final Paint mTabPaint;
-    private final Rect mTempRect;
     private int mTouchSlop;
 
     public PagerTabStrip(@NonNull Context context) {
@@ -83,12 +83,6 @@ public class PagerTabStrip extends PagerTitleStrip {
         }
     }
 
-    public void setTabIndicatorColor(@ColorInt int color) {
-        this.mIndicatorColor = color;
-        this.mTabPaint.setColor(this.mIndicatorColor);
-        invalidate();
-    }
-
     public void setTabIndicatorColorResource(@ColorRes int resId) {
         setTabIndicatorColor(ContextCompat.getColor(getContext(), resId));
     }
@@ -96,6 +90,12 @@ public class PagerTabStrip extends PagerTitleStrip {
     @ColorInt
     public int getTabIndicatorColor() {
         return this.mIndicatorColor;
+    }
+
+    public void setTabIndicatorColor(@ColorInt int color) {
+        this.mIndicatorColor = color;
+        this.mTabPaint.setColor(this.mIndicatorColor);
+        invalidate();
     }
 
     public void setPadding(int left, int top, int right, int bottom) {
@@ -133,14 +133,14 @@ public class PagerTabStrip extends PagerTitleStrip {
         }
     }
 
+    public boolean getDrawFullUnderline() {
+        return this.mDrawFullUnderline;
+    }
+
     public void setDrawFullUnderline(boolean drawFull) {
         this.mDrawFullUnderline = drawFull;
         this.mDrawFullUnderlineSet = true;
         invalidate();
-    }
-
-    public boolean getDrawFullUnderline() {
-        return this.mDrawFullUnderline;
     }
 
     /* access modifiers changed from: package-private */

@@ -2,22 +2,18 @@ package com.google.android.exoplayer2.trackselection;
 
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
+
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.source.chunk.MediaChunk;
 import com.google.android.exoplayer2.source.chunk.MediaChunkIterator;
 import com.google.android.exoplayer2.source.chunk.MediaChunkListIterator;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.util.Assertions;
+
 import java.util.Arrays;
 import java.util.List;
 
 public final class TrackSelectionUtil {
-
-    public interface AdaptiveTrackSelectionFactory {
-        TrackSelection createAdaptiveTrackSelection(TrackSelection.Definition definition);
-    }
 
     private TrackSelectionUtil() {
     }
@@ -187,5 +183,9 @@ public final class TrackSelectionUtil {
             }
         }
         return closestFormat;
+    }
+
+    public interface AdaptiveTrackSelectionFactory {
+        TrackSelection createAdaptiveTrackSelection(TrackSelection.Definition definition);
     }
 }

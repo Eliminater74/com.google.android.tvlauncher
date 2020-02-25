@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.BaseRequestOptions;
@@ -36,26 +37,27 @@ import com.google.android.tvlauncher.util.IntentUtil;
 import com.google.android.tvlauncher.util.OemPromotionApp;
 import com.google.android.tvlauncher.util.Util;
 import com.google.android.tvrecommendations.shared.util.Constants;
+
 import java.util.Arrays;
 import java.util.List;
 
 public class AddAppLinkActivity extends LoggingActivity {
     private static final String TAG = "AddAppLinkActivity";
-    private Button mAllowButton;
-    private TextView mCategory;
     /* access modifiers changed from: private */
     public int mCornerRadius;
+    /* access modifiers changed from: private */
+    public EventLogger mEventLogger;
+    /* access modifiers changed from: private */
+    public ImageView mScreenshotView;
+    private Button mAllowButton;
+    private TextView mCategory;
     private Button mDenyButton;
     private TextView mDescription;
     private TextView mDeveloper;
     private LinearLayout mDialogView;
-    /* access modifiers changed from: private */
-    public EventLogger mEventLogger;
     private ImageView mIconView;
     private Button mOpenButton;
     private RequestOptions mRequestOptions;
-    /* access modifiers changed from: private */
-    public ImageView mScreenshotView;
     private TextView mTitle;
 
     public AddAppLinkActivity() {

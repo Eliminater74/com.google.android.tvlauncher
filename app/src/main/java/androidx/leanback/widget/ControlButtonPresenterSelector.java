@@ -6,12 +6,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.leanback.C0364R;
-import androidx.leanback.widget.Presenter;
 
 public class ControlButtonPresenterSelector extends PresenterSelector {
-    private final Presenter[] mPresenters = {this.mPrimaryPresenter};
     private final Presenter mPrimaryPresenter = new ControlButtonPresenter(C0364R.layout.lb_control_button_primary);
+    private final Presenter[] mPresenters = {this.mPrimaryPresenter};
     private final Presenter mSecondaryPresenter = new ControlButtonPresenter(C0364R.layout.lb_control_button_secondary);
 
     public Presenter getPrimaryPresenter() {

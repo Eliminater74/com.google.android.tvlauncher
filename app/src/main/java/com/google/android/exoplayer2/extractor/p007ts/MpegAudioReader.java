@@ -4,7 +4,6 @@ import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.extractor.ExtractorOutput;
 import com.google.android.exoplayer2.extractor.MpegAudioHeader;
 import com.google.android.exoplayer2.extractor.TrackOutput;
-import com.google.android.exoplayer2.extractor.p007ts.TsPayloadReader;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.common.primitives.UnsignedBytes;
 
@@ -14,14 +13,14 @@ public final class MpegAudioReader implements ElementaryStreamReader {
     private static final int STATE_FINDING_HEADER = 0;
     private static final int STATE_READING_FRAME = 2;
     private static final int STATE_READING_HEADER = 1;
+    private final MpegAudioHeader header;
+    private final ParsableByteArray headerScratch;
+    private final String language;
     private String formatId;
     private int frameBytesRead;
     private long frameDurationUs;
     private int frameSize;
     private boolean hasOutputFormat;
-    private final MpegAudioHeader header;
-    private final ParsableByteArray headerScratch;
-    private final String language;
     private boolean lastByteWasFF;
     private TrackOutput output;
     private int state;

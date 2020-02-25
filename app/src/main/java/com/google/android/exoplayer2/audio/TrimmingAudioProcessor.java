@@ -1,7 +1,7 @@
 package com.google.android.exoplayer2.audio;
 
-import com.google.android.exoplayer2.audio.AudioProcessor;
 import com.google.android.exoplayer2.util.Util;
+
 import java.nio.ByteBuffer;
 
 final class TrimmingAudioProcessor extends BaseAudioProcessor {

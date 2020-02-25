@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.UserManager;
 import android.support.annotation.VisibleForTesting;
 import android.util.Log;
+
 import java.util.List;
 
 public class ProfilesManager {
@@ -19,17 +20,17 @@ public class ProfilesManager {
     private Context mContext;
     private UserManager mUserManager;
 
+    @VisibleForTesting
+    ProfilesManager(Context context) {
+        this.mContext = context.getApplicationContext();
+        this.mUserManager = (UserManager) context.getSystemService("user");
+    }
+
     public static ProfilesManager getInstance(Context context) {
         if (sInstance == null) {
             sInstance = new ProfilesManager(context);
         }
         return sInstance;
-    }
-
-    @VisibleForTesting
-    ProfilesManager(Context context) {
-        this.mContext = context.getApplicationContext();
-        this.mUserManager = (UserManager) context.getSystemService("user");
     }
 
     public boolean hasRestrictedProfile() {

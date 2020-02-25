@@ -3,7 +3,6 @@ package com.google.android.exoplayer2.source.chunk;
 import com.google.android.exoplayer2.extractor.DummyTrackOutput;
 import com.google.android.exoplayer2.extractor.TrackOutput;
 import com.google.android.exoplayer2.source.SampleQueue;
-import com.google.android.exoplayer2.source.chunk.ChunkExtractorWrapper;
 import com.google.android.exoplayer2.util.Log;
 
 public final class BaseMediaChunkOutput implements ChunkExtractorWrapper.TrackOutputProvider {

@@ -1,20 +1,22 @@
 package com.google.common.base;
 
 import com.google.common.annotations.GwtCompatible;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.util.Collections;
 import java.util.Set;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible
 final class Absent<T> extends Optional<T> {
     static final Absent<Object> INSTANCE = new Absent<>();
     private static final long serialVersionUID = 0;
 
-    static <T> Optional<T> withType() {
-        return INSTANCE;
+    private Absent() {
     }
 
-    private Absent() {
+    static <T> Optional<T> withType() {
+        return INSTANCE;
     }
 
     public boolean isPresent() {

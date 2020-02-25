@@ -10,8 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
+
 import androidx.leanback.C0364R;
-import androidx.leanback.app.BrowseFragment;
 import androidx.leanback.widget.BaseOnItemViewClickedListener;
 import androidx.leanback.widget.BaseOnItemViewSelectedListener;
 import androidx.leanback.widget.HorizontalGridView;
@@ -24,6 +24,7 @@ import androidx.leanback.widget.Presenter;
 import androidx.leanback.widget.RowPresenter;
 import androidx.leanback.widget.VerticalGridView;
 import androidx.leanback.widget.ViewHolderTask;
+
 import java.util.ArrayList;
 
 @Deprecated
@@ -32,7 +33,18 @@ public class RowsFragment extends BaseRowFragment implements BrowseFragment.Main
     static final boolean DEBUG = false;
     static final String TAG = "RowsFragment";
     boolean mAfterEntranceTransition = true;
+    boolean mExpand = true;
+    ItemBridgeAdapter.AdapterListener mExternalAdapterListener;
+    boolean mFreezeRows;
+    BaseOnItemViewClickedListener mOnItemViewClickedListener;
+    BaseOnItemViewSelectedListener mOnItemViewSelectedListener;
+    ItemBridgeAdapter.ViewHolder mSelectedViewHolder;
+    boolean mViewsCreated;
     private int mAlignedTop = Integer.MIN_VALUE;
+    private MainFragmentAdapter mMainFragmentAdapter;
+    private MainFragmentRowsAdapter mMainFragmentRowsAdapter;
+    private ArrayList<Presenter> mPresenterMapper;
+    private RecyclerView.RecycledViewPool mRecycledViewPool;
     private final ItemBridgeAdapter.AdapterListener mBridgeAdapterListener = new ItemBridgeAdapter.AdapterListener() {
         public void onAddPresenter(Presenter presenter, int type) {
             if (RowsFragment.this.mExternalAdapterListener != null) {
@@ -93,21 +105,30 @@ public class RowsFragment extends BaseRowFragment implements BrowseFragment.Main
             }
         }
     };
-    boolean mExpand = true;
-    ItemBridgeAdapter.AdapterListener mExternalAdapterListener;
-    boolean mFreezeRows;
-    private MainFragmentAdapter mMainFragmentAdapter;
-    private MainFragmentRowsAdapter mMainFragmentRowsAdapter;
-    BaseOnItemViewClickedListener mOnItemViewClickedListener;
-    BaseOnItemViewSelectedListener mOnItemViewSelectedListener;
-    private ArrayList<Presenter> mPresenterMapper;
-    private RecyclerView.RecycledViewPool mRecycledViewPool;
-    ItemBridgeAdapter.ViewHolder mSelectedViewHolder;
     private int mSubPosition;
-    boolean mViewsCreated;
+
+    static void setRowViewExpanded(ItemBridgeAdapter.ViewHolder vh, boolean expanded) {
+        ((RowPresenter) vh.getPresenter()).setRowViewExpanded(vh.getViewHolder(), expanded);
+    }
+
+    static void setRowViewSelected(ItemBridgeAdapter.ViewHolder vh, boolean selected, boolean immediate) {
+        ((RowViewHolderExtra) vh.getExtraObject()).animateSelect(selected, immediate);
+        ((RowPresenter) vh.getPresenter()).setRowViewSelected(vh.getViewHolder(), selected);
+    }
+
+    static RowPresenter.ViewHolder getRowViewHolder(ItemBridgeAdapter.ViewHolder ibvh) {
+        if (ibvh == null) {
+            return null;
+        }
+        return ((RowPresenter) ibvh.getPresenter()).getRowViewHolder(ibvh.getViewHolder());
+    }
 
     public /* bridge */ /* synthetic */ int getSelectedPosition() {
         return super.getSelectedPosition();
+    }
+
+    public /* bridge */ /* synthetic */ void setSelectedPosition(int i) {
+        super.setSelectedPosition(i);
     }
 
     public /* bridge */ /* synthetic */ View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
@@ -120,10 +141,6 @@ public class RowsFragment extends BaseRowFragment implements BrowseFragment.Main
 
     public /* bridge */ /* synthetic */ void onTransitionStart() {
         super.onTransitionStart();
-    }
-
-    public /* bridge */ /* synthetic */ void setSelectedPosition(int i) {
-        super.setSelectedPosition(i);
     }
 
     public /* bridge */ /* synthetic */ void setSelectedPosition(int i, boolean z) {
@@ -144,68 +161,13 @@ public class RowsFragment extends BaseRowFragment implements BrowseFragment.Main
         return this.mMainFragmentRowsAdapter;
     }
 
-    static final class RowViewHolderExtra implements TimeAnimator.TimeListener {
-        static final Interpolator sSelectAnimatorInterpolator = new DecelerateInterpolator(2.0f);
-        final RowPresenter mRowPresenter;
-        final Presenter.ViewHolder mRowViewHolder;
-        final TimeAnimator mSelectAnimator = new TimeAnimator();
-        final int mSelectAnimatorDurationInUse;
-        final Interpolator mSelectAnimatorInterpolatorInUse;
-        float mSelectLevelAnimDelta;
-        float mSelectLevelAnimStart;
-
-        RowViewHolderExtra(ItemBridgeAdapter.ViewHolder ibvh) {
-            this.mRowPresenter = (RowPresenter) ibvh.getPresenter();
-            this.mRowViewHolder = ibvh.getViewHolder();
-            this.mSelectAnimator.setTimeListener(this);
-            this.mSelectAnimatorDurationInUse = ibvh.itemView.getResources().getInteger(C0364R.integer.lb_browse_rows_anim_duration);
-            this.mSelectAnimatorInterpolatorInUse = sSelectAnimatorInterpolator;
-        }
-
-        public void onTimeUpdate(TimeAnimator animation, long totalTime, long deltaTime) {
-            if (this.mSelectAnimator.isRunning()) {
-                updateSelect(totalTime, deltaTime);
-            }
-        }
-
-        /* access modifiers changed from: package-private */
-        public void updateSelect(long totalTime, long deltaTime) {
-            float fraction;
-            int i = this.mSelectAnimatorDurationInUse;
-            if (totalTime >= ((long) i)) {
-                fraction = 1.0f;
-                this.mSelectAnimator.end();
-            } else {
-                double d = (double) totalTime;
-                double d2 = (double) i;
-                Double.isNaN(d);
-                Double.isNaN(d2);
-                fraction = (float) (d / d2);
-            }
-            Interpolator interpolator = this.mSelectAnimatorInterpolatorInUse;
-            if (interpolator != null) {
-                fraction = interpolator.getInterpolation(fraction);
-            }
-            this.mRowPresenter.setSelectLevel(this.mRowViewHolder, this.mSelectLevelAnimStart + (this.mSelectLevelAnimDelta * fraction));
-        }
-
-        /* access modifiers changed from: package-private */
-        public void animateSelect(boolean select, boolean immediate) {
-            this.mSelectAnimator.end();
-            float end = select ? 1.0f : 0.0f;
-            if (immediate) {
-                this.mRowPresenter.setSelectLevel(this.mRowViewHolder, end);
-            } else if (this.mRowPresenter.getSelectLevel(this.mRowViewHolder) != end) {
-                this.mSelectLevelAnimStart = this.mRowPresenter.getSelectLevel(this.mRowViewHolder);
-                this.mSelectLevelAnimDelta = end - this.mSelectLevelAnimStart;
-                this.mSelectAnimator.start();
-            }
-        }
-    }
-
     /* access modifiers changed from: protected */
     public VerticalGridView findGridViewFromRoot(View view) {
         return (VerticalGridView) view.findViewById(C0364R.C0366id.container_list);
+    }
+
+    public BaseOnItemViewClickedListener getOnItemViewClickedListener() {
+        return this.mOnItemViewClickedListener;
     }
 
     public void setOnItemViewClickedListener(BaseOnItemViewClickedListener listener) {
@@ -213,10 +175,6 @@ public class RowsFragment extends BaseRowFragment implements BrowseFragment.Main
         if (this.mViewsCreated) {
             throw new IllegalStateException("Item clicked listener must be set before views are created");
         }
-    }
-
-    public BaseOnItemViewClickedListener getOnItemViewClickedListener() {
-        return this.mOnItemViewClickedListener;
     }
 
     @Deprecated
@@ -234,6 +192,10 @@ public class RowsFragment extends BaseRowFragment implements BrowseFragment.Main
         }
     }
 
+    public BaseOnItemViewSelectedListener getOnItemViewSelectedListener() {
+        return this.mOnItemViewSelectedListener;
+    }
+
     public void setOnItemViewSelectedListener(BaseOnItemViewSelectedListener listener) {
         this.mOnItemViewSelectedListener = listener;
         VerticalGridView listView = getVerticalGridView();
@@ -243,10 +205,6 @@ public class RowsFragment extends BaseRowFragment implements BrowseFragment.Main
                 getRowViewHolder((ItemBridgeAdapter.ViewHolder) listView.getChildViewHolder(listView.getChildAt(i))).setOnItemViewSelectedListener(this.mOnItemViewSelectedListener);
             }
         }
-    }
-
-    public BaseOnItemViewSelectedListener getOnItemViewSelectedListener() {
-        return this.mOnItemViewSelectedListener;
     }
 
     /* access modifiers changed from: package-private */
@@ -308,15 +266,6 @@ public class RowsFragment extends BaseRowFragment implements BrowseFragment.Main
     /* access modifiers changed from: package-private */
     public void setExternalAdapterListener(ItemBridgeAdapter.AdapterListener listener) {
         this.mExternalAdapterListener = listener;
-    }
-
-    static void setRowViewExpanded(ItemBridgeAdapter.ViewHolder vh, boolean expanded) {
-        ((RowPresenter) vh.getPresenter()).setRowViewExpanded(vh.getViewHolder(), expanded);
-    }
-
-    static void setRowViewSelected(ItemBridgeAdapter.ViewHolder vh, boolean selected, boolean immediate) {
-        ((RowViewHolderExtra) vh.getExtraObject()).animateSelect(selected, immediate);
-        ((RowPresenter) vh.getPresenter()).setRowViewSelected(vh.getViewHolder(), selected);
     }
 
     /* access modifiers changed from: package-private */
@@ -413,13 +362,6 @@ public class RowsFragment extends BaseRowFragment implements BrowseFragment.Main
         }
     }
 
-    static RowPresenter.ViewHolder getRowViewHolder(ItemBridgeAdapter.ViewHolder ibvh) {
-        if (ibvh == null) {
-            return null;
-        }
-        return ((RowPresenter) ibvh.getPresenter()).getRowViewHolder(ibvh.getViewHolder());
-    }
-
     public boolean isScrolling() {
         if (getVerticalGridView() == null || getVerticalGridView().getScrollState() == 0) {
             return false;
@@ -447,6 +389,65 @@ public class RowsFragment extends BaseRowFragment implements BrowseFragment.Main
             return null;
         }
         return getRowViewHolder((ItemBridgeAdapter.ViewHolder) this.mVerticalGridView.findViewHolderForAdapterPosition(position));
+    }
+
+    static final class RowViewHolderExtra implements TimeAnimator.TimeListener {
+        static final Interpolator sSelectAnimatorInterpolator = new DecelerateInterpolator(2.0f);
+        final RowPresenter mRowPresenter;
+        final Presenter.ViewHolder mRowViewHolder;
+        final TimeAnimator mSelectAnimator = new TimeAnimator();
+        final int mSelectAnimatorDurationInUse;
+        final Interpolator mSelectAnimatorInterpolatorInUse;
+        float mSelectLevelAnimDelta;
+        float mSelectLevelAnimStart;
+
+        RowViewHolderExtra(ItemBridgeAdapter.ViewHolder ibvh) {
+            this.mRowPresenter = (RowPresenter) ibvh.getPresenter();
+            this.mRowViewHolder = ibvh.getViewHolder();
+            this.mSelectAnimator.setTimeListener(this);
+            this.mSelectAnimatorDurationInUse = ibvh.itemView.getResources().getInteger(C0364R.integer.lb_browse_rows_anim_duration);
+            this.mSelectAnimatorInterpolatorInUse = sSelectAnimatorInterpolator;
+        }
+
+        public void onTimeUpdate(TimeAnimator animation, long totalTime, long deltaTime) {
+            if (this.mSelectAnimator.isRunning()) {
+                updateSelect(totalTime, deltaTime);
+            }
+        }
+
+        /* access modifiers changed from: package-private */
+        public void updateSelect(long totalTime, long deltaTime) {
+            float fraction;
+            int i = this.mSelectAnimatorDurationInUse;
+            if (totalTime >= ((long) i)) {
+                fraction = 1.0f;
+                this.mSelectAnimator.end();
+            } else {
+                double d = (double) totalTime;
+                double d2 = (double) i;
+                Double.isNaN(d);
+                Double.isNaN(d2);
+                fraction = (float) (d / d2);
+            }
+            Interpolator interpolator = this.mSelectAnimatorInterpolatorInUse;
+            if (interpolator != null) {
+                fraction = interpolator.getInterpolation(fraction);
+            }
+            this.mRowPresenter.setSelectLevel(this.mRowViewHolder, this.mSelectLevelAnimStart + (this.mSelectLevelAnimDelta * fraction));
+        }
+
+        /* access modifiers changed from: package-private */
+        public void animateSelect(boolean select, boolean immediate) {
+            this.mSelectAnimator.end();
+            float end = select ? 1.0f : 0.0f;
+            if (immediate) {
+                this.mRowPresenter.setSelectLevel(this.mRowViewHolder, end);
+            } else if (this.mRowPresenter.getSelectLevel(this.mRowViewHolder) != end) {
+                this.mSelectLevelAnimStart = this.mRowPresenter.getSelectLevel(this.mRowViewHolder);
+                this.mSelectLevelAnimDelta = end - this.mSelectLevelAnimStart;
+                this.mSelectAnimator.start();
+            }
+        }
     }
 
     public static class MainFragmentAdapter extends BrowseFragment.MainFragmentAdapter<RowsFragment> {

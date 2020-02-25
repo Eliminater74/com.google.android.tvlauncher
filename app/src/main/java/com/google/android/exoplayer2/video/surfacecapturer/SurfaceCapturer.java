@@ -8,21 +8,15 @@ public abstract class SurfaceCapturer {
     private final int outputHeight;
     private final int outputWidth;
 
-    public interface Callback {
-        void onSurfaceCaptureError(Exception exc);
-
-        void onSurfaceCaptured(Bitmap bitmap);
-    }
-
-    public abstract Surface getSurface();
-
-    public abstract void release();
-
     protected SurfaceCapturer(Callback callback2, int outputWidth2, int outputHeight2) {
         this.callback = callback2;
         this.outputWidth = outputWidth2;
         this.outputHeight = outputHeight2;
     }
+
+    public abstract Surface getSurface();
+
+    public abstract void release();
 
     /* access modifiers changed from: protected */
     public Callback getCallback() {
@@ -35,5 +29,11 @@ public abstract class SurfaceCapturer {
 
     public int getOutputHeight() {
         return this.outputHeight;
+    }
+
+    public interface Callback {
+        void onSurfaceCaptureError(Exception exc);
+
+        void onSurfaceCaptured(Bitmap bitmap);
     }
 }

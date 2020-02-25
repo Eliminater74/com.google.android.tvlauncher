@@ -25,15 +25,15 @@ import android.support.p001v4.content.res.TypedArrayUtils;
 import android.support.p001v4.graphics.drawable.TintAwareDrawable;
 import android.support.p001v4.util.LongSparseArray;
 import android.support.p001v4.util.SparseArrayCompat;
-import android.support.p004v7.graphics.drawable.DrawableContainer;
-import android.support.p004v7.graphics.drawable.StateListDrawable;
 import android.support.p004v7.resources.C0245R;
 import android.support.p004v7.widget.ResourceManagerInternal;
 import android.util.AttributeSet;
 import android.util.StateSet;
-import java.io.IOException;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.IOException;
 
 @SuppressLint({"RestrictedAPI"})
 /* renamed from: android.support.v7.graphics.drawable.AnimatedStateListDrawableCompat */
@@ -49,130 +49,6 @@ public class AnimatedStateListDrawableCompat extends StateListDrawable implement
     private Transition mTransition;
     private int mTransitionFromIndex;
     private int mTransitionToIndex;
-
-    public /* bridge */ /* synthetic */ void addState(int[] iArr, Drawable drawable) {
-        super.addState(iArr, drawable);
-    }
-
-    @RequiresApi(21)
-    public /* bridge */ /* synthetic */ void applyTheme(@NonNull Resources.Theme theme) {
-        super.applyTheme(theme);
-    }
-
-    @RequiresApi(21)
-    public /* bridge */ /* synthetic */ boolean canApplyTheme() {
-        return super.canApplyTheme();
-    }
-
-    public /* bridge */ /* synthetic */ void draw(@NonNull Canvas canvas) {
-        super.draw(canvas);
-    }
-
-    public /* bridge */ /* synthetic */ int getAlpha() {
-        return super.getAlpha();
-    }
-
-    public /* bridge */ /* synthetic */ int getChangingConfigurations() {
-        return super.getChangingConfigurations();
-    }
-
-    @NonNull
-    public /* bridge */ /* synthetic */ Drawable getCurrent() {
-        return super.getCurrent();
-    }
-
-    public /* bridge */ /* synthetic */ void getHotspotBounds(@NonNull Rect rect) {
-        super.getHotspotBounds(rect);
-    }
-
-    public /* bridge */ /* synthetic */ int getIntrinsicHeight() {
-        return super.getIntrinsicHeight();
-    }
-
-    public /* bridge */ /* synthetic */ int getIntrinsicWidth() {
-        return super.getIntrinsicWidth();
-    }
-
-    public /* bridge */ /* synthetic */ int getMinimumHeight() {
-        return super.getMinimumHeight();
-    }
-
-    public /* bridge */ /* synthetic */ int getMinimumWidth() {
-        return super.getMinimumWidth();
-    }
-
-    public /* bridge */ /* synthetic */ int getOpacity() {
-        return super.getOpacity();
-    }
-
-    @RequiresApi(21)
-    public /* bridge */ /* synthetic */ void getOutline(@NonNull Outline outline) {
-        super.getOutline(outline);
-    }
-
-    public /* bridge */ /* synthetic */ boolean getPadding(@NonNull Rect rect) {
-        return super.getPadding(rect);
-    }
-
-    public /* bridge */ /* synthetic */ void invalidateDrawable(@NonNull Drawable drawable) {
-        super.invalidateDrawable(drawable);
-    }
-
-    public /* bridge */ /* synthetic */ boolean isAutoMirrored() {
-        return super.isAutoMirrored();
-    }
-
-    public /* bridge */ /* synthetic */ boolean onLayoutDirectionChanged(int i) {
-        return super.onLayoutDirectionChanged(i);
-    }
-
-    public /* bridge */ /* synthetic */ void scheduleDrawable(@NonNull Drawable drawable, @NonNull Runnable runnable, long j) {
-        super.scheduleDrawable(drawable, runnable, j);
-    }
-
-    public /* bridge */ /* synthetic */ void setAlpha(int i) {
-        super.setAlpha(i);
-    }
-
-    public /* bridge */ /* synthetic */ void setAutoMirrored(boolean z) {
-        super.setAutoMirrored(z);
-    }
-
-    public /* bridge */ /* synthetic */ void setColorFilter(ColorFilter colorFilter) {
-        super.setColorFilter(colorFilter);
-    }
-
-    public /* bridge */ /* synthetic */ void setDither(boolean z) {
-        super.setDither(z);
-    }
-
-    public /* bridge */ /* synthetic */ void setEnterFadeDuration(int i) {
-        super.setEnterFadeDuration(i);
-    }
-
-    public /* bridge */ /* synthetic */ void setExitFadeDuration(int i) {
-        super.setExitFadeDuration(i);
-    }
-
-    public /* bridge */ /* synthetic */ void setHotspot(float f, float f2) {
-        super.setHotspot(f, f2);
-    }
-
-    public /* bridge */ /* synthetic */ void setHotspotBounds(int i, int i2, int i3, int i4) {
-        super.setHotspotBounds(i, i2, i3, i4);
-    }
-
-    public /* bridge */ /* synthetic */ void setTintList(ColorStateList colorStateList) {
-        super.setTintList(colorStateList);
-    }
-
-    public /* bridge */ /* synthetic */ void setTintMode(@NonNull PorterDuff.Mode mode) {
-        super.setTintMode(mode);
-    }
-
-    public /* bridge */ /* synthetic */ void unscheduleDrawable(@NonNull Drawable drawable, @NonNull Runnable runnable) {
-        super.unscheduleDrawable(drawable, runnable);
-    }
 
     public AnimatedStateListDrawableCompat() {
         this(null, null);
@@ -238,6 +114,130 @@ public class AnimatedStateListDrawableCompat extends StateListDrawable implement
             return asl;
         }
         throw new XmlPullParserException(parser.getPositionDescription() + ": invalid animated-selector tag " + name);
+    }
+
+    public /* bridge */ /* synthetic */ void addState(int[] iArr, Drawable drawable) {
+        super.addState(iArr, drawable);
+    }
+
+    @RequiresApi(21)
+    public /* bridge */ /* synthetic */ void applyTheme(@NonNull Resources.Theme theme) {
+        super.applyTheme(theme);
+    }
+
+    @RequiresApi(21)
+    public /* bridge */ /* synthetic */ boolean canApplyTheme() {
+        return super.canApplyTheme();
+    }
+
+    public /* bridge */ /* synthetic */ void draw(@NonNull Canvas canvas) {
+        super.draw(canvas);
+    }
+
+    public /* bridge */ /* synthetic */ int getAlpha() {
+        return super.getAlpha();
+    }
+
+    public /* bridge */ /* synthetic */ void setAlpha(int i) {
+        super.setAlpha(i);
+    }
+
+    public /* bridge */ /* synthetic */ int getChangingConfigurations() {
+        return super.getChangingConfigurations();
+    }
+
+    @NonNull
+    public /* bridge */ /* synthetic */ Drawable getCurrent() {
+        return super.getCurrent();
+    }
+
+    public /* bridge */ /* synthetic */ void getHotspotBounds(@NonNull Rect rect) {
+        super.getHotspotBounds(rect);
+    }
+
+    public /* bridge */ /* synthetic */ int getIntrinsicHeight() {
+        return super.getIntrinsicHeight();
+    }
+
+    public /* bridge */ /* synthetic */ int getIntrinsicWidth() {
+        return super.getIntrinsicWidth();
+    }
+
+    public /* bridge */ /* synthetic */ int getMinimumHeight() {
+        return super.getMinimumHeight();
+    }
+
+    public /* bridge */ /* synthetic */ int getMinimumWidth() {
+        return super.getMinimumWidth();
+    }
+
+    public /* bridge */ /* synthetic */ int getOpacity() {
+        return super.getOpacity();
+    }
+
+    @RequiresApi(21)
+    public /* bridge */ /* synthetic */ void getOutline(@NonNull Outline outline) {
+        super.getOutline(outline);
+    }
+
+    public /* bridge */ /* synthetic */ boolean getPadding(@NonNull Rect rect) {
+        return super.getPadding(rect);
+    }
+
+    public /* bridge */ /* synthetic */ void invalidateDrawable(@NonNull Drawable drawable) {
+        super.invalidateDrawable(drawable);
+    }
+
+    public /* bridge */ /* synthetic */ boolean isAutoMirrored() {
+        return super.isAutoMirrored();
+    }
+
+    public /* bridge */ /* synthetic */ void setAutoMirrored(boolean z) {
+        super.setAutoMirrored(z);
+    }
+
+    public /* bridge */ /* synthetic */ boolean onLayoutDirectionChanged(int i) {
+        return super.onLayoutDirectionChanged(i);
+    }
+
+    public /* bridge */ /* synthetic */ void scheduleDrawable(@NonNull Drawable drawable, @NonNull Runnable runnable, long j) {
+        super.scheduleDrawable(drawable, runnable, j);
+    }
+
+    public /* bridge */ /* synthetic */ void setColorFilter(ColorFilter colorFilter) {
+        super.setColorFilter(colorFilter);
+    }
+
+    public /* bridge */ /* synthetic */ void setDither(boolean z) {
+        super.setDither(z);
+    }
+
+    public /* bridge */ /* synthetic */ void setEnterFadeDuration(int i) {
+        super.setEnterFadeDuration(i);
+    }
+
+    public /* bridge */ /* synthetic */ void setExitFadeDuration(int i) {
+        super.setExitFadeDuration(i);
+    }
+
+    public /* bridge */ /* synthetic */ void setHotspot(float f, float f2) {
+        super.setHotspot(f, f2);
+    }
+
+    public /* bridge */ /* synthetic */ void setHotspotBounds(int i, int i2, int i3, int i4) {
+        super.setHotspotBounds(i, i2, i3, i4);
+    }
+
+    public /* bridge */ /* synthetic */ void setTintList(ColorStateList colorStateList) {
+        super.setTintList(colorStateList);
+    }
+
+    public /* bridge */ /* synthetic */ void setTintMode(@NonNull PorterDuff.Mode mode) {
+        super.setTintMode(mode);
+    }
+
+    public /* bridge */ /* synthetic */ void unscheduleDrawable(@NonNull Drawable drawable, @NonNull Runnable runnable) {
+        super.unscheduleDrawable(drawable, runnable);
     }
 
     public void inflate(@NonNull Context context, @NonNull Resources resources, @NonNull XmlPullParser parser, @NonNull AttributeSet attrs, @Nullable Resources.Theme theme) throws XmlPullParserException, IOException {
@@ -352,99 +352,6 @@ public class AnimatedStateListDrawableCompat extends StateListDrawable implement
         this.mTransitionFromIndex = fromIndex;
         this.mTransitionToIndex = toIndex;
         return true;
-    }
-
-    /* renamed from: android.support.v7.graphics.drawable.AnimatedStateListDrawableCompat$Transition */
-    private static abstract class Transition {
-        public abstract void start();
-
-        public abstract void stop();
-
-        private Transition() {
-        }
-
-        public void reverse() {
-        }
-
-        public boolean canReverse() {
-            return false;
-        }
-    }
-
-    /* renamed from: android.support.v7.graphics.drawable.AnimatedStateListDrawableCompat$AnimatableTransition */
-    private static class AnimatableTransition extends Transition {
-
-        /* renamed from: mA */
-        private final Animatable f23mA;
-
-        AnimatableTransition(Animatable a) {
-            super();
-            this.f23mA = a;
-        }
-
-        public void start() {
-            this.f23mA.start();
-        }
-
-        public void stop() {
-            this.f23mA.stop();
-        }
-    }
-
-    /* renamed from: android.support.v7.graphics.drawable.AnimatedStateListDrawableCompat$AnimationDrawableTransition */
-    private static class AnimationDrawableTransition extends Transition {
-        private final ObjectAnimator mAnim;
-        private final boolean mHasReversibleFlag;
-
-        AnimationDrawableTransition(AnimationDrawable ad, boolean reversed, boolean hasReversibleFlag) {
-            super();
-            int frameCount = ad.getNumberOfFrames();
-            int fromFrame = reversed ? frameCount - 1 : 0;
-            int toFrame = reversed ? 0 : frameCount - 1;
-            FrameInterpolator interp = new FrameInterpolator(ad, reversed);
-            ObjectAnimator anim = ObjectAnimator.ofInt(ad, "currentIndex", fromFrame, toFrame);
-            if (Build.VERSION.SDK_INT >= 18) {
-                anim.setAutoCancel(true);
-            }
-            anim.setDuration((long) interp.getTotalDuration());
-            anim.setInterpolator(interp);
-            this.mHasReversibleFlag = hasReversibleFlag;
-            this.mAnim = anim;
-        }
-
-        public boolean canReverse() {
-            return this.mHasReversibleFlag;
-        }
-
-        public void start() {
-            this.mAnim.start();
-        }
-
-        public void reverse() {
-            this.mAnim.reverse();
-        }
-
-        public void stop() {
-            this.mAnim.cancel();
-        }
-    }
-
-    /* renamed from: android.support.v7.graphics.drawable.AnimatedStateListDrawableCompat$AnimatedVectorDrawableTransition */
-    private static class AnimatedVectorDrawableTransition extends Transition {
-        private final AnimatedVectorDrawableCompat mAvd;
-
-        AnimatedVectorDrawableTransition(AnimatedVectorDrawableCompat avd) {
-            super();
-            this.mAvd = avd;
-        }
-
-        public void start() {
-            this.mAvd.start();
-        }
-
-        public void stop() {
-            this.mAvd.stop();
-        }
     }
 
     private void updateStateFromTypedArray(TypedArray a) {
@@ -583,6 +490,107 @@ public class AnimatedStateListDrawableCompat extends StateListDrawable implement
         this.mMutated = false;
     }
 
+    /* access modifiers changed from: package-private */
+    public void setConstantState(@NonNull DrawableContainer.DrawableContainerState state) {
+        super.setConstantState(state);
+        if (state instanceof AnimatedStateListState) {
+            this.mState = (AnimatedStateListState) state;
+        }
+    }
+
+    /* renamed from: android.support.v7.graphics.drawable.AnimatedStateListDrawableCompat$Transition */
+    private static abstract class Transition {
+        private Transition() {
+        }
+
+        public abstract void start();
+
+        public abstract void stop();
+
+        public void reverse() {
+        }
+
+        public boolean canReverse() {
+            return false;
+        }
+    }
+
+    /* renamed from: android.support.v7.graphics.drawable.AnimatedStateListDrawableCompat$AnimatableTransition */
+    private static class AnimatableTransition extends Transition {
+
+        /* renamed from: mA */
+        private final Animatable f23mA;
+
+        AnimatableTransition(Animatable a) {
+            super();
+            this.f23mA = a;
+        }
+
+        public void start() {
+            this.f23mA.start();
+        }
+
+        public void stop() {
+            this.f23mA.stop();
+        }
+    }
+
+    /* renamed from: android.support.v7.graphics.drawable.AnimatedStateListDrawableCompat$AnimationDrawableTransition */
+    private static class AnimationDrawableTransition extends Transition {
+        private final ObjectAnimator mAnim;
+        private final boolean mHasReversibleFlag;
+
+        AnimationDrawableTransition(AnimationDrawable ad, boolean reversed, boolean hasReversibleFlag) {
+            super();
+            int frameCount = ad.getNumberOfFrames();
+            int fromFrame = reversed ? frameCount - 1 : 0;
+            int toFrame = reversed ? 0 : frameCount - 1;
+            FrameInterpolator interp = new FrameInterpolator(ad, reversed);
+            ObjectAnimator anim = ObjectAnimator.ofInt(ad, "currentIndex", fromFrame, toFrame);
+            if (Build.VERSION.SDK_INT >= 18) {
+                anim.setAutoCancel(true);
+            }
+            anim.setDuration((long) interp.getTotalDuration());
+            anim.setInterpolator(interp);
+            this.mHasReversibleFlag = hasReversibleFlag;
+            this.mAnim = anim;
+        }
+
+        public boolean canReverse() {
+            return this.mHasReversibleFlag;
+        }
+
+        public void start() {
+            this.mAnim.start();
+        }
+
+        public void reverse() {
+            this.mAnim.reverse();
+        }
+
+        public void stop() {
+            this.mAnim.cancel();
+        }
+    }
+
+    /* renamed from: android.support.v7.graphics.drawable.AnimatedStateListDrawableCompat$AnimatedVectorDrawableTransition */
+    private static class AnimatedVectorDrawableTransition extends Transition {
+        private final AnimatedVectorDrawableCompat mAvd;
+
+        AnimatedVectorDrawableTransition(AnimatedVectorDrawableCompat avd) {
+            super();
+            this.mAvd = avd;
+        }
+
+        public void start() {
+            this.mAvd.start();
+        }
+
+        public void stop() {
+            this.mAvd.stop();
+        }
+    }
+
     /* renamed from: android.support.v7.graphics.drawable.AnimatedStateListDrawableCompat$AnimatedStateListState */
     static class AnimatedStateListState extends StateListDrawable.StateListState {
         private static final long REVERSED_BIT = 4294967296L;
@@ -599,6 +607,10 @@ public class AnimatedStateListDrawableCompat extends StateListDrawable implement
             }
             this.mTransitions = new LongSparseArray<>();
             this.mStateIds = new SparseArrayCompat<>();
+        }
+
+        private static long generateTransitionKey(int fromId, int toId) {
+            return (((long) fromId) << 32) | ((long) toId);
         }
 
         /* access modifiers changed from: package-private */
@@ -669,18 +681,6 @@ public class AnimatedStateListDrawableCompat extends StateListDrawable implement
         @NonNull
         public Drawable newDrawable(Resources res) {
             return new AnimatedStateListDrawableCompat(this, res);
-        }
-
-        private static long generateTransitionKey(int fromId, int toId) {
-            return (((long) fromId) << 32) | ((long) toId);
-        }
-    }
-
-    /* access modifiers changed from: package-private */
-    public void setConstantState(@NonNull DrawableContainer.DrawableContainerState state) {
-        super.setConstantState(state);
-        if (state instanceof AnimatedStateListState) {
-            this.mState = (AnimatedStateListState) state;
         }
     }
 

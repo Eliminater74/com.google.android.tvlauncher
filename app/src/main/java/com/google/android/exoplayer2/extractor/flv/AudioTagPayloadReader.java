@@ -1,13 +1,14 @@
 package com.google.android.exoplayer2.extractor.flv;
 
 import android.util.Pair;
+
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.extractor.TrackOutput;
-import com.google.android.exoplayer2.extractor.flv.TagPayloadReader;
 import com.google.android.exoplayer2.util.CodecSpecificDataUtil;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.ParsableByteArray;
+
 import java.util.Collections;
 
 final class AudioTagPayloadReader extends TagPayloadReader {

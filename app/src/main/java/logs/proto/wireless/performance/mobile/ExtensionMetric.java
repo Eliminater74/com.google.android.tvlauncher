@@ -14,22 +14,18 @@ import com.google.protobuf.ProtoMessage;
 import com.google.protobuf.ProtoPresenceBits;
 import com.google.protobuf.ProtoPresenceCheckedField;
 import com.google.protobuf.ProtoSyntax;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import logs.proto.wireless.performance.mobile.ExtensionBugle;
-import logs.proto.wireless.performance.mobile.ExtensionCalendar;
-import logs.proto.wireless.performance.mobile.ExtensionCloudDpc;
-import logs.proto.wireless.performance.mobile.ExtensionCsapk;
-import logs.proto.wireless.performance.mobile.ExtensionGcs;
-import logs.proto.wireless.performance.mobile.ExtensionGmail;
-import logs.proto.wireless.performance.mobile.ExtensionGmm;
-import logs.proto.wireless.performance.mobile.ExtensionPhotos;
-import logs.proto.wireless.performance.mobile.ExtensionPhotosScanner;
-import logs.proto.wireless.performance.mobile.ExtensionTranslate;
-import logs.proto.wireless.performance.mobile.ExtensionYoutube;
 
 public final class ExtensionMetric {
+
+    private ExtensionMetric() {
+    }
+
+    public static void registerAllExtensions(ExtensionRegistryLite registry) {
+    }
 
     public interface MetricExtensionOrBuilder extends MessageLiteOrBuilder {
         ExtensionBugle.BugleExtension getBugleExtension();
@@ -81,12 +77,6 @@ public final class ExtensionMetric {
         boolean hasYoutubeExtension();
     }
 
-    private ExtensionMetric() {
-    }
-
-    public static void registerAllExtensions(ExtensionRegistryLite registry) {
-    }
-
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
     public static final class MetricExtension extends GeneratedMessageLite<MetricExtension, Builder> implements MetricExtensionOrBuilder {
         public static final int BUGLE_EXTENSION_FIELD_NUMBER = 11;
@@ -99,11 +89,16 @@ public final class ExtensionMetric {
         public static final int GCS_EXTENSION_FIELD_NUMBER = 9;
         public static final int GMAIL_EXTENSION_FIELD_NUMBER = 1;
         public static final int GMM_EXTENSION_FIELD_NUMBER = 2;
-        private static volatile Parser<MetricExtension> PARSER = null;
         public static final int PHOTOS_EXTENSION_FIELD_NUMBER = 5;
         public static final int PHOTOS_SCANNER_EXTENSION_FIELD_NUMBER = 3;
         public static final int TRANSLATE_EXTENSION_FIELD_NUMBER = 10;
         public static final int YOUTUBE_EXTENSION_FIELD_NUMBER = 6;
+        private static volatile Parser<MetricExtension> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(MetricExtension.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 11, isRequired = false, type = FieldType.MESSAGE)
@@ -144,6 +139,70 @@ public final class ExtensionMetric {
         private ExtensionYoutube.YouTubeExtension youtubeExtension_;
 
         private MetricExtension() {
+        }
+
+        public static MetricExtension parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (MetricExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static MetricExtension parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (MetricExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static MetricExtension parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (MetricExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static MetricExtension parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (MetricExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static MetricExtension parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (MetricExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static MetricExtension parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (MetricExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static MetricExtension parseFrom(InputStream input) throws IOException {
+            return (MetricExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static MetricExtension parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (MetricExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static MetricExtension parseDelimitedFrom(InputStream input) throws IOException {
+            return (MetricExtension) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static MetricExtension parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (MetricExtension) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static MetricExtension parseFrom(CodedInputStream input) throws IOException {
+            return (MetricExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static MetricExtension parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (MetricExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(MetricExtension prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static MetricExtension getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<MetricExtension> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasGmailExtension() {
@@ -698,60 +757,36 @@ public final class ExtensionMetric {
             this.bitField0_ &= -2049;
         }
 
-        public static MetricExtension parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (MetricExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static MetricExtension parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (MetricExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static MetricExtension parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (MetricExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static MetricExtension parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (MetricExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static MetricExtension parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (MetricExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static MetricExtension parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (MetricExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static MetricExtension parseFrom(InputStream input) throws IOException {
-            return (MetricExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static MetricExtension parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (MetricExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static MetricExtension parseDelimitedFrom(InputStream input) throws IOException {
-            return (MetricExtension) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static MetricExtension parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (MetricExtension) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static MetricExtension parseFrom(CodedInputStream input) throws IOException {
-            return (MetricExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static MetricExtension parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (MetricExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(MetricExtension prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new MetricExtension();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\f\u0000\u0001\u0001\f\f\u0000\u0000\u0000\u0001\t\u0000\u0002\t\u0001\u0003\t\u0002\u0004\t\u0003\u0005\t\u0004\u0006\t\u0005\u0007\t\u0006\b\t\u0007\t\t\b\n\t\t\u000b\t\n\f\t\u000b", new Object[]{"bitField0_", "gmailExtension_", "gmmExtension_", "photosScannerExtension_", "calendarExtension_", "photosExtension_", "youtubeExtension_", "cloudDpcExtension_", "gcoreDimension_", "gcsExtension_", "translateExtension_", "bugleExtension_", "csapkExtension_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<MetricExtension> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (MetricExtension.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<MetricExtension, Builder> implements MetricExtensionOrBuilder {
@@ -1142,50 +1177,6 @@ public final class ExtensionMetric {
                 ((MetricExtension) this.instance).clearCsapkExtension();
                 return this;
             }
-        }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new MetricExtension();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\f\u0000\u0001\u0001\f\f\u0000\u0000\u0000\u0001\t\u0000\u0002\t\u0001\u0003\t\u0002\u0004\t\u0003\u0005\t\u0004\u0006\t\u0005\u0007\t\u0006\b\t\u0007\t\t\b\n\t\t\u000b\t\n\f\t\u000b", new Object[]{"bitField0_", "gmailExtension_", "gmmExtension_", "photosScannerExtension_", "calendarExtension_", "photosExtension_", "youtubeExtension_", "cloudDpcExtension_", "gcoreDimension_", "gcsExtension_", "translateExtension_", "bugleExtension_", "csapkExtension_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<MetricExtension> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (MetricExtension.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(MetricExtension.class, DEFAULT_INSTANCE);
-        }
-
-        public static MetricExtension getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<MetricExtension> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
         }
     }
 }

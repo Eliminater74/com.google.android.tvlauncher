@@ -1,6 +1,7 @@
 package com.google.android.exoplayer2;
 
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.util.Util;
 

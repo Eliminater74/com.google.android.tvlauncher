@@ -9,10 +9,10 @@ public interface TintableCompoundButton {
     @Nullable
     ColorStateList getSupportButtonTintList();
 
+    void setSupportButtonTintList(@Nullable ColorStateList colorStateList);
+
     @Nullable
     PorterDuff.Mode getSupportButtonTintMode();
-
-    void setSupportButtonTintList(@Nullable ColorStateList colorStateList);
 
     void setSupportButtonTintMode(@Nullable PorterDuff.Mode mode);
 }

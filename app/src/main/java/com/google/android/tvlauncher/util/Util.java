@@ -14,7 +14,9 @@ import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.ContextThemeWrapper;
 import android.view.accessibility.AccessibilityManager;
+
 import com.google.android.tvrecommendations.shared.util.AppUtil;
+
 import java.util.Collections;
 import java.util.HashSet;
 

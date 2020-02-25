@@ -14,7 +14,6 @@ import android.support.p001v4.view.ActionProvider;
 import android.support.p001v4.view.accessibility.AccessibilityNodeInfoCompat;
 import android.support.p004v7.appcompat.C0233R;
 import android.support.p004v7.view.menu.ShowableListMenu;
-import android.support.p004v7.widget.ActivityChooserModel;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,24 +32,24 @@ import android.widget.TextView;
 /* renamed from: android.support.v7.widget.ActivityChooserView */
 public class ActivityChooserView extends ViewGroup implements ActivityChooserModel.ActivityChooserModelClient {
     private static final String LOG_TAG = "ActivityChooserView";
+    final ActivityChooserViewAdapter mAdapter;
+    final FrameLayout mDefaultActivityButton;
+    final FrameLayout mExpandActivityOverflowButton;
+    final DataSetObserver mModelDataSetObserver;
     private final View mActivityChooserContent;
     private final Drawable mActivityChooserContentBackground;
-    final ActivityChooserViewAdapter mAdapter;
     private final Callbacks mCallbacks;
-    private int mDefaultActionButtonContentDescription;
-    final FrameLayout mDefaultActivityButton;
     private final ImageView mDefaultActivityButtonImage;
-    final FrameLayout mExpandActivityOverflowButton;
     private final ImageView mExpandActivityOverflowButtonImage;
-    int mInitialActivityCount;
-    private boolean mIsAttachedToWindow;
-    boolean mIsSelectingDefaultActivity;
     private final int mListPopupMaxWidth;
-    private ListPopupWindow mListPopupWindow;
-    final DataSetObserver mModelDataSetObserver;
-    PopupWindow.OnDismissListener mOnDismissListener;
     private final ViewTreeObserver.OnGlobalLayoutListener mOnGlobalLayoutListener;
+    int mInitialActivityCount;
+    boolean mIsSelectingDefaultActivity;
+    PopupWindow.OnDismissListener mOnDismissListener;
     ActionProvider mProvider;
+    private int mDefaultActionButtonContentDescription;
+    private boolean mIsAttachedToWindow;
+    private ListPopupWindow mListPopupWindow;
 
     public ActivityChooserView(Context context) {
         this(context, null);
@@ -331,6 +330,19 @@ public class ActivityChooserView extends ViewGroup implements ActivityChooserMod
         }
     }
 
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    /* renamed from: android.support.v7.widget.ActivityChooserView$InnerLayout */
+    public static class InnerLayout extends LinearLayout {
+        private static final int[] TINT_ATTRS = {16842964};
+
+        public InnerLayout(Context context, AttributeSet attrs) {
+            super(context, attrs);
+            TintTypedArray a = TintTypedArray.obtainStyledAttributes(context, attrs, TINT_ATTRS);
+            setBackgroundDrawable(a.getDrawable(0));
+            a.recycle();
+        }
+    }
+
     /* renamed from: android.support.v7.widget.ActivityChooserView$Callbacks */
     private class Callbacks implements AdapterView.OnItemClickListener, View.OnClickListener, View.OnLongClickListener, PopupWindow.OnDismissListener {
         Callbacks() {
@@ -401,11 +413,11 @@ public class ActivityChooserView extends ViewGroup implements ActivityChooserMod
 
     /* renamed from: android.support.v7.widget.ActivityChooserView$ActivityChooserViewAdapter */
     private class ActivityChooserViewAdapter extends BaseAdapter {
+        public static final int MAX_ACTIVITY_COUNT_DEFAULT = 4;
+        public static final int MAX_ACTIVITY_COUNT_UNLIMITED = Integer.MAX_VALUE;
         private static final int ITEM_VIEW_TYPE_ACTIVITY = 0;
         private static final int ITEM_VIEW_TYPE_COUNT = 3;
         private static final int ITEM_VIEW_TYPE_FOOTER = 1;
-        public static final int MAX_ACTIVITY_COUNT_DEFAULT = 4;
-        public static final int MAX_ACTIVITY_COUNT_UNLIMITED = Integer.MAX_VALUE;
         private ActivityChooserModel mDataModel;
         private boolean mHighlightDefaultActivity;
         private int mMaxActivityCount = 4;
@@ -413,18 +425,6 @@ public class ActivityChooserView extends ViewGroup implements ActivityChooserMod
         private boolean mShowFooterView;
 
         ActivityChooserViewAdapter() {
-        }
-
-        public void setDataModel(ActivityChooserModel dataModel) {
-            ActivityChooserModel oldDataModel = ActivityChooserView.this.mAdapter.getDataModel();
-            if (oldDataModel != null && ActivityChooserView.this.isShown()) {
-                oldDataModel.unregisterObserver(ActivityChooserView.this.mModelDataSetObserver);
-            }
-            this.mDataModel = dataModel;
-            if (dataModel != null && ActivityChooserView.this.isShown()) {
-                dataModel.registerObserver(ActivityChooserView.this.mModelDataSetObserver);
-            }
-            notifyDataSetChanged();
         }
 
         public int getItemViewType(int position) {
@@ -549,6 +549,18 @@ public class ActivityChooserView extends ViewGroup implements ActivityChooserMod
             return this.mDataModel;
         }
 
+        public void setDataModel(ActivityChooserModel dataModel) {
+            ActivityChooserModel oldDataModel = ActivityChooserView.this.mAdapter.getDataModel();
+            if (oldDataModel != null && ActivityChooserView.this.isShown()) {
+                oldDataModel.unregisterObserver(ActivityChooserView.this.mModelDataSetObserver);
+            }
+            this.mDataModel = dataModel;
+            if (dataModel != null && ActivityChooserView.this.isShown()) {
+                dataModel.registerObserver(ActivityChooserView.this.mModelDataSetObserver);
+            }
+            notifyDataSetChanged();
+        }
+
         public void setShowDefaultActivity(boolean showDefaultActivity, boolean highlightDefaultActivity) {
             if (this.mShowDefaultActivity != showDefaultActivity || this.mHighlightDefaultActivity != highlightDefaultActivity) {
                 this.mShowDefaultActivity = showDefaultActivity;
@@ -559,19 +571,6 @@ public class ActivityChooserView extends ViewGroup implements ActivityChooserMod
 
         public boolean getShowDefaultActivity() {
             return this.mShowDefaultActivity;
-        }
-    }
-
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    /* renamed from: android.support.v7.widget.ActivityChooserView$InnerLayout */
-    public static class InnerLayout extends LinearLayout {
-        private static final int[] TINT_ATTRS = {16842964};
-
-        public InnerLayout(Context context, AttributeSet attrs) {
-            super(context, attrs);
-            TintTypedArray a = TintTypedArray.obtainStyledAttributes(context, attrs, TINT_ATTRS);
-            setBackgroundDrawable(a.getDrawable(0));
-            a.recycle();
         }
     }
 }

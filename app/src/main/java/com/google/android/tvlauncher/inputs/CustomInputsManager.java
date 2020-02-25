@@ -13,20 +13,24 @@ import android.support.annotation.VisibleForTesting;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
+
 import androidx.tvprovider.media.p005tv.TvContractCompat;
+
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.tvlauncher.C1188R;
-import com.google.android.tvlauncher.inputs.CustomTvInputEntry;
 import com.google.android.tvlauncher.util.OemConfiguration;
+
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class CustomInputsManager implements InputsManager {
-    private static final String AUTHORITY = "tvlauncher.inputs";
     public static final Uri CONTENT_URI = Uri.parse("content://tvlauncher.inputs/inputs");
+    /* access modifiers changed from: private */
+    public static final UriMatcher sUriMatcher = new UriMatcher(-1);
+    private static final String AUTHORITY = "tvlauncher.inputs";
     private static final boolean DEBUG = false;
     private static final int MATCH_INPUT = 1;
     private static final int MATCH_INPUT_ID = 2;
@@ -35,8 +39,18 @@ public class CustomInputsManager implements InputsManager {
     private static final String URI_INTENT_SCHEME_STR = "intent";
     @SuppressLint({"StaticFieldLeak"})
     private static CustomInputsManager sInputsManager = null;
-    /* access modifiers changed from: private */
-    public static final UriMatcher sUriMatcher = new UriMatcher(-1);
+
+    static {
+        sUriMatcher.addURI(AUTHORITY, "inputs", 1);
+        sUriMatcher.addURI(AUTHORITY, "inputs/*", 2);
+    }
+
+    private final Context mContext;
+    private List<CustomTvInputEntry> mInputs = Collections.emptyList();
+    private boolean mInputsLoaded;
+    private List<OnInputsChangedListener> mListeners = new ArrayList(2);
+    private RefreshInputList.LoadedDataCallback mLoadedDataCallback = new CustomInputsManager$$Lambda$0(this);
+    private AsyncTask mRefreshTask;
     private final ContentObserver mContentObserver = new ContentObserver(new Handler()) {
         public void onChange(boolean selfChange) {
             onChange(selfChange, null);
@@ -49,26 +63,11 @@ public class CustomInputsManager implements InputsManager {
             }
         }
     };
-    private final Context mContext;
-    private List<CustomTvInputEntry> mInputs = Collections.emptyList();
-    private boolean mInputsLoaded;
-    private List<OnInputsChangedListener> mListeners = new ArrayList(2);
-    private RefreshInputList.LoadedDataCallback mLoadedDataCallback = new CustomInputsManager$$Lambda$0(this);
-    private AsyncTask mRefreshTask;
     private boolean mRegistered;
 
-    static {
-        sUriMatcher.addURI(AUTHORITY, "inputs", 1);
-        sUriMatcher.addURI(AUTHORITY, "inputs/*", 2);
-    }
-
-    /* access modifiers changed from: package-private */
-    public final /* synthetic */ void lambda$new$0$CustomInputsManager(List inputList) {
-        this.mInputs = inputList;
-        for (OnInputsChangedListener listener : this.mListeners) {
-            listener.onInputsChanged();
-        }
-        this.mInputsLoaded = true;
+    @VisibleForTesting
+    CustomInputsManager(Context context) {
+        this.mContext = context;
     }
 
     public static CustomInputsManager getInstance(Context context) {
@@ -79,8 +78,53 @@ public class CustomInputsManager implements InputsManager {
     }
 
     @VisibleForTesting
-    CustomInputsManager(Context context) {
-        this.mContext = context;
+    static Intent parseIntentUri(String inputId, String intentUriStr) {
+        if (intentUriStr == null) {
+            String valueOf = String.valueOf(inputId);
+            Log.e(TAG, valueOf.length() != 0 ? "parseIntentUri: intent URI can't be null\nInput ID=".concat(valueOf) : new String("parseIntentUri: intent URI can't be null\nInput ID="));
+            return null;
+        }
+        Uri uri = Uri.parse(intentUriStr);
+        if (!"intent".equals(uri.getScheme())) {
+            StringBuilder sb = new StringBuilder(String.valueOf(inputId).length() + 89 + String.valueOf(intentUriStr).length());
+            sb.append("parseIntentUri: have to use Intent.URI_INTENT_SCHEME for intent URI\nInput ID=");
+            sb.append(inputId);
+            sb.append("\nIntent Uri=");
+            sb.append(intentUriStr);
+            Log.e(TAG, sb.toString());
+            return null;
+        }
+        try {
+            Intent intent = Intent.parseUri(intentUriStr, 1);
+            if (TvContractCompat.AUTHORITY.equals(uri.getAuthority()) || intent.getComponent() != null) {
+                intent.addFlags(C0841C.ENCODING_PCM_MU_LAW);
+                return intent;
+            }
+            StringBuilder sb2 = new StringBuilder(String.valueOf(inputId).length() + 93 + String.valueOf(intentUriStr).length());
+            sb2.append("parseIntentUri: Custom input intent URI should contain a component name\nInput ID=");
+            sb2.append(inputId);
+            sb2.append("\nIntent Uri=");
+            sb2.append(intentUriStr);
+            Log.e(TAG, sb2.toString());
+            return null;
+        } catch (URISyntaxException e) {
+            StringBuilder sb3 = new StringBuilder(String.valueOf(inputId).length() + 67 + String.valueOf(intentUriStr).length());
+            sb3.append("parseIntentUri: Cannot parse input intent URI\nInput ID=");
+            sb3.append(inputId);
+            sb3.append("\nIntent Uri=");
+            sb3.append(intentUriStr);
+            Log.e(TAG, sb3.toString());
+            return null;
+        }
+    }
+
+    /* access modifiers changed from: package-private */
+    public final /* synthetic */ void lambda$new$0$CustomInputsManager(List inputList) {
+        this.mInputs = inputList;
+        for (OnInputsChangedListener listener : this.mListeners) {
+            listener.onInputsChanged();
+        }
+        this.mInputsLoaded = true;
     }
 
     public void registerOnChangedListener(OnInputsChangedListener listener) {
@@ -189,67 +233,22 @@ public class CustomInputsManager implements InputsManager {
         return this.mInputs.get(position).getGroupId();
     }
 
-    @VisibleForTesting
-    static Intent parseIntentUri(String inputId, String intentUriStr) {
-        if (intentUriStr == null) {
-            String valueOf = String.valueOf(inputId);
-            Log.e(TAG, valueOf.length() != 0 ? "parseIntentUri: intent URI can't be null\nInput ID=".concat(valueOf) : new String("parseIntentUri: intent URI can't be null\nInput ID="));
-            return null;
-        }
-        Uri uri = Uri.parse(intentUriStr);
-        if (!"intent".equals(uri.getScheme())) {
-            StringBuilder sb = new StringBuilder(String.valueOf(inputId).length() + 89 + String.valueOf(intentUriStr).length());
-            sb.append("parseIntentUri: have to use Intent.URI_INTENT_SCHEME for intent URI\nInput ID=");
-            sb.append(inputId);
-            sb.append("\nIntent Uri=");
-            sb.append(intentUriStr);
-            Log.e(TAG, sb.toString());
-            return null;
-        }
-        try {
-            Intent intent = Intent.parseUri(intentUriStr, 1);
-            if (TvContractCompat.AUTHORITY.equals(uri.getAuthority()) || intent.getComponent() != null) {
-                intent.addFlags(C0841C.ENCODING_PCM_MU_LAW);
-                return intent;
-            }
-            StringBuilder sb2 = new StringBuilder(String.valueOf(inputId).length() + 93 + String.valueOf(intentUriStr).length());
-            sb2.append("parseIntentUri: Custom input intent URI should contain a component name\nInput ID=");
-            sb2.append(inputId);
-            sb2.append("\nIntent Uri=");
-            sb2.append(intentUriStr);
-            Log.e(TAG, sb2.toString());
-            return null;
-        } catch (URISyntaxException e) {
-            StringBuilder sb3 = new StringBuilder(String.valueOf(inputId).length() + 67 + String.valueOf(intentUriStr).length());
-            sb3.append("parseIntentUri: Cannot parse input intent URI\nInput ID=");
-            sb3.append(inputId);
-            sb3.append("\nIntent Uri=");
-            sb3.append(intentUriStr);
-            Log.e(TAG, sb3.toString());
-            return null;
-        }
-    }
-
     private static class RefreshInputList extends AsyncTask<Void, Void, List<CustomTvInputEntry>> {
         private final LoadedDataCallback mCallback;
         @SuppressLint({"StaticFieldLeak"})
         private final Context mContext;
         private final RequestOptions mImageRequestOptions;
 
-        interface LoadedDataCallback {
-            void onDataLoaded(List<CustomTvInputEntry> list);
-        }
-
-        /* access modifiers changed from: protected */
-        public /* bridge */ /* synthetic */ void onPostExecute(Object obj) {
-            onPostExecute((List<CustomTvInputEntry>) ((List) obj));
-        }
-
         RefreshInputList(Context context, LoadedDataCallback callback) {
             this.mContext = context;
             this.mCallback = callback;
             int iconMaxSize = this.mContext.getResources().getDimensionPixelSize(C1188R.dimen.input_icon_view_size);
             this.mImageRequestOptions = (RequestOptions) ((RequestOptions) new RequestOptions().override(iconMaxSize, iconMaxSize)).centerInside();
+        }
+
+        /* access modifiers changed from: protected */
+        public /* bridge */ /* synthetic */ void onPostExecute(Object obj) {
+            onPostExecute((List<CustomTvInputEntry>) ((List) obj));
         }
 
         /* access modifiers changed from: protected */
@@ -392,6 +391,10 @@ public class CustomInputsManager implements InputsManager {
 
         private CustomTvInputEntry getHomeInput() {
             return new CustomTvInputEntry.Builder().setId("com.google.android.tvlauncher.input.home").setLabel(this.mContext.getString(C1188R.string.input_title_home)).setIntentUri(new Intent("android.intent.action.MAIN").addCategory("android.intent.category.HOME").toUri(1)).build(this.mContext);
+        }
+
+        interface LoadedDataCallback {
+            void onDataLoaded(List<CustomTvInputEntry> list);
         }
     }
 }

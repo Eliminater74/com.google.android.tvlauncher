@@ -4,10 +4,6 @@ public class ListRow extends Row {
     private final ObjectAdapter mAdapter;
     private CharSequence mContentDescription;
 
-    public final ObjectAdapter getAdapter() {
-        return this.mAdapter;
-    }
-
     public ListRow(HeaderItem header, ObjectAdapter adapter) {
         super(header);
         this.mAdapter = adapter;
@@ -23,6 +19,10 @@ public class ListRow extends Row {
     public ListRow(ObjectAdapter adapter) {
         this.mAdapter = adapter;
         verify();
+    }
+
+    public final ObjectAdapter getAdapter() {
+        return this.mAdapter;
     }
 
     private void verify() {

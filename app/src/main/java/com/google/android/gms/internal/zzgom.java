@@ -7,12 +7,15 @@ import java.util.RandomAccess;
 /* compiled from: IntArrayList */
 final class zzgom extends zzgms<Integer> implements zzgoq, RandomAccess {
     private static final zzgom zza;
+
+    static {
+        zzgom zzgom = new zzgom();
+        zza = zzgom;
+        zzgom.zzb();
+    }
+
     private int[] zzb;
     private int zzc;
-
-    public static zzgom zzd() {
-        return zza;
-    }
 
     zzgom() {
         this(new int[10], 0);
@@ -21,6 +24,10 @@ final class zzgom extends zzgms<Integer> implements zzgoq, RandomAccess {
     private zzgom(int[] iArr, int i) {
         this.zzb = iArr;
         this.zzc = i;
+    }
+
+    public static zzgom zzd() {
+        return zza;
     }
 
     public final boolean equals(Object obj) {
@@ -175,11 +182,5 @@ final class zzgom extends zzgms<Integer> implements zzgoq, RandomAccess {
 
     public final /* synthetic */ Object get(int i) {
         return Integer.valueOf(zzc(i));
-    }
-
-    static {
-        zzgom zzgom = new zzgom();
-        zza = zzgom;
-        zzgom.zzb();
     }
 }

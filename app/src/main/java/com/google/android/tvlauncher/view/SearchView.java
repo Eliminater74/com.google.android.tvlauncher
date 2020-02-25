@@ -30,6 +30,7 @@ import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
@@ -37,6 +38,7 @@ import com.google.android.tvlauncher.C1188R;
 import com.google.android.tvlauncher.appsview.data.LaunchItemsManager;
 import com.google.android.tvlauncher.util.OemConfiguration;
 import com.google.android.tvrecommendations.shared.util.Constants;
+
 import java.util.Random;
 
 public class SearchView extends FrameLayout implements LaunchItemsManager.SearchPackageChangeListener {
@@ -50,62 +52,56 @@ public class SearchView extends FrameLayout implements LaunchItemsManager.Search
     private static final int TEXT_ANIM_FADE = 2;
     private static final int TEXT_ANIM_HORIZONTAL = 1;
     private static final int TEXT_ANIM_VERTICAL = 0;
+    /* access modifiers changed from: private */
+    public final int mIdleTextFlipDelay;
+    private final int mFocusedColor;
+    private final String mFocusedKeyboardText;
+    private final String mFocusedMicText;
+    private final int mKeyboardOrbWidth;
+    private final int mLaunchFadeDuration;
+    private final String mSearchHintText;
+    private final Intent mSearchIntent = getSearchIntent();
+    private final int mSearchOrbsSpacing;
+    private final int mTextSwitcherMarginStart;
+    private final int mTextSwitcherWithHotwordIconMarginStart;
+    private final int mUnfocusedColor;
+    /* access modifiers changed from: private */
+    public int mCurrentIndex = 0;
+    /* access modifiers changed from: private */
+    public Handler mHandler = new Handler();
+    /* access modifiers changed from: private */
+    public SearchOrb mKeyboardOrbView;
+    /* access modifiers changed from: private */
+    public SearchOrb mMicOrbView;
+    /* access modifiers changed from: private */
+    public Drawable mOemSearchIcon;
+    /* access modifiers changed from: private */
+    public TextSwitcher mSwitcher;
+    /* access modifiers changed from: private */
+    public String[] mTextToShow;
     private ActionCallbacks mActionCallbacks;
     private Drawable mAssistantIcon;
     private int mClickDeviceId = -1;
     private int mColorBright;
     private Drawable mColorMicFocusedIcon;
     private Context mContext;
-    /* access modifiers changed from: private */
-    public int mCurrentIndex = 0;
     private String[] mDefaultTextToShow;
     private boolean mEatDpadCenterKeyDown;
-    private final int mFocusedColor;
-    private final String mFocusedKeyboardText;
-    private final String mFocusedMicText;
-    /* access modifiers changed from: private */
-    public Handler mHandler = new Handler();
     private boolean mHotwordEnabled;
     private int mHotwordIconVisibility;
-    /* access modifiers changed from: private */
-    public final int mIdleTextFlipDelay;
     private boolean mIsHintFlippingAllowed;
     private boolean mKatnissExists;
     private FrameLayout mKeyboardContainer;
     private Drawable mKeyboardFocusedIcon;
-    /* access modifiers changed from: private */
-    public SearchOrb mKeyboardOrbView;
     private int mKeyboardOrbVisibility;
-    private final int mKeyboardOrbWidth;
     private Drawable mKeyboardUnfocusedIcon;
-    private final int mLaunchFadeDuration;
     private ImageView mMicDisabledIcon;
     private Drawable mMicFocusedIcon;
-    /* access modifiers changed from: private */
-    public SearchOrb mMicOrbView;
     private int mMicStatus;
     private Drawable mMicUnfocusedIcon;
     private int mOemFocusedOrbColor;
-    /* access modifiers changed from: private */
-    public Drawable mOemSearchIcon;
-    private final String mSearchHintText;
-    private final Intent mSearchIntent = getSearchIntent();
-    private final int mSearchOrbsSpacing;
     private Runnable mSwitchRunnable;
-    /* access modifiers changed from: private */
-    public TextSwitcher mSwitcher;
     private LinearLayout mSwitcherContainer;
-    private final int mTextSwitcherMarginStart;
-    private final int mTextSwitcherWithHotwordIconMarginStart;
-    /* access modifiers changed from: private */
-    public String[] mTextToShow;
-    private final int mUnfocusedColor;
-
-    public interface ActionCallbacks {
-        void onStartedKeyboardSearch();
-
-        void onStartedVoiceSearch();
-    }
 
     public SearchView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -133,6 +129,51 @@ public class SearchView extends FrameLayout implements LaunchItemsManager.Search
         this.mMicUnfocusedIcon = res.getDrawable(C1188R.C1189drawable.ic_mic_grey, null);
         this.mMicFocusedIcon = res.getDrawable(C1188R.C1189drawable.ic_mic_black, null);
         this.mTextToShow = this.mDefaultTextToShow;
+    }
+
+    public static int getColor(Resources res, int id, @Nullable Resources.Theme theme) {
+        return res.getColor(id, theme);
+    }
+
+    public static Intent getSearchIntent() {
+        return new Intent("android.intent.action.ASSIST").addFlags(270532608);
+    }
+
+    private static boolean startActivitySafely(Context context, Intent intent) {
+        try {
+            context.startActivity(intent);
+            return true;
+        } catch (ActivityNotFoundException e) {
+            String valueOf = String.valueOf(intent);
+            StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 27);
+            sb.append("Exception launching intent ");
+            sb.append(valueOf);
+            Log.e(TAG, sb.toString(), e);
+            Toast.makeText(context, context.getString(C1188R.string.app_unavailable), 0).show();
+            return false;
+        }
+    }
+
+    private static boolean startSearchActivitySafely(Context context, Intent intent, int deviceId, boolean isKeyboardSearch) {
+        intent.putExtra("android.intent.extra.ASSIST_INPUT_DEVICE_ID", deviceId);
+        intent.putExtra(EXTRA_SEARCH_TYPE, isKeyboardSearch ? 2 : 1);
+        return startActivitySafely(context, intent);
+    }
+
+    private static boolean startSearchActivitySafely(Context context, Intent intent, boolean isKeyboardSearch) {
+        intent.putExtra(EXTRA_SEARCH_TYPE, isKeyboardSearch ? 2 : 1);
+        return startActivitySafely(context, intent);
+    }
+
+    private static void playErrorSound(Context context) {
+        ((AudioManager) context.getSystemService("audio")).playSoundEffect(9);
+    }
+
+    private static boolean isConfirmKey(int keyCode) {
+        if (keyCode == 23 || keyCode == 62 || keyCode == 66 || keyCode == 96 || keyCode == 160) {
+            return true;
+        }
+        return false;
     }
 
     public void registerActionsCallbacks(ActionCallbacks actionsCallbacks) {
@@ -235,10 +276,6 @@ public class SearchView extends FrameLayout implements LaunchItemsManager.Search
                 this.mMicOrbView.setOrbIcon(micHasFocus ? this.mMicFocusedIcon : this.mMicUnfocusedIcon);
             }
         }
-    }
-
-    public static int getColor(Resources res, int id, @Nullable Resources.Theme theme) {
-        return res.getColor(id, theme);
     }
 
     private boolean focusIsOnSearchView() {
@@ -485,47 +522,6 @@ public class SearchView extends FrameLayout implements LaunchItemsManager.Search
         }
     }
 
-    public static Intent getSearchIntent() {
-        return new Intent("android.intent.action.ASSIST").addFlags(270532608);
-    }
-
-    private static boolean startActivitySafely(Context context, Intent intent) {
-        try {
-            context.startActivity(intent);
-            return true;
-        } catch (ActivityNotFoundException e) {
-            String valueOf = String.valueOf(intent);
-            StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 27);
-            sb.append("Exception launching intent ");
-            sb.append(valueOf);
-            Log.e(TAG, sb.toString(), e);
-            Toast.makeText(context, context.getString(C1188R.string.app_unavailable), 0).show();
-            return false;
-        }
-    }
-
-    private static boolean startSearchActivitySafely(Context context, Intent intent, int deviceId, boolean isKeyboardSearch) {
-        intent.putExtra("android.intent.extra.ASSIST_INPUT_DEVICE_ID", deviceId);
-        intent.putExtra(EXTRA_SEARCH_TYPE, isKeyboardSearch ? 2 : 1);
-        return startActivitySafely(context, intent);
-    }
-
-    private static boolean startSearchActivitySafely(Context context, Intent intent, boolean isKeyboardSearch) {
-        intent.putExtra(EXTRA_SEARCH_TYPE, isKeyboardSearch ? 2 : 1);
-        return startActivitySafely(context, intent);
-    }
-
-    private static void playErrorSound(Context context) {
-        ((AudioManager) context.getSystemService("audio")).playSoundEffect(9);
-    }
-
-    private static boolean isConfirmKey(int keyCode) {
-        if (keyCode == 23 || keyCode == 62 || keyCode == 66 || keyCode == 96 || keyCode == 160) {
-            return true;
-        }
-        return false;
-    }
-
     public void updateSearchSuggestions(String[] suggestions) {
         this.mCurrentIndex = 0;
         if (suggestions == null || suggestions.length == 0) {
@@ -675,5 +671,11 @@ public class SearchView extends FrameLayout implements LaunchItemsManager.Search
     @VisibleForTesting
     public ImageView getMicDisabledIcon() {
         return this.mMicDisabledIcon;
+    }
+
+    public interface ActionCallbacks {
+        void onStartedKeyboardSearch();
+
+        void onStartedVoiceSearch();
     }
 }

@@ -13,10 +13,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
-import java.io.IOException;
-import java.lang.reflect.Method;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.IOException;
+import java.lang.reflect.Method;
 
 /* renamed from: android.support.v4.graphics.drawable.DrawableCompat */
 public final class DrawableCompat {
@@ -25,6 +27,9 @@ public final class DrawableCompat {
     private static boolean sGetLayoutDirectionMethodFetched;
     private static Method sSetLayoutDirectionMethod;
     private static boolean sSetLayoutDirectionMethodFetched;
+
+    private DrawableCompat() {
+    }
 
     @Deprecated
     public static void jumpToCurrentState(@NonNull Drawable drawable) {
@@ -218,8 +223,5 @@ public final class DrawableCompat {
             }
         }
         return 0;
-    }
-
-    private DrawableCompat() {
     }
 }

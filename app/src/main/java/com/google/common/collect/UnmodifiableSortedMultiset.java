@@ -1,11 +1,11 @@
 package com.google.common.collect;
 
 import com.google.common.annotations.GwtCompatible;
-import com.google.common.collect.Multiset;
-import com.google.common.collect.Multisets;
+
+import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
+
 import java.util.Comparator;
 import java.util.NavigableSet;
-import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
 
 @GwtCompatible(emulated = true)
 final class UnmodifiableSortedMultiset<E> extends Multisets.UnmodifiableMultiset<E> implements SortedMultiset<E> {

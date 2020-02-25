@@ -2,6 +2,7 @@ package com.google.android.exoplayer2.analytics;
 
 import android.support.annotation.Nullable;
 import android.view.Surface;
+
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.PlaybackParameters;
@@ -13,6 +14,7 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.MediaSourceEventListener;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
+
 import java.io.IOException;
 
 public interface AnalyticsListener {

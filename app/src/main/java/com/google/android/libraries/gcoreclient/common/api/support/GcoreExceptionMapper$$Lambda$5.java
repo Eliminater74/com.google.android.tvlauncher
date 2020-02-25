@@ -1,6 +1,5 @@
 package com.google.android.libraries.gcoreclient.common.api.support;
 
-import com.google.android.libraries.gcoreclient.common.api.support.GcoreExceptionMapper;
 import java.util.concurrent.ExecutionException;
 
 final /* synthetic */ class GcoreExceptionMapper$$Lambda$5 implements GcoreExceptionMapper.SystemExceptionSupplier {

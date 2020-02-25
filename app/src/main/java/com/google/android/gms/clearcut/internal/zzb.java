@@ -2,6 +2,7 @@ package com.google.android.gms.clearcut.internal;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+
 import com.google.android.gms.clearcut.ClearcutLogger;
 import com.google.android.gms.clearcut.ClearcutLoggerApi;
 import com.google.android.gms.clearcut.LogEventParcelable;
@@ -11,6 +12,7 @@ import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.common.api.internal.zzh;
 import com.google.android.gms.tasks.Tasks;
+
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;

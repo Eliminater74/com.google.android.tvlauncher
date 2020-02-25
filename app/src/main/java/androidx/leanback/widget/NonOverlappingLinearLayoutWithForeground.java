@@ -11,9 +11,9 @@ import android.widget.LinearLayout;
 
 class NonOverlappingLinearLayoutWithForeground extends LinearLayout {
     private static final int VERSION_M = 23;
+    private final Rect mSelfBounds;
     private Drawable mForeground;
     private boolean mForegroundBoundsChanged;
-    private final Rect mSelfBounds;
 
     public NonOverlappingLinearLayoutWithForeground(Context context) {
         this(context, null);
@@ -36,6 +36,13 @@ class NonOverlappingLinearLayoutWithForeground extends LinearLayout {
         }
     }
 
+    public Drawable getForegroundCompat() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            return ForegroundHelper.getForeground(this);
+        }
+        return this.mForeground;
+    }
+
     public void setForegroundCompat(Drawable d) {
         if (Build.VERSION.SDK_INT >= 23) {
             ForegroundHelper.setForeground(this, d);
@@ -48,13 +55,6 @@ class NonOverlappingLinearLayoutWithForeground extends LinearLayout {
                 this.mForeground.setState(getDrawableState());
             }
         }
-    }
-
-    public Drawable getForegroundCompat() {
-        if (Build.VERSION.SDK_INT >= 23) {
-            return ForegroundHelper.getForeground(this);
-        }
-        return this.mForeground;
     }
 
     public void draw(Canvas canvas) {

@@ -12,6 +12,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
 import com.google.android.tvlauncher.C1188R;
 import com.google.android.tvlauncher.util.Util;
 import com.google.android.tvrecommendations.shared.util.ColorUtils;
@@ -38,10 +39,6 @@ public class ProgramView extends FrameLayout {
     private float mPreviewImageCurrentDimmingFactor;
     private float mPreviewImageDimmedFactorValue;
     private View mPreviewVideo;
-
-    public interface OnWindowVisibilityChangedListener {
-        void onWindowVisibilityChanged(int i);
-    }
 
     public ProgramView(@NonNull Context context) {
         this(context, null);
@@ -218,5 +215,9 @@ public class ProgramView extends FrameLayout {
     public void setDurationBadgeVisibility(int visibility) {
         this.mDurationBadgeVisibility = visibility;
         this.mDurationBadge.setVisibility(visibility);
+    }
+
+    public interface OnWindowVisibilityChangedListener {
+        void onWindowVisibilityChanged(int i);
     }
 }

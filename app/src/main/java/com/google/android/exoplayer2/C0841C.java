@@ -3,6 +3,7 @@ package com.google.android.exoplayer2;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.media.AudioManager;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -191,6 +192,22 @@ public final class C0841C {
     public static final int VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING = 2;
     public static final UUID WIDEVINE_UUID = new UUID(-1301668207276963122L, -6645017420763422227L);
 
+    private C0841C() {
+    }
+
+    public static long usToMs(long timeUs) {
+        return (timeUs == TIME_UNSET || timeUs == Long.MIN_VALUE) ? timeUs : timeUs / 1000;
+    }
+
+    public static long msToUs(long timeMs) {
+        return (timeMs == TIME_UNSET || timeMs == Long.MIN_VALUE) ? timeMs : 1000 * timeMs;
+    }
+
+    @TargetApi(21)
+    public static int generateAudioSessionIdV21(Context context) {
+        return ((AudioManager) context.getSystemService("audio")).generateAudioSessionId();
+    }
+
     @Documented
     @Retention(RetentionPolicy.SOURCE)
     /* renamed from: com.google.android.exoplayer2.C$AudioContentType */
@@ -303,21 +320,5 @@ public final class C0841C {
     @Retention(RetentionPolicy.SOURCE)
     /* renamed from: com.google.android.exoplayer2.C$VideoScalingMode */
     public @interface VideoScalingMode {
-    }
-
-    private C0841C() {
-    }
-
-    public static long usToMs(long timeUs) {
-        return (timeUs == TIME_UNSET || timeUs == Long.MIN_VALUE) ? timeUs : timeUs / 1000;
-    }
-
-    public static long msToUs(long timeMs) {
-        return (timeMs == TIME_UNSET || timeMs == Long.MIN_VALUE) ? timeMs : 1000 * timeMs;
-    }
-
-    @TargetApi(21)
-    public static int generateAudioSessionIdV21(Context context) {
-        return ((AudioManager) context.getSystemService("audio")).generateAudioSessionId();
     }
 }

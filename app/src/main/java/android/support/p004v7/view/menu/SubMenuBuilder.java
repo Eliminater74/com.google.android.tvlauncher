@@ -3,7 +3,6 @@ package android.support.p004v7.view.menu;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.RestrictTo;
-import android.support.p004v7.view.menu.MenuBuilder;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
@@ -21,20 +20,20 @@ public class SubMenuBuilder extends MenuBuilder implements SubMenu {
         this.mItem = item;
     }
 
-    public void setQwertyMode(boolean isQwerty) {
-        this.mParentMenu.setQwertyMode(isQwerty);
-    }
-
     public boolean isQwertyMode() {
         return this.mParentMenu.isQwertyMode();
     }
 
-    public void setShortcutsVisible(boolean shortcutsVisible) {
-        this.mParentMenu.setShortcutsVisible(shortcutsVisible);
+    public void setQwertyMode(boolean isQwerty) {
+        this.mParentMenu.setQwertyMode(isQwerty);
     }
 
     public boolean isShortcutsVisible() {
         return this.mParentMenu.isShortcutsVisible();
+    }
+
+    public void setShortcutsVisible(boolean shortcutsVisible) {
+        this.mParentMenu.setShortcutsVisible(shortcutsVisible);
     }
 
     public Menu getParentMenu() {
@@ -105,11 +104,11 @@ public class SubMenuBuilder extends MenuBuilder implements SubMenu {
         return super.getActionViewStatesKey() + ":" + itemId;
     }
 
-    public void setGroupDividerEnabled(boolean groupDividerEnabled) {
-        this.mParentMenu.setGroupDividerEnabled(groupDividerEnabled);
-    }
-
     public boolean isGroupDividerEnabled() {
         return this.mParentMenu.isGroupDividerEnabled();
+    }
+
+    public void setGroupDividerEnabled(boolean groupDividerEnabled) {
+        this.mParentMenu.setGroupDividerEnabled(groupDividerEnabled);
     }
 }

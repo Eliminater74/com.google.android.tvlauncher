@@ -1,34 +1,24 @@
 package com.google.android.exoplayer2.trackselection;
 
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.source.TrackGroup;
 import com.google.android.exoplayer2.source.chunk.MediaChunk;
 import com.google.android.exoplayer2.source.chunk.MediaChunkIterator;
 import com.google.android.exoplayer2.util.Assertions;
+
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
 public abstract class BaseTrackSelection implements TrackSelection {
-    private final long[] blacklistUntilTimes;
-    private final Format[] formats;
     protected final TrackGroup group;
-    private int hashCode;
     protected final int length;
     protected final int[] tracks;
-
-    public void onDiscontinuity() {
-        TrackSelection$$CC.onDiscontinuity$$dflt$$(this);
-    }
-
-    public void updateSelectedTrack(long j, long j2, long j3) {
-        TrackSelection$$CC.updateSelectedTrack$$dflt$$(this, j, j2, j3);
-    }
-
-    public void updateSelectedTrack(long j, long j2, long j3, List list, MediaChunkIterator[] mediaChunkIteratorArr) {
-        TrackSelection$$CC.updateSelectedTrack$$dflt$$(this, j, j2, j3, list, mediaChunkIteratorArr);
-    }
+    private final long[] blacklistUntilTimes;
+    private final Format[] formats;
+    private int hashCode;
 
     public BaseTrackSelection(TrackGroup group2, int... tracks2) {
         Assertions.checkState(tracks2.length > 0);
@@ -51,6 +41,18 @@ public abstract class BaseTrackSelection implements TrackSelection {
                 return;
             }
         }
+    }
+
+    public void onDiscontinuity() {
+        TrackSelection$$CC.onDiscontinuity$$dflt$$(this);
+    }
+
+    public void updateSelectedTrack(long j, long j2, long j3) {
+        TrackSelection$$CC.updateSelectedTrack$$dflt$$(this, j, j2, j3);
+    }
+
+    public void updateSelectedTrack(long j, long j2, long j3, List list, MediaChunkIterator[] mediaChunkIteratorArr) {
+        TrackSelection$$CC.updateSelectedTrack$$dflt$$(this, j, j2, j3, list, mediaChunkIteratorArr);
     }
 
     public void enable() {

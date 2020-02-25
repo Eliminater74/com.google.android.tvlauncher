@@ -4,6 +4,7 @@ import android.app.Service;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RestrictTo;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -12,12 +13,6 @@ public final class ServiceCompat {
     public static final int START_STICKY = 1;
     public static final int STOP_FOREGROUND_DETACH = 2;
     public static final int STOP_FOREGROUND_REMOVE = 1;
-
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    @Retention(RetentionPolicy.SOURCE)
-    /* renamed from: android.support.v4.app.ServiceCompat$StopForegroundFlags */
-    public @interface StopForegroundFlags {
-    }
 
     private ServiceCompat() {
     }
@@ -28,5 +23,11 @@ public final class ServiceCompat {
         } else {
             service.stopForeground((flags & 1) != 0);
         }
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    @Retention(RetentionPolicy.SOURCE)
+    /* renamed from: android.support.v4.app.ServiceCompat$StopForegroundFlags */
+    public @interface StopForegroundFlags {
     }
 }

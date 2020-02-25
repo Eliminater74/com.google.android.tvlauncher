@@ -7,10 +7,14 @@ import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.IOException;
 
 final class WavHeaderReader {
     private static final String TAG = "WavHeaderReader";
+
+    private WavHeaderReader() {
+    }
 
     public static WavHeader peek(ExtractorInput input) throws IOException, InterruptedException {
         ExtractorInput extractorInput = input;
@@ -95,9 +99,6 @@ final class WavHeaderReader {
         }
         input.skipFully(8);
         wavHeader.setDataBounds(input.getPosition(), chunkHeader.size);
-    }
-
-    private WavHeaderReader() {
     }
 
     private static final class ChunkHeader {

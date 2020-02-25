@@ -1,6 +1,5 @@
 package com.google.protobuf;
 
-import com.google.protobuf.Writer;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -12,6 +11,18 @@ public final class UnknownFieldSetLite {
     private int memoizedSerializedSize;
     private Object[] objects;
     private int[] tags;
+
+    private UnknownFieldSetLite() {
+        this(0, new int[8], new Object[8], true);
+    }
+
+    private UnknownFieldSetLite(int count2, int[] tags2, Object[] objects2, boolean isMutable2) {
+        this.memoizedSerializedSize = -1;
+        this.count = count2;
+        this.tags = tags2;
+        this.objects = objects2;
+        this.isMutable = isMutable2;
+    }
 
     public static UnknownFieldSetLite getDefaultInstance() {
         return DEFAULT_INSTANCE;
@@ -30,16 +41,64 @@ public final class UnknownFieldSetLite {
         return new UnknownFieldSetLite(count2, tags2, objects2, true);
     }
 
-    private UnknownFieldSetLite() {
-        this(0, new int[8], new Object[8], true);
+    private static void writeField(int tag, Object object, Writer writer) throws IOException {
+        int fieldNumber = WireFormat.getTagFieldNumber(tag);
+        int tagWireType = WireFormat.getTagWireType(tag);
+        if (tagWireType == 0) {
+            writer.writeInt64(fieldNumber, ((Long) object).longValue());
+        } else if (tagWireType == 1) {
+            writer.writeFixed64(fieldNumber, ((Long) object).longValue());
+        } else if (tagWireType == 2) {
+            writer.writeBytes(fieldNumber, (ByteString) object);
+        } else if (tagWireType != 3) {
+            if (tagWireType == 5) {
+                writer.writeFixed32(fieldNumber, ((Integer) object).intValue());
+                return;
+            }
+            throw new RuntimeException(InvalidProtocolBufferException.invalidWireType());
+        } else if (writer.fieldOrder() == Writer.FieldOrder.ASCENDING) {
+            writer.writeStartGroup(fieldNumber);
+            ((UnknownFieldSetLite) object).writeTo(writer);
+            writer.writeEndGroup(fieldNumber);
+        } else {
+            writer.writeEndGroup(fieldNumber);
+            ((UnknownFieldSetLite) object).writeTo(writer);
+            writer.writeStartGroup(fieldNumber);
+        }
     }
 
-    private UnknownFieldSetLite(int count2, int[] tags2, Object[] objects2, boolean isMutable2) {
-        this.memoizedSerializedSize = -1;
-        this.count = count2;
-        this.tags = tags2;
-        this.objects = objects2;
-        this.isMutable = isMutable2;
+    private static boolean equals(int[] tags1, int[] tags2, int count2) {
+        for (int i = 0; i < count2; i++) {
+            if (tags1[i] != tags2[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean equals(Object[] objects1, Object[] objects2, int count2) {
+        for (int i = 0; i < count2; i++) {
+            if (!objects1[i].equals(objects2[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static int hashCode(int[] tags2, int count2) {
+        int hashCode = 17;
+        for (int i = 0; i < count2; i++) {
+            hashCode = (hashCode * 31) + tags2[i];
+        }
+        return hashCode;
+    }
+
+    private static int hashCode(Object[] objects2, int count2) {
+        int hashCode = 17;
+        for (int i = 0; i < count2; i++) {
+            hashCode = (hashCode * 31) + objects2[i].hashCode();
+        }
+        return hashCode;
     }
 
     public void makeImmutable() {
@@ -109,32 +168,6 @@ public final class UnknownFieldSetLite {
         }
     }
 
-    private static void writeField(int tag, Object object, Writer writer) throws IOException {
-        int fieldNumber = WireFormat.getTagFieldNumber(tag);
-        int tagWireType = WireFormat.getTagWireType(tag);
-        if (tagWireType == 0) {
-            writer.writeInt64(fieldNumber, ((Long) object).longValue());
-        } else if (tagWireType == 1) {
-            writer.writeFixed64(fieldNumber, ((Long) object).longValue());
-        } else if (tagWireType == 2) {
-            writer.writeBytes(fieldNumber, (ByteString) object);
-        } else if (tagWireType != 3) {
-            if (tagWireType == 5) {
-                writer.writeFixed32(fieldNumber, ((Integer) object).intValue());
-                return;
-            }
-            throw new RuntimeException(InvalidProtocolBufferException.invalidWireType());
-        } else if (writer.fieldOrder() == Writer.FieldOrder.ASCENDING) {
-            writer.writeStartGroup(fieldNumber);
-            ((UnknownFieldSetLite) object).writeTo(writer);
-            writer.writeEndGroup(fieldNumber);
-        } else {
-            writer.writeEndGroup(fieldNumber);
-            ((UnknownFieldSetLite) object).writeTo(writer);
-            writer.writeStartGroup(fieldNumber);
-        }
-    }
-
     public int getSerializedSizeAsMessageSet() {
         int size = this.memoizedSerializedSize;
         if (size != -1) {
@@ -178,24 +211,6 @@ public final class UnknownFieldSetLite {
         return size2;
     }
 
-    private static boolean equals(int[] tags1, int[] tags2, int count2) {
-        for (int i = 0; i < count2; i++) {
-            if (tags1[i] != tags2[i]) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private static boolean equals(Object[] objects1, Object[] objects2, int count2) {
-        for (int i = 0; i < count2; i++) {
-            if (!objects1[i].equals(objects2[i])) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
@@ -209,22 +224,6 @@ public final class UnknownFieldSetLite {
             return false;
         }
         return true;
-    }
-
-    private static int hashCode(int[] tags2, int count2) {
-        int hashCode = 17;
-        for (int i = 0; i < count2; i++) {
-            hashCode = (hashCode * 31) + tags2[i];
-        }
-        return hashCode;
-    }
-
-    private static int hashCode(Object[] objects2, int count2) {
-        int hashCode = 17;
-        for (int i = 0; i < count2; i++) {
-            hashCode = (hashCode * 31) + objects2[i].hashCode();
-        }
-        return hashCode;
     }
 
     public int hashCode() {

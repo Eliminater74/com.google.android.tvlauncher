@@ -3,8 +3,10 @@ package com.google.common.primitives;
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.base.Preconditions;
-import java.math.BigInteger;
+
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
+import java.math.BigInteger;
 
 @GwtCompatible(emulated = true)
 public final class UnsignedInteger extends Number implements Comparable<UnsignedInteger> {

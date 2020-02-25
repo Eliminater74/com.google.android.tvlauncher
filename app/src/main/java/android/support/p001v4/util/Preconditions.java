@@ -5,11 +5,15 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RestrictTo;
 import android.support.p001v4.media.MediaDescriptionCompat;
+
 import java.util.Locale;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
 /* renamed from: android.support.v4.util.Preconditions */
 public final class Preconditions {
+    private Preconditions() {
+    }
+
     public static void checkArgument(boolean expression) {
         if (!expression) {
             throw new IllegalArgumentException();
@@ -72,8 +76,5 @@ public final class Preconditions {
         } else {
             throw new IllegalArgumentException(String.format(Locale.US, "%s is out of range of [%d, %d] (too high)", valueName, Integer.valueOf(lower), Integer.valueOf(upper)));
         }
-    }
-
-    private Preconditions() {
     }
 }

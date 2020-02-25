@@ -1,11 +1,11 @@
 package com.google.android.gms.phenotype;
 
 import android.os.RemoteException;
+
 import com.google.android.gms.common.api.Api;
 import com.google.android.gms.common.api.internal.zzdl;
 import com.google.android.gms.internal.zzdyr;
 import com.google.android.gms.internal.zzeac;
-import com.google.android.gms.phenotype.PhenotypeClient;
 import com.google.android.gms.tasks.TaskCompletionSource;
 
 /* compiled from: PhenotypeClient */

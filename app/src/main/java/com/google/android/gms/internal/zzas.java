@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.net.ssl.SSLSocketFactory;
 
 /* compiled from: HurlStack */
@@ -27,6 +28,38 @@ public final class zzas extends zzai {
     private zzas(zzat zzat, SSLSocketFactory sSLSocketFactory) {
         this.zza = null;
         this.zzb = null;
+    }
+
+    private static List<zzl> zza(Map<String, List<String>> map) {
+        ArrayList arrayList = new ArrayList(map.size());
+        for (Map.Entry next : map.entrySet()) {
+            if (next.getKey() != null) {
+                for (String zzl : (List) next.getValue()) {
+                    arrayList.add(new zzl((String) next.getKey(), zzl));
+                }
+            }
+        }
+        return arrayList;
+    }
+
+    private static InputStream zza(HttpURLConnection httpURLConnection) {
+        try {
+            return httpURLConnection.getInputStream();
+        } catch (IOException e) {
+            return httpURLConnection.getErrorStream();
+        }
+    }
+
+    private static void zza(HttpURLConnection httpURLConnection, zzr<?> zzr) throws IOException, zza {
+        byte[] zzg = zzr.zzg();
+        if (zzg != null) {
+            httpURLConnection.setDoOutput(true);
+            String valueOf = String.valueOf("UTF-8");
+            httpURLConnection.addRequestProperty("Content-Type", valueOf.length() != 0 ? "application/x-www-form-urlencoded; charset=".concat(valueOf) : new String("application/x-www-form-urlencoded; charset="));
+            DataOutputStream dataOutputStream = new DataOutputStream(httpURLConnection.getOutputStream());
+            dataOutputStream.write(zzg);
+            dataOutputStream.close();
+        }
     }
 
     public final zzaq zza(zzr<?> zzr, Map<String, String> map) throws IOException, zza {
@@ -102,37 +135,5 @@ public final class zzas extends zzai {
             return new zzaq(responseCode, zza(httpURLConnection.getHeaderFields()), httpURLConnection.getContentLength(), zza(httpURLConnection));
         }
         throw new IOException("Could not retrieve response code from HttpUrlConnection.");
-    }
-
-    private static List<zzl> zza(Map<String, List<String>> map) {
-        ArrayList arrayList = new ArrayList(map.size());
-        for (Map.Entry next : map.entrySet()) {
-            if (next.getKey() != null) {
-                for (String zzl : (List) next.getValue()) {
-                    arrayList.add(new zzl((String) next.getKey(), zzl));
-                }
-            }
-        }
-        return arrayList;
-    }
-
-    private static InputStream zza(HttpURLConnection httpURLConnection) {
-        try {
-            return httpURLConnection.getInputStream();
-        } catch (IOException e) {
-            return httpURLConnection.getErrorStream();
-        }
-    }
-
-    private static void zza(HttpURLConnection httpURLConnection, zzr<?> zzr) throws IOException, zza {
-        byte[] zzg = zzr.zzg();
-        if (zzg != null) {
-            httpURLConnection.setDoOutput(true);
-            String valueOf = String.valueOf("UTF-8");
-            httpURLConnection.addRequestProperty("Content-Type", valueOf.length() != 0 ? "application/x-www-form-urlencoded; charset=".concat(valueOf) : new String("application/x-www-form-urlencoded; charset="));
-            DataOutputStream dataOutputStream = new DataOutputStream(httpURLConnection.getOutputStream());
-            dataOutputStream.write(zzg);
-            dataOutputStream.close();
-        }
     }
 }

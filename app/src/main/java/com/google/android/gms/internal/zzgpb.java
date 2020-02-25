@@ -10,6 +10,13 @@ import java.util.RandomAccess;
 public final class zzgpb extends zzgms<String> implements zzgpc, RandomAccess {
     private static final zzgpb zza;
     private static final zzgpc zzb = zza;
+
+    static {
+        zzgpb zzgpb = new zzgpb();
+        zza = zzgpb;
+        zzgpb.zzb();
+    }
+
     private final List<Object> zzc;
 
     public zzgpb() {
@@ -22,6 +29,16 @@ public final class zzgpb extends zzgms<String> implements zzgpc, RandomAccess {
 
     private zzgpb(ArrayList<Object> arrayList) {
         this.zzc = arrayList;
+    }
+
+    private static String zza(Object obj) {
+        if (obj instanceof String) {
+            return (String) obj;
+        }
+        if (obj instanceof zzgnb) {
+            return ((zzgnb) obj).zzd();
+        }
+        return zzgon.zzb((byte[]) obj);
     }
 
     public final int size() {
@@ -56,16 +73,6 @@ public final class zzgpb extends zzgms<String> implements zzgpc, RandomAccess {
 
     public final Object zzb(int i) {
         return this.zzc.get(i);
-    }
-
-    private static String zza(Object obj) {
-        if (obj instanceof String) {
-            return (String) obj;
-        }
-        if (obj instanceof zzgnb) {
-            return ((zzgnb) obj).zzd();
-        }
-        return zzgon.zzb((byte[]) obj);
     }
 
     public final List<?> zzd() {
@@ -149,11 +156,5 @@ public final class zzgpb extends zzgms<String> implements zzgpc, RandomAccess {
             this.zzc.set(i, zzb2);
         }
         return zzb2;
-    }
-
-    static {
-        zzgpb zzgpb = new zzgpb();
-        zza = zzgpb;
-        zzgpb.zzb();
     }
 }

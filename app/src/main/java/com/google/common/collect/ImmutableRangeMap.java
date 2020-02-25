@@ -3,16 +3,15 @@ package com.google.common.collect;
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.SortedLists;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.Serializable;
-import java.lang.Comparable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtIncompatible
 @Beta
@@ -22,6 +21,11 @@ public class ImmutableRangeMap<K extends Comparable<?>, V> implements RangeMap<K
     /* access modifiers changed from: private */
     public final transient ImmutableList<Range<K>> ranges;
     private final transient ImmutableList<V> values;
+
+    ImmutableRangeMap(ImmutableList<Range<K>> ranges2, ImmutableList<V> values2) {
+        this.ranges = ranges2;
+        this.values = values2;
+    }
 
     /* renamed from: of */
     public static <K extends Comparable<?>, V> ImmutableRangeMap<K, V> m145of() {
@@ -49,57 +53,6 @@ public class ImmutableRangeMap<K extends Comparable<?>, V> implements RangeMap<K
 
     public static <K extends Comparable<?>, V> Builder<K, V> builder() {
         return new Builder<>();
-    }
-
-    public static final class Builder<K extends Comparable<?>, V> {
-        private final List<Map.Entry<Range<K>, V>> entries = Lists.newArrayList();
-
-        @CanIgnoreReturnValue
-        public Builder<K, V> put(Range<K> range, V value) {
-            Preconditions.checkNotNull(range);
-            Preconditions.checkNotNull(value);
-            Preconditions.checkArgument(!range.isEmpty(), "Range must not be empty, but was %s", range);
-            this.entries.add(Maps.immutableEntry(range, value));
-            return this;
-        }
-
-        @CanIgnoreReturnValue
-        public Builder<K, V> putAll(RangeMap<K, ? extends V> rangeMap) {
-            for (Map.Entry<Range<K>, ? extends V> entry : rangeMap.asMapOfRanges().entrySet()) {
-                put(entry.getKey(), entry.getValue());
-            }
-            return this;
-        }
-
-        public ImmutableRangeMap<K, V> build() {
-            Collections.sort(this.entries, Range.rangeLexOrdering().onKeys());
-            ImmutableList.Builder<Range<K>> rangesBuilder = new ImmutableList.Builder<>(this.entries.size());
-            ImmutableList.Builder<V> valuesBuilder = new ImmutableList.Builder<>(this.entries.size());
-            for (int i = 0; i < this.entries.size(); i++) {
-                Range<K> range = (Range) this.entries.get(i).getKey();
-                if (i > 0) {
-                    Range<K> prevRange = (Range) this.entries.get(i - 1).getKey();
-                    if (range.isConnected(prevRange) && !range.intersection(prevRange).isEmpty()) {
-                        String valueOf = String.valueOf(prevRange);
-                        String valueOf2 = String.valueOf(range);
-                        StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 47 + String.valueOf(valueOf2).length());
-                        sb.append("Overlapping ranges: range ");
-                        sb.append(valueOf);
-                        sb.append(" overlaps with entry ");
-                        sb.append(valueOf2);
-                        throw new IllegalArgumentException(sb.toString());
-                    }
-                }
-                rangesBuilder.add((Object) range);
-                valuesBuilder.add(this.entries.get(i).getValue());
-            }
-            return new ImmutableRangeMap<>(rangesBuilder.build(), valuesBuilder.build());
-        }
-    }
-
-    ImmutableRangeMap(ImmutableList<Range<K>> ranges2, ImmutableList<V> values2) {
-        this.ranges = ranges2;
-        this.values = values2;
     }
 
     @NullableDecl
@@ -235,6 +188,57 @@ public class ImmutableRangeMap<K extends Comparable<?>, V> implements RangeMap<K
         return asMapOfRanges().toString();
     }
 
+    /* access modifiers changed from: package-private */
+    public Object writeReplace() {
+        return new SerializedForm(asMapOfRanges());
+    }
+
+    public static final class Builder<K extends Comparable<?>, V> {
+        private final List<Map.Entry<Range<K>, V>> entries = Lists.newArrayList();
+
+        @CanIgnoreReturnValue
+        public Builder<K, V> put(Range<K> range, V value) {
+            Preconditions.checkNotNull(range);
+            Preconditions.checkNotNull(value);
+            Preconditions.checkArgument(!range.isEmpty(), "Range must not be empty, but was %s", range);
+            this.entries.add(Maps.immutableEntry(range, value));
+            return this;
+        }
+
+        @CanIgnoreReturnValue
+        public Builder<K, V> putAll(RangeMap<K, ? extends V> rangeMap) {
+            for (Map.Entry<Range<K>, ? extends V> entry : rangeMap.asMapOfRanges().entrySet()) {
+                put(entry.getKey(), entry.getValue());
+            }
+            return this;
+        }
+
+        public ImmutableRangeMap<K, V> build() {
+            Collections.sort(this.entries, Range.rangeLexOrdering().onKeys());
+            ImmutableList.Builder<Range<K>> rangesBuilder = new ImmutableList.Builder<>(this.entries.size());
+            ImmutableList.Builder<V> valuesBuilder = new ImmutableList.Builder<>(this.entries.size());
+            for (int i = 0; i < this.entries.size(); i++) {
+                Range<K> range = (Range) this.entries.get(i).getKey();
+                if (i > 0) {
+                    Range<K> prevRange = (Range) this.entries.get(i - 1).getKey();
+                    if (range.isConnected(prevRange) && !range.intersection(prevRange).isEmpty()) {
+                        String valueOf = String.valueOf(prevRange);
+                        String valueOf2 = String.valueOf(range);
+                        StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 47 + String.valueOf(valueOf2).length());
+                        sb.append("Overlapping ranges: range ");
+                        sb.append(valueOf);
+                        sb.append(" overlaps with entry ");
+                        sb.append(valueOf2);
+                        throw new IllegalArgumentException(sb.toString());
+                    }
+                }
+                rangesBuilder.add((Object) range);
+                valuesBuilder.add(this.entries.get(i).getValue());
+            }
+            return new ImmutableRangeMap<>(rangesBuilder.build(), valuesBuilder.build());
+        }
+    }
+
     private static class SerializedForm<K extends Comparable<?>, V> implements Serializable {
         private static final long serialVersionUID = 0;
         private final ImmutableMap<Range<K>, V> mapOfRanges;
@@ -261,10 +265,5 @@ public class ImmutableRangeMap<K extends Comparable<?>, V> implements RangeMap<K
             }
             return builder.build();
         }
-    }
-
-    /* access modifiers changed from: package-private */
-    public Object writeReplace() {
-        return new SerializedForm(asMapOfRanges());
     }
 }

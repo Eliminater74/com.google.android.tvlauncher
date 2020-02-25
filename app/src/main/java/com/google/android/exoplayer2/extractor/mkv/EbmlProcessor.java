@@ -2,6 +2,7 @@ package com.google.android.exoplayer2.extractor.mkv;
 
 import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.extractor.ExtractorInput;
+
 import java.io.IOException;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -14,11 +15,6 @@ public interface EbmlProcessor {
     public static final int ELEMENT_TYPE_STRING = 3;
     public static final int ELEMENT_TYPE_UNKNOWN = 0;
     public static final int ELEMENT_TYPE_UNSIGNED_INT = 2;
-
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface ElementType {
-    }
 
     void binaryElement(int i, int i2, ExtractorInput extractorInput) throws IOException, InterruptedException;
 
@@ -35,4 +31,9 @@ public interface EbmlProcessor {
     void startMasterElement(int i, long j, long j2) throws ParserException;
 
     void stringElement(int i, String str) throws ParserException;
+
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface ElementType {
+    }
 }

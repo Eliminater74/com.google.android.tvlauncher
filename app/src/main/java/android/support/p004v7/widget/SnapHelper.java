@@ -2,7 +2,6 @@ package android.support.p004v7.widget;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.p004v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
@@ -11,7 +10,6 @@ import android.widget.Scroller;
 /* renamed from: android.support.v7.widget.SnapHelper */
 public abstract class SnapHelper extends RecyclerView.OnFlingListener {
     static final float MILLISECONDS_PER_INCH = 100.0f;
-    private Scroller mGravityScroller;
     RecyclerView mRecyclerView;
     private final RecyclerView.OnScrollListener mScrollListener = new RecyclerView.OnScrollListener() {
         boolean mScrolled = false;
@@ -30,6 +28,7 @@ public abstract class SnapHelper extends RecyclerView.OnFlingListener {
             }
         }
     };
+    private Scroller mGravityScroller;
 
     @Nullable
     public abstract int[] calculateDistanceToFinalSnap(@NonNull RecyclerView.LayoutManager layoutManager, @NonNull View view);

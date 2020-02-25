@@ -1,9 +1,11 @@
 package com.google.common.base;
 
 import com.google.common.annotations.GwtCompatible;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.Serializable;
 import java.util.Map;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible
 public final class Functions {
@@ -12,6 +14,34 @@ public final class Functions {
 
     public static Function<Object, String> toStringFunction() {
         return ToStringFunction.INSTANCE;
+    }
+
+    public static <E> Function<E, E> identity() {
+        return IdentityFunction.INSTANCE;
+    }
+
+    public static <K, V> Function<K, V> forMap(Map<K, V> map) {
+        return new FunctionForMapNoDefault(map);
+    }
+
+    public static <K, V> Function<K, V> forMap(Map<K, ? extends V> map, @NullableDecl V defaultValue) {
+        return new ForMapWithDefault(map, defaultValue);
+    }
+
+    public static <A, B, C> Function<A, C> compose(Function<B, C> g, Function<A, ? extends B> f) {
+        return new FunctionComposition(g, f);
+    }
+
+    public static <T> Function<T, Boolean> forPredicate(Predicate<T> predicate) {
+        return new PredicateFunction(predicate);
+    }
+
+    public static <E> Function<Object, E> constant(@NullableDecl E value) {
+        return new ConstantFunction(value);
+    }
+
+    public static <T> Function<Object, T> forSupplier(Supplier<T> supplier) {
+        return new SupplierFunction(supplier);
     }
 
     private enum ToStringFunction implements Function<Object, String> {
@@ -27,10 +57,6 @@ public final class Functions {
         }
     }
 
-    public static <E> Function<E, E> identity() {
-        return IdentityFunction.INSTANCE;
-    }
-
     private enum IdentityFunction implements Function<Object, Object> {
         INSTANCE;
 
@@ -42,14 +68,6 @@ public final class Functions {
         public String toString() {
             return "Functions.identity()";
         }
-    }
-
-    public static <K, V> Function<K, V> forMap(Map<K, V> map) {
-        return new FunctionForMapNoDefault(map);
-    }
-
-    public static <K, V> Function<K, V> forMap(Map<K, ? extends V> map, @NullableDecl V defaultValue) {
-        return new ForMapWithDefault(map, defaultValue);
     }
 
     private static class FunctionForMapNoDefault<K, V> implements Function<K, V>, Serializable {
@@ -131,10 +149,6 @@ public final class Functions {
         }
     }
 
-    public static <A, B, C> Function<A, C> compose(Function<B, C> g, Function<A, ? extends B> f) {
-        return new FunctionComposition(g, f);
-    }
-
     private static class FunctionComposition<A, B, C> implements Function<A, C>, Serializable {
         private static final long serialVersionUID = 0;
 
@@ -180,10 +194,6 @@ public final class Functions {
         }
     }
 
-    public static <T> Function<T, Boolean> forPredicate(Predicate<T> predicate) {
-        return new PredicateFunction(predicate);
-    }
-
     private static class PredicateFunction<T> implements Function<T, Boolean>, Serializable {
         private static final long serialVersionUID = 0;
         private final Predicate<T> predicate;
@@ -215,10 +225,6 @@ public final class Functions {
             sb.append(")");
             return sb.toString();
         }
-    }
-
-    public static <E> Function<Object, E> constant(@NullableDecl E value) {
-        return new ConstantFunction(value);
     }
 
     private static class ConstantFunction<E> implements Function<Object, E>, Serializable {
@@ -257,10 +263,6 @@ public final class Functions {
             sb.append(")");
             return sb.toString();
         }
-    }
-
-    public static <T> Function<Object, T> forSupplier(Supplier<T> supplier) {
-        return new SupplierFunction(supplier);
     }
 
     private static class SupplierFunction<T> implements Function<Object, T>, Serializable {

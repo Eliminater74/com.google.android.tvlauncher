@@ -2,10 +2,12 @@ package com.google.android.gms.common.api.internal;
 
 import android.os.IBinder;
 import android.os.RemoteException;
+
 import com.google.android.gms.common.api.Api;
 import com.google.android.gms.common.api.Result;
 import com.google.android.gms.common.api.ResultStore;
 import com.google.android.gms.common.api.Status;
+
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -17,9 +19,9 @@ public final class zzdr {
     private static final BasePendingResult<?>[] zzc = new BasePendingResult[0];
     final Set<BasePendingResult<?>> zzb = Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap()));
     private final zzdu zzd = new zzds(this);
+    private final Map<Api.zzc<?>, Api.Client> zzf;
     /* access modifiers changed from: private */
     public ResultStore zze;
-    private final Map<Api.zzc<?>, Api.Client> zzf;
 
     public zzdr(Map<Api.zzc<?>, Api.Client> map) {
         this.zzf = map;

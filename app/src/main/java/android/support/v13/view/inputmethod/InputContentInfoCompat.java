@@ -11,6 +11,54 @@ import android.view.inputmethod.InputContentInfo;
 public final class InputContentInfoCompat {
     private final InputContentInfoCompatImpl mImpl;
 
+    public InputContentInfoCompat(@NonNull Uri contentUri, @NonNull ClipDescription description, @Nullable Uri linkUri) {
+        if (Build.VERSION.SDK_INT >= 25) {
+            this.mImpl = new InputContentInfoCompatApi25Impl(contentUri, description, linkUri);
+        } else {
+            this.mImpl = new InputContentInfoCompatBaseImpl(contentUri, description, linkUri);
+        }
+    }
+
+    private InputContentInfoCompat(@NonNull InputContentInfoCompatImpl impl) {
+        this.mImpl = impl;
+    }
+
+    @Nullable
+    public static InputContentInfoCompat wrap(@Nullable Object inputContentInfo) {
+        if (inputContentInfo != null && Build.VERSION.SDK_INT >= 25) {
+            return new InputContentInfoCompat(new InputContentInfoCompatApi25Impl(inputContentInfo));
+        }
+        return null;
+    }
+
+    @NonNull
+    public Uri getContentUri() {
+        return this.mImpl.getContentUri();
+    }
+
+    @NonNull
+    public ClipDescription getDescription() {
+        return this.mImpl.getDescription();
+    }
+
+    @Nullable
+    public Uri getLinkUri() {
+        return this.mImpl.getLinkUri();
+    }
+
+    @Nullable
+    public Object unwrap() {
+        return this.mImpl.getInputContentInfo();
+    }
+
+    public void requestPermission() {
+        this.mImpl.requestPermission();
+    }
+
+    public void releasePermission() {
+        this.mImpl.releasePermission();
+    }
+
     private interface InputContentInfoCompatImpl {
         @NonNull
         Uri getContentUri();
@@ -110,53 +158,5 @@ public final class InputContentInfoCompat {
         public void releasePermission() {
             this.mObject.releasePermission();
         }
-    }
-
-    public InputContentInfoCompat(@NonNull Uri contentUri, @NonNull ClipDescription description, @Nullable Uri linkUri) {
-        if (Build.VERSION.SDK_INT >= 25) {
-            this.mImpl = new InputContentInfoCompatApi25Impl(contentUri, description, linkUri);
-        } else {
-            this.mImpl = new InputContentInfoCompatBaseImpl(contentUri, description, linkUri);
-        }
-    }
-
-    private InputContentInfoCompat(@NonNull InputContentInfoCompatImpl impl) {
-        this.mImpl = impl;
-    }
-
-    @NonNull
-    public Uri getContentUri() {
-        return this.mImpl.getContentUri();
-    }
-
-    @NonNull
-    public ClipDescription getDescription() {
-        return this.mImpl.getDescription();
-    }
-
-    @Nullable
-    public Uri getLinkUri() {
-        return this.mImpl.getLinkUri();
-    }
-
-    @Nullable
-    public static InputContentInfoCompat wrap(@Nullable Object inputContentInfo) {
-        if (inputContentInfo != null && Build.VERSION.SDK_INT >= 25) {
-            return new InputContentInfoCompat(new InputContentInfoCompatApi25Impl(inputContentInfo));
-        }
-        return null;
-    }
-
-    @Nullable
-    public Object unwrap() {
-        return this.mImpl.getInputContentInfo();
-    }
-
-    public void requestPermission() {
-        this.mImpl.requestPermission();
-    }
-
-    public void releasePermission() {
-        this.mImpl.releasePermission();
     }
 }

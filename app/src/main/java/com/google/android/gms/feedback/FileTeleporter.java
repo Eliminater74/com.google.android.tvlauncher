@@ -6,9 +6,11 @@ import android.os.Parcelable;
 import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 import android.util.Pair;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.gms.internal.zzbkv;
 import com.google.android.gms.internal.zzbky;
+
 import java.io.Closeable;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -35,6 +37,15 @@ public class FileTeleporter extends zzbkv {
     public FileTeleporter(byte[] bArr, String str, String str2) {
         this((ParcelFileDescriptor) null, str, str2);
         this.zzc = bArr;
+    }
+
+    @VisibleForTesting
+    private static void zza(Closeable closeable) {
+        try {
+            closeable.close();
+        } catch (IOException e) {
+            Log.w("FileTeleporter", "Could not close stream", e);
+        }
     }
 
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
@@ -141,15 +152,6 @@ public class FileTeleporter extends zzbkv {
             }
         } else {
             throw new IllegalStateException("setTempDir() must be called before writing this object to a parcel.");
-        }
-    }
-
-    @VisibleForTesting
-    private static void zza(Closeable closeable) {
-        try {
-            closeable.close();
-        } catch (IOException e) {
-            Log.w("FileTeleporter", "Could not close stream", e);
         }
     }
 }

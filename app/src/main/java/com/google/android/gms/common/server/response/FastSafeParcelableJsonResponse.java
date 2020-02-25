@@ -1,8 +1,8 @@
 package com.google.android.gms.common.server.response;
 
 import android.os.Parcel;
+
 import com.google.android.gms.common.internal.Hide;
-import com.google.android.gms.common.server.response.FastJsonResponse;
 import com.google.android.gms.internal.zzbkz;
 
 public abstract class FastSafeParcelableJsonResponse extends FastJsonResponse implements zzbkz {

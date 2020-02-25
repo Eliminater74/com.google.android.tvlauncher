@@ -3,6 +3,7 @@ package android.support.p001v4.widget;
 import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -10,16 +11,7 @@ import java.util.Comparator;
 /* renamed from: android.support.v4.widget.FocusStrategy */
 class FocusStrategy {
 
-    /* renamed from: android.support.v4.widget.FocusStrategy$BoundsAdapter */
-    public interface BoundsAdapter<T> {
-        void obtainBounds(Object obj, Rect rect);
-    }
-
-    /* renamed from: android.support.v4.widget.FocusStrategy$CollectionAdapter */
-    public interface CollectionAdapter<T, V> {
-        V get(Object obj, int i);
-
-        int size(Object obj);
+    private FocusStrategy() {
     }
 
     public static <L, T> T findNextFocusInRelativeDirection(@NonNull L focusables, @NonNull CollectionAdapter<L, T> collectionAdapter, @NonNull BoundsAdapter<T> adapter, @Nullable T focused, int direction, boolean isLayoutRtl, boolean wrap) {
@@ -60,62 +52,6 @@ class FocusStrategy {
             return null;
         }
         return focusables.get(count - 1);
-    }
-
-    /* renamed from: android.support.v4.widget.FocusStrategy$SequentialComparator */
-    private static class SequentialComparator<T> implements Comparator<T> {
-        private final BoundsAdapter<T> mAdapter;
-        private final boolean mIsLayoutRtl;
-        private final Rect mTemp1 = new Rect();
-        private final Rect mTemp2 = new Rect();
-
-        SequentialComparator(boolean isLayoutRtl, BoundsAdapter<T> adapter) {
-            this.mIsLayoutRtl = isLayoutRtl;
-            this.mAdapter = adapter;
-        }
-
-        public int compare(T first, T second) {
-            Rect firstRect = this.mTemp1;
-            Rect secondRect = this.mTemp2;
-            this.mAdapter.obtainBounds(first, firstRect);
-            this.mAdapter.obtainBounds(second, secondRect);
-            if (firstRect.top < secondRect.top) {
-                return -1;
-            }
-            if (firstRect.top > secondRect.top) {
-                return 1;
-            }
-            if (firstRect.left < secondRect.left) {
-                if (this.mIsLayoutRtl) {
-                    return 1;
-                }
-                return -1;
-            } else if (firstRect.left > secondRect.left) {
-                if (this.mIsLayoutRtl) {
-                    return -1;
-                }
-                return 1;
-            } else if (firstRect.bottom < secondRect.bottom) {
-                return -1;
-            } else {
-                if (firstRect.bottom > secondRect.bottom) {
-                    return 1;
-                }
-                if (firstRect.right < secondRect.right) {
-                    if (this.mIsLayoutRtl) {
-                        return 1;
-                    }
-                    return -1;
-                } else if (firstRect.right <= secondRect.right) {
-                    return 0;
-                } else {
-                    if (this.mIsLayoutRtl) {
-                        return -1;
-                    }
-                    return 1;
-                }
-            }
-        }
     }
 
     public static <L, T> T findNextFocusInAbsoluteDirection(@NonNull L focusables, @NonNull CollectionAdapter<L, T> collectionAdapter, @NonNull BoundsAdapter<T> adapter, @Nullable T focused, @NonNull Rect focusedRect, int direction) {
@@ -302,6 +238,71 @@ class FocusStrategy {
         return Math.abs((source.top + (source.height() / 2)) - (dest.top + (dest.height() / 2)));
     }
 
-    private FocusStrategy() {
+    /* renamed from: android.support.v4.widget.FocusStrategy$BoundsAdapter */
+    public interface BoundsAdapter<T> {
+        void obtainBounds(Object obj, Rect rect);
+    }
+
+    /* renamed from: android.support.v4.widget.FocusStrategy$CollectionAdapter */
+    public interface CollectionAdapter<T, V> {
+        V get(Object obj, int i);
+
+        int size(Object obj);
+    }
+
+    /* renamed from: android.support.v4.widget.FocusStrategy$SequentialComparator */
+    private static class SequentialComparator<T> implements Comparator<T> {
+        private final BoundsAdapter<T> mAdapter;
+        private final boolean mIsLayoutRtl;
+        private final Rect mTemp1 = new Rect();
+        private final Rect mTemp2 = new Rect();
+
+        SequentialComparator(boolean isLayoutRtl, BoundsAdapter<T> adapter) {
+            this.mIsLayoutRtl = isLayoutRtl;
+            this.mAdapter = adapter;
+        }
+
+        public int compare(T first, T second) {
+            Rect firstRect = this.mTemp1;
+            Rect secondRect = this.mTemp2;
+            this.mAdapter.obtainBounds(first, firstRect);
+            this.mAdapter.obtainBounds(second, secondRect);
+            if (firstRect.top < secondRect.top) {
+                return -1;
+            }
+            if (firstRect.top > secondRect.top) {
+                return 1;
+            }
+            if (firstRect.left < secondRect.left) {
+                if (this.mIsLayoutRtl) {
+                    return 1;
+                }
+                return -1;
+            } else if (firstRect.left > secondRect.left) {
+                if (this.mIsLayoutRtl) {
+                    return -1;
+                }
+                return 1;
+            } else if (firstRect.bottom < secondRect.bottom) {
+                return -1;
+            } else {
+                if (firstRect.bottom > secondRect.bottom) {
+                    return 1;
+                }
+                if (firstRect.right < secondRect.right) {
+                    if (this.mIsLayoutRtl) {
+                        return 1;
+                    }
+                    return -1;
+                } else if (firstRect.right <= secondRect.right) {
+                    return 0;
+                } else {
+                    if (this.mIsLayoutRtl) {
+                        return -1;
+                    }
+                    return 1;
+                }
+            }
+        }
     }
 }

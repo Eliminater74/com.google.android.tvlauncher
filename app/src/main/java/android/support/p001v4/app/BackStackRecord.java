@@ -3,21 +3,27 @@ package android.support.p001v4.app;
 import android.arch.lifecycle.Lifecycle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.p001v4.app.Fragment;
-import android.support.p001v4.app.FragmentManager;
-import android.support.p001v4.app.FragmentManagerImpl;
-import android.support.p001v4.app.FragmentTransaction;
 import android.support.p001v4.util.LogWriter;
 import android.util.Log;
+
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
 /* renamed from: android.support.v4.app.BackStackRecord */
 final class BackStackRecord extends FragmentTransaction implements FragmentManager.BackStackEntry, FragmentManagerImpl.OpGenerator {
     static final String TAG = "FragmentManager";
+    final FragmentManagerImpl mManager;
     boolean mCommitted;
     int mIndex = -1;
-    final FragmentManagerImpl mManager;
+
+    public BackStackRecord(FragmentManagerImpl manager) {
+        this.mManager = manager;
+    }
+
+    private static boolean isFragmentPostponed(FragmentTransaction.C0075Op op) {
+        Fragment fragment = op.mFragment;
+        return fragment != null && fragment.mAdded && fragment.mView != null && !fragment.mDetached && !fragment.mHidden && fragment.isPostponed();
+    }
 
     public String toString() {
         StringBuilder sb = new StringBuilder(128);
@@ -157,10 +163,6 @@ final class BackStackRecord extends FragmentTransaction implements FragmentManag
                 }
             }
         }
-    }
-
-    public BackStackRecord(FragmentManagerImpl manager) {
-        this.mManager = manager;
     }
 
     public int getId() {
@@ -607,11 +609,6 @@ final class BackStackRecord extends FragmentTransaction implements FragmentManag
                 op.mFragment.setOnStartEnterTransitionListener(listener);
             }
         }
-    }
-
-    private static boolean isFragmentPostponed(FragmentTransaction.C0075Op op) {
-        Fragment fragment = op.mFragment;
-        return fragment != null && fragment.mAdded && fragment.mView != null && !fragment.mDetached && !fragment.mHidden && fragment.isPostponed();
     }
 
     @Nullable

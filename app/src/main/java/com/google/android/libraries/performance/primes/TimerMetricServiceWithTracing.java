@@ -2,24 +2,26 @@ package com.google.android.libraries.performance.primes;
 
 import android.app.Application;
 import android.support.annotation.Nullable;
-import com.google.android.libraries.performance.primes.TimerEvent;
+
 import com.google.android.libraries.performance.primes.sampling.ProbabilitySampler;
 import com.google.android.libraries.performance.primes.transmitter.MetricTransmitter;
 import com.google.common.base.Optional;
+
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
+
 import logs.proto.wireless.performance.mobile.ExtensionMetric;
 
 final class TimerMetricServiceWithTracing extends TimerMetricService {
     private final TraceMetricService traceMetricService;
 
-    static TimerMetricServiceWithTracing createService(MetricTransmitter transmitter, Application application, Supplier<MetricStamper> metricStamperSupplier, Supplier<ScheduledExecutorService> executorServiceSupplier, TraceMetricService traceMetricService2, PrimesTimerConfigurations configs, Optional<ConcurrentHashMap<String, TimerEvent>> timerEvents) {
-        return new TimerMetricServiceWithTracing(transmitter, application, metricStamperSupplier, executorServiceSupplier, traceMetricService2, new ProbabilitySampler(configs.getSamplingProbability()), configs.getSampleRatePerSecond(), configs.getPerEventConfigFlags(), timerEvents.mo22987or((PrimesBatteryConfigurations) new ConcurrentHashMap()));
-    }
-
     TimerMetricServiceWithTracing(MetricTransmitter transmitter, Application application, Supplier<MetricStamper> metricStamperSupplier, Supplier<ScheduledExecutorService> executorServiceSupplier, TraceMetricService traceMetricService2, ProbabilitySampler probabilitySampler, int maxSamplesPerSecond, Optional<PrimesPerEventConfigurationFlags> perEventConfigFlags, ConcurrentHashMap<String, TimerEvent> timerEvents) {
         super(transmitter, application, metricStamperSupplier, executorServiceSupplier, probabilitySampler, maxSamplesPerSecond, perEventConfigFlags, timerEvents);
         this.traceMetricService = traceMetricService2;
+    }
+
+    static TimerMetricServiceWithTracing createService(MetricTransmitter transmitter, Application application, Supplier<MetricStamper> metricStamperSupplier, Supplier<ScheduledExecutorService> executorServiceSupplier, TraceMetricService traceMetricService2, PrimesTimerConfigurations configs, Optional<ConcurrentHashMap<String, TimerEvent>> timerEvents) {
+        return new TimerMetricServiceWithTracing(transmitter, application, metricStamperSupplier, executorServiceSupplier, traceMetricService2, new ProbabilitySampler(configs.getSamplingProbability()), configs.getSampleRatePerSecond(), configs.getPerEventConfigFlags(), timerEvents.mo22987or((PrimesBatteryConfigurations) new ConcurrentHashMap()));
     }
 
     /* access modifiers changed from: package-private */

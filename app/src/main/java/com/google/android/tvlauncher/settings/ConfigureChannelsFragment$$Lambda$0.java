@@ -1,6 +1,5 @@
 package com.google.android.tvlauncher.settings;
 
-import com.google.android.tvlauncher.settings.AppModel;
 import java.util.Comparator;
 
 final /* synthetic */ class ConfigureChannelsFragment$$Lambda$0 implements Comparator {

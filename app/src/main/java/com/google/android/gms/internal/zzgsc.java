@@ -1,6 +1,5 @@
 package com.google.android.gms.internal;
 
-import com.google.android.gms.internal.zzgsb;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -8,15 +7,11 @@ import java.util.List;
 
 /* compiled from: Extension */
 public final class zzgsc<M extends zzgsb<M>, T> {
-    protected final Class<T> zza;
     public final int zzb;
+    protected final Class<T> zza;
     protected final boolean zzc;
     private final int zzd;
     private final zzgoj<?, ?> zze;
-
-    public static <M extends zzgsb<M>, T extends zzgsh> zzgsc<M, T> zza(int i, Class<T> cls, long j) {
-        return new zzgsc<>(11, cls, (int) j, false);
-    }
 
     private zzgsc(int i, Class<T> cls, int i2, boolean z) {
         this(11, cls, null, i2, false);
@@ -28,6 +23,10 @@ public final class zzgsc<M extends zzgsb<M>, T> {
         this.zzb = i2;
         this.zzc = false;
         this.zze = null;
+    }
+
+    public static <M extends zzgsb<M>, T extends zzgsh> zzgsc<M, T> zza(int i, Class<T> cls, long j) {
+        return new zzgsc<>(11, cls, (int) j, false);
     }
 
     public final boolean equals(Object obj) {

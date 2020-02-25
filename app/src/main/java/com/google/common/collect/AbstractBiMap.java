@@ -6,6 +6,10 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.j2objc.annotations.RetainedWith;
+
+import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -14,8 +18,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible(emulated = true)
 abstract class AbstractBiMap<K, V> extends ForwardingMap<K, V> implements BiMap<K, V>, Serializable {
@@ -24,11 +26,11 @@ abstract class AbstractBiMap<K, V> extends ForwardingMap<K, V> implements BiMap<
     /* access modifiers changed from: private */
     @MonotonicNonNullDecl
     public transient Map<K, V> delegate;
-    @MonotonicNonNullDecl
-    private transient Set<Map.Entry<K, V>> entrySet;
     @RetainedWith
     @MonotonicNonNullDecl
     transient AbstractBiMap<V, K> inverse;
+    @MonotonicNonNullDecl
+    private transient Set<Map.Entry<K, V>> entrySet;
     @MonotonicNonNullDecl
     private transient Set<K> keySet;
     @MonotonicNonNullDecl
@@ -198,6 +200,89 @@ abstract class AbstractBiMap<K, V> extends ForwardingMap<K, V> implements BiMap<
         return keySet2;
     }
 
+    public Set<V> values() {
+        Set<V> result = this.valueSet;
+        if (result != null) {
+            return result;
+        }
+        ValueSet valueSet2 = new ValueSet();
+        this.valueSet = valueSet2;
+        return valueSet2;
+    }
+
+    public Set<Map.Entry<K, V>> entrySet() {
+        Set<Map.Entry<K, V>> result = this.entrySet;
+        if (result != null) {
+            return result;
+        }
+        EntrySet entrySet2 = new EntrySet();
+        this.entrySet = entrySet2;
+        return entrySet2;
+    }
+
+    /* access modifiers changed from: package-private */
+    public Iterator<Map.Entry<K, V>> entrySetIterator() {
+        final Iterator<Map.Entry<K, V>> iterator = this.delegate.entrySet().iterator();
+        return new Iterator<Map.Entry<K, V>>() {
+            @NullableDecl
+            Map.Entry<K, V> entry;
+
+            public boolean hasNext() {
+                return iterator.hasNext();
+            }
+
+            public Map.Entry<K, V> next() {
+                this.entry = (Map.Entry) iterator.next();
+                return new BiMapEntry(this.entry);
+            }
+
+            public void remove() {
+                CollectPreconditions.checkRemove(this.entry != null);
+                V value = this.entry.getValue();
+                iterator.remove();
+                AbstractBiMap.this.removeFromInverseMap(value);
+                this.entry = null;
+            }
+        };
+    }
+
+    static class Inverse<K, V> extends AbstractBiMap<K, V> {
+        @GwtIncompatible
+        private static final long serialVersionUID = 0;
+
+        Inverse(Map<K, V> backward, AbstractBiMap<V, K> forward) {
+            super(backward, forward);
+        }
+
+        /* access modifiers changed from: package-private */
+        public K checkKey(K key) {
+            return this.inverse.checkValue(key);
+        }
+
+        /* access modifiers changed from: package-private */
+        public V checkValue(V value) {
+            return this.inverse.checkKey(value);
+        }
+
+        @GwtIncompatible
+        private void writeObject(ObjectOutputStream stream) throws IOException {
+            stream.defaultWriteObject();
+            stream.writeObject(inverse());
+        }
+
+        @GwtIncompatible
+        private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+            stream.defaultReadObject();
+            setInverse((AbstractBiMap) stream.readObject());
+        }
+
+        /* access modifiers changed from: package-private */
+        @GwtIncompatible
+        public Object readResolve() {
+            return inverse().inverse();
+        }
+    }
+
     private class KeySet extends ForwardingSet<K> {
         private KeySet() {
         }
@@ -232,16 +317,6 @@ abstract class AbstractBiMap<K, V> extends ForwardingMap<K, V> implements BiMap<
         }
     }
 
-    public Set<V> values() {
-        Set<V> result = this.valueSet;
-        if (result != null) {
-            return result;
-        }
-        ValueSet valueSet2 = new ValueSet();
-        this.valueSet = valueSet2;
-        return valueSet2;
-    }
-
     private class ValueSet extends ForwardingSet<V> {
         final Set<V> valuesDelegate;
 
@@ -271,16 +346,6 @@ abstract class AbstractBiMap<K, V> extends ForwardingMap<K, V> implements BiMap<
         }
     }
 
-    public Set<Map.Entry<K, V>> entrySet() {
-        Set<Map.Entry<K, V>> result = this.entrySet;
-        if (result != null) {
-            return result;
-        }
-        EntrySet entrySet2 = new EntrySet();
-        this.entrySet = entrySet2;
-        return entrySet2;
-    }
-
     class BiMapEntry extends ForwardingMapEntry<K, V> {
         private final Map.Entry<K, V> delegate;
 
@@ -305,32 +370,6 @@ abstract class AbstractBiMap<K, V> extends ForwardingMap<K, V> implements BiMap<
             AbstractBiMap.this.updateInverseMap(getKey(), true, oldValue, value);
             return oldValue;
         }
-    }
-
-    /* access modifiers changed from: package-private */
-    public Iterator<Map.Entry<K, V>> entrySetIterator() {
-        final Iterator<Map.Entry<K, V>> iterator = this.delegate.entrySet().iterator();
-        return new Iterator<Map.Entry<K, V>>() {
-            @NullableDecl
-            Map.Entry<K, V> entry;
-
-            public boolean hasNext() {
-                return iterator.hasNext();
-            }
-
-            public Map.Entry<K, V> next() {
-                this.entry = (Map.Entry) iterator.next();
-                return new BiMapEntry(this.entry);
-            }
-
-            public void remove() {
-                CollectPreconditions.checkRemove(this.entry != null);
-                V value = this.entry.getValue();
-                iterator.remove();
-                AbstractBiMap.this.removeFromInverseMap(value);
-                this.entry = null;
-            }
-        };
     }
 
     private class EntrySet extends ForwardingSet<Map.Entry<K, V>> {
@@ -385,43 +424,6 @@ abstract class AbstractBiMap<K, V> extends ForwardingMap<K, V> implements BiMap<
 
         public boolean retainAll(Collection<?> c) {
             return standardRetainAll(c);
-        }
-    }
-
-    static class Inverse<K, V> extends AbstractBiMap<K, V> {
-        @GwtIncompatible
-        private static final long serialVersionUID = 0;
-
-        Inverse(Map<K, V> backward, AbstractBiMap<V, K> forward) {
-            super(backward, forward);
-        }
-
-        /* access modifiers changed from: package-private */
-        public K checkKey(K key) {
-            return this.inverse.checkValue(key);
-        }
-
-        /* access modifiers changed from: package-private */
-        public V checkValue(V value) {
-            return this.inverse.checkKey(value);
-        }
-
-        @GwtIncompatible
-        private void writeObject(ObjectOutputStream stream) throws IOException {
-            stream.defaultWriteObject();
-            stream.writeObject(inverse());
-        }
-
-        @GwtIncompatible
-        private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
-            stream.defaultReadObject();
-            setInverse((AbstractBiMap) stream.readObject());
-        }
-
-        /* access modifiers changed from: package-private */
-        @GwtIncompatible
-        public Object readResolve() {
-            return inverse().inverse();
         }
     }
 }

@@ -4,21 +4,23 @@ import android.app.ActivityManager;
 import android.app.Application;
 import android.os.Build;
 import android.os.Process;
+
 import com.google.android.tvlauncher.appsview.data.LaunchItemsManagerProvider;
 import com.google.android.tvlauncher.util.ClearGlideCacheOnLocaleChangeReceiver;
 import com.google.android.tvlauncher.util.GoogleConfigurationManager;
 import com.google.android.tvlauncher.util.IntentLaunchDispatcher;
 import com.google.android.tvlauncher.util.TestUtils;
 import com.google.android.tvlauncher.wallpaper.WallpaperInstaller;
+
 import java.util.List;
 
 public abstract class TvLauncherApplicationBase extends Application {
     private static final String TAG = "TvLauncherApplicationBase";
     private static final String YOUTUBE_PROCESS_NAME = ":youtube";
-    private GoogleConfigurationManager mGoogleConfigurationManager;
     private final Object mGoogleConfigurationManagerLock = new Object();
-    private IntentLaunchDispatcher mIntentLauncher;
     private final Object mIntentLauncherLock = new Object();
+    private GoogleConfigurationManager mGoogleConfigurationManager;
+    private IntentLaunchDispatcher mIntentLauncher;
 
     public void onCreate() {
         super.onCreate();

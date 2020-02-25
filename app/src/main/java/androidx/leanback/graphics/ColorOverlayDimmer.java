@@ -6,14 +6,27 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.view.View;
+
 import androidx.leanback.C0364R;
 
 public final class ColorOverlayDimmer {
     private final float mActiveLevel;
-    private int mAlpha;
-    private float mAlphaFloat;
     private final float mDimmedLevel;
     private final Paint mPaint;
+    private int mAlpha;
+    private float mAlphaFloat;
+
+    private ColorOverlayDimmer(int dimColor, float activeLevel, float dimmedLevel) {
+        activeLevel = activeLevel > 1.0f ? 1.0f : activeLevel;
+        activeLevel = activeLevel < 0.0f ? 0.0f : activeLevel;
+        dimmedLevel = dimmedLevel > 1.0f ? 1.0f : dimmedLevel;
+        dimmedLevel = dimmedLevel < 0.0f ? 0.0f : dimmedLevel;
+        this.mPaint = new Paint();
+        this.mPaint.setColor(Color.rgb(Color.red(dimColor), Color.green(dimColor), Color.blue(dimColor)));
+        this.mActiveLevel = activeLevel;
+        this.mDimmedLevel = dimmedLevel;
+        setActiveLevel(1.0f);
+    }
 
     public static ColorOverlayDimmer createDefault(Context context) {
         TypedArray a = context.obtainStyledAttributes(C0364R.styleable.LeanbackTheme);
@@ -26,18 +39,6 @@ public final class ColorOverlayDimmer {
 
     public static ColorOverlayDimmer createColorOverlayDimmer(int dimColor, float activeLevel, float dimmedLevel) {
         return new ColorOverlayDimmer(dimColor, activeLevel, dimmedLevel);
-    }
-
-    private ColorOverlayDimmer(int dimColor, float activeLevel, float dimmedLevel) {
-        activeLevel = activeLevel > 1.0f ? 1.0f : activeLevel;
-        activeLevel = activeLevel < 0.0f ? 0.0f : activeLevel;
-        dimmedLevel = dimmedLevel > 1.0f ? 1.0f : dimmedLevel;
-        dimmedLevel = dimmedLevel < 0.0f ? 0.0f : dimmedLevel;
-        this.mPaint = new Paint();
-        this.mPaint.setColor(Color.rgb(Color.red(dimColor), Color.green(dimColor), Color.blue(dimColor)));
-        this.mActiveLevel = activeLevel;
-        this.mDimmedLevel = dimmedLevel;
-        setActiveLevel(1.0f);
     }
 
     public void setActiveLevel(float level) {

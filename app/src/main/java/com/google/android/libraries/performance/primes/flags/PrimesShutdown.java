@@ -5,16 +5,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+
 import com.google.android.gsf.Gservices;
 import com.google.android.libraries.performance.primes.PrimesExecutors;
 import com.google.android.libraries.performance.primes.PrimesLog;
 import com.google.android.libraries.performance.primes.Shutdown;
 import com.google.android.libraries.performance.primes.Supplier;
 import com.google.android.libraries.phenotype.client.PhenotypeFlag;
+
 import java.util.concurrent.ScheduledExecutorService;
 
 public final class PrimesShutdown {
     private static final String TAG = "PrimesShutdown";
+
+    private PrimesShutdown() {
+    }
 
     public static Shutdown createInstance() {
         return new GservicesDefaultShutdown();
@@ -48,11 +53,11 @@ public final class PrimesShutdown {
     }
 
     private static final class GServicesBroadcastReceiver extends BroadcastReceiver {
-        private final Supplier<ScheduledExecutorService> executorServiceSupplier;
         /* access modifiers changed from: private */
         public final Shutdown shutdown;
         /* access modifiers changed from: private */
         public final Supplier<Boolean> shutdownFlag;
+        private final Supplier<ScheduledExecutorService> executorServiceSupplier;
 
         GServicesBroadcastReceiver(Shutdown shutdown2, Supplier<Boolean> shutdownFlag2, Supplier<ScheduledExecutorService> executorServiceSupplier2) {
             this.shutdown = shutdown2;
@@ -74,8 +79,5 @@ public final class PrimesShutdown {
                 }));
             }
         }
-    }
-
-    private PrimesShutdown() {
     }
 }

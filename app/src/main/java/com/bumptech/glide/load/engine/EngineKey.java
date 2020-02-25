@@ -1,15 +1,16 @@
 package com.bumptech.glide.load.engine;
 
 import android.support.annotation.NonNull;
+
 import com.bumptech.glide.load.Key;
 import com.bumptech.glide.load.Options;
 import com.bumptech.glide.load.Transformation;
 import com.bumptech.glide.util.Preconditions;
+
 import java.security.MessageDigest;
 import java.util.Map;
 
 class EngineKey implements Key {
-    private int hashCode;
     private final int height;
     private final Object model;
     private final Options options;
@@ -18,6 +19,7 @@ class EngineKey implements Key {
     private final Class<?> transcodeClass;
     private final Map<Class<?>, Transformation<?>> transformations;
     private final int width;
+    private int hashCode;
 
     EngineKey(Object model2, Key signature2, int width2, int height2, Map<Class<?>, Transformation<?>> transformations2, Class<?> resourceClass2, Class<?> transcodeClass2, Options options2) {
         this.model = Preconditions.checkNotNull(model2);

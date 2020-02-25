@@ -9,7 +9,7 @@ import android.view.SubMenu;
 import android.view.View;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-/* renamed from: android.support.v7.view.menu.SubMenuWrapperICS */
+        /* renamed from: android.support.v7.view.menu.SubMenuWrapperICS */
 class SubMenuWrapperICS extends MenuWrapperICS implements SubMenu {
     private final SupportSubMenu mSubMenu;
 

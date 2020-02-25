@@ -13,12 +13,16 @@ import android.support.annotation.RestrictTo;
 import android.support.annotation.StyleableRes;
 import android.util.AttributeSet;
 import android.util.TypedValue;
+
 import org.xmlpull.v1.XmlPullParser;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
 /* renamed from: android.support.v4.content.res.TypedArrayUtils */
 public class TypedArrayUtils {
     private static final String NAMESPACE = "http://schemas.android.com/apk/res/android";
+
+    private TypedArrayUtils() {
+    }
 
     public static boolean hasAttribute(@NonNull XmlPullParser parser, @NonNull String attrName) {
         return parser.getAttributeValue(NAMESPACE, attrName) != null;
@@ -177,8 +181,5 @@ public class TypedArrayUtils {
             return attr;
         }
         return fallbackAttr;
-    }
-
-    private TypedArrayUtils() {
     }
 }

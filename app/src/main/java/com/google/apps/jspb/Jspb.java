@@ -58,7 +58,7 @@ public final class Jspb {
         NUMBER(1),
         STRING(2),
         INTEGER(100);
-        
+
         public static final int INT52_VALUE = 0;
         public static final int INTEGER_VALUE = 100;
         public static final int NUMBER_VALUE = 1;
@@ -70,8 +70,8 @@ public final class Jspb {
         };
         private final int value;
 
-        public final int getNumber() {
-            return this.value;
+        private JsType(int value2) {
+            this.value = value2;
         }
 
         public static JsType forNumber(int value2) {
@@ -98,6 +98,10 @@ public final class Jspb {
             return JsTypeVerifier.INSTANCE;
         }
 
+        public final int getNumber() {
+            return this.value;
+        }
+
         private static final class JsTypeVerifier implements Internal.EnumVerifier {
             static final Internal.EnumVerifier INSTANCE = new JsTypeVerifier();
 
@@ -107,10 +111,6 @@ public final class Jspb {
             public boolean isInRange(int number) {
                 return JsType.forNumber(number) != null;
             }
-        }
-
-        private JsType(int value2) {
-            this.value = value2;
         }
     }
 }

@@ -1,10 +1,10 @@
 package com.google.android.exoplayer2.extractor.mp3;
 
 import android.util.Pair;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.extractor.SeekMap;
 import com.google.android.exoplayer2.extractor.SeekPoint;
-import com.google.android.exoplayer2.extractor.mp3.Mp3Extractor;
 import com.google.android.exoplayer2.metadata.id3.MlltFrame;
 import com.google.android.exoplayer2.util.Util;
 
@@ -12,6 +12,12 @@ final class MlltSeeker implements Mp3Extractor.Seeker {
     private final long durationUs;
     private final long[] referencePositions;
     private final long[] referenceTimesMs;
+
+    private MlltSeeker(long[] referencePositions2, long[] referenceTimesMs2) {
+        this.referencePositions = referencePositions2;
+        this.referenceTimesMs = referenceTimesMs2;
+        this.durationUs = C0841C.msToUs(referenceTimesMs2[referenceTimesMs2.length - 1]);
+    }
 
     public static MlltSeeker create(long firstFramePosition, MlltFrame mlltFrame) {
         int referenceCount = mlltFrame.bytesDeviations.length;
@@ -28,29 +34,6 @@ final class MlltSeeker implements Mp3Extractor.Seeker {
             referenceTimesMs2[i] = timeMs;
         }
         return new MlltSeeker(referencePositions2, referenceTimesMs2);
-    }
-
-    private MlltSeeker(long[] referencePositions2, long[] referenceTimesMs2) {
-        this.referencePositions = referencePositions2;
-        this.referenceTimesMs = referenceTimesMs2;
-        this.durationUs = C0841C.msToUs(referenceTimesMs2[referenceTimesMs2.length - 1]);
-    }
-
-    public boolean isSeekable() {
-        return true;
-    }
-
-    public SeekMap.SeekPoints getSeekPoints(long timeUs) {
-        Pair<Long, Long> timeMsAndPosition = linearlyInterpolate(C0841C.usToMs(Util.constrainValue(timeUs, 0, this.durationUs)), this.referenceTimesMs, this.referencePositions);
-        return new SeekMap.SeekPoints(new SeekPoint(C0841C.msToUs(((Long) timeMsAndPosition.first).longValue()), ((Long) timeMsAndPosition.second).longValue()));
-    }
-
-    public long getTimeUs(long position) {
-        return C0841C.msToUs(((Long) linearlyInterpolate(position, this.referencePositions, this.referenceTimesMs).second).longValue());
-    }
-
-    public long getDurationUs() {
-        return this.durationUs;
     }
 
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
@@ -89,6 +72,23 @@ final class MlltSeeker implements Mp3Extractor.Seeker {
         double d6 = (double) (yNextReference - yPreviousReference);
         Double.isNaN(d6);
         return Pair.create(Long.valueOf(x), Long.valueOf(((long) (d6 * proportion)) + yPreviousReference));
+    }
+
+    public boolean isSeekable() {
+        return true;
+    }
+
+    public SeekMap.SeekPoints getSeekPoints(long timeUs) {
+        Pair<Long, Long> timeMsAndPosition = linearlyInterpolate(C0841C.usToMs(Util.constrainValue(timeUs, 0, this.durationUs)), this.referenceTimesMs, this.referencePositions);
+        return new SeekMap.SeekPoints(new SeekPoint(C0841C.msToUs(((Long) timeMsAndPosition.first).longValue()), ((Long) timeMsAndPosition.second).longValue()));
+    }
+
+    public long getTimeUs(long position) {
+        return C0841C.msToUs(((Long) linearlyInterpolate(position, this.referencePositions, this.referenceTimesMs).second).longValue());
+    }
+
+    public long getDurationUs() {
+        return this.durationUs;
     }
 
     public long getDataEndPosition() {

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.util.Log;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,42 @@ public final class ManifestParser {
 
     public ManifestParser(Context context2) {
         this.context = context2;
+    }
+
+    private static GlideModule parseModule(String className) {
+        try {
+            Class<?> clazz = Class.forName(className);
+            Object module = null;
+            try {
+                module = clazz.getDeclaredConstructor(new Class[0]).newInstance(new Object[0]);
+            } catch (InstantiationException e) {
+                throwInstantiateGlideModuleException(clazz, e);
+            } catch (IllegalAccessException e2) {
+                throwInstantiateGlideModuleException(clazz, e2);
+            } catch (NoSuchMethodException e3) {
+                throwInstantiateGlideModuleException(clazz, e3);
+            } catch (InvocationTargetException e4) {
+                throwInstantiateGlideModuleException(clazz, e4);
+            }
+            if (module instanceof GlideModule) {
+                return (GlideModule) module;
+            }
+            String valueOf = String.valueOf(module);
+            StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 44);
+            sb.append("Expected instanceof GlideModule, but found: ");
+            sb.append(valueOf);
+            throw new RuntimeException(sb.toString());
+        } catch (ClassNotFoundException e5) {
+            throw new IllegalArgumentException("Unable to find GlideModule implementation", e5);
+        }
+    }
+
+    private static void throwInstantiateGlideModuleException(Class<?> clazz, Exception e) {
+        String valueOf = String.valueOf(clazz);
+        StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 53);
+        sb.append("Unable to instantiate GlideModule implementation for ");
+        sb.append(valueOf);
+        throw new RuntimeException(sb.toString(), e);
     }
 
     public List<GlideModule> parse() {
@@ -54,41 +91,5 @@ public final class ManifestParser {
         } catch (PackageManager.NameNotFoundException e) {
             throw new RuntimeException("Unable to find metadata to parse GlideModules", e);
         }
-    }
-
-    private static GlideModule parseModule(String className) {
-        try {
-            Class<?> clazz = Class.forName(className);
-            Object module = null;
-            try {
-                module = clazz.getDeclaredConstructor(new Class[0]).newInstance(new Object[0]);
-            } catch (InstantiationException e) {
-                throwInstantiateGlideModuleException(clazz, e);
-            } catch (IllegalAccessException e2) {
-                throwInstantiateGlideModuleException(clazz, e2);
-            } catch (NoSuchMethodException e3) {
-                throwInstantiateGlideModuleException(clazz, e3);
-            } catch (InvocationTargetException e4) {
-                throwInstantiateGlideModuleException(clazz, e4);
-            }
-            if (module instanceof GlideModule) {
-                return (GlideModule) module;
-            }
-            String valueOf = String.valueOf(module);
-            StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 44);
-            sb.append("Expected instanceof GlideModule, but found: ");
-            sb.append(valueOf);
-            throw new RuntimeException(sb.toString());
-        } catch (ClassNotFoundException e5) {
-            throw new IllegalArgumentException("Unable to find GlideModule implementation", e5);
-        }
-    }
-
-    private static void throwInstantiateGlideModuleException(Class<?> clazz, Exception e) {
-        String valueOf = String.valueOf(clazz);
-        StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 53);
-        sb.append("Unable to instantiate GlideModule implementation for ");
-        sb.append(valueOf);
-        throw new RuntimeException(sb.toString(), e);
     }
 }

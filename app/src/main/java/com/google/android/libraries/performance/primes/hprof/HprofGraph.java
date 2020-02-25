@@ -3,6 +3,7 @@ package com.google.android.libraries.performance.primes.hprof;
 import com.android.ahat.dominators.Dominators;
 import com.android.ahat.dominators.DominatorsComputation;
 import com.google.android.libraries.stitch.util.Preconditions;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -11,13 +12,13 @@ public class HprofGraph implements Dominators.Graph<DominatorsComputation.Node> 
     private final ParseContext parseContext;
     private final ParseResult parseResult;
 
-    static HprofGraph newInstance(ParseContext parseContext2, ParseResult parseResult2) {
-        return new HprofGraph(parseContext2, parseResult2);
-    }
-
     private HprofGraph(ParseContext parseContext2, ParseResult parseResult2) {
         this.parseContext = (ParseContext) Preconditions.checkNotNull(parseContext2);
         this.parseResult = (ParseResult) Preconditions.checkNotNull(parseResult2);
+    }
+
+    static HprofGraph newInstance(ParseContext parseContext2, ParseResult parseResult2) {
+        return new HprofGraph(parseContext2, parseResult2);
     }
 
     public void setDominatorsComputationState(DominatorsComputation.Node node, Object state) {

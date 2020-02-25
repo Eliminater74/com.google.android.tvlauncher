@@ -1,6 +1,7 @@
 package com.google.android.tvlauncher.data;
 
 import android.content.Context;
+
 import com.google.android.tvlauncher.home.util.SearchWidgetInfoContract;
 
 public class TvSearchSuggestionsLoader extends DataLoader<String[]> {

@@ -5,9 +5,9 @@ import android.app.PendingIntent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.RequiresApi;
-import android.support.p001v4.app.NotificationCompat;
 import android.util.Log;
 import android.util.SparseArray;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,8 +17,9 @@ import java.util.List;
 import java.util.Set;
 
 @RequiresApi(16)
-/* renamed from: android.support.v4.app.NotificationCompatJellybean */
+        /* renamed from: android.support.v4.app.NotificationCompatJellybean */
 class NotificationCompatJellybean {
+    public static final String TAG = "NotificationCompat";
     static final String EXTRA_ALLOW_GENERATED_REPLIES = "android.support.allowGeneratedReplies";
     static final String EXTRA_DATA_ONLY_REMOTE_INPUTS = "android.support.dataRemoteInputs";
     private static final String KEY_ACTION_INTENT = "actionIntent";
@@ -34,16 +35,18 @@ class NotificationCompatJellybean {
     private static final String KEY_SEMANTIC_ACTION = "semanticAction";
     private static final String KEY_SHOWS_USER_INTERFACE = "showsUserInterface";
     private static final String KEY_TITLE = "title";
-    public static final String TAG = "NotificationCompat";
+    private static final Object sActionsLock = new Object();
+    private static final Object sExtrasLock = new Object();
     private static Field sActionIconField;
     private static Field sActionIntentField;
     private static Field sActionTitleField;
     private static boolean sActionsAccessFailed;
     private static Field sActionsField;
-    private static final Object sActionsLock = new Object();
     private static Field sExtrasField;
     private static boolean sExtrasFieldAccessFailed;
-    private static final Object sExtrasLock = new Object();
+
+    private NotificationCompatJellybean() {
+    }
 
     public static SparseArray<Bundle> buildActionExtrasMap(List<Bundle> actionExtrasList) {
         SparseArray<Bundle> actionExtrasMap = null;
@@ -285,8 +288,5 @@ class NotificationCompatJellybean {
         Bundle[] typedArray = (Bundle[]) Arrays.copyOf(array, array.length, Bundle[].class);
         bundle.putParcelableArray(key, typedArray);
         return typedArray;
-    }
-
-    private NotificationCompatJellybean() {
     }
 }

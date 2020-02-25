@@ -3,6 +3,7 @@ package com.google.android.tvlauncher.application;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.util.Log;
+
 import com.google.android.gsf.Gservices;
 
 public class PrimesSettings {

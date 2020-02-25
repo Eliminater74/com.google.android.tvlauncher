@@ -16,6 +16,7 @@ import com.google.protobuf.ProtoMessage;
 import com.google.protobuf.ProtoPresenceBits;
 import com.google.protobuf.ProtoPresenceCheckedField;
 import com.google.protobuf.ProtoSyntax;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -23,6 +24,12 @@ import java.util.Collections;
 import java.util.List;
 
 public final class TvlauncherClientLog {
+
+    private TvlauncherClientLog() {
+    }
+
+    public static void registerAllExtensions(ExtensionRegistryLite registry) {
+    }
 
     public interface AppLinkOrBuilder extends MessageLiteOrBuilder {
         boolean getIsInstalled();
@@ -442,21 +449,20 @@ public final class TvlauncherClientLog {
         boolean hasProgramCount();
     }
 
-    private TvlauncherClientLog() {
-    }
-
-    public static void registerAllExtensions(ExtensionRegistryLite registry) {
-    }
-
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
     public static final class TvLauncherClientExtension extends GeneratedMessageLite<TvLauncherClientExtension, Builder> implements TvLauncherClientExtensionOrBuilder {
         /* access modifiers changed from: private */
         public static final TvLauncherClientExtension DEFAULT_INSTANCE = new TvLauncherClientExtension();
         public static final int DEVICE_STATUS_FIELD_NUMBER = 3;
         public static final int MEDIA_SESSION_FIELD_NUMBER = 4;
-        private static volatile Parser<TvLauncherClientExtension> PARSER = null;
         public static final int PROPERTIES_FIELD_NUMBER = 2;
         public static final int VISUAL_ELEMENT_ENTRY_FIELD_NUMBER = 1;
+        private static volatile Parser<TvLauncherClientExtension> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(TvLauncherClientExtension.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 3, isRequired = false, type = FieldType.MESSAGE)
@@ -473,6 +479,70 @@ public final class TvlauncherClientLog {
         private VisualElementEntry visualElementEntry_;
 
         private TvLauncherClientExtension() {
+        }
+
+        public static TvLauncherClientExtension parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (TvLauncherClientExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static TvLauncherClientExtension parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (TvLauncherClientExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static TvLauncherClientExtension parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (TvLauncherClientExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static TvLauncherClientExtension parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (TvLauncherClientExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static TvLauncherClientExtension parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (TvLauncherClientExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static TvLauncherClientExtension parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (TvLauncherClientExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static TvLauncherClientExtension parseFrom(InputStream input) throws IOException {
+            return (TvLauncherClientExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static TvLauncherClientExtension parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (TvLauncherClientExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static TvLauncherClientExtension parseDelimitedFrom(InputStream input) throws IOException {
+            return (TvLauncherClientExtension) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static TvLauncherClientExtension parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (TvLauncherClientExtension) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static TvLauncherClientExtension parseFrom(CodedInputStream input) throws IOException {
+            return (TvLauncherClientExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static TvLauncherClientExtension parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (TvLauncherClientExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(TvLauncherClientExtension prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static TvLauncherClientExtension getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<TvLauncherClientExtension> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasVisualElementEntry() {
@@ -659,60 +729,36 @@ public final class TvlauncherClientLog {
             this.bitField0_ &= -9;
         }
 
-        public static TvLauncherClientExtension parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (TvLauncherClientExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static TvLauncherClientExtension parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (TvLauncherClientExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static TvLauncherClientExtension parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (TvLauncherClientExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static TvLauncherClientExtension parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (TvLauncherClientExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static TvLauncherClientExtension parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (TvLauncherClientExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static TvLauncherClientExtension parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (TvLauncherClientExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static TvLauncherClientExtension parseFrom(InputStream input) throws IOException {
-            return (TvLauncherClientExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static TvLauncherClientExtension parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (TvLauncherClientExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static TvLauncherClientExtension parseDelimitedFrom(InputStream input) throws IOException {
-            return (TvLauncherClientExtension) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static TvLauncherClientExtension parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (TvLauncherClientExtension) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static TvLauncherClientExtension parseFrom(CodedInputStream input) throws IOException {
-            return (TvLauncherClientExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static TvLauncherClientExtension parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (TvLauncherClientExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(TvLauncherClientExtension prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new TvLauncherClientExtension();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0004\u0000\u0001\u0001\u0004\u0004\u0000\u0000\u0000\u0001\t\u0000\u0002\t\u0001\u0003\t\u0002\u0004\t\u0003", new Object[]{"bitField0_", "visualElementEntry_", "properties_", "deviceStatus_", "mediaSession_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<TvLauncherClientExtension> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (TvLauncherClientExtension.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<TvLauncherClientExtension, Builder> implements TvLauncherClientExtensionOrBuilder {
@@ -848,50 +894,6 @@ public final class TvlauncherClientLog {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new TvLauncherClientExtension();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0004\u0000\u0001\u0001\u0004\u0004\u0000\u0000\u0000\u0001\t\u0000\u0002\t\u0001\u0003\t\u0002\u0004\t\u0003", new Object[]{"bitField0_", "visualElementEntry_", "properties_", "deviceStatus_", "mediaSession_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<TvLauncherClientExtension> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (TvLauncherClientExtension.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(TvLauncherClientExtension.class, DEFAULT_INSTANCE);
-        }
-
-        public static TvLauncherClientExtension getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<TvLauncherClientExtension> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -899,8 +901,13 @@ public final class TvlauncherClientLog {
         public static final int ANCESTRY_VISUAL_ELEMENT_FIELD_NUMBER = 1;
         /* access modifiers changed from: private */
         public static final VisualElementEntry DEFAULT_INSTANCE = new VisualElementEntry();
-        private static volatile Parser<VisualElementEntry> PARSER = null;
         public static final int VE_METADATA_FIELD_NUMBER = 2;
+        private static volatile Parser<VisualElementEntry> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(VisualElementEntry.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.MESSAGE)
         @ProtoPresenceCheckedField(mask = 1, presenceBitsId = 0)
         private AncestryVisualElement.AncestryVisualElementProto ancestryVisualElement_;
@@ -911,6 +918,70 @@ public final class TvlauncherClientLog {
         private VisualElementMetadata veMetadata_;
 
         private VisualElementEntry() {
+        }
+
+        public static VisualElementEntry parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (VisualElementEntry) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static VisualElementEntry parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (VisualElementEntry) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static VisualElementEntry parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (VisualElementEntry) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static VisualElementEntry parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (VisualElementEntry) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static VisualElementEntry parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (VisualElementEntry) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static VisualElementEntry parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (VisualElementEntry) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static VisualElementEntry parseFrom(InputStream input) throws IOException {
+            return (VisualElementEntry) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static VisualElementEntry parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (VisualElementEntry) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static VisualElementEntry parseDelimitedFrom(InputStream input) throws IOException {
+            return (VisualElementEntry) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static VisualElementEntry parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (VisualElementEntry) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static VisualElementEntry parseFrom(CodedInputStream input) throws IOException {
+            return (VisualElementEntry) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static VisualElementEntry parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (VisualElementEntry) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(VisualElementEntry prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static VisualElementEntry getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<VisualElementEntry> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasAncestryVisualElement() {
@@ -1005,60 +1076,36 @@ public final class TvlauncherClientLog {
             this.bitField0_ &= -3;
         }
 
-        public static VisualElementEntry parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (VisualElementEntry) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static VisualElementEntry parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (VisualElementEntry) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static VisualElementEntry parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (VisualElementEntry) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static VisualElementEntry parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (VisualElementEntry) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static VisualElementEntry parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (VisualElementEntry) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static VisualElementEntry parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (VisualElementEntry) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static VisualElementEntry parseFrom(InputStream input) throws IOException {
-            return (VisualElementEntry) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static VisualElementEntry parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (VisualElementEntry) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static VisualElementEntry parseDelimitedFrom(InputStream input) throws IOException {
-            return (VisualElementEntry) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static VisualElementEntry parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (VisualElementEntry) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static VisualElementEntry parseFrom(CodedInputStream input) throws IOException {
-            return (VisualElementEntry) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static VisualElementEntry parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (VisualElementEntry) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(VisualElementEntry prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new VisualElementEntry();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0000\u0000\u0001\t\u0000\u0002\t\u0001", new Object[]{"bitField0_", "ancestryVisualElement_", "veMetadata_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<VisualElementEntry> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (VisualElementEntry.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<VisualElementEntry, Builder> implements VisualElementEntryOrBuilder {
@@ -1130,50 +1177,6 @@ public final class TvlauncherClientLog {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new VisualElementEntry();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0000\u0000\u0001\t\u0000\u0002\t\u0001", new Object[]{"bitField0_", "ancestryVisualElement_", "veMetadata_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<VisualElementEntry> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (VisualElementEntry.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(VisualElementEntry.class, DEFAULT_INSTANCE);
-        }
-
-        public static VisualElementEntry getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<VisualElementEntry> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -1188,9 +1191,14 @@ public final class TvlauncherClientLog {
         public static final int LAUNCH_ITEM_FIELD_NUMBER = 7;
         public static final int NOTIFICATION_COLLECTION_FIELD_NUMBER = 6;
         public static final int NOTIFICATION_FIELD_NUMBER = 5;
-        private static volatile Parser<VisualElementMetadata> PARSER = null;
         public static final int PROGRAM_FIELD_NUMBER = 1;
         public static final int WATCH_NEXT_CHANNEL_FIELD_NUMBER = 4;
+        private static volatile Parser<VisualElementMetadata> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(VisualElementMetadata.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 3, isRequired = false, type = FieldType.MESSAGE)
@@ -1225,6 +1233,70 @@ public final class TvlauncherClientLog {
         private WatchNextChannel watchNextChannel_;
 
         private VisualElementMetadata() {
+        }
+
+        public static VisualElementMetadata parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (VisualElementMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static VisualElementMetadata parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (VisualElementMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static VisualElementMetadata parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (VisualElementMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static VisualElementMetadata parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (VisualElementMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static VisualElementMetadata parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (VisualElementMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static VisualElementMetadata parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (VisualElementMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static VisualElementMetadata parseFrom(InputStream input) throws IOException {
+            return (VisualElementMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static VisualElementMetadata parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (VisualElementMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static VisualElementMetadata parseDelimitedFrom(InputStream input) throws IOException {
+            return (VisualElementMetadata) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static VisualElementMetadata parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (VisualElementMetadata) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static VisualElementMetadata parseFrom(CodedInputStream input) throws IOException {
+            return (VisualElementMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static VisualElementMetadata parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (VisualElementMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(VisualElementMetadata prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static VisualElementMetadata getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<VisualElementMetadata> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasProgram() {
@@ -1687,60 +1759,36 @@ public final class TvlauncherClientLog {
             this.bitField0_ &= -513;
         }
 
-        public static VisualElementMetadata parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (VisualElementMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static VisualElementMetadata parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (VisualElementMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static VisualElementMetadata parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (VisualElementMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static VisualElementMetadata parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (VisualElementMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static VisualElementMetadata parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (VisualElementMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static VisualElementMetadata parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (VisualElementMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static VisualElementMetadata parseFrom(InputStream input) throws IOException {
-            return (VisualElementMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static VisualElementMetadata parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (VisualElementMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static VisualElementMetadata parseDelimitedFrom(InputStream input) throws IOException {
-            return (VisualElementMetadata) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static VisualElementMetadata parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (VisualElementMetadata) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static VisualElementMetadata parseFrom(CodedInputStream input) throws IOException {
-            return (VisualElementMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static VisualElementMetadata parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (VisualElementMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(VisualElementMetadata prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new VisualElementMetadata();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\n\u0000\u0001\u0001\n\n\u0000\u0000\u0000\u0001\t\u0000\u0002\t\u0001\u0003\t\u0002\u0004\t\u0003\u0005\t\u0004\u0006\t\u0005\u0007\t\u0006\b\t\u0007\t\t\b\n\t\t", new Object[]{"bitField0_", "program_", "channel_", "channelCollection_", "watchNextChannel_", "notification_", "notificationCollection_", "launchItem_", "launchItemCollection_", "input_", "inputCollection_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<VisualElementMetadata> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (VisualElementMetadata.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<VisualElementMetadata, Builder> implements VisualElementMetadataOrBuilder {
@@ -2068,50 +2116,6 @@ public final class TvlauncherClientLog {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new VisualElementMetadata();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\n\u0000\u0001\u0001\n\n\u0000\u0000\u0000\u0001\t\u0000\u0002\t\u0001\u0003\t\u0002\u0004\t\u0003\u0005\t\u0004\u0006\t\u0005\u0007\t\u0006\b\t\u0007\t\t\b\n\t\t", new Object[]{"bitField0_", "program_", "channel_", "channelCollection_", "watchNextChannel_", "notification_", "notificationCollection_", "launchItem_", "launchItemCollection_", "input_", "inputCollection_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<VisualElementMetadata> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (VisualElementMetadata.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(VisualElementMetadata.class, DEFAULT_INSTANCE);
-        }
-
-        public static VisualElementMetadata getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<VisualElementMetadata> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -2127,10 +2131,15 @@ public final class TvlauncherClientLog {
         public static final int IS_LIVE_FIELD_NUMBER = 8;
         public static final int METADATA_HASH_CODE_FIELD_NUMBER = 2;
         public static final int PACKAGE_NAME_FIELD_NUMBER = 1;
-        private static volatile Parser<Program> PARSER = null;
         public static final int PREVIEW_FIELD_NUMBER = 5;
         public static final int RATING_FIELD_NUMBER = 4;
         public static final int TYPE_FIELD_NUMBER = 3;
+        private static volatile Parser<Program> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(Program.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 7, isEnforceUtf8 = false, isRequired = false, type = FieldType.STRING)
@@ -2170,1076 +2179,71 @@ public final class TvlauncherClientLog {
         @ProtoPresenceCheckedField(mask = 4, presenceBitsId = 0)
         private int type_ = 1;
 
-        public interface InteractionCountOrBuilder extends MessageLiteOrBuilder {
-            long getCount();
-
-            InteractionCount.Type getType();
-
-            boolean hasCount();
-
-            boolean hasType();
-        }
-
-        public interface PreviewOrBuilder extends MessageLiteOrBuilder {
-            int getDurationSeconds();
-
-            int getPlayedDurationSeconds();
-
-            long getPlayedTimestamp();
-
-            Preview.PreviewType getType();
-
-            boolean hasDurationSeconds();
-
-            boolean hasPlayedDurationSeconds();
-
-            boolean hasPlayedTimestamp();
-
-            boolean hasType();
-        }
-
-        public interface RatingOrBuilder extends MessageLiteOrBuilder {
-            float getPercentage();
-
-            float getStarCount();
-
-            long getThumbsDownCount();
-
-            long getThumbsUpCount();
-
-            boolean hasPercentage();
-
-            boolean hasStarCount();
-
-            boolean hasThumbsDownCount();
-
-            boolean hasThumbsUpCount();
-        }
-
         private Program() {
         }
 
-        public enum Type implements Internal.EnumLite {
-            MOVIE(1),
-            TV_SERIES(2),
-            TV_SEASON(3),
-            TV_EPISODE(4),
-            CLIP(5),
-            EVENT(6),
-            CHANNEL(7),
-            TRACK(8),
-            ALBUM(9),
-            ARTIST(10),
-            PLAYLIST(11),
-            STATION(12),
-            GAME(13);
-            
-            public static final int ALBUM_VALUE = 9;
-            public static final int ARTIST_VALUE = 10;
-            public static final int CHANNEL_VALUE = 7;
-            public static final int CLIP_VALUE = 5;
-            public static final int EVENT_VALUE = 6;
-            public static final int GAME_VALUE = 13;
-            public static final int MOVIE_VALUE = 1;
-            public static final int PLAYLIST_VALUE = 11;
-            public static final int STATION_VALUE = 12;
-            public static final int TRACK_VALUE = 8;
-            public static final int TV_EPISODE_VALUE = 4;
-            public static final int TV_SEASON_VALUE = 3;
-            public static final int TV_SERIES_VALUE = 2;
-            private static final Internal.EnumLiteMap<Type> internalValueMap = new Internal.EnumLiteMap<Type>() {
-                public Type findValueByNumber(int number) {
-                    return Type.forNumber(number);
-                }
-            };
-            private final int value;
-
-            public final int getNumber() {
-                return this.value;
-            }
-
-            public static Type forNumber(int value2) {
-                switch (value2) {
-                    case 1:
-                        return MOVIE;
-                    case 2:
-                        return TV_SERIES;
-                    case 3:
-                        return TV_SEASON;
-                    case 4:
-                        return TV_EPISODE;
-                    case 5:
-                        return CLIP;
-                    case 6:
-                        return EVENT;
-                    case 7:
-                        return CHANNEL;
-                    case 8:
-                        return TRACK;
-                    case 9:
-                        return ALBUM;
-                    case 10:
-                        return ARTIST;
-                    case 11:
-                        return PLAYLIST;
-                    case 12:
-                        return STATION;
-                    case 13:
-                        return GAME;
-                    default:
-                        return null;
-                }
-            }
-
-            public static Internal.EnumLiteMap<Type> internalGetValueMap() {
-                return internalValueMap;
-            }
-
-            public static Internal.EnumVerifier internalGetVerifier() {
-                return TypeVerifier.INSTANCE;
-            }
-
-            private static final class TypeVerifier implements Internal.EnumVerifier {
-                static final Internal.EnumVerifier INSTANCE = new TypeVerifier();
-
-                private TypeVerifier() {
-                }
-
-                public boolean isInRange(int number) {
-                    return Type.forNumber(number) != null;
-                }
-            }
-
-            private Type(int value2) {
-                this.value = value2;
-            }
+        public static Program parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (Program) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
         }
 
-        @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
-        public static final class Rating extends GeneratedMessageLite<Rating, Builder> implements RatingOrBuilder {
-            /* access modifiers changed from: private */
-            public static final Rating DEFAULT_INSTANCE = new Rating();
-            private static volatile Parser<Rating> PARSER = null;
-            public static final int PERCENTAGE_FIELD_NUMBER = 2;
-            public static final int STAR_COUNT_FIELD_NUMBER = 1;
-            public static final int THUMBS_DOWN_COUNT_FIELD_NUMBER = 4;
-            public static final int THUMBS_UP_COUNT_FIELD_NUMBER = 3;
-            @ProtoPresenceBits(mo28548id = 0)
-            private int bitField0_;
-            @ProtoField(fieldNumber = 2, isRequired = false, type = FieldType.FLOAT)
-            @ProtoPresenceCheckedField(mask = 2, presenceBitsId = 0)
-            private float percentage_;
-            @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.FLOAT)
-            @ProtoPresenceCheckedField(mask = 1, presenceBitsId = 0)
-            private float starCount_;
-            @ProtoField(fieldNumber = 4, isRequired = false, type = FieldType.UINT64)
-            @ProtoPresenceCheckedField(mask = 8, presenceBitsId = 0)
-            private long thumbsDownCount_;
-            @ProtoField(fieldNumber = 3, isRequired = false, type = FieldType.UINT64)
-            @ProtoPresenceCheckedField(mask = 4, presenceBitsId = 0)
-            private long thumbsUpCount_;
-
-            private Rating() {
-            }
-
-            public boolean hasStarCount() {
-                return (this.bitField0_ & 1) != 0;
-            }
-
-            public float getStarCount() {
-                return this.starCount_;
-            }
-
-            /* access modifiers changed from: private */
-            public void setStarCount(float value) {
-                this.bitField0_ |= 1;
-                this.starCount_ = value;
-            }
-
-            /* access modifiers changed from: private */
-            public void clearStarCount() {
-                this.bitField0_ &= -2;
-                this.starCount_ = 0.0f;
-            }
-
-            public boolean hasPercentage() {
-                return (this.bitField0_ & 2) != 0;
-            }
-
-            public float getPercentage() {
-                return this.percentage_;
-            }
-
-            /* access modifiers changed from: private */
-            public void setPercentage(float value) {
-                this.bitField0_ |= 2;
-                this.percentage_ = value;
-            }
-
-            /* access modifiers changed from: private */
-            public void clearPercentage() {
-                this.bitField0_ &= -3;
-                this.percentage_ = 0.0f;
-            }
-
-            public boolean hasThumbsUpCount() {
-                return (this.bitField0_ & 4) != 0;
-            }
-
-            public long getThumbsUpCount() {
-                return this.thumbsUpCount_;
-            }
-
-            /* access modifiers changed from: private */
-            public void setThumbsUpCount(long value) {
-                this.bitField0_ |= 4;
-                this.thumbsUpCount_ = value;
-            }
-
-            /* access modifiers changed from: private */
-            public void clearThumbsUpCount() {
-                this.bitField0_ &= -5;
-                this.thumbsUpCount_ = 0;
-            }
-
-            public boolean hasThumbsDownCount() {
-                return (this.bitField0_ & 8) != 0;
-            }
-
-            public long getThumbsDownCount() {
-                return this.thumbsDownCount_;
-            }
-
-            /* access modifiers changed from: private */
-            public void setThumbsDownCount(long value) {
-                this.bitField0_ |= 8;
-                this.thumbsDownCount_ = value;
-            }
-
-            /* access modifiers changed from: private */
-            public void clearThumbsDownCount() {
-                this.bitField0_ &= -9;
-                this.thumbsDownCount_ = 0;
-            }
-
-            public static Rating parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-                return (Rating) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-            }
-
-            public static Rating parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-                return (Rating) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-            }
-
-            public static Rating parseFrom(ByteString data) throws InvalidProtocolBufferException {
-                return (Rating) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-            }
-
-            public static Rating parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-                return (Rating) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-            }
-
-            public static Rating parseFrom(byte[] data) throws InvalidProtocolBufferException {
-                return (Rating) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-            }
-
-            public static Rating parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-                return (Rating) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-            }
-
-            public static Rating parseFrom(InputStream input) throws IOException {
-                return (Rating) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-            }
-
-            public static Rating parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-                return (Rating) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-            }
-
-            public static Rating parseDelimitedFrom(InputStream input) throws IOException {
-                return (Rating) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-            }
-
-            public static Rating parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-                return (Rating) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-            }
-
-            public static Rating parseFrom(CodedInputStream input) throws IOException {
-                return (Rating) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-            }
-
-            public static Rating parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-                return (Rating) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-            }
-
-            public static Builder newBuilder() {
-                return (Builder) DEFAULT_INSTANCE.createBuilder();
-            }
-
-            public static Builder newBuilder(Rating prototype) {
-                return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
-            }
-
-            public static final class Builder extends GeneratedMessageLite.Builder<Rating, Builder> implements RatingOrBuilder {
-                private Builder() {
-                    super(Rating.DEFAULT_INSTANCE);
-                }
-
-                public boolean hasStarCount() {
-                    return ((Rating) this.instance).hasStarCount();
-                }
-
-                public float getStarCount() {
-                    return ((Rating) this.instance).getStarCount();
-                }
-
-                public Builder setStarCount(float value) {
-                    copyOnWrite();
-                    ((Rating) this.instance).setStarCount(value);
-                    return this;
-                }
-
-                public Builder clearStarCount() {
-                    copyOnWrite();
-                    ((Rating) this.instance).clearStarCount();
-                    return this;
-                }
-
-                public boolean hasPercentage() {
-                    return ((Rating) this.instance).hasPercentage();
-                }
-
-                public float getPercentage() {
-                    return ((Rating) this.instance).getPercentage();
-                }
-
-                public Builder setPercentage(float value) {
-                    copyOnWrite();
-                    ((Rating) this.instance).setPercentage(value);
-                    return this;
-                }
-
-                public Builder clearPercentage() {
-                    copyOnWrite();
-                    ((Rating) this.instance).clearPercentage();
-                    return this;
-                }
-
-                public boolean hasThumbsUpCount() {
-                    return ((Rating) this.instance).hasThumbsUpCount();
-                }
-
-                public long getThumbsUpCount() {
-                    return ((Rating) this.instance).getThumbsUpCount();
-                }
-
-                public Builder setThumbsUpCount(long value) {
-                    copyOnWrite();
-                    ((Rating) this.instance).setThumbsUpCount(value);
-                    return this;
-                }
-
-                public Builder clearThumbsUpCount() {
-                    copyOnWrite();
-                    ((Rating) this.instance).clearThumbsUpCount();
-                    return this;
-                }
-
-                public boolean hasThumbsDownCount() {
-                    return ((Rating) this.instance).hasThumbsDownCount();
-                }
-
-                public long getThumbsDownCount() {
-                    return ((Rating) this.instance).getThumbsDownCount();
-                }
-
-                public Builder setThumbsDownCount(long value) {
-                    copyOnWrite();
-                    ((Rating) this.instance).setThumbsDownCount(value);
-                    return this;
-                }
-
-                public Builder clearThumbsDownCount() {
-                    copyOnWrite();
-                    ((Rating) this.instance).clearThumbsDownCount();
-                    return this;
-                }
-            }
-
-            /* access modifiers changed from: protected */
-            public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-                switch (method) {
-                    case NEW_MUTABLE_INSTANCE:
-                        return new Rating();
-                    case NEW_BUILDER:
-                        return new Builder();
-                    case BUILD_MESSAGE_INFO:
-                        return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0004\u0000\u0001\u0001\u0004\u0004\u0000\u0000\u0000\u0001\u0001\u0000\u0002\u0001\u0001\u0003\u0003\u0002\u0004\u0003\u0003", new Object[]{"bitField0_", "starCount_", "percentage_", "thumbsUpCount_", "thumbsDownCount_"});
-                    case GET_DEFAULT_INSTANCE:
-                        return DEFAULT_INSTANCE;
-                    case GET_PARSER:
-                        Parser<Rating> parser = PARSER;
-                        if (parser == null) {
-                            synchronized (Rating.class) {
-                                parser = PARSER;
-                                if (parser == null) {
-                                    parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                    PARSER = parser;
-                                }
-                            }
-                        }
-                        return parser;
-                    case GET_MEMOIZED_IS_INITIALIZED:
-                        return (byte) 1;
-                    case SET_MEMOIZED_IS_INITIALIZED:
-                        return null;
-                    default:
-                        throw new UnsupportedOperationException();
-                }
-            }
-
-            static {
-                GeneratedMessageLite.registerDefaultInstance(Rating.class, DEFAULT_INSTANCE);
-            }
-
-            public static Rating getDefaultInstance() {
-                return DEFAULT_INSTANCE;
-            }
-
-            public static Parser<Rating> parser() {
-                return DEFAULT_INSTANCE.getParserForType();
-            }
+        public static Program parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (Program) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
         }
 
-        @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
-        public static final class Preview extends GeneratedMessageLite<Preview, Builder> implements PreviewOrBuilder {
-            /* access modifiers changed from: private */
-            public static final Preview DEFAULT_INSTANCE = new Preview();
-            public static final int DURATION_SECONDS_FIELD_NUMBER = 2;
-            private static volatile Parser<Preview> PARSER = null;
-            public static final int PLAYED_DURATION_SECONDS_FIELD_NUMBER = 4;
-            public static final int PLAYED_TIMESTAMP_FIELD_NUMBER = 3;
-            public static final int TYPE_FIELD_NUMBER = 1;
-            @ProtoPresenceBits(mo28548id = 0)
-            private int bitField0_;
-            @ProtoField(fieldNumber = 2, isRequired = false, type = FieldType.INT32)
-            @ProtoPresenceCheckedField(mask = 2, presenceBitsId = 0)
-            private int durationSeconds_;
-            @ProtoField(fieldNumber = 4, isRequired = false, type = FieldType.INT32)
-            @ProtoPresenceCheckedField(mask = 8, presenceBitsId = 0)
-            private int playedDurationSeconds_;
-            @ProtoField(fieldNumber = 3, isRequired = false, type = FieldType.INT64)
-            @ProtoPresenceCheckedField(mask = 4, presenceBitsId = 0)
-            private long playedTimestamp_;
-            @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.ENUM)
-            @ProtoPresenceCheckedField(mask = 1, presenceBitsId = 0)
-            private int type_ = 1;
-
-            private Preview() {
-            }
-
-            public enum PreviewType implements Internal.EnumLite {
-                VIDEO(1),
-                AUDIO(2);
-                
-                public static final int AUDIO_VALUE = 2;
-                public static final int VIDEO_VALUE = 1;
-                private static final Internal.EnumLiteMap<PreviewType> internalValueMap = new Internal.EnumLiteMap<PreviewType>() {
-                    public PreviewType findValueByNumber(int number) {
-                        return PreviewType.forNumber(number);
-                    }
-                };
-                private final int value;
-
-                public final int getNumber() {
-                    return this.value;
-                }
-
-                public static PreviewType forNumber(int value2) {
-                    if (value2 == 1) {
-                        return VIDEO;
-                    }
-                    if (value2 != 2) {
-                        return null;
-                    }
-                    return AUDIO;
-                }
-
-                public static Internal.EnumLiteMap<PreviewType> internalGetValueMap() {
-                    return internalValueMap;
-                }
-
-                public static Internal.EnumVerifier internalGetVerifier() {
-                    return PreviewTypeVerifier.INSTANCE;
-                }
-
-                private static final class PreviewTypeVerifier implements Internal.EnumVerifier {
-                    static final Internal.EnumVerifier INSTANCE = new PreviewTypeVerifier();
-
-                    private PreviewTypeVerifier() {
-                    }
-
-                    public boolean isInRange(int number) {
-                        return PreviewType.forNumber(number) != null;
-                    }
-                }
-
-                private PreviewType(int value2) {
-                    this.value = value2;
-                }
-            }
-
-            public boolean hasType() {
-                return (this.bitField0_ & 1) != 0;
-            }
-
-            public PreviewType getType() {
-                PreviewType result = PreviewType.forNumber(this.type_);
-                return result == null ? PreviewType.VIDEO : result;
-            }
-
-            /* access modifiers changed from: private */
-            public void setType(PreviewType value) {
-                if (value != null) {
-                    this.bitField0_ |= 1;
-                    this.type_ = value.getNumber();
-                    return;
-                }
-                throw new NullPointerException();
-            }
-
-            /* access modifiers changed from: private */
-            public void clearType() {
-                this.bitField0_ &= -2;
-                this.type_ = 1;
-            }
-
-            public boolean hasDurationSeconds() {
-                return (this.bitField0_ & 2) != 0;
-            }
-
-            public int getDurationSeconds() {
-                return this.durationSeconds_;
-            }
-
-            /* access modifiers changed from: private */
-            public void setDurationSeconds(int value) {
-                this.bitField0_ |= 2;
-                this.durationSeconds_ = value;
-            }
-
-            /* access modifiers changed from: private */
-            public void clearDurationSeconds() {
-                this.bitField0_ &= -3;
-                this.durationSeconds_ = 0;
-            }
-
-            public boolean hasPlayedTimestamp() {
-                return (this.bitField0_ & 4) != 0;
-            }
-
-            public long getPlayedTimestamp() {
-                return this.playedTimestamp_;
-            }
-
-            /* access modifiers changed from: private */
-            public void setPlayedTimestamp(long value) {
-                this.bitField0_ |= 4;
-                this.playedTimestamp_ = value;
-            }
-
-            /* access modifiers changed from: private */
-            public void clearPlayedTimestamp() {
-                this.bitField0_ &= -5;
-                this.playedTimestamp_ = 0;
-            }
-
-            public boolean hasPlayedDurationSeconds() {
-                return (this.bitField0_ & 8) != 0;
-            }
-
-            public int getPlayedDurationSeconds() {
-                return this.playedDurationSeconds_;
-            }
-
-            /* access modifiers changed from: private */
-            public void setPlayedDurationSeconds(int value) {
-                this.bitField0_ |= 8;
-                this.playedDurationSeconds_ = value;
-            }
-
-            /* access modifiers changed from: private */
-            public void clearPlayedDurationSeconds() {
-                this.bitField0_ &= -9;
-                this.playedDurationSeconds_ = 0;
-            }
-
-            public static Preview parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-                return (Preview) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-            }
-
-            public static Preview parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-                return (Preview) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-            }
-
-            public static Preview parseFrom(ByteString data) throws InvalidProtocolBufferException {
-                return (Preview) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-            }
-
-            public static Preview parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-                return (Preview) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-            }
-
-            public static Preview parseFrom(byte[] data) throws InvalidProtocolBufferException {
-                return (Preview) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-            }
-
-            public static Preview parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-                return (Preview) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-            }
-
-            public static Preview parseFrom(InputStream input) throws IOException {
-                return (Preview) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-            }
-
-            public static Preview parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-                return (Preview) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-            }
-
-            public static Preview parseDelimitedFrom(InputStream input) throws IOException {
-                return (Preview) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-            }
-
-            public static Preview parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-                return (Preview) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-            }
-
-            public static Preview parseFrom(CodedInputStream input) throws IOException {
-                return (Preview) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-            }
-
-            public static Preview parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-                return (Preview) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-            }
-
-            public static Builder newBuilder() {
-                return (Builder) DEFAULT_INSTANCE.createBuilder();
-            }
-
-            public static Builder newBuilder(Preview prototype) {
-                return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
-            }
-
-            public static final class Builder extends GeneratedMessageLite.Builder<Preview, Builder> implements PreviewOrBuilder {
-                private Builder() {
-                    super(Preview.DEFAULT_INSTANCE);
-                }
-
-                public boolean hasType() {
-                    return ((Preview) this.instance).hasType();
-                }
-
-                public PreviewType getType() {
-                    return ((Preview) this.instance).getType();
-                }
-
-                public Builder setType(PreviewType value) {
-                    copyOnWrite();
-                    ((Preview) this.instance).setType(value);
-                    return this;
-                }
-
-                public Builder clearType() {
-                    copyOnWrite();
-                    ((Preview) this.instance).clearType();
-                    return this;
-                }
-
-                public boolean hasDurationSeconds() {
-                    return ((Preview) this.instance).hasDurationSeconds();
-                }
-
-                public int getDurationSeconds() {
-                    return ((Preview) this.instance).getDurationSeconds();
-                }
-
-                public Builder setDurationSeconds(int value) {
-                    copyOnWrite();
-                    ((Preview) this.instance).setDurationSeconds(value);
-                    return this;
-                }
-
-                public Builder clearDurationSeconds() {
-                    copyOnWrite();
-                    ((Preview) this.instance).clearDurationSeconds();
-                    return this;
-                }
-
-                public boolean hasPlayedTimestamp() {
-                    return ((Preview) this.instance).hasPlayedTimestamp();
-                }
-
-                public long getPlayedTimestamp() {
-                    return ((Preview) this.instance).getPlayedTimestamp();
-                }
-
-                public Builder setPlayedTimestamp(long value) {
-                    copyOnWrite();
-                    ((Preview) this.instance).setPlayedTimestamp(value);
-                    return this;
-                }
-
-                public Builder clearPlayedTimestamp() {
-                    copyOnWrite();
-                    ((Preview) this.instance).clearPlayedTimestamp();
-                    return this;
-                }
-
-                public boolean hasPlayedDurationSeconds() {
-                    return ((Preview) this.instance).hasPlayedDurationSeconds();
-                }
-
-                public int getPlayedDurationSeconds() {
-                    return ((Preview) this.instance).getPlayedDurationSeconds();
-                }
-
-                public Builder setPlayedDurationSeconds(int value) {
-                    copyOnWrite();
-                    ((Preview) this.instance).setPlayedDurationSeconds(value);
-                    return this;
-                }
-
-                public Builder clearPlayedDurationSeconds() {
-                    copyOnWrite();
-                    ((Preview) this.instance).clearPlayedDurationSeconds();
-                    return this;
-                }
-            }
-
-            /* access modifiers changed from: protected */
-            public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-                switch (method) {
-                    case NEW_MUTABLE_INSTANCE:
-                        return new Preview();
-                    case NEW_BUILDER:
-                        return new Builder();
-                    case BUILD_MESSAGE_INFO:
-                        return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0004\u0000\u0001\u0001\u0004\u0004\u0000\u0000\u0000\u0001\f\u0000\u0002\u0004\u0001\u0003\u0002\u0002\u0004\u0004\u0003", new Object[]{"bitField0_", "type_", PreviewType.internalGetVerifier(), "durationSeconds_", "playedTimestamp_", "playedDurationSeconds_"});
-                    case GET_DEFAULT_INSTANCE:
-                        return DEFAULT_INSTANCE;
-                    case GET_PARSER:
-                        Parser<Preview> parser = PARSER;
-                        if (parser == null) {
-                            synchronized (Preview.class) {
-                                parser = PARSER;
-                                if (parser == null) {
-                                    parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                    PARSER = parser;
-                                }
-                            }
-                        }
-                        return parser;
-                    case GET_MEMOIZED_IS_INITIALIZED:
-                        return (byte) 1;
-                    case SET_MEMOIZED_IS_INITIALIZED:
-                        return null;
-                    default:
-                        throw new UnsupportedOperationException();
-                }
-            }
-
-            static {
-                GeneratedMessageLite.registerDefaultInstance(Preview.class, DEFAULT_INSTANCE);
-            }
-
-            public static Preview getDefaultInstance() {
-                return DEFAULT_INSTANCE;
-            }
-
-            public static Parser<Preview> parser() {
-                return DEFAULT_INSTANCE.getParserForType();
-            }
+        public static Program parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (Program) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
         }
 
-        @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
-        public static final class InteractionCount extends GeneratedMessageLite<InteractionCount, Builder> implements InteractionCountOrBuilder {
-            public static final int COUNT_FIELD_NUMBER = 2;
-            /* access modifiers changed from: private */
-            public static final InteractionCount DEFAULT_INSTANCE = new InteractionCount();
-            private static volatile Parser<InteractionCount> PARSER = null;
-            public static final int TYPE_FIELD_NUMBER = 1;
-            @ProtoPresenceBits(mo28548id = 0)
-            private int bitField0_;
-            @ProtoField(fieldNumber = 2, isRequired = false, type = FieldType.INT64)
-            @ProtoPresenceCheckedField(mask = 2, presenceBitsId = 0)
-            private long count_;
-            @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.ENUM)
-            @ProtoPresenceCheckedField(mask = 1, presenceBitsId = 0)
-            private int type_ = 1;
+        public static Program parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (Program) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-            private InteractionCount() {
-            }
+        public static Program parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (Program) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
 
-            public enum Type implements Internal.EnumLite {
-                VIEWS(1),
-                LISTENS(2),
-                FOLLOWERS(3),
-                FANS(4),
-                LIKES(5),
-                THUMBS(6),
-                VIEWERS(7);
-                
-                public static final int FANS_VALUE = 4;
-                public static final int FOLLOWERS_VALUE = 3;
-                public static final int LIKES_VALUE = 5;
-                public static final int LISTENS_VALUE = 2;
-                public static final int THUMBS_VALUE = 6;
-                public static final int VIEWERS_VALUE = 7;
-                public static final int VIEWS_VALUE = 1;
-                private static final Internal.EnumLiteMap<Type> internalValueMap = new Internal.EnumLiteMap<Type>() {
-                    public Type findValueByNumber(int number) {
-                        return Type.forNumber(number);
-                    }
-                };
-                private final int value;
+        public static Program parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (Program) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-                public final int getNumber() {
-                    return this.value;
-                }
+        public static Program parseFrom(InputStream input) throws IOException {
+            return (Program) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
 
-                public static Type forNumber(int value2) {
-                    switch (value2) {
-                        case 1:
-                            return VIEWS;
-                        case 2:
-                            return LISTENS;
-                        case 3:
-                            return FOLLOWERS;
-                        case 4:
-                            return FANS;
-                        case 5:
-                            return LIKES;
-                        case 6:
-                            return THUMBS;
-                        case 7:
-                            return VIEWERS;
-                        default:
-                            return null;
-                    }
-                }
+        public static Program parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (Program) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
 
-                public static Internal.EnumLiteMap<Type> internalGetValueMap() {
-                    return internalValueMap;
-                }
+        public static Program parseDelimitedFrom(InputStream input) throws IOException {
+            return (Program) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
 
-                public static Internal.EnumVerifier internalGetVerifier() {
-                    return TypeVerifier.INSTANCE;
-                }
+        public static Program parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (Program) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
 
-                private static final class TypeVerifier implements Internal.EnumVerifier {
-                    static final Internal.EnumVerifier INSTANCE = new TypeVerifier();
+        public static Program parseFrom(CodedInputStream input) throws IOException {
+            return (Program) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
 
-                    private TypeVerifier() {
-                    }
+        public static Program parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (Program) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
 
-                    public boolean isInRange(int number) {
-                        return Type.forNumber(number) != null;
-                    }
-                }
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
 
-                private Type(int value2) {
-                    this.value = value2;
-                }
-            }
+        public static Builder newBuilder(Program prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
 
-            public boolean hasType() {
-                return (this.bitField0_ & 1) != 0;
-            }
+        public static Program getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
 
-            public Type getType() {
-                Type result = Type.forNumber(this.type_);
-                return result == null ? Type.VIEWS : result;
-            }
-
-            /* access modifiers changed from: private */
-            public void setType(Type value) {
-                if (value != null) {
-                    this.bitField0_ |= 1;
-                    this.type_ = value.getNumber();
-                    return;
-                }
-                throw new NullPointerException();
-            }
-
-            /* access modifiers changed from: private */
-            public void clearType() {
-                this.bitField0_ &= -2;
-                this.type_ = 1;
-            }
-
-            public boolean hasCount() {
-                return (this.bitField0_ & 2) != 0;
-            }
-
-            public long getCount() {
-                return this.count_;
-            }
-
-            /* access modifiers changed from: private */
-            public void setCount(long value) {
-                this.bitField0_ |= 2;
-                this.count_ = value;
-            }
-
-            /* access modifiers changed from: private */
-            public void clearCount() {
-                this.bitField0_ &= -3;
-                this.count_ = 0;
-            }
-
-            public static InteractionCount parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-                return (InteractionCount) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-            }
-
-            public static InteractionCount parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-                return (InteractionCount) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-            }
-
-            public static InteractionCount parseFrom(ByteString data) throws InvalidProtocolBufferException {
-                return (InteractionCount) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-            }
-
-            public static InteractionCount parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-                return (InteractionCount) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-            }
-
-            public static InteractionCount parseFrom(byte[] data) throws InvalidProtocolBufferException {
-                return (InteractionCount) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-            }
-
-            public static InteractionCount parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-                return (InteractionCount) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-            }
-
-            public static InteractionCount parseFrom(InputStream input) throws IOException {
-                return (InteractionCount) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-            }
-
-            public static InteractionCount parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-                return (InteractionCount) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-            }
-
-            public static InteractionCount parseDelimitedFrom(InputStream input) throws IOException {
-                return (InteractionCount) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-            }
-
-            public static InteractionCount parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-                return (InteractionCount) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-            }
-
-            public static InteractionCount parseFrom(CodedInputStream input) throws IOException {
-                return (InteractionCount) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-            }
-
-            public static InteractionCount parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-                return (InteractionCount) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-            }
-
-            public static Builder newBuilder() {
-                return (Builder) DEFAULT_INSTANCE.createBuilder();
-            }
-
-            public static Builder newBuilder(InteractionCount prototype) {
-                return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
-            }
-
-            public static final class Builder extends GeneratedMessageLite.Builder<InteractionCount, Builder> implements InteractionCountOrBuilder {
-                private Builder() {
-                    super(InteractionCount.DEFAULT_INSTANCE);
-                }
-
-                public boolean hasType() {
-                    return ((InteractionCount) this.instance).hasType();
-                }
-
-                public Type getType() {
-                    return ((InteractionCount) this.instance).getType();
-                }
-
-                public Builder setType(Type value) {
-                    copyOnWrite();
-                    ((InteractionCount) this.instance).setType(value);
-                    return this;
-                }
-
-                public Builder clearType() {
-                    copyOnWrite();
-                    ((InteractionCount) this.instance).clearType();
-                    return this;
-                }
-
-                public boolean hasCount() {
-                    return ((InteractionCount) this.instance).hasCount();
-                }
-
-                public long getCount() {
-                    return ((InteractionCount) this.instance).getCount();
-                }
-
-                public Builder setCount(long value) {
-                    copyOnWrite();
-                    ((InteractionCount) this.instance).setCount(value);
-                    return this;
-                }
-
-                public Builder clearCount() {
-                    copyOnWrite();
-                    ((InteractionCount) this.instance).clearCount();
-                    return this;
-                }
-            }
-
-            /* access modifiers changed from: protected */
-            public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-                switch (method) {
-                    case NEW_MUTABLE_INSTANCE:
-                        return new InteractionCount();
-                    case NEW_BUILDER:
-                        return new Builder();
-                    case BUILD_MESSAGE_INFO:
-                        return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0000\u0000\u0001\f\u0000\u0002\u0002\u0001", new Object[]{"bitField0_", "type_", Type.internalGetVerifier(), "count_"});
-                    case GET_DEFAULT_INSTANCE:
-                        return DEFAULT_INSTANCE;
-                    case GET_PARSER:
-                        Parser<InteractionCount> parser = PARSER;
-                        if (parser == null) {
-                            synchronized (InteractionCount.class) {
-                                parser = PARSER;
-                                if (parser == null) {
-                                    parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                    PARSER = parser;
-                                }
-                            }
-                        }
-                        return parser;
-                    case GET_MEMOIZED_IS_INITIALIZED:
-                        return (byte) 1;
-                    case SET_MEMOIZED_IS_INITIALIZED:
-                        return null;
-                    default:
-                        throw new UnsupportedOperationException();
-                }
-            }
-
-            static {
-                GeneratedMessageLite.registerDefaultInstance(InteractionCount.class, DEFAULT_INSTANCE);
-            }
-
-            public static InteractionCount getDefaultInstance() {
-                return DEFAULT_INSTANCE;
-            }
-
-            public static Parser<InteractionCount> parser() {
-                return DEFAULT_INSTANCE.getParserForType();
-            }
+        public static Parser<Program> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasPackageName() {
@@ -3248,10 +2252,6 @@ public final class TvlauncherClientLog {
 
         public String getPackageName() {
             return this.packageName_;
-        }
-
-        public ByteString getPackageNameBytes() {
-            return ByteString.copyFromUtf8(this.packageName_);
         }
 
         /* access modifiers changed from: private */
@@ -3264,10 +2264,8 @@ public final class TvlauncherClientLog {
             throw new NullPointerException();
         }
 
-        /* access modifiers changed from: private */
-        public void clearPackageName() {
-            this.bitField0_ &= -2;
-            this.packageName_ = getDefaultInstance().getPackageName();
+        public ByteString getPackageNameBytes() {
+            return ByteString.copyFromUtf8(this.packageName_);
         }
 
         /* access modifiers changed from: private */
@@ -3278,6 +2276,12 @@ public final class TvlauncherClientLog {
                 return;
             }
             throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearPackageName() {
+            this.bitField0_ &= -2;
+            this.packageName_ = getDefaultInstance().getPackageName();
         }
 
         public boolean hasMetadataHashCode() {
@@ -3471,10 +2475,6 @@ public final class TvlauncherClientLog {
             return this.genre_;
         }
 
-        public ByteString getGenreBytes() {
-            return ByteString.copyFromUtf8(this.genre_);
-        }
-
         /* access modifiers changed from: private */
         public void setGenre(String value) {
             if (value != null) {
@@ -3485,10 +2485,8 @@ public final class TvlauncherClientLog {
             throw new NullPointerException();
         }
 
-        /* access modifiers changed from: private */
-        public void clearGenre() {
-            this.bitField0_ &= -65;
-            this.genre_ = getDefaultInstance().getGenre();
+        public ByteString getGenreBytes() {
+            return ByteString.copyFromUtf8(this.genre_);
         }
 
         /* access modifiers changed from: private */
@@ -3499,6 +2497,12 @@ public final class TvlauncherClientLog {
                 return;
             }
             throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearGenre() {
+            this.bitField0_ &= -65;
+            this.genre_ = getDefaultInstance().getGenre();
         }
 
         public boolean hasIsLive() {
@@ -3601,60 +2605,1108 @@ public final class TvlauncherClientLog {
             this.hasBadge_ = false;
         }
 
-        public static Program parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (Program) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new Program();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\f\u0000\u0001\u0001\f\f\u0000\u0000\u0000\u0001\b\u0000\u0002\u0002\u0001\u0003\f\u0002\u0004\t\u0003\u0005\t\u0004\u0006\t\u0005\u0007\b\u0006\b\u0007\u0007\t\u0007\b\n\u0007\t\u000b\u0007\n\f\u0007\u000b", new Object[]{"bitField0_", "packageName_", "metadataHashCode_", "type_", Type.internalGetVerifier(), "rating_", "preview_", "interactionCount_", "genre_", "isLive_", "hasDescription_", "hasContentRating_", "hasProgress_", "hasBadge_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<Program> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (Program.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
-        public static Program parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (Program) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        public enum Type implements Internal.EnumLite {
+            MOVIE(1),
+            TV_SERIES(2),
+            TV_SEASON(3),
+            TV_EPISODE(4),
+            CLIP(5),
+            EVENT(6),
+            CHANNEL(7),
+            TRACK(8),
+            ALBUM(9),
+            ARTIST(10),
+            PLAYLIST(11),
+            STATION(12),
+            GAME(13);
+
+            public static final int ALBUM_VALUE = 9;
+            public static final int ARTIST_VALUE = 10;
+            public static final int CHANNEL_VALUE = 7;
+            public static final int CLIP_VALUE = 5;
+            public static final int EVENT_VALUE = 6;
+            public static final int GAME_VALUE = 13;
+            public static final int MOVIE_VALUE = 1;
+            public static final int PLAYLIST_VALUE = 11;
+            public static final int STATION_VALUE = 12;
+            public static final int TRACK_VALUE = 8;
+            public static final int TV_EPISODE_VALUE = 4;
+            public static final int TV_SEASON_VALUE = 3;
+            public static final int TV_SERIES_VALUE = 2;
+            private static final Internal.EnumLiteMap<Type> internalValueMap = new Internal.EnumLiteMap<Type>() {
+                public Type findValueByNumber(int number) {
+                    return Type.forNumber(number);
+                }
+            };
+            private final int value;
+
+            private Type(int value2) {
+                this.value = value2;
+            }
+
+            public static Type forNumber(int value2) {
+                switch (value2) {
+                    case 1:
+                        return MOVIE;
+                    case 2:
+                        return TV_SERIES;
+                    case 3:
+                        return TV_SEASON;
+                    case 4:
+                        return TV_EPISODE;
+                    case 5:
+                        return CLIP;
+                    case 6:
+                        return EVENT;
+                    case 7:
+                        return CHANNEL;
+                    case 8:
+                        return TRACK;
+                    case 9:
+                        return ALBUM;
+                    case 10:
+                        return ARTIST;
+                    case 11:
+                        return PLAYLIST;
+                    case 12:
+                        return STATION;
+                    case 13:
+                        return GAME;
+                    default:
+                        return null;
+                }
+            }
+
+            public static Internal.EnumLiteMap<Type> internalGetValueMap() {
+                return internalValueMap;
+            }
+
+            public static Internal.EnumVerifier internalGetVerifier() {
+                return TypeVerifier.INSTANCE;
+            }
+
+            public final int getNumber() {
+                return this.value;
+            }
+
+            private static final class TypeVerifier implements Internal.EnumVerifier {
+                static final Internal.EnumVerifier INSTANCE = new TypeVerifier();
+
+                private TypeVerifier() {
+                }
+
+                public boolean isInRange(int number) {
+                    return Type.forNumber(number) != null;
+                }
+            }
         }
 
-        public static Program parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (Program) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        public interface InteractionCountOrBuilder extends MessageLiteOrBuilder {
+            long getCount();
+
+            InteractionCount.Type getType();
+
+            boolean hasCount();
+
+            boolean hasType();
         }
 
-        public static Program parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (Program) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        public interface PreviewOrBuilder extends MessageLiteOrBuilder {
+            int getDurationSeconds();
+
+            int getPlayedDurationSeconds();
+
+            long getPlayedTimestamp();
+
+            Preview.PreviewType getType();
+
+            boolean hasDurationSeconds();
+
+            boolean hasPlayedDurationSeconds();
+
+            boolean hasPlayedTimestamp();
+
+            boolean hasType();
         }
 
-        public static Program parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (Program) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        public interface RatingOrBuilder extends MessageLiteOrBuilder {
+            float getPercentage();
+
+            float getStarCount();
+
+            long getThumbsDownCount();
+
+            long getThumbsUpCount();
+
+            boolean hasPercentage();
+
+            boolean hasStarCount();
+
+            boolean hasThumbsDownCount();
+
+            boolean hasThumbsUpCount();
         }
 
-        public static Program parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (Program) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
+        public static final class Rating extends GeneratedMessageLite<Rating, Builder> implements RatingOrBuilder {
+            /* access modifiers changed from: private */
+            public static final Rating DEFAULT_INSTANCE = new Rating();
+            public static final int PERCENTAGE_FIELD_NUMBER = 2;
+            public static final int STAR_COUNT_FIELD_NUMBER = 1;
+            public static final int THUMBS_DOWN_COUNT_FIELD_NUMBER = 4;
+            public static final int THUMBS_UP_COUNT_FIELD_NUMBER = 3;
+            private static volatile Parser<Rating> PARSER = null;
+
+            static {
+                GeneratedMessageLite.registerDefaultInstance(Rating.class, DEFAULT_INSTANCE);
+            }
+
+            @ProtoPresenceBits(mo28548id = 0)
+            private int bitField0_;
+            @ProtoField(fieldNumber = 2, isRequired = false, type = FieldType.FLOAT)
+            @ProtoPresenceCheckedField(mask = 2, presenceBitsId = 0)
+            private float percentage_;
+            @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.FLOAT)
+            @ProtoPresenceCheckedField(mask = 1, presenceBitsId = 0)
+            private float starCount_;
+            @ProtoField(fieldNumber = 4, isRequired = false, type = FieldType.UINT64)
+            @ProtoPresenceCheckedField(mask = 8, presenceBitsId = 0)
+            private long thumbsDownCount_;
+            @ProtoField(fieldNumber = 3, isRequired = false, type = FieldType.UINT64)
+            @ProtoPresenceCheckedField(mask = 4, presenceBitsId = 0)
+            private long thumbsUpCount_;
+
+            private Rating() {
+            }
+
+            public static Rating parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+                return (Rating) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+            }
+
+            public static Rating parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+                return (Rating) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+            }
+
+            public static Rating parseFrom(ByteString data) throws InvalidProtocolBufferException {
+                return (Rating) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+            }
+
+            public static Rating parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+                return (Rating) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+            }
+
+            public static Rating parseFrom(byte[] data) throws InvalidProtocolBufferException {
+                return (Rating) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+            }
+
+            public static Rating parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+                return (Rating) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+            }
+
+            public static Rating parseFrom(InputStream input) throws IOException {
+                return (Rating) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+            }
+
+            public static Rating parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+                return (Rating) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+            }
+
+            public static Rating parseDelimitedFrom(InputStream input) throws IOException {
+                return (Rating) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+            }
+
+            public static Rating parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+                return (Rating) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+            }
+
+            public static Rating parseFrom(CodedInputStream input) throws IOException {
+                return (Rating) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+            }
+
+            public static Rating parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+                return (Rating) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+            }
+
+            public static Builder newBuilder() {
+                return (Builder) DEFAULT_INSTANCE.createBuilder();
+            }
+
+            public static Builder newBuilder(Rating prototype) {
+                return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+            }
+
+            public static Rating getDefaultInstance() {
+                return DEFAULT_INSTANCE;
+            }
+
+            public static Parser<Rating> parser() {
+                return DEFAULT_INSTANCE.getParserForType();
+            }
+
+            public boolean hasStarCount() {
+                return (this.bitField0_ & 1) != 0;
+            }
+
+            public float getStarCount() {
+                return this.starCount_;
+            }
+
+            /* access modifiers changed from: private */
+            public void setStarCount(float value) {
+                this.bitField0_ |= 1;
+                this.starCount_ = value;
+            }
+
+            /* access modifiers changed from: private */
+            public void clearStarCount() {
+                this.bitField0_ &= -2;
+                this.starCount_ = 0.0f;
+            }
+
+            public boolean hasPercentage() {
+                return (this.bitField0_ & 2) != 0;
+            }
+
+            public float getPercentage() {
+                return this.percentage_;
+            }
+
+            /* access modifiers changed from: private */
+            public void setPercentage(float value) {
+                this.bitField0_ |= 2;
+                this.percentage_ = value;
+            }
+
+            /* access modifiers changed from: private */
+            public void clearPercentage() {
+                this.bitField0_ &= -3;
+                this.percentage_ = 0.0f;
+            }
+
+            public boolean hasThumbsUpCount() {
+                return (this.bitField0_ & 4) != 0;
+            }
+
+            public long getThumbsUpCount() {
+                return this.thumbsUpCount_;
+            }
+
+            /* access modifiers changed from: private */
+            public void setThumbsUpCount(long value) {
+                this.bitField0_ |= 4;
+                this.thumbsUpCount_ = value;
+            }
+
+            /* access modifiers changed from: private */
+            public void clearThumbsUpCount() {
+                this.bitField0_ &= -5;
+                this.thumbsUpCount_ = 0;
+            }
+
+            public boolean hasThumbsDownCount() {
+                return (this.bitField0_ & 8) != 0;
+            }
+
+            public long getThumbsDownCount() {
+                return this.thumbsDownCount_;
+            }
+
+            /* access modifiers changed from: private */
+            public void setThumbsDownCount(long value) {
+                this.bitField0_ |= 8;
+                this.thumbsDownCount_ = value;
+            }
+
+            /* access modifiers changed from: private */
+            public void clearThumbsDownCount() {
+                this.bitField0_ &= -9;
+                this.thumbsDownCount_ = 0;
+            }
+
+            /* access modifiers changed from: protected */
+            public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+                switch (method) {
+                    case NEW_MUTABLE_INSTANCE:
+                        return new Rating();
+                    case NEW_BUILDER:
+                        return new Builder();
+                    case BUILD_MESSAGE_INFO:
+                        return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0004\u0000\u0001\u0001\u0004\u0004\u0000\u0000\u0000\u0001\u0001\u0000\u0002\u0001\u0001\u0003\u0003\u0002\u0004\u0003\u0003", new Object[]{"bitField0_", "starCount_", "percentage_", "thumbsUpCount_", "thumbsDownCount_"});
+                    case GET_DEFAULT_INSTANCE:
+                        return DEFAULT_INSTANCE;
+                    case GET_PARSER:
+                        Parser<Rating> parser = PARSER;
+                        if (parser == null) {
+                            synchronized (Rating.class) {
+                                parser = PARSER;
+                                if (parser == null) {
+                                    parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                    PARSER = parser;
+                                }
+                            }
+                        }
+                        return parser;
+                    case GET_MEMOIZED_IS_INITIALIZED:
+                        return (byte) 1;
+                    case SET_MEMOIZED_IS_INITIALIZED:
+                        return null;
+                    default:
+                        throw new UnsupportedOperationException();
+                }
+            }
+
+            public static final class Builder extends GeneratedMessageLite.Builder<Rating, Builder> implements RatingOrBuilder {
+                private Builder() {
+                    super(Rating.DEFAULT_INSTANCE);
+                }
+
+                public boolean hasStarCount() {
+                    return ((Rating) this.instance).hasStarCount();
+                }
+
+                public float getStarCount() {
+                    return ((Rating) this.instance).getStarCount();
+                }
+
+                public Builder setStarCount(float value) {
+                    copyOnWrite();
+                    ((Rating) this.instance).setStarCount(value);
+                    return this;
+                }
+
+                public Builder clearStarCount() {
+                    copyOnWrite();
+                    ((Rating) this.instance).clearStarCount();
+                    return this;
+                }
+
+                public boolean hasPercentage() {
+                    return ((Rating) this.instance).hasPercentage();
+                }
+
+                public float getPercentage() {
+                    return ((Rating) this.instance).getPercentage();
+                }
+
+                public Builder setPercentage(float value) {
+                    copyOnWrite();
+                    ((Rating) this.instance).setPercentage(value);
+                    return this;
+                }
+
+                public Builder clearPercentage() {
+                    copyOnWrite();
+                    ((Rating) this.instance).clearPercentage();
+                    return this;
+                }
+
+                public boolean hasThumbsUpCount() {
+                    return ((Rating) this.instance).hasThumbsUpCount();
+                }
+
+                public long getThumbsUpCount() {
+                    return ((Rating) this.instance).getThumbsUpCount();
+                }
+
+                public Builder setThumbsUpCount(long value) {
+                    copyOnWrite();
+                    ((Rating) this.instance).setThumbsUpCount(value);
+                    return this;
+                }
+
+                public Builder clearThumbsUpCount() {
+                    copyOnWrite();
+                    ((Rating) this.instance).clearThumbsUpCount();
+                    return this;
+                }
+
+                public boolean hasThumbsDownCount() {
+                    return ((Rating) this.instance).hasThumbsDownCount();
+                }
+
+                public long getThumbsDownCount() {
+                    return ((Rating) this.instance).getThumbsDownCount();
+                }
+
+                public Builder setThumbsDownCount(long value) {
+                    copyOnWrite();
+                    ((Rating) this.instance).setThumbsDownCount(value);
+                    return this;
+                }
+
+                public Builder clearThumbsDownCount() {
+                    copyOnWrite();
+                    ((Rating) this.instance).clearThumbsDownCount();
+                    return this;
+                }
+            }
         }
 
-        public static Program parseFrom(InputStream input) throws IOException {
-            return (Program) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
+        public static final class Preview extends GeneratedMessageLite<Preview, Builder> implements PreviewOrBuilder {
+            /* access modifiers changed from: private */
+            public static final Preview DEFAULT_INSTANCE = new Preview();
+            public static final int DURATION_SECONDS_FIELD_NUMBER = 2;
+            public static final int PLAYED_DURATION_SECONDS_FIELD_NUMBER = 4;
+            public static final int PLAYED_TIMESTAMP_FIELD_NUMBER = 3;
+            public static final int TYPE_FIELD_NUMBER = 1;
+            private static volatile Parser<Preview> PARSER = null;
+
+            static {
+                GeneratedMessageLite.registerDefaultInstance(Preview.class, DEFAULT_INSTANCE);
+            }
+
+            @ProtoPresenceBits(mo28548id = 0)
+            private int bitField0_;
+            @ProtoField(fieldNumber = 2, isRequired = false, type = FieldType.INT32)
+            @ProtoPresenceCheckedField(mask = 2, presenceBitsId = 0)
+            private int durationSeconds_;
+            @ProtoField(fieldNumber = 4, isRequired = false, type = FieldType.INT32)
+            @ProtoPresenceCheckedField(mask = 8, presenceBitsId = 0)
+            private int playedDurationSeconds_;
+            @ProtoField(fieldNumber = 3, isRequired = false, type = FieldType.INT64)
+            @ProtoPresenceCheckedField(mask = 4, presenceBitsId = 0)
+            private long playedTimestamp_;
+            @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.ENUM)
+            @ProtoPresenceCheckedField(mask = 1, presenceBitsId = 0)
+            private int type_ = 1;
+
+            private Preview() {
+            }
+
+            public static Preview parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+                return (Preview) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+            }
+
+            public static Preview parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+                return (Preview) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+            }
+
+            public static Preview parseFrom(ByteString data) throws InvalidProtocolBufferException {
+                return (Preview) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+            }
+
+            public static Preview parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+                return (Preview) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+            }
+
+            public static Preview parseFrom(byte[] data) throws InvalidProtocolBufferException {
+                return (Preview) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+            }
+
+            public static Preview parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+                return (Preview) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+            }
+
+            public static Preview parseFrom(InputStream input) throws IOException {
+                return (Preview) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+            }
+
+            public static Preview parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+                return (Preview) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+            }
+
+            public static Preview parseDelimitedFrom(InputStream input) throws IOException {
+                return (Preview) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+            }
+
+            public static Preview parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+                return (Preview) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+            }
+
+            public static Preview parseFrom(CodedInputStream input) throws IOException {
+                return (Preview) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+            }
+
+            public static Preview parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+                return (Preview) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+            }
+
+            public static Builder newBuilder() {
+                return (Builder) DEFAULT_INSTANCE.createBuilder();
+            }
+
+            public static Builder newBuilder(Preview prototype) {
+                return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+            }
+
+            public static Preview getDefaultInstance() {
+                return DEFAULT_INSTANCE;
+            }
+
+            public static Parser<Preview> parser() {
+                return DEFAULT_INSTANCE.getParserForType();
+            }
+
+            public boolean hasType() {
+                return (this.bitField0_ & 1) != 0;
+            }
+
+            public PreviewType getType() {
+                PreviewType result = PreviewType.forNumber(this.type_);
+                return result == null ? PreviewType.VIDEO : result;
+            }
+
+            /* access modifiers changed from: private */
+            public void setType(PreviewType value) {
+                if (value != null) {
+                    this.bitField0_ |= 1;
+                    this.type_ = value.getNumber();
+                    return;
+                }
+                throw new NullPointerException();
+            }
+
+            /* access modifiers changed from: private */
+            public void clearType() {
+                this.bitField0_ &= -2;
+                this.type_ = 1;
+            }
+
+            public boolean hasDurationSeconds() {
+                return (this.bitField0_ & 2) != 0;
+            }
+
+            public int getDurationSeconds() {
+                return this.durationSeconds_;
+            }
+
+            /* access modifiers changed from: private */
+            public void setDurationSeconds(int value) {
+                this.bitField0_ |= 2;
+                this.durationSeconds_ = value;
+            }
+
+            /* access modifiers changed from: private */
+            public void clearDurationSeconds() {
+                this.bitField0_ &= -3;
+                this.durationSeconds_ = 0;
+            }
+
+            public boolean hasPlayedTimestamp() {
+                return (this.bitField0_ & 4) != 0;
+            }
+
+            public long getPlayedTimestamp() {
+                return this.playedTimestamp_;
+            }
+
+            /* access modifiers changed from: private */
+            public void setPlayedTimestamp(long value) {
+                this.bitField0_ |= 4;
+                this.playedTimestamp_ = value;
+            }
+
+            /* access modifiers changed from: private */
+            public void clearPlayedTimestamp() {
+                this.bitField0_ &= -5;
+                this.playedTimestamp_ = 0;
+            }
+
+            public boolean hasPlayedDurationSeconds() {
+                return (this.bitField0_ & 8) != 0;
+            }
+
+            public int getPlayedDurationSeconds() {
+                return this.playedDurationSeconds_;
+            }
+
+            /* access modifiers changed from: private */
+            public void setPlayedDurationSeconds(int value) {
+                this.bitField0_ |= 8;
+                this.playedDurationSeconds_ = value;
+            }
+
+            /* access modifiers changed from: private */
+            public void clearPlayedDurationSeconds() {
+                this.bitField0_ &= -9;
+                this.playedDurationSeconds_ = 0;
+            }
+
+            /* access modifiers changed from: protected */
+            public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+                switch (method) {
+                    case NEW_MUTABLE_INSTANCE:
+                        return new Preview();
+                    case NEW_BUILDER:
+                        return new Builder();
+                    case BUILD_MESSAGE_INFO:
+                        return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0004\u0000\u0001\u0001\u0004\u0004\u0000\u0000\u0000\u0001\f\u0000\u0002\u0004\u0001\u0003\u0002\u0002\u0004\u0004\u0003", new Object[]{"bitField0_", "type_", PreviewType.internalGetVerifier(), "durationSeconds_", "playedTimestamp_", "playedDurationSeconds_"});
+                    case GET_DEFAULT_INSTANCE:
+                        return DEFAULT_INSTANCE;
+                    case GET_PARSER:
+                        Parser<Preview> parser = PARSER;
+                        if (parser == null) {
+                            synchronized (Preview.class) {
+                                parser = PARSER;
+                                if (parser == null) {
+                                    parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                    PARSER = parser;
+                                }
+                            }
+                        }
+                        return parser;
+                    case GET_MEMOIZED_IS_INITIALIZED:
+                        return (byte) 1;
+                    case SET_MEMOIZED_IS_INITIALIZED:
+                        return null;
+                    default:
+                        throw new UnsupportedOperationException();
+                }
+            }
+
+            public enum PreviewType implements Internal.EnumLite {
+                VIDEO(1),
+                AUDIO(2);
+
+                public static final int AUDIO_VALUE = 2;
+                public static final int VIDEO_VALUE = 1;
+                private static final Internal.EnumLiteMap<PreviewType> internalValueMap = new Internal.EnumLiteMap<PreviewType>() {
+                    public PreviewType findValueByNumber(int number) {
+                        return PreviewType.forNumber(number);
+                    }
+                };
+                private final int value;
+
+                private PreviewType(int value2) {
+                    this.value = value2;
+                }
+
+                public static PreviewType forNumber(int value2) {
+                    if (value2 == 1) {
+                        return VIDEO;
+                    }
+                    if (value2 != 2) {
+                        return null;
+                    }
+                    return AUDIO;
+                }
+
+                public static Internal.EnumLiteMap<PreviewType> internalGetValueMap() {
+                    return internalValueMap;
+                }
+
+                public static Internal.EnumVerifier internalGetVerifier() {
+                    return PreviewTypeVerifier.INSTANCE;
+                }
+
+                public final int getNumber() {
+                    return this.value;
+                }
+
+                private static final class PreviewTypeVerifier implements Internal.EnumVerifier {
+                    static final Internal.EnumVerifier INSTANCE = new PreviewTypeVerifier();
+
+                    private PreviewTypeVerifier() {
+                    }
+
+                    public boolean isInRange(int number) {
+                        return PreviewType.forNumber(number) != null;
+                    }
+                }
+            }
+
+            public static final class Builder extends GeneratedMessageLite.Builder<Preview, Builder> implements PreviewOrBuilder {
+                private Builder() {
+                    super(Preview.DEFAULT_INSTANCE);
+                }
+
+                public boolean hasType() {
+                    return ((Preview) this.instance).hasType();
+                }
+
+                public PreviewType getType() {
+                    return ((Preview) this.instance).getType();
+                }
+
+                public Builder setType(PreviewType value) {
+                    copyOnWrite();
+                    ((Preview) this.instance).setType(value);
+                    return this;
+                }
+
+                public Builder clearType() {
+                    copyOnWrite();
+                    ((Preview) this.instance).clearType();
+                    return this;
+                }
+
+                public boolean hasDurationSeconds() {
+                    return ((Preview) this.instance).hasDurationSeconds();
+                }
+
+                public int getDurationSeconds() {
+                    return ((Preview) this.instance).getDurationSeconds();
+                }
+
+                public Builder setDurationSeconds(int value) {
+                    copyOnWrite();
+                    ((Preview) this.instance).setDurationSeconds(value);
+                    return this;
+                }
+
+                public Builder clearDurationSeconds() {
+                    copyOnWrite();
+                    ((Preview) this.instance).clearDurationSeconds();
+                    return this;
+                }
+
+                public boolean hasPlayedTimestamp() {
+                    return ((Preview) this.instance).hasPlayedTimestamp();
+                }
+
+                public long getPlayedTimestamp() {
+                    return ((Preview) this.instance).getPlayedTimestamp();
+                }
+
+                public Builder setPlayedTimestamp(long value) {
+                    copyOnWrite();
+                    ((Preview) this.instance).setPlayedTimestamp(value);
+                    return this;
+                }
+
+                public Builder clearPlayedTimestamp() {
+                    copyOnWrite();
+                    ((Preview) this.instance).clearPlayedTimestamp();
+                    return this;
+                }
+
+                public boolean hasPlayedDurationSeconds() {
+                    return ((Preview) this.instance).hasPlayedDurationSeconds();
+                }
+
+                public int getPlayedDurationSeconds() {
+                    return ((Preview) this.instance).getPlayedDurationSeconds();
+                }
+
+                public Builder setPlayedDurationSeconds(int value) {
+                    copyOnWrite();
+                    ((Preview) this.instance).setPlayedDurationSeconds(value);
+                    return this;
+                }
+
+                public Builder clearPlayedDurationSeconds() {
+                    copyOnWrite();
+                    ((Preview) this.instance).clearPlayedDurationSeconds();
+                    return this;
+                }
+            }
         }
 
-        public static Program parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (Program) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
+        @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
+        public static final class InteractionCount extends GeneratedMessageLite<InteractionCount, Builder> implements InteractionCountOrBuilder {
+            public static final int COUNT_FIELD_NUMBER = 2;
+            /* access modifiers changed from: private */
+            public static final InteractionCount DEFAULT_INSTANCE = new InteractionCount();
+            public static final int TYPE_FIELD_NUMBER = 1;
+            private static volatile Parser<InteractionCount> PARSER = null;
 
-        public static Program parseDelimitedFrom(InputStream input) throws IOException {
-            return (Program) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
+            static {
+                GeneratedMessageLite.registerDefaultInstance(InteractionCount.class, DEFAULT_INSTANCE);
+            }
 
-        public static Program parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (Program) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
+            @ProtoPresenceBits(mo28548id = 0)
+            private int bitField0_;
+            @ProtoField(fieldNumber = 2, isRequired = false, type = FieldType.INT64)
+            @ProtoPresenceCheckedField(mask = 2, presenceBitsId = 0)
+            private long count_;
+            @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.ENUM)
+            @ProtoPresenceCheckedField(mask = 1, presenceBitsId = 0)
+            private int type_ = 1;
 
-        public static Program parseFrom(CodedInputStream input) throws IOException {
-            return (Program) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
+            private InteractionCount() {
+            }
 
-        public static Program parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (Program) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
+            public static InteractionCount parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+                return (InteractionCount) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+            }
 
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
+            public static InteractionCount parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+                return (InteractionCount) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+            }
 
-        public static Builder newBuilder(Program prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+            public static InteractionCount parseFrom(ByteString data) throws InvalidProtocolBufferException {
+                return (InteractionCount) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+            }
+
+            public static InteractionCount parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+                return (InteractionCount) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+            }
+
+            public static InteractionCount parseFrom(byte[] data) throws InvalidProtocolBufferException {
+                return (InteractionCount) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+            }
+
+            public static InteractionCount parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+                return (InteractionCount) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+            }
+
+            public static InteractionCount parseFrom(InputStream input) throws IOException {
+                return (InteractionCount) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+            }
+
+            public static InteractionCount parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+                return (InteractionCount) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+            }
+
+            public static InteractionCount parseDelimitedFrom(InputStream input) throws IOException {
+                return (InteractionCount) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+            }
+
+            public static InteractionCount parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+                return (InteractionCount) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+            }
+
+            public static InteractionCount parseFrom(CodedInputStream input) throws IOException {
+                return (InteractionCount) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+            }
+
+            public static InteractionCount parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+                return (InteractionCount) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+            }
+
+            public static Builder newBuilder() {
+                return (Builder) DEFAULT_INSTANCE.createBuilder();
+            }
+
+            public static Builder newBuilder(InteractionCount prototype) {
+                return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+            }
+
+            public static InteractionCount getDefaultInstance() {
+                return DEFAULT_INSTANCE;
+            }
+
+            public static Parser<InteractionCount> parser() {
+                return DEFAULT_INSTANCE.getParserForType();
+            }
+
+            public boolean hasType() {
+                return (this.bitField0_ & 1) != 0;
+            }
+
+            public Type getType() {
+                Type result = Type.forNumber(this.type_);
+                return result == null ? Type.VIEWS : result;
+            }
+
+            /* access modifiers changed from: private */
+            public void setType(Type value) {
+                if (value != null) {
+                    this.bitField0_ |= 1;
+                    this.type_ = value.getNumber();
+                    return;
+                }
+                throw new NullPointerException();
+            }
+
+            /* access modifiers changed from: private */
+            public void clearType() {
+                this.bitField0_ &= -2;
+                this.type_ = 1;
+            }
+
+            public boolean hasCount() {
+                return (this.bitField0_ & 2) != 0;
+            }
+
+            public long getCount() {
+                return this.count_;
+            }
+
+            /* access modifiers changed from: private */
+            public void setCount(long value) {
+                this.bitField0_ |= 2;
+                this.count_ = value;
+            }
+
+            /* access modifiers changed from: private */
+            public void clearCount() {
+                this.bitField0_ &= -3;
+                this.count_ = 0;
+            }
+
+            /* access modifiers changed from: protected */
+            public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+                switch (method) {
+                    case NEW_MUTABLE_INSTANCE:
+                        return new InteractionCount();
+                    case NEW_BUILDER:
+                        return new Builder();
+                    case BUILD_MESSAGE_INFO:
+                        return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0000\u0000\u0001\f\u0000\u0002\u0002\u0001", new Object[]{"bitField0_", "type_", Type.internalGetVerifier(), "count_"});
+                    case GET_DEFAULT_INSTANCE:
+                        return DEFAULT_INSTANCE;
+                    case GET_PARSER:
+                        Parser<InteractionCount> parser = PARSER;
+                        if (parser == null) {
+                            synchronized (InteractionCount.class) {
+                                parser = PARSER;
+                                if (parser == null) {
+                                    parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                    PARSER = parser;
+                                }
+                            }
+                        }
+                        return parser;
+                    case GET_MEMOIZED_IS_INITIALIZED:
+                        return (byte) 1;
+                    case SET_MEMOIZED_IS_INITIALIZED:
+                        return null;
+                    default:
+                        throw new UnsupportedOperationException();
+                }
+            }
+
+            public enum Type implements Internal.EnumLite {
+                VIEWS(1),
+                LISTENS(2),
+                FOLLOWERS(3),
+                FANS(4),
+                LIKES(5),
+                THUMBS(6),
+                VIEWERS(7);
+
+                public static final int FANS_VALUE = 4;
+                public static final int FOLLOWERS_VALUE = 3;
+                public static final int LIKES_VALUE = 5;
+                public static final int LISTENS_VALUE = 2;
+                public static final int THUMBS_VALUE = 6;
+                public static final int VIEWERS_VALUE = 7;
+                public static final int VIEWS_VALUE = 1;
+                private static final Internal.EnumLiteMap<Type> internalValueMap = new Internal.EnumLiteMap<Type>() {
+                    public Type findValueByNumber(int number) {
+                        return Type.forNumber(number);
+                    }
+                };
+                private final int value;
+
+                private Type(int value2) {
+                    this.value = value2;
+                }
+
+                public static Type forNumber(int value2) {
+                    switch (value2) {
+                        case 1:
+                            return VIEWS;
+                        case 2:
+                            return LISTENS;
+                        case 3:
+                            return FOLLOWERS;
+                        case 4:
+                            return FANS;
+                        case 5:
+                            return LIKES;
+                        case 6:
+                            return THUMBS;
+                        case 7:
+                            return VIEWERS;
+                        default:
+                            return null;
+                    }
+                }
+
+                public static Internal.EnumLiteMap<Type> internalGetValueMap() {
+                    return internalValueMap;
+                }
+
+                public static Internal.EnumVerifier internalGetVerifier() {
+                    return TypeVerifier.INSTANCE;
+                }
+
+                public final int getNumber() {
+                    return this.value;
+                }
+
+                private static final class TypeVerifier implements Internal.EnumVerifier {
+                    static final Internal.EnumVerifier INSTANCE = new TypeVerifier();
+
+                    private TypeVerifier() {
+                    }
+
+                    public boolean isInRange(int number) {
+                        return Type.forNumber(number) != null;
+                    }
+                }
+            }
+
+            public static final class Builder extends GeneratedMessageLite.Builder<InteractionCount, Builder> implements InteractionCountOrBuilder {
+                private Builder() {
+                    super(InteractionCount.DEFAULT_INSTANCE);
+                }
+
+                public boolean hasType() {
+                    return ((InteractionCount) this.instance).hasType();
+                }
+
+                public Type getType() {
+                    return ((InteractionCount) this.instance).getType();
+                }
+
+                public Builder setType(Type value) {
+                    copyOnWrite();
+                    ((InteractionCount) this.instance).setType(value);
+                    return this;
+                }
+
+                public Builder clearType() {
+                    copyOnWrite();
+                    ((InteractionCount) this.instance).clearType();
+                    return this;
+                }
+
+                public boolean hasCount() {
+                    return ((InteractionCount) this.instance).hasCount();
+                }
+
+                public long getCount() {
+                    return ((InteractionCount) this.instance).getCount();
+                }
+
+                public Builder setCount(long value) {
+                    copyOnWrite();
+                    ((InteractionCount) this.instance).setCount(value);
+                    return this;
+                }
+
+                public Builder clearCount() {
+                    copyOnWrite();
+                    ((InteractionCount) this.instance).clearCount();
+                    return this;
+                }
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<Program, Builder> implements ProgramOrBuilder {
@@ -3670,25 +3722,25 @@ public final class TvlauncherClientLog {
                 return ((Program) this.instance).getPackageName();
             }
 
-            public ByteString getPackageNameBytes() {
-                return ((Program) this.instance).getPackageNameBytes();
-            }
-
             public Builder setPackageName(String value) {
                 copyOnWrite();
                 ((Program) this.instance).setPackageName(value);
                 return this;
             }
 
-            public Builder clearPackageName() {
-                copyOnWrite();
-                ((Program) this.instance).clearPackageName();
-                return this;
+            public ByteString getPackageNameBytes() {
+                return ((Program) this.instance).getPackageNameBytes();
             }
 
             public Builder setPackageNameBytes(ByteString value) {
                 copyOnWrite();
                 ((Program) this.instance).setPackageNameBytes(value);
+                return this;
+            }
+
+            public Builder clearPackageName() {
+                copyOnWrite();
+                ((Program) this.instance).clearPackageName();
                 return this;
             }
 
@@ -3836,25 +3888,25 @@ public final class TvlauncherClientLog {
                 return ((Program) this.instance).getGenre();
             }
 
-            public ByteString getGenreBytes() {
-                return ((Program) this.instance).getGenreBytes();
-            }
-
             public Builder setGenre(String value) {
                 copyOnWrite();
                 ((Program) this.instance).setGenre(value);
                 return this;
             }
 
-            public Builder clearGenre() {
-                copyOnWrite();
-                ((Program) this.instance).clearGenre();
-                return this;
+            public ByteString getGenreBytes() {
+                return ((Program) this.instance).getGenreBytes();
             }
 
             public Builder setGenreBytes(ByteString value) {
                 copyOnWrite();
                 ((Program) this.instance).setGenreBytes(value);
+                return this;
+            }
+
+            public Builder clearGenre() {
+                copyOnWrite();
+                ((Program) this.instance).clearGenre();
                 return this;
             }
 
@@ -3958,50 +4010,6 @@ public final class TvlauncherClientLog {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new Program();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\f\u0000\u0001\u0001\f\f\u0000\u0000\u0000\u0001\b\u0000\u0002\u0002\u0001\u0003\f\u0002\u0004\t\u0003\u0005\t\u0004\u0006\t\u0005\u0007\b\u0006\b\u0007\u0007\t\u0007\b\n\u0007\t\u000b\u0007\n\f\u0007\u000b", new Object[]{"bitField0_", "packageName_", "metadataHashCode_", "type_", Type.internalGetVerifier(), "rating_", "preview_", "interactionCount_", "genre_", "isLive_", "hasDescription_", "hasContentRating_", "hasProgress_", "hasBadge_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<Program> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (Program.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(Program.class, DEFAULT_INSTANCE);
-        }
-
-        public static Program getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<Program> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -4011,11 +4019,16 @@ public final class TvlauncherClientLog {
         public static final int DENIAL_REASON_FIELD_NUMBER = 5;
         public static final int IS_LEGACY_FIELD_NUMBER = 6;
         public static final int PACKAGE_NAME_FIELD_NUMBER = 1;
-        private static volatile Parser<Channel> PARSER = null;
         public static final int POSITION_FIELD_NUMBER = 7;
         public static final int PROGRAMS_FIELD_NUMBER = 4;
         public static final int PROGRAM_COUNT_FIELD_NUMBER = 3;
         public static final int TITLE_FIELD_NUMBER = 2;
+        private static volatile Parser<Channel> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(Channel.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 5, isRequired = false, type = FieldType.ENUM)
@@ -4042,65 +4055,68 @@ public final class TvlauncherClientLog {
         private Channel() {
         }
 
-        public enum DenialReason implements Internal.EnumLite {
-            DENIED_BY_USER(1),
-            DIALOG_CLOSED(2),
-            APP_ERROR(3),
-            DENIED_BY_SYSTEM(4);
-            
-            public static final int APP_ERROR_VALUE = 3;
-            public static final int DENIED_BY_SYSTEM_VALUE = 4;
-            public static final int DENIED_BY_USER_VALUE = 1;
-            public static final int DIALOG_CLOSED_VALUE = 2;
-            private static final Internal.EnumLiteMap<DenialReason> internalValueMap = new Internal.EnumLiteMap<DenialReason>() {
-                public DenialReason findValueByNumber(int number) {
-                    return DenialReason.forNumber(number);
-                }
-            };
-            private final int value;
+        public static Channel parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (Channel) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
 
-            public final int getNumber() {
-                return this.value;
-            }
+        public static Channel parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (Channel) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-            public static DenialReason forNumber(int value2) {
-                if (value2 == 1) {
-                    return DENIED_BY_USER;
-                }
-                if (value2 == 2) {
-                    return DIALOG_CLOSED;
-                }
-                if (value2 == 3) {
-                    return APP_ERROR;
-                }
-                if (value2 != 4) {
-                    return null;
-                }
-                return DENIED_BY_SYSTEM;
-            }
+        public static Channel parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (Channel) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
 
-            public static Internal.EnumLiteMap<DenialReason> internalGetValueMap() {
-                return internalValueMap;
-            }
+        public static Channel parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (Channel) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-            public static Internal.EnumVerifier internalGetVerifier() {
-                return DenialReasonVerifier.INSTANCE;
-            }
+        public static Channel parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (Channel) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
 
-            private static final class DenialReasonVerifier implements Internal.EnumVerifier {
-                static final Internal.EnumVerifier INSTANCE = new DenialReasonVerifier();
+        public static Channel parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (Channel) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-                private DenialReasonVerifier() {
-                }
+        public static Channel parseFrom(InputStream input) throws IOException {
+            return (Channel) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
 
-                public boolean isInRange(int number) {
-                    return DenialReason.forNumber(number) != null;
-                }
-            }
+        public static Channel parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (Channel) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
 
-            private DenialReason(int value2) {
-                this.value = value2;
-            }
+        public static Channel parseDelimitedFrom(InputStream input) throws IOException {
+            return (Channel) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static Channel parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (Channel) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Channel parseFrom(CodedInputStream input) throws IOException {
+            return (Channel) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static Channel parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (Channel) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(Channel prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static Channel getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<Channel> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasPackageName() {
@@ -4109,10 +4125,6 @@ public final class TvlauncherClientLog {
 
         public String getPackageName() {
             return this.packageName_;
-        }
-
-        public ByteString getPackageNameBytes() {
-            return ByteString.copyFromUtf8(this.packageName_);
         }
 
         /* access modifiers changed from: private */
@@ -4125,10 +4137,8 @@ public final class TvlauncherClientLog {
             throw new NullPointerException();
         }
 
-        /* access modifiers changed from: private */
-        public void clearPackageName() {
-            this.bitField0_ &= -2;
-            this.packageName_ = getDefaultInstance().getPackageName();
+        public ByteString getPackageNameBytes() {
+            return ByteString.copyFromUtf8(this.packageName_);
         }
 
         /* access modifiers changed from: private */
@@ -4141,16 +4151,18 @@ public final class TvlauncherClientLog {
             throw new NullPointerException();
         }
 
+        /* access modifiers changed from: private */
+        public void clearPackageName() {
+            this.bitField0_ &= -2;
+            this.packageName_ = getDefaultInstance().getPackageName();
+        }
+
         public boolean hasTitle() {
             return (this.bitField0_ & 2) != 0;
         }
 
         public String getTitle() {
             return this.title_;
-        }
-
-        public ByteString getTitleBytes() {
-            return ByteString.copyFromUtf8(this.title_);
         }
 
         /* access modifiers changed from: private */
@@ -4163,10 +4175,8 @@ public final class TvlauncherClientLog {
             throw new NullPointerException();
         }
 
-        /* access modifiers changed from: private */
-        public void clearTitle() {
-            this.bitField0_ &= -3;
-            this.title_ = getDefaultInstance().getTitle();
+        public ByteString getTitleBytes() {
+            return ByteString.copyFromUtf8(this.title_);
         }
 
         /* access modifiers changed from: private */
@@ -4177,6 +4187,12 @@ public final class TvlauncherClientLog {
                 return;
             }
             throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearTitle() {
+            this.bitField0_ &= -3;
+            this.title_ = getDefaultInstance().getTitle();
         }
 
         public boolean hasProgramCount() {
@@ -4361,60 +4377,97 @@ public final class TvlauncherClientLog {
             this.position_ = 0;
         }
 
-        public static Channel parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (Channel) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new Channel();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0007\u0000\u0001\u0001\u0007\u0007\u0000\u0001\u0000\u0001\b\u0000\u0002\b\u0001\u0003\u0004\u0002\u0004\u001b\u0005\f\u0003\u0006\u0007\u0004\u0007\u0004\u0005", new Object[]{"bitField0_", "packageName_", "title_", "programCount_", "programs_", Program.class, "denialReason_", DenialReason.internalGetVerifier(), "isLegacy_", "position_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<Channel> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (Channel.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
-        public static Channel parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (Channel) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
+        public enum DenialReason implements Internal.EnumLite {
+            DENIED_BY_USER(1),
+            DIALOG_CLOSED(2),
+            APP_ERROR(3),
+            DENIED_BY_SYSTEM(4);
 
-        public static Channel parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (Channel) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
+            public static final int APP_ERROR_VALUE = 3;
+            public static final int DENIED_BY_SYSTEM_VALUE = 4;
+            public static final int DENIED_BY_USER_VALUE = 1;
+            public static final int DIALOG_CLOSED_VALUE = 2;
+            private static final Internal.EnumLiteMap<DenialReason> internalValueMap = new Internal.EnumLiteMap<DenialReason>() {
+                public DenialReason findValueByNumber(int number) {
+                    return DenialReason.forNumber(number);
+                }
+            };
+            private final int value;
 
-        public static Channel parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (Channel) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
+            private DenialReason(int value2) {
+                this.value = value2;
+            }
 
-        public static Channel parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (Channel) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
+            public static DenialReason forNumber(int value2) {
+                if (value2 == 1) {
+                    return DENIED_BY_USER;
+                }
+                if (value2 == 2) {
+                    return DIALOG_CLOSED;
+                }
+                if (value2 == 3) {
+                    return APP_ERROR;
+                }
+                if (value2 != 4) {
+                    return null;
+                }
+                return DENIED_BY_SYSTEM;
+            }
 
-        public static Channel parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (Channel) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
+            public static Internal.EnumLiteMap<DenialReason> internalGetValueMap() {
+                return internalValueMap;
+            }
 
-        public static Channel parseFrom(InputStream input) throws IOException {
-            return (Channel) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
+            public static Internal.EnumVerifier internalGetVerifier() {
+                return DenialReasonVerifier.INSTANCE;
+            }
 
-        public static Channel parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (Channel) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
+            public final int getNumber() {
+                return this.value;
+            }
 
-        public static Channel parseDelimitedFrom(InputStream input) throws IOException {
-            return (Channel) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
+            private static final class DenialReasonVerifier implements Internal.EnumVerifier {
+                static final Internal.EnumVerifier INSTANCE = new DenialReasonVerifier();
 
-        public static Channel parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (Channel) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
+                private DenialReasonVerifier() {
+                }
 
-        public static Channel parseFrom(CodedInputStream input) throws IOException {
-            return (Channel) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static Channel parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (Channel) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(Channel prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+                public boolean isInRange(int number) {
+                    return DenialReason.forNumber(number) != null;
+                }
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<Channel, Builder> implements ChannelOrBuilder {
@@ -4430,25 +4483,25 @@ public final class TvlauncherClientLog {
                 return ((Channel) this.instance).getPackageName();
             }
 
-            public ByteString getPackageNameBytes() {
-                return ((Channel) this.instance).getPackageNameBytes();
-            }
-
             public Builder setPackageName(String value) {
                 copyOnWrite();
                 ((Channel) this.instance).setPackageName(value);
                 return this;
             }
 
-            public Builder clearPackageName() {
-                copyOnWrite();
-                ((Channel) this.instance).clearPackageName();
-                return this;
+            public ByteString getPackageNameBytes() {
+                return ((Channel) this.instance).getPackageNameBytes();
             }
 
             public Builder setPackageNameBytes(ByteString value) {
                 copyOnWrite();
                 ((Channel) this.instance).setPackageNameBytes(value);
+                return this;
+            }
+
+            public Builder clearPackageName() {
+                copyOnWrite();
+                ((Channel) this.instance).clearPackageName();
                 return this;
             }
 
@@ -4460,25 +4513,25 @@ public final class TvlauncherClientLog {
                 return ((Channel) this.instance).getTitle();
             }
 
-            public ByteString getTitleBytes() {
-                return ((Channel) this.instance).getTitleBytes();
-            }
-
             public Builder setTitle(String value) {
                 copyOnWrite();
                 ((Channel) this.instance).setTitle(value);
                 return this;
             }
 
-            public Builder clearTitle() {
-                copyOnWrite();
-                ((Channel) this.instance).clearTitle();
-                return this;
+            public ByteString getTitleBytes() {
+                return ((Channel) this.instance).getTitleBytes();
             }
 
             public Builder setTitleBytes(ByteString value) {
                 copyOnWrite();
                 ((Channel) this.instance).setTitleBytes(value);
+                return this;
+            }
+
+            public Builder clearTitle() {
+                copyOnWrite();
+                ((Channel) this.instance).clearTitle();
                 return this;
             }
 
@@ -4628,50 +4681,6 @@ public final class TvlauncherClientLog {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new Channel();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0007\u0000\u0001\u0001\u0007\u0007\u0000\u0001\u0000\u0001\b\u0000\u0002\b\u0001\u0003\u0004\u0002\u0004\u001b\u0005\f\u0003\u0006\u0007\u0004\u0007\u0004\u0005", new Object[]{"bitField0_", "packageName_", "title_", "programCount_", "programs_", Program.class, "denialReason_", DenialReason.internalGetVerifier(), "isLegacy_", "position_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<Channel> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (Channel.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(Channel.class, DEFAULT_INSTANCE);
-        }
-
-        public static Channel getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<Channel> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -4683,6 +4692,11 @@ public final class TvlauncherClientLog {
         public static final ChannelCollection DEFAULT_INSTANCE = new ChannelCollection();
         public static final int LEGACY_COUNT_FIELD_NUMBER = 3;
         private static volatile Parser<ChannelCollection> PARSER;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(ChannelCollection.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 2, isRequired = false, type = FieldType.INT32)
@@ -4699,6 +4713,70 @@ public final class TvlauncherClientLog {
         private int legacyCount_;
 
         private ChannelCollection() {
+        }
+
+        public static ChannelCollection parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (ChannelCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static ChannelCollection parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (ChannelCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static ChannelCollection parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (ChannelCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static ChannelCollection parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (ChannelCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static ChannelCollection parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (ChannelCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static ChannelCollection parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (ChannelCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static ChannelCollection parseFrom(InputStream input) throws IOException {
+            return (ChannelCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static ChannelCollection parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (ChannelCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static ChannelCollection parseDelimitedFrom(InputStream input) throws IOException {
+            return (ChannelCollection) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static ChannelCollection parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (ChannelCollection) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static ChannelCollection parseFrom(CodedInputStream input) throws IOException {
+            return (ChannelCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static ChannelCollection parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (ChannelCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(ChannelCollection prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static ChannelCollection getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<ChannelCollection> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasCount() {
@@ -4781,60 +4859,36 @@ public final class TvlauncherClientLog {
             this.browsableLegacyCount_ = 0;
         }
 
-        public static ChannelCollection parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (ChannelCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static ChannelCollection parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (ChannelCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static ChannelCollection parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (ChannelCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static ChannelCollection parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (ChannelCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static ChannelCollection parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (ChannelCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static ChannelCollection parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (ChannelCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static ChannelCollection parseFrom(InputStream input) throws IOException {
-            return (ChannelCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static ChannelCollection parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (ChannelCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static ChannelCollection parseDelimitedFrom(InputStream input) throws IOException {
-            return (ChannelCollection) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static ChannelCollection parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (ChannelCollection) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static ChannelCollection parseFrom(CodedInputStream input) throws IOException {
-            return (ChannelCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static ChannelCollection parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (ChannelCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(ChannelCollection prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new ChannelCollection();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0004\u0000\u0001\u0001\u0004\u0004\u0000\u0000\u0000\u0001\u0004\u0000\u0002\u0004\u0001\u0003\u0004\u0002\u0004\u0004\u0003", new Object[]{"bitField0_", "count_", "browsableCount_", "legacyCount_", "browsableLegacyCount_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<ChannelCollection> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (ChannelCollection.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<ChannelCollection, Builder> implements ChannelCollectionOrBuilder {
@@ -4922,59 +4976,20 @@ public final class TvlauncherClientLog {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new ChannelCollection();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0004\u0000\u0001\u0001\u0004\u0004\u0000\u0000\u0000\u0001\u0004\u0000\u0002\u0004\u0001\u0003\u0004\u0002\u0004\u0004\u0003", new Object[]{"bitField0_", "count_", "browsableCount_", "legacyCount_", "browsableLegacyCount_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<ChannelCollection> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (ChannelCollection.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(ChannelCollection.class, DEFAULT_INSTANCE);
-        }
-
-        public static ChannelCollection getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<ChannelCollection> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
     public static final class WatchNextChannel extends GeneratedMessageLite<WatchNextChannel, Builder> implements WatchNextChannelOrBuilder {
         /* access modifiers changed from: private */
         public static final WatchNextChannel DEFAULT_INSTANCE = new WatchNextChannel();
-        private static volatile Parser<WatchNextChannel> PARSER = null;
         public static final int PROGRAMS_FIELD_NUMBER = 2;
         public static final int PROGRAM_COUNT_FIELD_NUMBER = 1;
+        private static volatile Parser<WatchNextChannel> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(WatchNextChannel.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.INT32)
@@ -4984,6 +4999,70 @@ public final class TvlauncherClientLog {
         private Internal.ProtobufList<Program> programs_ = emptyProtobufList();
 
         private WatchNextChannel() {
+        }
+
+        public static WatchNextChannel parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (WatchNextChannel) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static WatchNextChannel parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (WatchNextChannel) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static WatchNextChannel parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (WatchNextChannel) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static WatchNextChannel parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (WatchNextChannel) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static WatchNextChannel parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (WatchNextChannel) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static WatchNextChannel parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (WatchNextChannel) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static WatchNextChannel parseFrom(InputStream input) throws IOException {
+            return (WatchNextChannel) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static WatchNextChannel parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (WatchNextChannel) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static WatchNextChannel parseDelimitedFrom(InputStream input) throws IOException {
+            return (WatchNextChannel) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static WatchNextChannel parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (WatchNextChannel) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static WatchNextChannel parseFrom(CodedInputStream input) throws IOException {
+            return (WatchNextChannel) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static WatchNextChannel parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (WatchNextChannel) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(WatchNextChannel prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static WatchNextChannel getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<WatchNextChannel> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasProgramCount() {
@@ -5103,60 +5182,36 @@ public final class TvlauncherClientLog {
             this.programs_.remove(index);
         }
 
-        public static WatchNextChannel parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (WatchNextChannel) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static WatchNextChannel parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (WatchNextChannel) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static WatchNextChannel parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (WatchNextChannel) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static WatchNextChannel parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (WatchNextChannel) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static WatchNextChannel parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (WatchNextChannel) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static WatchNextChannel parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (WatchNextChannel) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static WatchNextChannel parseFrom(InputStream input) throws IOException {
-            return (WatchNextChannel) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static WatchNextChannel parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (WatchNextChannel) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static WatchNextChannel parseDelimitedFrom(InputStream input) throws IOException {
-            return (WatchNextChannel) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static WatchNextChannel parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (WatchNextChannel) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static WatchNextChannel parseFrom(CodedInputStream input) throws IOException {
-            return (WatchNextChannel) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static WatchNextChannel parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (WatchNextChannel) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(WatchNextChannel prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new WatchNextChannel();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0001\u0000\u0001\u0004\u0000\u0002\u001b", new Object[]{"bitField0_", "programCount_", "programs_", Program.class});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<WatchNextChannel> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (WatchNextChannel.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<WatchNextChannel, Builder> implements WatchNextChannelOrBuilder {
@@ -5250,50 +5305,6 @@ public final class TvlauncherClientLog {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new WatchNextChannel();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0001\u0000\u0001\u0004\u0000\u0002\u001b", new Object[]{"bitField0_", "programCount_", "programs_", Program.class});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<WatchNextChannel> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (WatchNextChannel.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(WatchNextChannel.class, DEFAULT_INSTANCE);
-        }
-
-        public static WatchNextChannel getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<WatchNextChannel> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -5302,8 +5313,13 @@ public final class TvlauncherClientLog {
         public static final Notification DEFAULT_INSTANCE = new Notification();
         public static final int IMPORTANCE_FIELD_NUMBER = 3;
         public static final int PACKAGE_NAME_FIELD_NUMBER = 1;
-        private static volatile Parser<Notification> PARSER = null;
         public static final int SUMMARY_FIELD_NUMBER = 2;
+        private static volatile Parser<Notification> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(Notification.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 3, isRequired = false, type = FieldType.ENUM)
@@ -5317,173 +5333,6 @@ public final class TvlauncherClientLog {
         private String summary_ = "";
 
         private Notification() {
-        }
-
-        public enum Importance implements Internal.EnumLite {
-            MIN(1),
-            LOW(2),
-            DEFAULT(3),
-            HIGH(4),
-            MAX(5);
-            
-            public static final int DEFAULT_VALUE = 3;
-            public static final int HIGH_VALUE = 4;
-            public static final int LOW_VALUE = 2;
-            public static final int MAX_VALUE = 5;
-            public static final int MIN_VALUE = 1;
-            private static final Internal.EnumLiteMap<Importance> internalValueMap = new Internal.EnumLiteMap<Importance>() {
-                public Importance findValueByNumber(int number) {
-                    return Importance.forNumber(number);
-                }
-            };
-            private final int value;
-
-            public final int getNumber() {
-                return this.value;
-            }
-
-            public static Importance forNumber(int value2) {
-                if (value2 == 1) {
-                    return MIN;
-                }
-                if (value2 == 2) {
-                    return LOW;
-                }
-                if (value2 == 3) {
-                    return DEFAULT;
-                }
-                if (value2 == 4) {
-                    return HIGH;
-                }
-                if (value2 != 5) {
-                    return null;
-                }
-                return MAX;
-            }
-
-            public static Internal.EnumLiteMap<Importance> internalGetValueMap() {
-                return internalValueMap;
-            }
-
-            public static Internal.EnumVerifier internalGetVerifier() {
-                return ImportanceVerifier.INSTANCE;
-            }
-
-            private static final class ImportanceVerifier implements Internal.EnumVerifier {
-                static final Internal.EnumVerifier INSTANCE = new ImportanceVerifier();
-
-                private ImportanceVerifier() {
-                }
-
-                public boolean isInRange(int number) {
-                    return Importance.forNumber(number) != null;
-                }
-            }
-
-            private Importance(int value2) {
-                this.value = value2;
-            }
-        }
-
-        public boolean hasPackageName() {
-            return (this.bitField0_ & 1) != 0;
-        }
-
-        public String getPackageName() {
-            return this.packageName_;
-        }
-
-        public ByteString getPackageNameBytes() {
-            return ByteString.copyFromUtf8(this.packageName_);
-        }
-
-        /* access modifiers changed from: private */
-        public void setPackageName(String value) {
-            if (value != null) {
-                this.bitField0_ |= 1;
-                this.packageName_ = value;
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        /* access modifiers changed from: private */
-        public void clearPackageName() {
-            this.bitField0_ &= -2;
-            this.packageName_ = getDefaultInstance().getPackageName();
-        }
-
-        /* access modifiers changed from: private */
-        public void setPackageNameBytes(ByteString value) {
-            if (value != null) {
-                this.bitField0_ |= 1;
-                this.packageName_ = value.toStringUtf8();
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        public boolean hasSummary() {
-            return (this.bitField0_ & 2) != 0;
-        }
-
-        public String getSummary() {
-            return this.summary_;
-        }
-
-        public ByteString getSummaryBytes() {
-            return ByteString.copyFromUtf8(this.summary_);
-        }
-
-        /* access modifiers changed from: private */
-        public void setSummary(String value) {
-            if (value != null) {
-                this.bitField0_ |= 2;
-                this.summary_ = value;
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        /* access modifiers changed from: private */
-        public void clearSummary() {
-            this.bitField0_ &= -3;
-            this.summary_ = getDefaultInstance().getSummary();
-        }
-
-        /* access modifiers changed from: private */
-        public void setSummaryBytes(ByteString value) {
-            if (value != null) {
-                this.bitField0_ |= 2;
-                this.summary_ = value.toStringUtf8();
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        public boolean hasImportance() {
-            return (this.bitField0_ & 4) != 0;
-        }
-
-        public Importance getImportance() {
-            Importance result = Importance.forNumber(this.importance_);
-            return result == null ? Importance.MIN : result;
-        }
-
-        /* access modifiers changed from: private */
-        public void setImportance(Importance value) {
-            if (value != null) {
-                this.bitField0_ |= 4;
-                this.importance_ = value.getNumber();
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        /* access modifiers changed from: private */
-        public void clearImportance() {
-            this.bitField0_ &= -5;
-            this.importance_ = 1;
         }
 
         public static Notification parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
@@ -5542,90 +5391,113 @@ public final class TvlauncherClientLog {
             return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
         }
 
-        public static final class Builder extends GeneratedMessageLite.Builder<Notification, Builder> implements NotificationOrBuilder {
-            private Builder() {
-                super(Notification.DEFAULT_INSTANCE);
-            }
+        public static Notification getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
 
-            public boolean hasPackageName() {
-                return ((Notification) this.instance).hasPackageName();
-            }
+        public static Parser<Notification> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
+        }
 
-            public String getPackageName() {
-                return ((Notification) this.instance).getPackageName();
-            }
+        public boolean hasPackageName() {
+            return (this.bitField0_ & 1) != 0;
+        }
 
-            public ByteString getPackageNameBytes() {
-                return ((Notification) this.instance).getPackageNameBytes();
-            }
+        public String getPackageName() {
+            return this.packageName_;
+        }
 
-            public Builder setPackageName(String value) {
-                copyOnWrite();
-                ((Notification) this.instance).setPackageName(value);
-                return this;
+        /* access modifiers changed from: private */
+        public void setPackageName(String value) {
+            if (value != null) {
+                this.bitField0_ |= 1;
+                this.packageName_ = value;
+                return;
             }
+            throw new NullPointerException();
+        }
 
-            public Builder clearPackageName() {
-                copyOnWrite();
-                ((Notification) this.instance).clearPackageName();
-                return this;
-            }
+        public ByteString getPackageNameBytes() {
+            return ByteString.copyFromUtf8(this.packageName_);
+        }
 
-            public Builder setPackageNameBytes(ByteString value) {
-                copyOnWrite();
-                ((Notification) this.instance).setPackageNameBytes(value);
-                return this;
+        /* access modifiers changed from: private */
+        public void setPackageNameBytes(ByteString value) {
+            if (value != null) {
+                this.bitField0_ |= 1;
+                this.packageName_ = value.toStringUtf8();
+                return;
             }
+            throw new NullPointerException();
+        }
 
-            public boolean hasSummary() {
-                return ((Notification) this.instance).hasSummary();
-            }
+        /* access modifiers changed from: private */
+        public void clearPackageName() {
+            this.bitField0_ &= -2;
+            this.packageName_ = getDefaultInstance().getPackageName();
+        }
 
-            public String getSummary() {
-                return ((Notification) this.instance).getSummary();
-            }
+        public boolean hasSummary() {
+            return (this.bitField0_ & 2) != 0;
+        }
 
-            public ByteString getSummaryBytes() {
-                return ((Notification) this.instance).getSummaryBytes();
-            }
+        public String getSummary() {
+            return this.summary_;
+        }
 
-            public Builder setSummary(String value) {
-                copyOnWrite();
-                ((Notification) this.instance).setSummary(value);
-                return this;
+        /* access modifiers changed from: private */
+        public void setSummary(String value) {
+            if (value != null) {
+                this.bitField0_ |= 2;
+                this.summary_ = value;
+                return;
             }
+            throw new NullPointerException();
+        }
 
-            public Builder clearSummary() {
-                copyOnWrite();
-                ((Notification) this.instance).clearSummary();
-                return this;
-            }
+        public ByteString getSummaryBytes() {
+            return ByteString.copyFromUtf8(this.summary_);
+        }
 
-            public Builder setSummaryBytes(ByteString value) {
-                copyOnWrite();
-                ((Notification) this.instance).setSummaryBytes(value);
-                return this;
+        /* access modifiers changed from: private */
+        public void setSummaryBytes(ByteString value) {
+            if (value != null) {
+                this.bitField0_ |= 2;
+                this.summary_ = value.toStringUtf8();
+                return;
             }
+            throw new NullPointerException();
+        }
 
-            public boolean hasImportance() {
-                return ((Notification) this.instance).hasImportance();
-            }
+        /* access modifiers changed from: private */
+        public void clearSummary() {
+            this.bitField0_ &= -3;
+            this.summary_ = getDefaultInstance().getSummary();
+        }
 
-            public Importance getImportance() {
-                return ((Notification) this.instance).getImportance();
-            }
+        public boolean hasImportance() {
+            return (this.bitField0_ & 4) != 0;
+        }
 
-            public Builder setImportance(Importance value) {
-                copyOnWrite();
-                ((Notification) this.instance).setImportance(value);
-                return this;
-            }
+        public Importance getImportance() {
+            Importance result = Importance.forNumber(this.importance_);
+            return result == null ? Importance.MIN : result;
+        }
 
-            public Builder clearImportance() {
-                copyOnWrite();
-                ((Notification) this.instance).clearImportance();
-                return this;
+        /* access modifiers changed from: private */
+        public void setImportance(Importance value) {
+            if (value != null) {
+                this.bitField0_ |= 4;
+                this.importance_ = value.getNumber();
+                return;
             }
+            throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearImportance() {
+            this.bitField0_ &= -5;
+            this.importance_ = 1;
         }
 
         /* access modifiers changed from: protected */
@@ -5660,16 +5532,156 @@ public final class TvlauncherClientLog {
             }
         }
 
-        static {
-            GeneratedMessageLite.registerDefaultInstance(Notification.class, DEFAULT_INSTANCE);
+        public enum Importance implements Internal.EnumLite {
+            MIN(1),
+            LOW(2),
+            DEFAULT(3),
+            HIGH(4),
+            MAX(5);
+
+            public static final int DEFAULT_VALUE = 3;
+            public static final int HIGH_VALUE = 4;
+            public static final int LOW_VALUE = 2;
+            public static final int MAX_VALUE = 5;
+            public static final int MIN_VALUE = 1;
+            private static final Internal.EnumLiteMap<Importance> internalValueMap = new Internal.EnumLiteMap<Importance>() {
+                public Importance findValueByNumber(int number) {
+                    return Importance.forNumber(number);
+                }
+            };
+            private final int value;
+
+            private Importance(int value2) {
+                this.value = value2;
+            }
+
+            public static Importance forNumber(int value2) {
+                if (value2 == 1) {
+                    return MIN;
+                }
+                if (value2 == 2) {
+                    return LOW;
+                }
+                if (value2 == 3) {
+                    return DEFAULT;
+                }
+                if (value2 == 4) {
+                    return HIGH;
+                }
+                if (value2 != 5) {
+                    return null;
+                }
+                return MAX;
+            }
+
+            public static Internal.EnumLiteMap<Importance> internalGetValueMap() {
+                return internalValueMap;
+            }
+
+            public static Internal.EnumVerifier internalGetVerifier() {
+                return ImportanceVerifier.INSTANCE;
+            }
+
+            public final int getNumber() {
+                return this.value;
+            }
+
+            private static final class ImportanceVerifier implements Internal.EnumVerifier {
+                static final Internal.EnumVerifier INSTANCE = new ImportanceVerifier();
+
+                private ImportanceVerifier() {
+                }
+
+                public boolean isInRange(int number) {
+                    return Importance.forNumber(number) != null;
+                }
+            }
         }
 
-        public static Notification getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
+        public static final class Builder extends GeneratedMessageLite.Builder<Notification, Builder> implements NotificationOrBuilder {
+            private Builder() {
+                super(Notification.DEFAULT_INSTANCE);
+            }
 
-        public static Parser<Notification> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
+            public boolean hasPackageName() {
+                return ((Notification) this.instance).hasPackageName();
+            }
+
+            public String getPackageName() {
+                return ((Notification) this.instance).getPackageName();
+            }
+
+            public Builder setPackageName(String value) {
+                copyOnWrite();
+                ((Notification) this.instance).setPackageName(value);
+                return this;
+            }
+
+            public ByteString getPackageNameBytes() {
+                return ((Notification) this.instance).getPackageNameBytes();
+            }
+
+            public Builder setPackageNameBytes(ByteString value) {
+                copyOnWrite();
+                ((Notification) this.instance).setPackageNameBytes(value);
+                return this;
+            }
+
+            public Builder clearPackageName() {
+                copyOnWrite();
+                ((Notification) this.instance).clearPackageName();
+                return this;
+            }
+
+            public boolean hasSummary() {
+                return ((Notification) this.instance).hasSummary();
+            }
+
+            public String getSummary() {
+                return ((Notification) this.instance).getSummary();
+            }
+
+            public Builder setSummary(String value) {
+                copyOnWrite();
+                ((Notification) this.instance).setSummary(value);
+                return this;
+            }
+
+            public ByteString getSummaryBytes() {
+                return ((Notification) this.instance).getSummaryBytes();
+            }
+
+            public Builder setSummaryBytes(ByteString value) {
+                copyOnWrite();
+                ((Notification) this.instance).setSummaryBytes(value);
+                return this;
+            }
+
+            public Builder clearSummary() {
+                copyOnWrite();
+                ((Notification) this.instance).clearSummary();
+                return this;
+            }
+
+            public boolean hasImportance() {
+                return ((Notification) this.instance).hasImportance();
+            }
+
+            public Importance getImportance() {
+                return ((Notification) this.instance).getImportance();
+            }
+
+            public Builder setImportance(Importance value) {
+                copyOnWrite();
+                ((Notification) this.instance).setImportance(value);
+                return this;
+            }
+
+            public Builder clearImportance() {
+                copyOnWrite();
+                ((Notification) this.instance).clearImportance();
+                return this;
+            }
         }
     }
 
@@ -5682,6 +5694,11 @@ public final class TvlauncherClientLog {
         public static final int MAX_PRIORITY_COUNT_FIELD_NUMBER = 2;
         public static final int NOTIFICATIONS_FIELD_NUMBER = 4;
         private static volatile Parser<NotificationCollection> PARSER;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(NotificationCollection.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.UINT32)
@@ -5697,6 +5714,70 @@ public final class TvlauncherClientLog {
         private Internal.ProtobufList<Notification> notifications_ = emptyProtobufList();
 
         private NotificationCollection() {
+        }
+
+        public static NotificationCollection parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (NotificationCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static NotificationCollection parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (NotificationCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static NotificationCollection parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (NotificationCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static NotificationCollection parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (NotificationCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static NotificationCollection parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (NotificationCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static NotificationCollection parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (NotificationCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static NotificationCollection parseFrom(InputStream input) throws IOException {
+            return (NotificationCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static NotificationCollection parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (NotificationCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static NotificationCollection parseDelimitedFrom(InputStream input) throws IOException {
+            return (NotificationCollection) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static NotificationCollection parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (NotificationCollection) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static NotificationCollection parseFrom(CodedInputStream input) throws IOException {
+            return (NotificationCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static NotificationCollection parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (NotificationCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(NotificationCollection prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static NotificationCollection getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<NotificationCollection> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasCount() {
@@ -5856,60 +5937,36 @@ public final class TvlauncherClientLog {
             this.notifications_.remove(index);
         }
 
-        public static NotificationCollection parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (NotificationCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static NotificationCollection parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (NotificationCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static NotificationCollection parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (NotificationCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static NotificationCollection parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (NotificationCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static NotificationCollection parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (NotificationCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static NotificationCollection parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (NotificationCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static NotificationCollection parseFrom(InputStream input) throws IOException {
-            return (NotificationCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static NotificationCollection parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (NotificationCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static NotificationCollection parseDelimitedFrom(InputStream input) throws IOException {
-            return (NotificationCollection) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static NotificationCollection parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (NotificationCollection) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static NotificationCollection parseFrom(CodedInputStream input) throws IOException {
-            return (NotificationCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static NotificationCollection parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (NotificationCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(NotificationCollection prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new NotificationCollection();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0004\u0000\u0001\u0001\u0004\u0004\u0000\u0001\u0000\u0001\u000b\u0000\u0002\u000b\u0001\u0003\u0007\u0002\u0004\u001b", new Object[]{"bitField0_", "count_", "maxPriorityCount_", "hasNewNotifications_", "notifications_", Notification.class});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<NotificationCollection> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (NotificationCollection.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<NotificationCollection, Builder> implements NotificationCollectionOrBuilder {
@@ -6043,50 +6100,6 @@ public final class TvlauncherClientLog {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new NotificationCollection();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0004\u0000\u0001\u0001\u0004\u0004\u0000\u0001\u0000\u0001\u000b\u0000\u0002\u000b\u0001\u0003\u0007\u0002\u0004\u001b", new Object[]{"bitField0_", "count_", "maxPriorityCount_", "hasNewNotifications_", "notifications_", Notification.class});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<NotificationCollection> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (NotificationCollection.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(NotificationCollection.class, DEFAULT_INSTANCE);
-        }
-
-        public static NotificationCollection getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<NotificationCollection> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -6096,6 +6109,11 @@ public final class TvlauncherClientLog {
         /* access modifiers changed from: private */
         public static final LaunchItem DEFAULT_INSTANCE = new LaunchItem();
         private static volatile Parser<LaunchItem> PARSER;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(LaunchItem.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoField(fieldNumber = 2, isRequired = false, type = FieldType.MESSAGE)
         @ProtoPresenceCheckedField(mask = 2, presenceBitsId = 0)
         private AppLink appLink_;
@@ -6106,6 +6124,70 @@ public final class TvlauncherClientLog {
         private int bitField0_;
 
         private LaunchItem() {
+        }
+
+        public static LaunchItem parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (LaunchItem) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static LaunchItem parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (LaunchItem) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static LaunchItem parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (LaunchItem) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static LaunchItem parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (LaunchItem) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static LaunchItem parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (LaunchItem) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static LaunchItem parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (LaunchItem) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static LaunchItem parseFrom(InputStream input) throws IOException {
+            return (LaunchItem) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static LaunchItem parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (LaunchItem) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static LaunchItem parseDelimitedFrom(InputStream input) throws IOException {
+            return (LaunchItem) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static LaunchItem parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (LaunchItem) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static LaunchItem parseFrom(CodedInputStream input) throws IOException {
+            return (LaunchItem) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static LaunchItem parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (LaunchItem) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(LaunchItem prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static LaunchItem getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<LaunchItem> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasApp() {
@@ -6200,60 +6282,36 @@ public final class TvlauncherClientLog {
             this.bitField0_ &= -3;
         }
 
-        public static LaunchItem parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (LaunchItem) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static LaunchItem parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (LaunchItem) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static LaunchItem parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (LaunchItem) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static LaunchItem parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (LaunchItem) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static LaunchItem parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (LaunchItem) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static LaunchItem parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (LaunchItem) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static LaunchItem parseFrom(InputStream input) throws IOException {
-            return (LaunchItem) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static LaunchItem parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (LaunchItem) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static LaunchItem parseDelimitedFrom(InputStream input) throws IOException {
-            return (LaunchItem) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static LaunchItem parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (LaunchItem) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static LaunchItem parseFrom(CodedInputStream input) throws IOException {
-            return (LaunchItem) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static LaunchItem parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (LaunchItem) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(LaunchItem prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new LaunchItem();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0000\u0000\u0001\t\u0000\u0002\t\u0001", new Object[]{"bitField0_", "app_", "appLink_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<LaunchItem> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (LaunchItem.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<LaunchItem, Builder> implements LaunchItemOrBuilder {
@@ -6325,50 +6383,6 @@ public final class TvlauncherClientLog {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new LaunchItem();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0000\u0000\u0001\t\u0000\u0002\t\u0001", new Object[]{"bitField0_", "app_", "appLink_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<LaunchItem> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (LaunchItem.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(LaunchItem.class, DEFAULT_INSTANCE);
-        }
-
-        public static LaunchItem getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<LaunchItem> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -6380,9 +6394,14 @@ public final class TvlauncherClientLog {
         public static final Application DEFAULT_INSTANCE = new Application();
         public static final int IS_GAME_FIELD_NUMBER = 3;
         public static final int PACKAGE_NAME_FIELD_NUMBER = 1;
-        private static volatile Parser<Application> PARSER = null;
         public static final int TARGET_SDK_FIELD_NUMBER = 4;
         public static final int VERSION_CODE_FIELD_NUMBER = 2;
+        private static volatile Parser<Application> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(Application.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 6, isRequired = false, type = FieldType.INT32)
@@ -6409,16 +6428,76 @@ public final class TvlauncherClientLog {
         private Application() {
         }
 
+        public static Application parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (Application) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static Application parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (Application) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static Application parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (Application) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static Application parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (Application) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static Application parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (Application) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static Application parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (Application) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static Application parseFrom(InputStream input) throws IOException {
+            return (Application) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static Application parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (Application) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Application parseDelimitedFrom(InputStream input) throws IOException {
+            return (Application) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static Application parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (Application) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Application parseFrom(CodedInputStream input) throws IOException {
+            return (Application) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static Application parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (Application) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(Application prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static Application getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<Application> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
+        }
+
         public boolean hasPackageName() {
             return (this.bitField0_ & 1) != 0;
         }
 
         public String getPackageName() {
             return this.packageName_;
-        }
-
-        public ByteString getPackageNameBytes() {
-            return ByteString.copyFromUtf8(this.packageName_);
         }
 
         /* access modifiers changed from: private */
@@ -6431,10 +6510,8 @@ public final class TvlauncherClientLog {
             throw new NullPointerException();
         }
 
-        /* access modifiers changed from: private */
-        public void clearPackageName() {
-            this.bitField0_ &= -2;
-            this.packageName_ = getDefaultInstance().getPackageName();
+        public ByteString getPackageNameBytes() {
+            return ByteString.copyFromUtf8(this.packageName_);
         }
 
         /* access modifiers changed from: private */
@@ -6445,6 +6522,12 @@ public final class TvlauncherClientLog {
                 return;
             }
             throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearPackageName() {
+            this.bitField0_ &= -2;
+            this.packageName_ = getDefaultInstance().getPackageName();
         }
 
         public boolean hasVersionCode() {
@@ -6644,60 +6727,36 @@ public final class TvlauncherClientLog {
             this.channels_.remove(index);
         }
 
-        public static Application parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (Application) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static Application parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (Application) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static Application parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (Application) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static Application parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (Application) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static Application parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (Application) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static Application parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (Application) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static Application parseFrom(InputStream input) throws IOException {
-            return (Application) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static Application parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (Application) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Application parseDelimitedFrom(InputStream input) throws IOException {
-            return (Application) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static Application parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (Application) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Application parseFrom(CodedInputStream input) throws IOException {
-            return (Application) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static Application parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (Application) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(Application prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new Application();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0007\u0000\u0001\u0001\u0007\u0007\u0000\u0001\u0000\u0001\b\u0000\u0002\u000b\u0001\u0003\u0007\u0002\u0004\u0004\u0003\u0005\u0004\u0004\u0006\u0004\u0005\u0007\u001b", new Object[]{"bitField0_", "packageName_", "versionCode_", "isGame_", "targetSdk_", "channelCount_", "browsableChannelCount_", "channels_", Channel.class});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<Application> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (Application.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<Application, Builder> implements ApplicationOrBuilder {
@@ -6713,25 +6772,25 @@ public final class TvlauncherClientLog {
                 return ((Application) this.instance).getPackageName();
             }
 
-            public ByteString getPackageNameBytes() {
-                return ((Application) this.instance).getPackageNameBytes();
-            }
-
             public Builder setPackageName(String value) {
                 copyOnWrite();
                 ((Application) this.instance).setPackageName(value);
                 return this;
             }
 
-            public Builder clearPackageName() {
-                copyOnWrite();
-                ((Application) this.instance).clearPackageName();
-                return this;
+            public ByteString getPackageNameBytes() {
+                return ((Application) this.instance).getPackageNameBytes();
             }
 
             public Builder setPackageNameBytes(ByteString value) {
                 copyOnWrite();
                 ((Application) this.instance).setPackageNameBytes(value);
+                return this;
+            }
+
+            public Builder clearPackageName() {
+                copyOnWrite();
+                ((Application) this.instance).clearPackageName();
                 return this;
             }
 
@@ -6901,50 +6960,6 @@ public final class TvlauncherClientLog {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new Application();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0007\u0000\u0001\u0001\u0007\u0007\u0000\u0001\u0000\u0001\b\u0000\u0002\u000b\u0001\u0003\u0007\u0002\u0004\u0004\u0003\u0005\u0004\u0004\u0006\u0004\u0005\u0007\u001b", new Object[]{"bitField0_", "packageName_", "versionCode_", "isGame_", "targetSdk_", "channelCount_", "browsableChannelCount_", "channels_", Channel.class});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<Application> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (Application.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(Application.class, DEFAULT_INSTANCE);
-        }
-
-        public static Application getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<Application> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -6953,8 +6968,13 @@ public final class TvlauncherClientLog {
         public static final AppLink DEFAULT_INSTANCE = new AppLink();
         public static final int IS_INSTALLED_FIELD_NUMBER = 3;
         public static final int PACKAGE_NAME_FIELD_NUMBER = 1;
-        private static volatile Parser<AppLink> PARSER = null;
         public static final int URI_FIELD_NUMBER = 2;
+        private static volatile Parser<AppLink> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(AppLink.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 3, isRequired = false, type = FieldType.BOOL)
@@ -6968,102 +6988,6 @@ public final class TvlauncherClientLog {
         private String uri_ = "";
 
         private AppLink() {
-        }
-
-        public boolean hasPackageName() {
-            return (this.bitField0_ & 1) != 0;
-        }
-
-        public String getPackageName() {
-            return this.packageName_;
-        }
-
-        public ByteString getPackageNameBytes() {
-            return ByteString.copyFromUtf8(this.packageName_);
-        }
-
-        /* access modifiers changed from: private */
-        public void setPackageName(String value) {
-            if (value != null) {
-                this.bitField0_ |= 1;
-                this.packageName_ = value;
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        /* access modifiers changed from: private */
-        public void clearPackageName() {
-            this.bitField0_ &= -2;
-            this.packageName_ = getDefaultInstance().getPackageName();
-        }
-
-        /* access modifiers changed from: private */
-        public void setPackageNameBytes(ByteString value) {
-            if (value != null) {
-                this.bitField0_ |= 1;
-                this.packageName_ = value.toStringUtf8();
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        public boolean hasUri() {
-            return (this.bitField0_ & 2) != 0;
-        }
-
-        public String getUri() {
-            return this.uri_;
-        }
-
-        public ByteString getUriBytes() {
-            return ByteString.copyFromUtf8(this.uri_);
-        }
-
-        /* access modifiers changed from: private */
-        public void setUri(String value) {
-            if (value != null) {
-                this.bitField0_ |= 2;
-                this.uri_ = value;
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        /* access modifiers changed from: private */
-        public void clearUri() {
-            this.bitField0_ &= -3;
-            this.uri_ = getDefaultInstance().getUri();
-        }
-
-        /* access modifiers changed from: private */
-        public void setUriBytes(ByteString value) {
-            if (value != null) {
-                this.bitField0_ |= 2;
-                this.uri_ = value.toStringUtf8();
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        public boolean hasIsInstalled() {
-            return (this.bitField0_ & 4) != 0;
-        }
-
-        public boolean getIsInstalled() {
-            return this.isInstalled_;
-        }
-
-        /* access modifiers changed from: private */
-        public void setIsInstalled(boolean value) {
-            this.bitField0_ |= 4;
-            this.isInstalled_ = value;
-        }
-
-        /* access modifiers changed from: private */
-        public void clearIsInstalled() {
-            this.bitField0_ &= -5;
-            this.isInstalled_ = false;
         }
 
         public static AppLink parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
@@ -7122,90 +7046,108 @@ public final class TvlauncherClientLog {
             return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
         }
 
-        public static final class Builder extends GeneratedMessageLite.Builder<AppLink, Builder> implements AppLinkOrBuilder {
-            private Builder() {
-                super(AppLink.DEFAULT_INSTANCE);
-            }
+        public static AppLink getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
 
-            public boolean hasPackageName() {
-                return ((AppLink) this.instance).hasPackageName();
-            }
+        public static Parser<AppLink> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
+        }
 
-            public String getPackageName() {
-                return ((AppLink) this.instance).getPackageName();
-            }
+        public boolean hasPackageName() {
+            return (this.bitField0_ & 1) != 0;
+        }
 
-            public ByteString getPackageNameBytes() {
-                return ((AppLink) this.instance).getPackageNameBytes();
-            }
+        public String getPackageName() {
+            return this.packageName_;
+        }
 
-            public Builder setPackageName(String value) {
-                copyOnWrite();
-                ((AppLink) this.instance).setPackageName(value);
-                return this;
+        /* access modifiers changed from: private */
+        public void setPackageName(String value) {
+            if (value != null) {
+                this.bitField0_ |= 1;
+                this.packageName_ = value;
+                return;
             }
+            throw new NullPointerException();
+        }
 
-            public Builder clearPackageName() {
-                copyOnWrite();
-                ((AppLink) this.instance).clearPackageName();
-                return this;
-            }
+        public ByteString getPackageNameBytes() {
+            return ByteString.copyFromUtf8(this.packageName_);
+        }
 
-            public Builder setPackageNameBytes(ByteString value) {
-                copyOnWrite();
-                ((AppLink) this.instance).setPackageNameBytes(value);
-                return this;
+        /* access modifiers changed from: private */
+        public void setPackageNameBytes(ByteString value) {
+            if (value != null) {
+                this.bitField0_ |= 1;
+                this.packageName_ = value.toStringUtf8();
+                return;
             }
+            throw new NullPointerException();
+        }
 
-            public boolean hasUri() {
-                return ((AppLink) this.instance).hasUri();
-            }
+        /* access modifiers changed from: private */
+        public void clearPackageName() {
+            this.bitField0_ &= -2;
+            this.packageName_ = getDefaultInstance().getPackageName();
+        }
 
-            public String getUri() {
-                return ((AppLink) this.instance).getUri();
-            }
+        public boolean hasUri() {
+            return (this.bitField0_ & 2) != 0;
+        }
 
-            public ByteString getUriBytes() {
-                return ((AppLink) this.instance).getUriBytes();
-            }
+        public String getUri() {
+            return this.uri_;
+        }
 
-            public Builder setUri(String value) {
-                copyOnWrite();
-                ((AppLink) this.instance).setUri(value);
-                return this;
+        /* access modifiers changed from: private */
+        public void setUri(String value) {
+            if (value != null) {
+                this.bitField0_ |= 2;
+                this.uri_ = value;
+                return;
             }
+            throw new NullPointerException();
+        }
 
-            public Builder clearUri() {
-                copyOnWrite();
-                ((AppLink) this.instance).clearUri();
-                return this;
-            }
+        public ByteString getUriBytes() {
+            return ByteString.copyFromUtf8(this.uri_);
+        }
 
-            public Builder setUriBytes(ByteString value) {
-                copyOnWrite();
-                ((AppLink) this.instance).setUriBytes(value);
-                return this;
+        /* access modifiers changed from: private */
+        public void setUriBytes(ByteString value) {
+            if (value != null) {
+                this.bitField0_ |= 2;
+                this.uri_ = value.toStringUtf8();
+                return;
             }
+            throw new NullPointerException();
+        }
 
-            public boolean hasIsInstalled() {
-                return ((AppLink) this.instance).hasIsInstalled();
-            }
+        /* access modifiers changed from: private */
+        public void clearUri() {
+            this.bitField0_ &= -3;
+            this.uri_ = getDefaultInstance().getUri();
+        }
 
-            public boolean getIsInstalled() {
-                return ((AppLink) this.instance).getIsInstalled();
-            }
+        public boolean hasIsInstalled() {
+            return (this.bitField0_ & 4) != 0;
+        }
 
-            public Builder setIsInstalled(boolean value) {
-                copyOnWrite();
-                ((AppLink) this.instance).setIsInstalled(value);
-                return this;
-            }
+        public boolean getIsInstalled() {
+            return this.isInstalled_;
+        }
 
-            public Builder clearIsInstalled() {
-                copyOnWrite();
-                ((AppLink) this.instance).clearIsInstalled();
-                return this;
-            }
+        /* access modifiers changed from: private */
+        public void setIsInstalled(boolean value) {
+            this.bitField0_ |= 4;
+            this.isInstalled_ = value;
+        }
+
+        /* access modifiers changed from: private */
+        public void clearIsInstalled() {
+            this.bitField0_ &= -5;
+            this.isInstalled_ = false;
         }
 
         /* access modifiers changed from: protected */
@@ -7240,16 +7182,90 @@ public final class TvlauncherClientLog {
             }
         }
 
-        static {
-            GeneratedMessageLite.registerDefaultInstance(AppLink.class, DEFAULT_INSTANCE);
-        }
+        public static final class Builder extends GeneratedMessageLite.Builder<AppLink, Builder> implements AppLinkOrBuilder {
+            private Builder() {
+                super(AppLink.DEFAULT_INSTANCE);
+            }
 
-        public static AppLink getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
+            public boolean hasPackageName() {
+                return ((AppLink) this.instance).hasPackageName();
+            }
 
-        public static Parser<AppLink> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
+            public String getPackageName() {
+                return ((AppLink) this.instance).getPackageName();
+            }
+
+            public Builder setPackageName(String value) {
+                copyOnWrite();
+                ((AppLink) this.instance).setPackageName(value);
+                return this;
+            }
+
+            public ByteString getPackageNameBytes() {
+                return ((AppLink) this.instance).getPackageNameBytes();
+            }
+
+            public Builder setPackageNameBytes(ByteString value) {
+                copyOnWrite();
+                ((AppLink) this.instance).setPackageNameBytes(value);
+                return this;
+            }
+
+            public Builder clearPackageName() {
+                copyOnWrite();
+                ((AppLink) this.instance).clearPackageName();
+                return this;
+            }
+
+            public boolean hasUri() {
+                return ((AppLink) this.instance).hasUri();
+            }
+
+            public String getUri() {
+                return ((AppLink) this.instance).getUri();
+            }
+
+            public Builder setUri(String value) {
+                copyOnWrite();
+                ((AppLink) this.instance).setUri(value);
+                return this;
+            }
+
+            public ByteString getUriBytes() {
+                return ((AppLink) this.instance).getUriBytes();
+            }
+
+            public Builder setUriBytes(ByteString value) {
+                copyOnWrite();
+                ((AppLink) this.instance).setUriBytes(value);
+                return this;
+            }
+
+            public Builder clearUri() {
+                copyOnWrite();
+                ((AppLink) this.instance).clearUri();
+                return this;
+            }
+
+            public boolean hasIsInstalled() {
+                return ((AppLink) this.instance).hasIsInstalled();
+            }
+
+            public boolean getIsInstalled() {
+                return ((AppLink) this.instance).getIsInstalled();
+            }
+
+            public Builder setIsInstalled(boolean value) {
+                copyOnWrite();
+                ((AppLink) this.instance).setIsInstalled(value);
+                return this;
+            }
+
+            public Builder clearIsInstalled() {
+                copyOnWrite();
+                ((AppLink) this.instance).clearIsInstalled();
+                return this;
+            }
         }
     }
 
@@ -7261,6 +7277,11 @@ public final class TvlauncherClientLog {
         public static final int GAME_COUNT_FIELD_NUMBER = 2;
         public static final int ITEMS_FIELD_NUMBER = 3;
         private static volatile Parser<LaunchItemCollection> PARSER;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(LaunchItemCollection.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.INT32)
@@ -7273,6 +7294,70 @@ public final class TvlauncherClientLog {
         private Internal.ProtobufList<LaunchItem> items_ = emptyProtobufList();
 
         private LaunchItemCollection() {
+        }
+
+        public static LaunchItemCollection parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (LaunchItemCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static LaunchItemCollection parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (LaunchItemCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static LaunchItemCollection parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (LaunchItemCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static LaunchItemCollection parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (LaunchItemCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static LaunchItemCollection parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (LaunchItemCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static LaunchItemCollection parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (LaunchItemCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static LaunchItemCollection parseFrom(InputStream input) throws IOException {
+            return (LaunchItemCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static LaunchItemCollection parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (LaunchItemCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static LaunchItemCollection parseDelimitedFrom(InputStream input) throws IOException {
+            return (LaunchItemCollection) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static LaunchItemCollection parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (LaunchItemCollection) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static LaunchItemCollection parseFrom(CodedInputStream input) throws IOException {
+            return (LaunchItemCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static LaunchItemCollection parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (LaunchItemCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(LaunchItemCollection prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static LaunchItemCollection getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<LaunchItemCollection> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasCount() {
@@ -7412,60 +7497,36 @@ public final class TvlauncherClientLog {
             this.items_.remove(index);
         }
 
-        public static LaunchItemCollection parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (LaunchItemCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static LaunchItemCollection parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (LaunchItemCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static LaunchItemCollection parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (LaunchItemCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static LaunchItemCollection parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (LaunchItemCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static LaunchItemCollection parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (LaunchItemCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static LaunchItemCollection parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (LaunchItemCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static LaunchItemCollection parseFrom(InputStream input) throws IOException {
-            return (LaunchItemCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static LaunchItemCollection parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (LaunchItemCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static LaunchItemCollection parseDelimitedFrom(InputStream input) throws IOException {
-            return (LaunchItemCollection) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static LaunchItemCollection parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (LaunchItemCollection) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static LaunchItemCollection parseFrom(CodedInputStream input) throws IOException {
-            return (LaunchItemCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static LaunchItemCollection parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (LaunchItemCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(LaunchItemCollection prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new LaunchItemCollection();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0003\u0000\u0001\u0001\u0003\u0003\u0000\u0001\u0000\u0001\u0004\u0000\u0002\u0004\u0001\u0003\u001b", new Object[]{"bitField0_", "count_", "gameCount_", "items_", LaunchItem.class});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<LaunchItemCollection> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (LaunchItemCollection.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<LaunchItemCollection, Builder> implements LaunchItemCollectionOrBuilder {
@@ -7579,50 +7640,6 @@ public final class TvlauncherClientLog {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new LaunchItemCollection();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0003\u0000\u0001\u0001\u0003\u0003\u0000\u0001\u0000\u0001\u0004\u0000\u0002\u0004\u0001\u0003\u001b", new Object[]{"bitField0_", "count_", "gameCount_", "items_", LaunchItem.class});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<LaunchItemCollection> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (LaunchItemCollection.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(LaunchItemCollection.class, DEFAULT_INSTANCE);
-        }
-
-        public static LaunchItemCollection getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<LaunchItemCollection> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -7630,8 +7647,13 @@ public final class TvlauncherClientLog {
         /* access modifiers changed from: private */
         public static final Input DEFAULT_INSTANCE = new Input();
         public static final int DISPLAY_NAME_FIELD_NUMBER = 2;
-        private static volatile Parser<Input> PARSER = null;
         public static final int TYPE_FIELD_NUMBER = 1;
+        private static volatile Parser<Input> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(Input.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 2, isEnforceUtf8 = false, isRequired = false, type = FieldType.STRING)
@@ -7642,171 +7664,6 @@ public final class TvlauncherClientLog {
         private int type_ = 1;
 
         private Input() {
-        }
-
-        public enum Type implements Internal.EnumLite {
-            TUNER(1),
-            COMPOSITE(2),
-            SVIDEO(3),
-            SCART(4),
-            COMPONENT(5),
-            VGA(6),
-            DVI(7),
-            HDMI(8),
-            DISPLAY_PORT(9),
-            CEC_DEVICE(-2),
-            BUNDLED_TUNER(-3),
-            CEC_DEVICE_RECORDER(-4),
-            CEC_DEVICE_PLAYBACK(-5),
-            MHL_MOBILE(-6);
-            
-            public static final int BUNDLED_TUNER_VALUE = -3;
-            public static final int CEC_DEVICE_PLAYBACK_VALUE = -5;
-            public static final int CEC_DEVICE_RECORDER_VALUE = -4;
-            public static final int CEC_DEVICE_VALUE = -2;
-            public static final int COMPONENT_VALUE = 5;
-            public static final int COMPOSITE_VALUE = 2;
-            public static final int DISPLAY_PORT_VALUE = 9;
-            public static final int DVI_VALUE = 7;
-            public static final int HDMI_VALUE = 8;
-            public static final int MHL_MOBILE_VALUE = -6;
-            public static final int SCART_VALUE = 4;
-            public static final int SVIDEO_VALUE = 3;
-            public static final int TUNER_VALUE = 1;
-            public static final int VGA_VALUE = 6;
-            private static final Internal.EnumLiteMap<Type> internalValueMap = new Internal.EnumLiteMap<Type>() {
-                public Type findValueByNumber(int number) {
-                    return Type.forNumber(number);
-                }
-            };
-            private final int value;
-
-            public final int getNumber() {
-                return this.value;
-            }
-
-            public static Type forNumber(int value2) {
-                switch (value2) {
-                    case -6:
-                        return MHL_MOBILE;
-                    case -5:
-                        return CEC_DEVICE_PLAYBACK;
-                    case -4:
-                        return CEC_DEVICE_RECORDER;
-                    case -3:
-                        return BUNDLED_TUNER;
-                    case -2:
-                        return CEC_DEVICE;
-                    case -1:
-                    case 0:
-                    default:
-                        return null;
-                    case 1:
-                        return TUNER;
-                    case 2:
-                        return COMPOSITE;
-                    case 3:
-                        return SVIDEO;
-                    case 4:
-                        return SCART;
-                    case 5:
-                        return COMPONENT;
-                    case 6:
-                        return VGA;
-                    case 7:
-                        return DVI;
-                    case 8:
-                        return HDMI;
-                    case 9:
-                        return DISPLAY_PORT;
-                }
-            }
-
-            public static Internal.EnumLiteMap<Type> internalGetValueMap() {
-                return internalValueMap;
-            }
-
-            public static Internal.EnumVerifier internalGetVerifier() {
-                return TypeVerifier.INSTANCE;
-            }
-
-            private static final class TypeVerifier implements Internal.EnumVerifier {
-                static final Internal.EnumVerifier INSTANCE = new TypeVerifier();
-
-                private TypeVerifier() {
-                }
-
-                public boolean isInRange(int number) {
-                    return Type.forNumber(number) != null;
-                }
-            }
-
-            private Type(int value2) {
-                this.value = value2;
-            }
-        }
-
-        public boolean hasType() {
-            return (this.bitField0_ & 1) != 0;
-        }
-
-        public Type getType() {
-            Type result = Type.forNumber(this.type_);
-            return result == null ? Type.TUNER : result;
-        }
-
-        /* access modifiers changed from: private */
-        public void setType(Type value) {
-            if (value != null) {
-                this.bitField0_ |= 1;
-                this.type_ = value.getNumber();
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        /* access modifiers changed from: private */
-        public void clearType() {
-            this.bitField0_ &= -2;
-            this.type_ = 1;
-        }
-
-        public boolean hasDisplayName() {
-            return (this.bitField0_ & 2) != 0;
-        }
-
-        public String getDisplayName() {
-            return this.displayName_;
-        }
-
-        public ByteString getDisplayNameBytes() {
-            return ByteString.copyFromUtf8(this.displayName_);
-        }
-
-        /* access modifiers changed from: private */
-        public void setDisplayName(String value) {
-            if (value != null) {
-                this.bitField0_ |= 2;
-                this.displayName_ = value;
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        /* access modifiers changed from: private */
-        public void clearDisplayName() {
-            this.bitField0_ &= -3;
-            this.displayName_ = getDefaultInstance().getDisplayName();
-        }
-
-        /* access modifiers changed from: private */
-        public void setDisplayNameBytes(ByteString value) {
-            if (value != null) {
-                this.bitField0_ |= 2;
-                this.displayName_ = value.toStringUtf8();
-                return;
-            }
-            throw new NullPointerException();
         }
 
         public static Input parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
@@ -7865,60 +7722,75 @@ public final class TvlauncherClientLog {
             return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
         }
 
-        public static final class Builder extends GeneratedMessageLite.Builder<Input, Builder> implements InputOrBuilder {
-            private Builder() {
-                super(Input.DEFAULT_INSTANCE);
-            }
+        public static Input getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
 
-            public boolean hasType() {
-                return ((Input) this.instance).hasType();
-            }
+        public static Parser<Input> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
+        }
 
-            public Type getType() {
-                return ((Input) this.instance).getType();
-            }
+        public boolean hasType() {
+            return (this.bitField0_ & 1) != 0;
+        }
 
-            public Builder setType(Type value) {
-                copyOnWrite();
-                ((Input) this.instance).setType(value);
-                return this;
-            }
+        public Type getType() {
+            Type result = Type.forNumber(this.type_);
+            return result == null ? Type.TUNER : result;
+        }
 
-            public Builder clearType() {
-                copyOnWrite();
-                ((Input) this.instance).clearType();
-                return this;
+        /* access modifiers changed from: private */
+        public void setType(Type value) {
+            if (value != null) {
+                this.bitField0_ |= 1;
+                this.type_ = value.getNumber();
+                return;
             }
+            throw new NullPointerException();
+        }
 
-            public boolean hasDisplayName() {
-                return ((Input) this.instance).hasDisplayName();
-            }
+        /* access modifiers changed from: private */
+        public void clearType() {
+            this.bitField0_ &= -2;
+            this.type_ = 1;
+        }
 
-            public String getDisplayName() {
-                return ((Input) this.instance).getDisplayName();
-            }
+        public boolean hasDisplayName() {
+            return (this.bitField0_ & 2) != 0;
+        }
 
-            public ByteString getDisplayNameBytes() {
-                return ((Input) this.instance).getDisplayNameBytes();
-            }
+        public String getDisplayName() {
+            return this.displayName_;
+        }
 
-            public Builder setDisplayName(String value) {
-                copyOnWrite();
-                ((Input) this.instance).setDisplayName(value);
-                return this;
+        /* access modifiers changed from: private */
+        public void setDisplayName(String value) {
+            if (value != null) {
+                this.bitField0_ |= 2;
+                this.displayName_ = value;
+                return;
             }
+            throw new NullPointerException();
+        }
 
-            public Builder clearDisplayName() {
-                copyOnWrite();
-                ((Input) this.instance).clearDisplayName();
-                return this;
-            }
+        public ByteString getDisplayNameBytes() {
+            return ByteString.copyFromUtf8(this.displayName_);
+        }
 
-            public Builder setDisplayNameBytes(ByteString value) {
-                copyOnWrite();
-                ((Input) this.instance).setDisplayNameBytes(value);
-                return this;
+        /* access modifiers changed from: private */
+        public void setDisplayNameBytes(ByteString value) {
+            if (value != null) {
+                this.bitField0_ |= 2;
+                this.displayName_ = value.toStringUtf8();
+                return;
             }
+            throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearDisplayName() {
+            this.bitField0_ &= -3;
+            this.displayName_ = getDefaultInstance().getDisplayName();
         }
 
         /* access modifiers changed from: protected */
@@ -7953,16 +7825,162 @@ public final class TvlauncherClientLog {
             }
         }
 
-        static {
-            GeneratedMessageLite.registerDefaultInstance(Input.class, DEFAULT_INSTANCE);
+        public enum Type implements Internal.EnumLite {
+            TUNER(1),
+            COMPOSITE(2),
+            SVIDEO(3),
+            SCART(4),
+            COMPONENT(5),
+            VGA(6),
+            DVI(7),
+            HDMI(8),
+            DISPLAY_PORT(9),
+            CEC_DEVICE(-2),
+            BUNDLED_TUNER(-3),
+            CEC_DEVICE_RECORDER(-4),
+            CEC_DEVICE_PLAYBACK(-5),
+            MHL_MOBILE(-6);
+
+            public static final int BUNDLED_TUNER_VALUE = -3;
+            public static final int CEC_DEVICE_PLAYBACK_VALUE = -5;
+            public static final int CEC_DEVICE_RECORDER_VALUE = -4;
+            public static final int CEC_DEVICE_VALUE = -2;
+            public static final int COMPONENT_VALUE = 5;
+            public static final int COMPOSITE_VALUE = 2;
+            public static final int DISPLAY_PORT_VALUE = 9;
+            public static final int DVI_VALUE = 7;
+            public static final int HDMI_VALUE = 8;
+            public static final int MHL_MOBILE_VALUE = -6;
+            public static final int SCART_VALUE = 4;
+            public static final int SVIDEO_VALUE = 3;
+            public static final int TUNER_VALUE = 1;
+            public static final int VGA_VALUE = 6;
+            private static final Internal.EnumLiteMap<Type> internalValueMap = new Internal.EnumLiteMap<Type>() {
+                public Type findValueByNumber(int number) {
+                    return Type.forNumber(number);
+                }
+            };
+            private final int value;
+
+            private Type(int value2) {
+                this.value = value2;
+            }
+
+            public static Type forNumber(int value2) {
+                switch (value2) {
+                    case -6:
+                        return MHL_MOBILE;
+                    case -5:
+                        return CEC_DEVICE_PLAYBACK;
+                    case -4:
+                        return CEC_DEVICE_RECORDER;
+                    case -3:
+                        return BUNDLED_TUNER;
+                    case -2:
+                        return CEC_DEVICE;
+                    case -1:
+                    case 0:
+                    default:
+                        return null;
+                    case 1:
+                        return TUNER;
+                    case 2:
+                        return COMPOSITE;
+                    case 3:
+                        return SVIDEO;
+                    case 4:
+                        return SCART;
+                    case 5:
+                        return COMPONENT;
+                    case 6:
+                        return VGA;
+                    case 7:
+                        return DVI;
+                    case 8:
+                        return HDMI;
+                    case 9:
+                        return DISPLAY_PORT;
+                }
+            }
+
+            public static Internal.EnumLiteMap<Type> internalGetValueMap() {
+                return internalValueMap;
+            }
+
+            public static Internal.EnumVerifier internalGetVerifier() {
+                return TypeVerifier.INSTANCE;
+            }
+
+            public final int getNumber() {
+                return this.value;
+            }
+
+            private static final class TypeVerifier implements Internal.EnumVerifier {
+                static final Internal.EnumVerifier INSTANCE = new TypeVerifier();
+
+                private TypeVerifier() {
+                }
+
+                public boolean isInRange(int number) {
+                    return Type.forNumber(number) != null;
+                }
+            }
         }
 
-        public static Input getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
+        public static final class Builder extends GeneratedMessageLite.Builder<Input, Builder> implements InputOrBuilder {
+            private Builder() {
+                super(Input.DEFAULT_INSTANCE);
+            }
 
-        public static Parser<Input> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
+            public boolean hasType() {
+                return ((Input) this.instance).hasType();
+            }
+
+            public Type getType() {
+                return ((Input) this.instance).getType();
+            }
+
+            public Builder setType(Type value) {
+                copyOnWrite();
+                ((Input) this.instance).setType(value);
+                return this;
+            }
+
+            public Builder clearType() {
+                copyOnWrite();
+                ((Input) this.instance).clearType();
+                return this;
+            }
+
+            public boolean hasDisplayName() {
+                return ((Input) this.instance).hasDisplayName();
+            }
+
+            public String getDisplayName() {
+                return ((Input) this.instance).getDisplayName();
+            }
+
+            public Builder setDisplayName(String value) {
+                copyOnWrite();
+                ((Input) this.instance).setDisplayName(value);
+                return this;
+            }
+
+            public ByteString getDisplayNameBytes() {
+                return ((Input) this.instance).getDisplayNameBytes();
+            }
+
+            public Builder setDisplayNameBytes(ByteString value) {
+                copyOnWrite();
+                ((Input) this.instance).setDisplayNameBytes(value);
+                return this;
+            }
+
+            public Builder clearDisplayName() {
+                copyOnWrite();
+                ((Input) this.instance).clearDisplayName();
+                return this;
+            }
         }
     }
 
@@ -7973,6 +7991,11 @@ public final class TvlauncherClientLog {
         public static final InputCollection DEFAULT_INSTANCE = new InputCollection();
         public static final int INPUTS_FIELD_NUMBER = 2;
         private static volatile Parser<InputCollection> PARSER;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(InputCollection.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.INT32)
@@ -7982,6 +8005,70 @@ public final class TvlauncherClientLog {
         private Internal.ProtobufList<Input> inputs_ = emptyProtobufList();
 
         private InputCollection() {
+        }
+
+        public static InputCollection parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (InputCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static InputCollection parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (InputCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static InputCollection parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (InputCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static InputCollection parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (InputCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static InputCollection parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (InputCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static InputCollection parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (InputCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static InputCollection parseFrom(InputStream input) throws IOException {
+            return (InputCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static InputCollection parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (InputCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static InputCollection parseDelimitedFrom(InputStream input) throws IOException {
+            return (InputCollection) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static InputCollection parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (InputCollection) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static InputCollection parseFrom(CodedInputStream input) throws IOException {
+            return (InputCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static InputCollection parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (InputCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(InputCollection prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static InputCollection getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<InputCollection> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasCount() {
@@ -8101,60 +8188,36 @@ public final class TvlauncherClientLog {
             this.inputs_.remove(index);
         }
 
-        public static InputCollection parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (InputCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static InputCollection parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (InputCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static InputCollection parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (InputCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static InputCollection parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (InputCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static InputCollection parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (InputCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static InputCollection parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (InputCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static InputCollection parseFrom(InputStream input) throws IOException {
-            return (InputCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static InputCollection parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (InputCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static InputCollection parseDelimitedFrom(InputStream input) throws IOException {
-            return (InputCollection) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static InputCollection parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (InputCollection) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static InputCollection parseFrom(CodedInputStream input) throws IOException {
-            return (InputCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static InputCollection parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (InputCollection) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(InputCollection prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new InputCollection();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0001\u0000\u0001\u0004\u0000\u0002\u001b", new Object[]{"bitField0_", "count_", "inputs_", Input.class});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<InputCollection> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (InputCollection.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<InputCollection, Builder> implements InputCollectionOrBuilder {
@@ -8248,50 +8311,6 @@ public final class TvlauncherClientLog {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new InputCollection();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0001\u0000\u0001\u0004\u0000\u0002\u001b", new Object[]{"bitField0_", "count_", "inputs_", Input.class});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<InputCollection> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (InputCollection.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(InputCollection.class, DEFAULT_INSTANCE);
-        }
-
-        public static InputCollection getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<InputCollection> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -8301,8 +8320,13 @@ public final class TvlauncherClientLog {
         public static final SystemProperties DEFAULT_INSTANCE = new SystemProperties();
         public static final int IS_DEFAULT_LAUNCHER_FIELD_NUMBER = 1;
         public static final int MEDIA_PACKAGE_NAME_FIELD_NUMBER = 2;
-        private static volatile Parser<SystemProperties> PARSER = null;
         public static final int WATCH_NEXT_CHANNEL_FIELD_NUMBER = 4;
+        private static volatile Parser<SystemProperties> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(SystemProperties.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoField(fieldNumber = 3, type = FieldType.MESSAGE_LIST)
         private Internal.ProtobufList<Application> apps_ = emptyProtobufList();
         @ProtoPresenceBits(mo28548id = 0)
@@ -8318,6 +8342,70 @@ public final class TvlauncherClientLog {
         private WatchNextChannel watchNextChannel_;
 
         private SystemProperties() {
+        }
+
+        public static SystemProperties parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (SystemProperties) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static SystemProperties parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (SystemProperties) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static SystemProperties parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (SystemProperties) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static SystemProperties parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (SystemProperties) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static SystemProperties parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (SystemProperties) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static SystemProperties parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (SystemProperties) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static SystemProperties parseFrom(InputStream input) throws IOException {
+            return (SystemProperties) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static SystemProperties parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (SystemProperties) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static SystemProperties parseDelimitedFrom(InputStream input) throws IOException {
+            return (SystemProperties) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static SystemProperties parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (SystemProperties) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static SystemProperties parseFrom(CodedInputStream input) throws IOException {
+            return (SystemProperties) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static SystemProperties parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (SystemProperties) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(SystemProperties prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static SystemProperties getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<SystemProperties> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasIsDefaultLauncher() {
@@ -8348,10 +8436,6 @@ public final class TvlauncherClientLog {
             return this.mediaPackageName_;
         }
 
-        public ByteString getMediaPackageNameBytes() {
-            return ByteString.copyFromUtf8(this.mediaPackageName_);
-        }
-
         /* access modifiers changed from: private */
         public void setMediaPackageName(String value) {
             if (value != null) {
@@ -8362,10 +8446,8 @@ public final class TvlauncherClientLog {
             throw new NullPointerException();
         }
 
-        /* access modifiers changed from: private */
-        public void clearMediaPackageName() {
-            this.bitField0_ &= -3;
-            this.mediaPackageName_ = getDefaultInstance().getMediaPackageName();
+        public ByteString getMediaPackageNameBytes() {
+            return ByteString.copyFromUtf8(this.mediaPackageName_);
         }
 
         /* access modifiers changed from: private */
@@ -8376,6 +8458,12 @@ public final class TvlauncherClientLog {
                 return;
             }
             throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearMediaPackageName() {
+            this.bitField0_ &= -3;
+            this.mediaPackageName_ = getDefaultInstance().getMediaPackageName();
         }
 
         public List<Application> getAppsList() {
@@ -8521,60 +8609,36 @@ public final class TvlauncherClientLog {
             this.bitField0_ &= -5;
         }
 
-        public static SystemProperties parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (SystemProperties) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static SystemProperties parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (SystemProperties) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static SystemProperties parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (SystemProperties) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static SystemProperties parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (SystemProperties) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static SystemProperties parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (SystemProperties) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static SystemProperties parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (SystemProperties) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static SystemProperties parseFrom(InputStream input) throws IOException {
-            return (SystemProperties) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static SystemProperties parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (SystemProperties) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static SystemProperties parseDelimitedFrom(InputStream input) throws IOException {
-            return (SystemProperties) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static SystemProperties parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (SystemProperties) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static SystemProperties parseFrom(CodedInputStream input) throws IOException {
-            return (SystemProperties) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static SystemProperties parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (SystemProperties) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(SystemProperties prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new SystemProperties();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0004\u0000\u0001\u0001\u0004\u0004\u0000\u0001\u0000\u0001\u0007\u0000\u0002\b\u0001\u0003\u001b\u0004\t\u0002", new Object[]{"bitField0_", "isDefaultLauncher_", "mediaPackageName_", "apps_", Application.class, "watchNextChannel_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<SystemProperties> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (SystemProperties.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<SystemProperties, Builder> implements SystemPropertiesOrBuilder {
@@ -8610,25 +8674,25 @@ public final class TvlauncherClientLog {
                 return ((SystemProperties) this.instance).getMediaPackageName();
             }
 
-            public ByteString getMediaPackageNameBytes() {
-                return ((SystemProperties) this.instance).getMediaPackageNameBytes();
-            }
-
             public Builder setMediaPackageName(String value) {
                 copyOnWrite();
                 ((SystemProperties) this.instance).setMediaPackageName(value);
                 return this;
             }
 
-            public Builder clearMediaPackageName() {
-                copyOnWrite();
-                ((SystemProperties) this.instance).clearMediaPackageName();
-                return this;
+            public ByteString getMediaPackageNameBytes() {
+                return ((SystemProperties) this.instance).getMediaPackageNameBytes();
             }
 
             public Builder setMediaPackageNameBytes(ByteString value) {
                 copyOnWrite();
                 ((SystemProperties) this.instance).setMediaPackageNameBytes(value);
+                return this;
+            }
+
+            public Builder clearMediaPackageName() {
+                copyOnWrite();
+                ((SystemProperties) this.instance).clearMediaPackageName();
                 return this;
             }
 
@@ -8730,50 +8794,6 @@ public final class TvlauncherClientLog {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new SystemProperties();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0004\u0000\u0001\u0001\u0004\u0004\u0000\u0001\u0000\u0001\u0007\u0000\u0002\b\u0001\u0003\u001b\u0004\t\u0002", new Object[]{"bitField0_", "isDefaultLauncher_", "mediaPackageName_", "apps_", Application.class, "watchNextChannel_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<SystemProperties> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (SystemProperties.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(SystemProperties.class, DEFAULT_INSTANCE);
-        }
-
-        public static SystemProperties getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<SystemProperties> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -8785,8 +8805,13 @@ public final class TvlauncherClientLog {
         public static final int IS_PLAYING_AUDIO_FIELD_NUMBER = 4;
         public static final int IS_PLAYING_VIDEO_FIELD_NUMBER = 3;
         public static final int IS_SCREEN_ON_FIELD_NUMBER = 5;
-        private static volatile Parser<DeviceStatus> PARSER = null;
         public static final int PIP_PACKAGE_NAME_FIELD_NUMBER = 6;
+        private static volatile Parser<DeviceStatus> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(DeviceStatus.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoField(fieldNumber = 2, isRequired = false, type = FieldType.MESSAGE)
         @ProtoPresenceCheckedField(mask = 2, presenceBitsId = 0)
         private Input activeInput_;
@@ -8811,16 +8836,76 @@ public final class TvlauncherClientLog {
         private DeviceStatus() {
         }
 
+        public static DeviceStatus parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (DeviceStatus) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static DeviceStatus parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (DeviceStatus) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static DeviceStatus parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (DeviceStatus) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static DeviceStatus parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (DeviceStatus) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static DeviceStatus parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (DeviceStatus) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static DeviceStatus parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (DeviceStatus) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static DeviceStatus parseFrom(InputStream input) throws IOException {
+            return (DeviceStatus) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static DeviceStatus parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (DeviceStatus) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static DeviceStatus parseDelimitedFrom(InputStream input) throws IOException {
+            return (DeviceStatus) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static DeviceStatus parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (DeviceStatus) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static DeviceStatus parseFrom(CodedInputStream input) throws IOException {
+            return (DeviceStatus) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static DeviceStatus parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (DeviceStatus) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(DeviceStatus prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static DeviceStatus getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<DeviceStatus> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
+        }
+
         public boolean hasForegroundPackageName() {
             return (this.bitField0_ & 1) != 0;
         }
 
         public String getForegroundPackageName() {
             return this.foregroundPackageName_;
-        }
-
-        public ByteString getForegroundPackageNameBytes() {
-            return ByteString.copyFromUtf8(this.foregroundPackageName_);
         }
 
         /* access modifiers changed from: private */
@@ -8833,10 +8918,8 @@ public final class TvlauncherClientLog {
             throw new NullPointerException();
         }
 
-        /* access modifiers changed from: private */
-        public void clearForegroundPackageName() {
-            this.bitField0_ &= -2;
-            this.foregroundPackageName_ = getDefaultInstance().getForegroundPackageName();
+        public ByteString getForegroundPackageNameBytes() {
+            return ByteString.copyFromUtf8(this.foregroundPackageName_);
         }
 
         /* access modifiers changed from: private */
@@ -8847,6 +8930,12 @@ public final class TvlauncherClientLog {
                 return;
             }
             throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearForegroundPackageName() {
+            this.bitField0_ &= -2;
+            this.foregroundPackageName_ = getDefaultInstance().getForegroundPackageName();
         }
 
         public boolean hasActiveInput() {
@@ -8963,10 +9052,6 @@ public final class TvlauncherClientLog {
             return this.pipPackageName_;
         }
 
-        public ByteString getPipPackageNameBytes() {
-            return ByteString.copyFromUtf8(this.pipPackageName_);
-        }
-
         /* access modifiers changed from: private */
         public void setPipPackageName(String value) {
             if (value != null) {
@@ -8977,10 +9062,8 @@ public final class TvlauncherClientLog {
             throw new NullPointerException();
         }
 
-        /* access modifiers changed from: private */
-        public void clearPipPackageName() {
-            this.bitField0_ &= -33;
-            this.pipPackageName_ = getDefaultInstance().getPipPackageName();
+        public ByteString getPipPackageNameBytes() {
+            return ByteString.copyFromUtf8(this.pipPackageName_);
         }
 
         /* access modifiers changed from: private */
@@ -8993,60 +9076,42 @@ public final class TvlauncherClientLog {
             throw new NullPointerException();
         }
 
-        public static DeviceStatus parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (DeviceStatus) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        /* access modifiers changed from: private */
+        public void clearPipPackageName() {
+            this.bitField0_ &= -33;
+            this.pipPackageName_ = getDefaultInstance().getPipPackageName();
         }
 
-        public static DeviceStatus parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (DeviceStatus) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static DeviceStatus parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (DeviceStatus) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static DeviceStatus parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (DeviceStatus) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static DeviceStatus parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (DeviceStatus) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static DeviceStatus parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (DeviceStatus) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static DeviceStatus parseFrom(InputStream input) throws IOException {
-            return (DeviceStatus) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static DeviceStatus parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (DeviceStatus) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static DeviceStatus parseDelimitedFrom(InputStream input) throws IOException {
-            return (DeviceStatus) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static DeviceStatus parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (DeviceStatus) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static DeviceStatus parseFrom(CodedInputStream input) throws IOException {
-            return (DeviceStatus) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static DeviceStatus parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (DeviceStatus) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(DeviceStatus prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new DeviceStatus();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0006\u0000\u0001\u0001\u0006\u0006\u0000\u0000\u0000\u0001\b\u0000\u0002\t\u0001\u0003\u0007\u0002\u0004\u0007\u0003\u0005\u0007\u0004\u0006\b\u0005", new Object[]{"bitField0_", "foregroundPackageName_", "activeInput_", "isPlayingVideo_", "isPlayingAudio_", "isScreenOn_", "pipPackageName_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<DeviceStatus> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (DeviceStatus.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<DeviceStatus, Builder> implements DeviceStatusOrBuilder {
@@ -9062,25 +9127,25 @@ public final class TvlauncherClientLog {
                 return ((DeviceStatus) this.instance).getForegroundPackageName();
             }
 
-            public ByteString getForegroundPackageNameBytes() {
-                return ((DeviceStatus) this.instance).getForegroundPackageNameBytes();
-            }
-
             public Builder setForegroundPackageName(String value) {
                 copyOnWrite();
                 ((DeviceStatus) this.instance).setForegroundPackageName(value);
                 return this;
             }
 
-            public Builder clearForegroundPackageName() {
-                copyOnWrite();
-                ((DeviceStatus) this.instance).clearForegroundPackageName();
-                return this;
+            public ByteString getForegroundPackageNameBytes() {
+                return ((DeviceStatus) this.instance).getForegroundPackageNameBytes();
             }
 
             public Builder setForegroundPackageNameBytes(ByteString value) {
                 copyOnWrite();
                 ((DeviceStatus) this.instance).setForegroundPackageNameBytes(value);
+                return this;
+            }
+
+            public Builder clearForegroundPackageName() {
+                copyOnWrite();
+                ((DeviceStatus) this.instance).clearForegroundPackageName();
                 return this;
             }
 
@@ -9184,13 +9249,19 @@ public final class TvlauncherClientLog {
                 return ((DeviceStatus) this.instance).getPipPackageName();
             }
 
+            public Builder setPipPackageName(String value) {
+                copyOnWrite();
+                ((DeviceStatus) this.instance).setPipPackageName(value);
+                return this;
+            }
+
             public ByteString getPipPackageNameBytes() {
                 return ((DeviceStatus) this.instance).getPipPackageNameBytes();
             }
 
-            public Builder setPipPackageName(String value) {
+            public Builder setPipPackageNameBytes(ByteString value) {
                 copyOnWrite();
-                ((DeviceStatus) this.instance).setPipPackageName(value);
+                ((DeviceStatus) this.instance).setPipPackageNameBytes(value);
                 return this;
             }
 
@@ -9199,56 +9270,6 @@ public final class TvlauncherClientLog {
                 ((DeviceStatus) this.instance).clearPipPackageName();
                 return this;
             }
-
-            public Builder setPipPackageNameBytes(ByteString value) {
-                copyOnWrite();
-                ((DeviceStatus) this.instance).setPipPackageNameBytes(value);
-                return this;
-            }
-        }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new DeviceStatus();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0006\u0000\u0001\u0001\u0006\u0006\u0000\u0000\u0000\u0001\b\u0000\u0002\t\u0001\u0003\u0007\u0002\u0004\u0007\u0003\u0005\u0007\u0004\u0006\b\u0005", new Object[]{"bitField0_", "foregroundPackageName_", "activeInput_", "isPlayingVideo_", "isPlayingAudio_", "isScreenOn_", "pipPackageName_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<DeviceStatus> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (DeviceStatus.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(DeviceStatus.class, DEFAULT_INSTANCE);
-        }
-
-        public static DeviceStatus getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<DeviceStatus> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
         }
     }
 
@@ -9261,10 +9282,15 @@ public final class TvlauncherClientLog {
         public static final int INITIATED_FROM_LAUNCHER_FIELD_NUMBER = 3;
         public static final int IS_VIDEO_FIELD_NUMBER = 2;
         public static final int PACKAGE_NAME_FIELD_NUMBER = 1;
-        private static volatile Parser<MediaSession> PARSER = null;
         public static final int PLAYING_DURATION_SECONDS_FIELD_NUMBER = 8;
         public static final int START_LATENCY_MILLIS_FIELD_NUMBER = 4;
         public static final int WAS_PREVIEW_PLAYING_FIELD_NUMBER = 6;
+        private static volatile Parser<MediaSession> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(MediaSession.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 7, isRequired = false, type = FieldType.INT32)
@@ -9295,16 +9321,76 @@ public final class TvlauncherClientLog {
         private MediaSession() {
         }
 
+        public static MediaSession parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (MediaSession) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static MediaSession parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (MediaSession) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static MediaSession parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (MediaSession) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static MediaSession parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (MediaSession) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static MediaSession parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (MediaSession) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static MediaSession parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (MediaSession) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static MediaSession parseFrom(InputStream input) throws IOException {
+            return (MediaSession) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static MediaSession parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (MediaSession) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static MediaSession parseDelimitedFrom(InputStream input) throws IOException {
+            return (MediaSession) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static MediaSession parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (MediaSession) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static MediaSession parseFrom(CodedInputStream input) throws IOException {
+            return (MediaSession) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static MediaSession parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (MediaSession) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(MediaSession prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static MediaSession getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<MediaSession> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
+        }
+
         public boolean hasPackageName() {
             return (this.bitField0_ & 1) != 0;
         }
 
         public String getPackageName() {
             return this.packageName_;
-        }
-
-        public ByteString getPackageNameBytes() {
-            return ByteString.copyFromUtf8(this.packageName_);
         }
 
         /* access modifiers changed from: private */
@@ -9317,10 +9403,8 @@ public final class TvlauncherClientLog {
             throw new NullPointerException();
         }
 
-        /* access modifiers changed from: private */
-        public void clearPackageName() {
-            this.bitField0_ &= -2;
-            this.packageName_ = getDefaultInstance().getPackageName();
+        public ByteString getPackageNameBytes() {
+            return ByteString.copyFromUtf8(this.packageName_);
         }
 
         /* access modifiers changed from: private */
@@ -9331,6 +9415,12 @@ public final class TvlauncherClientLog {
                 return;
             }
             throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearPackageName() {
+            this.bitField0_ &= -2;
+            this.packageName_ = getDefaultInstance().getPackageName();
         }
 
         public boolean hasIsVideo() {
@@ -9473,60 +9563,36 @@ public final class TvlauncherClientLog {
             this.playingDurationSeconds_ = 0;
         }
 
-        public static MediaSession parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (MediaSession) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static MediaSession parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (MediaSession) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static MediaSession parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (MediaSession) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static MediaSession parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (MediaSession) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static MediaSession parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (MediaSession) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static MediaSession parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (MediaSession) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static MediaSession parseFrom(InputStream input) throws IOException {
-            return (MediaSession) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static MediaSession parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (MediaSession) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static MediaSession parseDelimitedFrom(InputStream input) throws IOException {
-            return (MediaSession) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static MediaSession parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (MediaSession) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static MediaSession parseFrom(CodedInputStream input) throws IOException {
-            return (MediaSession) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static MediaSession parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (MediaSession) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(MediaSession prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new MediaSession();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\b\u0000\u0001\u0001\b\b\u0000\u0000\u0000\u0001\b\u0000\u0002\u0007\u0001\u0003\u0007\u0002\u0004\u0002\u0003\u0005\u0007\u0004\u0006\u0007\u0005\u0007\u0004\u0006\b\u0004\u0007", new Object[]{"bitField0_", "packageName_", "isVideo_", "initiatedFromLauncher_", "startLatencyMillis_", "hasPreview_", "wasPreviewPlaying_", "durationSeconds_", "playingDurationSeconds_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<MediaSession> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (MediaSession.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<MediaSession, Builder> implements MediaSessionOrBuilder {
@@ -9542,25 +9608,25 @@ public final class TvlauncherClientLog {
                 return ((MediaSession) this.instance).getPackageName();
             }
 
-            public ByteString getPackageNameBytes() {
-                return ((MediaSession) this.instance).getPackageNameBytes();
-            }
-
             public Builder setPackageName(String value) {
                 copyOnWrite();
                 ((MediaSession) this.instance).setPackageName(value);
                 return this;
             }
 
-            public Builder clearPackageName() {
-                copyOnWrite();
-                ((MediaSession) this.instance).clearPackageName();
-                return this;
+            public ByteString getPackageNameBytes() {
+                return ((MediaSession) this.instance).getPackageNameBytes();
             }
 
             public Builder setPackageNameBytes(ByteString value) {
                 copyOnWrite();
                 ((MediaSession) this.instance).setPackageNameBytes(value);
+                return this;
+            }
+
+            public Builder clearPackageName() {
+                copyOnWrite();
+                ((MediaSession) this.instance).clearPackageName();
                 return this;
             }
 
@@ -9703,50 +9769,6 @@ public final class TvlauncherClientLog {
                 ((MediaSession) this.instance).clearPlayingDurationSeconds();
                 return this;
             }
-        }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new MediaSession();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\b\u0000\u0001\u0001\b\b\u0000\u0000\u0000\u0001\b\u0000\u0002\u0007\u0001\u0003\u0007\u0002\u0004\u0002\u0003\u0005\u0007\u0004\u0006\u0007\u0005\u0007\u0004\u0006\b\u0004\u0007", new Object[]{"bitField0_", "packageName_", "isVideo_", "initiatedFromLauncher_", "startLatencyMillis_", "hasPreview_", "wasPreviewPlaying_", "durationSeconds_", "playingDurationSeconds_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<MediaSession> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (MediaSession.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(MediaSession.class, DEFAULT_INSTANCE);
-        }
-
-        public static MediaSession getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<MediaSession> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
         }
     }
 }

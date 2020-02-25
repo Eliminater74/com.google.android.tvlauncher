@@ -13,6 +13,7 @@ import android.support.annotation.FloatRange;
 import android.support.annotation.RestrictTo;
 import android.support.p001v4.graphics.drawable.DrawableCompat;
 import android.support.p004v7.appcompat.C0233R;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -23,24 +24,18 @@ public class DrawerArrowDrawable extends Drawable {
     public static final int ARROW_DIRECTION_RIGHT = 1;
     public static final int ARROW_DIRECTION_START = 2;
     private static final float ARROW_HEAD_ANGLE = ((float) Math.toRadians(45.0d));
+    private final Paint mPaint = new Paint();
+    private final Path mPath = new Path();
+    private final int mSize;
     private float mArrowHeadLength;
     private float mArrowShaftLength;
     private float mBarGap;
     private float mBarLength;
     private int mDirection = 2;
     private float mMaxCutForBarSize;
-    private final Paint mPaint = new Paint();
-    private final Path mPath = new Path();
     private float mProgress;
-    private final int mSize;
     private boolean mSpin;
     private boolean mVerticalMirror = false;
-
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    @Retention(RetentionPolicy.SOURCE)
-    /* renamed from: android.support.v7.graphics.drawable.DrawerArrowDrawable$ArrowDirection */
-    public @interface ArrowDirection {
-    }
 
     public DrawerArrowDrawable(Context context) {
         this.mPaint.setStyle(Paint.Style.STROKE);
@@ -59,6 +54,14 @@ public class DrawerArrowDrawable extends Drawable {
         a.recycle();
     }
 
+    private static float lerp(float a, float b, float t) {
+        return ((b - a) * t) + a;
+    }
+
+    public float getArrowHeadLength() {
+        return this.mArrowHeadLength;
+    }
+
     public void setArrowHeadLength(float length) {
         if (this.mArrowHeadLength != length) {
             this.mArrowHeadLength = length;
@@ -66,8 +69,8 @@ public class DrawerArrowDrawable extends Drawable {
         }
     }
 
-    public float getArrowHeadLength() {
-        return this.mArrowHeadLength;
+    public float getArrowShaftLength() {
+        return this.mArrowShaftLength;
     }
 
     public void setArrowShaftLength(float length) {
@@ -75,10 +78,6 @@ public class DrawerArrowDrawable extends Drawable {
             this.mArrowShaftLength = length;
             invalidateSelf();
         }
-    }
-
-    public float getArrowShaftLength() {
-        return this.mArrowShaftLength;
     }
 
     public float getBarLength() {
@@ -92,6 +91,11 @@ public class DrawerArrowDrawable extends Drawable {
         }
     }
 
+    @ColorInt
+    public int getColor() {
+        return this.mPaint.getColor();
+    }
+
     public void setColor(@ColorInt int color) {
         if (color != this.mPaint.getColor()) {
             this.mPaint.setColor(color);
@@ -99,9 +103,8 @@ public class DrawerArrowDrawable extends Drawable {
         }
     }
 
-    @ColorInt
-    public int getColor() {
-        return this.mPaint.getColor();
+    public float getBarThickness() {
+        return this.mPaint.getStrokeWidth();
     }
 
     public void setBarThickness(float width) {
@@ -115,10 +118,6 @@ public class DrawerArrowDrawable extends Drawable {
         }
     }
 
-    public float getBarThickness() {
-        return this.mPaint.getStrokeWidth();
-    }
-
     public float getGapSize() {
         return this.mBarGap;
     }
@@ -126,13 +125,6 @@ public class DrawerArrowDrawable extends Drawable {
     public void setGapSize(float gap) {
         if (gap != this.mBarGap) {
             this.mBarGap = gap;
-            invalidateSelf();
-        }
-    }
-
-    public void setDirection(int direction) {
-        if (direction != this.mDirection) {
-            this.mDirection = direction;
             invalidateSelf();
         }
     }
@@ -150,6 +142,13 @@ public class DrawerArrowDrawable extends Drawable {
 
     public int getDirection() {
         return this.mDirection;
+    }
+
+    public void setDirection(int direction) {
+        if (direction != this.mDirection) {
+            this.mDirection = direction;
+            invalidateSelf();
+        }
     }
 
     public void setVerticalMirror(boolean verticalMirror) {
@@ -260,7 +259,9 @@ public class DrawerArrowDrawable extends Drawable {
         return this.mPaint;
     }
 
-    private static float lerp(float a, float b, float t) {
-        return ((b - a) * t) + a;
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    @Retention(RetentionPolicy.SOURCE)
+    /* renamed from: android.support.v7.graphics.drawable.DrawerArrowDrawable$ArrowDirection */
+    public @interface ArrowDirection {
     }
 }

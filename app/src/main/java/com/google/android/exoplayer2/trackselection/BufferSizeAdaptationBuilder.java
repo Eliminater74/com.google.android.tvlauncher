@@ -2,6 +2,7 @@ package com.google.android.exoplayer2.trackselection;
 
 import android.support.annotation.Nullable;
 import android.util.Pair;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.Format;
@@ -9,11 +10,11 @@ import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.source.TrackGroup;
 import com.google.android.exoplayer2.source.chunk.MediaChunk;
 import com.google.android.exoplayer2.source.chunk.MediaChunkIterator;
-import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultAllocator;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Clock;
+
 import java.util.List;
 
 public final class BufferSizeAdaptationBuilder {
@@ -24,11 +25,6 @@ public final class BufferSizeAdaptationBuilder {
     public static final int DEFAULT_MIN_BUFFER_MS = 15000;
     public static final float DEFAULT_START_UP_BANDWIDTH_FRACTION = 0.75f;
     public static final int DEFAULT_START_UP_MIN_BUFFER_FOR_QUALITY_INCREASE_MS = 10000;
-    @Nullable
-    private DefaultAllocator allocator;
-    private int bufferForPlaybackAfterRebufferMs = 5000;
-    private int bufferForPlaybackMs = 2500;
-    private boolean buildCalled;
     /* access modifiers changed from: private */
     public Clock clock = Clock.DEFAULT;
     /* access modifiers changed from: private */
@@ -43,12 +39,11 @@ public final class BufferSizeAdaptationBuilder {
     public float startUpBandwidthFraction = 0.75f;
     /* access modifiers changed from: private */
     public int startUpMinBufferForQualityIncreaseMs = 10000;
-
-    public interface DynamicFormatFilter {
-        public static final DynamicFormatFilter NO_FILTER = BufferSizeAdaptationBuilder$DynamicFormatFilter$$Lambda$0.$instance;
-
-        boolean isFormatAllowed(Format format, int i, boolean z);
-    }
+    @Nullable
+    private DefaultAllocator allocator;
+    private int bufferForPlaybackAfterRebufferMs = 5000;
+    private int bufferForPlaybackMs = 2500;
+    private boolean buildCalled;
 
     public BufferSizeAdaptationBuilder setClock(Clock clock2) {
         Assertions.checkState(!this.buildCalled);
@@ -117,6 +112,12 @@ public final class BufferSizeAdaptationBuilder {
         }, loadControlBuilder.createDefaultLoadControl());
     }
 
+    public interface DynamicFormatFilter {
+        public static final DynamicFormatFilter NO_FILTER = BufferSizeAdaptationBuilder$DynamicFormatFilter$$Lambda$0.$instance;
+
+        boolean isFormatAllowed(Format format, int i, boolean z);
+    }
+
     private static final class BufferSizeAdaptiveTrackSelection extends BaseTrackSelection {
         private static final int BITRATE_BLACKLISTED = -1;
         private final BandwidthMeter bandwidthMeter;
@@ -126,16 +127,16 @@ public final class BufferSizeAdaptationBuilder {
         private final DynamicFormatFilter dynamicFormatFilter;
         private final int[] formatBitrates;
         private final long hysteresisBufferUs;
-        private boolean isInSteadyState;
         private final int maxBitrate;
         private final long maxBufferUs;
         private final int minBitrate;
         private final long minBufferUs;
+        private final float startUpBandwidthFraction;
+        private final long startUpMinBufferForQualityIncreaseUs;
+        private boolean isInSteadyState;
         private float playbackSpeed;
         private int selectedIndex;
         private int selectionReason;
-        private final float startUpBandwidthFraction;
-        private final long startUpMinBufferForQualityIncreaseUs;
 
         private BufferSizeAdaptiveTrackSelection(TrackGroup trackGroup, int[] tracks, BandwidthMeter bandwidthMeter2, int minBufferMs, int maxBufferMs, int hysteresisBufferMs, float startUpBandwidthFraction2, int startUpMinBufferForQualityIncreaseMs, DynamicFormatFilter dynamicFormatFilter2, Clock clock2) {
             super(trackGroup, tracks);
@@ -163,6 +164,10 @@ public final class BufferSizeAdaptationBuilder {
             double d4 = (double) this.minBufferUs;
             Double.isNaN(d4);
             this.bitrateToBufferFunctionIntercept = d4 - (this.bitrateToBufferFunctionSlope * Math.log((double) this.minBitrate));
+        }
+
+        private static long getCurrentPeriodBufferedDurationUs(long playbackPositionUs, long bufferedDurationUs) {
+            return playbackPositionUs >= 0 ? bufferedDurationUs : playbackPositionUs + bufferedDurationUs;
         }
 
         public void onPlaybackSpeed(float playbackSpeed2) {
@@ -287,10 +292,6 @@ public final class BufferSizeAdaptationBuilder {
                 return this.maxBufferUs - this.hysteresisBufferUs;
             }
             return (long) ((int) ((this.bitrateToBufferFunctionSlope * Math.log((double) bitrate)) + this.bitrateToBufferFunctionIntercept));
-        }
-
-        private static long getCurrentPeriodBufferedDurationUs(long playbackPositionUs, long bufferedDurationUs) {
-            return playbackPositionUs >= 0 ? bufferedDurationUs : playbackPositionUs + bufferedDurationUs;
         }
     }
 }

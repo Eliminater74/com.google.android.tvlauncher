@@ -4,13 +4,12 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.BaseRenderer;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.FormatHolder;
 import com.google.android.exoplayer2.PlaybackParameters;
-import com.google.android.exoplayer2.audio.AudioRendererEventListener;
-import com.google.android.exoplayer2.audio.AudioSink;
 import com.google.android.exoplayer2.decoder.DecoderCounters;
 import com.google.android.exoplayer2.decoder.DecoderInputBuffer;
 import com.google.android.exoplayer2.decoder.SimpleDecoder;
@@ -24,6 +23,7 @@ import com.google.android.exoplayer2.util.MediaClock;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.TraceUtil;
 import com.google.android.exoplayer2.util.Util;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -32,10 +32,16 @@ public abstract class SimpleDecoderAudioRenderer extends BaseRenderer implements
     private static final int REINITIALIZATION_STATE_NONE = 0;
     private static final int REINITIALIZATION_STATE_SIGNAL_END_OF_STREAM = 1;
     private static final int REINITIALIZATION_STATE_WAIT_END_OF_STREAM = 2;
-    private boolean allowFirstBufferPositionDiscontinuity;
+    /* access modifiers changed from: private */
+    public final AudioRendererEventListener.EventDispatcher eventDispatcher;
+    private final AudioSink audioSink;
+    private final DrmSessionManager<ExoMediaCrypto> drmSessionManager;
+    private final DecoderInputBuffer flagsOnlyBuffer;
+    private final FormatHolder formatHolder;
+    private final boolean playClearSamplesWithoutKeys;
     /* access modifiers changed from: private */
     public boolean allowPositionDiscontinuity;
-    private final AudioSink audioSink;
+    private boolean allowFirstBufferPositionDiscontinuity;
     private boolean audioTrackNeedsConfigure;
     private long currentPositionUs;
     private SimpleDecoder<DecoderInputBuffer, ? extends SimpleOutputBuffer, ? extends AudioDecoderException> decoder;
@@ -44,33 +50,16 @@ public abstract class SimpleDecoderAudioRenderer extends BaseRenderer implements
     private DrmSession<ExoMediaCrypto> decoderDrmSession;
     private boolean decoderReceivedBuffers;
     private int decoderReinitializationState;
-    private final DrmSessionManager<ExoMediaCrypto> drmSessionManager;
     private int encoderDelay;
     private int encoderPadding;
-    /* access modifiers changed from: private */
-    public final AudioRendererEventListener.EventDispatcher eventDispatcher;
-    private final DecoderInputBuffer flagsOnlyBuffer;
-    private final FormatHolder formatHolder;
     private DecoderInputBuffer inputBuffer;
     private Format inputFormat;
     private boolean inputStreamEnded;
     private SimpleOutputBuffer outputBuffer;
     private boolean outputStreamEnded;
-    private final boolean playClearSamplesWithoutKeys;
     @Nullable
     private DrmSession<ExoMediaCrypto> sourceDrmSession;
     private boolean waitingForKeys;
-
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    private @interface ReinitializationState {
-    }
-
-    /* access modifiers changed from: protected */
-    public abstract SimpleDecoder<DecoderInputBuffer, ? extends SimpleOutputBuffer, ? extends AudioDecoderException> createDecoder(Format format, ExoMediaCrypto exoMediaCrypto) throws AudioDecoderException;
-
-    /* access modifiers changed from: protected */
-    public abstract int supportsFormatInternal(DrmSessionManager<ExoMediaCrypto> drmSessionManager2, Format format);
 
     public SimpleDecoderAudioRenderer() {
         this((Handler) null, (AudioRendererEventListener) null, new AudioProcessor[0]);
@@ -100,6 +89,12 @@ public abstract class SimpleDecoderAudioRenderer extends BaseRenderer implements
         this.decoderReinitializationState = 0;
         this.audioTrackNeedsConfigure = true;
     }
+
+    /* access modifiers changed from: protected */
+    public abstract SimpleDecoder<DecoderInputBuffer, ? extends SimpleOutputBuffer, ? extends AudioDecoderException> createDecoder(Format format, ExoMediaCrypto exoMediaCrypto) throws AudioDecoderException;
+
+    /* access modifiers changed from: protected */
+    public abstract int supportsFormatInternal(DrmSessionManager<ExoMediaCrypto> drmSessionManager2, Format format);
 
     public MediaClock getMediaClock() {
         return this;
@@ -507,6 +502,11 @@ public abstract class SimpleDecoderAudioRenderer extends BaseRenderer implements
             this.currentPositionUs = j;
             this.allowPositionDiscontinuity = false;
         }
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    private @interface ReinitializationState {
     }
 
     private final class AudioSinkListener implements AudioSink.Listener {

@@ -2,7 +2,7 @@ package com.google.common.collect;
 
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.GwtIncompatible;
-import com.google.common.collect.Maps;
+
 import java.util.Iterator;
 import java.util.Map;
 import java.util.NavigableMap;
@@ -12,11 +12,11 @@ import java.util.SortedMap;
 
 @GwtIncompatible
 public abstract class ForwardingNavigableMap<K, V> extends ForwardingSortedMap<K, V> implements NavigableMap<K, V> {
-    /* access modifiers changed from: protected */
-    public abstract NavigableMap<K, V> delegate();
-
     protected ForwardingNavigableMap() {
     }
+
+    /* access modifiers changed from: protected */
+    public abstract NavigableMap<K, V> delegate();
 
     public Map.Entry<K, V> lowerEntry(K key) {
         return delegate().lowerEntry(key);
@@ -148,6 +148,47 @@ public abstract class ForwardingNavigableMap<K, V> extends ForwardingSortedMap<K
         return delegate().descendingMap();
     }
 
+    public NavigableSet<K> navigableKeySet() {
+        return delegate().navigableKeySet();
+    }
+
+    public NavigableSet<K> descendingKeySet() {
+        return delegate().descendingKeySet();
+    }
+
+    /* access modifiers changed from: protected */
+    @Beta
+    public NavigableSet<K> standardDescendingKeySet() {
+        return descendingMap().navigableKeySet();
+    }
+
+    /* access modifiers changed from: protected */
+    public SortedMap<K, V> standardSubMap(K fromKey, K toKey) {
+        return subMap(fromKey, true, toKey, false);
+    }
+
+    public NavigableMap<K, V> subMap(K fromKey, boolean fromInclusive, K toKey, boolean toInclusive) {
+        return delegate().subMap(fromKey, fromInclusive, toKey, toInclusive);
+    }
+
+    public NavigableMap<K, V> headMap(K toKey, boolean inclusive) {
+        return delegate().headMap(toKey, inclusive);
+    }
+
+    public NavigableMap<K, V> tailMap(K fromKey, boolean inclusive) {
+        return delegate().tailMap(fromKey, inclusive);
+    }
+
+    /* access modifiers changed from: protected */
+    public SortedMap<K, V> standardHeadMap(K toKey) {
+        return headMap(toKey, false);
+    }
+
+    /* access modifiers changed from: protected */
+    public SortedMap<K, V> standardTailMap(K fromKey) {
+        return tailMap(fromKey, true);
+    }
+
     @Beta
     protected class StandardDescendingMap extends Maps.DescendingMap<K, V> {
         public StandardDescendingMap() {
@@ -190,51 +231,10 @@ public abstract class ForwardingNavigableMap<K, V> extends ForwardingSortedMap<K
         }
     }
 
-    public NavigableSet<K> navigableKeySet() {
-        return delegate().navigableKeySet();
-    }
-
     @Beta
     protected class StandardNavigableKeySet extends Maps.NavigableKeySet<K, V> {
         public StandardNavigableKeySet(ForwardingNavigableMap this$0) {
             super(this$0);
         }
-    }
-
-    public NavigableSet<K> descendingKeySet() {
-        return delegate().descendingKeySet();
-    }
-
-    /* access modifiers changed from: protected */
-    @Beta
-    public NavigableSet<K> standardDescendingKeySet() {
-        return descendingMap().navigableKeySet();
-    }
-
-    /* access modifiers changed from: protected */
-    public SortedMap<K, V> standardSubMap(K fromKey, K toKey) {
-        return subMap(fromKey, true, toKey, false);
-    }
-
-    public NavigableMap<K, V> subMap(K fromKey, boolean fromInclusive, K toKey, boolean toInclusive) {
-        return delegate().subMap(fromKey, fromInclusive, toKey, toInclusive);
-    }
-
-    public NavigableMap<K, V> headMap(K toKey, boolean inclusive) {
-        return delegate().headMap(toKey, inclusive);
-    }
-
-    public NavigableMap<K, V> tailMap(K fromKey, boolean inclusive) {
-        return delegate().tailMap(fromKey, inclusive);
-    }
-
-    /* access modifiers changed from: protected */
-    public SortedMap<K, V> standardHeadMap(K toKey) {
-        return headMap(toKey, false);
-    }
-
-    /* access modifiers changed from: protected */
-    public SortedMap<K, V> standardTailMap(K fromKey) {
-        return tailMap(fromKey, true);
     }
 }

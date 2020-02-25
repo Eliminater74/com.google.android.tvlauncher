@@ -4,13 +4,9 @@ import android.content.Context;
 
 public final class BinderProvider {
     private final boolean attachRootBinder;
-    private volatile Binder binder;
     private final Object binderInitLock;
     private final Initializer initializer;
-
-    public interface Initializer {
-        void initBinder(Context context, Binder binder);
-    }
+    private volatile Binder binder;
 
     public BinderProvider(Initializer initializer2) {
         this(true, initializer2);
@@ -38,5 +34,9 @@ public final class BinderProvider {
             }
         }
         return this.binder;
+    }
+
+    public interface Initializer {
+        void initBinder(Context context, Binder binder);
     }
 }

@@ -1,7 +1,5 @@
 package com.google.android.gms.internal;
 
-import com.google.android.gms.internal.zzgoj;
-
 /* compiled from: NewInstanceSchemaLite */
 final class zzgqc implements zzgqb {
     zzgqc() {

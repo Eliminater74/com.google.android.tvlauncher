@@ -14,6 +14,10 @@ public interface MultiActionsProvider {
             this.mId = id;
         }
 
+        public Drawable[] getDrawables() {
+            return this.mDrawables;
+        }
+
         public void setDrawables(Drawable[] drawables) {
             this.mDrawables = drawables;
             if (this.mIndex > drawables.length - 1) {
@@ -21,21 +25,17 @@ public interface MultiActionsProvider {
             }
         }
 
-        public Drawable[] getDrawables() {
-            return this.mDrawables;
-        }
-
         public void incrementIndex() {
             int i = this.mIndex;
             setIndex(i < this.mDrawables.length + -1 ? i + 1 : 0);
         }
 
-        public void setIndex(int index) {
-            this.mIndex = index;
-        }
-
         public int getIndex() {
             return this.mIndex;
+        }
+
+        public void setIndex(int index) {
+            this.mIndex = index;
         }
 
         public Drawable getCurrentDrawable() {

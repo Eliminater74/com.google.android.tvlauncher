@@ -1,9 +1,10 @@
 package com.bumptech.glide.load.engine.cache;
 
 import android.util.Log;
+
 import com.bumptech.glide.disklrucache.DiskLruCache;
 import com.bumptech.glide.load.Key;
-import com.bumptech.glide.load.engine.cache.DiskCache;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -13,10 +14,17 @@ public class DiskLruCacheWrapper implements DiskCache {
     private static final int VALUE_COUNT = 1;
     private static DiskLruCacheWrapper wrapper;
     private final File directory;
-    private DiskLruCache diskLruCache;
     private final long maxSize;
     private final SafeKeyGenerator safeKeyGenerator;
     private final DiskCacheWriteLocker writeLocker = new DiskCacheWriteLocker();
+    private DiskLruCache diskLruCache;
+
+    @Deprecated
+    protected DiskLruCacheWrapper(File directory2, long maxSize2) {
+        this.directory = directory2;
+        this.maxSize = maxSize2;
+        this.safeKeyGenerator = new SafeKeyGenerator();
+    }
 
     @Deprecated
     public static synchronized DiskCache get(File directory2, long maxSize2) {
@@ -32,13 +40,6 @@ public class DiskLruCacheWrapper implements DiskCache {
 
     public static DiskCache create(File directory2, long maxSize2) {
         return new DiskLruCacheWrapper(directory2, maxSize2);
-    }
-
-    @Deprecated
-    protected DiskLruCacheWrapper(File directory2, long maxSize2) {
-        this.directory = directory2;
-        this.maxSize = maxSize2;
-        this.safeKeyGenerator = new SafeKeyGenerator();
     }
 
     private synchronized DiskLruCache getDiskCache() throws IOException {

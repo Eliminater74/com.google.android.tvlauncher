@@ -3,15 +3,15 @@ package androidx.leanback.widget;
 import android.content.Context;
 import android.content.res.Resources;
 import android.util.AttributeSet;
+
 import androidx.leanback.C0364R;
-import androidx.leanback.widget.SearchOrbView;
 
 public class SpeechOrbView extends SearchOrbView {
+    private final float mSoundLevelMaxZoom;
     private int mCurrentLevel;
     private boolean mListening;
     private SearchOrbView.Colors mListeningOrbColors;
     private SearchOrbView.Colors mNotListeningOrbColors;
-    private final float mSoundLevelMaxZoom;
 
     public SpeechOrbView(Context context) {
         this(context, null);

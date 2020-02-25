@@ -2,10 +2,12 @@ package com.google.android.libraries.performance.primes;
 
 import android.app.Application;
 import android.support.annotation.VisibleForTesting;
+
 import com.google.android.libraries.performance.primes.flags.ServiceFlags;
 import com.google.android.libraries.performance.primes.transmitter.MetricTransmitter;
 import com.google.android.libraries.performance.primes.transmitter.MetricTransmitterProvider;
 import com.google.android.libraries.stitch.util.Preconditions;
+
 import java.util.concurrent.atomic.AtomicInteger;
 
 public final class PrimesApiProvider {

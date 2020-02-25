@@ -2,7 +2,6 @@ package android.support.p004v7.view;
 
 import android.content.Context;
 import android.support.annotation.RestrictTo;
-import android.support.p004v7.view.ActionMode;
 import android.support.p004v7.view.menu.MenuBuilder;
 import android.support.p004v7.view.menu.MenuPopupHelper;
 import android.support.p004v7.view.menu.SubMenuBuilder;
@@ -11,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+
 import java.lang.ref.WeakReference;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
@@ -33,22 +33,6 @@ public class StandaloneActionMode extends ActionMode implements MenuBuilder.Call
         this.mFocusable = isFocusable;
     }
 
-    public void setTitle(CharSequence title) {
-        this.mContextView.setTitle(title);
-    }
-
-    public void setSubtitle(CharSequence subtitle) {
-        this.mContextView.setSubtitle(subtitle);
-    }
-
-    public void setTitle(int resId) {
-        setTitle(this.mContext.getString(resId));
-    }
-
-    public void setSubtitle(int resId) {
-        setSubtitle(this.mContext.getString(resId));
-    }
-
     public void setTitleOptionalHint(boolean titleOptional) {
         super.setTitleOptionalHint(titleOptional);
         this.mContextView.setTitleOptional(titleOptional);
@@ -56,11 +40,6 @@ public class StandaloneActionMode extends ActionMode implements MenuBuilder.Call
 
     public boolean isTitleOptional() {
         return this.mContextView.isTitleOptional();
-    }
-
-    public void setCustomView(View view) {
-        this.mContextView.setCustomView(view);
-        this.mCustomView = view != null ? new WeakReference<>(view) : null;
     }
 
     public void invalidate() {
@@ -83,8 +62,24 @@ public class StandaloneActionMode extends ActionMode implements MenuBuilder.Call
         return this.mContextView.getTitle();
     }
 
+    public void setTitle(CharSequence title) {
+        this.mContextView.setTitle(title);
+    }
+
+    public void setTitle(int resId) {
+        setTitle(this.mContext.getString(resId));
+    }
+
     public CharSequence getSubtitle() {
         return this.mContextView.getSubtitle();
+    }
+
+    public void setSubtitle(CharSequence subtitle) {
+        this.mContextView.setSubtitle(subtitle);
+    }
+
+    public void setSubtitle(int resId) {
+        setSubtitle(this.mContext.getString(resId));
     }
 
     public View getCustomView() {
@@ -93,6 +88,11 @@ public class StandaloneActionMode extends ActionMode implements MenuBuilder.Call
             return weakReference.get();
         }
         return null;
+    }
+
+    public void setCustomView(View view) {
+        this.mContextView.setCustomView(view);
+        this.mCustomView = view != null ? new WeakReference<>(view) : null;
     }
 
     public MenuInflater getMenuInflater() {

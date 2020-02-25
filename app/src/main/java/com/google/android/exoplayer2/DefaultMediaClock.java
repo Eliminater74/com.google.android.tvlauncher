@@ -1,21 +1,18 @@
 package com.google.android.exoplayer2;
 
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.util.Clock;
 import com.google.android.exoplayer2.util.MediaClock;
 import com.google.android.exoplayer2.util.StandaloneMediaClock;
 
 final class DefaultMediaClock implements MediaClock {
     private final PlaybackParameterListener listener;
+    private final StandaloneMediaClock standaloneMediaClock;
     @Nullable
     private MediaClock rendererClock;
     @Nullable
     private Renderer rendererClockSource;
-    private final StandaloneMediaClock standaloneMediaClock;
-
-    public interface PlaybackParameterListener {
-        void onPlaybackParametersChanged(PlaybackParameters playbackParameters);
-    }
 
     public DefaultMediaClock(PlaybackParameterListener listener2, Clock clock) {
         this.listener = listener2;
@@ -101,5 +98,9 @@ final class DefaultMediaClock implements MediaClock {
     private boolean isUsingRendererClock() {
         Renderer renderer = this.rendererClockSource;
         return renderer != null && !renderer.isEnded() && (this.rendererClockSource.isReady() || !this.rendererClockSource.hasReadStreamToEnd());
+    }
+
+    public interface PlaybackParameterListener {
+        void onPlaybackParametersChanged(PlaybackParameters playbackParameters);
     }
 }

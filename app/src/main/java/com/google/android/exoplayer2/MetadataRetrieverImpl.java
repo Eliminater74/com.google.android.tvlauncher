@@ -7,10 +7,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.Pair;
-import com.google.android.exoplayer2.DefaultLoadControl;
-import com.google.android.exoplayer2.MetadataRetriever;
-import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.Timeline;
+
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
@@ -25,6 +22,7 @@ import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.surfacecapturer.SingleFrameMediaCodecVideoRenderer;
 import com.google.android.exoplayer2.video.surfacecapturer.VideoRendererOutputCapturer;
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.util.ArrayDeque;
 import java.util.Queue;
 
@@ -35,21 +33,25 @@ final class MetadataRetrieverImpl implements MetadataRetriever, Handler.Callback
     private static final int RECAPTURE_FRAME_DELAY_MILLIS = 15000;
     private static final int VIDEO_RENDERER_INDEX = 0;
     /* access modifiers changed from: private */
+    public final ExoPlayerImpl exoPlayer;
+    private final Handler handler;
+    private final Timeline.Period period;
+    private final Queue<Query> queryQueue;
+    private final RendererCapabilities[] rendererCapabilities;
+    private final DefaultTrackSelector standaloneTrackSelector;
+    private final DefaultTrackSelector trackSelector;
+    private final VideoRendererOutputCapturer videoRendererOutputCapturer;
+    private final Timeline.Window window;
+    /* access modifiers changed from: private */
     public int currentOutputHeight;
     /* access modifiers changed from: private */
     public int currentOutputWidth;
-    /* access modifiers changed from: private */
-    public final ExoPlayerImpl exoPlayer;
-    private final Handler handler;
-    private boolean isRecapturing;
     /* access modifiers changed from: private */
     @Nullable
     public Bitmap lastCapturedBitmap;
     /* access modifiers changed from: private */
     @Nullable
     public Exception lastSurfaceCaptureException;
-    @Nullable
-    private MediaSource mediaSource;
     /* access modifiers changed from: private */
     @Nullable
     public MetadataRetriever.MediaSourceCallback mediaSourceCallback;
@@ -57,22 +59,18 @@ final class MetadataRetrieverImpl implements MetadataRetriever, Handler.Callback
     public boolean outputCapturePending;
     /* access modifiers changed from: private */
     public boolean outputSurfaceSetPending;
-    private final Timeline.Period period;
     /* access modifiers changed from: private */
     public long playerSeekAckPositionMs;
-    private final Queue<Query> queryQueue;
-    private int queryWindowIndex;
-    private final RendererCapabilities[] rendererCapabilities;
-    private SeekParameters seekParameters;
-    private final DefaultTrackSelector standaloneTrackSelector;
     /* access modifiers changed from: private */
     public Timeline timeline;
     /* access modifiers changed from: private */
     @Nullable
     public Object trackGroupsPeriodUid;
-    private final DefaultTrackSelector trackSelector;
-    private final VideoRendererOutputCapturer videoRendererOutputCapturer;
-    private final Timeline.Window window;
+    private boolean isRecapturing;
+    @Nullable
+    private MediaSource mediaSource;
+    private int queryWindowIndex;
+    private SeekParameters seekParameters;
 
     public MetadataRetrieverImpl(Context context, Clock clock) {
         this(context, clock, (Looper) Assertions.checkNotNull(Looper.myLooper()));
@@ -146,12 +144,12 @@ final class MetadataRetrieverImpl implements MetadataRetriever, Handler.Callback
         return frameQuery;
     }
 
-    public void setWindowIndex(int windowIndex) {
-        this.queryWindowIndex = windowIndex;
-    }
-
     public int getWindowIndex() {
         return this.queryWindowIndex;
+    }
+
+    public void setWindowIndex(int windowIndex) {
+        this.queryWindowIndex = windowIndex;
     }
 
     public long getWindowDurationMs() {
@@ -166,12 +164,12 @@ final class MetadataRetrieverImpl implements MetadataRetriever, Handler.Callback
         return this.timeline;
     }
 
-    public void setSeekParameters(SeekParameters seekParameters2) {
-        this.seekParameters = seekParameters2;
-    }
-
     public SeekParameters getSeekParameters() {
         return this.seekParameters;
+    }
+
+    public void setSeekParameters(SeekParameters seekParameters2) {
+        this.seekParameters = seekParameters2;
     }
 
     public boolean handleMessage(Message msg) {
@@ -414,116 +412,14 @@ final class MetadataRetrieverImpl implements MetadataRetriever, Handler.Callback
         this.handler.removeCallbacksAndMessages(null);
     }
 
-    private final class ComponentListener implements Player.EventListener {
-        public void onLoadingChanged(boolean z) {
-            Player$EventListener$$CC.onLoadingChanged$$dflt$$(this, z);
-        }
-
-        public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
-            Player$EventListener$$CC.onPlaybackParametersChanged$$dflt$$(this, playbackParameters);
-        }
-
-        public void onPlayerStateChanged(boolean z, int i) {
-            Player$EventListener$$CC.onPlayerStateChanged$$dflt$$(this, z, i);
-        }
-
-        public void onPositionDiscontinuity(int i) {
-            Player$EventListener$$CC.onPositionDiscontinuity$$dflt$$(this, i);
-        }
-
-        public void onRepeatModeChanged(int i) {
-            Player$EventListener$$CC.onRepeatModeChanged$$dflt$$(this, i);
-        }
-
-        public void onShuffleModeEnabledChanged(boolean z) {
-            Player$EventListener$$CC.onShuffleModeEnabledChanged$$dflt$$(this, z);
-        }
-
-        private ComponentListener() {
-        }
-
-        public void onTimelineChanged(Timeline timeline, @Nullable Object manifest, int reason) {
-            if (!timeline.equals(MetadataRetrieverImpl.this.timeline)) {
-                long unused = MetadataRetrieverImpl.this.playerSeekAckPositionMs = C0841C.TIME_UNSET;
-                Timeline unused2 = MetadataRetrieverImpl.this.timeline = timeline;
-                if (MetadataRetrieverImpl.this.mediaSourceCallback != null) {
-                    MetadataRetrieverImpl.this.mediaSourceCallback.onTimelineUpdated(timeline, manifest, reason);
-                }
-            }
-        }
-
-        public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
-            if (MetadataRetrieverImpl.this.exoPlayer.emptyTrackSelectorResult.selections != trackSelections) {
-                int currentPeriodIndex = MetadataRetrieverImpl.this.exoPlayer.getCurrentPeriodIndex();
-                if (currentPeriodIndex < MetadataRetrieverImpl.this.timeline.getPeriodCount()) {
-                    MetadataRetrieverImpl metadataRetrieverImpl = MetadataRetrieverImpl.this;
-                    Object unused = metadataRetrieverImpl.trackGroupsPeriodUid = metadataRetrieverImpl.timeline.getUidOfPeriod(currentPeriodIndex);
-                }
-                MetadataRetrieverImpl.this.processNextQuery();
-            }
-        }
-
-        public void onSeekProcessed() {
-            long lastPlayerSeekAckPositionMs = MetadataRetrieverImpl.this.playerSeekAckPositionMs;
-            MetadataRetrieverImpl metadataRetrieverImpl = MetadataRetrieverImpl.this;
-            long unused = metadataRetrieverImpl.playerSeekAckPositionMs = metadataRetrieverImpl.exoPlayer.getCurrentPosition();
-            if (!MetadataRetrieverImpl.this.outputCapturePending || MetadataRetrieverImpl.this.playerSeekAckPositionMs != lastPlayerSeekAckPositionMs) {
-                MetadataRetrieverImpl.this.processNextQuery();
-            } else {
-                MetadataRetrieverImpl.this.processRecaptureFrame();
-            }
-        }
-
-        public void onPlayerError(ExoPlaybackException exception) {
-            MetadataRetriever.MediaSourceCallback mediaSourceCallback = MetadataRetrieverImpl.this.mediaSourceCallback;
-            MetadataRetrieverImpl.this.stop();
-            if (mediaSourceCallback != null) {
-                mediaSourceCallback.onTimelineUnavailable(exception);
-            }
-        }
-    }
-
-    private final class VideoRendererOutputCapturerCallback implements VideoRendererOutputCapturer.Callback {
-        private VideoRendererOutputCapturerCallback() {
-        }
-
-        public void onOutputSizeSet(int width, int height) {
-            int unused = MetadataRetrieverImpl.this.currentOutputWidth = width;
-            int unused2 = MetadataRetrieverImpl.this.currentOutputHeight = height;
-            if (MetadataRetrieverImpl.this.outputSurfaceSetPending) {
-                boolean unused3 = MetadataRetrieverImpl.this.outputSurfaceSetPending = false;
-                MetadataRetrieverImpl.this.processNextQuery();
-            }
-        }
-
-        public void onSurfaceCaptured(Bitmap bitmap) {
-            if (MetadataRetrieverImpl.this.outputCapturePending) {
-                Bitmap unused = MetadataRetrieverImpl.this.lastCapturedBitmap = bitmap;
-                boolean unused2 = MetadataRetrieverImpl.this.outputCapturePending = false;
-                MetadataRetrieverImpl.this.processNextQuery();
-            }
-        }
-
-        public void onSurfaceCaptureError(Exception exception) {
-            if (MetadataRetrieverImpl.this.outputCapturePending) {
-                Exception unused = MetadataRetrieverImpl.this.lastSurfaceCaptureException = exception;
-                boolean unused2 = MetadataRetrieverImpl.this.outputCapturePending = false;
-                MetadataRetrieverImpl.this.processNextQuery();
-            }
-        }
-    }
-
     private static abstract class Query {
-        public long periodPositionUs = C0841C.TIME_UNSET;
-        @Nullable
-        public Object periodUid;
         public final SeekParameters seekParameters;
         public final Timeline timeline;
         public final int windowIndex;
         public final long windowPositionMs;
-
-        /* access modifiers changed from: protected */
-        public abstract void notifyQueryFailed(Exception exc);
+        public long periodPositionUs = C0841C.TIME_UNSET;
+        @Nullable
+        public Object periodUid;
 
         protected Query(int windowIndex2, long windowPositionMs2, Timeline timeline2, SeekParameters seekParameters2) {
             this.windowIndex = windowIndex2;
@@ -531,6 +427,9 @@ final class MetadataRetrieverImpl implements MetadataRetriever, Handler.Callback
             this.timeline = timeline2;
             this.seekParameters = seekParameters2;
         }
+
+        /* access modifiers changed from: protected */
+        public abstract void notifyQueryFailed(Exception exc);
 
         public String toString() {
             String valueOf = String.valueOf(this.timeline);
@@ -622,6 +521,105 @@ final class MetadataRetrieverImpl implements MetadataRetriever, Handler.Callback
 
         public boolean outputSizeResolved() {
             return this.outputSizeResolved;
+        }
+    }
+
+    private final class ComponentListener implements Player.EventListener {
+        private ComponentListener() {
+        }
+
+        public void onLoadingChanged(boolean z) {
+            Player$EventListener$$CC.onLoadingChanged$$dflt$$(this, z);
+        }
+
+        public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
+            Player$EventListener$$CC.onPlaybackParametersChanged$$dflt$$(this, playbackParameters);
+        }
+
+        public void onPlayerStateChanged(boolean z, int i) {
+            Player$EventListener$$CC.onPlayerStateChanged$$dflt$$(this, z, i);
+        }
+
+        public void onPositionDiscontinuity(int i) {
+            Player$EventListener$$CC.onPositionDiscontinuity$$dflt$$(this, i);
+        }
+
+        public void onRepeatModeChanged(int i) {
+            Player$EventListener$$CC.onRepeatModeChanged$$dflt$$(this, i);
+        }
+
+        public void onShuffleModeEnabledChanged(boolean z) {
+            Player$EventListener$$CC.onShuffleModeEnabledChanged$$dflt$$(this, z);
+        }
+
+        public void onTimelineChanged(Timeline timeline, @Nullable Object manifest, int reason) {
+            if (!timeline.equals(MetadataRetrieverImpl.this.timeline)) {
+                long unused = MetadataRetrieverImpl.this.playerSeekAckPositionMs = C0841C.TIME_UNSET;
+                Timeline unused2 = MetadataRetrieverImpl.this.timeline = timeline;
+                if (MetadataRetrieverImpl.this.mediaSourceCallback != null) {
+                    MetadataRetrieverImpl.this.mediaSourceCallback.onTimelineUpdated(timeline, manifest, reason);
+                }
+            }
+        }
+
+        public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
+            if (MetadataRetrieverImpl.this.exoPlayer.emptyTrackSelectorResult.selections != trackSelections) {
+                int currentPeriodIndex = MetadataRetrieverImpl.this.exoPlayer.getCurrentPeriodIndex();
+                if (currentPeriodIndex < MetadataRetrieverImpl.this.timeline.getPeriodCount()) {
+                    MetadataRetrieverImpl metadataRetrieverImpl = MetadataRetrieverImpl.this;
+                    Object unused = metadataRetrieverImpl.trackGroupsPeriodUid = metadataRetrieverImpl.timeline.getUidOfPeriod(currentPeriodIndex);
+                }
+                MetadataRetrieverImpl.this.processNextQuery();
+            }
+        }
+
+        public void onSeekProcessed() {
+            long lastPlayerSeekAckPositionMs = MetadataRetrieverImpl.this.playerSeekAckPositionMs;
+            MetadataRetrieverImpl metadataRetrieverImpl = MetadataRetrieverImpl.this;
+            long unused = metadataRetrieverImpl.playerSeekAckPositionMs = metadataRetrieverImpl.exoPlayer.getCurrentPosition();
+            if (!MetadataRetrieverImpl.this.outputCapturePending || MetadataRetrieverImpl.this.playerSeekAckPositionMs != lastPlayerSeekAckPositionMs) {
+                MetadataRetrieverImpl.this.processNextQuery();
+            } else {
+                MetadataRetrieverImpl.this.processRecaptureFrame();
+            }
+        }
+
+        public void onPlayerError(ExoPlaybackException exception) {
+            MetadataRetriever.MediaSourceCallback mediaSourceCallback = MetadataRetrieverImpl.this.mediaSourceCallback;
+            MetadataRetrieverImpl.this.stop();
+            if (mediaSourceCallback != null) {
+                mediaSourceCallback.onTimelineUnavailable(exception);
+            }
+        }
+    }
+
+    private final class VideoRendererOutputCapturerCallback implements VideoRendererOutputCapturer.Callback {
+        private VideoRendererOutputCapturerCallback() {
+        }
+
+        public void onOutputSizeSet(int width, int height) {
+            int unused = MetadataRetrieverImpl.this.currentOutputWidth = width;
+            int unused2 = MetadataRetrieverImpl.this.currentOutputHeight = height;
+            if (MetadataRetrieverImpl.this.outputSurfaceSetPending) {
+                boolean unused3 = MetadataRetrieverImpl.this.outputSurfaceSetPending = false;
+                MetadataRetrieverImpl.this.processNextQuery();
+            }
+        }
+
+        public void onSurfaceCaptured(Bitmap bitmap) {
+            if (MetadataRetrieverImpl.this.outputCapturePending) {
+                Bitmap unused = MetadataRetrieverImpl.this.lastCapturedBitmap = bitmap;
+                boolean unused2 = MetadataRetrieverImpl.this.outputCapturePending = false;
+                MetadataRetrieverImpl.this.processNextQuery();
+            }
+        }
+
+        public void onSurfaceCaptureError(Exception exception) {
+            if (MetadataRetrieverImpl.this.outputCapturePending) {
+                Exception unused = MetadataRetrieverImpl.this.lastSurfaceCaptureException = exception;
+                boolean unused2 = MetadataRetrieverImpl.this.outputCapturePending = false;
+                MetadataRetrieverImpl.this.processNextQuery();
+            }
         }
     }
 }

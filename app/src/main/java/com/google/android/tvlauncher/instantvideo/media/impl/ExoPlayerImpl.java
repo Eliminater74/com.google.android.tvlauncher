@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.view.Surface;
 import android.view.View;
+
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.PlaybackParameters;
@@ -56,16 +57,37 @@ public class ExoPlayerImpl implements MediaPlayer {
         this.playerView = playerView2;
     }
 
+    private static int inferContentType(String fileName) {
+        if (fileName == null) {
+            return 3;
+        }
+        if (fileName.endsWith(".mpd")) {
+            return 0;
+        }
+        if (fileName.endsWith(".ism") || fileName.endsWith(".isml")) {
+            return 1;
+        }
+        if (fileName.endsWith(".m3u8")) {
+            return 2;
+        }
+        return 3;
+    }
+
+    private static DefaultDataSourceFactory buildDataSourceFactory(Context context2, boolean useBandwidthMeter) {
+        DefaultBandwidthMeter bandwidthMeter = useBandwidthMeter ? BANDWIDTH_METER : null;
+        return new DefaultDataSourceFactory(context2, bandwidthMeter, new DefaultHttpDataSourceFactory("ExoPlayerImpl", bandwidthMeter));
+    }
+
     public int getPlaybackState() {
         return this.player.getPlaybackState();
     }
 
-    public void setVideoUri(Uri uri) {
-        this.videoUri = uri;
-    }
-
     public Uri getVideoUri() {
         return this.videoUri;
+    }
+
+    public void setVideoUri(Uri uri) {
+        this.videoUri = uri;
     }
 
     public void prepare() {
@@ -200,26 +222,5 @@ public class ExoPlayerImpl implements MediaPlayer {
             sb.append(type);
             throw new IllegalStateException(sb.toString());
         }
-    }
-
-    private static int inferContentType(String fileName) {
-        if (fileName == null) {
-            return 3;
-        }
-        if (fileName.endsWith(".mpd")) {
-            return 0;
-        }
-        if (fileName.endsWith(".ism") || fileName.endsWith(".isml")) {
-            return 1;
-        }
-        if (fileName.endsWith(".m3u8")) {
-            return 2;
-        }
-        return 3;
-    }
-
-    private static DefaultDataSourceFactory buildDataSourceFactory(Context context2, boolean useBandwidthMeter) {
-        DefaultBandwidthMeter bandwidthMeter = useBandwidthMeter ? BANDWIDTH_METER : null;
-        return new DefaultDataSourceFactory(context2, bandwidthMeter, new DefaultHttpDataSourceFactory("ExoPlayerImpl", bandwidthMeter));
     }
 }

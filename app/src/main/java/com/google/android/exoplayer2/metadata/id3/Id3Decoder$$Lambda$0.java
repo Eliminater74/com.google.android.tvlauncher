@@ -1,7 +1,5 @@
 package com.google.android.exoplayer2.metadata.id3;
 
-import com.google.android.exoplayer2.metadata.id3.Id3Decoder;
-
 final /* synthetic */ class Id3Decoder$$Lambda$0 implements Id3Decoder.FramePredicate {
     static final Id3Decoder.FramePredicate $instance = new Id3Decoder$$Lambda$0();
 

@@ -6,11 +6,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.Pair;
-import com.google.android.exoplayer2.BasePlayer;
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.PlayerMessage;
-import com.google.android.exoplayer2.Timeline;
+
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
@@ -22,6 +18,7 @@ import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Clock;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.Util;
+
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -32,30 +29,30 @@ final class ExoPlayerImpl extends BasePlayer implements ExoPlayer {
     private static final String TAG = "ExoPlayerImpl";
     final TrackSelectorResult emptyTrackSelectorResult;
     private final Handler eventHandler;
+    private final ExoPlayerImplInternal internalPlayer;
+    private final Handler internalPlayerHandler;
+    private final CopyOnWriteArrayList<BasePlayer.ListenerHolder> listeners;
+    private final ArrayDeque<Runnable> pendingListenerNotifications;
+    private final Timeline.Period period;
+    private final Renderer[] renderers;
+    private final TrackSelector trackSelector;
     private boolean foregroundMode;
     private boolean hasPendingPrepare;
     private boolean hasPendingSeek;
     private boolean internalPlayWhenReady;
-    private final ExoPlayerImplInternal internalPlayer;
-    private final Handler internalPlayerHandler;
-    private final CopyOnWriteArrayList<BasePlayer.ListenerHolder> listeners;
     private int maskingPeriodIndex;
     private int maskingWindowIndex;
     private long maskingWindowPositionMs;
     private MediaSource mediaSource;
-    private final ArrayDeque<Runnable> pendingListenerNotifications;
     private int pendingOperationAcks;
-    private final Timeline.Period period;
     private boolean playWhenReady;
     @Nullable
     private ExoPlaybackException playbackError;
     private PlaybackInfo playbackInfo;
     private PlaybackParameters playbackParameters;
-    private final Renderer[] renderers;
     private int repeatMode;
     private SeekParameters seekParameters;
     private boolean shuffleModeEnabled;
-    private final TrackSelector trackSelector;
 
     @SuppressLint({"HandlerLeak"})
     public ExoPlayerImpl(Renderer[] renderers2, TrackSelector trackSelector2, LoadControl loadControl, BandwidthMeter bandwidthMeter, Clock clock, Looper looper) {
@@ -91,6 +88,14 @@ final class ExoPlayerImpl extends BasePlayer implements ExoPlayer {
         this.pendingListenerNotifications = new ArrayDeque<>();
         this.internalPlayer = new ExoPlayerImplInternal(renderers2, trackSelector2, this.emptyTrackSelectorResult, loadControl, bandwidthMeter, this.playWhenReady, this.repeatMode, this.shuffleModeEnabled, this.eventHandler, clock);
         this.internalPlayerHandler = new Handler(this.internalPlayer.getPlaybackLooper());
+    }
+
+    /* access modifiers changed from: private */
+    public static void invokeAll(CopyOnWriteArrayList<BasePlayer.ListenerHolder> listeners2, BasePlayer.ListenerInvocation listenerInvocation) {
+        Iterator<BasePlayer.ListenerHolder> it = listeners2.iterator();
+        while (it.hasNext()) {
+            it.next().invoke(listenerInvocation);
+        }
     }
 
     @Nullable
@@ -168,10 +173,6 @@ final class ExoPlayerImpl extends BasePlayer implements ExoPlayer {
         updatePlaybackInfo(playbackInfo2, false, 4, 1, false);
     }
 
-    public void setPlayWhenReady(boolean playWhenReady2) {
-        setPlayWhenReady(playWhenReady2, false);
-    }
-
     public void setPlayWhenReady(boolean playWhenReady2, boolean suppressPlayback) {
         boolean internalPlayWhenReady2 = playWhenReady2 && !suppressPlayback;
         if (this.internalPlayWhenReady != internalPlayWhenReady2) {
@@ -188,6 +189,14 @@ final class ExoPlayerImpl extends BasePlayer implements ExoPlayer {
         return this.playWhenReady;
     }
 
+    public void setPlayWhenReady(boolean playWhenReady2) {
+        setPlayWhenReady(playWhenReady2, false);
+    }
+
+    public int getRepeatMode() {
+        return this.repeatMode;
+    }
+
     public void setRepeatMode(int repeatMode2) {
         if (this.repeatMode != repeatMode2) {
             this.repeatMode = repeatMode2;
@@ -196,8 +205,8 @@ final class ExoPlayerImpl extends BasePlayer implements ExoPlayer {
         }
     }
 
-    public int getRepeatMode() {
-        return this.repeatMode;
+    public boolean getShuffleModeEnabled() {
+        return this.shuffleModeEnabled;
     }
 
     public void setShuffleModeEnabled(boolean shuffleModeEnabled2) {
@@ -206,10 +215,6 @@ final class ExoPlayerImpl extends BasePlayer implements ExoPlayer {
             this.internalPlayer.setShuffleModeEnabled(shuffleModeEnabled2);
             notifyListeners(new ExoPlayerImpl$$Lambda$2(shuffleModeEnabled2));
         }
-    }
-
-    public boolean getShuffleModeEnabled() {
-        return this.shuffleModeEnabled;
     }
 
     public boolean isLoading() {
@@ -242,6 +247,10 @@ final class ExoPlayerImpl extends BasePlayer implements ExoPlayer {
         notifyListeners(ExoPlayerImpl$$Lambda$3.$instance);
     }
 
+    public PlaybackParameters getPlaybackParameters() {
+        return this.playbackParameters;
+    }
+
     public void setPlaybackParameters(@Nullable PlaybackParameters playbackParameters2) {
         if (playbackParameters2 == null) {
             playbackParameters2 = PlaybackParameters.DEFAULT;
@@ -249,8 +258,8 @@ final class ExoPlayerImpl extends BasePlayer implements ExoPlayer {
         this.internalPlayer.setPlaybackParameters(playbackParameters2);
     }
 
-    public PlaybackParameters getPlaybackParameters() {
-        return this.playbackParameters;
+    public SeekParameters getSeekParameters() {
+        return this.seekParameters;
     }
 
     public void setSeekParameters(@Nullable SeekParameters seekParameters2) {
@@ -261,10 +270,6 @@ final class ExoPlayerImpl extends BasePlayer implements ExoPlayer {
             this.seekParameters = seekParameters2;
             this.internalPlayer.setSeekParameters(seekParameters2);
         }
-    }
-
-    public SeekParameters getSeekParameters() {
-        return this.seekParameters;
     }
 
     public void setForegroundMode(boolean foregroundMode2) {
@@ -647,14 +652,6 @@ final class ExoPlayerImpl extends BasePlayer implements ExoPlayer {
         /* access modifiers changed from: package-private */
         public final /* synthetic */ void lambda$run$4$ExoPlayerImpl$PlaybackInfoUpdate(Player.EventListener listener) {
             listener.onPlayerStateChanged(this.playWhenReady, this.playbackInfo.playbackState);
-        }
-    }
-
-    /* access modifiers changed from: private */
-    public static void invokeAll(CopyOnWriteArrayList<BasePlayer.ListenerHolder> listeners2, BasePlayer.ListenerInvocation listenerInvocation) {
-        Iterator<BasePlayer.ListenerHolder> it = listeners2.iterator();
-        while (it.hasNext()) {
-            it.next().invoke(listenerInvocation);
         }
     }
 }

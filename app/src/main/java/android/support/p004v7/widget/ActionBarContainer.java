@@ -17,15 +17,15 @@ import android.widget.FrameLayout;
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
 /* renamed from: android.support.v7.widget.ActionBarContainer */
 public class ActionBarContainer extends FrameLayout {
-    private View mActionBarView;
     Drawable mBackground;
-    private View mContextView;
-    private int mHeight;
     boolean mIsSplit;
     boolean mIsStacked;
-    private boolean mIsTransitioning;
     Drawable mSplitBackground;
     Drawable mStackedBackground;
+    private View mActionBarView;
+    private View mContextView;
+    private int mHeight;
+    private boolean mIsTransitioning;
     private View mTabContainer;
 
     public ActionBarContainer(Context context) {
@@ -206,6 +206,10 @@ public class ActionBarContainer extends FrameLayout {
         return true;
     }
 
+    public View getTabContainer() {
+        return this.mTabContainer;
+    }
+
     public void setTabContainer(ScrollingTabContainerView tabView) {
         View view = this.mTabContainer;
         if (view != null) {
@@ -219,10 +223,6 @@ public class ActionBarContainer extends FrameLayout {
             lp.height = -2;
             tabView.setAllowCollapse(false);
         }
-    }
-
-    public View getTabContainer() {
-        return this.mTabContainer;
     }
 
     public ActionMode startActionModeForChild(View child, ActionMode.Callback callback) {

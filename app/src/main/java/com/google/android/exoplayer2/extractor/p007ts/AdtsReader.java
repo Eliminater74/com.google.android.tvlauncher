@@ -1,19 +1,20 @@
 package com.google.android.exoplayer2.extractor.p007ts;
 
 import android.util.Pair;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.extractor.DummyTrackOutput;
 import com.google.android.exoplayer2.extractor.ExtractorOutput;
 import com.google.android.exoplayer2.extractor.TrackOutput;
-import com.google.android.exoplayer2.extractor.p007ts.TsPayloadReader;
 import com.google.android.exoplayer2.util.CodecSpecificDataUtil;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.ParsableBitArray;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.common.primitives.UnsignedBytes;
+
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -37,20 +38,20 @@ public final class AdtsReader implements ElementaryStreamReader {
     private static final String TAG = "AdtsReader";
     private static final int VERSION_UNSET = -1;
     private final ParsableBitArray adtsScratch;
+    private final boolean exposeId3;
+    private final ParsableByteArray id3HeaderBuffer;
+    private final String language;
     private int bytesRead;
     private int currentFrameVersion;
     private TrackOutput currentOutput;
     private long currentSampleDuration;
-    private final boolean exposeId3;
     private int firstFrameSampleRateIndex;
     private int firstFrameVersion;
     private String formatId;
     private boolean foundFirstFrame;
     private boolean hasCrc;
     private boolean hasOutputFormat;
-    private final ParsableByteArray id3HeaderBuffer;
     private TrackOutput id3Output;
-    private final String language;
     private int matchState;
     private TrackOutput output;
     private long sampleDurationUs;

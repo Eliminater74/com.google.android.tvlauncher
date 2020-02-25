@@ -3,6 +3,9 @@ package com.google.common.primitives;
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.base.Preconditions;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.Serializable;
 import java.util.AbstractList;
 import java.util.Arrays;
@@ -11,37 +14,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.RandomAccess;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible
 public final class Booleans {
     private Booleans() {
-    }
-
-    private enum BooleanComparator implements Comparator<Boolean> {
-        TRUE_FIRST(1, "Booleans.trueFirst()"),
-        FALSE_FIRST(-1, "Booleans.falseFirst()");
-        
-        private final String toString;
-        private final int trueValue;
-
-        private BooleanComparator(int trueValue2, String toString2) {
-            this.trueValue = trueValue2;
-            this.toString = toString2;
-        }
-
-        public int compare(Boolean a, Boolean b) {
-            int bVal = 0;
-            int aVal = a.booleanValue() ? this.trueValue : 0;
-            if (b.booleanValue()) {
-                bVal = this.trueValue;
-            }
-            return bVal - aVal;
-        }
-
-        public String toString() {
-            return this.toString;
-        }
     }
 
     @Beta
@@ -165,25 +141,6 @@ public final class Booleans {
         return LexicographicalComparator.INSTANCE;
     }
 
-    private enum LexicographicalComparator implements Comparator<boolean[]> {
-        INSTANCE;
-
-        public int compare(boolean[] left, boolean[] right) {
-            int minLength = Math.min(left.length, right.length);
-            for (int i = 0; i < minLength; i++) {
-                int result = Booleans.compare(left[i], right[i]);
-                if (result != 0) {
-                    return result;
-                }
-            }
-            return left.length - right.length;
-        }
-
-        public String toString() {
-            return "Booleans.lexicographicalComparator()";
-        }
-    }
-
     public static boolean[] toArray(Collection<Boolean> collection) {
         if (collection instanceof BooleanArrayAsList) {
             return ((BooleanArrayAsList) collection).toBooleanArray();
@@ -202,6 +159,79 @@ public final class Booleans {
             return Collections.emptyList();
         }
         return new BooleanArrayAsList(backingArray);
+    }
+
+    @Beta
+    public static int countTrue(boolean... values) {
+        int count = 0;
+        for (boolean value : values) {
+            if (value) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public static void reverse(boolean[] array) {
+        Preconditions.checkNotNull(array);
+        reverse(array, 0, array.length);
+    }
+
+    public static void reverse(boolean[] array, int fromIndex, int toIndex) {
+        Preconditions.checkNotNull(array);
+        Preconditions.checkPositionIndexes(fromIndex, toIndex, array.length);
+        int i = fromIndex;
+        for (int j = toIndex - 1; i < j; j--) {
+            boolean tmp = array[i];
+            array[i] = array[j];
+            array[j] = tmp;
+            i++;
+        }
+    }
+
+    private enum BooleanComparator implements Comparator<Boolean> {
+        TRUE_FIRST(1, "Booleans.trueFirst()"),
+        FALSE_FIRST(-1, "Booleans.falseFirst()");
+
+        private final String toString;
+        private final int trueValue;
+
+        private BooleanComparator(int trueValue2, String toString2) {
+            this.trueValue = trueValue2;
+            this.toString = toString2;
+        }
+
+        public int compare(Boolean a, Boolean b) {
+            int bVal = 0;
+            int aVal = a.booleanValue() ? this.trueValue : 0;
+            if (b.booleanValue()) {
+                bVal = this.trueValue;
+            }
+            return bVal - aVal;
+        }
+
+        public String toString() {
+            return this.toString;
+        }
+    }
+
+    private enum LexicographicalComparator implements Comparator<boolean[]> {
+        INSTANCE;
+
+        public int compare(boolean[] left, boolean[] right) {
+            int minLength = Math.min(left.length, right.length);
+            for (int i = 0; i < minLength; i++) {
+                int result = Booleans.compare(left[i], right[i]);
+                if (result != 0) {
+                    return result;
+                }
+            }
+            return left.length - right.length;
+        }
+
+        public String toString() {
+            return "Booleans.lexicographicalComparator()";
+        }
     }
 
     @GwtCompatible
@@ -319,34 +349,6 @@ public final class Booleans {
         /* access modifiers changed from: package-private */
         public boolean[] toBooleanArray() {
             return Arrays.copyOfRange(this.array, this.start, this.end);
-        }
-    }
-
-    @Beta
-    public static int countTrue(boolean... values) {
-        int count = 0;
-        for (boolean value : values) {
-            if (value) {
-                count++;
-            }
-        }
-        return count;
-    }
-
-    public static void reverse(boolean[] array) {
-        Preconditions.checkNotNull(array);
-        reverse(array, 0, array.length);
-    }
-
-    public static void reverse(boolean[] array, int fromIndex, int toIndex) {
-        Preconditions.checkNotNull(array);
-        Preconditions.checkPositionIndexes(fromIndex, toIndex, array.length);
-        int i = fromIndex;
-        for (int j = toIndex - 1; i < j; j--) {
-            boolean tmp = array[i];
-            array[i] = array[j];
-            array[j] = tmp;
-            i++;
         }
     }
 }

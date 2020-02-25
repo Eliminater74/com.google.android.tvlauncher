@@ -5,11 +5,12 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.CheckResult;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.Format;
-import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.util.Assertions;
+
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Iterator;
@@ -77,11 +78,11 @@ public interface MediaSourceEventListener {
     }
 
     public static final class EventDispatcher {
-        private final CopyOnWriteArrayList<ListenerAndHandler> listenerAndHandlers;
         @Nullable
         public final MediaSource.MediaPeriodId mediaPeriodId;
-        private final long mediaTimeOffsetMs;
         public final int windowIndex;
+        private final CopyOnWriteArrayList<ListenerAndHandler> listenerAndHandlers;
+        private final long mediaTimeOffsetMs;
 
         public EventDispatcher() {
             this(new CopyOnWriteArrayList(), 0, null, 0);

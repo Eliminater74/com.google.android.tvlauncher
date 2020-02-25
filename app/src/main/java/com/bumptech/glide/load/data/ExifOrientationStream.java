@@ -1,16 +1,18 @@
 package com.bumptech.glide.load.data;
 
 import android.support.annotation.NonNull;
+
 import com.google.common.base.Ascii;
 import com.google.common.primitives.UnsignedBytes;
+
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 public final class ExifOrientationStream extends FilterInputStream {
     private static final byte[] EXIF_SEGMENT = {-1, -31, 0, Ascii.f150FS, 69, 120, 105, 102, 0, 0, 77, 77, 0, 0, 0, 0, 0, 8, 0, 1, 1, Ascii.DC2, 0, 2, 0, 0, 0, 1, 0};
-    private static final int ORIENTATION_POSITION = (SEGMENT_LENGTH + 2);
     private static final int SEGMENT_LENGTH = EXIF_SEGMENT.length;
+    private static final int ORIENTATION_POSITION = (SEGMENT_LENGTH + 2);
     private static final int SEGMENT_START_POSITION = 2;
     private final byte orientation;
     private int position;

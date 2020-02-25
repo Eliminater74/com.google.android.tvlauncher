@@ -2,6 +2,7 @@ package android.support.p004v7.util;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Collection;
@@ -9,21 +10,21 @@ import java.util.Comparator;
 
 /* renamed from: android.support.v7.util.SortedList */
 public class SortedList<T> {
+    public static final int INVALID_POSITION = -1;
     private static final int CAPACITY_GROWTH = 10;
     private static final int DELETION = 2;
     private static final int INSERTION = 1;
-    public static final int INVALID_POSITION = -1;
     private static final int LOOKUP = 4;
     private static final int MIN_CAPACITY = 10;
+    private final Class<T> mTClass;
+    T[] mData;
     private BatchedCallback mBatchedCallback;
     private Callback mCallback;
-    T[] mData;
     private int mNewDataStart;
     private T[] mOldData;
     private int mOldDataSize;
     private int mOldDataStart;
     private int mSize;
-    private final Class<T> mTClass;
 
     public SortedList(@NonNull Class<T> klass, @NonNull Callback<T> callback) {
         this(klass, callback, 10);
@@ -572,8 +573,8 @@ public class SortedList<T> {
 
     /* renamed from: android.support.v7.util.SortedList$BatchedCallback */
     public static class BatchedCallback<T2> extends Callback<T2> {
-        private final BatchingListUpdateCallback mBatchingListUpdateCallback = new BatchingListUpdateCallback(this.mWrappedCallback);
         final Callback<T2> mWrappedCallback;
+        private final BatchingListUpdateCallback mBatchingListUpdateCallback = new BatchingListUpdateCallback(this.mWrappedCallback);
 
         public BatchedCallback(Callback<T2> wrappedCallback) {
             this.mWrappedCallback = wrappedCallback;

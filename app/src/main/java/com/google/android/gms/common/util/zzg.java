@@ -2,6 +2,7 @@ package com.google.android.gms.common.util;
 
 import android.database.CharArrayBuffer;
 import android.text.TextUtils;
+
 import com.google.android.gms.common.internal.Hide;
 
 @Hide

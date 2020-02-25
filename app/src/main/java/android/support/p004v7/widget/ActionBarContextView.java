@@ -33,6 +33,25 @@ public class ActionBarContextView extends AbsActionBarView {
     private int mTitleStyleRes;
     private TextView mTitleView;
 
+    public ActionBarContextView(Context context) {
+        this(context, null);
+    }
+
+    public ActionBarContextView(Context context, AttributeSet attrs) {
+        this(context, attrs, C0233R.attr.actionModeStyle);
+    }
+
+    public ActionBarContextView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        TintTypedArray a = TintTypedArray.obtainStyledAttributes(context, attrs, C0233R.styleable.ActionMode, defStyle, 0);
+        ViewCompat.setBackground(this, a.getDrawable(C0233R.styleable.ActionMode_background));
+        this.mTitleStyleRes = a.getResourceId(C0233R.styleable.ActionMode_titleTextStyle, 0);
+        this.mSubtitleStyleRes = a.getResourceId(C0233R.styleable.ActionMode_subtitleTextStyle, 0);
+        this.mContentHeight = a.getLayoutDimension(C0233R.styleable.ActionMode_height, 0);
+        this.mCloseItemLayout = a.getResourceId(C0233R.styleable.ActionMode_closeItemLayout, C0233R.layout.abc_action_mode_close_item_material);
+        a.recycle();
+    }
+
     public /* bridge */ /* synthetic */ void animateToVisibility(int i) {
         super.animateToVisibility(i);
     }
@@ -51,6 +70,10 @@ public class ActionBarContextView extends AbsActionBarView {
 
     public /* bridge */ /* synthetic */ int getContentHeight() {
         return super.getContentHeight();
+    }
+
+    public void setContentHeight(int height) {
+        this.mContentHeight = height;
     }
 
     public /* bridge */ /* synthetic */ boolean isOverflowMenuShowPending() {
@@ -81,35 +104,12 @@ public class ActionBarContextView extends AbsActionBarView {
         return super.setupAnimatorToVisibility(i, j);
     }
 
-    public ActionBarContextView(Context context) {
-        this(context, null);
-    }
-
-    public ActionBarContextView(Context context, AttributeSet attrs) {
-        this(context, attrs, C0233R.attr.actionModeStyle);
-    }
-
-    public ActionBarContextView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        TintTypedArray a = TintTypedArray.obtainStyledAttributes(context, attrs, C0233R.styleable.ActionMode, defStyle, 0);
-        ViewCompat.setBackground(this, a.getDrawable(C0233R.styleable.ActionMode_background));
-        this.mTitleStyleRes = a.getResourceId(C0233R.styleable.ActionMode_titleTextStyle, 0);
-        this.mSubtitleStyleRes = a.getResourceId(C0233R.styleable.ActionMode_subtitleTextStyle, 0);
-        this.mContentHeight = a.getLayoutDimension(C0233R.styleable.ActionMode_height, 0);
-        this.mCloseItemLayout = a.getResourceId(C0233R.styleable.ActionMode_closeItemLayout, C0233R.layout.abc_action_mode_close_item_material);
-        a.recycle();
-    }
-
     public void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         if (this.mActionMenuPresenter != null) {
             this.mActionMenuPresenter.hideOverflowMenu();
             this.mActionMenuPresenter.hideSubMenus();
         }
-    }
-
-    public void setContentHeight(int height) {
-        this.mContentHeight = height;
     }
 
     public void setCustomView(View view) {
@@ -129,22 +129,22 @@ public class ActionBarContextView extends AbsActionBarView {
         requestLayout();
     }
 
+    public CharSequence getTitle() {
+        return this.mTitle;
+    }
+
     public void setTitle(CharSequence title) {
         this.mTitle = title;
         initTitle();
     }
 
+    public CharSequence getSubtitle() {
+        return this.mSubtitle;
+    }
+
     public void setSubtitle(CharSequence subtitle) {
         this.mSubtitle = subtitle;
         initTitle();
-    }
-
-    public CharSequence getTitle() {
-        return this.mTitle;
-    }
-
-    public CharSequence getSubtitle() {
-        return this.mSubtitle;
     }
 
     private void initTitle() {
@@ -369,14 +369,14 @@ public class ActionBarContextView extends AbsActionBarView {
         super.onInitializeAccessibilityEvent(event);
     }
 
+    public boolean isTitleOptional() {
+        return this.mTitleOptional;
+    }
+
     public void setTitleOptional(boolean titleOptional) {
         if (titleOptional != this.mTitleOptional) {
             requestLayout();
         }
         this.mTitleOptional = titleOptional;
-    }
-
-    public boolean isTitleOptional() {
-        return this.mTitleOptional;
     }
 }

@@ -15,14 +15,22 @@ import com.google.protobuf.ProtoMessage;
 import com.google.protobuf.ProtoPresenceBits;
 import com.google.protobuf.ProtoPresenceCheckedField;
 import com.google.protobuf.ProtoSyntax;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.Collections;
 import java.util.List;
+
 import wireless.android.work.clouddpc.performance.schema.CommonEnums;
 
 public final class ExtensionCloudDpc {
+
+    private ExtensionCloudDpc() {
+    }
+
+    public static void registerAllExtensions(ExtensionRegistryLite registry) {
+    }
 
     public interface ActivityMetricOrBuilder extends MessageLiteOrBuilder {
         String getActivityStarted();
@@ -210,12 +218,6 @@ public final class ExtensionCloudDpc {
         boolean hasTaskFailureType();
     }
 
-    private ExtensionCloudDpc() {
-    }
-
-    public static void registerAllExtensions(ExtensionRegistryLite registry) {
-    }
-
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
     public static final class CloudDpcExtension extends GeneratedMessageLite<CloudDpcExtension, Builder> implements CloudDpcExtensionOrBuilder {
         public static final int ACTIVITY_METRIC_FIELD_NUMBER = 10;
@@ -228,7 +230,6 @@ public final class ExtensionCloudDpc {
         public static final int EVENT_STATE_FIELD_NUMBER = 5;
         public static final int METRIC_TYPE_FIELD_NUMBER = 1;
         public static final int MITIGATION_FIELD_NUMBER = 6;
-        private static volatile Parser<CloudDpcExtension> PARSER = null;
         public static final int PROVISION_ENTRY_POINT_FIELD_NUMBER = 9;
         public static final int PROVISION_MODE_FIELD_NUMBER = 3;
         public static final int SYSTEM_APP_METRIC_FIELD_NUMBER = 13;
@@ -240,6 +241,12 @@ public final class ExtensionCloudDpc {
                 return result == null ? CommonEnums.MetricType.APP_INSTALL_METRIC : result;
             }
         };
+        private static volatile Parser<CloudDpcExtension> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(CloudDpcExtension.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoField(fieldNumber = 10, isRequired = false, type = FieldType.MESSAGE)
         @ProtoPresenceCheckedField(mask = 256, presenceBitsId = 0)
         private ActivityMetric activityMetric_;
@@ -283,8 +290,68 @@ public final class ExtensionCloudDpc {
         private CloudDpcExtension() {
         }
 
-        static {
-            GeneratedMessageLite.registerDefaultInstance(CloudDpcExtension.class, DEFAULT_INSTANCE);
+        public static CloudDpcExtension parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (CloudDpcExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static CloudDpcExtension parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (CloudDpcExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static CloudDpcExtension parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (CloudDpcExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static CloudDpcExtension parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (CloudDpcExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static CloudDpcExtension parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (CloudDpcExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static CloudDpcExtension parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (CloudDpcExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static CloudDpcExtension parseFrom(InputStream input) throws IOException {
+            return (CloudDpcExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static CloudDpcExtension parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (CloudDpcExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static CloudDpcExtension parseDelimitedFrom(InputStream input) throws IOException {
+            return (CloudDpcExtension) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static CloudDpcExtension parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (CloudDpcExtension) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static CloudDpcExtension parseFrom(CodedInputStream input) throws IOException {
+            return (CloudDpcExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static CloudDpcExtension parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (CloudDpcExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(CloudDpcExtension prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static CloudDpcExtension getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<CloudDpcExtension> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public List<CommonEnums.MetricType> getMetricTypeList() {
@@ -514,10 +581,6 @@ public final class ExtensionCloudDpc {
             return this.eventName_;
         }
 
-        public ByteString getEventNameBytes() {
-            return ByteString.copyFromUtf8(this.eventName_);
-        }
-
         /* access modifiers changed from: private */
         public void setEventName(String value) {
             if (value != null) {
@@ -528,10 +591,8 @@ public final class ExtensionCloudDpc {
             throw new NullPointerException();
         }
 
-        /* access modifiers changed from: private */
-        public void clearEventName() {
-            this.bitField0_ &= -5;
-            this.eventName_ = getDefaultInstance().getEventName();
+        public ByteString getEventNameBytes() {
+            return ByteString.copyFromUtf8(this.eventName_);
         }
 
         /* access modifiers changed from: private */
@@ -542,6 +603,12 @@ public final class ExtensionCloudDpc {
                 return;
             }
             throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearEventName() {
+            this.bitField0_ &= -5;
+            this.eventName_ = getDefaultInstance().getEventName();
         }
 
         public boolean hasEventState() {
@@ -602,10 +669,6 @@ public final class ExtensionCloudDpc {
             return this.emmId_;
         }
 
-        public ByteString getEmmIdBytes() {
-            return ByteString.copyFromUtf8(this.emmId_);
-        }
-
         /* access modifiers changed from: private */
         public void setEmmId(String value) {
             if (value != null) {
@@ -616,10 +679,8 @@ public final class ExtensionCloudDpc {
             throw new NullPointerException();
         }
 
-        /* access modifiers changed from: private */
-        public void clearEmmId() {
-            this.bitField0_ &= -33;
-            this.emmId_ = getDefaultInstance().getEmmId();
+        public ByteString getEmmIdBytes() {
+            return ByteString.copyFromUtf8(this.emmId_);
         }
 
         /* access modifiers changed from: private */
@@ -630,6 +691,12 @@ public final class ExtensionCloudDpc {
                 return;
             }
             throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearEmmId() {
+            this.bitField0_ &= -33;
+            this.emmId_ = getDefaultInstance().getEmmId();
         }
 
         public boolean hasTaskFailMetric() {
@@ -789,60 +856,36 @@ public final class ExtensionCloudDpc {
             this.devBuild_ = false;
         }
 
-        public static CloudDpcExtension parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (CloudDpcExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static CloudDpcExtension parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (CloudDpcExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static CloudDpcExtension parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (CloudDpcExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static CloudDpcExtension parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (CloudDpcExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static CloudDpcExtension parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (CloudDpcExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static CloudDpcExtension parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (CloudDpcExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static CloudDpcExtension parseFrom(InputStream input) throws IOException {
-            return (CloudDpcExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static CloudDpcExtension parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (CloudDpcExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static CloudDpcExtension parseDelimitedFrom(InputStream input) throws IOException {
-            return (CloudDpcExtension) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static CloudDpcExtension parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (CloudDpcExtension) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static CloudDpcExtension parseFrom(CodedInputStream input) throws IOException {
-            return (CloudDpcExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static CloudDpcExtension parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (CloudDpcExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(CloudDpcExtension prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new CloudDpcExtension();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\r\u0000\u0001\u0001\r\r\u0000\u0002\u0000\u0001\u001e\u0002\t\u0000\u0003\f\u0001\u0004\b\u0002\u0005\f\u0003\u0006\f\u0004\u0007\b\u0005\b\t\u0006\t\f\u0007\n\t\b\u000b\u0007\t\f\u0007\n\r\u001b", new Object[]{"bitField0_", "metricType_", CommonEnums.MetricType.internalGetVerifier(), "appInstallMetric_", "provisionMode_", CommonEnums.ProvisionMode.internalGetVerifier(), "eventName_", "eventState_", CommonEnums.EventState.internalGetVerifier(), "mitigation_", CommonEnums.Mitigation.internalGetVerifier(), "emmId_", "taskFailMetric_", "provisionEntryPoint_", CommonEnums.ProvisionEntryPoint.internalGetVerifier(), "activityMetric_", "userDebugBuild_", "devBuild_", "systemAppMetric_", SystemAppMetric.class});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<CloudDpcExtension> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (CloudDpcExtension.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<CloudDpcExtension, Builder> implements CloudDpcExtensionOrBuilder {
@@ -1012,25 +1055,25 @@ public final class ExtensionCloudDpc {
                 return ((CloudDpcExtension) this.instance).getEventName();
             }
 
-            public ByteString getEventNameBytes() {
-                return ((CloudDpcExtension) this.instance).getEventNameBytes();
-            }
-
             public Builder setEventName(String value) {
                 copyOnWrite();
                 ((CloudDpcExtension) this.instance).setEventName(value);
                 return this;
             }
 
-            public Builder clearEventName() {
-                copyOnWrite();
-                ((CloudDpcExtension) this.instance).clearEventName();
-                return this;
+            public ByteString getEventNameBytes() {
+                return ((CloudDpcExtension) this.instance).getEventNameBytes();
             }
 
             public Builder setEventNameBytes(ByteString value) {
                 copyOnWrite();
                 ((CloudDpcExtension) this.instance).setEventNameBytes(value);
+                return this;
+            }
+
+            public Builder clearEventName() {
+                copyOnWrite();
+                ((CloudDpcExtension) this.instance).clearEventName();
                 return this;
             }
 
@@ -1082,25 +1125,25 @@ public final class ExtensionCloudDpc {
                 return ((CloudDpcExtension) this.instance).getEmmId();
             }
 
-            public ByteString getEmmIdBytes() {
-                return ((CloudDpcExtension) this.instance).getEmmIdBytes();
-            }
-
             public Builder setEmmId(String value) {
                 copyOnWrite();
                 ((CloudDpcExtension) this.instance).setEmmId(value);
                 return this;
             }
 
-            public Builder clearEmmId() {
-                copyOnWrite();
-                ((CloudDpcExtension) this.instance).clearEmmId();
-                return this;
+            public ByteString getEmmIdBytes() {
+                return ((CloudDpcExtension) this.instance).getEmmIdBytes();
             }
 
             public Builder setEmmIdBytes(ByteString value) {
                 copyOnWrite();
                 ((CloudDpcExtension) this.instance).setEmmIdBytes(value);
+                return this;
+            }
+
+            public Builder clearEmmId() {
+                copyOnWrite();
+                ((CloudDpcExtension) this.instance).clearEmmId();
                 return this;
             }
 
@@ -1228,46 +1271,6 @@ public final class ExtensionCloudDpc {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new CloudDpcExtension();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\r\u0000\u0001\u0001\r\r\u0000\u0002\u0000\u0001\u001e\u0002\t\u0000\u0003\f\u0001\u0004\b\u0002\u0005\f\u0003\u0006\f\u0004\u0007\b\u0005\b\t\u0006\t\f\u0007\n\t\b\u000b\u0007\t\f\u0007\n\r\u001b", new Object[]{"bitField0_", "metricType_", CommonEnums.MetricType.internalGetVerifier(), "appInstallMetric_", "provisionMode_", CommonEnums.ProvisionMode.internalGetVerifier(), "eventName_", "eventState_", CommonEnums.EventState.internalGetVerifier(), "mitigation_", CommonEnums.Mitigation.internalGetVerifier(), "emmId_", "taskFailMetric_", "provisionEntryPoint_", CommonEnums.ProvisionEntryPoint.internalGetVerifier(), "activityMetric_", "userDebugBuild_", "devBuild_", "systemAppMetric_", SystemAppMetric.class});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<CloudDpcExtension> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (CloudDpcExtension.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        public static CloudDpcExtension getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<CloudDpcExtension> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -1279,6 +1282,11 @@ public final class ExtensionCloudDpc {
         public static final int NUM_OF_PACKAGES_INSTALLED_FIELD_NUMBER = 2;
         public static final int NUM_OF_PACKAGES_TO_INSTALL_FIELD_NUMBER = 1;
         private static volatile Parser<AppInstallMetric> PARSER;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(AppInstallMetric.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 4, type = FieldType.MESSAGE_LIST)
@@ -1294,6 +1302,70 @@ public final class ExtensionCloudDpc {
         private int numOfPackagesToInstall_;
 
         private AppInstallMetric() {
+        }
+
+        public static AppInstallMetric parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (AppInstallMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static AppInstallMetric parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (AppInstallMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static AppInstallMetric parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (AppInstallMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static AppInstallMetric parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (AppInstallMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static AppInstallMetric parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (AppInstallMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static AppInstallMetric parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (AppInstallMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static AppInstallMetric parseFrom(InputStream input) throws IOException {
+            return (AppInstallMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static AppInstallMetric parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (AppInstallMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static AppInstallMetric parseDelimitedFrom(InputStream input) throws IOException {
+            return (AppInstallMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static AppInstallMetric parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (AppInstallMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static AppInstallMetric parseFrom(CodedInputStream input) throws IOException {
+            return (AppInstallMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static AppInstallMetric parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (AppInstallMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(AppInstallMetric prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static AppInstallMetric getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<AppInstallMetric> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasNumOfPackagesToInstall() {
@@ -1453,60 +1525,36 @@ public final class ExtensionCloudDpc {
             this.installEvent_.remove(index);
         }
 
-        public static AppInstallMetric parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (AppInstallMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static AppInstallMetric parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (AppInstallMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static AppInstallMetric parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (AppInstallMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static AppInstallMetric parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (AppInstallMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static AppInstallMetric parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (AppInstallMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static AppInstallMetric parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (AppInstallMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static AppInstallMetric parseFrom(InputStream input) throws IOException {
-            return (AppInstallMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static AppInstallMetric parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (AppInstallMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static AppInstallMetric parseDelimitedFrom(InputStream input) throws IOException {
-            return (AppInstallMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static AppInstallMetric parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (AppInstallMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static AppInstallMetric parseFrom(CodedInputStream input) throws IOException {
-            return (AppInstallMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static AppInstallMetric parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (AppInstallMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(AppInstallMetric prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new AppInstallMetric();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0004\u0000\u0001\u0001\u0004\u0004\u0000\u0001\u0000\u0001\u0004\u0000\u0002\u0004\u0001\u0003\u0004\u0002\u0004\u001b", new Object[]{"bitField0_", "numOfPackagesToInstall_", "numOfPackagesInstalled_", "millisecondsSinceInstallWindowStart_", "installEvent_", InstallEvent.class});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<AppInstallMetric> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (AppInstallMetric.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<AppInstallMetric, Builder> implements AppInstallMetricOrBuilder {
@@ -1640,50 +1688,6 @@ public final class ExtensionCloudDpc {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new AppInstallMetric();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0004\u0000\u0001\u0001\u0004\u0004\u0000\u0001\u0000\u0001\u0004\u0000\u0002\u0004\u0001\u0003\u0004\u0002\u0004\u001b", new Object[]{"bitField0_", "numOfPackagesToInstall_", "numOfPackagesInstalled_", "millisecondsSinceInstallWindowStart_", "installEvent_", InstallEvent.class});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<AppInstallMetric> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (AppInstallMetric.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(AppInstallMetric.class, DEFAULT_INSTANCE);
-        }
-
-        public static AppInstallMetric getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<AppInstallMetric> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -1694,6 +1698,11 @@ public final class ExtensionCloudDpc {
         public static final int INSTALL_DURATION_MILLISECONDS_FIELD_NUMBER = 3;
         public static final int INSTALL_ERROR_REASON_FIELD_NUMBER = 1;
         private static volatile Parser<InstallEvent> PARSER;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(InstallEvent.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoField(fieldNumber = 2, isRequired = false, type = FieldType.FLOAT)
         @ProtoPresenceCheckedField(mask = 2, presenceBitsId = 0)
         private float apkSizeMb_;
@@ -1707,6 +1716,70 @@ public final class ExtensionCloudDpc {
         private int installErrorReason_;
 
         private InstallEvent() {
+        }
+
+        public static InstallEvent parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (InstallEvent) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static InstallEvent parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (InstallEvent) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static InstallEvent parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (InstallEvent) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static InstallEvent parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (InstallEvent) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static InstallEvent parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (InstallEvent) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static InstallEvent parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (InstallEvent) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static InstallEvent parseFrom(InputStream input) throws IOException {
+            return (InstallEvent) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static InstallEvent parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (InstallEvent) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static InstallEvent parseDelimitedFrom(InputStream input) throws IOException {
+            return (InstallEvent) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static InstallEvent parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (InstallEvent) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static InstallEvent parseFrom(CodedInputStream input) throws IOException {
+            return (InstallEvent) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static InstallEvent parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (InstallEvent) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(InstallEvent prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static InstallEvent getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<InstallEvent> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasInstallErrorReason() {
@@ -1774,60 +1847,36 @@ public final class ExtensionCloudDpc {
             this.installDurationMilliseconds_ = 0;
         }
 
-        public static InstallEvent parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (InstallEvent) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static InstallEvent parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (InstallEvent) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static InstallEvent parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (InstallEvent) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static InstallEvent parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (InstallEvent) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static InstallEvent parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (InstallEvent) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static InstallEvent parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (InstallEvent) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static InstallEvent parseFrom(InputStream input) throws IOException {
-            return (InstallEvent) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static InstallEvent parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (InstallEvent) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static InstallEvent parseDelimitedFrom(InputStream input) throws IOException {
-            return (InstallEvent) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static InstallEvent parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (InstallEvent) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static InstallEvent parseFrom(CodedInputStream input) throws IOException {
-            return (InstallEvent) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static InstallEvent parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (InstallEvent) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(InstallEvent prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new InstallEvent();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0003\u0000\u0001\u0001\u0003\u0003\u0000\u0000\u0000\u0001\f\u0000\u0002\u0001\u0001\u0003\u0004\u0002", new Object[]{"bitField0_", "installErrorReason_", CommonEnums.InstallErrorReason.internalGetVerifier(), "apkSizeMb_", "installDurationMilliseconds_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<InstallEvent> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (InstallEvent.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<InstallEvent, Builder> implements InstallEventOrBuilder {
@@ -1895,50 +1944,6 @@ public final class ExtensionCloudDpc {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new InstallEvent();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0003\u0000\u0001\u0001\u0003\u0003\u0000\u0000\u0000\u0001\f\u0000\u0002\u0001\u0001\u0003\u0004\u0002", new Object[]{"bitField0_", "installErrorReason_", CommonEnums.InstallErrorReason.internalGetVerifier(), "apkSizeMb_", "installDurationMilliseconds_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<InstallEvent> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (InstallEvent.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(InstallEvent.class, DEFAULT_INSTANCE);
-        }
-
-        public static InstallEvent getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<InstallEvent> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -1946,12 +1951,17 @@ public final class ExtensionCloudDpc {
         /* access modifiers changed from: private */
         public static final TaskFailMetric DEFAULT_INSTANCE = new TaskFailMetric();
         public static final int EXCEPTION_CAUSE_FIELD_NUMBER = 5;
-        private static volatile Parser<TaskFailMetric> PARSER = null;
         public static final int RETRY_COUNT_FIELD_NUMBER = 4;
         public static final int SHRINKED_STACKTRACE_FIELD_NUMBER = 6;
         public static final int TASK_FAILURE_ERROR_CODE_FIELD_NUMBER = 2;
         public static final int TASK_FAILURE_REASON_FIELD_NUMBER = 1;
         public static final int TASK_FAILURE_TYPE_FIELD_NUMBER = 3;
+        private static volatile Parser<TaskFailMetric> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(TaskFailMetric.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 5, isEnforceUtf8 = false, isRequired = false, type = FieldType.STRING)
@@ -1973,6 +1983,70 @@ public final class ExtensionCloudDpc {
         private int taskFailureType_;
 
         private TaskFailMetric() {
+        }
+
+        public static TaskFailMetric parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (TaskFailMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static TaskFailMetric parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (TaskFailMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static TaskFailMetric parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (TaskFailMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static TaskFailMetric parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (TaskFailMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static TaskFailMetric parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (TaskFailMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static TaskFailMetric parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (TaskFailMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static TaskFailMetric parseFrom(InputStream input) throws IOException {
+            return (TaskFailMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static TaskFailMetric parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (TaskFailMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static TaskFailMetric parseDelimitedFrom(InputStream input) throws IOException {
+            return (TaskFailMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static TaskFailMetric parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (TaskFailMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static TaskFailMetric parseFrom(CodedInputStream input) throws IOException {
+            return (TaskFailMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static TaskFailMetric parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (TaskFailMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(TaskFailMetric prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static TaskFailMetric getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<TaskFailMetric> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasTaskFailureReason() {
@@ -2073,10 +2147,6 @@ public final class ExtensionCloudDpc {
             return this.exceptionCause_;
         }
 
-        public ByteString getExceptionCauseBytes() {
-            return ByteString.copyFromUtf8(this.exceptionCause_);
-        }
-
         /* access modifiers changed from: private */
         public void setExceptionCause(String value) {
             if (value != null) {
@@ -2087,10 +2157,8 @@ public final class ExtensionCloudDpc {
             throw new NullPointerException();
         }
 
-        /* access modifiers changed from: private */
-        public void clearExceptionCause() {
-            this.bitField0_ &= -17;
-            this.exceptionCause_ = getDefaultInstance().getExceptionCause();
+        public ByteString getExceptionCauseBytes() {
+            return ByteString.copyFromUtf8(this.exceptionCause_);
         }
 
         /* access modifiers changed from: private */
@@ -2101,6 +2169,12 @@ public final class ExtensionCloudDpc {
                 return;
             }
             throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearExceptionCause() {
+            this.bitField0_ &= -17;
+            this.exceptionCause_ = getDefaultInstance().getExceptionCause();
         }
 
         public List<String> getShrinkedStacktraceList() {
@@ -2172,60 +2246,36 @@ public final class ExtensionCloudDpc {
             throw new NullPointerException();
         }
 
-        public static TaskFailMetric parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (TaskFailMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static TaskFailMetric parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (TaskFailMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static TaskFailMetric parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (TaskFailMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static TaskFailMetric parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (TaskFailMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static TaskFailMetric parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (TaskFailMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static TaskFailMetric parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (TaskFailMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static TaskFailMetric parseFrom(InputStream input) throws IOException {
-            return (TaskFailMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static TaskFailMetric parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (TaskFailMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static TaskFailMetric parseDelimitedFrom(InputStream input) throws IOException {
-            return (TaskFailMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static TaskFailMetric parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (TaskFailMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static TaskFailMetric parseFrom(CodedInputStream input) throws IOException {
-            return (TaskFailMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static TaskFailMetric parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (TaskFailMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(TaskFailMetric prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new TaskFailMetric();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0006\u0000\u0001\u0001\u0006\u0006\u0000\u0001\u0000\u0001\f\u0000\u0002\u0004\u0001\u0003\f\u0002\u0004\u0004\u0003\u0005\b\u0004\u0006\u001a", new Object[]{"bitField0_", "taskFailureReason_", CommonEnums.TaskFailureReason.internalGetVerifier(), "taskFailureErrorCode_", "taskFailureType_", CommonEnums.SetupTaskFailureType.internalGetVerifier(), "retryCount_", "exceptionCause_", "shrinkedStacktrace_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<TaskFailMetric> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (TaskFailMetric.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<TaskFailMetric, Builder> implements TaskFailMetricOrBuilder {
@@ -2321,25 +2371,25 @@ public final class ExtensionCloudDpc {
                 return ((TaskFailMetric) this.instance).getExceptionCause();
             }
 
-            public ByteString getExceptionCauseBytes() {
-                return ((TaskFailMetric) this.instance).getExceptionCauseBytes();
-            }
-
             public Builder setExceptionCause(String value) {
                 copyOnWrite();
                 ((TaskFailMetric) this.instance).setExceptionCause(value);
                 return this;
             }
 
-            public Builder clearExceptionCause() {
-                copyOnWrite();
-                ((TaskFailMetric) this.instance).clearExceptionCause();
-                return this;
+            public ByteString getExceptionCauseBytes() {
+                return ((TaskFailMetric) this.instance).getExceptionCauseBytes();
             }
 
             public Builder setExceptionCauseBytes(ByteString value) {
                 copyOnWrite();
                 ((TaskFailMetric) this.instance).setExceptionCauseBytes(value);
+                return this;
+            }
+
+            public Builder clearExceptionCause() {
+                copyOnWrite();
+                ((TaskFailMetric) this.instance).clearExceptionCause();
                 return this;
             }
 
@@ -2389,50 +2439,6 @@ public final class ExtensionCloudDpc {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new TaskFailMetric();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0006\u0000\u0001\u0001\u0006\u0006\u0000\u0001\u0000\u0001\f\u0000\u0002\u0004\u0001\u0003\f\u0002\u0004\u0004\u0003\u0005\b\u0004\u0006\u001a", new Object[]{"bitField0_", "taskFailureReason_", CommonEnums.TaskFailureReason.internalGetVerifier(), "taskFailureErrorCode_", "taskFailureType_", CommonEnums.SetupTaskFailureType.internalGetVerifier(), "retryCount_", "exceptionCause_", "shrinkedStacktrace_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<TaskFailMetric> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (TaskFailMetric.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(TaskFailMetric.class, DEFAULT_INSTANCE);
-        }
-
-        public static TaskFailMetric getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<TaskFailMetric> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -2445,10 +2451,15 @@ public final class ExtensionCloudDpc {
         public static final int IS_DESTROYED_FIELD_NUMBER = 7;
         public static final int IS_WIPED_FIELD_NUMBER = 6;
         public static final int LOGIN_SCOPE_TOKEN_REVOKED_FIELD_NUMBER = 2;
-        private static volatile Parser<ActivityMetric> PARSER = null;
         public static final int PERSONAL_ACCOUNT_ADDED_FIELD_NUMBER = 1;
         public static final int REQUEST_CODE_FIELD_NUMBER = 8;
         public static final int RESTORE_LAUNCHED_FIELD_NUMBER = 4;
+        private static volatile Parser<ActivityMetric> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(ActivityMetric.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoField(fieldNumber = 9, isEnforceUtf8 = false, isRequired = false, type = FieldType.STRING)
         @ProtoPresenceCheckedField(mask = 256, presenceBitsId = 0)
         private String activityStarted_ = "";
@@ -2480,6 +2491,70 @@ public final class ExtensionCloudDpc {
         private boolean restoreLaunched_;
 
         private ActivityMetric() {
+        }
+
+        public static ActivityMetric parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (ActivityMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static ActivityMetric parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (ActivityMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static ActivityMetric parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (ActivityMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static ActivityMetric parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (ActivityMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static ActivityMetric parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (ActivityMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static ActivityMetric parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (ActivityMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static ActivityMetric parseFrom(InputStream input) throws IOException {
+            return (ActivityMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static ActivityMetric parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (ActivityMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static ActivityMetric parseDelimitedFrom(InputStream input) throws IOException {
+            return (ActivityMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static ActivityMetric parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (ActivityMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static ActivityMetric parseFrom(CodedInputStream input) throws IOException {
+            return (ActivityMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static ActivityMetric parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (ActivityMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(ActivityMetric prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static ActivityMetric getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<ActivityMetric> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasPersonalAccountAdded() {
@@ -2650,10 +2725,6 @@ public final class ExtensionCloudDpc {
             return this.activityStarted_;
         }
 
-        public ByteString getActivityStartedBytes() {
-            return ByteString.copyFromUtf8(this.activityStarted_);
-        }
-
         /* access modifiers changed from: private */
         public void setActivityStarted(String value) {
             if (value != null) {
@@ -2664,10 +2735,8 @@ public final class ExtensionCloudDpc {
             throw new NullPointerException();
         }
 
-        /* access modifiers changed from: private */
-        public void clearActivityStarted() {
-            this.bitField0_ &= -257;
-            this.activityStarted_ = getDefaultInstance().getActivityStarted();
+        public ByteString getActivityStartedBytes() {
+            return ByteString.copyFromUtf8(this.activityStarted_);
         }
 
         /* access modifiers changed from: private */
@@ -2680,60 +2749,42 @@ public final class ExtensionCloudDpc {
             throw new NullPointerException();
         }
 
-        public static ActivityMetric parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (ActivityMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        /* access modifiers changed from: private */
+        public void clearActivityStarted() {
+            this.bitField0_ &= -257;
+            this.activityStarted_ = getDefaultInstance().getActivityStarted();
         }
 
-        public static ActivityMetric parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (ActivityMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static ActivityMetric parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (ActivityMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static ActivityMetric parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (ActivityMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static ActivityMetric parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (ActivityMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static ActivityMetric parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (ActivityMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static ActivityMetric parseFrom(InputStream input) throws IOException {
-            return (ActivityMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static ActivityMetric parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (ActivityMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static ActivityMetric parseDelimitedFrom(InputStream input) throws IOException {
-            return (ActivityMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static ActivityMetric parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (ActivityMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static ActivityMetric parseFrom(CodedInputStream input) throws IOException {
-            return (ActivityMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static ActivityMetric parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (ActivityMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(ActivityMetric prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new ActivityMetric();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\t\u0000\u0001\u0001\t\t\u0000\u0000\u0000\u0001\u0007\u0000\u0002\u0007\u0001\u0003\u0007\u0002\u0004\u0007\u0003\u0005\u0007\u0004\u0006\u0007\u0005\u0007\u0007\u0006\b\u0004\u0007\t\b\b", new Object[]{"bitField0_", "personalAccountAdded_", "loginScopeTokenRevoked_", "googlerAccount_", "restoreLaunched_", "isCancelled_", "isWiped_", "isDestroyed_", "requestCode_", "activityStarted_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<ActivityMetric> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (ActivityMetric.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<ActivityMetric, Builder> implements ActivityMetricOrBuilder {
@@ -2909,13 +2960,19 @@ public final class ExtensionCloudDpc {
                 return ((ActivityMetric) this.instance).getActivityStarted();
             }
 
+            public Builder setActivityStarted(String value) {
+                copyOnWrite();
+                ((ActivityMetric) this.instance).setActivityStarted(value);
+                return this;
+            }
+
             public ByteString getActivityStartedBytes() {
                 return ((ActivityMetric) this.instance).getActivityStartedBytes();
             }
 
-            public Builder setActivityStarted(String value) {
+            public Builder setActivityStartedBytes(ByteString value) {
                 copyOnWrite();
-                ((ActivityMetric) this.instance).setActivityStarted(value);
+                ((ActivityMetric) this.instance).setActivityStartedBytes(value);
                 return this;
             }
 
@@ -2924,56 +2981,6 @@ public final class ExtensionCloudDpc {
                 ((ActivityMetric) this.instance).clearActivityStarted();
                 return this;
             }
-
-            public Builder setActivityStartedBytes(ByteString value) {
-                copyOnWrite();
-                ((ActivityMetric) this.instance).setActivityStartedBytes(value);
-                return this;
-            }
-        }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new ActivityMetric();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\t\u0000\u0001\u0001\t\t\u0000\u0000\u0000\u0001\u0007\u0000\u0002\u0007\u0001\u0003\u0007\u0002\u0004\u0007\u0003\u0005\u0007\u0004\u0006\u0007\u0005\u0007\u0007\u0006\b\u0004\u0007\t\b\b", new Object[]{"bitField0_", "personalAccountAdded_", "loginScopeTokenRevoked_", "googlerAccount_", "restoreLaunched_", "isCancelled_", "isWiped_", "isDestroyed_", "requestCode_", "activityStarted_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<ActivityMetric> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (ActivityMetric.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(ActivityMetric.class, DEFAULT_INSTANCE);
-        }
-
-        public static ActivityMetric getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<ActivityMetric> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
         }
     }
 
@@ -2985,6 +2992,11 @@ public final class ExtensionCloudDpc {
         public static final int INTENT_FIELD_NUMBER = 3;
         public static final int PACKAGE_NAME_FIELD_NUMBER = 1;
         private static volatile Parser<SystemAppMetric> PARSER;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(SystemAppMetric.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoField(fieldNumber = 2, isRequired = false, type = FieldType.ENUM)
         @ProtoPresenceCheckedField(mask = 2, presenceBitsId = 0)
         private int action_;
@@ -2998,107 +3010,6 @@ public final class ExtensionCloudDpc {
         private String packageName_ = "";
 
         private SystemAppMetric() {
-        }
-
-        public boolean hasPackageName() {
-            return (this.bitField0_ & 1) != 0;
-        }
-
-        public String getPackageName() {
-            return this.packageName_;
-        }
-
-        public ByteString getPackageNameBytes() {
-            return ByteString.copyFromUtf8(this.packageName_);
-        }
-
-        /* access modifiers changed from: private */
-        public void setPackageName(String value) {
-            if (value != null) {
-                this.bitField0_ |= 1;
-                this.packageName_ = value;
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        /* access modifiers changed from: private */
-        public void clearPackageName() {
-            this.bitField0_ &= -2;
-            this.packageName_ = getDefaultInstance().getPackageName();
-        }
-
-        /* access modifiers changed from: private */
-        public void setPackageNameBytes(ByteString value) {
-            if (value != null) {
-                this.bitField0_ |= 1;
-                this.packageName_ = value.toStringUtf8();
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        public boolean hasAction() {
-            return (this.bitField0_ & 2) != 0;
-        }
-
-        public CommonEnums.SmartSystemAppAction getAction() {
-            CommonEnums.SmartSystemAppAction result = CommonEnums.SmartSystemAppAction.forNumber(this.action_);
-            return result == null ? CommonEnums.SmartSystemAppAction.UNKNOWN : result;
-        }
-
-        /* access modifiers changed from: private */
-        public void setAction(CommonEnums.SmartSystemAppAction value) {
-            if (value != null) {
-                this.bitField0_ |= 2;
-                this.action_ = value.getNumber();
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        /* access modifiers changed from: private */
-        public void clearAction() {
-            this.bitField0_ &= -3;
-            this.action_ = 0;
-        }
-
-        public boolean hasIntent() {
-            return (this.bitField0_ & 4) != 0;
-        }
-
-        public String getIntent() {
-            return this.intent_;
-        }
-
-        public ByteString getIntentBytes() {
-            return ByteString.copyFromUtf8(this.intent_);
-        }
-
-        /* access modifiers changed from: private */
-        public void setIntent(String value) {
-            if (value != null) {
-                this.bitField0_ |= 4;
-                this.intent_ = value;
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        /* access modifiers changed from: private */
-        public void clearIntent() {
-            this.bitField0_ &= -5;
-            this.intent_ = getDefaultInstance().getIntent();
-        }
-
-        /* access modifiers changed from: private */
-        public void setIntentBytes(ByteString value) {
-            if (value != null) {
-                this.bitField0_ |= 4;
-                this.intent_ = value.toStringUtf8();
-                return;
-            }
-            throw new NullPointerException();
         }
 
         public static SystemAppMetric parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
@@ -3157,90 +3068,113 @@ public final class ExtensionCloudDpc {
             return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
         }
 
-        public static final class Builder extends GeneratedMessageLite.Builder<SystemAppMetric, Builder> implements SystemAppMetricOrBuilder {
-            private Builder() {
-                super(SystemAppMetric.DEFAULT_INSTANCE);
-            }
+        public static SystemAppMetric getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
 
-            public boolean hasPackageName() {
-                return ((SystemAppMetric) this.instance).hasPackageName();
-            }
+        public static Parser<SystemAppMetric> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
+        }
 
-            public String getPackageName() {
-                return ((SystemAppMetric) this.instance).getPackageName();
-            }
+        public boolean hasPackageName() {
+            return (this.bitField0_ & 1) != 0;
+        }
 
-            public ByteString getPackageNameBytes() {
-                return ((SystemAppMetric) this.instance).getPackageNameBytes();
-            }
+        public String getPackageName() {
+            return this.packageName_;
+        }
 
-            public Builder setPackageName(String value) {
-                copyOnWrite();
-                ((SystemAppMetric) this.instance).setPackageName(value);
-                return this;
+        /* access modifiers changed from: private */
+        public void setPackageName(String value) {
+            if (value != null) {
+                this.bitField0_ |= 1;
+                this.packageName_ = value;
+                return;
             }
+            throw new NullPointerException();
+        }
 
-            public Builder clearPackageName() {
-                copyOnWrite();
-                ((SystemAppMetric) this.instance).clearPackageName();
-                return this;
-            }
+        public ByteString getPackageNameBytes() {
+            return ByteString.copyFromUtf8(this.packageName_);
+        }
 
-            public Builder setPackageNameBytes(ByteString value) {
-                copyOnWrite();
-                ((SystemAppMetric) this.instance).setPackageNameBytes(value);
-                return this;
+        /* access modifiers changed from: private */
+        public void setPackageNameBytes(ByteString value) {
+            if (value != null) {
+                this.bitField0_ |= 1;
+                this.packageName_ = value.toStringUtf8();
+                return;
             }
+            throw new NullPointerException();
+        }
 
-            public boolean hasAction() {
-                return ((SystemAppMetric) this.instance).hasAction();
-            }
+        /* access modifiers changed from: private */
+        public void clearPackageName() {
+            this.bitField0_ &= -2;
+            this.packageName_ = getDefaultInstance().getPackageName();
+        }
 
-            public CommonEnums.SmartSystemAppAction getAction() {
-                return ((SystemAppMetric) this.instance).getAction();
-            }
+        public boolean hasAction() {
+            return (this.bitField0_ & 2) != 0;
+        }
 
-            public Builder setAction(CommonEnums.SmartSystemAppAction value) {
-                copyOnWrite();
-                ((SystemAppMetric) this.instance).setAction(value);
-                return this;
-            }
+        public CommonEnums.SmartSystemAppAction getAction() {
+            CommonEnums.SmartSystemAppAction result = CommonEnums.SmartSystemAppAction.forNumber(this.action_);
+            return result == null ? CommonEnums.SmartSystemAppAction.UNKNOWN : result;
+        }
 
-            public Builder clearAction() {
-                copyOnWrite();
-                ((SystemAppMetric) this.instance).clearAction();
-                return this;
+        /* access modifiers changed from: private */
+        public void setAction(CommonEnums.SmartSystemAppAction value) {
+            if (value != null) {
+                this.bitField0_ |= 2;
+                this.action_ = value.getNumber();
+                return;
             }
+            throw new NullPointerException();
+        }
 
-            public boolean hasIntent() {
-                return ((SystemAppMetric) this.instance).hasIntent();
-            }
+        /* access modifiers changed from: private */
+        public void clearAction() {
+            this.bitField0_ &= -3;
+            this.action_ = 0;
+        }
 
-            public String getIntent() {
-                return ((SystemAppMetric) this.instance).getIntent();
-            }
+        public boolean hasIntent() {
+            return (this.bitField0_ & 4) != 0;
+        }
 
-            public ByteString getIntentBytes() {
-                return ((SystemAppMetric) this.instance).getIntentBytes();
-            }
+        public String getIntent() {
+            return this.intent_;
+        }
 
-            public Builder setIntent(String value) {
-                copyOnWrite();
-                ((SystemAppMetric) this.instance).setIntent(value);
-                return this;
+        /* access modifiers changed from: private */
+        public void setIntent(String value) {
+            if (value != null) {
+                this.bitField0_ |= 4;
+                this.intent_ = value;
+                return;
             }
+            throw new NullPointerException();
+        }
 
-            public Builder clearIntent() {
-                copyOnWrite();
-                ((SystemAppMetric) this.instance).clearIntent();
-                return this;
-            }
+        public ByteString getIntentBytes() {
+            return ByteString.copyFromUtf8(this.intent_);
+        }
 
-            public Builder setIntentBytes(ByteString value) {
-                copyOnWrite();
-                ((SystemAppMetric) this.instance).setIntentBytes(value);
-                return this;
+        /* access modifiers changed from: private */
+        public void setIntentBytes(ByteString value) {
+            if (value != null) {
+                this.bitField0_ |= 4;
+                this.intent_ = value.toStringUtf8();
+                return;
             }
+            throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearIntent() {
+            this.bitField0_ &= -5;
+            this.intent_ = getDefaultInstance().getIntent();
         }
 
         /* access modifiers changed from: protected */
@@ -3275,16 +3209,90 @@ public final class ExtensionCloudDpc {
             }
         }
 
-        static {
-            GeneratedMessageLite.registerDefaultInstance(SystemAppMetric.class, DEFAULT_INSTANCE);
-        }
+        public static final class Builder extends GeneratedMessageLite.Builder<SystemAppMetric, Builder> implements SystemAppMetricOrBuilder {
+            private Builder() {
+                super(SystemAppMetric.DEFAULT_INSTANCE);
+            }
 
-        public static SystemAppMetric getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
+            public boolean hasPackageName() {
+                return ((SystemAppMetric) this.instance).hasPackageName();
+            }
 
-        public static Parser<SystemAppMetric> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
+            public String getPackageName() {
+                return ((SystemAppMetric) this.instance).getPackageName();
+            }
+
+            public Builder setPackageName(String value) {
+                copyOnWrite();
+                ((SystemAppMetric) this.instance).setPackageName(value);
+                return this;
+            }
+
+            public ByteString getPackageNameBytes() {
+                return ((SystemAppMetric) this.instance).getPackageNameBytes();
+            }
+
+            public Builder setPackageNameBytes(ByteString value) {
+                copyOnWrite();
+                ((SystemAppMetric) this.instance).setPackageNameBytes(value);
+                return this;
+            }
+
+            public Builder clearPackageName() {
+                copyOnWrite();
+                ((SystemAppMetric) this.instance).clearPackageName();
+                return this;
+            }
+
+            public boolean hasAction() {
+                return ((SystemAppMetric) this.instance).hasAction();
+            }
+
+            public CommonEnums.SmartSystemAppAction getAction() {
+                return ((SystemAppMetric) this.instance).getAction();
+            }
+
+            public Builder setAction(CommonEnums.SmartSystemAppAction value) {
+                copyOnWrite();
+                ((SystemAppMetric) this.instance).setAction(value);
+                return this;
+            }
+
+            public Builder clearAction() {
+                copyOnWrite();
+                ((SystemAppMetric) this.instance).clearAction();
+                return this;
+            }
+
+            public boolean hasIntent() {
+                return ((SystemAppMetric) this.instance).hasIntent();
+            }
+
+            public String getIntent() {
+                return ((SystemAppMetric) this.instance).getIntent();
+            }
+
+            public Builder setIntent(String value) {
+                copyOnWrite();
+                ((SystemAppMetric) this.instance).setIntent(value);
+                return this;
+            }
+
+            public ByteString getIntentBytes() {
+                return ((SystemAppMetric) this.instance).getIntentBytes();
+            }
+
+            public Builder setIntentBytes(ByteString value) {
+                copyOnWrite();
+                ((SystemAppMetric) this.instance).setIntentBytes(value);
+                return this;
+            }
+
+            public Builder clearIntent() {
+                copyOnWrite();
+                ((SystemAppMetric) this.instance).clearIntent();
+                return this;
+            }
         }
     }
 }

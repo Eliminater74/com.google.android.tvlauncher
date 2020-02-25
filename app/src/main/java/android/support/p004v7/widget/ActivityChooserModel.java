@@ -7,6 +7,7 @@ import android.content.pm.ResolveInfo;
 import android.database.DataSetObservable;
 import android.os.AsyncTask;
 import android.text.TextUtils;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,48 +17,42 @@ import java.util.Map;
 
 /* renamed from: android.support.v7.widget.ActivityChooserModel */
 class ActivityChooserModel extends DataSetObservable {
+    public static final String DEFAULT_HISTORY_FILE_NAME = "activity_choser_model_history.xml";
+    public static final int DEFAULT_HISTORY_MAX_LENGTH = 50;
     static final String ATTRIBUTE_ACTIVITY = "activity";
     static final String ATTRIBUTE_TIME = "time";
     static final String ATTRIBUTE_WEIGHT = "weight";
     static final boolean DEBUG = false;
-    private static final int DEFAULT_ACTIVITY_INFLATION = 5;
-    private static final float DEFAULT_HISTORICAL_RECORD_WEIGHT = 1.0f;
-    public static final String DEFAULT_HISTORY_FILE_NAME = "activity_choser_model_history.xml";
-    public static final int DEFAULT_HISTORY_MAX_LENGTH = 50;
-    private static final String HISTORY_FILE_EXTENSION = ".xml";
-    private static final int INVALID_INDEX = -1;
     static final String LOG_TAG = ActivityChooserModel.class.getSimpleName();
     static final String TAG_HISTORICAL_RECORD = "historical-record";
     static final String TAG_HISTORICAL_RECORDS = "historical-records";
+    private static final int DEFAULT_ACTIVITY_INFLATION = 5;
+    private static final float DEFAULT_HISTORICAL_RECORD_WEIGHT = 1.0f;
+    private static final String HISTORY_FILE_EXTENSION = ".xml";
+    private static final int INVALID_INDEX = -1;
     private static final Map<String, ActivityChooserModel> sDataModelRegistry = new HashMap();
     private static final Object sRegistryLock = new Object();
+    final Context mContext;
+    final String mHistoryFileName;
     private final List<ActivityResolveInfo> mActivities = new ArrayList();
+    private final List<HistoricalRecord> mHistoricalRecords = new ArrayList();
+    private final Object mInstanceLock = new Object();
+    boolean mCanReadHistoricalData = true;
     private OnChooseActivityListener mActivityChoserModelPolicy;
     private ActivitySorter mActivitySorter = new DefaultSorter();
-    boolean mCanReadHistoricalData = true;
-    final Context mContext;
-    private final List<HistoricalRecord> mHistoricalRecords = new ArrayList();
     private boolean mHistoricalRecordsChanged = true;
-    final String mHistoryFileName;
     private int mHistoryMaxSize = 50;
-    private final Object mInstanceLock = new Object();
     private Intent mIntent;
     private boolean mReadShareHistoryCalled = false;
     private boolean mReloadActivities = false;
 
-    /* renamed from: android.support.v7.widget.ActivityChooserModel$ActivityChooserModelClient */
-    public interface ActivityChooserModelClient {
-        void setActivityChooserModel(ActivityChooserModel activityChooserModel);
-    }
-
-    /* renamed from: android.support.v7.widget.ActivityChooserModel$ActivitySorter */
-    public interface ActivitySorter {
-        void sort(Intent intent, List<ActivityResolveInfo> list, List<HistoricalRecord> list2);
-    }
-
-    /* renamed from: android.support.v7.widget.ActivityChooserModel$OnChooseActivityListener */
-    public interface OnChooseActivityListener {
-        boolean onChooseActivity(ActivityChooserModel activityChooserModel, Intent intent);
+    private ActivityChooserModel(Context context, String historyFileName) {
+        this.mContext = context.getApplicationContext();
+        if (TextUtils.isEmpty(historyFileName) || historyFileName.endsWith(HISTORY_FILE_EXTENSION)) {
+            this.mHistoryFileName = historyFileName;
+            return;
+        }
+        this.mHistoryFileName = historyFileName + HISTORY_FILE_EXTENSION;
     }
 
     public static ActivityChooserModel get(Context context, String historyFileName) {
@@ -72,13 +67,12 @@ class ActivityChooserModel extends DataSetObservable {
         return dataModel;
     }
 
-    private ActivityChooserModel(Context context, String historyFileName) {
-        this.mContext = context.getApplicationContext();
-        if (TextUtils.isEmpty(historyFileName) || historyFileName.endsWith(HISTORY_FILE_EXTENSION)) {
-            this.mHistoryFileName = historyFileName;
-            return;
+    public Intent getIntent() {
+        Intent intent;
+        synchronized (this.mInstanceLock) {
+            intent = this.mIntent;
         }
-        this.mHistoryFileName = historyFileName + HISTORY_FILE_EXTENSION;
+        return intent;
     }
 
     public void setIntent(Intent intent) {
@@ -89,14 +83,6 @@ class ActivityChooserModel extends DataSetObservable {
                 ensureConsistentState();
             }
         }
-    }
-
-    public Intent getIntent() {
-        Intent intent;
-        synchronized (this.mInstanceLock) {
-            intent = this.mIntent;
-        }
-        return intent;
     }
 
     public int getActivityCount() {
@@ -223,6 +209,14 @@ class ActivityChooserModel extends DataSetObservable {
         throw new UnsupportedOperationException("Method not decompiled: android.support.p004v7.widget.ActivityChooserModel.setActivitySorter(android.support.v7.widget.ActivityChooserModel$ActivitySorter):void");
     }
 
+    public int getHistoryMaxSize() {
+        int i;
+        synchronized (this.mInstanceLock) {
+            i = this.mHistoryMaxSize;
+        }
+        return i;
+    }
+
     /* JADX WARNING: Code restructure failed: missing block: B:11:0x0018, code lost:
         return;
      */
@@ -251,14 +245,6 @@ class ActivityChooserModel extends DataSetObservable {
             throw r1
         */
         throw new UnsupportedOperationException("Method not decompiled: android.support.p004v7.widget.ActivityChooserModel.setHistoryMaxSize(int):void");
-    }
-
-    public int getHistoryMaxSize() {
-        int i;
-        synchronized (this.mInstanceLock) {
-            i = this.mHistoryMaxSize;
-        }
-        return i;
     }
 
     public int getHistorySize() {
@@ -330,119 +316,6 @@ class ActivityChooserModel extends DataSetObservable {
             for (int i = 0; i < pruneCount; i++) {
                 HistoricalRecord remove = this.mHistoricalRecords.remove(0);
             }
-        }
-    }
-
-    /* renamed from: android.support.v7.widget.ActivityChooserModel$HistoricalRecord */
-    public static final class HistoricalRecord {
-        public final ComponentName activity;
-        public final long time;
-        public final float weight;
-
-        public HistoricalRecord(String activityName, long time2, float weight2) {
-            this(ComponentName.unflattenFromString(activityName), time2, weight2);
-        }
-
-        public HistoricalRecord(ComponentName activityName, long time2, float weight2) {
-            this.activity = activityName;
-            this.time = time2;
-            this.weight = weight2;
-        }
-
-        public int hashCode() {
-            int i = 1 * 31;
-            ComponentName componentName = this.activity;
-            int hashCode = componentName == null ? 0 : componentName.hashCode();
-            long j = this.time;
-            return ((((i + hashCode) * 31) + ((int) (j ^ (j >>> 32)))) * 31) + Float.floatToIntBits(this.weight);
-        }
-
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (obj == null || getClass() != obj.getClass()) {
-                return false;
-            }
-            HistoricalRecord other = (HistoricalRecord) obj;
-            ComponentName componentName = this.activity;
-            if (componentName == null) {
-                if (other.activity != null) {
-                    return false;
-                }
-            } else if (!componentName.equals(other.activity)) {
-                return false;
-            }
-            if (this.time == other.time && Float.floatToIntBits(this.weight) == Float.floatToIntBits(other.weight)) {
-                return true;
-            }
-            return false;
-        }
-
-        public String toString() {
-            return "[" + "; activity:" + this.activity + "; time:" + this.time + "; weight:" + new BigDecimal((double) this.weight) + "]";
-        }
-    }
-
-    /* renamed from: android.support.v7.widget.ActivityChooserModel$ActivityResolveInfo */
-    public static final class ActivityResolveInfo implements Comparable<ActivityResolveInfo> {
-        public final ResolveInfo resolveInfo;
-        public float weight;
-
-        public ActivityResolveInfo(ResolveInfo resolveInfo2) {
-            this.resolveInfo = resolveInfo2;
-        }
-
-        public int hashCode() {
-            return Float.floatToIntBits(this.weight) + 31;
-        }
-
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (obj != null && getClass() == obj.getClass() && Float.floatToIntBits(this.weight) == Float.floatToIntBits(((ActivityResolveInfo) obj).weight)) {
-                return true;
-            }
-            return false;
-        }
-
-        public int compareTo(ActivityResolveInfo another) {
-            return Float.floatToIntBits(another.weight) - Float.floatToIntBits(this.weight);
-        }
-
-        public String toString() {
-            return "[" + "resolveInfo:" + this.resolveInfo.toString() + "; weight:" + new BigDecimal((double) this.weight) + "]";
-        }
-    }
-
-    /* renamed from: android.support.v7.widget.ActivityChooserModel$DefaultSorter */
-    private static final class DefaultSorter implements ActivitySorter {
-        private static final float WEIGHT_DECAY_COEFFICIENT = 0.95f;
-        private final Map<ComponentName, ActivityResolveInfo> mPackageNameToActivityMap = new HashMap();
-
-        DefaultSorter() {
-        }
-
-        public void sort(Intent intent, List<ActivityResolveInfo> activities, List<HistoricalRecord> historicalRecords) {
-            Map<ComponentName, ActivityResolveInfo> componentNameToActivityMap = this.mPackageNameToActivityMap;
-            componentNameToActivityMap.clear();
-            int activityCount = activities.size();
-            for (int i = 0; i < activityCount; i++) {
-                ActivityResolveInfo activity = activities.get(i);
-                activity.weight = 0.0f;
-                componentNameToActivityMap.put(new ComponentName(activity.resolveInfo.activityInfo.packageName, activity.resolveInfo.activityInfo.name), activity);
-            }
-            float nextRecordWeight = ActivityChooserModel.DEFAULT_HISTORICAL_RECORD_WEIGHT;
-            for (int i2 = historicalRecords.size() - 1; i2 >= 0; i2--) {
-                HistoricalRecord historicalRecord = historicalRecords.get(i2);
-                ActivityResolveInfo activity2 = componentNameToActivityMap.get(historicalRecord.activity);
-                if (activity2 != null) {
-                    activity2.weight += historicalRecord.weight * nextRecordWeight;
-                    nextRecordWeight *= WEIGHT_DECAY_COEFFICIENT;
-                }
-            }
-            Collections.sort(activities);
         }
     }
 
@@ -579,6 +452,134 @@ class ActivityChooserModel extends DataSetObservable {
             return
         */
         throw new UnsupportedOperationException("Method not decompiled: android.support.p004v7.widget.ActivityChooserModel.readHistoricalDataImpl():void");
+    }
+
+    /* renamed from: android.support.v7.widget.ActivityChooserModel$ActivityChooserModelClient */
+    public interface ActivityChooserModelClient {
+        void setActivityChooserModel(ActivityChooserModel activityChooserModel);
+    }
+
+    /* renamed from: android.support.v7.widget.ActivityChooserModel$ActivitySorter */
+    public interface ActivitySorter {
+        void sort(Intent intent, List<ActivityResolveInfo> list, List<HistoricalRecord> list2);
+    }
+
+    /* renamed from: android.support.v7.widget.ActivityChooserModel$OnChooseActivityListener */
+    public interface OnChooseActivityListener {
+        boolean onChooseActivity(ActivityChooserModel activityChooserModel, Intent intent);
+    }
+
+    /* renamed from: android.support.v7.widget.ActivityChooserModel$HistoricalRecord */
+    public static final class HistoricalRecord {
+        public final ComponentName activity;
+        public final long time;
+        public final float weight;
+
+        public HistoricalRecord(String activityName, long time2, float weight2) {
+            this(ComponentName.unflattenFromString(activityName), time2, weight2);
+        }
+
+        public HistoricalRecord(ComponentName activityName, long time2, float weight2) {
+            this.activity = activityName;
+            this.time = time2;
+            this.weight = weight2;
+        }
+
+        public int hashCode() {
+            int i = 1 * 31;
+            ComponentName componentName = this.activity;
+            int hashCode = componentName == null ? 0 : componentName.hashCode();
+            long j = this.time;
+            return ((((i + hashCode) * 31) + ((int) (j ^ (j >>> 32)))) * 31) + Float.floatToIntBits(this.weight);
+        }
+
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null || getClass() != obj.getClass()) {
+                return false;
+            }
+            HistoricalRecord other = (HistoricalRecord) obj;
+            ComponentName componentName = this.activity;
+            if (componentName == null) {
+                if (other.activity != null) {
+                    return false;
+                }
+            } else if (!componentName.equals(other.activity)) {
+                return false;
+            }
+            if (this.time == other.time && Float.floatToIntBits(this.weight) == Float.floatToIntBits(other.weight)) {
+                return true;
+            }
+            return false;
+        }
+
+        public String toString() {
+            return "[" + "; activity:" + this.activity + "; time:" + this.time + "; weight:" + new BigDecimal((double) this.weight) + "]";
+        }
+    }
+
+    /* renamed from: android.support.v7.widget.ActivityChooserModel$ActivityResolveInfo */
+    public static final class ActivityResolveInfo implements Comparable<ActivityResolveInfo> {
+        public final ResolveInfo resolveInfo;
+        public float weight;
+
+        public ActivityResolveInfo(ResolveInfo resolveInfo2) {
+            this.resolveInfo = resolveInfo2;
+        }
+
+        public int hashCode() {
+            return Float.floatToIntBits(this.weight) + 31;
+        }
+
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj != null && getClass() == obj.getClass() && Float.floatToIntBits(this.weight) == Float.floatToIntBits(((ActivityResolveInfo) obj).weight)) {
+                return true;
+            }
+            return false;
+        }
+
+        public int compareTo(ActivityResolveInfo another) {
+            return Float.floatToIntBits(another.weight) - Float.floatToIntBits(this.weight);
+        }
+
+        public String toString() {
+            return "[" + "resolveInfo:" + this.resolveInfo.toString() + "; weight:" + new BigDecimal((double) this.weight) + "]";
+        }
+    }
+
+    /* renamed from: android.support.v7.widget.ActivityChooserModel$DefaultSorter */
+    private static final class DefaultSorter implements ActivitySorter {
+        private static final float WEIGHT_DECAY_COEFFICIENT = 0.95f;
+        private final Map<ComponentName, ActivityResolveInfo> mPackageNameToActivityMap = new HashMap();
+
+        DefaultSorter() {
+        }
+
+        public void sort(Intent intent, List<ActivityResolveInfo> activities, List<HistoricalRecord> historicalRecords) {
+            Map<ComponentName, ActivityResolveInfo> componentNameToActivityMap = this.mPackageNameToActivityMap;
+            componentNameToActivityMap.clear();
+            int activityCount = activities.size();
+            for (int i = 0; i < activityCount; i++) {
+                ActivityResolveInfo activity = activities.get(i);
+                activity.weight = 0.0f;
+                componentNameToActivityMap.put(new ComponentName(activity.resolveInfo.activityInfo.packageName, activity.resolveInfo.activityInfo.name), activity);
+            }
+            float nextRecordWeight = ActivityChooserModel.DEFAULT_HISTORICAL_RECORD_WEIGHT;
+            for (int i2 = historicalRecords.size() - 1; i2 >= 0; i2--) {
+                HistoricalRecord historicalRecord = historicalRecords.get(i2);
+                ActivityResolveInfo activity2 = componentNameToActivityMap.get(historicalRecord.activity);
+                if (activity2 != null) {
+                    activity2.weight += historicalRecord.weight * nextRecordWeight;
+                    nextRecordWeight *= WEIGHT_DECAY_COEFFICIENT;
+                }
+            }
+            Collections.sort(activities);
+        }
     }
 
     /* renamed from: android.support.v7.widget.ActivityChooserModel$PersistHistoryAsyncTask */

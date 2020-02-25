@@ -4,10 +4,12 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.Pair;
+
 import com.google.android.gms.common.internal.zzan;
 import com.google.android.gms.feedback.BaseFeedbackProductSpecificData;
 import com.google.android.gms.feedback.Feedback;
 import com.google.android.gms.feedback.FeedbackClient;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

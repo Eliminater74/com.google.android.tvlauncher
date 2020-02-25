@@ -2,15 +2,24 @@ package com.google.common.util.concurrent;
 
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.base.Preconditions;
-import com.google.common.util.concurrent.FluentFuture;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.RunnableFuture;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible
 class TrustedListenableFutureTask<V> extends FluentFuture.TrustedFuture<V> implements RunnableFuture<V> {
     private volatile InterruptibleTask<?> task;
+
+    TrustedListenableFutureTask(Callable<V> callable) {
+        this.task = new TrustedFutureInterruptibleTask(callable);
+    }
+
+    TrustedListenableFutureTask(AsyncCallable<V> callable) {
+        this.task = new TrustedFutureInterruptibleAsyncTask(callable);
+    }
 
     static <V> TrustedListenableFutureTask<V> create(AsyncCallable asyncCallable) {
         return new TrustedListenableFutureTask<>(asyncCallable);
@@ -22,14 +31,6 @@ class TrustedListenableFutureTask<V> extends FluentFuture.TrustedFuture<V> imple
 
     static <V> TrustedListenableFutureTask<V> create(Runnable runnable, @NullableDecl V result) {
         return new TrustedListenableFutureTask<>(Executors.callable(runnable, result));
-    }
-
-    TrustedListenableFutureTask(Callable<V> callable) {
-        this.task = new TrustedFutureInterruptibleTask(callable);
-    }
-
-    TrustedListenableFutureTask(AsyncCallable<V> callable) {
-        this.task = new TrustedFutureInterruptibleAsyncTask(callable);
     }
 
     public void run() {

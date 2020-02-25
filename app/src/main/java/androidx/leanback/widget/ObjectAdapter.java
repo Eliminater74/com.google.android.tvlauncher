@@ -5,84 +5,9 @@ import android.support.annotation.RestrictTo;
 
 public abstract class ObjectAdapter {
     public static final int NO_ID = -1;
-    private boolean mHasStableIds;
     private final DataObservable mObservable = new DataObservable();
+    private boolean mHasStableIds;
     private PresenterSelector mPresenterSelector;
-
-    public abstract Object get(int i);
-
-    public abstract int size();
-
-    public static abstract class DataObserver {
-        public void onChanged() {
-        }
-
-        public void onItemRangeChanged(int positionStart, int itemCount) {
-            onChanged();
-        }
-
-        public void onItemRangeChanged(int positionStart, int itemCount, Object payload) {
-            onChanged();
-        }
-
-        public void onItemRangeInserted(int positionStart, int itemCount) {
-            onChanged();
-        }
-
-        public void onItemMoved(int fromPosition, int toPosition) {
-            onChanged();
-        }
-
-        public void onItemRangeRemoved(int positionStart, int itemCount) {
-            onChanged();
-        }
-    }
-
-    private static final class DataObservable extends Observable<DataObserver> {
-        DataObservable() {
-        }
-
-        public void notifyChanged() {
-            for (int i = this.mObservers.size() - 1; i >= 0; i--) {
-                ((DataObserver) this.mObservers.get(i)).onChanged();
-            }
-        }
-
-        public void notifyItemRangeChanged(int positionStart, int itemCount) {
-            for (int i = this.mObservers.size() - 1; i >= 0; i--) {
-                ((DataObserver) this.mObservers.get(i)).onItemRangeChanged(positionStart, itemCount);
-            }
-        }
-
-        public void notifyItemRangeChanged(int positionStart, int itemCount, Object payload) {
-            for (int i = this.mObservers.size() - 1; i >= 0; i--) {
-                ((DataObserver) this.mObservers.get(i)).onItemRangeChanged(positionStart, itemCount, payload);
-            }
-        }
-
-        public void notifyItemRangeInserted(int positionStart, int itemCount) {
-            for (int i = this.mObservers.size() - 1; i >= 0; i--) {
-                ((DataObserver) this.mObservers.get(i)).onItemRangeInserted(positionStart, itemCount);
-            }
-        }
-
-        public void notifyItemRangeRemoved(int positionStart, int itemCount) {
-            for (int i = this.mObservers.size() - 1; i >= 0; i--) {
-                ((DataObserver) this.mObservers.get(i)).onItemRangeRemoved(positionStart, itemCount);
-            }
-        }
-
-        public void notifyItemMoved(int positionStart, int toPosition) {
-            for (int i = this.mObservers.size() - 1; i >= 0; i--) {
-                ((DataObserver) this.mObservers.get(i)).onItemMoved(positionStart, toPosition);
-            }
-        }
-
-        /* access modifiers changed from: package-private */
-        public boolean hasObserver() {
-            return this.mObservers.size() > 0;
-        }
-    }
 
     public ObjectAdapter(PresenterSelector presenterSelector) {
         setPresenterSelector(presenterSelector);
@@ -93,6 +18,18 @@ public abstract class ObjectAdapter {
     }
 
     public ObjectAdapter() {
+    }
+
+    public abstract Object get(int i);
+
+    public abstract int size();
+
+    /* access modifiers changed from: protected */
+    public void onPresenterSelectorChanged() {
+    }
+
+    public final PresenterSelector getPresenterSelector() {
+        return this.mPresenterSelector;
     }
 
     public final void setPresenterSelector(PresenterSelector presenterSelector) {
@@ -113,14 +50,6 @@ public abstract class ObjectAdapter {
             return;
         }
         throw new IllegalArgumentException("Presenter selector must not be null");
-    }
-
-    /* access modifiers changed from: protected */
-    public void onPresenterSelectorChanged() {
-    }
-
-    public final PresenterSelector getPresenterSelector() {
-        return this.mPresenterSelector;
     }
 
     public final void registerObserver(DataObserver observer) {
@@ -198,5 +127,76 @@ public abstract class ObjectAdapter {
 
     public boolean isImmediateNotifySupported() {
         return false;
+    }
+
+    public static abstract class DataObserver {
+        public void onChanged() {
+        }
+
+        public void onItemRangeChanged(int positionStart, int itemCount) {
+            onChanged();
+        }
+
+        public void onItemRangeChanged(int positionStart, int itemCount, Object payload) {
+            onChanged();
+        }
+
+        public void onItemRangeInserted(int positionStart, int itemCount) {
+            onChanged();
+        }
+
+        public void onItemMoved(int fromPosition, int toPosition) {
+            onChanged();
+        }
+
+        public void onItemRangeRemoved(int positionStart, int itemCount) {
+            onChanged();
+        }
+    }
+
+    private static final class DataObservable extends Observable<DataObserver> {
+        DataObservable() {
+        }
+
+        public void notifyChanged() {
+            for (int i = this.mObservers.size() - 1; i >= 0; i--) {
+                ((DataObserver) this.mObservers.get(i)).onChanged();
+            }
+        }
+
+        public void notifyItemRangeChanged(int positionStart, int itemCount) {
+            for (int i = this.mObservers.size() - 1; i >= 0; i--) {
+                ((DataObserver) this.mObservers.get(i)).onItemRangeChanged(positionStart, itemCount);
+            }
+        }
+
+        public void notifyItemRangeChanged(int positionStart, int itemCount, Object payload) {
+            for (int i = this.mObservers.size() - 1; i >= 0; i--) {
+                ((DataObserver) this.mObservers.get(i)).onItemRangeChanged(positionStart, itemCount, payload);
+            }
+        }
+
+        public void notifyItemRangeInserted(int positionStart, int itemCount) {
+            for (int i = this.mObservers.size() - 1; i >= 0; i--) {
+                ((DataObserver) this.mObservers.get(i)).onItemRangeInserted(positionStart, itemCount);
+            }
+        }
+
+        public void notifyItemRangeRemoved(int positionStart, int itemCount) {
+            for (int i = this.mObservers.size() - 1; i >= 0; i--) {
+                ((DataObserver) this.mObservers.get(i)).onItemRangeRemoved(positionStart, itemCount);
+            }
+        }
+
+        public void notifyItemMoved(int positionStart, int toPosition) {
+            for (int i = this.mObservers.size() - 1; i >= 0; i--) {
+                ((DataObserver) this.mObservers.get(i)).onItemMoved(positionStart, toPosition);
+            }
+        }
+
+        /* access modifiers changed from: package-private */
+        public boolean hasObserver() {
+            return this.mObservers.size() > 0;
+        }
     }
 }

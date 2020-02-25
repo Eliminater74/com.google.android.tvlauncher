@@ -1,12 +1,12 @@
 package com.google.android.libraries.performance.primes;
 
 public final class PrimesProfilingConfigurations {
+    static final int MAX_BUFFER_SIZE_BYTES_UPPER_BOUND = 3145728;
     private static final int DEFAULT_FREQUENCY_MICRO = 1000;
     private static final int DEFAULT_MAX_BUFFER_SIZE_BYTES = 2097152;
     private static final double DEFAULT_SAMPLES_PER_EPOCH = 5.0d;
     private static final int DEFAULT_SAMPLE_DURATION_MS = 30000;
     private static final int DEFAULT_SAMPLE_DURATION_SKEW_MS = 5000;
-    static final int MAX_BUFFER_SIZE_BYTES_UPPER_BOUND = 3145728;
     private final boolean enabled;
     private final int maxBufferSizeBytes;
     private final int sampleDurationMs;

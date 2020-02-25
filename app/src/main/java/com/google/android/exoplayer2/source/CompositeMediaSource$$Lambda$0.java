@@ -1,7 +1,6 @@
 package com.google.android.exoplayer2.source;
 
 import com.google.android.exoplayer2.Timeline;
-import com.google.android.exoplayer2.source.MediaSource;
 
 final /* synthetic */ class CompositeMediaSource$$Lambda$0 implements MediaSource.SourceInfoRefreshListener {
     private final CompositeMediaSource arg$1;

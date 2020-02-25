@@ -29,7 +29,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.accessibility.AccessibilityEvent;
+
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -40,48 +42,29 @@ public class SlidingPaneLayout extends ViewGroup {
     private static final int DEFAULT_OVERHANG_SIZE = 32;
     private static final int MIN_FLING_VELOCITY = 400;
     private static final String TAG = "SlidingPaneLayout";
+    final ViewDragHelper mDragHelper;
+    final ArrayList<DisableLayerRunnable> mPostedRunnables;
+    private final int mOverhangSize;
+    private final Rect mTmpRect;
+    boolean mIsUnableToDrag;
+    boolean mPreservedOpenState;
+    float mSlideOffset;
+    int mSlideRange;
+    View mSlideableView;
     private boolean mCanSlide;
     private int mCoveredFadeColor;
     private boolean mDisplayListReflectionLoaded;
-    final ViewDragHelper mDragHelper;
     private boolean mFirstLayout;
     private Method mGetDisplayList;
     private float mInitialMotionX;
     private float mInitialMotionY;
-    boolean mIsUnableToDrag;
-    private final int mOverhangSize;
     private PanelSlideListener mPanelSlideListener;
     private int mParallaxBy;
     private float mParallaxOffset;
-    final ArrayList<DisableLayerRunnable> mPostedRunnables;
-    boolean mPreservedOpenState;
     private Field mRecreateDisplayList;
     private Drawable mShadowDrawableLeft;
     private Drawable mShadowDrawableRight;
-    float mSlideOffset;
-    int mSlideRange;
-    View mSlideableView;
     private int mSliderFadeColor;
-    private final Rect mTmpRect;
-
-    public interface PanelSlideListener {
-        void onPanelClosed(@NonNull View view);
-
-        void onPanelOpened(@NonNull View view);
-
-        void onPanelSlide(@NonNull View view, float f);
-    }
-
-    public static class SimplePanelSlideListener implements PanelSlideListener {
-        public void onPanelSlide(View panel, float slideOffset) {
-        }
-
-        public void onPanelOpened(View panel) {
-        }
-
-        public void onPanelClosed(View panel) {
-        }
-    }
 
     public SlidingPaneLayout(@NonNull Context context) {
         this(context, null);
@@ -106,9 +89,15 @@ public class SlidingPaneLayout extends ViewGroup {
         this.mDragHelper.setMinVelocity(400.0f * density);
     }
 
-    public void setParallaxDistance(@C0013Px int parallaxBy) {
-        this.mParallaxBy = parallaxBy;
-        requestLayout();
+    private static boolean viewIsOpaque(View v) {
+        Drawable bg;
+        if (v.isOpaque()) {
+            return true;
+        }
+        if (Build.VERSION.SDK_INT < 18 && (bg = v.getBackground()) != null && bg.getOpacity() == -1) {
+            return true;
+        }
+        return false;
     }
 
     @C0013Px
@@ -116,8 +105,9 @@ public class SlidingPaneLayout extends ViewGroup {
         return this.mParallaxBy;
     }
 
-    public void setSliderFadeColor(@ColorInt int color) {
-        this.mSliderFadeColor = color;
+    public void setParallaxDistance(@C0013Px int parallaxBy) {
+        this.mParallaxBy = parallaxBy;
+        requestLayout();
     }
 
     @ColorInt
@@ -125,13 +115,17 @@ public class SlidingPaneLayout extends ViewGroup {
         return this.mSliderFadeColor;
     }
 
-    public void setCoveredFadeColor(@ColorInt int color) {
-        this.mCoveredFadeColor = color;
+    public void setSliderFadeColor(@ColorInt int color) {
+        this.mSliderFadeColor = color;
     }
 
     @ColorInt
     public int getCoveredFadeColor() {
         return this.mCoveredFadeColor;
+    }
+
+    public void setCoveredFadeColor(@ColorInt int color) {
+        this.mCoveredFadeColor = color;
     }
 
     public void setPanelSlideListener(@Nullable PanelSlideListener listener) {
@@ -227,17 +221,6 @@ public class SlidingPaneLayout extends ViewGroup {
                 child.setVisibility(0);
             }
         }
-    }
-
-    private static boolean viewIsOpaque(View v) {
-        Drawable bg;
-        if (v.isOpaque()) {
-            return true;
-        }
-        if (Build.VERSION.SDK_INT < 18 && (bg = v.getBackground()) != null && bg.getOpacity() == -1) {
-            return true;
-        }
-        return false;
     }
 
     /* access modifiers changed from: protected */
@@ -1013,6 +996,97 @@ public class SlidingPaneLayout extends ViewGroup {
         this.mPreservedOpenState = ss.isOpen;
     }
 
+    /* access modifiers changed from: package-private */
+    public boolean isLayoutRtlSupport() {
+        return ViewCompat.getLayoutDirection(this) == 1;
+    }
+
+    public interface PanelSlideListener {
+        void onPanelClosed(@NonNull View view);
+
+        void onPanelOpened(@NonNull View view);
+
+        void onPanelSlide(@NonNull View view, float f);
+    }
+
+    public static class SimplePanelSlideListener implements PanelSlideListener {
+        public void onPanelSlide(View panel, float slideOffset) {
+        }
+
+        public void onPanelOpened(View panel) {
+        }
+
+        public void onPanelClosed(View panel) {
+        }
+    }
+
+    public static class LayoutParams extends ViewGroup.MarginLayoutParams {
+        private static final int[] ATTRS = {16843137};
+        public float weight = 0.0f;
+        Paint dimPaint;
+        boolean dimWhenOffset;
+        boolean slideable;
+
+        public LayoutParams() {
+            super(-1, -1);
+        }
+
+        public LayoutParams(int width, int height) {
+            super(width, height);
+        }
+
+        public LayoutParams(@NonNull ViewGroup.LayoutParams source) {
+            super(source);
+        }
+
+        public LayoutParams(@NonNull ViewGroup.MarginLayoutParams source) {
+            super(source);
+        }
+
+        public LayoutParams(@NonNull LayoutParams source) {
+            super((ViewGroup.MarginLayoutParams) source);
+            this.weight = source.weight;
+        }
+
+        public LayoutParams(@NonNull Context c, @Nullable AttributeSet attrs) {
+            super(c, attrs);
+            TypedArray a = c.obtainStyledAttributes(attrs, ATTRS);
+            this.weight = a.getFloat(0, 0.0f);
+            a.recycle();
+        }
+    }
+
+    static class SavedState extends AbsSavedState {
+        public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.ClassLoaderCreator<SavedState>() {
+            public SavedState createFromParcel(Parcel in, ClassLoader loader) {
+                return new SavedState(in, null);
+            }
+
+            public SavedState createFromParcel(Parcel in) {
+                return new SavedState(in, null);
+            }
+
+            public SavedState[] newArray(int size) {
+                return new SavedState[size];
+            }
+        };
+        boolean isOpen;
+
+        SavedState(Parcelable superState) {
+            super(superState);
+        }
+
+        SavedState(Parcel in, ClassLoader loader) {
+            super(in, loader);
+            this.isOpen = in.readInt() != 0;
+        }
+
+        public void writeToParcel(Parcel out, int flags) {
+            super.writeToParcel(out, flags);
+            out.writeInt(this.isOpen ? 1 : 0);
+        }
+    }
+
     private class DragHelperCallback extends ViewDragHelper.Callback {
         DragHelperCallback() {
         }
@@ -1096,73 +1170,6 @@ public class SlidingPaneLayout extends ViewGroup {
         }
     }
 
-    public static class LayoutParams extends ViewGroup.MarginLayoutParams {
-        private static final int[] ATTRS = {16843137};
-        Paint dimPaint;
-        boolean dimWhenOffset;
-        boolean slideable;
-        public float weight = 0.0f;
-
-        public LayoutParams() {
-            super(-1, -1);
-        }
-
-        public LayoutParams(int width, int height) {
-            super(width, height);
-        }
-
-        public LayoutParams(@NonNull ViewGroup.LayoutParams source) {
-            super(source);
-        }
-
-        public LayoutParams(@NonNull ViewGroup.MarginLayoutParams source) {
-            super(source);
-        }
-
-        public LayoutParams(@NonNull LayoutParams source) {
-            super((ViewGroup.MarginLayoutParams) source);
-            this.weight = source.weight;
-        }
-
-        public LayoutParams(@NonNull Context c, @Nullable AttributeSet attrs) {
-            super(c, attrs);
-            TypedArray a = c.obtainStyledAttributes(attrs, ATTRS);
-            this.weight = a.getFloat(0, 0.0f);
-            a.recycle();
-        }
-    }
-
-    static class SavedState extends AbsSavedState {
-        public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.ClassLoaderCreator<SavedState>() {
-            public SavedState createFromParcel(Parcel in, ClassLoader loader) {
-                return new SavedState(in, null);
-            }
-
-            public SavedState createFromParcel(Parcel in) {
-                return new SavedState(in, null);
-            }
-
-            public SavedState[] newArray(int size) {
-                return new SavedState[size];
-            }
-        };
-        boolean isOpen;
-
-        SavedState(Parcelable superState) {
-            super(superState);
-        }
-
-        SavedState(Parcel in, ClassLoader loader) {
-            super(in, loader);
-            this.isOpen = in.readInt() != 0;
-        }
-
-        public void writeToParcel(Parcel out, int flags) {
-            super.writeToParcel(out, flags);
-            out.writeInt(this.isOpen ? 1 : 0);
-        }
-    }
-
     class AccessibilityDelegate extends AccessibilityDelegateCompat {
         private final Rect mTmpRect = new Rect();
 
@@ -1242,10 +1249,5 @@ public class SlidingPaneLayout extends ViewGroup {
             }
             SlidingPaneLayout.this.mPostedRunnables.remove(this);
         }
-    }
-
-    /* access modifiers changed from: package-private */
-    public boolean isLayoutRtlSupport() {
-        return ViewCompat.getLayoutDirection(this) == 1;
     }
 }

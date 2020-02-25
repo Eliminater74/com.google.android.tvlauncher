@@ -4,18 +4,23 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Pair;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.drm.DrmInitData;
 import com.google.android.exoplayer2.extractor.mp4.PsshAtomUtil;
 import com.google.android.exoplayer2.extractor.mp4.TrackEncryptionBox;
-import com.google.android.exoplayer2.source.smoothstreaming.manifest.SsManifest;
 import com.google.android.exoplayer2.upstream.ParsingLoadable;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.CodecSpecificDataUtil;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.Util;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -23,9 +28,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-import org.xmlpull.v1.XmlPullParserFactory;
 
 public class SsManifestParser implements ParsingLoadable.Parser<SsManifest> {
     private final XmlPullParserFactory xmlParserFactory;
@@ -77,14 +79,14 @@ public class SsManifestParser implements ParsingLoadable.Parser<SsManifest> {
         private final ElementParser parent;
         private final String tag;
 
-        /* access modifiers changed from: protected */
-        public abstract Object build();
-
         public ElementParser(ElementParser parent2, String baseUri2, String tag2) {
             this.parent = parent2;
             this.baseUri = baseUri2;
             this.tag = tag2;
         }
+
+        /* access modifiers changed from: protected */
+        public abstract Object build();
 
         public final Object parse(XmlPullParser xmlParser) throws XmlPullParserException, IOException {
             boolean foundStartTag = false;
@@ -260,6 +262,7 @@ public class SsManifestParser implements ParsingLoadable.Parser<SsManifest> {
     }
 
     private static class SmoothStreamingMediaParser extends ElementParser {
+        public static final String TAG = "SmoothStreamingMedia";
         private static final String KEY_DURATION = "Duration";
         private static final String KEY_DVR_WINDOW_LENGTH = "DVRWindowLength";
         private static final String KEY_IS_LIVE = "IsLive";
@@ -267,7 +270,7 @@ public class SsManifestParser implements ParsingLoadable.Parser<SsManifest> {
         private static final String KEY_MAJOR_VERSION = "MajorVersion";
         private static final String KEY_MINOR_VERSION = "MinorVersion";
         private static final String KEY_TIME_SCALE = "TimeScale";
-        public static final String TAG = "SmoothStreamingMedia";
+        private final List<SsManifest.StreamElement> streamElements = new LinkedList();
         private long duration;
         private long dvrWindowLength;
         private boolean isLive;
@@ -275,7 +278,6 @@ public class SsManifestParser implements ParsingLoadable.Parser<SsManifest> {
         private int majorVersion;
         private int minorVersion;
         private SsManifest.ProtectionElement protectionElement = null;
-        private final List<SsManifest.StreamElement> streamElements = new LinkedList();
         private long timescale;
 
         public SmoothStreamingMediaParser(ElementParser parent, String baseUri) {
@@ -324,44 +326,16 @@ public class SsManifestParser implements ParsingLoadable.Parser<SsManifest> {
     }
 
     private static class ProtectionParser extends ElementParser {
-        private static final int INITIALIZATION_VECTOR_SIZE = 8;
         public static final String KEY_SYSTEM_ID = "SystemID";
         public static final String TAG = "Protection";
         public static final String TAG_PROTECTION_HEADER = "ProtectionHeader";
+        private static final int INITIALIZATION_VECTOR_SIZE = 8;
         private boolean inProtectionHeader;
         private byte[] initData;
         private UUID uuid;
 
         public ProtectionParser(ElementParser parent, String baseUri) {
             super(parent, baseUri, TAG);
-        }
-
-        public boolean handleChildInline(String tag) {
-            return TAG_PROTECTION_HEADER.equals(tag);
-        }
-
-        public void parseStartTag(XmlPullParser parser) {
-            if (TAG_PROTECTION_HEADER.equals(parser.getName())) {
-                this.inProtectionHeader = true;
-                this.uuid = UUID.fromString(stripCurlyBraces(parser.getAttributeValue(null, KEY_SYSTEM_ID)));
-            }
-        }
-
-        public void parseText(XmlPullParser parser) {
-            if (this.inProtectionHeader) {
-                this.initData = Base64.decode(parser.getText(), 0);
-            }
-        }
-
-        public void parseEndTag(XmlPullParser parser) {
-            if (TAG_PROTECTION_HEADER.equals(parser.getName())) {
-                this.inProtectionHeader = false;
-            }
-        }
-
-        public Object build() {
-            UUID uuid2 = this.uuid;
-            return new SsManifest.ProtectionElement(uuid2, PsshAtomUtil.buildPsshAtom(uuid2, this.initData), buildTrackEncryptionBoxes(this.initData));
         }
 
         private static TrackEncryptionBox[] buildTrackEncryptionBoxes(byte[] initData2) {
@@ -395,9 +369,38 @@ public class SsManifestParser implements ParsingLoadable.Parser<SsManifest> {
             }
             return uuidString;
         }
+
+        public boolean handleChildInline(String tag) {
+            return TAG_PROTECTION_HEADER.equals(tag);
+        }
+
+        public void parseStartTag(XmlPullParser parser) {
+            if (TAG_PROTECTION_HEADER.equals(parser.getName())) {
+                this.inProtectionHeader = true;
+                this.uuid = UUID.fromString(stripCurlyBraces(parser.getAttributeValue(null, KEY_SYSTEM_ID)));
+            }
+        }
+
+        public void parseText(XmlPullParser parser) {
+            if (this.inProtectionHeader) {
+                this.initData = Base64.decode(parser.getText(), 0);
+            }
+        }
+
+        public void parseEndTag(XmlPullParser parser) {
+            if (TAG_PROTECTION_HEADER.equals(parser.getName())) {
+                this.inProtectionHeader = false;
+            }
+        }
+
+        public Object build() {
+            UUID uuid2 = this.uuid;
+            return new SsManifest.ProtectionElement(uuid2, PsshAtomUtil.buildPsshAtom(uuid2, this.initData), buildTrackEncryptionBoxes(this.initData));
+        }
     }
 
     private static class StreamIndexParser extends ElementParser {
+        public static final String TAG = "StreamIndex";
         private static final String KEY_DISPLAY_HEIGHT = "DisplayHeight";
         private static final String KEY_DISPLAY_WIDTH = "DisplayWidth";
         private static final String KEY_FRAGMENT_DURATION = "d";
@@ -414,12 +417,11 @@ public class SsManifestParser implements ParsingLoadable.Parser<SsManifest> {
         private static final String KEY_TYPE_TEXT = "text";
         private static final String KEY_TYPE_VIDEO = "video";
         private static final String KEY_URL = "Url";
-        public static final String TAG = "StreamIndex";
         private static final String TAG_STREAM_FRAGMENT = "c";
         private final String baseUri;
+        private final List<Format> formats = new LinkedList();
         private int displayHeight;
         private int displayWidth;
-        private final List<Format> formats = new LinkedList();
         private String language;
         private long lastChunkDuration;
         private int maxHeight;
@@ -532,6 +534,7 @@ public class SsManifestParser implements ParsingLoadable.Parser<SsManifest> {
     }
 
     private static class QualityLevelParser extends ElementParser {
+        public static final String TAG = "QualityLevel";
         private static final String KEY_BITRATE = "Bitrate";
         private static final String KEY_CHANNELS = "Channels";
         private static final String KEY_CODEC_PRIVATE_DATA = "CodecPrivateData";
@@ -543,40 +546,10 @@ public class SsManifestParser implements ParsingLoadable.Parser<SsManifest> {
         private static final String KEY_NAME = "Name";
         private static final String KEY_SAMPLING_RATE = "SamplingRate";
         private static final String KEY_TYPE = "Type";
-        public static final String TAG = "QualityLevel";
         private Format format;
 
         public QualityLevelParser(ElementParser parent, String baseUri) {
             super(parent, baseUri, TAG);
-        }
-
-        public void parseStartTag(XmlPullParser parser) throws ParserException {
-            XmlPullParser xmlPullParser = parser;
-            int type = ((Integer) getNormalizedAttribute(KEY_TYPE)).intValue();
-            String id = xmlPullParser.getAttributeValue(null, KEY_INDEX);
-            String name = (String) getNormalizedAttribute(KEY_NAME);
-            int bitrate = parseRequiredInt(xmlPullParser, KEY_BITRATE);
-            String sampleMimeType = fourCCToMimeType(parseRequiredString(xmlPullParser, KEY_FOUR_CC));
-            if (type == 2) {
-                this.format = Format.createVideoContainerFormat(id, name, MimeTypes.VIDEO_MP4, sampleMimeType, null, bitrate, parseRequiredInt(xmlPullParser, KEY_MAX_WIDTH), parseRequiredInt(xmlPullParser, KEY_MAX_HEIGHT), -1.0f, buildCodecSpecificData(xmlPullParser.getAttributeValue(null, KEY_CODEC_PRIVATE_DATA)), 0, 0);
-            } else if (type == 1) {
-                String sampleMimeType2 = sampleMimeType == null ? MimeTypes.AUDIO_AAC : sampleMimeType;
-                int channels = parseRequiredInt(xmlPullParser, KEY_CHANNELS);
-                int samplingRate = parseRequiredInt(xmlPullParser, KEY_SAMPLING_RATE);
-                List<byte[]> codecSpecificData = buildCodecSpecificData(xmlPullParser.getAttributeValue(null, KEY_CODEC_PRIVATE_DATA));
-                if (codecSpecificData.isEmpty() && MimeTypes.AUDIO_AAC.equals(sampleMimeType2)) {
-                    codecSpecificData = Collections.singletonList(CodecSpecificDataUtil.buildAacLcAudioSpecificConfig(samplingRate, channels));
-                }
-                this.format = Format.createAudioContainerFormat(id, name, MimeTypes.AUDIO_MP4, sampleMimeType2, null, bitrate, channels, samplingRate, codecSpecificData, 0, 0, (String) getNormalizedAttribute(KEY_LANGUAGE));
-            } else if (type == 3) {
-                this.format = Format.createTextContainerFormat(id, name, MimeTypes.APPLICATION_MP4, sampleMimeType, null, bitrate, 0, 0, (String) getNormalizedAttribute(KEY_LANGUAGE));
-            } else {
-                this.format = Format.createContainerFormat(id, name, MimeTypes.APPLICATION_MP4, sampleMimeType, null, bitrate, 0, 0, null);
-            }
-        }
-
-        public Object build() {
-            return this.format;
         }
 
         private static List<byte[]> buildCodecSpecificData(String codecSpecificDataString) {
@@ -622,6 +595,35 @@ public class SsManifestParser implements ParsingLoadable.Parser<SsManifest> {
                 return MimeTypes.AUDIO_OPUS;
             }
             return null;
+        }
+
+        public void parseStartTag(XmlPullParser parser) throws ParserException {
+            XmlPullParser xmlPullParser = parser;
+            int type = ((Integer) getNormalizedAttribute(KEY_TYPE)).intValue();
+            String id = xmlPullParser.getAttributeValue(null, KEY_INDEX);
+            String name = (String) getNormalizedAttribute(KEY_NAME);
+            int bitrate = parseRequiredInt(xmlPullParser, KEY_BITRATE);
+            String sampleMimeType = fourCCToMimeType(parseRequiredString(xmlPullParser, KEY_FOUR_CC));
+            if (type == 2) {
+                this.format = Format.createVideoContainerFormat(id, name, MimeTypes.VIDEO_MP4, sampleMimeType, null, bitrate, parseRequiredInt(xmlPullParser, KEY_MAX_WIDTH), parseRequiredInt(xmlPullParser, KEY_MAX_HEIGHT), -1.0f, buildCodecSpecificData(xmlPullParser.getAttributeValue(null, KEY_CODEC_PRIVATE_DATA)), 0, 0);
+            } else if (type == 1) {
+                String sampleMimeType2 = sampleMimeType == null ? MimeTypes.AUDIO_AAC : sampleMimeType;
+                int channels = parseRequiredInt(xmlPullParser, KEY_CHANNELS);
+                int samplingRate = parseRequiredInt(xmlPullParser, KEY_SAMPLING_RATE);
+                List<byte[]> codecSpecificData = buildCodecSpecificData(xmlPullParser.getAttributeValue(null, KEY_CODEC_PRIVATE_DATA));
+                if (codecSpecificData.isEmpty() && MimeTypes.AUDIO_AAC.equals(sampleMimeType2)) {
+                    codecSpecificData = Collections.singletonList(CodecSpecificDataUtil.buildAacLcAudioSpecificConfig(samplingRate, channels));
+                }
+                this.format = Format.createAudioContainerFormat(id, name, MimeTypes.AUDIO_MP4, sampleMimeType2, null, bitrate, channels, samplingRate, codecSpecificData, 0, 0, (String) getNormalizedAttribute(KEY_LANGUAGE));
+            } else if (type == 3) {
+                this.format = Format.createTextContainerFormat(id, name, MimeTypes.APPLICATION_MP4, sampleMimeType, null, bitrate, 0, 0, (String) getNormalizedAttribute(KEY_LANGUAGE));
+            } else {
+                this.format = Format.createContainerFormat(id, name, MimeTypes.APPLICATION_MP4, sampleMimeType, null, bitrate, 0, 0, null);
+            }
+        }
+
+        public Object build() {
+            return this.format;
         }
     }
 }

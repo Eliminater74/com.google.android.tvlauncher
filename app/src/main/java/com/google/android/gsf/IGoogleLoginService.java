@@ -40,7 +40,6 @@ public interface IGoogleLoginService extends IInterface {
     int waitForAndroidId() throws RemoteException;
 
     public static abstract class Stub extends Binder implements IGoogleLoginService {
-        private static final String DESCRIPTOR = "com.google.android.gsf.IGoogleLoginService";
         static final int TRANSACTION_blockingGetCredentials = 5;
         static final int TRANSACTION_deleteAllAccounts = 15;
         static final int TRANSACTION_deleteOneAccount = 14;
@@ -57,6 +56,7 @@ public interface IGoogleLoginService extends IInterface {
         static final int TRANSACTION_updatePassword = 11;
         static final int TRANSACTION_verifyStoredPassword = 12;
         static final int TRANSACTION_waitForAndroidId = 16;
+        private static final String DESCRIPTOR = "com.google.android.gsf.IGoogleLoginService";
 
         public Stub() {
             attachInterface(this, DESCRIPTOR);

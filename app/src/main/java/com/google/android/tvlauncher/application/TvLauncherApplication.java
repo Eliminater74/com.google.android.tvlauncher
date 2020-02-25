@@ -2,6 +2,7 @@ package com.google.android.tvlauncher.application;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
+
 import com.google.android.libraries.gcoreclient.clearcut.impl.GcoreClearcutApiImpl;
 import com.google.android.libraries.gcoreclient.clearcut.impl.GcoreClearcutLoggerFactoryImpl;
 import com.google.android.libraries.gcoreclient.common.api.impl.GcoreGoogleApiClientImpl;
@@ -26,18 +27,18 @@ import com.google.android.tvlauncher.util.TestUtils;
 
 public class TvLauncherApplication extends TvLauncherApplicationBase {
     private static final String TAG = "TvLauncherApplication";
-    private AdsManager mAdsManager;
     private final Object mAdsManagerLock = new Object();
-    private AdsUtil mAdsUtil;
     private final Object mAdsUtilLock = new Object();
-    private DirectAdConfigSerializer mDirectAdConfigSerializer;
     private final Object mDirectAdConfigSerializerLock = new Object();
-    private DoubleClickAdConfigSerializer mDoubleClickAdConfigSerializer;
     private final Object mDoubleClickAdConfigSerializerLock = new Object();
-    private DoubleClickAdServer mDoubleClickAdServer;
     private final Object mDoubleClickAdServerLock = new Object();
-    private OutstreamVideoAdFactory mOutstreamVideoAdFactory;
     private final Object mOutstreamVideoAdFactoryLock = new Object();
+    private AdsManager mAdsManager;
+    private AdsUtil mAdsUtil;
+    private DirectAdConfigSerializer mDirectAdConfigSerializer;
+    private DoubleClickAdConfigSerializer mDoubleClickAdConfigSerializer;
+    private DoubleClickAdServer mDoubleClickAdServer;
+    private OutstreamVideoAdFactory mOutstreamVideoAdFactory;
 
     public void onCreate() {
         super.onCreate();

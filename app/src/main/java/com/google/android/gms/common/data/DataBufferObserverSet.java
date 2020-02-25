@@ -1,6 +1,5 @@
 package com.google.android.gms.common.data;
 
-import com.google.android.gms.common.data.DataBufferObserver;
 import java.util.HashSet;
 import java.util.Iterator;
 

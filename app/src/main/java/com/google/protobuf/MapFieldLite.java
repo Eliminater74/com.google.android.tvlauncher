@@ -1,6 +1,5 @@
 package com.google.protobuf;
 
-import com.google.protobuf.Internal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -9,6 +8,11 @@ import java.util.Set;
 
 public final class MapFieldLite<K, V> extends LinkedHashMap<K, V> {
     private static final MapFieldLite EMPTY_MAP_FIELD = new MapFieldLite();
+
+    static {
+        EMPTY_MAP_FIELD.makeImmutable();
+    }
+
     private boolean isMutable = true;
 
     private MapFieldLite() {
@@ -18,50 +22,8 @@ public final class MapFieldLite<K, V> extends LinkedHashMap<K, V> {
         super(mapData);
     }
 
-    static {
-        EMPTY_MAP_FIELD.makeImmutable();
-    }
-
     public static <K, V> MapFieldLite<K, V> emptyMapField() {
         return EMPTY_MAP_FIELD;
-    }
-
-    public void mergeFrom(MapFieldLite<K, V> other) {
-        ensureMutable();
-        if (!other.isEmpty()) {
-            putAll(other);
-        }
-    }
-
-    public Set<Map.Entry<K, V>> entrySet() {
-        return isEmpty() ? Collections.emptySet() : super.entrySet();
-    }
-
-    public void clear() {
-        ensureMutable();
-        super.clear();
-    }
-
-    public V put(K key, V value) {
-        ensureMutable();
-        Internal.checkNotNull(key);
-        Internal.checkNotNull(value);
-        return super.put(key, value);
-    }
-
-    public V put(Map.Entry<K, V> entry) {
-        return put(entry.getKey(), entry.getValue());
-    }
-
-    public void putAll(Map<? extends K, ? extends V> m) {
-        ensureMutable();
-        checkForNullKeysAndValues(m);
-        super.putAll(m);
-    }
-
-    public V remove(Object key) {
-        ensureMutable();
-        return super.remove(key);
     }
 
     private static void checkForNullKeysAndValues(Map<?, ?> m) {
@@ -124,10 +86,6 @@ public final class MapFieldLite<K, V> extends LinkedHashMap<K, V> {
         throw new UnsupportedOperationException("Method not decompiled: com.google.protobuf.MapFieldLite.equals(java.util.Map, java.util.Map):boolean");
     }
 
-    public boolean equals(Object object) {
-        return (object instanceof Map) && equals(this, (Map) object);
-    }
-
     private static int calculateHashCodeForObject(Object a) {
         if (a instanceof byte[]) {
             return Internal.hashCode((byte[]) a);
@@ -144,10 +102,6 @@ public final class MapFieldLite<K, V> extends LinkedHashMap<K, V> {
             result += calculateHashCodeForObject(entry.getKey()) ^ calculateHashCodeForObject(entry.getValue());
         }
         return result;
-    }
-
-    public int hashCode() {
-        return calculateHashCodeForMap(this);
     }
 
     private static Object copy(Object object) {
@@ -167,6 +121,52 @@ public final class MapFieldLite<K, V> extends LinkedHashMap<K, V> {
             result.put(entry.getKey(), copy((Object) entry.getValue()));
         }
         return result;
+    }
+
+    public void mergeFrom(MapFieldLite<K, V> other) {
+        ensureMutable();
+        if (!other.isEmpty()) {
+            putAll(other);
+        }
+    }
+
+    public Set<Map.Entry<K, V>> entrySet() {
+        return isEmpty() ? Collections.emptySet() : super.entrySet();
+    }
+
+    public void clear() {
+        ensureMutable();
+        super.clear();
+    }
+
+    public V put(K key, V value) {
+        ensureMutable();
+        Internal.checkNotNull(key);
+        Internal.checkNotNull(value);
+        return super.put(key, value);
+    }
+
+    public V put(Map.Entry<K, V> entry) {
+        return put(entry.getKey(), entry.getValue());
+    }
+
+    public void putAll(Map<? extends K, ? extends V> m) {
+        ensureMutable();
+        checkForNullKeysAndValues(m);
+        super.putAll(m);
+    }
+
+    public V remove(Object key) {
+        ensureMutable();
+        return super.remove(key);
+    }
+
+    public boolean equals(Object object) {
+        return (object instanceof Map) && equals(this, (Map) object);
+    }
+
+    public int hashCode() {
+        return calculateHashCodeForMap(this);
     }
 
     public MapFieldLite<K, V> mutableCopy() {

@@ -3,10 +3,12 @@ package com.google.android.gms.common.api.internal;
 import android.support.annotation.NonNull;
 import android.support.p001v4.util.ArrayMap;
 import android.util.Log;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.AvailabilityException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+
 import java.util.Collections;
 import java.util.Map;
 

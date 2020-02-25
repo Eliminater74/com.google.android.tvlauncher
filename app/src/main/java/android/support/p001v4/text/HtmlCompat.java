@@ -22,6 +22,9 @@ public final class HtmlCompat {
     public static final int TO_HTML_PARAGRAPH_LINES_CONSECUTIVE = 0;
     public static final int TO_HTML_PARAGRAPH_LINES_INDIVIDUAL = 1;
 
+    private HtmlCompat() {
+    }
+
     @NonNull
     public static Spanned fromHtml(@NonNull String source, int flags) {
         if (Build.VERSION.SDK_INT >= 24) {
@@ -44,8 +47,5 @@ public final class HtmlCompat {
             return Html.toHtml(text, options);
         }
         return Html.toHtml(text);
-    }
-
-    private HtmlCompat() {
     }
 }

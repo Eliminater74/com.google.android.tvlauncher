@@ -2,42 +2,18 @@ package com.google.android.exoplayer2.trackselection;
 
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.source.TrackGroup;
 import com.google.android.exoplayer2.source.chunk.MediaChunk;
 import com.google.android.exoplayer2.source.chunk.MediaChunkIterator;
-import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.upstream.BandwidthMeter;
+
 import java.util.List;
 import java.util.Random;
 
 public final class RandomTrackSelection extends BaseTrackSelection {
     private final Random random;
     private int selectedIndex;
-
-    public static final class Factory implements TrackSelection.Factory {
-        private final Random random;
-
-        public TrackSelection createTrackSelection(TrackGroup trackGroup, BandwidthMeter bandwidthMeter, int... iArr) {
-            return TrackSelection$Factory$$CC.createTrackSelection$$dflt$$(this, trackGroup, bandwidthMeter, iArr);
-        }
-
-        public Factory() {
-            this.random = new Random();
-        }
-
-        public Factory(int seed) {
-            this.random = new Random((long) seed);
-        }
-
-        public TrackSelection[] createTrackSelections(TrackSelection.Definition[] definitions, BandwidthMeter bandwidthMeter) {
-            return TrackSelectionUtil.createTrackSelectionsForDefinitions(definitions, new RandomTrackSelection$Factory$$Lambda$0(this));
-        }
-
-        /* access modifiers changed from: package-private */
-        public final /* synthetic */ TrackSelection lambda$createTrackSelections$0$RandomTrackSelection$Factory(TrackSelection.Definition definition) {
-            return new RandomTrackSelection(definition.group, definition.tracks, this.random);
-        }
-    }
 
     public RandomTrackSelection(TrackGroup group, int... tracks) {
         super(group, tracks);
@@ -90,5 +66,30 @@ public final class RandomTrackSelection extends BaseTrackSelection {
     @Nullable
     public Object getSelectionData() {
         return null;
+    }
+
+    public static final class Factory implements TrackSelection.Factory {
+        private final Random random;
+
+        public Factory() {
+            this.random = new Random();
+        }
+
+        public Factory(int seed) {
+            this.random = new Random((long) seed);
+        }
+
+        public TrackSelection createTrackSelection(TrackGroup trackGroup, BandwidthMeter bandwidthMeter, int... iArr) {
+            return TrackSelection$Factory$$CC.createTrackSelection$$dflt$$(this, trackGroup, bandwidthMeter, iArr);
+        }
+
+        public TrackSelection[] createTrackSelections(TrackSelection.Definition[] definitions, BandwidthMeter bandwidthMeter) {
+            return TrackSelectionUtil.createTrackSelectionsForDefinitions(definitions, new RandomTrackSelection$Factory$$Lambda$0(this));
+        }
+
+        /* access modifiers changed from: package-private */
+        public final /* synthetic */ TrackSelection lambda$createTrackSelections$0$RandomTrackSelection$Factory(TrackSelection.Definition definition) {
+            return new RandomTrackSelection(definition.group, definition.tracks, this.random);
+        }
     }
 }

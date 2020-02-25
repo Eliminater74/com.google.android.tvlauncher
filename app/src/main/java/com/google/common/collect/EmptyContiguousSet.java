@@ -2,11 +2,12 @@ package com.google.common.collect;
 
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.GwtIncompatible;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.Serializable;
-import java.lang.Comparable;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible(emulated = true)
 final class EmptyContiguousSet<C extends Comparable> extends ContiguousSet<C> {
@@ -106,6 +107,18 @@ final class EmptyContiguousSet<C extends Comparable> extends ContiguousSet<C> {
         return 0;
     }
 
+    /* access modifiers changed from: package-private */
+    @GwtIncompatible
+    public Object writeReplace() {
+        return new SerializedForm(this.domain);
+    }
+
+    /* access modifiers changed from: package-private */
+    @GwtIncompatible
+    public ImmutableSortedSet<C> createDescendingSet() {
+        return ImmutableSortedSet.emptySet(Ordering.natural().reverse());
+    }
+
     @GwtIncompatible
     private static final class SerializedForm<C extends Comparable> implements Serializable {
         private static final long serialVersionUID = 0;
@@ -118,17 +131,5 @@ final class EmptyContiguousSet<C extends Comparable> extends ContiguousSet<C> {
         private Object readResolve() {
             return new EmptyContiguousSet(this.domain);
         }
-    }
-
-    /* access modifiers changed from: package-private */
-    @GwtIncompatible
-    public Object writeReplace() {
-        return new SerializedForm(this.domain);
-    }
-
-    /* access modifiers changed from: package-private */
-    @GwtIncompatible
-    public ImmutableSortedSet<C> createDescendingSet() {
-        return ImmutableSortedSet.emptySet(Ordering.natural().reverse());
     }
 }

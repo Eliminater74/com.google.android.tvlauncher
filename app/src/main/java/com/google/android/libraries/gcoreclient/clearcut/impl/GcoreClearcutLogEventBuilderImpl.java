@@ -8,6 +8,18 @@ import com.google.android.libraries.gcoreclient.common.api.GcorePendingResult;
 import com.google.android.libraries.gcoreclient.phenotype.GcoreExperimentTokens;
 
 public final class GcoreClearcutLogEventBuilderImpl extends BaseClearcutLogEventBuilderImpl {
+    GcoreClearcutLogEventBuilderImpl(ClearcutLogger clearcutLogger, byte[] protoExtension) {
+        super(clearcutLogger, protoExtension);
+    }
+
+    GcoreClearcutLogEventBuilderImpl(ClearcutLogger clearcutLogger, ClearcutLogger.MessageProducer extensionProducer) {
+        super(clearcutLogger, extensionProducer);
+    }
+
+    private static ExperimentTokens newExperimentTokens(GcoreExperimentTokens experimentTokens) {
+        return new ExperimentTokens(experimentTokens.getUser(), experimentTokens.getDirectExperimentToken(), experimentTokens.getGaiaCrossExperimentTokens(), experimentTokens.getPseudonymousCrossExperimentTokens(), experimentTokens.getAlwaysCrossExperimentTokens(), experimentTokens.getOtherCrossExperimentTokens(), experimentTokens.getWeakExperimentIds(), experimentTokens.getAdditionalDirectExperimentTokens());
+    }
+
     public /* bridge */ /* synthetic */ GcorePendingResult logAsync() {
         return super.logAsync();
     }
@@ -30,14 +42,6 @@ public final class GcoreClearcutLogEventBuilderImpl extends BaseClearcutLogEvent
 
     public /* bridge */ /* synthetic */ GcoreClearcutLogEventBuilder setZwiebackCookieOverride(String str) {
         return super.setZwiebackCookieOverride(str);
-    }
-
-    GcoreClearcutLogEventBuilderImpl(ClearcutLogger clearcutLogger, byte[] protoExtension) {
-        super(clearcutLogger, protoExtension);
-    }
-
-    GcoreClearcutLogEventBuilderImpl(ClearcutLogger clearcutLogger, ClearcutLogger.MessageProducer extensionProducer) {
-        super(clearcutLogger, extensionProducer);
     }
 
     public GcoreClearcutLogEventBuilder setQosTier(int qosTier) {
@@ -92,9 +96,5 @@ public final class GcoreClearcutLogEventBuilderImpl extends BaseClearcutLogEvent
     public GcoreClearcutLogEventBuilder addExperimentTokensAndSkipPhenotype(GcoreExperimentTokens experimentTokens) {
         this.logEventBuilder.addExperimentTokensAndSkipPhenotype(newExperimentTokens(experimentTokens));
         return this;
-    }
-
-    private static ExperimentTokens newExperimentTokens(GcoreExperimentTokens experimentTokens) {
-        return new ExperimentTokens(experimentTokens.getUser(), experimentTokens.getDirectExperimentToken(), experimentTokens.getGaiaCrossExperimentTokens(), experimentTokens.getPseudonymousCrossExperimentTokens(), experimentTokens.getAlwaysCrossExperimentTokens(), experimentTokens.getOtherCrossExperimentTokens(), experimentTokens.getWeakExperimentIds(), experimentTokens.getAdditionalDirectExperimentTokens());
     }
 }

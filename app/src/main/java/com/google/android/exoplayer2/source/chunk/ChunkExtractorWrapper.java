@@ -2,6 +2,7 @@ package com.google.android.exoplayer2.source.chunk;
 
 import android.support.annotation.Nullable;
 import android.util.SparseArray;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.extractor.DummyTrackOutput;
@@ -12,22 +13,19 @@ import com.google.android.exoplayer2.extractor.SeekMap;
 import com.google.android.exoplayer2.extractor.TrackOutput;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.ParsableByteArray;
+
 import java.io.IOException;
 
 public final class ChunkExtractorWrapper implements ExtractorOutput {
-    private final SparseArray<BindingTrackOutput> bindingTrackOutputs = new SparseArray<>();
-    private long endTimeUs;
     public final Extractor extractor;
-    private boolean extractorInitialized;
+    private final SparseArray<BindingTrackOutput> bindingTrackOutputs = new SparseArray<>();
     private final Format primaryTrackManifestFormat;
     private final int primaryTrackType;
+    private long endTimeUs;
+    private boolean extractorInitialized;
     private Format[] sampleFormats;
     private SeekMap seekMap;
     private TrackOutputProvider trackOutputProvider;
-
-    public interface TrackOutputProvider {
-        TrackOutput track(int i, int i2);
-    }
 
     public ChunkExtractorWrapper(Extractor extractor2, int primaryTrackType2, Format primaryTrackManifestFormat2) {
         this.extractor = extractor2;
@@ -84,16 +82,19 @@ public final class ChunkExtractorWrapper implements ExtractorOutput {
         this.seekMap = seekMap2;
     }
 
+    public interface TrackOutputProvider {
+        TrackOutput track(int i, int i2);
+    }
+
     private static final class BindingTrackOutput implements TrackOutput {
         private final DummyTrackOutput dummyTrackOutput = new DummyTrackOutput();
-        private long endTimeUs;
-
         /* renamed from: id */
         private final int f93id;
         private final Format manifestFormat;
-        public Format sampleFormat;
-        private TrackOutput trackOutput;
         private final int type;
+        public Format sampleFormat;
+        private long endTimeUs;
+        private TrackOutput trackOutput;
 
         public BindingTrackOutput(int id, int type2, Format manifestFormat2) {
             this.f93id = id;

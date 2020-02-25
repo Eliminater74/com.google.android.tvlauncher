@@ -3,6 +3,7 @@ package com.google.android.exoplayer2.extractor.mp4;
 import com.google.android.exoplayer2.extractor.ExtractorInput;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.io.IOException;
 
 final class TrackFragment {

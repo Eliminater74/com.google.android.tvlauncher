@@ -4,13 +4,14 @@ import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 import android.text.TextUtils;
 import android.util.Log;
+
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.HttpException;
-import com.bumptech.glide.load.data.DataFetcher;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.util.ContentLengthInputStream;
 import com.bumptech.glide.util.LogTime;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -26,14 +27,10 @@ public class HttpUrlFetcher implements DataFetcher<InputStream> {
     private static final String TAG = "HttpUrlFetcher";
     private final HttpUrlConnectionFactory connectionFactory;
     private final GlideUrl glideUrl;
+    private final int timeout;
     private volatile boolean isCancelled;
     private InputStream stream;
-    private final int timeout;
     private HttpURLConnection urlConnection;
-
-    interface HttpUrlConnectionFactory {
-        HttpURLConnection build(URL url) throws IOException;
-    }
 
     public HttpUrlFetcher(GlideUrl glideUrl2, int timeout2) {
         this(glideUrl2, timeout2, DEFAULT_CONNECTION_FACTORY);
@@ -44,6 +41,14 @@ public class HttpUrlFetcher implements DataFetcher<InputStream> {
         this.glideUrl = glideUrl2;
         this.timeout = timeout2;
         this.connectionFactory = connectionFactory2;
+    }
+
+    private static boolean isHttpOk(int statusCode) {
+        return statusCode / 100 == 2;
+    }
+
+    private static boolean isHttpRedirect(int statusCode) {
+        return statusCode / 100 == 3;
     }
 
     public void loadData(@NonNull Priority priority, @NonNull DataFetcher.DataCallback<? super InputStream> callback) {
@@ -126,14 +131,6 @@ public class HttpUrlFetcher implements DataFetcher<InputStream> {
         }
     }
 
-    private static boolean isHttpOk(int statusCode) {
-        return statusCode / 100 == 2;
-    }
-
-    private static boolean isHttpRedirect(int statusCode) {
-        return statusCode / 100 == 3;
-    }
-
     private InputStream getStreamForSuccessfulRequest(HttpURLConnection urlConnection2) throws IOException {
         if (TextUtils.isEmpty(urlConnection2.getContentEncoding())) {
             this.stream = ContentLengthInputStream.obtain(urlConnection2.getInputStream(), (long) urlConnection2.getContentLength());
@@ -174,6 +171,10 @@ public class HttpUrlFetcher implements DataFetcher<InputStream> {
     @NonNull
     public DataSource getDataSource() {
         return DataSource.REMOTE;
+    }
+
+    interface HttpUrlConnectionFactory {
+        HttpURLConnection build(URL url) throws IOException;
     }
 
     private static class DefaultHttpUrlConnectionFactory implements HttpUrlConnectionFactory {

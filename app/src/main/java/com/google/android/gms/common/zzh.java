@@ -1,6 +1,7 @@
 package com.google.android.gms.common;
 
 import com.google.android.gms.common.internal.Hide;
+
 import java.lang.ref.WeakReference;
 
 @Hide

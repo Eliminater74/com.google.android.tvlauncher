@@ -2,12 +2,15 @@ package com.google.android.libraries.performance.primes;
 
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
+
 import com.google.common.base.Optional;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import logs.proto.wireless.performance.mobile.ExtensionMetric;
 import logs.proto.wireless.performance.mobile.NetworkMetric;
 import logs.proto.wireless.performance.mobile.SystemHealthProto;
@@ -69,6 +72,88 @@ final class NetworkMetricCollector {
         if (matcher.matches()) {
             return matcher.group(2);
         }
+        return null;
+    }
+
+    private static NetworkMetric.RequestNegotiatedProtocol getNegotiationProtocol(String negotiatedProtocol) {
+        if (negotiatedProtocol == null || negotiatedProtocol.isEmpty()) {
+            return NetworkMetric.RequestNegotiatedProtocol.REQUEST_NEGOTIATED_PROTOCOL_UNKNOWN;
+        }
+        if (negotiatedProtocol.equals("http/1.1")) {
+            return NetworkMetric.RequestNegotiatedProtocol.REQUEST_NEGOTIATED_PROTOCOL_HTTP11;
+        }
+        if (negotiatedProtocol.equals("spdy/2")) {
+            return NetworkMetric.RequestNegotiatedProtocol.REQUEST_NEGOTIATED_PROTOCOL_SPDY2;
+        }
+        if (negotiatedProtocol.equals("spdy/3")) {
+            return NetworkMetric.RequestNegotiatedProtocol.REQUEST_NEGOTIATED_PROTOCOL_SPDY3;
+        }
+        if (negotiatedProtocol.equals("spdy/3.1")) {
+            return NetworkMetric.RequestNegotiatedProtocol.REQUEST_NEGOTIATED_PROTOCOL_SPDY31;
+        }
+        if (negotiatedProtocol.startsWith("h2")) {
+            return NetworkMetric.RequestNegotiatedProtocol.REQUEST_NEGOTIATED_PROTOCOL_SPDY4;
+        }
+        if (negotiatedProtocol.equals("quic/1+spdy/3")) {
+            return NetworkMetric.RequestNegotiatedProtocol.REQUEST_NEGOTIATED_PROTOCOL_QUIC1_SPDY3;
+        }
+        return NetworkMetric.RequestNegotiatedProtocol.REQUEST_NEGOTIATED_PROTOCOL_UNKNOWN;
+    }
+
+    @VisibleForTesting
+    static String sanitizeUrl(String path, UrlSanitizer sanitizer, boolean sanitizeAtServer) {
+        if (path == null || path.isEmpty()) {
+            return null;
+        }
+        boolean matched = false;
+        String sanitizedPath = path;
+        if (sanitizer != null && !sanitizeAtServer) {
+            sanitizedPath = sanitizer.sanitizeUrl(path);
+        }
+        if (sanitizeAtServer) {
+            matched = true;
+        } else {
+            String urlDomain = getDomainFromUrl(sanitizedPath);
+            if (urlDomain != null) {
+                matched = true;
+                sanitizedPath = urlDomain;
+            }
+        }
+        Matcher matcher = PARAMETERS_PATTERN.matcher(sanitizedPath);
+        if (matcher.find()) {
+            matched = true;
+            sanitizedPath = matcher.group(1);
+        }
+        String tmpSanitizedPath = trimIpAddress(sanitizedPath);
+        if (tmpSanitizedPath != null && !tmpSanitizedPath.equals(sanitizedPath)) {
+            matched = true;
+        }
+        String sanitizedPath2 = tmpSanitizedPath;
+        Matcher matcher2 = IP_ADDRESS_PATTERN.matcher(sanitizedPath2);
+        if (matcher2.find()) {
+            matched = true;
+            sanitizedPath2 = matcher2.replaceFirst(IP_ADDRESS_REPLACEMENT);
+        }
+        if (matched) {
+            return sanitizedPath2;
+        }
+        Matcher matcher3 = ALLOWED_SANITIZED_PATH_PATTERN.matcher(sanitizedPath2);
+        if (matcher3.find()) {
+            return matcher3.group(1);
+        }
+        return null;
+    }
+
+    @VisibleForTesting
+    static String extractContentType(String contentType) {
+        if (contentType == null || contentType.isEmpty()) {
+            return null;
+        }
+        Matcher matcher = CONTENT_TYPE_PATTERN.matcher(contentType);
+        if (matcher.find()) {
+            return matcher.group(0);
+        }
+        PrimesLog.m54w(TAG, "contentType extraction failed for %s, skipping logging path", contentType);
         return null;
     }
 
@@ -161,87 +246,5 @@ final class NetworkMetricCollector {
             PrimesLog.m53w(TAG, "Exception while getting network metric extension!", e, new Object[0]);
         }
         return (SystemHealthProto.SystemHealthMetric) systemHealthMetric.build();
-    }
-
-    private static NetworkMetric.RequestNegotiatedProtocol getNegotiationProtocol(String negotiatedProtocol) {
-        if (negotiatedProtocol == null || negotiatedProtocol.isEmpty()) {
-            return NetworkMetric.RequestNegotiatedProtocol.REQUEST_NEGOTIATED_PROTOCOL_UNKNOWN;
-        }
-        if (negotiatedProtocol.equals("http/1.1")) {
-            return NetworkMetric.RequestNegotiatedProtocol.REQUEST_NEGOTIATED_PROTOCOL_HTTP11;
-        }
-        if (negotiatedProtocol.equals("spdy/2")) {
-            return NetworkMetric.RequestNegotiatedProtocol.REQUEST_NEGOTIATED_PROTOCOL_SPDY2;
-        }
-        if (negotiatedProtocol.equals("spdy/3")) {
-            return NetworkMetric.RequestNegotiatedProtocol.REQUEST_NEGOTIATED_PROTOCOL_SPDY3;
-        }
-        if (negotiatedProtocol.equals("spdy/3.1")) {
-            return NetworkMetric.RequestNegotiatedProtocol.REQUEST_NEGOTIATED_PROTOCOL_SPDY31;
-        }
-        if (negotiatedProtocol.startsWith("h2")) {
-            return NetworkMetric.RequestNegotiatedProtocol.REQUEST_NEGOTIATED_PROTOCOL_SPDY4;
-        }
-        if (negotiatedProtocol.equals("quic/1+spdy/3")) {
-            return NetworkMetric.RequestNegotiatedProtocol.REQUEST_NEGOTIATED_PROTOCOL_QUIC1_SPDY3;
-        }
-        return NetworkMetric.RequestNegotiatedProtocol.REQUEST_NEGOTIATED_PROTOCOL_UNKNOWN;
-    }
-
-    @VisibleForTesting
-    static String sanitizeUrl(String path, UrlSanitizer sanitizer, boolean sanitizeAtServer) {
-        if (path == null || path.isEmpty()) {
-            return null;
-        }
-        boolean matched = false;
-        String sanitizedPath = path;
-        if (sanitizer != null && !sanitizeAtServer) {
-            sanitizedPath = sanitizer.sanitizeUrl(path);
-        }
-        if (sanitizeAtServer) {
-            matched = true;
-        } else {
-            String urlDomain = getDomainFromUrl(sanitizedPath);
-            if (urlDomain != null) {
-                matched = true;
-                sanitizedPath = urlDomain;
-            }
-        }
-        Matcher matcher = PARAMETERS_PATTERN.matcher(sanitizedPath);
-        if (matcher.find()) {
-            matched = true;
-            sanitizedPath = matcher.group(1);
-        }
-        String tmpSanitizedPath = trimIpAddress(sanitizedPath);
-        if (tmpSanitizedPath != null && !tmpSanitizedPath.equals(sanitizedPath)) {
-            matched = true;
-        }
-        String sanitizedPath2 = tmpSanitizedPath;
-        Matcher matcher2 = IP_ADDRESS_PATTERN.matcher(sanitizedPath2);
-        if (matcher2.find()) {
-            matched = true;
-            sanitizedPath2 = matcher2.replaceFirst(IP_ADDRESS_REPLACEMENT);
-        }
-        if (matched) {
-            return sanitizedPath2;
-        }
-        Matcher matcher3 = ALLOWED_SANITIZED_PATH_PATTERN.matcher(sanitizedPath2);
-        if (matcher3.find()) {
-            return matcher3.group(1);
-        }
-        return null;
-    }
-
-    @VisibleForTesting
-    static String extractContentType(String contentType) {
-        if (contentType == null || contentType.isEmpty()) {
-            return null;
-        }
-        Matcher matcher = CONTENT_TYPE_PATTERN.matcher(contentType);
-        if (matcher.find()) {
-            return matcher.group(0);
-        }
-        PrimesLog.m54w(TAG, "contentType extraction failed for %s, skipping logging path", contentType);
-        return null;
     }
 }

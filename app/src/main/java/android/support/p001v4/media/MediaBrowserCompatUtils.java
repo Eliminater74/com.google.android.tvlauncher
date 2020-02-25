@@ -6,6 +6,9 @@ import android.support.annotation.RestrictTo;
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
 /* renamed from: android.support.v4.media.MediaBrowserCompatUtils */
 public class MediaBrowserCompatUtils {
+    private MediaBrowserCompatUtils() {
+    }
+
     public static boolean areSameOptions(Bundle options1, Bundle options2) {
         if (options1 == options2) {
             return true;
@@ -64,8 +67,5 @@ public class MediaBrowserCompatUtils {
             return false;
         }
         return true;
-    }
-
-    private MediaBrowserCompatUtils() {
     }
 }

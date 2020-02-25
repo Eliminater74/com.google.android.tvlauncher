@@ -8,20 +8,19 @@ import android.os.ParcelFileDescriptor;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
+
 import com.bumptech.glide.load.Option;
 import com.bumptech.glide.load.Options;
 import com.bumptech.glide.load.ResourceDecoder;
 import com.bumptech.glide.load.engine.Resource;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 
 public class VideoDecoder<T> implements ResourceDecoder<T, Bitmap> {
-    private static final MediaMetadataRetrieverFactory DEFAULT_FACTORY = new MediaMetadataRetrieverFactory();
     public static final long DEFAULT_FRAME = -1;
-    @VisibleForTesting
-    static final int DEFAULT_FRAME_OPTION = 2;
     public static final Option<Integer> FRAME_OPTION = Option.disk("com.bumptech.glide.load.resource.bitmap.VideoBitmapDecode.FrameOption", 2, new Option.CacheKeyUpdater<Integer>() {
         private final ByteBuffer buffer = ByteBuffer.allocate(4);
 
@@ -35,7 +34,6 @@ public class VideoDecoder<T> implements ResourceDecoder<T, Bitmap> {
             }
         }
     });
-    private static final String TAG = "VideoDecoder";
     public static final Option<Long> TARGET_FRAME = Option.disk("com.bumptech.glide.load.resource.bitmap.VideoBitmapDecode.TargetFrame", -1L, new Option.CacheKeyUpdater<Long>() {
         private final ByteBuffer buffer = ByteBuffer.allocate(8);
 
@@ -47,22 +45,13 @@ public class VideoDecoder<T> implements ResourceDecoder<T, Bitmap> {
             }
         }
     });
+    @VisibleForTesting
+    static final int DEFAULT_FRAME_OPTION = 2;
+    private static final MediaMetadataRetrieverFactory DEFAULT_FACTORY = new MediaMetadataRetrieverFactory();
+    private static final String TAG = "VideoDecoder";
     private final BitmapPool bitmapPool;
     private final MediaMetadataRetrieverFactory factory;
     private final MediaMetadataRetrieverInitializer<T> initializer;
-
-    @VisibleForTesting
-    interface MediaMetadataRetrieverInitializer<T> {
-        void initialize(MediaMetadataRetriever mediaMetadataRetriever, T t);
-    }
-
-    public static ResourceDecoder<AssetFileDescriptor, Bitmap> asset(BitmapPool bitmapPool2) {
-        return new VideoDecoder(bitmapPool2, new AssetFileDescriptorInitializer());
-    }
-
-    public static ResourceDecoder<ParcelFileDescriptor, Bitmap> parcel(BitmapPool bitmapPool2) {
-        return new VideoDecoder(bitmapPool2, new ParcelFileDescriptorInitializer());
-    }
 
     VideoDecoder(BitmapPool bitmapPool2, MediaMetadataRetrieverInitializer<T> initializer2) {
         this(bitmapPool2, initializer2, DEFAULT_FACTORY);
@@ -75,59 +64,12 @@ public class VideoDecoder<T> implements ResourceDecoder<T, Bitmap> {
         this.factory = factory2;
     }
 
-    public boolean handles(@NonNull T t, @NonNull Options options) {
-        return true;
+    public static ResourceDecoder<AssetFileDescriptor, Bitmap> asset(BitmapPool bitmapPool2) {
+        return new VideoDecoder(bitmapPool2, new AssetFileDescriptorInitializer());
     }
 
-    public Resource<Bitmap> decode(@NonNull T resource, int outWidth, int outHeight, @NonNull Options options) throws IOException {
-        Integer frameOption;
-        DownsampleStrategy downsampleStrategy;
-        Options options2 = options;
-        long frameTimeMicros = ((Long) options2.get(TARGET_FRAME)).longValue();
-        if (frameTimeMicros >= 0 || frameTimeMicros == -1) {
-            Integer frameOption2 = (Integer) options2.get(FRAME_OPTION);
-            if (frameOption2 == null) {
-                frameOption = 2;
-            } else {
-                frameOption = frameOption2;
-            }
-            DownsampleStrategy downsampleStrategy2 = (DownsampleStrategy) options2.get(DownsampleStrategy.OPTION);
-            if (downsampleStrategy2 == null) {
-                downsampleStrategy = DownsampleStrategy.DEFAULT;
-            } else {
-                downsampleStrategy = downsampleStrategy2;
-            }
-            MediaMetadataRetriever mediaMetadataRetriever = this.factory.build();
-            try {
-                try {
-                    this.initializer.initialize(mediaMetadataRetriever, resource);
-                    Bitmap result = decodeFrame(mediaMetadataRetriever, frameTimeMicros, frameOption.intValue(), outWidth, outHeight, downsampleStrategy);
-                    mediaMetadataRetriever.release();
-                    return BitmapResource.obtain(result, this.bitmapPool);
-                } catch (RuntimeException e) {
-                    e = e;
-                    try {
-                        throw new IOException(e);
-                    } catch (Throwable th) {
-                        e = th;
-                        mediaMetadataRetriever.release();
-                        throw e;
-                    }
-                }
-            } catch (RuntimeException e2) {
-                e = e2;
-                throw new IOException(e);
-            } catch (Throwable th2) {
-                e = th2;
-                mediaMetadataRetriever.release();
-                throw e;
-            }
-        } else {
-            StringBuilder sb = new StringBuilder(83);
-            sb.append("Requested frame must be non-negative, or DEFAULT_FRAME, given: ");
-            sb.append(frameTimeMicros);
-            throw new IllegalArgumentException(sb.toString());
-        }
+    public static ResourceDecoder<ParcelFileDescriptor, Bitmap> parcel(BitmapPool bitmapPool2) {
+        return new VideoDecoder(bitmapPool2, new ParcelFileDescriptorInitializer());
     }
 
     @Nullable
@@ -213,6 +155,66 @@ public class VideoDecoder<T> implements ResourceDecoder<T, Bitmap> {
 
     private static Bitmap decodeOriginalFrame(MediaMetadataRetriever mediaMetadataRetriever, long frameTimeMicros, int frameOption) {
         return mediaMetadataRetriever.getFrameAtTime(frameTimeMicros, frameOption);
+    }
+
+    public boolean handles(@NonNull T t, @NonNull Options options) {
+        return true;
+    }
+
+    public Resource<Bitmap> decode(@NonNull T resource, int outWidth, int outHeight, @NonNull Options options) throws IOException {
+        Integer frameOption;
+        DownsampleStrategy downsampleStrategy;
+        Options options2 = options;
+        long frameTimeMicros = ((Long) options2.get(TARGET_FRAME)).longValue();
+        if (frameTimeMicros >= 0 || frameTimeMicros == -1) {
+            Integer frameOption2 = (Integer) options2.get(FRAME_OPTION);
+            if (frameOption2 == null) {
+                frameOption = 2;
+            } else {
+                frameOption = frameOption2;
+            }
+            DownsampleStrategy downsampleStrategy2 = (DownsampleStrategy) options2.get(DownsampleStrategy.OPTION);
+            if (downsampleStrategy2 == null) {
+                downsampleStrategy = DownsampleStrategy.DEFAULT;
+            } else {
+                downsampleStrategy = downsampleStrategy2;
+            }
+            MediaMetadataRetriever mediaMetadataRetriever = this.factory.build();
+            try {
+                try {
+                    this.initializer.initialize(mediaMetadataRetriever, resource);
+                    Bitmap result = decodeFrame(mediaMetadataRetriever, frameTimeMicros, frameOption.intValue(), outWidth, outHeight, downsampleStrategy);
+                    mediaMetadataRetriever.release();
+                    return BitmapResource.obtain(result, this.bitmapPool);
+                } catch (RuntimeException e) {
+                    e = e;
+                    try {
+                        throw new IOException(e);
+                    } catch (Throwable th) {
+                        e = th;
+                        mediaMetadataRetriever.release();
+                        throw e;
+                    }
+                }
+            } catch (RuntimeException e2) {
+                e = e2;
+                throw new IOException(e);
+            } catch (Throwable th2) {
+                e = th2;
+                mediaMetadataRetriever.release();
+                throw e;
+            }
+        } else {
+            StringBuilder sb = new StringBuilder(83);
+            sb.append("Requested frame must be non-negative, or DEFAULT_FRAME, given: ");
+            sb.append(frameTimeMicros);
+            throw new IllegalArgumentException(sb.toString());
+        }
+    }
+
+    @VisibleForTesting
+    interface MediaMetadataRetrieverInitializer<T> {
+        void initialize(MediaMetadataRetriever mediaMetadataRetriever, T t);
     }
 
     @VisibleForTesting

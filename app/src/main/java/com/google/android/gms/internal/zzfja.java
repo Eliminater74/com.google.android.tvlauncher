@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.UserManager;
 import android.support.p001v4.content.PermissionChecker;
 import android.util.Log;
+
 import com.google.android.gsf.Gservices;
 
 /* compiled from: PhenotypeFlag */
@@ -26,42 +27,6 @@ public abstract class zzfja<T> {
     private T zzj;
     private volatile zzfiy zzk;
     private volatile SharedPreferences zzl;
-
-    public static void zza(Context context) {
-        synchronized (zzb) {
-            if (Build.VERSION.SDK_INT < 24 || !context.isDeviceProtectedStorage()) {
-                Context applicationContext = context.getApplicationContext();
-                if (applicationContext != null) {
-                    context = applicationContext;
-                }
-            }
-            if (zzc != context) {
-                zze = null;
-            }
-            zzc = context;
-        }
-        zzd = false;
-    }
-
-    /* access modifiers changed from: protected */
-    public abstract T zza(SharedPreferences sharedPreferences);
-
-    /* access modifiers changed from: protected */
-    public abstract T zza(String str);
-
-    public static void zza() {
-        zzd = true;
-    }
-
-    public static void zzb(Context context) {
-        if (zzc == null && !zzd) {
-            zza(context);
-        }
-    }
-
-    public static void zza(boolean z) {
-        zzd = z;
-    }
 
     private zzfja(zzfjh zzfjh, String str, T t) {
         this.zzj = null;
@@ -82,6 +47,91 @@ public abstract class zzfja<T> {
             throw new IllegalArgumentException("Must pass one of SharedPreferences file name or ContentProvider URI");
         }
     }
+
+    /* synthetic */ zzfja(zzfjh zzfjh, String str, Object obj, zzfje zzfje) {
+        this(zzfjh, str, obj);
+    }
+
+    public static void zza(Context context) {
+        synchronized (zzb) {
+            if (Build.VERSION.SDK_INT < 24 || !context.isDeviceProtectedStorage()) {
+                Context applicationContext = context.getApplicationContext();
+                if (applicationContext != null) {
+                    context = applicationContext;
+                }
+            }
+            if (zzc != context) {
+                zze = null;
+            }
+            zzc = context;
+        }
+        zzd = false;
+    }
+
+    public static void zza() {
+        zzd = true;
+    }
+
+    public static void zzb(Context context) {
+        if (zzc == null && !zzd) {
+            zza(context);
+        }
+    }
+
+    public static void zza(boolean z) {
+        zzd = z;
+    }
+
+    public static void zzc() {
+    }
+
+    private static <V> V zza(zzfjg<V> zzfjg) {
+        long clearCallingIdentity;
+        try {
+            return zzfjg.zza();
+        } catch (SecurityException e) {
+            clearCallingIdentity = Binder.clearCallingIdentity();
+            V zza2 = zzfjg.zza();
+            Binder.restoreCallingIdentity(clearCallingIdentity);
+            return zza2;
+        } catch (Throwable th) {
+            Binder.restoreCallingIdentity(clearCallingIdentity);
+            throw th;
+        }
+    }
+
+    static boolean zza(String str, boolean z) {
+        if (zzg()) {
+            return ((Boolean) zza(new zzfjd(str, false))).booleanValue();
+        }
+        return false;
+    }
+
+    private static boolean zzg() {
+        if (zze == null) {
+            Context context = zzc;
+            boolean z = false;
+            if (context == null) {
+                return false;
+            }
+            if (PermissionChecker.checkCallingOrSelfPermission(context, Gservices.PERMISSION_READ_GSERVICES) == 0) {
+                z = true;
+            }
+            zze = Boolean.valueOf(z);
+        }
+        return zze.booleanValue();
+    }
+
+    /* access modifiers changed from: private */
+    public static zzfja<String> zzb(zzfjh zzfjh, String str, String str2) {
+        return new zzfjf(zzfjh, str, str2);
+    }
+
+    /* access modifiers changed from: protected */
+    public abstract T zza(SharedPreferences sharedPreferences);
+
+    /* access modifiers changed from: protected */
+    public abstract T zza(String str);
 
     public final T zzb() {
         if (zzd) {
@@ -157,57 +207,8 @@ public abstract class zzfja<T> {
         return zza(str);
     }
 
-    public static void zzc() {
-    }
-
-    private static <V> V zza(zzfjg<V> zzfjg) {
-        long clearCallingIdentity;
-        try {
-            return zzfjg.zza();
-        } catch (SecurityException e) {
-            clearCallingIdentity = Binder.clearCallingIdentity();
-            V zza2 = zzfjg.zza();
-            Binder.restoreCallingIdentity(clearCallingIdentity);
-            return zza2;
-        } catch (Throwable th) {
-            Binder.restoreCallingIdentity(clearCallingIdentity);
-            throw th;
-        }
-    }
-
-    static boolean zza(String str, boolean z) {
-        if (zzg()) {
-            return ((Boolean) zza(new zzfjd(str, false))).booleanValue();
-        }
-        return false;
-    }
-
-    private static boolean zzg() {
-        if (zze == null) {
-            Context context = zzc;
-            boolean z = false;
-            if (context == null) {
-                return false;
-            }
-            if (PermissionChecker.checkCallingOrSelfPermission(context, Gservices.PERMISSION_READ_GSERVICES) == 0) {
-                z = true;
-            }
-            zze = Boolean.valueOf(z);
-        }
-        return zze.booleanValue();
-    }
-
-    /* access modifiers changed from: private */
-    public static zzfja<String> zzb(zzfjh zzfjh, String str, String str2) {
-        return new zzfjf(zzfjh, str, str2);
-    }
-
     /* access modifiers changed from: package-private */
     public final /* synthetic */ String zzd() {
         return zzfij.zza(zzc.getContentResolver(), this.zzh, (String) null);
-    }
-
-    /* synthetic */ zzfja(zzfjh zzfjh, String str, Object obj, zzfje zzfje) {
-        this(zzfjh, str, obj);
     }
 }

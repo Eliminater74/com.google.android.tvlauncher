@@ -3,11 +3,12 @@ package androidx.leanback.widget;
 import android.graphics.Rect;
 import android.view.View;
 import android.view.ViewGroup;
-import androidx.leanback.widget.GridLayoutManager;
-import androidx.leanback.widget.ItemAlignmentFacet;
 
 class ItemAlignmentFacetHelper {
     private static Rect sRect = new Rect();
+
+    private ItemAlignmentFacetHelper() {
+    }
 
     static int getAlignmentPosition(View itemView, ItemAlignmentFacet.ItemAlignmentDef facet, int orientation) {
         int alignPos;
@@ -99,8 +100,5 @@ class ItemAlignmentFacetHelper {
             ((ViewGroup) itemView).offsetDescendantRectToMyCoords(view, rect3);
             return sRect.left - p.getOpticalLeftInset();
         }
-    }
-
-    private ItemAlignmentFacetHelper() {
     }
 }

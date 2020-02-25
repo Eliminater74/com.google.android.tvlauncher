@@ -3,6 +3,7 @@ package com.google.common.collect;
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Supplier;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,8 +21,6 @@ import java.util.TreeSet;
 @GwtCompatible
 public abstract class MultimapBuilder<K0, V0> {
     private static final int DEFAULT_EXPECTED_KEYS = 8;
-
-    public abstract <K extends K0, V extends V0> Multimap<K, V> build();
 
     private MultimapBuilder() {
     }
@@ -78,16 +77,12 @@ public abstract class MultimapBuilder<K0, V0> {
         };
     }
 
-    private static final class ArrayListSupplier<V> implements Supplier<List<V>>, Serializable {
-        private final int expectedValuesPerKey;
+    public abstract <K extends K0, V extends V0> Multimap<K, V> build();
 
-        ArrayListSupplier(int expectedValuesPerKey2) {
-            this.expectedValuesPerKey = CollectPreconditions.checkNonnegative(expectedValuesPerKey2, "expectedValuesPerKey");
-        }
-
-        public List<V> get() {
-            return new ArrayList(this.expectedValuesPerKey);
-        }
+    public <K extends K0, V extends V0> Multimap<K, V> build(Multimap<? extends K, ? extends V> multimap) {
+        Multimap<K, V> result = build();
+        result.putAll(multimap);
+        return result;
     }
 
     private enum LinkedListSupplier implements Supplier<List<Object>> {
@@ -99,6 +94,18 @@ public abstract class MultimapBuilder<K0, V0> {
 
         public List<Object> get() {
             return new LinkedList();
+        }
+    }
+
+    private static final class ArrayListSupplier<V> implements Supplier<List<V>>, Serializable {
+        private final int expectedValuesPerKey;
+
+        ArrayListSupplier(int expectedValuesPerKey2) {
+            this.expectedValuesPerKey = CollectPreconditions.checkNonnegative(expectedValuesPerKey2, "expectedValuesPerKey");
+        }
+
+        public List<V> get() {
+            return new ArrayList(this.expectedValuesPerKey);
         }
     }
 
@@ -153,11 +160,11 @@ public abstract class MultimapBuilder<K0, V0> {
     public static abstract class MultimapBuilderWithKeys<K0> {
         private static final int DEFAULT_EXPECTED_VALUES_PER_KEY = 2;
 
-        /* access modifiers changed from: package-private */
-        public abstract <K extends K0, V> Map<K, Collection<V>> createMap();
-
         MultimapBuilderWithKeys() {
         }
+
+        /* access modifiers changed from: package-private */
+        public abstract <K extends K0, V> Map<K, Collection<V>> createMap();
 
         public ListMultimapBuilder<K0, Object> arrayListValues() {
             return arrayListValues(2);
@@ -229,18 +236,12 @@ public abstract class MultimapBuilder<K0, V0> {
         }
     }
 
-    public <K extends K0, V extends V0> Multimap<K, V> build(Multimap<? extends K, ? extends V> multimap) {
-        Multimap<K, V> result = build();
-        result.putAll(multimap);
-        return result;
-    }
-
     public static abstract class ListMultimapBuilder<K0, V0> extends MultimapBuilder<K0, V0> {
-        public abstract <K extends K0, V extends V0> ListMultimap<K, V> build();
-
         ListMultimapBuilder() {
             super();
         }
+
+        public abstract <K extends K0, V extends V0> ListMultimap<K, V> build();
 
         public <K extends K0, V extends V0> ListMultimap<K, V> build(Multimap<? extends K, ? extends V> multimap) {
             return (ListMultimap) MultimapBuilder.super.build((Multimap) multimap);
@@ -248,11 +249,11 @@ public abstract class MultimapBuilder<K0, V0> {
     }
 
     public static abstract class SetMultimapBuilder<K0, V0> extends MultimapBuilder<K0, V0> {
-        public abstract <K extends K0, V extends V0> SetMultimap<K, V> build();
-
         SetMultimapBuilder() {
             super();
         }
+
+        public abstract <K extends K0, V extends V0> SetMultimap<K, V> build();
 
         public <K extends K0, V extends V0> SetMultimap<K, V> build(Multimap<? extends K, ? extends V> multimap) {
             return (SetMultimap) MultimapBuilder.super.build((Multimap) multimap);
@@ -260,10 +261,10 @@ public abstract class MultimapBuilder<K0, V0> {
     }
 
     public static abstract class SortedSetMultimapBuilder<K0, V0> extends SetMultimapBuilder<K0, V0> {
-        public abstract <K extends K0, V extends V0> SortedSetMultimap<K, V> build();
-
         SortedSetMultimapBuilder() {
         }
+
+        public abstract <K extends K0, V extends V0> SortedSetMultimap<K, V> build();
 
         public <K extends K0, V extends V0> SortedSetMultimap<K, V> build(Multimap<? extends K, ? extends V> multimap) {
             return (SortedSetMultimap) super.build((Multimap) multimap);

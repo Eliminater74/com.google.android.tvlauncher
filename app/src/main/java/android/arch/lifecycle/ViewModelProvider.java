@@ -3,17 +3,13 @@ package android.arch.lifecycle;
 import android.app.Application;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
+
 import java.lang.reflect.InvocationTargetException;
 
 public class ViewModelProvider {
     private static final String DEFAULT_KEY = "android.arch.lifecycle.ViewModelProvider.DefaultKey";
     private final Factory mFactory;
     private final ViewModelStore mViewModelStore;
-
-    public interface Factory {
-        @NonNull
-        <T extends ViewModel> T create(@NonNull Class<T> cls);
-    }
 
     public ViewModelProvider(@NonNull ViewModelStoreOwner owner, @NonNull Factory factory) {
         this(owner.getViewModelStore(), factory);
@@ -46,6 +42,11 @@ public class ViewModelProvider {
         return viewModel2;
     }
 
+    public interface Factory {
+        @NonNull
+        <T extends ViewModel> T create(@NonNull Class<T> cls);
+    }
+
     public static class NewInstanceFactory implements Factory {
         @NonNull
         public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
@@ -63,16 +64,16 @@ public class ViewModelProvider {
         private static AndroidViewModelFactory sInstance;
         private Application mApplication;
 
+        public AndroidViewModelFactory(@NonNull Application application) {
+            this.mApplication = application;
+        }
+
         @NonNull
         public static AndroidViewModelFactory getInstance(@NonNull Application application) {
             if (sInstance == null) {
                 sInstance = new AndroidViewModelFactory(application);
             }
             return sInstance;
-        }
-
-        public AndroidViewModelFactory(@NonNull Application application) {
-            this.mApplication = application;
         }
 
         @NonNull

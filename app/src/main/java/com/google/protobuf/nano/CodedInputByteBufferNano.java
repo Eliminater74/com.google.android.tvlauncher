@@ -10,16 +10,17 @@ import com.google.protobuf.MapEntryLite;
 import com.google.protobuf.MapFieldLite;
 import com.google.protobuf.Parser;
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.io.IOException;
 
 public final class CodedInputByteBufferNano {
     private static final int DEFAULT_RECURSION_LIMIT = 64;
     private static final int DEFAULT_SIZE_LIMIT = 67108864;
     private final byte[] buffer;
-    private int bufferPos;
     private final int bufferSize;
-    private int bufferSizeAfterLimit;
     private final int bufferStart;
+    private int bufferPos;
+    private int bufferSizeAfterLimit;
     private CodedInputStream codedInputStream;
     private int currentLimit = Integer.MAX_VALUE;
     private int lastTag;
@@ -28,12 +29,29 @@ public final class CodedInputByteBufferNano {
     private int recursionLimit = 64;
     private int sizeLimit = DEFAULT_SIZE_LIMIT;
 
+    private CodedInputByteBufferNano(byte[] buffer2, int off, int len) {
+        this.buffer = buffer2;
+        this.bufferStart = off;
+        int i = off + len;
+        this.maybeLimitedBufferSize = i;
+        this.bufferSize = i;
+        this.bufferPos = off;
+    }
+
     public static CodedInputByteBufferNano newInstance(byte[] buf) {
         return newInstance(buf, 0, buf.length);
     }
 
     public static CodedInputByteBufferNano newInstance(byte[] buf, int off, int len) {
         return new CodedInputByteBufferNano(buf, off, len);
+    }
+
+    public static int decodeZigZag32(int n) {
+        return (n >>> 1) ^ (-(n & 1));
+    }
+
+    public static long decodeZigZag64(long n) {
+        return (n >>> 1) ^ (-(1 & n));
     }
 
     public int readTag() throws IOException {
@@ -263,23 +281,6 @@ public final class CodedInputByteBufferNano {
 
     public long readRawLittleEndian64() throws IOException {
         return (((long) readRawByte()) & 255) | ((((long) readRawByte()) & 255) << 8) | ((((long) readRawByte()) & 255) << 16) | ((((long) readRawByte()) & 255) << 24) | ((((long) readRawByte()) & 255) << 32) | ((((long) readRawByte()) & 255) << 40) | ((((long) readRawByte()) & 255) << 48) | ((255 & ((long) readRawByte())) << 56);
-    }
-
-    public static int decodeZigZag32(int n) {
-        return (n >>> 1) ^ (-(n & 1));
-    }
-
-    public static long decodeZigZag64(long n) {
-        return (n >>> 1) ^ (-(1 & n));
-    }
-
-    private CodedInputByteBufferNano(byte[] buffer2, int off, int len) {
-        this.buffer = buffer2;
-        this.bufferStart = off;
-        int i = off + len;
-        this.maybeLimitedBufferSize = i;
-        this.bufferSize = i;
-        this.bufferPos = off;
     }
 
     private CodedInputStream getCodedInputStream() throws IOException {

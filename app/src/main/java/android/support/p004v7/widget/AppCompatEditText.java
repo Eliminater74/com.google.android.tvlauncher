@@ -69,14 +69,6 @@ public class AppCompatEditText extends EditText implements TintableBackgroundVie
         }
     }
 
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    public void setSupportBackgroundTintList(@Nullable ColorStateList tint) {
-        AppCompatBackgroundHelper appCompatBackgroundHelper = this.mBackgroundTintHelper;
-        if (appCompatBackgroundHelper != null) {
-            appCompatBackgroundHelper.setSupportBackgroundTintList(tint);
-        }
-    }
-
     @Nullable
     @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
     public ColorStateList getSupportBackgroundTintList() {
@@ -88,10 +80,10 @@ public class AppCompatEditText extends EditText implements TintableBackgroundVie
     }
 
     @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    public void setSupportBackgroundTintMode(@Nullable PorterDuff.Mode tintMode) {
+    public void setSupportBackgroundTintList(@Nullable ColorStateList tint) {
         AppCompatBackgroundHelper appCompatBackgroundHelper = this.mBackgroundTintHelper;
         if (appCompatBackgroundHelper != null) {
-            appCompatBackgroundHelper.setSupportBackgroundTintMode(tintMode);
+            appCompatBackgroundHelper.setSupportBackgroundTintList(tint);
         }
     }
 
@@ -103,6 +95,14 @@ public class AppCompatEditText extends EditText implements TintableBackgroundVie
             return appCompatBackgroundHelper.getSupportBackgroundTintMode();
         }
         return null;
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    public void setSupportBackgroundTintMode(@Nullable PorterDuff.Mode tintMode) {
+        AppCompatBackgroundHelper appCompatBackgroundHelper = this.mBackgroundTintHelper;
+        if (appCompatBackgroundHelper != null) {
+            appCompatBackgroundHelper.setSupportBackgroundTintMode(tintMode);
+        }
     }
 
     /* access modifiers changed from: protected */
@@ -135,16 +135,6 @@ public class AppCompatEditText extends EditText implements TintableBackgroundVie
     }
 
     @RequiresApi(api = 26)
-    public void setTextClassifier(@Nullable TextClassifier textClassifier) {
-        AppCompatTextClassifierHelper appCompatTextClassifierHelper;
-        if (Build.VERSION.SDK_INT >= 28 || (appCompatTextClassifierHelper = this.mTextClassifierHelper) == null) {
-            super.setTextClassifier(textClassifier);
-        } else {
-            appCompatTextClassifierHelper.setTextClassifier(textClassifier);
-        }
-    }
-
-    @RequiresApi(api = 26)
     @NonNull
     public TextClassifier getTextClassifier() {
         AppCompatTextClassifierHelper appCompatTextClassifierHelper;
@@ -152,5 +142,15 @@ public class AppCompatEditText extends EditText implements TintableBackgroundVie
             return super.getTextClassifier();
         }
         return appCompatTextClassifierHelper.getTextClassifier();
+    }
+
+    @RequiresApi(api = 26)
+    public void setTextClassifier(@Nullable TextClassifier textClassifier) {
+        AppCompatTextClassifierHelper appCompatTextClassifierHelper;
+        if (Build.VERSION.SDK_INT >= 28 || (appCompatTextClassifierHelper = this.mTextClassifierHelper) == null) {
+            super.setTextClassifier(textClassifier);
+        } else {
+            appCompatTextClassifierHelper.setTextClassifier(textClassifier);
+        }
     }
 }

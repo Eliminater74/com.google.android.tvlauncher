@@ -17,6 +17,7 @@ import android.text.format.DateUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.bumptech.glide.Glide;
 import com.google.android.exoplayer2.upstream.DefaultLoadErrorHandlingPolicy;
 import com.google.android.tvlauncher.C1188R;
@@ -28,6 +29,7 @@ import com.google.android.tvlauncher.model.Program;
 import com.google.android.tvlauncher.util.Util;
 import com.google.android.tvlauncher.widget.BarRatingView;
 import com.google.protos.logs.proto.wireless.android.tvlauncher.TvlauncherClientLog;
+
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -46,6 +48,11 @@ class ChannelItemMetadataController {
     private static final int HOUR_IN_MINUTES = 60;
     private static final int MINUTE_IN_SECONDS = 60;
     private static final String TAG = "ItemMetadata";
+
+    static {
+        DATETIME_PARSE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
+    }
+
     private final int mAvailabilityDefaultColor;
     private final int mAvailabilityFreeColor;
     private final String mAvailabilityFreeText;
@@ -62,11 +69,7 @@ class ChannelItemMetadataController {
     private final String mEpisodeDisplayNumberFormat;
     private final TextView mFirstRow;
     private final String mInteractionReleaseDateAndDescriptionFormat;
-    private boolean mIsStarRatingSet;
-    private boolean mLegacy = false;
-    private LogMetadata mLogMetadata;
     private final ImageView mLogo;
-    private String mLogoUri;
     private final String mMetadataItemSeparator;
     private final String mMetadataPrefix;
     private final String mMetadataSuffix;
@@ -86,10 +89,10 @@ class ChannelItemMetadataController {
     private final Pattern mThumbsUpDownRatingPattern;
     private final String mTvSeriesItemTitleAndDescriptionFormat;
     private final String mTvSeriesItemTitleFormat;
-
-    static {
-        DATETIME_PARSE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
-    }
+    private boolean mIsStarRatingSet;
+    private boolean mLegacy = false;
+    private LogMetadata mLogMetadata;
+    private String mLogoUri;
 
     ChannelItemMetadataController(View view) {
         this.mContext = view.getContext();
@@ -614,6 +617,42 @@ class ChannelItemMetadataController {
         }
     }
 
+    /* access modifiers changed from: package-private */
+    @VisibleForTesting
+    public TextView getFirstRow() {
+        return this.mFirstRow;
+    }
+
+    /* access modifiers changed from: package-private */
+    @VisibleForTesting
+    public TextView getSecondRow() {
+        return this.mSecondRow;
+    }
+
+    /* access modifiers changed from: package-private */
+    @VisibleForTesting
+    public TextView getThirdRow() {
+        return this.mThirdRow;
+    }
+
+    /* access modifiers changed from: package-private */
+    @VisibleForTesting
+    public BarRatingView getStarRatingView() {
+        return this.mStarRating;
+    }
+
+    /* access modifiers changed from: package-private */
+    @VisibleForTesting
+    public TextView getOldPriceView() {
+        return this.mOldPrice;
+    }
+
+    /* access modifiers changed from: package-private */
+    @VisibleForTesting
+    public TextView getPriceView() {
+        return this.mPrice;
+    }
+
     private static class LogMetadata {
         String genre;
         boolean hasContentRating;
@@ -661,41 +700,5 @@ class ChannelItemMetadataController {
             program.setHasContentRating(this.hasContentRating);
             program.setHasDescription(this.hasDescription);
         }
-    }
-
-    /* access modifiers changed from: package-private */
-    @VisibleForTesting
-    public TextView getFirstRow() {
-        return this.mFirstRow;
-    }
-
-    /* access modifiers changed from: package-private */
-    @VisibleForTesting
-    public TextView getSecondRow() {
-        return this.mSecondRow;
-    }
-
-    /* access modifiers changed from: package-private */
-    @VisibleForTesting
-    public TextView getThirdRow() {
-        return this.mThirdRow;
-    }
-
-    /* access modifiers changed from: package-private */
-    @VisibleForTesting
-    public BarRatingView getStarRatingView() {
-        return this.mStarRating;
-    }
-
-    /* access modifiers changed from: package-private */
-    @VisibleForTesting
-    public TextView getOldPriceView() {
-        return this.mOldPrice;
-    }
-
-    /* access modifiers changed from: package-private */
-    @VisibleForTesting
-    public TextView getPriceView() {
-        return this.mPrice;
     }
 }

@@ -3,16 +3,17 @@ package com.google.android.libraries.performance.primes;
 import android.app.Application;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
-import com.google.android.libraries.performance.primes.MetricRecorder;
-import com.google.android.libraries.performance.primes.TimerEvent;
+
 import com.google.android.libraries.performance.primes.sampling.ProbabilitySampler;
 import com.google.android.libraries.performance.primes.transmitter.MetricTransmitter;
 import com.google.common.base.Optional;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
+
 import logs.proto.wireless.performance.mobile.ExtensionMetric;
 import logs.proto.wireless.performance.mobile.SystemHealthProto;
 
@@ -21,9 +22,16 @@ class TimerMetricService extends AbstractMetricService {
     private static final Set<String> reservedEventNames = new HashSet(Arrays.asList(PrimesStartupEvents.COLD_STARTUP_EVENT_NAME, PrimesStartupEvents.COLD_STARTUP_INTERACTIVE_EVENT_NAME, "Cold startup interactive before onDraw", PrimesStartupEvents.WARM_STARTUP_EVENT_NAME, PrimesStartupEvents.WARM_STARTUP_INTERACTIVE_EVENT_NAME, "Warm startup interactive before onDraw", PrimesStartupEvents.WARM_STARTUP_ACTIVITY_ON_START_EVENT_NAME));
     /* access modifiers changed from: private */
     public final Optional<PrimesPerEventConfigurationFlags> perEventConfigFlags;
-    private final ProbabilitySampler probabilitySampler;
     @VisibleForTesting
     final ConcurrentHashMap<String, TimerEvent> timerEvents;
+    private final ProbabilitySampler probabilitySampler;
+
+    TimerMetricService(MetricTransmitter transmitter, Application application, Supplier<MetricStamper> metricStamperSupplier, Supplier<ScheduledExecutorService> executorServiceSupplier, ProbabilitySampler probabilitySampler2, int maxSamplesPerSecond, Optional<PrimesPerEventConfigurationFlags> perEventConfigFlags2, ConcurrentHashMap<String, TimerEvent> timerEvents2) {
+        super(transmitter, application, metricStamperSupplier, executorServiceSupplier, MetricRecorder.RunIn.SAME_THREAD, maxSamplesPerSecond);
+        this.probabilitySampler = probabilitySampler2;
+        this.timerEvents = timerEvents2;
+        this.perEventConfigFlags = perEventConfigFlags2;
+    }
 
     private static SystemHealthProto.TimerMetric getTimerMetric(TimerEvent event) {
         return (SystemHealthProto.TimerMetric) SystemHealthProto.TimerMetric.newBuilder().setDurationMs(event.getDuration()).setEndStatus(event.getTimerStatus().toProto()).build();
@@ -43,13 +51,6 @@ class TimerMetricService extends AbstractMetricService {
 
     static TimerMetricService createService(MetricTransmitter transmitter, Application application, Supplier<MetricStamper> metricStamperSupplier, Supplier<ScheduledExecutorService> executorServiceSupplier, PrimesTimerConfigurations configs, Optional<ConcurrentHashMap<String, TimerEvent>> timerEvents2) {
         return new TimerMetricService(transmitter, application, metricStamperSupplier, executorServiceSupplier, new ProbabilitySampler(configs.getSamplingProbability()), configs.getSampleRatePerSecond(), configs.getPerEventConfigFlags(), timerEvents2.mo22987or((PrimesBatteryConfigurations) new ConcurrentHashMap()));
-    }
-
-    TimerMetricService(MetricTransmitter transmitter, Application application, Supplier<MetricStamper> metricStamperSupplier, Supplier<ScheduledExecutorService> executorServiceSupplier, ProbabilitySampler probabilitySampler2, int maxSamplesPerSecond, Optional<PrimesPerEventConfigurationFlags> perEventConfigFlags2, ConcurrentHashMap<String, TimerEvent> timerEvents2) {
-        super(transmitter, application, metricStamperSupplier, executorServiceSupplier, MetricRecorder.RunIn.SAME_THREAD, maxSamplesPerSecond);
-        this.probabilitySampler = probabilitySampler2;
-        this.timerEvents = timerEvents2;
-        this.perEventConfigFlags = perEventConfigFlags2;
     }
 
     private boolean isReserved(String eventName) {

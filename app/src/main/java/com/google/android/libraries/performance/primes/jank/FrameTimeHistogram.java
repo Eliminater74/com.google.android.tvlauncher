@@ -2,11 +2,14 @@ package com.google.android.libraries.performance.primes.jank;
 
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
+
 import com.google.android.libraries.stitch.util.Preconditions;
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import logs.proto.wireless.performance.mobile.SystemHealthProto;
 
 final class FrameTimeHistogram implements FrameTimeMeasurement {
@@ -24,41 +27,6 @@ final class FrameTimeHistogram implements FrameTimeMeasurement {
     @VisibleForTesting
     static int[] bucketBounds() {
         return (int[]) BUCKETS_BOUNDS.clone();
-    }
-
-    public void addFrame(int frameTimeMs, int maxAcceptedFrameTimeMs) {
-        Preconditions.checkArgument(frameTimeMs >= 0);
-        this.renderedFrameCount++;
-        if (frameTimeMs > maxAcceptedFrameTimeMs) {
-            this.jankyFrameCount++;
-        }
-        int[] iArr = this.buckets;
-        int indexForFrameTime = indexForFrameTime(frameTimeMs);
-        iArr[indexForFrameTime] = iArr[indexForFrameTime] + 1;
-        this.maxRenderTimeMs = Math.max(this.maxRenderTimeMs, frameTimeMs);
-        this.totalFrameTimeMs += frameTimeMs;
-    }
-
-    public boolean isMetricReadyToBeSent() {
-        return this.renderedFrameCount != 0;
-    }
-
-    @Nullable
-    public SystemHealthProto.JankMetric getMetric() {
-        if (!isMetricReadyToBeSent()) {
-            return null;
-        }
-        return (SystemHealthProto.JankMetric) SystemHealthProto.JankMetric.newBuilder().setJankyFrameCount(this.jankyFrameCount).setRenderedFrameCount(this.renderedFrameCount).setDurationMs(this.totalFrameTimeMs).setMaxFrameRenderTimeMs(this.maxRenderTimeMs).addAllFrameTimeHistogram(Arrays.asList(createFrameTimeHistogram(this.buckets))).build();
-    }
-
-    public int getRenderedFrameCount() {
-        return this.renderedFrameCount;
-    }
-
-    /* access modifiers changed from: package-private */
-    @VisibleForTesting
-    public int[] getBuckets() {
-        return (int[]) this.buckets.clone();
     }
 
     @VisibleForTesting
@@ -96,5 +64,40 @@ final class FrameTimeHistogram implements FrameTimeMeasurement {
             result.setMax(maxIdx.intValue());
         }
         return (SystemHealthProto.HistogramBucket) result.build();
+    }
+
+    public void addFrame(int frameTimeMs, int maxAcceptedFrameTimeMs) {
+        Preconditions.checkArgument(frameTimeMs >= 0);
+        this.renderedFrameCount++;
+        if (frameTimeMs > maxAcceptedFrameTimeMs) {
+            this.jankyFrameCount++;
+        }
+        int[] iArr = this.buckets;
+        int indexForFrameTime = indexForFrameTime(frameTimeMs);
+        iArr[indexForFrameTime] = iArr[indexForFrameTime] + 1;
+        this.maxRenderTimeMs = Math.max(this.maxRenderTimeMs, frameTimeMs);
+        this.totalFrameTimeMs += frameTimeMs;
+    }
+
+    public boolean isMetricReadyToBeSent() {
+        return this.renderedFrameCount != 0;
+    }
+
+    @Nullable
+    public SystemHealthProto.JankMetric getMetric() {
+        if (!isMetricReadyToBeSent()) {
+            return null;
+        }
+        return (SystemHealthProto.JankMetric) SystemHealthProto.JankMetric.newBuilder().setJankyFrameCount(this.jankyFrameCount).setRenderedFrameCount(this.renderedFrameCount).setDurationMs(this.totalFrameTimeMs).setMaxFrameRenderTimeMs(this.maxRenderTimeMs).addAllFrameTimeHistogram(Arrays.asList(createFrameTimeHistogram(this.buckets))).build();
+    }
+
+    public int getRenderedFrameCount() {
+        return this.renderedFrameCount;
+    }
+
+    /* access modifiers changed from: package-private */
+    @VisibleForTesting
+    public int[] getBuckets() {
+        return (int[]) this.buckets.clone();
     }
 }

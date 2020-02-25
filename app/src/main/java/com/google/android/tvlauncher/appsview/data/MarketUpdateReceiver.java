@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.text.TextUtils;
+
 import com.google.android.tvlauncher.appsview.LaunchItem;
 
 public class MarketUpdateReceiver extends BroadcastReceiver {

@@ -2,6 +2,7 @@ package com.google.android.gms.common.api.internal;
 
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
+
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.TaskCompletionSource;
 

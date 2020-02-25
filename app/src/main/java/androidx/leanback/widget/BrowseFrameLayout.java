@@ -12,16 +12,6 @@ public class BrowseFrameLayout extends FrameLayout {
     private OnChildFocusListener mOnChildFocusListener;
     private View.OnKeyListener mOnDispatchKeyListener;
 
-    public interface OnChildFocusListener {
-        void onRequestChildFocus(View view, View view2);
-
-        boolean onRequestFocusInDescendants(int i, Rect rect);
-    }
-
-    public interface OnFocusSearchListener {
-        View onFocusSearch(View view, int i);
-    }
-
     public BrowseFrameLayout(Context context) {
         this(context, null, 0);
     }
@@ -34,20 +24,20 @@ public class BrowseFrameLayout extends FrameLayout {
         super(context, attrs, defStyle);
     }
 
-    public void setOnFocusSearchListener(OnFocusSearchListener listener) {
-        this.mListener = listener;
-    }
-
     public OnFocusSearchListener getOnFocusSearchListener() {
         return this.mListener;
     }
 
-    public void setOnChildFocusListener(OnChildFocusListener listener) {
-        this.mOnChildFocusListener = listener;
+    public void setOnFocusSearchListener(OnFocusSearchListener listener) {
+        this.mListener = listener;
     }
 
     public OnChildFocusListener getOnChildFocusListener() {
         return this.mOnChildFocusListener;
+    }
+
+    public void setOnChildFocusListener(OnChildFocusListener listener) {
+        this.mOnChildFocusListener = listener;
     }
 
     /* access modifiers changed from: protected */
@@ -87,5 +77,15 @@ public class BrowseFrameLayout extends FrameLayout {
 
     public void setOnDispatchKeyListener(View.OnKeyListener listener) {
         this.mOnDispatchKeyListener = listener;
+    }
+
+    public interface OnChildFocusListener {
+        void onRequestChildFocus(View view, View view2);
+
+        boolean onRequestFocusInDescendants(int i, Rect rect);
+    }
+
+    public interface OnFocusSearchListener {
+        View onFocusSearch(View view, int i);
     }
 }

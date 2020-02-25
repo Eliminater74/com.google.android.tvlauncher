@@ -2,6 +2,7 @@ package com.google.android.exoplayer2.offline;
 
 import android.net.Uri;
 import android.support.annotation.Nullable;
+
 import java.lang.reflect.Constructor;
 import java.util.List;
 
@@ -12,7 +13,6 @@ public class DefaultDownloaderFactory implements DownloaderFactory {
     private static final Constructor<? extends Downloader> HLS_DOWNLOADER_CONSTRUCTOR;
     @Nullable
     private static final Constructor<? extends Downloader> SS_DOWNLOADER_CONSTRUCTOR;
-    private final DownloaderConstructorHelper downloaderConstructorHelper;
 
     static {
         Constructor<? extends Downloader> dashDownloaderConstructor = null;
@@ -35,8 +35,18 @@ public class DefaultDownloaderFactory implements DownloaderFactory {
         SS_DOWNLOADER_CONSTRUCTOR = ssDownloaderConstructor;
     }
 
+    private final DownloaderConstructorHelper downloaderConstructorHelper;
+
     public DefaultDownloaderFactory(DownloaderConstructorHelper downloaderConstructorHelper2) {
         this.downloaderConstructorHelper = downloaderConstructorHelper2;
+    }
+
+    private static Constructor<? extends Downloader> getDownloaderConstructor(Class<?> clazz) {
+        try {
+            return clazz.asSubclass(Downloader.class).getConstructor(Uri.class, List.class, DownloaderConstructorHelper.class);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException("DASH downloader constructor missing", e);
+        }
     }
 
     /* JADX WARNING: Removed duplicated region for block: B:22:0x004a  */
@@ -139,14 +149,6 @@ public class DefaultDownloaderFactory implements DownloaderFactory {
         } catch (Exception e) {
             String valueOf2 = String.valueOf(request.type);
             throw new RuntimeException(valueOf2.length() != 0 ? "Failed to instantiate downloader for: ".concat(valueOf2) : new String("Failed to instantiate downloader for: "), e);
-        }
-    }
-
-    private static Constructor<? extends Downloader> getDownloaderConstructor(Class<?> clazz) {
-        try {
-            return clazz.asSubclass(Downloader.class).getConstructor(Uri.class, List.class, DownloaderConstructorHelper.class);
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException("DASH downloader constructor missing", e);
         }
     }
 }

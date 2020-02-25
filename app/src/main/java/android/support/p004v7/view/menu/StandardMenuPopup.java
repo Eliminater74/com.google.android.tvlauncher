@@ -5,7 +5,6 @@ import android.content.res.Resources;
 import android.os.Parcelable;
 import android.support.p001v4.view.ViewCompat;
 import android.support.p004v7.appcompat.C0233R;
-import android.support.p004v7.view.menu.MenuPresenter;
 import android.support.p004v7.widget.MenuPopupWindow;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -22,8 +21,16 @@ import android.widget.TextView;
 /* renamed from: android.support.v7.view.menu.StandardMenuPopup */
 final class StandardMenuPopup extends MenuPopup implements PopupWindow.OnDismissListener, AdapterView.OnItemClickListener, MenuPresenter, View.OnKeyListener {
     private static final int ITEM_LAYOUT = C0233R.layout.abc_popup_menu_item_layout;
+    final MenuPopupWindow mPopup;
     private final MenuAdapter mAdapter;
-    private View mAnchorView;
+    private final Context mContext;
+    private final MenuBuilder mMenu;
+    private final boolean mOverflowOnly;
+    private final int mPopupMaxWidth;
+    private final int mPopupStyleAttr;
+    private final int mPopupStyleRes;
+    View mShownAnchorView;
+    ViewTreeObserver mTreeObserver;
     private final View.OnAttachStateChangeListener mAttachStateChangeListener = new View.OnAttachStateChangeListener() {
         public void onViewAttachedToWindow(View v) {
         }
@@ -38,9 +45,14 @@ final class StandardMenuPopup extends MenuPopup implements PopupWindow.OnDismiss
             v.removeOnAttachStateChangeListener(this);
         }
     };
+    private View mAnchorView;
     private int mContentWidth;
-    private final Context mContext;
     private int mDropDownGravity = 0;
+    private boolean mHasContentWidth;
+    private PopupWindow.OnDismissListener mOnDismissListener;
+    private MenuPresenter.Callback mPresenterCallback;
+    private boolean mShowTitle;
+    private boolean mWasDismissed;
     final ViewTreeObserver.OnGlobalLayoutListener mGlobalLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
         public void onGlobalLayout() {
             if (StandardMenuPopup.this.isShowing() && !StandardMenuPopup.this.mPopup.isModal()) {
@@ -53,19 +65,6 @@ final class StandardMenuPopup extends MenuPopup implements PopupWindow.OnDismiss
             }
         }
     };
-    private boolean mHasContentWidth;
-    private final MenuBuilder mMenu;
-    private PopupWindow.OnDismissListener mOnDismissListener;
-    private final boolean mOverflowOnly;
-    final MenuPopupWindow mPopup;
-    private final int mPopupMaxWidth;
-    private final int mPopupStyleAttr;
-    private final int mPopupStyleRes;
-    private MenuPresenter.Callback mPresenterCallback;
-    private boolean mShowTitle;
-    View mShownAnchorView;
-    ViewTreeObserver mTreeObserver;
-    private boolean mWasDismissed;
 
     public StandardMenuPopup(Context context, MenuBuilder menu, View anchorView, int popupStyleAttr, int popupStyleRes, boolean overflowOnly) {
         this.mContext = context;

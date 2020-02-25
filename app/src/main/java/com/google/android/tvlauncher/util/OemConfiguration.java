@@ -5,107 +5,43 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 import android.text.TextUtils;
+
 import com.google.android.tvlauncher.C1188R;
 import com.google.android.tvrecommendations.shared.util.OemUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class OemConfiguration {
+    public static final String INPUTS_PANEL_LABEL_INPUTS = "inputs";
+    public static final String INPUTS_PANEL_LABEL_SOURCES = "sources";
     private static final String APPS_VIEW_LAYOUT_APPS_GAMES_OEM = "apps_games_oem";
     private static final String APPS_VIEW_LAYOUT_APPS_OEM = "apps_oem";
     private static final String APPS_VIEW_LAYOUT_APPS_OEM_GAMES = "apps_oem_games";
     private static final String APPS_VIEW_LAYOUT_GAMES_APPS_OEM = "games_apps_oem";
     private static final int DEFAULT_QUOTA = 1;
-    public static final String INPUTS_PANEL_LABEL_INPUTS = "inputs";
-    public static final String INPUTS_PANEL_LABEL_SOURCES = "sources";
     private static final Object sLock = new Object();
     private static OemConfiguration sOemConfiguration;
     protected final OemConfigurationData mConfiguration;
-    private List<OemConfigurationPackageChangeListener> mConfigurationPackageChangeListeners = new ArrayList(1);
     protected Context mContext;
+    private List<OemConfigurationPackageChangeListener> mConfigurationPackageChangeListeners = new ArrayList(1);
     private String mPackageName;
 
-    public interface OemConfigurationPackageChangeListener {
-        void onOemConfigurationPackageChanged();
-
-        void onOemConfigurationPackageRemoved();
-    }
-
-    public interface OnDataLoadedListener {
-        void onDataLoaded();
-    }
-
-    public abstract List<OemOutOfBoxApp> getVirtualOutOfBoxApps();
-
-    public abstract boolean isWatchNextChannelEnabledByDefault();
-
-    /* access modifiers changed from: package-private */
-    public abstract void onOemConfigurationFetched();
-
-    public abstract boolean shouldShowAddToWatchNextFromProgramMenu();
-
-    public abstract boolean shouldShowRemoveProgramFromProgramMenu();
-
-    public enum LayoutOrderOptions {
-        APPS_OEM_GAMES(OemConfiguration.APPS_VIEW_LAYOUT_APPS_OEM_GAMES),
-        APPS_GAMES_OEM(OemConfiguration.APPS_VIEW_LAYOUT_APPS_GAMES_OEM),
-        GAMES_APPS_OEM(OemConfiguration.APPS_VIEW_LAYOUT_GAMES_APPS_OEM),
-        APPS_OEM(OemConfiguration.APPS_VIEW_LAYOUT_APPS_OEM);
-        
-        private final String mRowOrder;
-
-        private LayoutOrderOptions(String rowOrder) {
-            this.mRowOrder = rowOrder;
+    protected OemConfiguration(Context context, String packageName) {
+        int configurationPackageVersion;
+        this.mPackageName = packageName;
+        if (context != null) {
+            configurationPackageVersion = PackageUtils.getApplicationVersionCode(context, packageName);
+        } else {
+            configurationPackageVersion = -1;
         }
-
-        public String getRowOrder() {
-            return this.mRowOrder;
-        }
-
-        public static LayoutOrderOptions getLayoutOptionForRowOrder(String rowOrder) {
-            if (rowOrder == null) {
-                return null;
+        this.mContext = context != null ? context.getApplicationContext() : null;
+        this.mConfiguration = new OemConfigurationData(this.mContext, configurationPackageVersion);
+        if (context != null) {
+            registerOnDataLoadedListener(OemConfiguration$$Lambda$0.$instance);
+            if (Util.isOperatorTierDevice(context)) {
+                NotifyRefreshOemConfigurationDataJobService.schedule(context);
             }
-            char c = 65535;
-            switch (rowOrder.hashCode()) {
-                case 315532620:
-                    if (rowOrder.equals(OemConfiguration.APPS_VIEW_LAYOUT_APPS_GAMES_OEM)) {
-                        c = 1;
-                        break;
-                    }
-                    break;
-                case 1185685002:
-                    if (rowOrder.equals(OemConfiguration.APPS_VIEW_LAYOUT_APPS_OEM)) {
-                        c = 3;
-                        break;
-                    }
-                    break;
-                case 1234273356:
-                    if (rowOrder.equals(OemConfiguration.APPS_VIEW_LAYOUT_APPS_OEM_GAMES)) {
-                        c = 0;
-                        break;
-                    }
-                    break;
-                case 1305388488:
-                    if (rowOrder.equals(OemConfiguration.APPS_VIEW_LAYOUT_GAMES_APPS_OEM)) {
-                        c = 2;
-                        break;
-                    }
-                    break;
-            }
-            if (c == 0) {
-                return APPS_OEM_GAMES;
-            }
-            if (c == 1) {
-                return APPS_GAMES_OEM;
-            }
-            if (c == 2) {
-                return GAMES_APPS_OEM;
-            }
-            if (c != 3) {
-                return null;
-            }
-            return APPS_OEM;
         }
     }
 
@@ -125,14 +61,6 @@ public abstract class OemConfiguration {
         return sOemConfiguration;
     }
 
-    private void notifyConfigurationPackageRemoved() {
-        this.mPackageName = null;
-        this.mContext = null;
-        for (OemConfigurationPackageChangeListener listener : this.mConfigurationPackageChangeListeners) {
-            listener.onOemConfigurationPackageRemoved();
-        }
-    }
-
     public static void resetIfNecessary(String packageName, boolean packageRemoved) {
         synchronized (sLock) {
             if (sOemConfiguration != null && !TextUtils.isEmpty(packageName) && packageName.equals(sOemConfiguration.getPackageName()) && packageRemoved) {
@@ -141,21 +69,22 @@ public abstract class OemConfiguration {
         }
     }
 
-    protected OemConfiguration(Context context, String packageName) {
-        int configurationPackageVersion;
-        this.mPackageName = packageName;
-        if (context != null) {
-            configurationPackageVersion = PackageUtils.getApplicationVersionCode(context, packageName);
-        } else {
-            configurationPackageVersion = -1;
-        }
-        this.mContext = context != null ? context.getApplicationContext() : null;
-        this.mConfiguration = new OemConfigurationData(this.mContext, configurationPackageVersion);
-        if (context != null) {
-            registerOnDataLoadedListener(OemConfiguration$$Lambda$0.$instance);
-            if (Util.isOperatorTierDevice(context)) {
-                NotifyRefreshOemConfigurationDataJobService.schedule(context);
-            }
+    public abstract List<OemOutOfBoxApp> getVirtualOutOfBoxApps();
+
+    public abstract boolean isWatchNextChannelEnabledByDefault();
+
+    /* access modifiers changed from: package-private */
+    public abstract void onOemConfigurationFetched();
+
+    public abstract boolean shouldShowAddToWatchNextFromProgramMenu();
+
+    public abstract boolean shouldShowRemoveProgramFromProgramMenu();
+
+    private void notifyConfigurationPackageRemoved() {
+        this.mPackageName = null;
+        this.mContext = null;
+        for (OemConfigurationPackageChangeListener listener : this.mConfigurationPackageChangeListeners) {
+            listener.onOemConfigurationPackageRemoved();
         }
     }
 
@@ -460,5 +389,78 @@ public abstract class OemConfiguration {
 
     public void removeConfigurationPackageChangeListener(OemConfigurationPackageChangeListener listener) {
         this.mConfigurationPackageChangeListeners.remove(listener);
+    }
+
+    public enum LayoutOrderOptions {
+        APPS_OEM_GAMES(OemConfiguration.APPS_VIEW_LAYOUT_APPS_OEM_GAMES),
+        APPS_GAMES_OEM(OemConfiguration.APPS_VIEW_LAYOUT_APPS_GAMES_OEM),
+        GAMES_APPS_OEM(OemConfiguration.APPS_VIEW_LAYOUT_GAMES_APPS_OEM),
+        APPS_OEM(OemConfiguration.APPS_VIEW_LAYOUT_APPS_OEM);
+
+        private final String mRowOrder;
+
+        private LayoutOrderOptions(String rowOrder) {
+            this.mRowOrder = rowOrder;
+        }
+
+        public static LayoutOrderOptions getLayoutOptionForRowOrder(String rowOrder) {
+            if (rowOrder == null) {
+                return null;
+            }
+            char c = 65535;
+            switch (rowOrder.hashCode()) {
+                case 315532620:
+                    if (rowOrder.equals(OemConfiguration.APPS_VIEW_LAYOUT_APPS_GAMES_OEM)) {
+                        c = 1;
+                        break;
+                    }
+                    break;
+                case 1185685002:
+                    if (rowOrder.equals(OemConfiguration.APPS_VIEW_LAYOUT_APPS_OEM)) {
+                        c = 3;
+                        break;
+                    }
+                    break;
+                case 1234273356:
+                    if (rowOrder.equals(OemConfiguration.APPS_VIEW_LAYOUT_APPS_OEM_GAMES)) {
+                        c = 0;
+                        break;
+                    }
+                    break;
+                case 1305388488:
+                    if (rowOrder.equals(OemConfiguration.APPS_VIEW_LAYOUT_GAMES_APPS_OEM)) {
+                        c = 2;
+                        break;
+                    }
+                    break;
+            }
+            if (c == 0) {
+                return APPS_OEM_GAMES;
+            }
+            if (c == 1) {
+                return APPS_GAMES_OEM;
+            }
+            if (c == 2) {
+                return GAMES_APPS_OEM;
+            }
+            if (c != 3) {
+                return null;
+            }
+            return APPS_OEM;
+        }
+
+        public String getRowOrder() {
+            return this.mRowOrder;
+        }
+    }
+
+    public interface OemConfigurationPackageChangeListener {
+        void onOemConfigurationPackageChanged();
+
+        void onOemConfigurationPackageRemoved();
+    }
+
+    public interface OnDataLoadedListener {
+        void onDataLoaded();
     }
 }

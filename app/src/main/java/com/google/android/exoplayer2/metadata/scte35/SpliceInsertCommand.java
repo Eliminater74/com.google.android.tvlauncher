@@ -2,9 +2,11 @@ package com.google.android.exoplayer2.metadata.scte35;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.TimestampAdjuster;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -155,28 +157,6 @@ public final class SpliceInsertCommand extends SpliceCommand {
         return new SpliceInsertCommand(spliceEventId2, spliceEventCancelIndicator2, outOfNetworkIndicator2, programSpliceFlag2, spliceImmediateFlag2, programSplicePts2, timestampAdjuster2.adjustTsTimestamp(programSplicePts2), componentSplices, autoReturn2, breakDurationUs2, uniqueProgramId2, availNum2, availsExpected2);
     }
 
-    public static final class ComponentSplice {
-        public final long componentSplicePlaybackPositionUs;
-        public final long componentSplicePts;
-        public final int componentTag;
-
-        private ComponentSplice(int componentTag2, long componentSplicePts2, long componentSplicePlaybackPositionUs2) {
-            this.componentTag = componentTag2;
-            this.componentSplicePts = componentSplicePts2;
-            this.componentSplicePlaybackPositionUs = componentSplicePlaybackPositionUs2;
-        }
-
-        public void writeToParcel(Parcel dest) {
-            dest.writeInt(this.componentTag);
-            dest.writeLong(this.componentSplicePts);
-            dest.writeLong(this.componentSplicePlaybackPositionUs);
-        }
-
-        public static ComponentSplice createFromParcel(Parcel in) {
-            return new ComponentSplice(in.readInt(), in.readLong(), in.readLong());
-        }
-    }
-
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(this.spliceEventId);
         dest.writeByte(this.spliceEventCancelIndicator ? (byte) 1 : 0);
@@ -195,5 +175,27 @@ public final class SpliceInsertCommand extends SpliceCommand {
         dest.writeInt(this.uniqueProgramId);
         dest.writeInt(this.availNum);
         dest.writeInt(this.availsExpected);
+    }
+
+    public static final class ComponentSplice {
+        public final long componentSplicePlaybackPositionUs;
+        public final long componentSplicePts;
+        public final int componentTag;
+
+        private ComponentSplice(int componentTag2, long componentSplicePts2, long componentSplicePlaybackPositionUs2) {
+            this.componentTag = componentTag2;
+            this.componentSplicePts = componentSplicePts2;
+            this.componentSplicePlaybackPositionUs = componentSplicePlaybackPositionUs2;
+        }
+
+        public static ComponentSplice createFromParcel(Parcel in) {
+            return new ComponentSplice(in.readInt(), in.readLong(), in.readLong());
+        }
+
+        public void writeToParcel(Parcel dest) {
+            dest.writeInt(this.componentTag);
+            dest.writeLong(this.componentSplicePts);
+            dest.writeLong(this.componentSplicePlaybackPositionUs);
+        }
     }
 }

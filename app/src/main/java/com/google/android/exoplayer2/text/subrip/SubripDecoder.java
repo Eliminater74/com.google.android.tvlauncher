@@ -4,16 +4,21 @@ import android.support.annotation.Nullable;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
+
 import com.google.android.exoplayer2.text.Cue;
 import com.google.android.exoplayer2.text.SimpleSubtitleDecoder;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.LongArray;
 import com.google.android.exoplayer2.util.ParsableByteArray;
+
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class SubripDecoder extends SimpleSubtitleDecoder {
+    static final float END_FRACTION = 0.92f;
+    static final float MID_FRACTION = 0.5f;
+    static final float START_FRACTION = 0.08f;
     private static final String ALIGN_BOTTOM_LEFT = "{\\an1}";
     private static final String ALIGN_BOTTOM_MID = "{\\an2}";
     private static final String ALIGN_BOTTOM_RIGHT = "{\\an3}";
@@ -23,9 +28,6 @@ public final class SubripDecoder extends SimpleSubtitleDecoder {
     private static final String ALIGN_TOP_LEFT = "{\\an7}";
     private static final String ALIGN_TOP_MID = "{\\an8}";
     private static final String ALIGN_TOP_RIGHT = "{\\an9}";
-    static final float END_FRACTION = 0.92f;
-    static final float MID_FRACTION = 0.5f;
-    static final float START_FRACTION = 0.08f;
     private static final String SUBRIP_ALIGNMENT_TAG = "\\{\\\\an[1-9]\\}";
     private static final Pattern SUBRIP_TAG_PATTERN = Pattern.compile("\\{\\\\.*?\\}");
     private static final String SUBRIP_TIMECODE = "(?:(\\d+):)?(\\d+):(\\d+),(\\d+)";
@@ -36,6 +38,23 @@ public final class SubripDecoder extends SimpleSubtitleDecoder {
 
     public SubripDecoder() {
         super(TAG);
+    }
+
+    private static long parseTimecode(Matcher matcher, int groupOffset) {
+        return 1000 * ((Long.parseLong(matcher.group(groupOffset + 1)) * 60 * 60 * 1000) + (Long.parseLong(matcher.group(groupOffset + 2)) * 60 * 1000) + (Long.parseLong(matcher.group(groupOffset + 3)) * 1000) + Long.parseLong(matcher.group(groupOffset + 4)));
+    }
+
+    static float getFractionalPositionForAnchorType(int anchorType) {
+        if (anchorType == 0) {
+            return 0.08f;
+        }
+        if (anchorType == 1) {
+            return MID_FRACTION;
+        }
+        if (anchorType == 2) {
+            return END_FRACTION;
+        }
+        throw new IllegalArgumentException();
     }
 
     /* access modifiers changed from: protected */
@@ -287,22 +306,5 @@ public final class SubripDecoder extends SimpleSubtitleDecoder {
             lineAnchor = 1;
         }
         return new Cue(text, null, getFractionalPositionForAnchorType(lineAnchor), 0, lineAnchor, getFractionalPositionForAnchorType(positionAnchor), positionAnchor, Float.MIN_VALUE);
-    }
-
-    private static long parseTimecode(Matcher matcher, int groupOffset) {
-        return 1000 * ((Long.parseLong(matcher.group(groupOffset + 1)) * 60 * 60 * 1000) + (Long.parseLong(matcher.group(groupOffset + 2)) * 60 * 1000) + (Long.parseLong(matcher.group(groupOffset + 3)) * 1000) + Long.parseLong(matcher.group(groupOffset + 4)));
-    }
-
-    static float getFractionalPositionForAnchorType(int anchorType) {
-        if (anchorType == 0) {
-            return 0.08f;
-        }
-        if (anchorType == 1) {
-            return MID_FRACTION;
-        }
-        if (anchorType == 2) {
-            return END_FRACTION;
-        }
-        throw new IllegalArgumentException();
     }
 }

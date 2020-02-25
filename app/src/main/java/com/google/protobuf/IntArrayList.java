@@ -1,22 +1,18 @@
 package com.google.protobuf;
 
-import com.google.protobuf.Internal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.RandomAccess;
 
 final class IntArrayList extends AbstractProtobufList<Integer> implements Internal.IntList, RandomAccess, PrimitiveNonBoxingCollection {
     private static final IntArrayList EMPTY_LIST = new IntArrayList(new int[0], 0);
-    private int[] array;
-    private int size;
 
     static {
         EMPTY_LIST.makeImmutable();
     }
 
-    public static IntArrayList emptyList() {
-        return EMPTY_LIST;
-    }
+    private int[] array;
+    private int size;
 
     IntArrayList() {
         this(new int[10], 0);
@@ -25,6 +21,10 @@ final class IntArrayList extends AbstractProtobufList<Integer> implements Intern
     private IntArrayList(int[] other, int size2) {
         this.array = other;
         this.size = size2;
+    }
+
+    public static IntArrayList emptyList() {
+        return EMPTY_LIST;
     }
 
     /* access modifiers changed from: protected */

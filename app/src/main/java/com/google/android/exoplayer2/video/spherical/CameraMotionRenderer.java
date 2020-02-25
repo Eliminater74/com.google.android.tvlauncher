@@ -1,6 +1,7 @@
 package com.google.android.exoplayer2.video.spherical;
 
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.BaseRenderer;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.Format;
@@ -9,17 +10,18 @@ import com.google.android.exoplayer2.decoder.DecoderInputBuffer;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.Util;
+
 import java.nio.ByteBuffer;
 
 public class CameraMotionRenderer extends BaseRenderer {
     private static final int SAMPLE_WINDOW_DURATION_US = 100000;
     private final DecoderInputBuffer buffer = new DecoderInputBuffer(1);
     private final FormatHolder formatHolder = new FormatHolder();
+    private final ParsableByteArray scratch = new ParsableByteArray();
     private long lastTimestampUs;
     @Nullable
     private CameraMotionListener listener;
     private long offsetUs;
-    private final ParsableByteArray scratch = new ParsableByteArray();
 
     public CameraMotionRenderer() {
         super(5);

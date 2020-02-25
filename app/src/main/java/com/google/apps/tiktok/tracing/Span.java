@@ -12,6 +12,7 @@ import com.google.protobuf.ProtoMessage;
 import com.google.protobuf.ProtoPresenceBits;
 import com.google.protobuf.ProtoPresenceCheckedField;
 import com.google.protobuf.ProtoSyntax;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -25,9 +26,14 @@ public final class Span extends GeneratedMessageLite<Span, Builder> implements S
     public static final int ID_FIELD_NUMBER = 2;
     public static final int NAME_FIELD_NUMBER = 1;
     public static final int PARENT_ID_FIELD_NUMBER = 3;
-    private static volatile Parser<Span> PARSER = null;
     public static final int RELATIVE_START_TIME_MS_FIELD_NUMBER = 4;
     public static final int UI_THREAD_FIELD_NUMBER = 6;
+    private static volatile Parser<Span> PARSER = null;
+
+    static {
+        GeneratedMessageLite.registerDefaultInstance(Span.class, DEFAULT_INSTANCE);
+    }
+
     @ProtoPresenceBits(mo28548id = 0)
     private int bitField0_;
     @ProtoField(fieldNumber = 7, isRequired = false, type = FieldType.INT32)
@@ -55,16 +61,76 @@ public final class Span extends GeneratedMessageLite<Span, Builder> implements S
     private Span() {
     }
 
+    public static Span parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+        return (Span) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+    }
+
+    public static Span parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+        return (Span) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+    }
+
+    public static Span parseFrom(ByteString data) throws InvalidProtocolBufferException {
+        return (Span) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+    }
+
+    public static Span parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+        return (Span) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+    }
+
+    public static Span parseFrom(byte[] data) throws InvalidProtocolBufferException {
+        return (Span) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+    }
+
+    public static Span parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+        return (Span) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+    }
+
+    public static Span parseFrom(InputStream input) throws IOException {
+        return (Span) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+    }
+
+    public static Span parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+        return (Span) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+    }
+
+    public static Span parseDelimitedFrom(InputStream input) throws IOException {
+        return (Span) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+    }
+
+    public static Span parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+        return (Span) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+    }
+
+    public static Span parseFrom(CodedInputStream input) throws IOException {
+        return (Span) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+    }
+
+    public static Span parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+        return (Span) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() {
+        return (Builder) DEFAULT_INSTANCE.createBuilder();
+    }
+
+    public static Builder newBuilder(Span prototype) {
+        return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+    }
+
+    public static Span getDefaultInstance() {
+        return DEFAULT_INSTANCE;
+    }
+
+    public static Parser<Span> parser() {
+        return DEFAULT_INSTANCE.getParserForType();
+    }
+
     public boolean hasName() {
         return (this.bitField0_ & 1) != 0;
     }
 
     public String getName() {
         return this.name_;
-    }
-
-    public ByteString getNameBytes() {
-        return ByteString.copyFromUtf8(this.name_);
     }
 
     /* access modifiers changed from: private */
@@ -77,10 +143,8 @@ public final class Span extends GeneratedMessageLite<Span, Builder> implements S
         throw new NullPointerException();
     }
 
-    /* access modifiers changed from: private */
-    public void clearName() {
-        this.bitField0_ &= -2;
-        this.name_ = getDefaultInstance().getName();
+    public ByteString getNameBytes() {
+        return ByteString.copyFromUtf8(this.name_);
     }
 
     /* access modifiers changed from: private */
@@ -91,6 +155,12 @@ public final class Span extends GeneratedMessageLite<Span, Builder> implements S
             return;
         }
         throw new NullPointerException();
+    }
+
+    /* access modifiers changed from: private */
+    public void clearName() {
+        this.bitField0_ &= -2;
+        this.name_ = getDefaultInstance().getName();
     }
 
     public boolean hasId() {
@@ -213,60 +283,36 @@ public final class Span extends GeneratedMessageLite<Span, Builder> implements S
         this.uiThread_ = false;
     }
 
-    public static Span parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-        return (Span) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-    }
-
-    public static Span parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-        return (Span) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-    }
-
-    public static Span parseFrom(ByteString data) throws InvalidProtocolBufferException {
-        return (Span) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-    }
-
-    public static Span parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-        return (Span) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-    }
-
-    public static Span parseFrom(byte[] data) throws InvalidProtocolBufferException {
-        return (Span) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-    }
-
-    public static Span parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-        return (Span) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-    }
-
-    public static Span parseFrom(InputStream input) throws IOException {
-        return (Span) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-    }
-
-    public static Span parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-        return (Span) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-    }
-
-    public static Span parseDelimitedFrom(InputStream input) throws IOException {
-        return (Span) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-    }
-
-    public static Span parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-        return (Span) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-    }
-
-    public static Span parseFrom(CodedInputStream input) throws IOException {
-        return (Span) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-    }
-
-    public static Span parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-        return (Span) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-    }
-
-    public static Builder newBuilder() {
-        return (Builder) DEFAULT_INSTANCE.createBuilder();
-    }
-
-    public static Builder newBuilder(Span prototype) {
-        return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+    /* access modifiers changed from: protected */
+    public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+        switch (method) {
+            case NEW_MUTABLE_INSTANCE:
+                return new Span();
+            case NEW_BUILDER:
+                return new Builder();
+            case BUILD_MESSAGE_INFO:
+                return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0007\u0000\u0001\u0001\u0007\u0007\u0000\u0000\u0000\u0001\b\u0000\u0002\u0004\u0001\u0003\u0004\u0002\u0004\u0002\u0003\u0005\u0002\u0004\u0006\u0007\u0006\u0007\u0004\u0005", new Object[]{"bitField0_", "name_", "id_", "parentId_", "relativeStartTimeMs_", "durationMs_", "uiThread_", "cpuTimeMs_"});
+            case GET_DEFAULT_INSTANCE:
+                return DEFAULT_INSTANCE;
+            case GET_PARSER:
+                Parser<Span> parser = PARSER;
+                if (parser == null) {
+                    synchronized (Span.class) {
+                        parser = PARSER;
+                        if (parser == null) {
+                            parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                            PARSER = parser;
+                        }
+                    }
+                }
+                return parser;
+            case GET_MEMOIZED_IS_INITIALIZED:
+                return (byte) 1;
+            case SET_MEMOIZED_IS_INITIALIZED:
+                return null;
+            default:
+                throw new UnsupportedOperationException();
+        }
     }
 
     public static final class Builder extends GeneratedMessageLite.Builder<Span, Builder> implements SpanOrBuilder {
@@ -282,25 +328,25 @@ public final class Span extends GeneratedMessageLite<Span, Builder> implements S
             return ((Span) this.instance).getName();
         }
 
-        public ByteString getNameBytes() {
-            return ((Span) this.instance).getNameBytes();
-        }
-
         public Builder setName(String value) {
             copyOnWrite();
             ((Span) this.instance).setName(value);
             return this;
         }
 
-        public Builder clearName() {
-            copyOnWrite();
-            ((Span) this.instance).clearName();
-            return this;
+        public ByteString getNameBytes() {
+            return ((Span) this.instance).getNameBytes();
         }
 
         public Builder setNameBytes(ByteString value) {
             copyOnWrite();
             ((Span) this.instance).setNameBytes(value);
+            return this;
+        }
+
+        public Builder clearName() {
+            copyOnWrite();
+            ((Span) this.instance).clearName();
             return this;
         }
 
@@ -423,49 +469,5 @@ public final class Span extends GeneratedMessageLite<Span, Builder> implements S
             ((Span) this.instance).clearUiThread();
             return this;
         }
-    }
-
-    /* access modifiers changed from: protected */
-    public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-        switch (method) {
-            case NEW_MUTABLE_INSTANCE:
-                return new Span();
-            case NEW_BUILDER:
-                return new Builder();
-            case BUILD_MESSAGE_INFO:
-                return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0007\u0000\u0001\u0001\u0007\u0007\u0000\u0000\u0000\u0001\b\u0000\u0002\u0004\u0001\u0003\u0004\u0002\u0004\u0002\u0003\u0005\u0002\u0004\u0006\u0007\u0006\u0007\u0004\u0005", new Object[]{"bitField0_", "name_", "id_", "parentId_", "relativeStartTimeMs_", "durationMs_", "uiThread_", "cpuTimeMs_"});
-            case GET_DEFAULT_INSTANCE:
-                return DEFAULT_INSTANCE;
-            case GET_PARSER:
-                Parser<Span> parser = PARSER;
-                if (parser == null) {
-                    synchronized (Span.class) {
-                        parser = PARSER;
-                        if (parser == null) {
-                            parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                            PARSER = parser;
-                        }
-                    }
-                }
-                return parser;
-            case GET_MEMOIZED_IS_INITIALIZED:
-                return (byte) 1;
-            case SET_MEMOIZED_IS_INITIALIZED:
-                return null;
-            default:
-                throw new UnsupportedOperationException();
-        }
-    }
-
-    static {
-        GeneratedMessageLite.registerDefaultInstance(Span.class, DEFAULT_INSTANCE);
-    }
-
-    public static Span getDefaultInstance() {
-        return DEFAULT_INSTANCE;
-    }
-
-    public static Parser<Span> parser() {
-        return DEFAULT_INSTANCE.getParserForType();
     }
 }

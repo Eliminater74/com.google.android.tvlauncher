@@ -1,11 +1,12 @@
 package com.google.android.gms.internal;
 
 import com.google.android.exoplayer2.C0841C;
-import com.google.android.gms.internal.zzgoj;
+
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import sun.misc.Unsafe;
 
 /* compiled from: MessageSchema */
@@ -142,6 +143,187 @@ final class zzgpx<T> implements zzgql<T> {
         }
         ((zzgqy) zzgpr2).zza();
         throw new NoSuchMethodError();
+    }
+
+    private static <E> List<E> zza(Object obj, long j) {
+        return (List) zzgrj.zzf(obj, j);
+    }
+
+    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+     method: com.google.android.gms.internal.zzgrd.zza(java.lang.Object, com.google.android.gms.internal.zzgrx):void
+     arg types: [UT, com.google.android.gms.internal.zzgrx]
+     candidates:
+      com.google.android.gms.internal.zzgrd.zza(java.lang.Object, java.lang.Object):void
+      com.google.android.gms.internal.zzgrd.zza(java.lang.Object, com.google.android.gms.internal.zzgqk):boolean
+      com.google.android.gms.internal.zzgrd.zza(java.lang.Object, com.google.android.gms.internal.zzgrx):void */
+    private static <UT, UB> void zza(zzgrd<UT, UB> zzgrd, T t, zzgrx zzgrx) {
+        zzgrd.zza((Object) zzgrd.zzb(t), zzgrx);
+    }
+
+    private static zzgre zzd(Object obj) {
+        zzgoj zzgoj = (zzgoj) obj;
+        zzgre zzgre = zzgoj.zzb;
+        if (zzgre != zzgre.zza()) {
+            return zzgre;
+        }
+        zzgre zzb2 = zzgre.zzb();
+        zzgoj.zzb = zzb2;
+        return zzb2;
+    }
+
+    /* JADX INFO: additional move instructions added (1) to help type inference */
+    /* JADX WARN: Type inference failed for: r0v2, types: [int] */
+    /* JADX WARN: Type inference failed for: r8v4, types: [int] */
+    /* JADX WARNING: Multi-variable type inference failed */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    private static int zza(com.google.android.gms.internal.zzgql r6, byte[] r7, int r8, int r9, com.google.android.gms.internal.zzgmv r10) throws java.io.IOException {
+        /*
+            int r0 = r8 + 1
+            byte r8 = r7[r8]
+            if (r8 >= 0) goto L_0x000e
+            int r0 = com.google.android.gms.internal.zzgmu.zza(r8, r7, r0, r10)
+            int r8 = r10.zza
+            r3 = r0
+            goto L_0x000f
+        L_0x000e:
+            r3 = r0
+        L_0x000f:
+            if (r8 < 0) goto L_0x0027
+            int r9 = r9 - r3
+            if (r8 > r9) goto L_0x0027
+            java.lang.Object r9 = r6.zza()
+            int r8 = r8 + r3
+            r0 = r6
+            r1 = r9
+            r2 = r7
+            r4 = r8
+            r5 = r10
+            r0.zza(r1, r2, r3, r4, r5)
+            r6.zzc(r9)
+            r10.zzc = r9
+            return r8
+        L_0x0027:
+            com.google.android.gms.internal.zzgot r6 = com.google.android.gms.internal.zzgot.zza()
+            throw r6
+        */
+        throw new UnsupportedOperationException("Method not decompiled: com.google.android.gms.internal.zzgpx.zza(com.google.android.gms.internal.zzgql, byte[], int, int, com.google.android.gms.internal.zzgmv):int");
+    }
+
+    private static int zza(zzgql zzgql, byte[] bArr, int i, int i2, int i3, zzgmv zzgmv) throws IOException {
+        zzgpx zzgpx = (zzgpx) zzgql;
+        Object zza2 = zzgpx.zza();
+        int zza3 = zzgpx.zza(zza2, bArr, i, i2, i3, zzgmv);
+        zzgpx.zzc(zza2);
+        zzgmv.zzc = zza2;
+        return zza3;
+    }
+
+    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+     method: com.google.android.gms.internal.zzgpx.zza(com.google.android.gms.internal.zzgql, byte[], int, int, com.google.android.gms.internal.zzgmv):int
+     arg types: [com.google.android.gms.internal.zzgql<?>, byte[], int, int, com.google.android.gms.internal.zzgmv]
+     candidates:
+      com.google.android.gms.internal.zzgpx.zza(int, java.util.Map, com.google.android.gms.internal.zzgop<?>, java.lang.Object, com.google.android.gms.internal.zzgrd):UB
+      com.google.android.gms.internal.zzgpx.zza(java.lang.Object, byte[], int, int, com.google.android.gms.internal.zzgmv):void
+      com.google.android.gms.internal.zzgql.zza(java.lang.Object, byte[], int, int, com.google.android.gms.internal.zzgmv):void
+      com.google.android.gms.internal.zzgpx.zza(com.google.android.gms.internal.zzgql, byte[], int, int, com.google.android.gms.internal.zzgmv):int */
+    private static int zza(zzgql<?> zzgql, int i, byte[] bArr, int i2, int i3, zzgos<?> zzgos, zzgmv zzgmv) throws IOException {
+        int zza2 = zza((zzgql) zzgql, bArr, i2, i3, zzgmv);
+        zzgos.add(zzgmv.zzc);
+        while (zza2 < i3) {
+            int zza3 = zzgmu.zza(bArr, zza2, zzgmv);
+            if (i != zzgmv.zza) {
+                break;
+            }
+            zza2 = zza((zzgql) zzgql, bArr, zza3, i3, zzgmv);
+            zzgos.add(zzgmv.zzc);
+        }
+        return zza2;
+    }
+
+    private static int zza(byte[] bArr, int i, int i2, zzgrr zzgrr, Class<?> cls, zzgmv zzgmv) throws IOException {
+        switch (zzgpy.zza[zzgrr.ordinal()]) {
+            case 1:
+                int zzb2 = zzgmu.zzb(bArr, i, zzgmv);
+                zzgmv.zzc = Boolean.valueOf(zzgmv.zzb != 0);
+                return zzb2;
+            case 2:
+                return zzgmu.zze(bArr, i, zzgmv);
+            case 3:
+                zzgmv.zzc = Double.valueOf(zzgmu.zzc(bArr, i));
+                return i + 8;
+            case 4:
+            case 5:
+                zzgmv.zzc = Integer.valueOf(zzgmu.zza(bArr, i));
+                return i + 4;
+            case 6:
+            case 7:
+                zzgmv.zzc = Long.valueOf(zzgmu.zzb(bArr, i));
+                return i + 8;
+            case 8:
+                zzgmv.zzc = Float.valueOf(zzgmu.zzd(bArr, i));
+                return i + 4;
+            case 9:
+            case 10:
+            case 11:
+                int zza2 = zzgmu.zza(bArr, i, zzgmv);
+                zzgmv.zzc = Integer.valueOf(zzgmv.zza);
+                return zza2;
+            case 12:
+            case 13:
+                int zzb3 = zzgmu.zzb(bArr, i, zzgmv);
+                zzgmv.zzc = Long.valueOf(zzgmv.zzb);
+                return zzb3;
+            case 14:
+                return zza(zzgqf.zza().zza((Class) cls), bArr, i, i2, zzgmv);
+            case 15:
+                int zza3 = zzgmu.zza(bArr, i, zzgmv);
+                zzgmv.zzc = Integer.valueOf(zzgnk.zzg(zzgmv.zza));
+                return zza3;
+            case 16:
+                int zzb4 = zzgmu.zzb(bArr, i, zzgmv);
+                zzgmv.zzc = Long.valueOf(zzgnk.zza(zzgmv.zzb));
+                return zzb4;
+            case 17:
+                return zzgmu.zzd(bArr, i, zzgmv);
+            default:
+                throw new RuntimeException("unsupported field type.");
+        }
+    }
+
+    private static int zza(int i, byte[] bArr, int i2, int i3, Object obj, zzgmv zzgmv) throws IOException {
+        return zzgmu.zza(i, bArr, i2, i3, zzd(obj), zzgmv);
+    }
+
+    private static void zza(int i, Object obj, zzgrx zzgrx) {
+        if (obj instanceof String) {
+            zzgrx.zza(i, (String) obj);
+        } else {
+            zzgrx.zza(i, (zzgnb) obj);
+        }
+    }
+
+    private static boolean zzc(int i) {
+        return (i & 536870912) != 0;
+    }
+
+    private static <T> double zzb(T t, long j) {
+        return ((Double) zzgrj.zzf(t, j)).doubleValue();
+    }
+
+    private static <T> float zzc(T t, long j) {
+        return ((Float) zzgrj.zzf(t, j)).floatValue();
+    }
+
+    private static <T> int zzd(T t, long j) {
+        return ((Integer) zzgrj.zzf(t, j)).intValue();
+    }
+
+    private static <T> long zze(T t, long j) {
+        return ((Long) zzgrj.zzf(t, j)).longValue();
+    }
+
+    private static <T> boolean zzf(T t, long j) {
+        return ((Boolean) zzgrj.zzf(t, j)).booleanValue();
     }
 
     public final T zza() {
@@ -1420,10 +1602,6 @@ final class zzgpx<T> implements zzgql<T> {
         return zzf4;
     }
 
-    private static <E> List<E> zza(Object obj, long j) {
-        return (List) zzgrj.zzf(obj, j);
-    }
-
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
      method: com.google.android.gms.internal.zzgqn.zza(int, java.util.List<java.lang.Double>, com.google.android.gms.internal.zzgrx, boolean):void
      arg types: [int, java.util.List, com.google.android.gms.internal.zzgrx, int]
@@ -2195,17 +2373,6 @@ final class zzgpx<T> implements zzgql<T> {
     }
 
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-     method: com.google.android.gms.internal.zzgrd.zza(java.lang.Object, com.google.android.gms.internal.zzgrx):void
-     arg types: [UT, com.google.android.gms.internal.zzgrx]
-     candidates:
-      com.google.android.gms.internal.zzgrd.zza(java.lang.Object, java.lang.Object):void
-      com.google.android.gms.internal.zzgrd.zza(java.lang.Object, com.google.android.gms.internal.zzgqk):boolean
-      com.google.android.gms.internal.zzgrd.zza(java.lang.Object, com.google.android.gms.internal.zzgrx):void */
-    private static <UT, UB> void zza(zzgrd<UT, UB> zzgrd, T t, zzgrx zzgrx) {
-        zzgrd.zza((Object) zzgrd.zzb(t), zzgrx);
-    }
-
-    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
      method: com.google.android.gms.internal.zzgrd.zza(java.lang.Object, com.google.android.gms.internal.zzgqk):boolean
      arg types: [?, com.google.android.gms.internal.zzgqk]
      candidates:
@@ -2723,140 +2890,6 @@ final class zzgpx<T> implements zzgql<T> {
         } else {
             throw new NullPointerException();
         }
-    }
-
-    private static zzgre zzd(Object obj) {
-        zzgoj zzgoj = (zzgoj) obj;
-        zzgre zzgre = zzgoj.zzb;
-        if (zzgre != zzgre.zza()) {
-            return zzgre;
-        }
-        zzgre zzb2 = zzgre.zzb();
-        zzgoj.zzb = zzb2;
-        return zzb2;
-    }
-
-    /* JADX INFO: additional move instructions added (1) to help type inference */
-    /* JADX WARN: Type inference failed for: r0v2, types: [int] */
-    /* JADX WARN: Type inference failed for: r8v4, types: [int] */
-    /* JADX WARNING: Multi-variable type inference failed */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
-    private static int zza(com.google.android.gms.internal.zzgql r6, byte[] r7, int r8, int r9, com.google.android.gms.internal.zzgmv r10) throws java.io.IOException {
-        /*
-            int r0 = r8 + 1
-            byte r8 = r7[r8]
-            if (r8 >= 0) goto L_0x000e
-            int r0 = com.google.android.gms.internal.zzgmu.zza(r8, r7, r0, r10)
-            int r8 = r10.zza
-            r3 = r0
-            goto L_0x000f
-        L_0x000e:
-            r3 = r0
-        L_0x000f:
-            if (r8 < 0) goto L_0x0027
-            int r9 = r9 - r3
-            if (r8 > r9) goto L_0x0027
-            java.lang.Object r9 = r6.zza()
-            int r8 = r8 + r3
-            r0 = r6
-            r1 = r9
-            r2 = r7
-            r4 = r8
-            r5 = r10
-            r0.zza(r1, r2, r3, r4, r5)
-            r6.zzc(r9)
-            r10.zzc = r9
-            return r8
-        L_0x0027:
-            com.google.android.gms.internal.zzgot r6 = com.google.android.gms.internal.zzgot.zza()
-            throw r6
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.google.android.gms.internal.zzgpx.zza(com.google.android.gms.internal.zzgql, byte[], int, int, com.google.android.gms.internal.zzgmv):int");
-    }
-
-    private static int zza(zzgql zzgql, byte[] bArr, int i, int i2, int i3, zzgmv zzgmv) throws IOException {
-        zzgpx zzgpx = (zzgpx) zzgql;
-        Object zza2 = zzgpx.zza();
-        int zza3 = zzgpx.zza(zza2, bArr, i, i2, i3, zzgmv);
-        zzgpx.zzc(zza2);
-        zzgmv.zzc = zza2;
-        return zza3;
-    }
-
-    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-     method: com.google.android.gms.internal.zzgpx.zza(com.google.android.gms.internal.zzgql, byte[], int, int, com.google.android.gms.internal.zzgmv):int
-     arg types: [com.google.android.gms.internal.zzgql<?>, byte[], int, int, com.google.android.gms.internal.zzgmv]
-     candidates:
-      com.google.android.gms.internal.zzgpx.zza(int, java.util.Map, com.google.android.gms.internal.zzgop<?>, java.lang.Object, com.google.android.gms.internal.zzgrd):UB
-      com.google.android.gms.internal.zzgpx.zza(java.lang.Object, byte[], int, int, com.google.android.gms.internal.zzgmv):void
-      com.google.android.gms.internal.zzgql.zza(java.lang.Object, byte[], int, int, com.google.android.gms.internal.zzgmv):void
-      com.google.android.gms.internal.zzgpx.zza(com.google.android.gms.internal.zzgql, byte[], int, int, com.google.android.gms.internal.zzgmv):int */
-    private static int zza(zzgql<?> zzgql, int i, byte[] bArr, int i2, int i3, zzgos<?> zzgos, zzgmv zzgmv) throws IOException {
-        int zza2 = zza((zzgql) zzgql, bArr, i2, i3, zzgmv);
-        zzgos.add(zzgmv.zzc);
-        while (zza2 < i3) {
-            int zza3 = zzgmu.zza(bArr, zza2, zzgmv);
-            if (i != zzgmv.zza) {
-                break;
-            }
-            zza2 = zza((zzgql) zzgql, bArr, zza3, i3, zzgmv);
-            zzgos.add(zzgmv.zzc);
-        }
-        return zza2;
-    }
-
-    private static int zza(byte[] bArr, int i, int i2, zzgrr zzgrr, Class<?> cls, zzgmv zzgmv) throws IOException {
-        switch (zzgpy.zza[zzgrr.ordinal()]) {
-            case 1:
-                int zzb2 = zzgmu.zzb(bArr, i, zzgmv);
-                zzgmv.zzc = Boolean.valueOf(zzgmv.zzb != 0);
-                return zzb2;
-            case 2:
-                return zzgmu.zze(bArr, i, zzgmv);
-            case 3:
-                zzgmv.zzc = Double.valueOf(zzgmu.zzc(bArr, i));
-                return i + 8;
-            case 4:
-            case 5:
-                zzgmv.zzc = Integer.valueOf(zzgmu.zza(bArr, i));
-                return i + 4;
-            case 6:
-            case 7:
-                zzgmv.zzc = Long.valueOf(zzgmu.zzb(bArr, i));
-                return i + 8;
-            case 8:
-                zzgmv.zzc = Float.valueOf(zzgmu.zzd(bArr, i));
-                return i + 4;
-            case 9:
-            case 10:
-            case 11:
-                int zza2 = zzgmu.zza(bArr, i, zzgmv);
-                zzgmv.zzc = Integer.valueOf(zzgmv.zza);
-                return zza2;
-            case 12:
-            case 13:
-                int zzb3 = zzgmu.zzb(bArr, i, zzgmv);
-                zzgmv.zzc = Long.valueOf(zzgmv.zzb);
-                return zzb3;
-            case 14:
-                return zza(zzgqf.zza().zza((Class) cls), bArr, i, i2, zzgmv);
-            case 15:
-                int zza3 = zzgmu.zza(bArr, i, zzgmv);
-                zzgmv.zzc = Integer.valueOf(zzgnk.zzg(zzgmv.zza));
-                return zza3;
-            case 16:
-                int zzb4 = zzgmu.zzb(bArr, i, zzgmv);
-                zzgmv.zzc = Long.valueOf(zzgnk.zza(zzgmv.zzb));
-                return zzb4;
-            case 17:
-                return zzgmu.zzd(bArr, i, zzgmv);
-            default:
-                throw new RuntimeException("unsupported field type.");
-        }
-    }
-
-    private static int zza(int i, byte[] bArr, int i2, int i3, Object obj, zzgmv zzgmv) throws IOException {
-        return zzgmu.zza(i, bArr, i2, i3, zzd(obj), zzgmv);
     }
 
     private final int zza(T t, byte[] bArr, int i, int i2, int i3, int i4, int i5, int i6, long j, int i7, long j2, zzgmv zzgmv) throws IOException {
@@ -4779,14 +4812,6 @@ final class zzgpx<T> implements zzgql<T> {
         return ub;
     }
 
-    private static void zza(int i, Object obj, zzgrx zzgrx) {
-        if (obj instanceof String) {
-            zzgrx.zza(i, (String) obj);
-        } else {
-            zzgrx.zza(i, (zzgnb) obj);
-        }
-    }
-
     private final void zza(Object obj, int i, zzgqk zzgqk) throws IOException {
         if (zzc(i)) {
             zzgrj.zza(obj, (long) (i & 1048575), zzgqk.zzm());
@@ -4803,30 +4828,6 @@ final class zzgpx<T> implements zzgql<T> {
 
     private final int zzb(int i) {
         return this.zzb[i + 2];
-    }
-
-    private static boolean zzc(int i) {
-        return (i & 536870912) != 0;
-    }
-
-    private static <T> double zzb(T t, long j) {
-        return ((Double) zzgrj.zzf(t, j)).doubleValue();
-    }
-
-    private static <T> float zzc(T t, long j) {
-        return ((Float) zzgrj.zzf(t, j)).floatValue();
-    }
-
-    private static <T> int zzd(T t, long j) {
-        return ((Integer) zzgrj.zzf(t, j)).intValue();
-    }
-
-    private static <T> long zze(T t, long j) {
-        return ((Long) zzgrj.zzf(t, j)).longValue();
-    }
-
-    private static <T> boolean zzf(T t, long j) {
-        return ((Boolean) zzgrj.zzf(t, j)).booleanValue();
     }
 
     private final boolean zzc(T t, T t2, int i) {

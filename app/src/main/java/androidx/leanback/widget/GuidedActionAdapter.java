@@ -11,9 +11,7 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.EditText;
 import android.widget.TextView;
-import androidx.leanback.widget.GuidedActionAutofillSupport;
-import androidx.leanback.widget.GuidedActionsStylist;
-import androidx.leanback.widget.ImeKeyMonitor;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,15 +21,16 @@ public class GuidedActionAdapter extends RecyclerView.Adapter {
     static final boolean DEBUG_EDIT = false;
     static final String TAG = "GuidedActionAdapter";
     static final String TAG_EDIT = "EditableAction";
+    final List<GuidedAction> mActions;
+    final GuidedActionsStylist mStylist;
     private final ActionAutofillListener mActionAutofillListener;
     private final ActionEditListener mActionEditListener;
     private final ActionOnFocusListener mActionOnFocusListener;
     private final ActionOnKeyListener mActionOnKeyListener;
-    final List<GuidedAction> mActions;
-    private ClickListener mClickListener;
+    private final boolean mIsSubAdapter;
     DiffCallback<GuidedAction> mDiffCallback;
     GuidedActionAdapterGroup mGroup;
-    private final boolean mIsSubAdapter;
+    private ClickListener mClickListener;
     private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
         public void onClick(View v) {
             if (v != null && v.getWindowToken() != null && GuidedActionAdapter.this.getRecyclerView() != null) {
@@ -50,25 +49,6 @@ public class GuidedActionAdapter extends RecyclerView.Adapter {
             }
         }
     };
-    final GuidedActionsStylist mStylist;
-
-    public interface ClickListener {
-        void onGuidedActionClicked(GuidedAction guidedAction);
-    }
-
-    public interface EditListener {
-        void onGuidedActionEditCanceled(GuidedAction guidedAction);
-
-        long onGuidedActionEditedAndProceed(GuidedAction guidedAction);
-
-        void onImeClose();
-
-        void onImeOpen();
-    }
-
-    public interface FocusListener {
-        void onGuidedActionFocused(GuidedAction guidedAction);
-    }
 
     public GuidedActionAdapter(List<GuidedAction> actions, ClickListener clickListener, FocusListener focusListener, GuidedActionsStylist presenter, boolean isSubAdapter) {
         ArrayList arrayList;
@@ -90,6 +70,35 @@ public class GuidedActionAdapter extends RecyclerView.Adapter {
 
     public void setDiffCallback(DiffCallback<GuidedAction> diffCallback) {
         this.mDiffCallback = diffCallback;
+    }
+
+    public int getCount() {
+        return this.mActions.size();
+    }
+
+    public GuidedAction getItem(int position) {
+        return this.mActions.get(position);
+    }
+
+    public int indexOf(GuidedAction action) {
+        return this.mActions.indexOf(action);
+    }
+
+    public GuidedActionsStylist getGuidedActionsStylist() {
+        return this.mStylist;
+    }
+
+    public void setClickListener(ClickListener clickListener) {
+        this.mClickListener = clickListener;
+    }
+
+    public void setFocusListener(FocusListener focusListener) {
+        this.mActionOnFocusListener.setFocusListener(focusListener);
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    public List<GuidedAction> getActions() {
+        return new ArrayList(this.mActions);
     }
 
     public void setActions(List<GuidedAction> actions) {
@@ -129,35 +138,6 @@ public class GuidedActionAdapter extends RecyclerView.Adapter {
         this.mActions.clear();
         this.mActions.addAll(actions);
         notifyDataSetChanged();
-    }
-
-    public int getCount() {
-        return this.mActions.size();
-    }
-
-    public GuidedAction getItem(int position) {
-        return this.mActions.get(position);
-    }
-
-    public int indexOf(GuidedAction action) {
-        return this.mActions.indexOf(action);
-    }
-
-    public GuidedActionsStylist getGuidedActionsStylist() {
-        return this.mStylist;
-    }
-
-    public void setClickListener(ClickListener clickListener) {
-        this.mClickListener = clickListener;
-    }
-
-    public void setFocusListener(FocusListener focusListener) {
-        this.mActionOnFocusListener.setFocusListener(focusListener);
-    }
-
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    public List<GuidedAction> getActions() {
-        return new ArrayList(this.mActions);
     }
 
     public int getItemViewType(int position) {
@@ -201,47 +181,6 @@ public class GuidedActionAdapter extends RecyclerView.Adapter {
 
     public int getItemCount() {
         return this.mActions.size();
-    }
-
-    private class ActionOnFocusListener implements View.OnFocusChangeListener {
-        private FocusListener mFocusListener;
-        private View mSelectedView;
-
-        ActionOnFocusListener(FocusListener focusListener) {
-            this.mFocusListener = focusListener;
-        }
-
-        public void setFocusListener(FocusListener focusListener) {
-            this.mFocusListener = focusListener;
-        }
-
-        public void unFocus() {
-            if (this.mSelectedView != null && GuidedActionAdapter.this.getRecyclerView() != null) {
-                RecyclerView.ViewHolder vh = GuidedActionAdapter.this.getRecyclerView().getChildViewHolder(this.mSelectedView);
-                if (vh != null) {
-                    GuidedActionAdapter.this.mStylist.onAnimateItemFocused((GuidedActionsStylist.ViewHolder) vh, false);
-                    return;
-                }
-                Log.w(GuidedActionAdapter.TAG, "RecyclerView returned null view holder", new Throwable());
-            }
-        }
-
-        public void onFocusChange(View v, boolean hasFocus) {
-            if (GuidedActionAdapter.this.getRecyclerView() != null) {
-                GuidedActionsStylist.ViewHolder avh = (GuidedActionsStylist.ViewHolder) GuidedActionAdapter.this.getRecyclerView().getChildViewHolder(v);
-                if (hasFocus) {
-                    this.mSelectedView = v;
-                    FocusListener focusListener = this.mFocusListener;
-                    if (focusListener != null) {
-                        focusListener.onGuidedActionFocused(avh.getAction());
-                    }
-                } else if (this.mSelectedView == v) {
-                    GuidedActionAdapter.this.mStylist.onAnimateItemPressedCancelled(avh);
-                    this.mSelectedView = null;
-                }
-                GuidedActionAdapter.this.mStylist.onAnimateItemFocused(avh, hasFocus);
-            }
-        }
     }
 
     public GuidedActionsStylist.ViewHolder findSubChildViewHolder(View v) {
@@ -290,6 +229,65 @@ public class GuidedActionAdapter extends RecyclerView.Adapter {
         ClickListener clickListener = this.mClickListener;
         if (clickListener != null) {
             clickListener.onGuidedActionClicked(avh.getAction());
+        }
+    }
+
+    public interface ClickListener {
+        void onGuidedActionClicked(GuidedAction guidedAction);
+    }
+
+    public interface EditListener {
+        void onGuidedActionEditCanceled(GuidedAction guidedAction);
+
+        long onGuidedActionEditedAndProceed(GuidedAction guidedAction);
+
+        void onImeClose();
+
+        void onImeOpen();
+    }
+
+    public interface FocusListener {
+        void onGuidedActionFocused(GuidedAction guidedAction);
+    }
+
+    private class ActionOnFocusListener implements View.OnFocusChangeListener {
+        private FocusListener mFocusListener;
+        private View mSelectedView;
+
+        ActionOnFocusListener(FocusListener focusListener) {
+            this.mFocusListener = focusListener;
+        }
+
+        public void setFocusListener(FocusListener focusListener) {
+            this.mFocusListener = focusListener;
+        }
+
+        public void unFocus() {
+            if (this.mSelectedView != null && GuidedActionAdapter.this.getRecyclerView() != null) {
+                RecyclerView.ViewHolder vh = GuidedActionAdapter.this.getRecyclerView().getChildViewHolder(this.mSelectedView);
+                if (vh != null) {
+                    GuidedActionAdapter.this.mStylist.onAnimateItemFocused((GuidedActionsStylist.ViewHolder) vh, false);
+                    return;
+                }
+                Log.w(GuidedActionAdapter.TAG, "RecyclerView returned null view holder", new Throwable());
+            }
+        }
+
+        public void onFocusChange(View v, boolean hasFocus) {
+            if (GuidedActionAdapter.this.getRecyclerView() != null) {
+                GuidedActionsStylist.ViewHolder avh = (GuidedActionsStylist.ViewHolder) GuidedActionAdapter.this.getRecyclerView().getChildViewHolder(v);
+                if (hasFocus) {
+                    this.mSelectedView = v;
+                    FocusListener focusListener = this.mFocusListener;
+                    if (focusListener != null) {
+                        focusListener.onGuidedActionFocused(avh.getAction());
+                    }
+                } else if (this.mSelectedView == v) {
+                    GuidedActionAdapter.this.mStylist.onAnimateItemPressedCancelled(avh);
+                    this.mSelectedView = null;
+                }
+                GuidedActionAdapter.this.mStylist.onAnimateItemFocused(avh, hasFocus);
+            }
         }
     }
 

@@ -6,9 +6,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 public abstract class ThumbnailImageViewTarget<T> extends ImageViewTarget<T> {
-    /* access modifiers changed from: protected */
-    public abstract Drawable getDrawable(Object obj);
-
     public ThumbnailImageViewTarget(ImageView view) {
         super(view);
     }
@@ -17,6 +14,9 @@ public abstract class ThumbnailImageViewTarget<T> extends ImageViewTarget<T> {
     public ThumbnailImageViewTarget(ImageView view, boolean waitForLayout) {
         super(view, waitForLayout);
     }
+
+    /* access modifiers changed from: protected */
+    public abstract Drawable getDrawable(Object obj);
 
     /* access modifiers changed from: protected */
     public void setResource(@Nullable T resource) {

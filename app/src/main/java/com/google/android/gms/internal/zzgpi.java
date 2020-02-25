@@ -1,7 +1,5 @@
 package com.google.android.gms.internal;
 
-import com.google.android.gms.internal.zzgoj;
-
 /* compiled from: ManifestSchemaFactory */
 final class zzgpi implements zzgqm {
     private static final zzgps zzb = new zzgpj();
@@ -21,6 +19,18 @@ final class zzgpi implements zzgqm {
         this.zza = (zzgps) zzgon.zza((Object) zzgps, "messageInfoFactory");
     }
 
+    private static boolean zza(zzgpr zzgpr) {
+        return zzgpr.zza() == zzgoj.zzg.zzi;
+    }
+
+    private static zzgps zza() {
+        try {
+            return (zzgps) Class.forName("com.google.protobuf.DescriptorMessageInfoFactory").getDeclaredMethod("getInstance", new Class[0]).invoke(null, new Object[0]);
+        } catch (Exception e) {
+            return zzb;
+        }
+    }
+
     public final <T> zzgql<T> zza(Class<T> cls) {
         zzgqn.zza((Class<?>) cls);
         zzgpr zzb2 = this.zza.zzb(cls);
@@ -38,18 +48,6 @@ final class zzgpi implements zzgqm {
             return zzgpx.zza(cls, zzb2, zzgqd.zza(), zzgpd.zza(), zzgqn.zza(), zzgnz.zzb(), zzgpq.zza());
         } else {
             return zzgpx.zza(cls, zzb2, zzgqd.zza(), zzgpd.zza(), zzgqn.zzb(), (zzgnw<?>) null, zzgpq.zza());
-        }
-    }
-
-    private static boolean zza(zzgpr zzgpr) {
-        return zzgpr.zza() == zzgoj.zzg.zzi;
-    }
-
-    private static zzgps zza() {
-        try {
-            return (zzgps) Class.forName("com.google.protobuf.DescriptorMessageInfoFactory").getDeclaredMethod("getInstance", new Class[0]).invoke(null, new Object[0]);
-        } catch (Exception e) {
-            return zzb;
         }
     }
 }

@@ -1,14 +1,13 @@
 package com.google.common.collect;
 
 import com.google.common.annotations.GwtCompatible;
-import com.google.common.collect.Multiset;
-import com.google.common.collect.Multisets;
-import com.google.common.collect.SortedMultisets;
+
+import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
+
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.NavigableSet;
 import java.util.Set;
-import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
 
 @GwtCompatible(emulated = true)
 abstract class DescendingMultiset<E> extends ForwardingMultiset<E> implements SortedMultiset<E> {
@@ -19,14 +18,14 @@ abstract class DescendingMultiset<E> extends ForwardingMultiset<E> implements So
     @MonotonicNonNullDecl
     private transient Set<Multiset.Entry<E>> entrySet;
 
+    DescendingMultiset() {
+    }
+
     /* access modifiers changed from: package-private */
     public abstract Iterator<Multiset.Entry<E>> entryIterator();
 
     /* access modifiers changed from: package-private */
     public abstract SortedMultiset<E> forwardMultiset();
-
-    DescendingMultiset() {
-    }
 
     public Comparator<? super E> comparator() {
         Comparator<? super E> result = this.comparator;

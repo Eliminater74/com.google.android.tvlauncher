@@ -11,10 +11,17 @@ import android.view.ViewConfiguration;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
+
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
 
 /* renamed from: android.support.v4.widget.AutoScrollHelper */
 public abstract class AutoScrollHelper implements View.OnTouchListener {
+    public static final int EDGE_TYPE_INSIDE = 0;
+    public static final int EDGE_TYPE_INSIDE_EXTEND = 1;
+    public static final int EDGE_TYPE_OUTSIDE = 2;
+    public static final float NO_MAX = Float.MAX_VALUE;
+    public static final float NO_MIN = 0.0f;
+    public static final float RELATIVE_UNSPECIFIED = 0.0f;
     private static final int DEFAULT_ACTIVATION_DELAY = ViewConfiguration.getTapTimeout();
     private static final int DEFAULT_EDGE_TYPE = 1;
     private static final float DEFAULT_MAXIMUM_EDGE = Float.MAX_VALUE;
@@ -24,37 +31,25 @@ public abstract class AutoScrollHelper implements View.OnTouchListener {
     private static final int DEFAULT_RAMP_UP_DURATION = 500;
     private static final float DEFAULT_RELATIVE_EDGE = 0.2f;
     private static final float DEFAULT_RELATIVE_VELOCITY = 1.0f;
-    public static final int EDGE_TYPE_INSIDE = 0;
-    public static final int EDGE_TYPE_INSIDE_EXTEND = 1;
-    public static final int EDGE_TYPE_OUTSIDE = 2;
     private static final int HORIZONTAL = 0;
-    public static final float NO_MAX = Float.MAX_VALUE;
-    public static final float NO_MIN = 0.0f;
-    public static final float RELATIVE_UNSPECIFIED = 0.0f;
     private static final int VERTICAL = 1;
+    final ClampedScroller mScroller = new ClampedScroller();
+    final View mTarget;
+    private final Interpolator mEdgeInterpolator = new AccelerateInterpolator();
+    boolean mAnimating;
+    boolean mNeedsCancel;
+    boolean mNeedsReset;
     private int mActivationDelay;
     private boolean mAlreadyDelayed;
-    boolean mAnimating;
-    private final Interpolator mEdgeInterpolator = new AccelerateInterpolator();
     private int mEdgeType;
     private boolean mEnabled;
     private boolean mExclusive;
     private float[] mMaximumEdges = {Float.MAX_VALUE, Float.MAX_VALUE};
     private float[] mMaximumVelocity = {Float.MAX_VALUE, Float.MAX_VALUE};
     private float[] mMinimumVelocity = {0.0f, 0.0f};
-    boolean mNeedsCancel;
-    boolean mNeedsReset;
     private float[] mRelativeEdges = {0.0f, 0.0f};
     private float[] mRelativeVelocity = {0.0f, 0.0f};
     private Runnable mRunnable;
-    final ClampedScroller mScroller = new ClampedScroller();
-    final View mTarget;
-
-    public abstract boolean canTargetScrollHorizontally(int i);
-
-    public abstract boolean canTargetScrollVertically(int i);
-
-    public abstract void scrollTargetBy(int i, int i2);
 
     public AutoScrollHelper(@NonNull View target) {
         this.mTarget = target;
@@ -72,6 +67,36 @@ public abstract class AutoScrollHelper implements View.OnTouchListener {
         setRampDownDuration(ClientAnalytics.LogRequest.LogSource.GOR_ANDROID_PRIMES_VALUE);
     }
 
+    static int constrain(int value, int min, int max) {
+        if (value > max) {
+            return max;
+        }
+        if (value < min) {
+            return min;
+        }
+        return value;
+    }
+
+    static float constrain(float value, float min, float max) {
+        if (value > max) {
+            return max;
+        }
+        if (value < min) {
+            return min;
+        }
+        return value;
+    }
+
+    public abstract boolean canTargetScrollHorizontally(int i);
+
+    public abstract boolean canTargetScrollVertically(int i);
+
+    public abstract void scrollTargetBy(int i, int i2);
+
+    public boolean isEnabled() {
+        return this.mEnabled;
+    }
+
     public AutoScrollHelper setEnabled(boolean enabled) {
         if (this.mEnabled && !enabled) {
             requestStop();
@@ -80,17 +105,13 @@ public abstract class AutoScrollHelper implements View.OnTouchListener {
         return this;
     }
 
-    public boolean isEnabled() {
-        return this.mEnabled;
+    public boolean isExclusive() {
+        return this.mExclusive;
     }
 
     public AutoScrollHelper setExclusive(boolean exclusive) {
         this.mExclusive = exclusive;
         return this;
-    }
-
-    public boolean isExclusive() {
-        return this.mExclusive;
     }
 
     @NonNull
@@ -299,61 +320,12 @@ public abstract class AutoScrollHelper implements View.OnTouchListener {
         return 0.0f;
     }
 
-    static int constrain(int value, int min, int max) {
-        if (value > max) {
-            return max;
-        }
-        if (value < min) {
-            return min;
-        }
-        return value;
-    }
-
-    static float constrain(float value, float min, float max) {
-        if (value > max) {
-            return max;
-        }
-        if (value < min) {
-            return min;
-        }
-        return value;
-    }
-
     /* access modifiers changed from: package-private */
     public void cancelTargetTouch() {
         long eventTime = SystemClock.uptimeMillis();
         MotionEvent cancel = MotionEvent.obtain(eventTime, eventTime, 3, 0.0f, 0.0f, 0);
         this.mTarget.onTouchEvent(cancel);
         cancel.recycle();
-    }
-
-    /* renamed from: android.support.v4.widget.AutoScrollHelper$ScrollAnimationRunnable */
-    private class ScrollAnimationRunnable implements Runnable {
-        ScrollAnimationRunnable() {
-        }
-
-        public void run() {
-            if (AutoScrollHelper.this.mAnimating) {
-                if (AutoScrollHelper.this.mNeedsReset) {
-                    AutoScrollHelper autoScrollHelper = AutoScrollHelper.this;
-                    autoScrollHelper.mNeedsReset = false;
-                    autoScrollHelper.mScroller.start();
-                }
-                ClampedScroller scroller = AutoScrollHelper.this.mScroller;
-                if (scroller.isFinished() || !AutoScrollHelper.this.shouldAnimate()) {
-                    AutoScrollHelper.this.mAnimating = false;
-                    return;
-                }
-                if (AutoScrollHelper.this.mNeedsCancel) {
-                    AutoScrollHelper autoScrollHelper2 = AutoScrollHelper.this;
-                    autoScrollHelper2.mNeedsCancel = false;
-                    autoScrollHelper2.cancelTargetTouch();
-                }
-                scroller.computeScrollDelta();
-                AutoScrollHelper.this.scrollTargetBy(scroller.getDeltaX(), scroller.getDeltaY());
-                ViewCompat.postOnAnimation(AutoScrollHelper.this.mTarget, this);
-            }
-        }
     }
 
     /* renamed from: android.support.v4.widget.AutoScrollHelper$ClampedScroller */
@@ -451,6 +423,35 @@ public abstract class AutoScrollHelper implements View.OnTouchListener {
 
         public int getDeltaY() {
             return this.mDeltaY;
+        }
+    }
+
+    /* renamed from: android.support.v4.widget.AutoScrollHelper$ScrollAnimationRunnable */
+    private class ScrollAnimationRunnable implements Runnable {
+        ScrollAnimationRunnable() {
+        }
+
+        public void run() {
+            if (AutoScrollHelper.this.mAnimating) {
+                if (AutoScrollHelper.this.mNeedsReset) {
+                    AutoScrollHelper autoScrollHelper = AutoScrollHelper.this;
+                    autoScrollHelper.mNeedsReset = false;
+                    autoScrollHelper.mScroller.start();
+                }
+                ClampedScroller scroller = AutoScrollHelper.this.mScroller;
+                if (scroller.isFinished() || !AutoScrollHelper.this.shouldAnimate()) {
+                    AutoScrollHelper.this.mAnimating = false;
+                    return;
+                }
+                if (AutoScrollHelper.this.mNeedsCancel) {
+                    AutoScrollHelper autoScrollHelper2 = AutoScrollHelper.this;
+                    autoScrollHelper2.mNeedsCancel = false;
+                    autoScrollHelper2.cancelTargetTouch();
+                }
+                scroller.computeScrollDelta();
+                AutoScrollHelper.this.scrollTargetBy(scroller.getDeltaX(), scroller.getDeltaY());
+                ViewCompat.postOnAnimation(AutoScrollHelper.this.mTarget, this);
+            }
         }
     }
 }

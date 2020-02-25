@@ -7,6 +7,9 @@ import android.view.View;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
 public final class BackgroundHelper {
+    private BackgroundHelper() {
+    }
+
     public static void setBackgroundPreservingAlpha(View view, Drawable drawable) {
         if (Build.VERSION.SDK_INT >= 19) {
             if (view.getBackground() != null) {
@@ -16,8 +19,5 @@ public final class BackgroundHelper {
             return;
         }
         view.setBackground(drawable);
-    }
-
-    private BackgroundHelper() {
     }
 }

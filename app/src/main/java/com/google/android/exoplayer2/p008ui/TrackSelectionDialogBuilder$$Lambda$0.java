@@ -1,8 +1,8 @@
 package com.google.android.exoplayer2.p008ui;
 
-import com.google.android.exoplayer2.p008ui.TrackSelectionDialogBuilder;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+
 import java.util.List;
 
 /* renamed from: com.google.android.exoplayer2.ui.TrackSelectionDialogBuilder$$Lambda$0 */

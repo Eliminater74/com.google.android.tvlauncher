@@ -3,11 +3,13 @@ package androidx.leanback.widget;
 import android.support.p001v4.view.ViewCompat;
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.leanback.transition.LeanbackTransitionHelper;
 import androidx.leanback.transition.TransitionHelper;
-import androidx.leanback.widget.BrowseFrameLayout;
 
 public class TitleHelper {
+    ViewGroup mSceneRoot;
+    View mTitleView;
     private final BrowseFrameLayout.OnFocusSearchListener mOnFocusSearchListener = new BrowseFrameLayout.OnFocusSearchListener() {
         public View onFocusSearch(View focused, int direction) {
             if (focused != TitleHelper.this.mTitleView && direction == 33) {
@@ -27,12 +29,10 @@ public class TitleHelper {
             return null;
         }
     };
-    ViewGroup mSceneRoot;
     private Object mSceneWithTitle;
     private Object mSceneWithoutTitle;
     private Object mTitleDownTransition;
     private Object mTitleUpTransition;
-    View mTitleView;
 
     public TitleHelper(ViewGroup sceneRoot, View titleView) {
         if (sceneRoot == null || titleView == null) {

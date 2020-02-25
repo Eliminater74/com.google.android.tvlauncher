@@ -10,16 +10,18 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Shader;
 import android.support.annotation.NonNull;
+
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
 import com.google.android.tvlauncher.C1188R;
 import com.google.android.tvlauncher.util.Util;
+
 import java.security.MessageDigest;
 import java.util.Arrays;
 
 final class AddScrimTransformation extends BitmapTransformation {
-    private static final int sHashCode = Arrays.hashCode(sKeyBytes);
     private static final byte[] sKeyBytes = AddScrimTransformation.class.getName().getBytes(CHARSET);
+    private static final int sHashCode = Arrays.hashCode(sKeyBytes);
     private final int[] mColors;
     private final float[] mPositions;
 

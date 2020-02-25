@@ -1,7 +1,7 @@
 package com.google.protobuf;
 
-import com.google.protobuf.Utf8;
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.BufferOverflowException;
@@ -17,81 +17,11 @@ public abstract class CodedOutputStream extends ByteOutput {
     @Deprecated
     public static final int LITTLE_ENDIAN_32_SIZE = 4;
     private static final Logger logger = Logger.getLogger(CodedOutputStream.class.getName());
-    private boolean serializationDeterministic;
     CodedOutputStreamWriter wrapper;
+    private boolean serializationDeterministic;
 
-    public abstract void flush() throws IOException;
-
-    public abstract int getTotalBytesWritten();
-
-    public abstract int spaceLeft();
-
-    public abstract void write(byte b) throws IOException;
-
-    public abstract void write(ByteBuffer byteBuffer) throws IOException;
-
-    public abstract void write(byte[] bArr, int i, int i2) throws IOException;
-
-    public abstract void writeBool(int i, boolean z) throws IOException;
-
-    public abstract void writeByteArray(int i, byte[] bArr) throws IOException;
-
-    public abstract void writeByteArray(int i, byte[] bArr, int i2, int i3) throws IOException;
-
-    /* access modifiers changed from: package-private */
-    public abstract void writeByteArrayNoTag(byte[] bArr, int i, int i2) throws IOException;
-
-    public abstract void writeByteBuffer(int i, ByteBuffer byteBuffer) throws IOException;
-
-    public abstract void writeBytes(int i, ByteString byteString) throws IOException;
-
-    public abstract void writeBytesNoTag(ByteString byteString) throws IOException;
-
-    public abstract void writeFixed32(int i, int i2) throws IOException;
-
-    public abstract void writeFixed32NoTag(int i) throws IOException;
-
-    public abstract void writeFixed64(int i, long j) throws IOException;
-
-    public abstract void writeFixed64NoTag(long j) throws IOException;
-
-    public abstract void writeInt32(int i, int i2) throws IOException;
-
-    public abstract void writeInt32NoTag(int i) throws IOException;
-
-    public abstract void writeLazy(ByteBuffer byteBuffer) throws IOException;
-
-    public abstract void writeLazy(byte[] bArr, int i, int i2) throws IOException;
-
-    public abstract void writeMessage(int i, MessageLite messageLite) throws IOException;
-
-    /* access modifiers changed from: package-private */
-    public abstract void writeMessage(int i, MessageLite messageLite, Schema schema) throws IOException;
-
-    public abstract void writeMessageNoTag(MessageLite messageLite) throws IOException;
-
-    /* access modifiers changed from: package-private */
-    public abstract void writeMessageNoTag(MessageLite messageLite, Schema schema) throws IOException;
-
-    public abstract void writeMessageSetExtension(int i, MessageLite messageLite) throws IOException;
-
-    public abstract void writeRawBytes(ByteBuffer byteBuffer) throws IOException;
-
-    public abstract void writeRawMessageSetExtension(int i, ByteString byteString) throws IOException;
-
-    public abstract void writeString(int i, String str) throws IOException;
-
-    public abstract void writeStringNoTag(String str) throws IOException;
-
-    public abstract void writeTag(int i, int i2) throws IOException;
-
-    public abstract void writeUInt32(int i, int i2) throws IOException;
-
-    public abstract void writeUInt32NoTag(int i) throws IOException;
-
-    public abstract void writeUInt64(int i, long j) throws IOException;
-
-    public abstract void writeUInt64NoTag(long j) throws IOException;
+    private CodedOutputStream() {
+    }
 
     static int computePreferredBufferSize(int dataLength) {
         if (dataLength > 4096) {
@@ -137,15 +67,6 @@ public abstract class CodedOutputStream extends ByteOutput {
         return new SafeDirectNioEncoder(buffer);
     }
 
-    public void useDeterministicSerialization() {
-        this.serializationDeterministic = true;
-    }
-
-    /* access modifiers changed from: package-private */
-    public boolean isSerializationDeterministic() {
-        return this.serializationDeterministic;
-    }
-
     @Deprecated
     public static CodedOutputStream newInstance(ByteBuffer byteBuffer, int unused) {
         return newInstance(byteBuffer);
@@ -156,123 +77,6 @@ public abstract class CodedOutputStream extends ByteOutput {
             return new ByteOutputEncoder(byteOutput, bufferSize);
         }
         throw new IllegalArgumentException("bufferSize must be positive");
-    }
-
-    private CodedOutputStream() {
-    }
-
-    public final void writeSInt32(int fieldNumber, int value) throws IOException {
-        writeUInt32(fieldNumber, encodeZigZag32(value));
-    }
-
-    public final void writeSFixed32(int fieldNumber, int value) throws IOException {
-        writeFixed32(fieldNumber, value);
-    }
-
-    public final void writeInt64(int fieldNumber, long value) throws IOException {
-        writeUInt64(fieldNumber, value);
-    }
-
-    public final void writeSInt64(int fieldNumber, long value) throws IOException {
-        writeUInt64(fieldNumber, encodeZigZag64(value));
-    }
-
-    public final void writeSFixed64(int fieldNumber, long value) throws IOException {
-        writeFixed64(fieldNumber, value);
-    }
-
-    public final void writeFloat(int fieldNumber, float value) throws IOException {
-        writeFixed32(fieldNumber, Float.floatToRawIntBits(value));
-    }
-
-    public final void writeDouble(int fieldNumber, double value) throws IOException {
-        writeFixed64(fieldNumber, Double.doubleToRawLongBits(value));
-    }
-
-    public final void writeEnum(int fieldNumber, int value) throws IOException {
-        writeInt32(fieldNumber, value);
-    }
-
-    public final void writeRawByte(byte value) throws IOException {
-        write(value);
-    }
-
-    public final void writeRawByte(int value) throws IOException {
-        write((byte) value);
-    }
-
-    public final void writeRawBytes(byte[] value) throws IOException {
-        write(value, 0, value.length);
-    }
-
-    public final void writeRawBytes(byte[] value, int offset, int length) throws IOException {
-        write(value, offset, length);
-    }
-
-    public final void writeRawBytes(ByteString value) throws IOException {
-        value.writeTo(this);
-    }
-
-    public final void writeSInt32NoTag(int value) throws IOException {
-        writeUInt32NoTag(encodeZigZag32(value));
-    }
-
-    public final void writeSFixed32NoTag(int value) throws IOException {
-        writeFixed32NoTag(value);
-    }
-
-    public final void writeInt64NoTag(long value) throws IOException {
-        writeUInt64NoTag(value);
-    }
-
-    public final void writeSInt64NoTag(long value) throws IOException {
-        writeUInt64NoTag(encodeZigZag64(value));
-    }
-
-    public final void writeSFixed64NoTag(long value) throws IOException {
-        writeFixed64NoTag(value);
-    }
-
-    public final void writeFloatNoTag(float value) throws IOException {
-        writeFixed32NoTag(Float.floatToRawIntBits(value));
-    }
-
-    public final void writeDoubleNoTag(double value) throws IOException {
-        writeFixed64NoTag(Double.doubleToRawLongBits(value));
-    }
-
-    public final void writeBoolNoTag(boolean value) throws IOException {
-        write(value ? (byte) 1 : 0);
-    }
-
-    public final void writeEnumNoTag(int value) throws IOException {
-        writeInt32NoTag(value);
-    }
-
-    public final void writeByteArrayNoTag(byte[] value) throws IOException {
-        writeByteArrayNoTag(value, 0, value.length);
-    }
-
-    @Deprecated
-    public final void writeGroupNoTagWithCachedSizes(MutableMessageLite value) throws IOException {
-        value.writeToWithCachedSizes(this);
-    }
-
-    @Deprecated
-    public final void writeGroupWithCachedSizes(int fieldNumber, MutableMessageLite value) throws IOException {
-        writeTag(fieldNumber, 3);
-        writeGroupNoTagWithCachedSizes(value);
-        writeTag(fieldNumber, 4);
-    }
-
-    public final void writeMessageWithCachedSizes(int fieldNumber, MutableMessageLite value) throws IOException {
-        writeTag(fieldNumber, 2);
-        writeMessageNoTagWithCachedSizes(value);
-    }
-
-    public final void writeMessageNoTagWithCachedSizes(MutableMessageLite value) throws IOException {
-        writeUInt32NoTag(value.getCachedSize());
-        value.writeToWithCachedSizes(this);
     }
 
     public static int computeInt32Size(int fieldNumber, int value) {
@@ -510,10 +314,304 @@ public abstract class CodedOutputStream extends ByteOutput {
         return (n << 1) ^ (n >> 63);
     }
 
+    @Deprecated
+    public static int computeGroupSize(int fieldNumber, MessageLite value) {
+        return (computeTagSize(fieldNumber) * 2) + computeGroupSizeNoTag(value);
+    }
+
+    @Deprecated
+    static int computeGroupSize(int fieldNumber, MessageLite value, Schema schema) {
+        return (computeTagSize(fieldNumber) * 2) + computeGroupSizeNoTag(value, schema);
+    }
+
+    @Deprecated
+    public static int computeGroupSizeNoTag(MessageLite value) {
+        return value.getSerializedSize();
+    }
+
+    @Deprecated
+    static int computeGroupSizeNoTag(MessageLite value, Schema schema) {
+        return ((AbstractMessageLite) value).getSerializedSize(schema);
+    }
+
+    @Deprecated
+    public static int computeRawVarint32Size(int value) {
+        return computeUInt32SizeNoTag(value);
+    }
+
+    @Deprecated
+    public static int computeRawVarint64Size(long value) {
+        return computeUInt64SizeNoTag(value);
+    }
+
+    public abstract void flush() throws IOException;
+
+    public abstract int getTotalBytesWritten();
+
+    public abstract int spaceLeft();
+
+    public abstract void write(byte b) throws IOException;
+
+    public abstract void write(ByteBuffer byteBuffer) throws IOException;
+
+    public abstract void write(byte[] bArr, int i, int i2) throws IOException;
+
+    public abstract void writeBool(int i, boolean z) throws IOException;
+
+    public abstract void writeByteArray(int i, byte[] bArr) throws IOException;
+
+    public abstract void writeByteArray(int i, byte[] bArr, int i2, int i3) throws IOException;
+
+    /* access modifiers changed from: package-private */
+    public abstract void writeByteArrayNoTag(byte[] bArr, int i, int i2) throws IOException;
+
+    public abstract void writeByteBuffer(int i, ByteBuffer byteBuffer) throws IOException;
+
+    public abstract void writeBytes(int i, ByteString byteString) throws IOException;
+
+    public abstract void writeBytesNoTag(ByteString byteString) throws IOException;
+
+    public abstract void writeFixed32(int i, int i2) throws IOException;
+
+    public abstract void writeFixed32NoTag(int i) throws IOException;
+
+    public abstract void writeFixed64(int i, long j) throws IOException;
+
+    public abstract void writeFixed64NoTag(long j) throws IOException;
+
+    public abstract void writeInt32(int i, int i2) throws IOException;
+
+    public abstract void writeInt32NoTag(int i) throws IOException;
+
+    public abstract void writeLazy(ByteBuffer byteBuffer) throws IOException;
+
+    public abstract void writeLazy(byte[] bArr, int i, int i2) throws IOException;
+
+    public abstract void writeMessage(int i, MessageLite messageLite) throws IOException;
+
+    /* access modifiers changed from: package-private */
+    public abstract void writeMessage(int i, MessageLite messageLite, Schema schema) throws IOException;
+
+    public abstract void writeMessageNoTag(MessageLite messageLite) throws IOException;
+
+    /* access modifiers changed from: package-private */
+    public abstract void writeMessageNoTag(MessageLite messageLite, Schema schema) throws IOException;
+
+    public abstract void writeMessageSetExtension(int i, MessageLite messageLite) throws IOException;
+
+    public abstract void writeRawBytes(ByteBuffer byteBuffer) throws IOException;
+
+    public abstract void writeRawMessageSetExtension(int i, ByteString byteString) throws IOException;
+
+    public abstract void writeString(int i, String str) throws IOException;
+
+    public abstract void writeStringNoTag(String str) throws IOException;
+
+    public abstract void writeTag(int i, int i2) throws IOException;
+
+    public abstract void writeUInt32(int i, int i2) throws IOException;
+
+    public abstract void writeUInt32NoTag(int i) throws IOException;
+
+    public abstract void writeUInt64(int i, long j) throws IOException;
+
+    public abstract void writeUInt64NoTag(long j) throws IOException;
+
+    public void useDeterministicSerialization() {
+        this.serializationDeterministic = true;
+    }
+
+    /* access modifiers changed from: package-private */
+    public boolean isSerializationDeterministic() {
+        return this.serializationDeterministic;
+    }
+
+    public final void writeSInt32(int fieldNumber, int value) throws IOException {
+        writeUInt32(fieldNumber, encodeZigZag32(value));
+    }
+
+    public final void writeSFixed32(int fieldNumber, int value) throws IOException {
+        writeFixed32(fieldNumber, value);
+    }
+
+    public final void writeInt64(int fieldNumber, long value) throws IOException {
+        writeUInt64(fieldNumber, value);
+    }
+
+    public final void writeSInt64(int fieldNumber, long value) throws IOException {
+        writeUInt64(fieldNumber, encodeZigZag64(value));
+    }
+
+    public final void writeSFixed64(int fieldNumber, long value) throws IOException {
+        writeFixed64(fieldNumber, value);
+    }
+
+    public final void writeFloat(int fieldNumber, float value) throws IOException {
+        writeFixed32(fieldNumber, Float.floatToRawIntBits(value));
+    }
+
+    public final void writeDouble(int fieldNumber, double value) throws IOException {
+        writeFixed64(fieldNumber, Double.doubleToRawLongBits(value));
+    }
+
+    public final void writeEnum(int fieldNumber, int value) throws IOException {
+        writeInt32(fieldNumber, value);
+    }
+
+    public final void writeRawByte(byte value) throws IOException {
+        write(value);
+    }
+
+    public final void writeRawByte(int value) throws IOException {
+        write((byte) value);
+    }
+
+    public final void writeRawBytes(byte[] value) throws IOException {
+        write(value, 0, value.length);
+    }
+
+    public final void writeRawBytes(byte[] value, int offset, int length) throws IOException {
+        write(value, offset, length);
+    }
+
+    public final void writeRawBytes(ByteString value) throws IOException {
+        value.writeTo(this);
+    }
+
+    public final void writeSInt32NoTag(int value) throws IOException {
+        writeUInt32NoTag(encodeZigZag32(value));
+    }
+
+    public final void writeSFixed32NoTag(int value) throws IOException {
+        writeFixed32NoTag(value);
+    }
+
+    public final void writeInt64NoTag(long value) throws IOException {
+        writeUInt64NoTag(value);
+    }
+
+    public final void writeSInt64NoTag(long value) throws IOException {
+        writeUInt64NoTag(encodeZigZag64(value));
+    }
+
+    public final void writeSFixed64NoTag(long value) throws IOException {
+        writeFixed64NoTag(value);
+    }
+
+    public final void writeFloatNoTag(float value) throws IOException {
+        writeFixed32NoTag(Float.floatToRawIntBits(value));
+    }
+
+    public final void writeDoubleNoTag(double value) throws IOException {
+        writeFixed64NoTag(Double.doubleToRawLongBits(value));
+    }
+
+    public final void writeBoolNoTag(boolean value) throws IOException {
+        write(value ? (byte) 1 : 0);
+    }
+
+    public final void writeEnumNoTag(int value) throws IOException {
+        writeInt32NoTag(value);
+    }
+
+    public final void writeByteArrayNoTag(byte[] value) throws IOException {
+        writeByteArrayNoTag(value, 0, value.length);
+    }
+
+    @Deprecated
+    public final void writeGroupNoTagWithCachedSizes(MutableMessageLite value) throws IOException {
+        value.writeToWithCachedSizes(this);
+    }
+
+    @Deprecated
+    public final void writeGroupWithCachedSizes(int fieldNumber, MutableMessageLite value) throws IOException {
+        writeTag(fieldNumber, 3);
+        writeGroupNoTagWithCachedSizes(value);
+        writeTag(fieldNumber, 4);
+    }
+
+    public final void writeMessageWithCachedSizes(int fieldNumber, MutableMessageLite value) throws IOException {
+        writeTag(fieldNumber, 2);
+        writeMessageNoTagWithCachedSizes(value);
+    }
+
+    public final void writeMessageNoTagWithCachedSizes(MutableMessageLite value) throws IOException {
+        writeUInt32NoTag(value.getCachedSize());
+        value.writeToWithCachedSizes(this);
+    }
+
     public final void checkNoSpaceLeft() {
         if (spaceLeft() != 0) {
             throw new IllegalStateException("Did not write as much data as expected.");
         }
+    }
+
+    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+     method: ClspMth{java.util.logging.Logger.logp(java.util.logging.Level, java.lang.String, java.lang.String, java.lang.String, java.lang.Throwable):void}
+     arg types: [java.util.logging.Level, java.lang.String, java.lang.String, java.lang.String, com.google.protobuf.Utf8$UnpairedSurrogateException]
+     candidates:
+      ClspMth{java.util.logging.Logger.logp(java.util.logging.Level, java.lang.String, java.lang.String, java.lang.Throwable, java.util.function.Supplier<java.lang.String>):void}
+      ClspMth{java.util.logging.Logger.logp(java.util.logging.Level, java.lang.String, java.lang.String, java.lang.String, java.lang.Object[]):void}
+      ClspMth{java.util.logging.Logger.logp(java.util.logging.Level, java.lang.String, java.lang.String, java.lang.String, java.lang.Object):void}
+      ClspMth{java.util.logging.Logger.logp(java.util.logging.Level, java.lang.String, java.lang.String, java.lang.String, java.lang.Throwable):void} */
+    /* access modifiers changed from: package-private */
+    public final void inefficientWriteStringNoTag(String value, Utf8.UnpairedSurrogateException cause) throws IOException {
+        logger.logp(Level.WARNING, "com.google.protobuf.CodedOutputStream", "inefficientWriteStringNoTag", "Converting ill-formed UTF-16. Your Protocol Buffer will not round trip correctly!", (Throwable) cause);
+        byte[] bytes = value.getBytes(Internal.UTF_8);
+        try {
+            writeUInt32NoTag(bytes.length);
+            writeLazy(bytes, 0, bytes.length);
+        } catch (IndexOutOfBoundsException e) {
+            throw new OutOfSpaceException(e);
+        } catch (OutOfSpaceException e2) {
+            throw e2;
+        }
+    }
+
+    @Deprecated
+    public final void writeGroup(int fieldNumber, MessageLite value) throws IOException {
+        writeTag(fieldNumber, 3);
+        writeGroupNoTag(value);
+        writeTag(fieldNumber, 4);
+    }
+
+    /* access modifiers changed from: package-private */
+    @Deprecated
+    public final void writeGroup(int fieldNumber, MessageLite value, Schema schema) throws IOException {
+        writeTag(fieldNumber, 3);
+        writeGroupNoTag(value, schema);
+        writeTag(fieldNumber, 4);
+    }
+
+    @Deprecated
+    public final void writeGroupNoTag(MessageLite value) throws IOException {
+        value.writeTo(this);
+    }
+
+    /* access modifiers changed from: package-private */
+    @Deprecated
+    public final void writeGroupNoTag(MessageLite value, Schema schema) throws IOException {
+        schema.writeTo(value, this.wrapper);
+    }
+
+    @Deprecated
+    public final void writeRawVarint32(int value) throws IOException {
+        writeUInt32NoTag(value);
+    }
+
+    @Deprecated
+    public final void writeRawVarint64(long value) throws IOException {
+        writeUInt64NoTag(value);
+    }
+
+    @Deprecated
+    public final void writeRawLittleEndian32(int value) throws IOException {
+        writeFixed32NoTag(value);
+    }
+
+    @Deprecated
+    public final void writeRawLittleEndian64(long value) throws IOException {
+        writeFixed64NoTag(value);
     }
 
     public static class OutOfSpaceException extends IOException {
@@ -573,104 +671,6 @@ public abstract class CodedOutputStream extends ByteOutput {
             */
             throw new UnsupportedOperationException("Method not decompiled: com.google.protobuf.CodedOutputStream.OutOfSpaceException.<init>(java.lang.String, java.lang.Throwable):void");
         }
-    }
-
-    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-     method: ClspMth{java.util.logging.Logger.logp(java.util.logging.Level, java.lang.String, java.lang.String, java.lang.String, java.lang.Throwable):void}
-     arg types: [java.util.logging.Level, java.lang.String, java.lang.String, java.lang.String, com.google.protobuf.Utf8$UnpairedSurrogateException]
-     candidates:
-      ClspMth{java.util.logging.Logger.logp(java.util.logging.Level, java.lang.String, java.lang.String, java.lang.Throwable, java.util.function.Supplier<java.lang.String>):void}
-      ClspMth{java.util.logging.Logger.logp(java.util.logging.Level, java.lang.String, java.lang.String, java.lang.String, java.lang.Object[]):void}
-      ClspMth{java.util.logging.Logger.logp(java.util.logging.Level, java.lang.String, java.lang.String, java.lang.String, java.lang.Object):void}
-      ClspMth{java.util.logging.Logger.logp(java.util.logging.Level, java.lang.String, java.lang.String, java.lang.String, java.lang.Throwable):void} */
-    /* access modifiers changed from: package-private */
-    public final void inefficientWriteStringNoTag(String value, Utf8.UnpairedSurrogateException cause) throws IOException {
-        logger.logp(Level.WARNING, "com.google.protobuf.CodedOutputStream", "inefficientWriteStringNoTag", "Converting ill-formed UTF-16. Your Protocol Buffer will not round trip correctly!", (Throwable) cause);
-        byte[] bytes = value.getBytes(Internal.UTF_8);
-        try {
-            writeUInt32NoTag(bytes.length);
-            writeLazy(bytes, 0, bytes.length);
-        } catch (IndexOutOfBoundsException e) {
-            throw new OutOfSpaceException(e);
-        } catch (OutOfSpaceException e2) {
-            throw e2;
-        }
-    }
-
-    @Deprecated
-    public final void writeGroup(int fieldNumber, MessageLite value) throws IOException {
-        writeTag(fieldNumber, 3);
-        writeGroupNoTag(value);
-        writeTag(fieldNumber, 4);
-    }
-
-    /* access modifiers changed from: package-private */
-    @Deprecated
-    public final void writeGroup(int fieldNumber, MessageLite value, Schema schema) throws IOException {
-        writeTag(fieldNumber, 3);
-        writeGroupNoTag(value, schema);
-        writeTag(fieldNumber, 4);
-    }
-
-    @Deprecated
-    public final void writeGroupNoTag(MessageLite value) throws IOException {
-        value.writeTo(this);
-    }
-
-    /* access modifiers changed from: package-private */
-    @Deprecated
-    public final void writeGroupNoTag(MessageLite value, Schema schema) throws IOException {
-        schema.writeTo(value, this.wrapper);
-    }
-
-    @Deprecated
-    public static int computeGroupSize(int fieldNumber, MessageLite value) {
-        return (computeTagSize(fieldNumber) * 2) + computeGroupSizeNoTag(value);
-    }
-
-    @Deprecated
-    static int computeGroupSize(int fieldNumber, MessageLite value, Schema schema) {
-        return (computeTagSize(fieldNumber) * 2) + computeGroupSizeNoTag(value, schema);
-    }
-
-    @Deprecated
-    public static int computeGroupSizeNoTag(MessageLite value) {
-        return value.getSerializedSize();
-    }
-
-    @Deprecated
-    static int computeGroupSizeNoTag(MessageLite value, Schema schema) {
-        return ((AbstractMessageLite) value).getSerializedSize(schema);
-    }
-
-    @Deprecated
-    public final void writeRawVarint32(int value) throws IOException {
-        writeUInt32NoTag(value);
-    }
-
-    @Deprecated
-    public final void writeRawVarint64(long value) throws IOException {
-        writeUInt64NoTag(value);
-    }
-
-    @Deprecated
-    public static int computeRawVarint32Size(int value) {
-        return computeUInt32SizeNoTag(value);
-    }
-
-    @Deprecated
-    public static int computeRawVarint64Size(long value) {
-        return computeUInt64SizeNoTag(value);
-    }
-
-    @Deprecated
-    public final void writeRawLittleEndian32(int value) throws IOException {
-        writeFixed32NoTag(value);
-    }
-
-    @Deprecated
-    public final void writeRawLittleEndian64(long value) throws IOException {
-        writeFixed64NoTag(value);
     }
 
     private static class ArrayEncoder extends CodedOutputStream {

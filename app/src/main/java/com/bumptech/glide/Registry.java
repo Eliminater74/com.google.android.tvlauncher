@@ -3,6 +3,7 @@ package com.bumptech.glide;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.p001v4.util.Pools;
+
 import com.bumptech.glide.load.Encoder;
 import com.bumptech.glide.load.ImageHeaderParser;
 import com.bumptech.glide.load.ResourceDecoder;
@@ -24,26 +25,27 @@ import com.bumptech.glide.provider.ModelToResourceClassCache;
 import com.bumptech.glide.provider.ResourceDecoderRegistry;
 import com.bumptech.glide.provider.ResourceEncoderRegistry;
 import com.bumptech.glide.util.pool.FactoryPools;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public class Registry {
-    private static final String BUCKET_APPEND_ALL = "legacy_append";
     public static final String BUCKET_BITMAP = "Bitmap";
     public static final String BUCKET_BITMAP_DRAWABLE = "BitmapDrawable";
     public static final String BUCKET_GIF = "Gif";
+    private static final String BUCKET_APPEND_ALL = "legacy_append";
     private static final String BUCKET_PREPEND_ALL = "legacy_prepend_all";
     private final DataRewinderRegistry dataRewinderRegistry = new DataRewinderRegistry();
     private final ResourceDecoderRegistry decoderRegistry = new ResourceDecoderRegistry();
     private final EncoderRegistry encoderRegistry = new EncoderRegistry();
     private final ImageHeaderParserRegistry imageHeaderParserRegistry = new ImageHeaderParserRegistry();
     private final LoadPathCache loadPathCache = new LoadPathCache();
-    private final ModelLoaderRegistry modelLoaderRegistry = new ModelLoaderRegistry(this.throwableListPool);
     private final ModelToResourceClassCache modelToResourceClassCache = new ModelToResourceClassCache();
     private final ResourceEncoderRegistry resourceEncoderRegistry = new ResourceEncoderRegistry();
     private final Pools.Pool<List<Throwable>> throwableListPool = FactoryPools.threadSafeList();
+    private final ModelLoaderRegistry modelLoaderRegistry = new ModelLoaderRegistry(this.throwableListPool);
     private final TranscoderRegistry transcoderRegistry = new TranscoderRegistry();
 
     public Registry() {

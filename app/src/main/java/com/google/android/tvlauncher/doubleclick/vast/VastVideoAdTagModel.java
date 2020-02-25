@@ -1,6 +1,7 @@
 package com.google.android.tvlauncher.doubleclick.vast;
 
 import android.util.Size;
+
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -11,8 +12,8 @@ public class VastVideoAdTagModel {
     private final Set<Size> mCompanionAdSizes;
     private final String mCorrelator;
     private final String mDescriptionUrl;
-    private Map<String, String> mTargeting;
     private final String mUrl;
+    private Map<String, String> mTargeting;
 
     private VastVideoAdTagModel(Builder builder) {
         this.mAdUnitId = builder.mAdUnitId;

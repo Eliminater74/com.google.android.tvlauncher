@@ -1,6 +1,7 @@
 package com.google.android.gms.common.api.internal;
 
 import android.support.annotation.NonNull;
+
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.Result;
@@ -9,6 +10,7 @@ import com.google.android.gms.common.api.ResultStore;
 import com.google.android.gms.common.api.ResultTransform;
 import com.google.android.gms.common.api.TransformedResult;
 import com.google.android.gms.common.internal.Hide;
+
 import java.util.concurrent.TimeUnit;
 
 /* compiled from: OptionalPendingResultImpl */

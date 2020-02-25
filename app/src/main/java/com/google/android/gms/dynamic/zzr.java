@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.p001v4.app.Fragment;
 import android.view.View;
+
 import com.google.android.gms.common.internal.Hide;
 
 @Hide
@@ -11,15 +12,15 @@ import com.google.android.gms.common.internal.Hide;
 public final class zzr extends zzl {
     private Fragment zza;
 
+    private zzr(Fragment fragment) {
+        this.zza = fragment;
+    }
+
     public static zzr zza(Fragment fragment) {
         if (fragment != null) {
             return new zzr(fragment);
         }
         return null;
-    }
-
-    private zzr(Fragment fragment) {
-        this.zza = fragment;
     }
 
     public final IObjectWrapper zza() {

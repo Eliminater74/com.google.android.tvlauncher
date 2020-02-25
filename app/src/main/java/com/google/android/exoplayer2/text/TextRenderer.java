@@ -4,6 +4,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.BaseRenderer;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.Format;
@@ -11,6 +12,7 @@ import com.google.android.exoplayer2.FormatHolder;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.Util;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -22,29 +24,20 @@ public final class TextRenderer extends BaseRenderer implements Handler.Callback
     private static final int REPLACEMENT_STATE_NONE = 0;
     private static final int REPLACEMENT_STATE_SIGNAL_END_OF_STREAM = 1;
     private static final int REPLACEMENT_STATE_WAIT_END_OF_STREAM = 2;
-    private SubtitleDecoder decoder;
     private final SubtitleDecoderFactory decoderFactory;
-    private int decoderReplacementState;
     private final FormatHolder formatHolder;
+    private final TextOutput output;
+    @Nullable
+    private final Handler outputHandler;
+    private SubtitleDecoder decoder;
+    private int decoderReplacementState;
     private boolean inputStreamEnded;
     private SubtitleInputBuffer nextInputBuffer;
     private SubtitleOutputBuffer nextSubtitle;
     private int nextSubtitleEventIndex;
-    private final TextOutput output;
-    @Nullable
-    private final Handler outputHandler;
     private boolean outputStreamEnded;
     private Format streamFormat;
     private SubtitleOutputBuffer subtitle;
-
-    @Deprecated
-    public interface Output extends TextOutput {
-    }
-
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    private @interface ReplacementState {
-    }
 
     public TextRenderer(TextOutput output2, @Nullable Looper outputLooper) {
         this(output2, outputLooper, SubtitleDecoderFactory.DEFAULT);
@@ -247,5 +240,14 @@ public final class TextRenderer extends BaseRenderer implements Handler.Callback
 
     private void invokeUpdateOutputInternal(List<Cue> cues) {
         this.output.onCues(cues);
+    }
+
+    @Deprecated
+    public interface Output extends TextOutput {
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    private @interface ReplacementState {
     }
 }

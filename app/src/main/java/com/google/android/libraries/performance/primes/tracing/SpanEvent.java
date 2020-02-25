@@ -3,30 +3,33 @@ package com.google.android.libraries.performance.primes.tracing;
 import com.google.android.libraries.performance.primes.PrimesToken;
 import com.google.android.libraries.performance.primes.metriccapture.TimeCapture;
 import com.google.android.libraries.stitch.util.Preconditions;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public final class SpanEvent {
     static final SpanEvent EMPTY_SPAN = newSpan("");
-    private volatile List<SpanEvent> children;
-    long endMs = -1;
     final EventNameType eventNameType;
+    final long threadId;
+    long endMs = -1;
     String spanName;
     SpanType spanType;
     long startMs;
-    final long threadId;
+    private volatile List<SpanEvent> children;
 
-    public enum EventNameType {
-        CONSTANT,
-        CUSTOM
-    }
-
-    public enum SpanType {
-        THREAD_ROOT_SPAN,
-        ROOT_SPAN,
-        CHILD_SPAN,
-        TIMER_SPAN
+    private SpanEvent(String spanName2, EventNameType eventNameType2, long startMs2, long endMs2, long threadId2, SpanType spanType2) {
+        this.spanName = spanName2;
+        this.eventNameType = eventNameType2;
+        this.startMs = startMs2;
+        this.endMs = endMs2;
+        this.threadId = threadId2;
+        this.spanType = spanType2;
+        if (this.spanType == SpanType.THREAD_ROOT_SPAN) {
+            this.children = Collections.synchronizedList(new ArrayList());
+        } else {
+            this.children = Collections.emptyList();
+        }
     }
 
     static SpanEvent newSpan(String spanName2) {
@@ -44,20 +47,6 @@ public final class SpanEvent {
     public static SpanEvent newSpan(PrimesToken token, String spanName2, EventNameType eventNameType2, long startMs2, long endMs2, long threadId2, SpanType spanType2) {
         Preconditions.checkNotNull(token);
         return new SpanEvent(spanName2, eventNameType2, startMs2, endMs2, threadId2, spanType2);
-    }
-
-    private SpanEvent(String spanName2, EventNameType eventNameType2, long startMs2, long endMs2, long threadId2, SpanType spanType2) {
-        this.spanName = spanName2;
-        this.eventNameType = eventNameType2;
-        this.startMs = startMs2;
-        this.endMs = endMs2;
-        this.threadId = threadId2;
-        this.spanType = spanType2;
-        if (this.spanType == SpanType.THREAD_ROOT_SPAN) {
-            this.children = Collections.synchronizedList(new ArrayList());
-        } else {
-            this.children = Collections.emptyList();
-        }
     }
 
     public void addChildSpans(PrimesToken token, List<SpanEvent> spans) {
@@ -139,5 +128,17 @@ public final class SpanEvent {
 
     public long getStartMs() {
         return this.startMs;
+    }
+
+    public enum EventNameType {
+        CONSTANT,
+        CUSTOM
+    }
+
+    public enum SpanType {
+        THREAD_ROOT_SPAN,
+        ROOT_SPAN,
+        CHILD_SPAN,
+        TIMER_SPAN
     }
 }

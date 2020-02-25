@@ -5,7 +5,6 @@ import android.os.IBinder;
 import android.os.IInterface;
 import android.os.Parcel;
 import android.os.RemoteException;
-import com.google.android.gtalkservice.IGTalkConnection;
 
 public interface IGTalkConnectionListener extends IInterface {
     void onConnectionCreated(IGTalkConnection iGTalkConnection) throws RemoteException;
@@ -13,9 +12,9 @@ public interface IGTalkConnectionListener extends IInterface {
     void onConnectionCreationFailed(String str) throws RemoteException;
 
     public static abstract class Stub extends Binder implements IGTalkConnectionListener {
-        private static final String DESCRIPTOR = "com.google.android.gtalkservice.IGTalkConnectionListener";
         static final int TRANSACTION_onConnectionCreated = 1;
         static final int TRANSACTION_onConnectionCreationFailed = 2;
+        private static final String DESCRIPTOR = "com.google.android.gtalkservice.IGTalkConnectionListener";
 
         public Stub() {
             attachInterface(this, DESCRIPTOR);

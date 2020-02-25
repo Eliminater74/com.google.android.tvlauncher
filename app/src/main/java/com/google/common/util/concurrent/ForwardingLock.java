@@ -5,11 +5,11 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 
 abstract class ForwardingLock implements Lock {
-    /* access modifiers changed from: package-private */
-    public abstract Lock delegate();
-
     ForwardingLock() {
     }
+
+    /* access modifiers changed from: package-private */
+    public abstract Lock delegate();
 
     public void lock() {
         delegate().lock();

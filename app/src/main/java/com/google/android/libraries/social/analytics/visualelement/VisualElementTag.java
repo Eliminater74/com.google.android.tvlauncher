@@ -2,6 +2,7 @@ package com.google.android.libraries.social.analytics.visualelement;
 
 import com.google.errorprone.annotations.Immutable;
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.io.Serializable;
 import java.util.Locale;
 

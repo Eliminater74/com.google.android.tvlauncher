@@ -3,10 +3,9 @@ package android.support.p001v4.media;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
-import android.support.p001v4.media.MediaSessionManager;
 
 @RequiresApi(21)
-/* renamed from: android.support.v4.media.MediaSessionManagerImplApi21 */
+        /* renamed from: android.support.v4.media.MediaSessionManagerImplApi21 */
 class MediaSessionManagerImplApi21 extends MediaSessionManagerImplBase {
     MediaSessionManagerImplApi21(Context context) {
         super(context);

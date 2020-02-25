@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.support.p001v4.media.MediaDescriptionCompat;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -20,6 +21,81 @@ final class LocaleListCompatWrapper implements LocaleListInterface {
     private final Locale[] mList;
     @NonNull
     private final String mStringRepresentation;
+
+    LocaleListCompatWrapper(@NonNull Locale... list) {
+        if (list.length == 0) {
+            this.mList = sEmptyList;
+            this.mStringRepresentation = "";
+            return;
+        }
+        Locale[] localeList = new Locale[list.length];
+        HashSet<Locale> seenLocales = new HashSet<>();
+        StringBuilder sb = new StringBuilder();
+        int i = 0;
+        while (i < list.length) {
+            Locale l = list[i];
+            if (l == null) {
+                throw new NullPointerException("list[" + i + "] is null");
+            } else if (!seenLocales.contains(l)) {
+                Locale localeClone = (Locale) l.clone();
+                localeList[i] = localeClone;
+                toLanguageTag(sb, localeClone);
+                if (i < list.length - 1) {
+                    sb.append(',');
+                }
+                seenLocales.add(localeClone);
+                i++;
+            } else {
+                throw new IllegalArgumentException("list[" + i + "] is a repetition");
+            }
+        }
+        this.mList = localeList;
+        this.mStringRepresentation = sb.toString();
+    }
+
+    @VisibleForTesting
+    static void toLanguageTag(StringBuilder builder, Locale locale) {
+        builder.append(locale.getLanguage());
+        String country = locale.getCountry();
+        if (country != null && !country.isEmpty()) {
+            builder.append('-');
+            builder.append(locale.getCountry());
+        }
+    }
+
+    private static String getLikelyScript(Locale locale) {
+        if (Build.VERSION.SDK_INT < 21) {
+            return "";
+        }
+        String script = locale.getScript();
+        if (!script.isEmpty()) {
+            return script;
+        }
+        return "";
+    }
+
+    private static boolean isPseudoLocale(Locale locale) {
+        return LOCALE_EN_XA.equals(locale) || LOCALE_AR_XB.equals(locale);
+    }
+
+    @IntRange(from = MediaDescriptionCompat.BT_FOLDER_TYPE_MIXED, mo124to = 1)
+    private static int matchScore(Locale supported, Locale desired) {
+        if (supported.equals(desired)) {
+            return 1;
+        }
+        if (!supported.getLanguage().equals(desired.getLanguage()) || isPseudoLocale(supported) || isPseudoLocale(desired)) {
+            return 0;
+        }
+        String supportedScr = getLikelyScript(supported);
+        if (!supportedScr.isEmpty()) {
+            return supportedScr.equals(getLikelyScript(desired)) ? 1 : 0;
+        }
+        String supportedRegion = supported.getCountry();
+        if (supportedRegion.isEmpty() || supportedRegion.equals(desired.getCountry())) {
+            return 1;
+        }
+        return 0;
+    }
 
     @Nullable
     public Object getLocaleList() {
@@ -116,81 +192,6 @@ final class LocaleListCompatWrapper implements LocaleListInterface {
 
     public String toLanguageTags() {
         return this.mStringRepresentation;
-    }
-
-    LocaleListCompatWrapper(@NonNull Locale... list) {
-        if (list.length == 0) {
-            this.mList = sEmptyList;
-            this.mStringRepresentation = "";
-            return;
-        }
-        Locale[] localeList = new Locale[list.length];
-        HashSet<Locale> seenLocales = new HashSet<>();
-        StringBuilder sb = new StringBuilder();
-        int i = 0;
-        while (i < list.length) {
-            Locale l = list[i];
-            if (l == null) {
-                throw new NullPointerException("list[" + i + "] is null");
-            } else if (!seenLocales.contains(l)) {
-                Locale localeClone = (Locale) l.clone();
-                localeList[i] = localeClone;
-                toLanguageTag(sb, localeClone);
-                if (i < list.length - 1) {
-                    sb.append(',');
-                }
-                seenLocales.add(localeClone);
-                i++;
-            } else {
-                throw new IllegalArgumentException("list[" + i + "] is a repetition");
-            }
-        }
-        this.mList = localeList;
-        this.mStringRepresentation = sb.toString();
-    }
-
-    @VisibleForTesting
-    static void toLanguageTag(StringBuilder builder, Locale locale) {
-        builder.append(locale.getLanguage());
-        String country = locale.getCountry();
-        if (country != null && !country.isEmpty()) {
-            builder.append('-');
-            builder.append(locale.getCountry());
-        }
-    }
-
-    private static String getLikelyScript(Locale locale) {
-        if (Build.VERSION.SDK_INT < 21) {
-            return "";
-        }
-        String script = locale.getScript();
-        if (!script.isEmpty()) {
-            return script;
-        }
-        return "";
-    }
-
-    private static boolean isPseudoLocale(Locale locale) {
-        return LOCALE_EN_XA.equals(locale) || LOCALE_AR_XB.equals(locale);
-    }
-
-    @IntRange(from = MediaDescriptionCompat.BT_FOLDER_TYPE_MIXED, mo124to = 1)
-    private static int matchScore(Locale supported, Locale desired) {
-        if (supported.equals(desired)) {
-            return 1;
-        }
-        if (!supported.getLanguage().equals(desired.getLanguage()) || isPseudoLocale(supported) || isPseudoLocale(desired)) {
-            return 0;
-        }
-        String supportedScr = getLikelyScript(supported);
-        if (!supportedScr.isEmpty()) {
-            return supportedScr.equals(getLikelyScript(desired)) ? 1 : 0;
-        }
-        String supportedRegion = supported.getCountry();
-        if (supportedRegion.isEmpty() || supportedRegion.equals(desired.getCountry())) {
-            return 1;
-        }
-        return 0;
     }
 
     private int findFirstMatchIndex(Locale supportedLocale) {

@@ -14,22 +14,11 @@ public abstract class ActionProvider {
     private SubUiVisibilityListener mSubUiVisibilityListener;
     private VisibilityListener mVisibilityListener;
 
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    /* renamed from: android.support.v4.view.ActionProvider$SubUiVisibilityListener */
-    public interface SubUiVisibilityListener {
-        void onSubUiVisibilityChanged(boolean z);
-    }
-
-    /* renamed from: android.support.v4.view.ActionProvider$VisibilityListener */
-    public interface VisibilityListener {
-        void onActionProviderVisibilityChanged(boolean z);
-    }
-
-    public abstract View onCreateActionView();
-
     public ActionProvider(Context context) {
         this.mContext = context;
     }
+
+    public abstract View onCreateActionView();
 
     public Context getContext() {
         return this.mContext;
@@ -88,5 +77,16 @@ public abstract class ActionProvider {
     public void reset() {
         this.mVisibilityListener = null;
         this.mSubUiVisibilityListener = null;
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    /* renamed from: android.support.v4.view.ActionProvider$SubUiVisibilityListener */
+    public interface SubUiVisibilityListener {
+        void onSubUiVisibilityChanged(boolean z);
+    }
+
+    /* renamed from: android.support.v4.view.ActionProvider$VisibilityListener */
+    public interface VisibilityListener {
+        void onActionProviderVisibilityChanged(boolean z);
     }
 }

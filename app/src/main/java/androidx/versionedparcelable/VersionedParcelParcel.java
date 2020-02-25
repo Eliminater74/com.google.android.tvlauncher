@@ -9,20 +9,21 @@ import android.support.annotation.RestrictTo;
 import android.support.p001v4.util.ArrayMap;
 import android.text.TextUtils;
 import android.util.SparseIntArray;
+
 import java.lang.reflect.Method;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY})
 class VersionedParcelParcel extends VersionedParcel {
     private static final boolean DEBUG = false;
     private static final String TAG = "VersionedParcelParcel";
-    private int mCurrentField;
     private final int mEnd;
-    private int mFieldId;
-    private int mNextRead;
     private final int mOffset;
     private final Parcel mParcel;
     private final SparseIntArray mPositionLookup;
     private final String mPrefix;
+    private int mCurrentField;
+    private int mFieldId;
+    private int mNextRead;
 
     VersionedParcelParcel(Parcel p) {
         this(p, p.dataPosition(), p.dataSize(), "", new ArrayMap(), new ArrayMap(), new ArrayMap());

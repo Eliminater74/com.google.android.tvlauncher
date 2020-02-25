@@ -7,25 +7,6 @@ public final class CircularArray<E> {
     private int mHead;
     private int mTail;
 
-    private void doubleCapacity() {
-        E[] eArr = this.mElements;
-        int n = eArr.length;
-        int i = this.mHead;
-        int r = n - i;
-        int newCapacity = n << 1;
-        if (newCapacity >= 0) {
-            E[] eArr2 = new Object[newCapacity];
-            System.arraycopy(eArr, i, eArr2, 0, r);
-            System.arraycopy(this.mElements, 0, eArr2, r, this.mHead);
-            this.mElements = (Object[]) eArr2;
-            this.mHead = 0;
-            this.mTail = n;
-            this.mCapacityBitmask = newCapacity - 1;
-            return;
-        }
-        throw new RuntimeException("Max array capacity exceeded");
-    }
-
     public CircularArray() {
         this(8);
     }
@@ -45,6 +26,25 @@ public final class CircularArray<E> {
         } else {
             throw new IllegalArgumentException("capacity must be <= 2^30");
         }
+    }
+
+    private void doubleCapacity() {
+        E[] eArr = this.mElements;
+        int n = eArr.length;
+        int i = this.mHead;
+        int r = n - i;
+        int newCapacity = n << 1;
+        if (newCapacity >= 0) {
+            E[] eArr2 = new Object[newCapacity];
+            System.arraycopy(eArr, i, eArr2, 0, r);
+            System.arraycopy(this.mElements, 0, eArr2, r, this.mHead);
+            this.mElements = (Object[]) eArr2;
+            this.mHead = 0;
+            this.mTail = n;
+            this.mCapacityBitmask = newCapacity - 1;
+            return;
+        }
+        throw new RuntimeException("Max array capacity exceeded");
     }
 
     public void addFirst(E e) {

@@ -3,14 +3,17 @@ package com.google.android.tvlauncher.doubleclick.vast;
 import android.content.Context;
 import android.support.annotation.VisibleForTesting;
 import android.text.TextUtils;
+
 import com.google.android.tvlauncher.application.TvLauncherApplication;
 import com.google.android.tvlauncher.doubleclick.AdVideoTracker;
 import com.google.android.tvlauncher.doubleclick.AdsManager;
 import com.google.android.tvlauncher.doubleclick.TrackingUrl;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import javax.annotation.Nonnull;
 
 public class VastVideoTracker extends AdVideoTracker {

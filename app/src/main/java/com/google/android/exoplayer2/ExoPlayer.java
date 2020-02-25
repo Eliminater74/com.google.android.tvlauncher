@@ -2,14 +2,10 @@ package com.google.android.exoplayer2;
 
 import android.os.Looper;
 import android.support.annotation.Nullable;
-import com.google.android.exoplayer2.PlayerMessage;
+
 import com.google.android.exoplayer2.source.MediaSource;
 
 public interface ExoPlayer extends Player {
-
-    @Deprecated
-    public interface ExoPlayerComponent extends PlayerMessage.Target {
-    }
 
     @Deprecated
     void blockingSendMessages(ExoPlayerMessage... exoPlayerMessageArr);
@@ -19,6 +15,8 @@ public interface ExoPlayer extends Player {
     Looper getPlaybackLooper();
 
     SeekParameters getSeekParameters();
+
+    void setSeekParameters(@Nullable SeekParameters seekParameters);
 
     void prepare(MediaSource mediaSource);
 
@@ -31,7 +29,9 @@ public interface ExoPlayer extends Player {
 
     void setForegroundMode(boolean z);
 
-    void setSeekParameters(@Nullable SeekParameters seekParameters);
+    @Deprecated
+    public interface ExoPlayerComponent extends PlayerMessage.Target {
+    }
 
     @Deprecated
     public static final class ExoPlayerMessage {

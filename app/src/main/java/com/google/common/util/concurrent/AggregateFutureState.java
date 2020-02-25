@@ -3,6 +3,7 @@ package com.google.common.util.concurrent;
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.collect.Sets;
 import com.google.j2objc.annotations.ReflectionSupport;
+
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
@@ -14,19 +15,6 @@ import java.util.logging.Logger;
 abstract class AggregateFutureState {
     private static final AtomicHelper ATOMIC_HELPER;
     private static final Logger log = Logger.getLogger(AggregateFutureState.class.getName());
-    /* access modifiers changed from: private */
-    public volatile int remaining;
-    /* access modifiers changed from: private */
-    public volatile Set<Throwable> seenExceptions = null;
-
-    /* access modifiers changed from: package-private */
-    public abstract void addInitialException(Set<Throwable> set);
-
-    static /* synthetic */ int access$310(AggregateFutureState x0) {
-        int i = x0.remaining;
-        x0.remaining = i - 1;
-        return i;
-    }
 
     static {
         AtomicHelper helper;
@@ -43,9 +31,23 @@ abstract class AggregateFutureState {
         }
     }
 
+    /* access modifiers changed from: private */
+    public volatile int remaining;
+    /* access modifiers changed from: private */
+    public volatile Set<Throwable> seenExceptions = null;
+
     AggregateFutureState(int remainingFutures) {
         this.remaining = remainingFutures;
     }
+
+    static /* synthetic */ int access$310(AggregateFutureState x0) {
+        int i = x0.remaining;
+        x0.remaining = i - 1;
+        return i;
+    }
+
+    /* access modifiers changed from: package-private */
+    public abstract void addInitialException(Set<Throwable> set);
 
     /* access modifiers changed from: package-private */
     public final Set<Throwable> getOrInitSeenExceptions() {
@@ -65,14 +67,14 @@ abstract class AggregateFutureState {
     }
 
     private static abstract class AtomicHelper {
+        private AtomicHelper() {
+        }
+
         /* access modifiers changed from: package-private */
         public abstract void compareAndSetSeenExceptions(AggregateFutureState aggregateFutureState, Set<Throwable> set, Set<Throwable> set2);
 
         /* access modifiers changed from: package-private */
         public abstract int decrementAndGetRemainingCount(AggregateFutureState aggregateFutureState);
-
-        private AtomicHelper() {
-        }
     }
 
     private static final class SafeAtomicHelper extends AtomicHelper {

@@ -2,11 +2,11 @@ package com.google.android.exoplayer2.upstream.cache;
 
 import com.google.android.exoplayer2.upstream.DataSink;
 import com.google.android.exoplayer2.upstream.DataSpec;
-import com.google.android.exoplayer2.upstream.cache.Cache;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.ReusableBufferedOutputStream;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -18,23 +18,17 @@ public final class CacheDataSink implements DataSink {
     private static final long MIN_RECOMMENDED_FRAGMENT_SIZE = 2097152;
     private static final String TAG = "CacheDataSink";
     private final int bufferSize;
-    private ReusableBufferedOutputStream bufferedOutputStream;
     private final Cache cache;
+    private final long fragmentSize;
+    private ReusableBufferedOutputStream bufferedOutputStream;
     private DataSpec dataSpec;
     private long dataSpecBytesWritten;
     private long dataSpecFragmentSize;
     private File file;
-    private final long fragmentSize;
     private OutputStream outputStream;
     private long outputStreamBytesWritten;
     private boolean syncFileDescriptor;
     private FileOutputStream underlyingFileOutputStream;
-
-    public static class CacheDataSinkException extends Cache.CacheException {
-        public CacheDataSinkException(IOException cause) {
-            super(cause);
-        }
-    }
 
     public CacheDataSink(Cache cache2, long fragmentSize2) {
         this(cache2, fragmentSize2, DEFAULT_BUFFER_SIZE);
@@ -150,6 +144,12 @@ public final class CacheDataSink implements DataSink {
                     fileToCommit.delete();
                 }
             }
+        }
+    }
+
+    public static class CacheDataSinkException extends Cache.CacheException {
+        public CacheDataSinkException(IOException cause) {
+            super(cause);
         }
     }
 }

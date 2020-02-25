@@ -57,12 +57,27 @@ public class ChannelStateSettings {
         return this.mItemHeight;
     }
 
+    /* access modifiers changed from: package-private */
+    public void setItemHeight(int itemHeight) {
+        this.mItemHeight = itemHeight;
+    }
+
     public int getItemMarginTop() {
         return this.mItemMarginTop;
     }
 
+    /* access modifiers changed from: package-private */
+    public void setItemMarginTop(int itemMarginTop) {
+        this.mItemMarginTop = itemMarginTop;
+    }
+
     public int getItemMarginBottom() {
         return this.mItemMarginBottom;
+    }
+
+    /* access modifiers changed from: package-private */
+    public void setItemMarginBottom(int itemMarginBottom) {
+        this.mItemMarginBottom = itemMarginBottom;
     }
 
     public int getMarginTop() {
@@ -75,21 +90,6 @@ public class ChannelStateSettings {
 
     public int getChannelLogoAlignmentOriginMargin() {
         return this.mChannelLogoAlignmentOriginMargin;
-    }
-
-    /* access modifiers changed from: package-private */
-    public void setItemHeight(int itemHeight) {
-        this.mItemHeight = itemHeight;
-    }
-
-    /* access modifiers changed from: package-private */
-    public void setItemMarginTop(int itemMarginTop) {
-        this.mItemMarginTop = itemMarginTop;
-    }
-
-    /* access modifiers changed from: package-private */
-    public void setItemMarginBottom(int itemMarginBottom) {
-        this.mItemMarginBottom = itemMarginBottom;
     }
 
     /* access modifiers changed from: package-private */
@@ -146,8 +146,8 @@ public class ChannelStateSettings {
     }
 
     /* access modifiers changed from: package-private */
-    public void setChannelItemsTitleMarginTop(int channelItemsTitleMarginTop) {
-        this.mChannelItemsTitleMarginTop = channelItemsTitleMarginTop;
+    public void setEmptyChannelMessageMarginTop(int emptyChannelMessageMarginTop) {
+        this.mEmptyChannelMessageMarginTop = emptyChannelMessageMarginTop;
     }
 
     public int getChannelItemsTitleMarginTop() {
@@ -155,8 +155,8 @@ public class ChannelStateSettings {
     }
 
     /* access modifiers changed from: package-private */
-    public void setChannelItemsTitleMarginBottom(int channelItemsTitleMarginBottom) {
-        this.mChannelItemsTitleMarginBottom = channelItemsTitleMarginBottom;
+    public void setChannelItemsTitleMarginTop(int channelItemsTitleMarginTop) {
+        this.mChannelItemsTitleMarginTop = channelItemsTitleMarginTop;
     }
 
     public int getChannelItemsTitleMarginBottom() {
@@ -164,8 +164,8 @@ public class ChannelStateSettings {
     }
 
     /* access modifiers changed from: package-private */
-    public void setEmptyChannelMessageMarginTop(int emptyChannelMessageMarginTop) {
-        this.mEmptyChannelMessageMarginTop = emptyChannelMessageMarginTop;
+    public void setChannelItemsTitleMarginBottom(int channelItemsTitleMarginBottom) {
+        this.mChannelItemsTitleMarginBottom = channelItemsTitleMarginBottom;
     }
 
     static class Builder {

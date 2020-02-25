@@ -8,9 +8,11 @@ import android.support.p001v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewParent;
+
 import com.google.android.libraries.social.analytics.binder.extensions.FragmentDeferredVisualElementProvider;
 import com.google.android.libraries.stitch.binder.Binder;
 import com.google.android.libraries.stitch.util.Objects;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;

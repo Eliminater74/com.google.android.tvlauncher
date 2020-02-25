@@ -1,8 +1,10 @@
 package com.google.android.tvlauncher.settings;
 
 import android.content.Context;
+
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceViewHolder;
+
 import com.google.android.tvlauncher.C1188R;
 
 public class SummaryPreferenceCategory extends PreferenceCategory {

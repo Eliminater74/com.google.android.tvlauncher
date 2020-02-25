@@ -13,16 +13,6 @@ public final class ExoDatabaseProvider extends SQLiteOpenHelper implements Datab
         super(context.getApplicationContext(), DATABASE_NAME, (SQLiteDatabase.CursorFactory) null, 1);
     }
 
-    public void onCreate(SQLiteDatabase db) {
-    }
-
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-    }
-
-    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        wipeDatabase(db);
-    }
-
     /* JADX WARNING: Code restructure failed: missing block: B:22:0x0088, code lost:
         r2 = move-exception;
      */
@@ -121,5 +111,15 @@ public final class ExoDatabaseProvider extends SQLiteOpenHelper implements Datab
             return
         */
         throw new UnsupportedOperationException("Method not decompiled: com.google.android.exoplayer2.database.ExoDatabaseProvider.wipeDatabase(android.database.sqlite.SQLiteDatabase):void");
+    }
+
+    public void onCreate(SQLiteDatabase db) {
+    }
+
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+    }
+
+    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        wipeDatabase(db);
     }
 }

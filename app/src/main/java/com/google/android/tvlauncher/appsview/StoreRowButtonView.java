@@ -14,21 +14,22 @@ import android.view.ViewOutlineProvider;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.google.android.libraries.social.analytics.visualelement.VisualElementTag;
 import com.google.android.tvlauncher.C1188R;
 
 public class StoreRowButtonView extends LinearLayout implements View.OnClickListener, View.OnFocusChangeListener {
-    private final int mAnimDuration;
     /* access modifiers changed from: private */
     public final int mCornerRadius;
+    private final int mAnimDuration;
     private final int mElevation;
     private final int mFocusedFillColor;
     private final float mFocusedScale;
+    private final int mUnfocusedFillColor;
     private OnAppsViewActionListener mOnAppsViewActionListener;
     private ImageView mStoreIconView;
     private LaunchItem mStoreItem;
     private TextView mStoreTitleView;
-    private final int mUnfocusedFillColor;
     private VisualElementTag mVisualElementTag;
 
     public StoreRowButtonView(Context context) {

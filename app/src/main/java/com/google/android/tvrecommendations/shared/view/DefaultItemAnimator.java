@@ -10,6 +10,7 @@ import android.support.p004v7.widget.RecyclerView;
 import android.support.p004v7.widget.SimpleItemAnimator;
 import android.view.View;
 import android.view.ViewPropertyAnimator;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -24,75 +25,13 @@ class DefaultItemAnimator extends SimpleItemAnimator {
     ArrayList<ArrayList<ChangeInfo>> mChangesList = new ArrayList<>();
     ArrayList<RecyclerView.ViewHolder> mMoveAnimations = new ArrayList<>();
     ArrayList<ArrayList<MoveInfo>> mMovesList = new ArrayList<>();
+    ArrayList<RecyclerView.ViewHolder> mRemoveAnimations = new ArrayList<>();
     private ArrayList<RecyclerView.ViewHolder> mPendingAdditions = new ArrayList<>();
     private ArrayList<ChangeInfo> mPendingChanges = new ArrayList<>();
     private ArrayList<MoveInfo> mPendingMoves = new ArrayList<>();
     private ArrayList<RecyclerView.ViewHolder> mPendingRemovals = new ArrayList<>();
-    ArrayList<RecyclerView.ViewHolder> mRemoveAnimations = new ArrayList<>();
 
     DefaultItemAnimator() {
-    }
-
-    private static class MoveInfo {
-        public int fromX;
-        public int fromY;
-        public RecyclerView.ViewHolder holder;
-        public int toX;
-        public int toY;
-
-        MoveInfo(RecyclerView.ViewHolder holder2, int fromX2, int fromY2, int toX2, int toY2) {
-            this.holder = holder2;
-            this.fromX = fromX2;
-            this.fromY = fromY2;
-            this.toX = toX2;
-            this.toY = toY2;
-        }
-    }
-
-    private static class ChangeInfo {
-        public int fromX;
-        public int fromY;
-        public RecyclerView.ViewHolder newHolder;
-        public RecyclerView.ViewHolder oldHolder;
-        public int toX;
-        public int toY;
-
-        private ChangeInfo(RecyclerView.ViewHolder oldHolder2, RecyclerView.ViewHolder newHolder2) {
-            this.oldHolder = oldHolder2;
-            this.newHolder = newHolder2;
-        }
-
-        ChangeInfo(RecyclerView.ViewHolder oldHolder2, RecyclerView.ViewHolder newHolder2, int fromX2, int fromY2, int toX2, int toY2) {
-            this(oldHolder2, newHolder2);
-            this.fromX = fromX2;
-            this.fromY = fromY2;
-            this.toX = toX2;
-            this.toY = toY2;
-        }
-
-        public String toString() {
-            String valueOf = String.valueOf(this.oldHolder);
-            String valueOf2 = String.valueOf(this.newHolder);
-            int i = this.fromX;
-            int i2 = this.fromY;
-            int i3 = this.toX;
-            int i4 = this.toY;
-            StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 106 + String.valueOf(valueOf2).length());
-            sb.append("ChangeInfo{oldHolder=");
-            sb.append(valueOf);
-            sb.append(", newHolder=");
-            sb.append(valueOf2);
-            sb.append(", fromX=");
-            sb.append(i);
-            sb.append(", fromY=");
-            sb.append(i2);
-            sb.append(", toX=");
-            sb.append(i3);
-            sb.append(", toY=");
-            sb.append(i4);
-            sb.append('}');
-            return sb.toString();
-        }
     }
 
     public void runPendingAnimations() {
@@ -574,5 +513,67 @@ class DefaultItemAnimator extends SimpleItemAnimator {
 
     public boolean canReuseUpdatedViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, @NonNull List<Object> payloads) {
         return !payloads.isEmpty() || super.canReuseUpdatedViewHolder(viewHolder, payloads);
+    }
+
+    private static class MoveInfo {
+        public int fromX;
+        public int fromY;
+        public RecyclerView.ViewHolder holder;
+        public int toX;
+        public int toY;
+
+        MoveInfo(RecyclerView.ViewHolder holder2, int fromX2, int fromY2, int toX2, int toY2) {
+            this.holder = holder2;
+            this.fromX = fromX2;
+            this.fromY = fromY2;
+            this.toX = toX2;
+            this.toY = toY2;
+        }
+    }
+
+    private static class ChangeInfo {
+        public int fromX;
+        public int fromY;
+        public RecyclerView.ViewHolder newHolder;
+        public RecyclerView.ViewHolder oldHolder;
+        public int toX;
+        public int toY;
+
+        private ChangeInfo(RecyclerView.ViewHolder oldHolder2, RecyclerView.ViewHolder newHolder2) {
+            this.oldHolder = oldHolder2;
+            this.newHolder = newHolder2;
+        }
+
+        ChangeInfo(RecyclerView.ViewHolder oldHolder2, RecyclerView.ViewHolder newHolder2, int fromX2, int fromY2, int toX2, int toY2) {
+            this(oldHolder2, newHolder2);
+            this.fromX = fromX2;
+            this.fromY = fromY2;
+            this.toX = toX2;
+            this.toY = toY2;
+        }
+
+        public String toString() {
+            String valueOf = String.valueOf(this.oldHolder);
+            String valueOf2 = String.valueOf(this.newHolder);
+            int i = this.fromX;
+            int i2 = this.fromY;
+            int i3 = this.toX;
+            int i4 = this.toY;
+            StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 106 + String.valueOf(valueOf2).length());
+            sb.append("ChangeInfo{oldHolder=");
+            sb.append(valueOf);
+            sb.append(", newHolder=");
+            sb.append(valueOf2);
+            sb.append(", fromX=");
+            sb.append(i);
+            sb.append(", fromY=");
+            sb.append(i2);
+            sb.append(", toX=");
+            sb.append(i3);
+            sb.append(", toY=");
+            sb.append(i4);
+            sb.append('}');
+            return sb.toString();
+        }
     }
 }

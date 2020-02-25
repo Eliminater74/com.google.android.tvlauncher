@@ -8,6 +8,7 @@ import android.provider.DocumentsContract;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
+
 import java.util.ArrayList;
 
 @RequiresApi(21)
@@ -22,21 +23,32 @@ class TreeDocumentFile extends DocumentFile {
     }
 
     @Nullable
-    public DocumentFile createFile(String mimeType, String displayName) {
-        Uri result = createFile(this.mContext, this.mUri, mimeType, displayName);
-        if (result != null) {
-            return new TreeDocumentFile(this, this.mContext, result);
-        }
-        return null;
-    }
-
-    @Nullable
     private static Uri createFile(Context context, Uri self, String mimeType, String displayName) {
         try {
             return DocumentsContract.createDocument(context.getContentResolver(), self, mimeType, displayName);
         } catch (Exception e) {
             return null;
         }
+    }
+
+    private static void closeQuietly(@Nullable AutoCloseable closeable) {
+        if (closeable != null) {
+            try {
+                closeable.close();
+            } catch (RuntimeException rethrown) {
+                throw rethrown;
+            } catch (Exception e) {
+            }
+        }
+    }
+
+    @Nullable
+    public DocumentFile createFile(String mimeType, String displayName) {
+        Uri result = createFile(this.mContext, this.mUri, mimeType, displayName);
+        if (result != null) {
+            return new TreeDocumentFile(this, this.mContext, result);
+        }
+        return null;
     }
 
     @Nullable
@@ -126,17 +138,6 @@ class TreeDocumentFile extends DocumentFile {
             resultFiles[i] = new TreeDocumentFile(this, this.mContext, result[i]);
         }
         return resultFiles;
-    }
-
-    private static void closeQuietly(@Nullable AutoCloseable closeable) {
-        if (closeable != null) {
-            try {
-                closeable.close();
-            } catch (RuntimeException rethrown) {
-                throw rethrown;
-            } catch (Exception e) {
-            }
-        }
     }
 
     public boolean renameTo(String displayName) {

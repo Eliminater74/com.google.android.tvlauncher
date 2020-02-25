@@ -4,6 +4,9 @@ import com.google.common.annotations.Beta;
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.base.Preconditions;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.Serializable;
 import java.util.AbstractList;
 import java.util.Arrays;
@@ -12,7 +15,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.RandomAccess;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible(emulated = true)
 public final class Chars {
@@ -193,25 +195,6 @@ public final class Chars {
         return LexicographicalComparator.INSTANCE;
     }
 
-    private enum LexicographicalComparator implements Comparator<char[]> {
-        INSTANCE;
-
-        public int compare(char[] left, char[] right) {
-            int minLength = Math.min(left.length, right.length);
-            for (int i = 0; i < minLength; i++) {
-                int result = Chars.compare(left[i], right[i]);
-                if (result != 0) {
-                    return result;
-                }
-            }
-            return left.length - right.length;
-        }
-
-        public String toString() {
-            return "Chars.lexicographicalComparator()";
-        }
-    }
-
     public static char[] toArray(Collection<Character> collection) {
         if (collection instanceof CharArrayAsList) {
             return ((CharArrayAsList) collection).toCharArray();
@@ -259,6 +242,25 @@ public final class Chars {
             return Collections.emptyList();
         }
         return new CharArrayAsList(backingArray);
+    }
+
+    private enum LexicographicalComparator implements Comparator<char[]> {
+        INSTANCE;
+
+        public int compare(char[] left, char[] right) {
+            int minLength = Math.min(left.length, right.length);
+            for (int i = 0; i < minLength; i++) {
+                int result = Chars.compare(left[i], right[i]);
+                if (result != 0) {
+                    return result;
+                }
+            }
+            return left.length - right.length;
+        }
+
+        public String toString() {
+            return "Chars.lexicographicalComparator()";
+        }
     }
 
     @GwtCompatible

@@ -1,9 +1,11 @@
 package com.google.android.libraries.performance.primes.scenario;
 
 import android.support.annotation.VisibleForTesting;
+
 import com.google.android.libraries.performance.primes.NoPiiString;
 import com.google.android.libraries.performance.primes.metriccapture.TimeCapture;
 import com.google.android.libraries.stitch.util.Preconditions;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,6 +21,14 @@ public final class ScenarioEvent {
         this.eventName = eventName2;
         this.tags = tags2;
         this.timestampMs = timestampMs2;
+    }
+
+    private static boolean objectEquals(Object a, Object b) {
+        return a == b || (a != null && a.equals(b));
+    }
+
+    public static Builder newBuilder() {
+        return new Builder();
     }
 
     public String getEventName() {
@@ -46,14 +56,6 @@ public final class ScenarioEvent {
             }
         }
         return true;
-    }
-
-    private static boolean objectEquals(Object a, Object b) {
-        return a == b || (a != null && a.equals(b));
-    }
-
-    public static Builder newBuilder() {
-        return new Builder();
     }
 
     public static final class Builder {

@@ -14,9 +14,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import androidx.preference.Preference;
-import androidx.preference.PreferenceGroup;
-import androidx.preference.PreferenceManager;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,12 +24,12 @@ public class PreferenceGroupAdapter extends RecyclerView.Adapter<PreferenceViewH
     private PreferenceGroup mPreferenceGroup;
     private List<PreferenceResourceDescriptor> mPreferenceResourceDescriptors;
     private List<Preference> mPreferences;
+    private List<Preference> mVisiblePreferences;
     private Runnable mSyncRunnable = new Runnable() {
         public void run() {
             PreferenceGroupAdapter.this.updatePreferences();
         }
     };
-    private List<Preference> mVisiblePreferences;
 
     public PreferenceGroupAdapter(PreferenceGroup preferenceGroup) {
         this.mPreferenceGroup = preferenceGroup;

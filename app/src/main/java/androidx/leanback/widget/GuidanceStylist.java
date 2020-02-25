@@ -9,7 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.leanback.C0364R;
+
 import java.util.List;
 
 public class GuidanceStylist implements FragmentAnimationProvider {
@@ -18,36 +20,6 @@ public class GuidanceStylist implements FragmentAnimationProvider {
     private View mGuidanceContainer;
     private ImageView mIconView;
     private TextView mTitleView;
-
-    public static class Guidance {
-        private final String mBreadcrumb;
-        private final String mDescription;
-        private final Drawable mIconDrawable;
-        private final String mTitle;
-
-        public Guidance(String title, String description, String breadcrumb, Drawable icon) {
-            this.mBreadcrumb = breadcrumb;
-            this.mTitle = title;
-            this.mDescription = description;
-            this.mIconDrawable = icon;
-        }
-
-        public String getTitle() {
-            return this.mTitle;
-        }
-
-        public String getDescription() {
-            return this.mDescription;
-        }
-
-        public String getBreadcrumb() {
-            return this.mBreadcrumb;
-        }
-
-        public Drawable getIconDrawable() {
-            return this.mIconDrawable;
-        }
-    }
 
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
      method: ClspMth{android.view.LayoutInflater.inflate(int, android.view.ViewGroup, boolean):android.view.View}
@@ -132,5 +104,35 @@ public class GuidanceStylist implements FragmentAnimationProvider {
     }
 
     public void onImeDisappearing(@NonNull List<Animator> list) {
+    }
+
+    public static class Guidance {
+        private final String mBreadcrumb;
+        private final String mDescription;
+        private final Drawable mIconDrawable;
+        private final String mTitle;
+
+        public Guidance(String title, String description, String breadcrumb, Drawable icon) {
+            this.mBreadcrumb = breadcrumb;
+            this.mTitle = title;
+            this.mDescription = description;
+            this.mIconDrawable = icon;
+        }
+
+        public String getTitle() {
+            return this.mTitle;
+        }
+
+        public String getDescription() {
+            return this.mDescription;
+        }
+
+        public String getBreadcrumb() {
+            return this.mBreadcrumb;
+        }
+
+        public Drawable getIconDrawable() {
+            return this.mIconDrawable;
+        }
     }
 }

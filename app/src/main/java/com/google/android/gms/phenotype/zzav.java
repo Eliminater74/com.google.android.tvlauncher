@@ -1,8 +1,8 @@
 package com.google.android.gms.phenotype;
 
-import com.google.android.gms.phenotype.PhenotypeFlagCommitter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+
 import java.util.concurrent.Executor;
 
 final /* synthetic */ class zzav implements OnCompleteListener {

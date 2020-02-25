@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.WorkerThread;
 import android.support.p001v4.util.ArraySet;
 import android.util.Log;
+
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -24,6 +25,7 @@ import com.google.android.gms.common.internal.zzv;
 import com.google.android.gms.signin.zzd;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
+
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -40,28 +42,37 @@ public final class zzbn implements Handler.Callback {
     public static final Object zzf = new Object();
     private static zzbn zzg;
     /* access modifiers changed from: private */
+    public final Context zzh;
+    /* access modifiers changed from: private */
+    public final GoogleApiAvailability zzi;
+    /* access modifiers changed from: private */
+    public final zzv zzj;
+    /* access modifiers changed from: private */
+    public final Map<zzi<?>, zzbp<?>> zzm = new ConcurrentHashMap(5, 0.75f, 1);
+    /* access modifiers changed from: private */
+    public final Set<zzi<?>> zzo = new ArraySet();
+    /* access modifiers changed from: private */
+    public final Handler zzq;
+    private final AtomicInteger zzk = new AtomicInteger(1);
+    private final AtomicInteger zzl = new AtomicInteger(0);
+    private final Set<zzi<?>> zzp = new ArraySet();
+    /* access modifiers changed from: private */
     public long zzc = DefaultRenderersFactory.DEFAULT_ALLOWED_VIDEO_JOINING_TIME_MS;
     /* access modifiers changed from: private */
     public long zzd = 120000;
     /* access modifiers changed from: private */
     public long zze = 10000;
     /* access modifiers changed from: private */
-    public final Context zzh;
-    /* access modifiers changed from: private */
-    public final GoogleApiAvailability zzi;
-    /* access modifiers changed from: private */
-    public final zzv zzj;
-    private final AtomicInteger zzk = new AtomicInteger(1);
-    private final AtomicInteger zzl = new AtomicInteger(0);
-    /* access modifiers changed from: private */
-    public final Map<zzi<?>, zzbp<?>> zzm = new ConcurrentHashMap(5, 0.75f, 1);
-    /* access modifiers changed from: private */
     public zzai zzn = null;
-    /* access modifiers changed from: private */
-    public final Set<zzi<?>> zzo = new ArraySet();
-    private final Set<zzi<?>> zzp = new ArraySet();
-    /* access modifiers changed from: private */
-    public final Handler zzq;
+
+    private zzbn(Context context, Looper looper, GoogleApiAvailability googleApiAvailability) {
+        this.zzh = context;
+        this.zzq = new Handler(looper, this);
+        this.zzi = googleApiAvailability;
+        this.zzj = new zzv(googleApiAvailability);
+        Handler handler = this.zzq;
+        handler.sendMessage(handler.obtainMessage(6));
+    }
 
     public static zzbn zza(Context context) {
         zzbn zzbn;
@@ -94,15 +105,6 @@ public final class zzbn implements Handler.Callback {
                 handler.sendMessageAtFrontOfQueue(handler.obtainMessage(10));
             }
         }
-    }
-
-    private zzbn(Context context, Looper looper, GoogleApiAvailability googleApiAvailability) {
-        this.zzh = context;
-        this.zzq = new Handler(looper, this);
-        this.zzi = googleApiAvailability;
-        this.zzj = new zzv(googleApiAvailability);
-        Handler handler = this.zzq;
-        handler.sendMessage(handler.obtainMessage(6));
     }
 
     public final int zzc() {

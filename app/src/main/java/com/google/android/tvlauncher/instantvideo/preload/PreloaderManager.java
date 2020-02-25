@@ -2,6 +2,7 @@ package com.google.android.tvlauncher.instantvideo.preload;
 
 import android.net.Uri;
 import android.support.annotation.Nullable;
+
 import com.google.android.tvlauncher.instantvideo.media.MediaPlayer;
 
 public abstract class PreloaderManager {

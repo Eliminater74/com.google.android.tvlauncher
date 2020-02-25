@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.p001v4.util.ArrayMap;
 import android.util.Log;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailabilityLight;
 import com.google.android.gms.common.api.Api;
@@ -17,6 +18,7 @@ import com.google.android.gms.common.internal.ClientSettings;
 import com.google.android.gms.common.internal.zzau;
 import com.google.android.gms.signin.SignInOptions;
 import com.google.android.gms.signin.zzd;
+
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -29,26 +31,50 @@ import java.util.concurrent.locks.Lock;
 
 /* compiled from: CompositeGoogleApiClient */
 final class zzw implements zzcc {
-    private final Context zza;
-    private final zzbb zzb;
-    private final Looper zzc;
     /* access modifiers changed from: private */
     public final zzbj zzd;
     /* access modifiers changed from: private */
     public final zzbj zze;
+    /* access modifiers changed from: private */
+    public final Lock zzm;
+    private final Context zza;
+    private final zzbb zzb;
+    private final Looper zzc;
     private final Map<Api.zzc<?>, zzbj> zzf;
     private final Set<zzda> zzg = Collections.newSetFromMap(new WeakHashMap());
     private final Api.Client zzh;
-    private Bundle zzi;
     /* access modifiers changed from: private */
     public ConnectionResult zzj = null;
     /* access modifiers changed from: private */
     public ConnectionResult zzk = null;
     /* access modifiers changed from: private */
     public boolean zzl = false;
-    /* access modifiers changed from: private */
-    public final Lock zzm;
+    private Bundle zzi;
     private int zzn = 0;
+
+    private zzw(Context context, zzbb zzbb, Lock lock, Looper looper, GoogleApiAvailabilityLight googleApiAvailabilityLight, Map<Api.zzc<?>, Api.Client> map, Map<Api.zzc<?>, Api.Client> map2, ClientSettings clientSettings, Api.zza<? extends zzd, SignInOptions> zza2, Api.Client client, ArrayList<zzu> arrayList, ArrayList<zzu> arrayList2, Map<Api<?>, Boolean> map3, Map<Api<?>, Boolean> map4) {
+        this.zza = context;
+        this.zzb = zzbb;
+        this.zzm = lock;
+        this.zzc = looper;
+        this.zzh = client;
+        Context context2 = context;
+        Lock lock2 = lock;
+        Looper looper2 = looper;
+        GoogleApiAvailabilityLight googleApiAvailabilityLight2 = googleApiAvailabilityLight;
+        zzbj zzbj = r3;
+        zzbj zzbj2 = new zzbj(context2, this.zzb, lock2, looper2, googleApiAvailabilityLight2, map2, null, map4, null, arrayList2, new zzy(this, null));
+        this.zzd = zzbj;
+        this.zze = new zzbj(context2, this.zzb, lock2, looper2, googleApiAvailabilityLight2, map, clientSettings, map3, zza2, arrayList, new zzz(this, null));
+        ArrayMap arrayMap = new ArrayMap();
+        for (Api.zzc<?> put : map2.keySet()) {
+            arrayMap.put(put, this.zzd);
+        }
+        for (Api.zzc<?> put2 : map.keySet()) {
+            arrayMap.put(put2, this.zze);
+        }
+        this.zzf = Collections.unmodifiableMap(arrayMap);
+    }
 
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
      method: com.google.android.gms.common.internal.zzau.zza(boolean, java.lang.Object):void
@@ -108,28 +134,8 @@ final class zzw implements zzcc {
         return new zzw(context, zzbb, lock, looper, googleApiAvailabilityLight, arrayMap, arrayMap2, clientSettings, zza2, client, arrayList2, arrayList3, arrayMap3, arrayMap4);
     }
 
-    private zzw(Context context, zzbb zzbb, Lock lock, Looper looper, GoogleApiAvailabilityLight googleApiAvailabilityLight, Map<Api.zzc<?>, Api.Client> map, Map<Api.zzc<?>, Api.Client> map2, ClientSettings clientSettings, Api.zza<? extends zzd, SignInOptions> zza2, Api.Client client, ArrayList<zzu> arrayList, ArrayList<zzu> arrayList2, Map<Api<?>, Boolean> map3, Map<Api<?>, Boolean> map4) {
-        this.zza = context;
-        this.zzb = zzbb;
-        this.zzm = lock;
-        this.zzc = looper;
-        this.zzh = client;
-        Context context2 = context;
-        Lock lock2 = lock;
-        Looper looper2 = looper;
-        GoogleApiAvailabilityLight googleApiAvailabilityLight2 = googleApiAvailabilityLight;
-        zzbj zzbj = r3;
-        zzbj zzbj2 = new zzbj(context2, this.zzb, lock2, looper2, googleApiAvailabilityLight2, map2, null, map4, null, arrayList2, new zzy(this, null));
-        this.zzd = zzbj;
-        this.zze = new zzbj(context2, this.zzb, lock2, looper2, googleApiAvailabilityLight2, map, clientSettings, map3, zza2, arrayList, new zzz(this, null));
-        ArrayMap arrayMap = new ArrayMap();
-        for (Api.zzc<?> put : map2.keySet()) {
-            arrayMap.put(put, this.zzd);
-        }
-        for (Api.zzc<?> put2 : map.keySet()) {
-            arrayMap.put(put2, this.zze);
-        }
-        this.zzf = Collections.unmodifiableMap(arrayMap);
+    private static boolean zzb(ConnectionResult connectionResult) {
+        return connectionResult != null && connectionResult.isSuccess();
     }
 
     /*  JADX ERROR: JadxRuntimeException in pass: MethodInvokeVisitor
@@ -404,10 +410,6 @@ final class zzw implements zzcc {
         } else if (bundle != null) {
             bundle2.putAll(bundle);
         }
-    }
-
-    private static boolean zzb(ConnectionResult connectionResult) {
-        return connectionResult != null && connectionResult.isSuccess();
     }
 
     public final void zza(String str, FileDescriptor fileDescriptor, PrintWriter printWriter, String[] strArr) {

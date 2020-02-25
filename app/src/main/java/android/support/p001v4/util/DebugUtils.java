@@ -5,6 +5,9 @@ import android.support.annotation.RestrictTo;
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
 /* renamed from: android.support.v4.util.DebugUtils */
 public class DebugUtils {
+    private DebugUtils() {
+    }
+
     public static void buildShortClassTag(Object cls, StringBuilder out) {
         int end;
         if (cls == null) {
@@ -18,8 +21,5 @@ public class DebugUtils {
         out.append(simpleName);
         out.append('{');
         out.append(Integer.toHexString(System.identityHashCode(cls)));
-    }
-
-    private DebugUtils() {
     }
 }

@@ -1,7 +1,9 @@
 package com.bumptech.glide.provider;
 
 import android.support.annotation.NonNull;
+
 import com.bumptech.glide.load.ResourceDecoder;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -79,9 +81,9 @@ public class ResourceDecoderRegistry {
     }
 
     private static class Entry<T, R> {
-        private final Class<T> dataClass;
         final ResourceDecoder<T, R> decoder;
         final Class<R> resourceClass;
+        private final Class<T> dataClass;
 
         public Entry(@NonNull Class<T> dataClass2, @NonNull Class<R> resourceClass2, ResourceDecoder<T, R> decoder2) {
             this.dataClass = dataClass2;

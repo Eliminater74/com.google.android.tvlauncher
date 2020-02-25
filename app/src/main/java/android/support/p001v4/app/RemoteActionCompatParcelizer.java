@@ -1,6 +1,7 @@
 package android.support.p001v4.app;
 
 import android.support.annotation.RestrictTo;
+
 import androidx.versionedparcelable.VersionedParcel;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY})

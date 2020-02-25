@@ -7,6 +7,7 @@ import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.annotation.VisibleForTesting;
+
 import java.util.Objects;
 
 /* renamed from: android.support.v4.graphics.ColorUtils */

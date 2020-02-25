@@ -7,23 +7,20 @@ import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.p001v4.content.Loader;
+
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 
 /* renamed from: android.support.v4.app.LoaderManager */
 public abstract class LoaderManager {
 
-    /* renamed from: android.support.v4.app.LoaderManager$LoaderCallbacks */
-    public interface LoaderCallbacks<D> {
-        @MainThread
-        @NonNull
-        Loader<D> onCreateLoader(int i, @Nullable Bundle bundle);
+    @NonNull
+    public static <T extends LifecycleOwner & ViewModelStoreOwner> LoaderManager getInstance(@NonNull T owner) {
+        return new LoaderManagerImpl(owner, ((ViewModelStoreOwner) owner).getViewModelStore());
+    }
 
-        @MainThread
-        void onLoadFinished(@NonNull Loader<D> loader, D d);
-
-        @MainThread
-        void onLoaderReset(@NonNull Loader<D> loader);
+    public static void enableDebugLogging(boolean enabled) {
+        LoaderManagerImpl.DEBUG = enabled;
     }
 
     @MainThread
@@ -45,16 +42,20 @@ public abstract class LoaderManager {
     @NonNull
     public abstract <D> Loader<D> restartLoader(int i, @Nullable Bundle bundle, @NonNull LoaderCallbacks<D> loaderCallbacks);
 
-    @NonNull
-    public static <T extends LifecycleOwner & ViewModelStoreOwner> LoaderManager getInstance(@NonNull T owner) {
-        return new LoaderManagerImpl(owner, ((ViewModelStoreOwner) owner).getViewModelStore());
-    }
-
-    public static void enableDebugLogging(boolean enabled) {
-        LoaderManagerImpl.DEBUG = enabled;
-    }
-
     public boolean hasRunningLoaders() {
         return false;
+    }
+
+    /* renamed from: android.support.v4.app.LoaderManager$LoaderCallbacks */
+    public interface LoaderCallbacks<D> {
+        @MainThread
+        @NonNull
+        Loader<D> onCreateLoader(int i, @Nullable Bundle bundle);
+
+        @MainThread
+        void onLoadFinished(@NonNull Loader<D> loader, D d);
+
+        @MainThread
+        void onLoaderReset(@NonNull Loader<D> loader);
     }
 }

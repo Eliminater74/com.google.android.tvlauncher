@@ -6,6 +6,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ObjectArrays;
 import com.google.common.collect.Sets;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -31,6 +32,52 @@ public final class SimpleTimeLimiter implements TimeLimiter {
         return new SimpleTimeLimiter(executor2);
     }
 
+    private static <T> T newProxy(Class<T> interfaceType, InvocationHandler handler) {
+        return interfaceType.cast(Proxy.newProxyInstance(interfaceType.getClassLoader(), new Class[]{interfaceType}, handler));
+    }
+
+    /* access modifiers changed from: private */
+    public static Exception throwCause(Exception e, boolean combineStackTraces) throws Exception {
+        Throwable cause = e.getCause();
+        if (cause != null) {
+            if (combineStackTraces) {
+                cause.setStackTrace((StackTraceElement[]) ObjectArrays.concat(cause.getStackTrace(), e.getStackTrace(), StackTraceElement.class));
+            }
+            if (cause instanceof Exception) {
+                throw ((Exception) cause);
+            } else if (cause instanceof Error) {
+                throw ((Error) cause);
+            } else {
+                throw e;
+            }
+        } else {
+            throw e;
+        }
+    }
+
+    private static Set<Method> findInterruptibleMethods(Class<?> interfaceType) {
+        Set<Method> set = Sets.newHashSet();
+        for (Method m : interfaceType.getMethods()) {
+            if (declaresInterruptedEx(m)) {
+                set.add(m);
+            }
+        }
+        return set;
+    }
+
+    private static boolean declaresInterruptedEx(Method method) {
+        for (Class<?> exType : method.getExceptionTypes()) {
+            if (exType == InterruptedException.class) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static void checkPositiveTimeout(long timeoutDuration) {
+        Preconditions.checkArgument(timeoutDuration > 0, "timeout must be positive: %s", timeoutDuration);
+    }
+
     public <T> T newProxy(T target, Class<T> interfaceType, long timeoutDuration, TimeUnit timeoutUnit) {
         Preconditions.checkNotNull(target);
         Preconditions.checkNotNull(interfaceType);
@@ -54,10 +101,6 @@ public final class SimpleTimeLimiter implements TimeLimiter {
                 }, j, timeUnit, findInterruptibleMethods.contains(method));
             }
         });
-    }
-
-    private static <T> T newProxy(Class<T> interfaceType, InvocationHandler handler) {
-        return interfaceType.cast(Proxy.newProxyInstance(interfaceType.getClassLoader(), new Class[]{interfaceType}, handler));
     }
 
     /* access modifiers changed from: private */
@@ -148,44 +191,6 @@ public final class SimpleTimeLimiter implements TimeLimiter {
         }
     }
 
-    /* access modifiers changed from: private */
-    public static Exception throwCause(Exception e, boolean combineStackTraces) throws Exception {
-        Throwable cause = e.getCause();
-        if (cause != null) {
-            if (combineStackTraces) {
-                cause.setStackTrace((StackTraceElement[]) ObjectArrays.concat(cause.getStackTrace(), e.getStackTrace(), StackTraceElement.class));
-            }
-            if (cause instanceof Exception) {
-                throw ((Exception) cause);
-            } else if (cause instanceof Error) {
-                throw ((Error) cause);
-            } else {
-                throw e;
-            }
-        } else {
-            throw e;
-        }
-    }
-
-    private static Set<Method> findInterruptibleMethods(Class<?> interfaceType) {
-        Set<Method> set = Sets.newHashSet();
-        for (Method m : interfaceType.getMethods()) {
-            if (declaresInterruptedEx(m)) {
-                set.add(m);
-            }
-        }
-        return set;
-    }
-
-    private static boolean declaresInterruptedEx(Method method) {
-        for (Class<?> exType : method.getExceptionTypes()) {
-            if (exType == InterruptedException.class) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     private void wrapAndThrowExecutionExceptionOrError(Throwable cause) throws ExecutionException {
         if (cause instanceof Error) {
             throw new ExecutionError((Error) cause);
@@ -201,9 +206,5 @@ public final class SimpleTimeLimiter implements TimeLimiter {
             throw new ExecutionError((Error) cause);
         }
         throw new UncheckedExecutionException(cause);
-    }
-
-    private static void checkPositiveTimeout(long timeoutDuration) {
-        Preconditions.checkArgument(timeoutDuration > 0, "timeout must be positive: %s", timeoutDuration);
     }
 }

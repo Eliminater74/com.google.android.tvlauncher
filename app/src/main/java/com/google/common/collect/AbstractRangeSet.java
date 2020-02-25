@@ -1,17 +1,17 @@
 package com.google.common.collect;
 
 import com.google.common.annotations.GwtIncompatible;
-import java.lang.Comparable;
+
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtIncompatible
 abstract class AbstractRangeSet<C extends Comparable> implements RangeSet<C> {
+    AbstractRangeSet() {
+    }
+
     public abstract boolean encloses(Range<C> range);
 
     public abstract Range<C> rangeContaining(C c);
-
-    AbstractRangeSet() {
-    }
 
     public boolean contains(C value) {
         return rangeContaining(value) != null;

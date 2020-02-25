@@ -1,7 +1,6 @@
 package com.google.android.tvlauncher.home;
 
 import android.view.View;
-import com.google.android.tvlauncher.home.FavoriteLaunchItemsAdapter;
 
 final /* synthetic */ class FavoriteLaunchItemsAdapter$BaseViewHolder$$Lambda$1 implements View.OnFocusChangeListener {
     private final FavoriteLaunchItemsAdapter.BaseViewHolder arg$1;

@@ -5,11 +5,13 @@ import android.os.Parcel;
 import android.os.ParcelFileDescriptor;
 import android.os.Parcelable;
 import android.util.Log;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.gms.common.internal.Hide;
 import com.google.android.gms.common.internal.ReflectedParcelable;
 import com.google.android.gms.internal.zzbkv;
 import com.google.android.gms.internal.zzbky;
+
 import java.io.BufferedOutputStream;
 import java.io.Closeable;
 import java.io.DataInputStream;
@@ -24,8 +26,8 @@ import java.nio.ByteBuffer;
 public class BitmapTeleporter extends zzbkv implements ReflectedParcelable {
     public static final Parcelable.Creator<BitmapTeleporter> CREATOR = new zza();
     private final int zza;
-    private ParcelFileDescriptor zzb;
     private final int zzc;
+    private ParcelFileDescriptor zzb;
     private Bitmap zzd;
     private boolean zze;
     private File zzf;
@@ -44,6 +46,14 @@ public class BitmapTeleporter extends zzbkv implements ReflectedParcelable {
         this.zzc = 0;
         this.zzd = bitmap;
         this.zze = true;
+    }
+
+    private static void zza(Closeable closeable) {
+        try {
+            closeable.close();
+        } catch (IOException e) {
+            Log.w("BitmapTeleporter", "Could not close stream", e);
+        }
     }
 
     public Bitmap get() {
@@ -142,14 +152,6 @@ public class BitmapTeleporter extends zzbkv implements ReflectedParcelable {
             }
         } else {
             throw new IllegalStateException("setTempDir() must be called before writing this object to a parcel");
-        }
-    }
-
-    private static void zza(Closeable closeable) {
-        try {
-            closeable.close();
-        } catch (IOException e) {
-            Log.w("BitmapTeleporter", "Could not close stream", e);
         }
     }
 }

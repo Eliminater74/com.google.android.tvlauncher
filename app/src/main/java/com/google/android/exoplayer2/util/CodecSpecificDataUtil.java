@@ -2,8 +2,10 @@ package com.google.android.exoplayer2.util;
 
 import android.support.annotation.Nullable;
 import android.util.Pair;
+
 import com.google.android.exoplayer2.ParserException;
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.util.ArrayList;
 import java.util.List;
 

@@ -6,6 +6,9 @@ import android.os.SystemClock;
 public final class zzh implements Clock {
     private static zzh zza = new zzh();
 
+    private zzh() {
+    }
+
     public static Clock zza() {
         return zza;
     }
@@ -24,8 +27,5 @@ public final class zzh implements Clock {
 
     public final long currentThreadTimeMillis() {
         return SystemClock.currentThreadTimeMillis();
-    }
-
-    private zzh() {
     }
 }

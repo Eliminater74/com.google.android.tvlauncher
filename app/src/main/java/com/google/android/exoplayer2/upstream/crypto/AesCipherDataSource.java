@@ -2,18 +2,20 @@ package com.google.android.exoplayer2.upstream.crypto;
 
 import android.net.Uri;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.TransferListener;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 public final class AesCipherDataSource implements DataSource {
-    @Nullable
-    private AesFlushingCipher cipher;
     private final byte[] secretKey;
     private final DataSource upstream;
+    @Nullable
+    private AesFlushingCipher cipher;
 
     public AesCipherDataSource(byte[] secretKey2, DataSource upstream2) {
         this.upstream = upstream2;

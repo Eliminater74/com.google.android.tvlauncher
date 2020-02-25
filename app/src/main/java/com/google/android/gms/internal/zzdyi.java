@@ -4,8 +4,10 @@ import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
+
 import com.google.android.gms.common.internal.Hide;
 import com.google.android.gms.common.internal.zzau;
+
 import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +27,17 @@ public final class zzdyi {
     private static final String zzi = "\u0002";
     @SuppressLint({"TrulyRandom"})
     private static final SecureRandom zzj = new SecureRandom();
+
+    static {
+        HashMap hashMap = new HashMap();
+        zza = hashMap;
+        hashMap.put("circle", -1);
+        zza.put("extendedCircles", 4);
+        zza.put("myCircles", 3);
+        zza.put("domain", 2);
+        zza.put("public", 1);
+        zza.put(null, -2);
+    }
 
     public static String zza(String str) {
         if (str == null || str.length() == 0) {
@@ -100,16 +113,5 @@ public final class zzdyi {
             i++;
         }
         return str.substring(i);
-    }
-
-    static {
-        HashMap hashMap = new HashMap();
-        zza = hashMap;
-        hashMap.put("circle", -1);
-        zza.put("extendedCircles", 4);
-        zza.put("myCircles", 3);
-        zza.put("domain", 2);
-        zza.put("public", 1);
-        zza.put(null, -2);
     }
 }

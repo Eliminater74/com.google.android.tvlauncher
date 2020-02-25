@@ -5,6 +5,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.RemoteException;
 import android.util.Log;
+
 import com.google.android.gms.common.internal.Hide;
 import com.google.android.gms.common.internal.zzab;
 import com.google.android.gms.dynamic.IObjectWrapper;
@@ -30,6 +31,24 @@ public final class zzl extends zzbkv {
         this.zza = str;
         this.zzb = zzf;
         this.zzc = z;
+    }
+
+    private static zzf zza(IBinder iBinder) {
+        if (iBinder == null) {
+            return null;
+        }
+        try {
+            IObjectWrapper zzb2 = zzab.zza(iBinder).zzb();
+            byte[] bArr = zzb2 == null ? null : (byte[]) zzn.zza(zzb2);
+            if (bArr != null) {
+                return new zzg(bArr);
+            }
+            Log.e("GoogleCertificatesQuery", "Could not unwrap certificate");
+            return null;
+        } catch (RemoteException e) {
+            Log.e("GoogleCertificatesQuery", "Could not unwrap certificate", e);
+            return null;
+        }
     }
 
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
@@ -100,23 +119,5 @@ public final class zzl extends zzbkv {
         zzbky.zza(parcel, 2, iBinder, false);
         zzbky.zza(parcel, 3, this.zzc);
         zzbky.zza(parcel, zza2);
-    }
-
-    private static zzf zza(IBinder iBinder) {
-        if (iBinder == null) {
-            return null;
-        }
-        try {
-            IObjectWrapper zzb2 = zzab.zza(iBinder).zzb();
-            byte[] bArr = zzb2 == null ? null : (byte[]) zzn.zza(zzb2);
-            if (bArr != null) {
-                return new zzg(bArr);
-            }
-            Log.e("GoogleCertificatesQuery", "Could not unwrap certificate");
-            return null;
-        } catch (RemoteException e) {
-            Log.e("GoogleCertificatesQuery", "Could not unwrap certificate", e);
-            return null;
-        }
     }
 }

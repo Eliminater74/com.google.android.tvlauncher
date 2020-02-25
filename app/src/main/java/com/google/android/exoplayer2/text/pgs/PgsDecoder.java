@@ -1,12 +1,14 @@
 package com.google.android.exoplayer2.text.pgs;
 
 import android.graphics.Bitmap;
+
 import com.google.android.exoplayer2.text.Cue;
 import com.google.android.exoplayer2.text.SimpleSubtitleDecoder;
 import com.google.android.exoplayer2.text.Subtitle;
 import com.google.android.exoplayer2.text.SubtitleDecoderException;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.Util;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -25,32 +27,6 @@ public final class PgsDecoder extends SimpleSubtitleDecoder {
 
     public PgsDecoder() {
         super("PgsDecoder");
-    }
-
-    /* access modifiers changed from: protected */
-    public Subtitle decode(byte[] data, int size, boolean reset) throws SubtitleDecoderException {
-        this.buffer.reset(data, size);
-        maybeInflateData(this.buffer);
-        this.cueBuilder.reset();
-        ArrayList<Cue> cues = new ArrayList<>();
-        while (this.buffer.bytesLeft() >= 3) {
-            Cue cue = readNextSection(this.buffer, this.cueBuilder);
-            if (cue != null) {
-                cues.add(cue);
-            }
-        }
-        return new PgsSubtitle(Collections.unmodifiableList(cues));
-    }
-
-    private void maybeInflateData(ParsableByteArray buffer2) {
-        if (buffer2.bytesLeft() > 0 && buffer2.peekUnsignedByte() == 120) {
-            if (this.inflater == null) {
-                this.inflater = new Inflater();
-            }
-            if (Util.inflate(buffer2, this.inflatedBuffer, this.inflater)) {
-                buffer2.reset(this.inflatedBuffer.data, this.inflatedBuffer.limit());
-            }
-        }
     }
 
     private static Cue readNextSection(ParsableByteArray buffer2, CueBuilder cueBuilder2) {
@@ -83,13 +59,39 @@ public final class PgsDecoder extends SimpleSubtitleDecoder {
         return cue;
     }
 
+    /* access modifiers changed from: protected */
+    public Subtitle decode(byte[] data, int size, boolean reset) throws SubtitleDecoderException {
+        this.buffer.reset(data, size);
+        maybeInflateData(this.buffer);
+        this.cueBuilder.reset();
+        ArrayList<Cue> cues = new ArrayList<>();
+        while (this.buffer.bytesLeft() >= 3) {
+            Cue cue = readNextSection(this.buffer, this.cueBuilder);
+            if (cue != null) {
+                cues.add(cue);
+            }
+        }
+        return new PgsSubtitle(Collections.unmodifiableList(cues));
+    }
+
+    private void maybeInflateData(ParsableByteArray buffer2) {
+        if (buffer2.bytesLeft() > 0 && buffer2.peekUnsignedByte() == 120) {
+            if (this.inflater == null) {
+                this.inflater = new Inflater();
+            }
+            if (Util.inflate(buffer2, this.inflatedBuffer, this.inflater)) {
+                buffer2.reset(this.inflatedBuffer.data, this.inflatedBuffer.limit());
+            }
+        }
+    }
+
     private static final class CueBuilder {
         private final ParsableByteArray bitmapData = new ParsableByteArray();
+        private final int[] colors = new int[256];
         private int bitmapHeight;
         private int bitmapWidth;
         private int bitmapX;
         private int bitmapY;
-        private final int[] colors = new int[256];
         private boolean colorsSet;
         private int planeHeight;
         private int planeWidth;

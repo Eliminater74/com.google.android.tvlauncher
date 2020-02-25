@@ -8,6 +8,7 @@ import com.google.android.exoplayer2.extractor.PositionHolder;
 import com.google.android.exoplayer2.extractor.SeekMap;
 import com.google.android.exoplayer2.extractor.TrackOutput;
 import com.google.android.exoplayer2.util.ParsableByteArray;
+
 import java.io.IOException;
 
 abstract class StreamReader {
@@ -15,11 +16,11 @@ abstract class StreamReader {
     private static final int STATE_READ_HEADERS = 0;
     private static final int STATE_READ_PAYLOAD = 2;
     private static final int STATE_SKIP_HEADERS = 1;
+    private final OggPacket oggPacket = new OggPacket();
     private long currentGranule;
     private ExtractorOutput extractorOutput;
     private boolean formatSet;
     private long lengthOfReadPacket;
-    private final OggPacket oggPacket = new OggPacket();
     private OggSeeker oggSeeker;
     private long payloadStartPosition;
     private int sampleRate;
@@ -34,14 +35,6 @@ abstract class StreamReader {
 
     /* access modifiers changed from: protected */
     public abstract boolean readHeaders(ParsableByteArray parsableByteArray, long j, SetupData setupData2) throws IOException, InterruptedException;
-
-    static class SetupData {
-        Format format;
-        OggSeeker oggSeeker;
-
-        SetupData() {
-        }
-    }
 
     /* access modifiers changed from: package-private */
     public void init(ExtractorOutput output, TrackOutput trackOutput2) {
@@ -172,6 +165,14 @@ abstract class StreamReader {
     /* access modifiers changed from: protected */
     public void onSeekEnd(long currentGranule2) {
         this.currentGranule = currentGranule2;
+    }
+
+    static class SetupData {
+        Format format;
+        OggSeeker oggSeeker;
+
+        SetupData() {
+        }
     }
 
     private static final class UnseekableOggSeeker implements OggSeeker {

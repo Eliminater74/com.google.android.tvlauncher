@@ -2,9 +2,7 @@ package com.google.protobuf;
 
 import com.google.common.base.Ascii;
 import com.google.common.primitives.UnsignedBytes;
-import com.google.protobuf.InvalidProtocolBufferException;
-import com.google.protobuf.MapEntryLite;
-import com.google.protobuf.WireFormat;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.List;
@@ -14,7 +12,8 @@ abstract class BinaryReader implements Reader {
     private static final int FIXED32_MULTIPLE_MASK = 3;
     private static final int FIXED64_MULTIPLE_MASK = 7;
 
-    public abstract int getTotalBytesRead();
+    private BinaryReader() {
+    }
 
     public static BinaryReader newInstance(ByteBuffer buffer, boolean bufferIsImmutable) {
         if (buffer.hasArray()) {
@@ -23,8 +22,7 @@ abstract class BinaryReader implements Reader {
         throw new IllegalArgumentException("Direct buffers not yet supported");
     }
 
-    private BinaryReader() {
-    }
+    public abstract int getTotalBytesRead();
 
     public boolean shouldDiscardUnknownFields() {
         return false;
@@ -33,8 +31,8 @@ abstract class BinaryReader implements Reader {
     private static final class SafeHeapReader extends BinaryReader {
         private final byte[] buffer;
         private final boolean bufferIsImmutable;
-        private int endGroupTag;
         private final int initialPos;
+        private int endGroupTag;
         private int limit;
         private int pos;
         private int tag;

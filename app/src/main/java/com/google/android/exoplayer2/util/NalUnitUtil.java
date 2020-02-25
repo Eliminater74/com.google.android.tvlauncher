@@ -1,62 +1,22 @@
 package com.google.android.exoplayer2.util;
 
 import com.google.common.base.Ascii;
+
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 public final class NalUnitUtil {
     public static final float[] ASPECT_RATIO_IDC_VALUES = {1.0f, 1.0f, 1.0909091f, 0.90909094f, 1.4545455f, 1.2121212f, 2.1818182f, 1.8181819f, 2.909091f, 2.4242425f, 1.6363636f, 1.3636364f, 1.939394f, 1.6161616f, 1.3333334f, 1.5f, 2.0f};
     public static final int EXTENDED_SAR = 255;
+    public static final byte[] NAL_START_CODE = {0, 0, 0, 1};
     private static final int H264_NAL_UNIT_TYPE_SEI = 6;
     private static final int H264_NAL_UNIT_TYPE_SPS = 7;
     private static final int H265_NAL_UNIT_TYPE_PREFIX_SEI = 39;
-    public static final byte[] NAL_START_CODE = {0, 0, 0, 1};
     private static final String TAG = "NalUnitUtil";
-    private static int[] scratchEscapePositions = new int[10];
     private static final Object scratchEscapePositionsLock = new Object();
+    private static int[] scratchEscapePositions = new int[10];
 
-    public static final class SpsData {
-        public final int constraintsFlagsAndReservedZero2Bits;
-        public final boolean deltaPicOrderAlwaysZeroFlag;
-        public final boolean frameMbsOnlyFlag;
-        public final int frameNumLength;
-        public final int height;
-        public final int levelIdc;
-        public final int picOrderCntLsbLength;
-        public final int picOrderCountType;
-        public final float pixelWidthAspectRatio;
-        public final int profileIdc;
-        public final boolean separateColorPlaneFlag;
-        public final int seqParameterSetId;
-        public final int width;
-
-        public SpsData(int profileIdc2, int constraintsFlagsAndReservedZero2Bits2, int levelIdc2, int seqParameterSetId2, int width2, int height2, float pixelWidthAspectRatio2, boolean separateColorPlaneFlag2, boolean frameMbsOnlyFlag2, int frameNumLength2, int picOrderCountType2, int picOrderCntLsbLength2, boolean deltaPicOrderAlwaysZeroFlag2) {
-            this.profileIdc = profileIdc2;
-            this.constraintsFlagsAndReservedZero2Bits = constraintsFlagsAndReservedZero2Bits2;
-            this.levelIdc = levelIdc2;
-            this.seqParameterSetId = seqParameterSetId2;
-            this.width = width2;
-            this.height = height2;
-            this.pixelWidthAspectRatio = pixelWidthAspectRatio2;
-            this.separateColorPlaneFlag = separateColorPlaneFlag2;
-            this.frameMbsOnlyFlag = frameMbsOnlyFlag2;
-            this.frameNumLength = frameNumLength2;
-            this.picOrderCountType = picOrderCountType2;
-            this.picOrderCntLsbLength = picOrderCntLsbLength2;
-            this.deltaPicOrderAlwaysZeroFlag = deltaPicOrderAlwaysZeroFlag2;
-        }
-    }
-
-    public static final class PpsData {
-        public final boolean bottomFieldPicOrderInFramePresentFlag;
-        public final int picParameterSetId;
-        public final int seqParameterSetId;
-
-        public PpsData(int picParameterSetId2, int seqParameterSetId2, boolean bottomFieldPicOrderInFramePresentFlag2) {
-            this.picParameterSetId = picParameterSetId2;
-            this.seqParameterSetId = seqParameterSetId2;
-            this.bottomFieldPicOrderInFramePresentFlag = bottomFieldPicOrderInFramePresentFlag2;
-        }
+    private NalUnitUtil() {
     }
 
     /* JADX INFO: Multiple debug info for r6v2 int: [D('i' int), D('remainingLength' int)] */
@@ -362,6 +322,47 @@ public final class NalUnitUtil {
         }
     }
 
-    private NalUnitUtil() {
+    public static final class SpsData {
+        public final int constraintsFlagsAndReservedZero2Bits;
+        public final boolean deltaPicOrderAlwaysZeroFlag;
+        public final boolean frameMbsOnlyFlag;
+        public final int frameNumLength;
+        public final int height;
+        public final int levelIdc;
+        public final int picOrderCntLsbLength;
+        public final int picOrderCountType;
+        public final float pixelWidthAspectRatio;
+        public final int profileIdc;
+        public final boolean separateColorPlaneFlag;
+        public final int seqParameterSetId;
+        public final int width;
+
+        public SpsData(int profileIdc2, int constraintsFlagsAndReservedZero2Bits2, int levelIdc2, int seqParameterSetId2, int width2, int height2, float pixelWidthAspectRatio2, boolean separateColorPlaneFlag2, boolean frameMbsOnlyFlag2, int frameNumLength2, int picOrderCountType2, int picOrderCntLsbLength2, boolean deltaPicOrderAlwaysZeroFlag2) {
+            this.profileIdc = profileIdc2;
+            this.constraintsFlagsAndReservedZero2Bits = constraintsFlagsAndReservedZero2Bits2;
+            this.levelIdc = levelIdc2;
+            this.seqParameterSetId = seqParameterSetId2;
+            this.width = width2;
+            this.height = height2;
+            this.pixelWidthAspectRatio = pixelWidthAspectRatio2;
+            this.separateColorPlaneFlag = separateColorPlaneFlag2;
+            this.frameMbsOnlyFlag = frameMbsOnlyFlag2;
+            this.frameNumLength = frameNumLength2;
+            this.picOrderCountType = picOrderCountType2;
+            this.picOrderCntLsbLength = picOrderCntLsbLength2;
+            this.deltaPicOrderAlwaysZeroFlag = deltaPicOrderAlwaysZeroFlag2;
+        }
+    }
+
+    public static final class PpsData {
+        public final boolean bottomFieldPicOrderInFramePresentFlag;
+        public final int picParameterSetId;
+        public final int seqParameterSetId;
+
+        public PpsData(int picParameterSetId2, int seqParameterSetId2, boolean bottomFieldPicOrderInFramePresentFlag2) {
+            this.picParameterSetId = picParameterSetId2;
+            this.seqParameterSetId = seqParameterSetId2;
+            this.bottomFieldPicOrderInFramePresentFlag = bottomFieldPicOrderInFramePresentFlag2;
+        }
     }
 }

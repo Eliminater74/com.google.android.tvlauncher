@@ -8,7 +8,7 @@ import android.support.annotation.ArrayRes;
 import android.support.annotation.NonNull;
 import android.support.p001v4.content.res.TypedArrayUtils;
 import android.util.AttributeSet;
-import androidx.preference.Preference;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -39,6 +39,10 @@ public class MultiSelectListPreference extends DialogPreference {
         this(context, null);
     }
 
+    public CharSequence[] getEntries() {
+        return this.mEntries;
+    }
+
     public void setEntries(CharSequence[] entries) {
         this.mEntries = entries;
     }
@@ -47,8 +51,8 @@ public class MultiSelectListPreference extends DialogPreference {
         setEntries(getContext().getResources().getTextArray(entriesResId));
     }
 
-    public CharSequence[] getEntries() {
-        return this.mEntries;
+    public CharSequence[] getEntryValues() {
+        return this.mEntryValues;
     }
 
     public void setEntryValues(CharSequence[] entryValues) {
@@ -59,8 +63,8 @@ public class MultiSelectListPreference extends DialogPreference {
         setEntryValues(getContext().getResources().getTextArray(entryValuesResId));
     }
 
-    public CharSequence[] getEntryValues() {
-        return this.mEntryValues;
+    public Set<String> getValues() {
+        return this.mValues;
     }
 
     public void setValues(Set<String> values) {
@@ -68,10 +72,6 @@ public class MultiSelectListPreference extends DialogPreference {
         this.mValues.addAll(values);
         persistStringSet(values);
         notifyChanged();
-    }
-
-    public Set<String> getValues() {
-        return this.mValues;
     }
 
     public int findIndexOfValue(String value) {

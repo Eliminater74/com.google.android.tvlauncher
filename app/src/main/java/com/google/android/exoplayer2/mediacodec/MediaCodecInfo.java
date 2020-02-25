@@ -2,11 +2,10 @@ package com.google.android.exoplayer2.mediacodec;
 
 import android.annotation.TargetApi;
 import android.graphics.Point;
-import android.media.MediaCodecInfo;
 import android.support.annotation.Nullable;
 import android.util.Pair;
+
 import com.google.android.exoplayer2.Format;
-import com.google.android.exoplayer2.mediacodec.MediaCodecUtil;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.MimeTypes;
@@ -18,25 +17,13 @@ public final class MediaCodecInfo {
     public final boolean adaptive;
     @Nullable
     public final MediaCodecInfo.CodecCapabilities capabilities;
-    private final boolean isVideo;
     @Nullable
     public final String mimeType;
     public final String name;
     public final boolean passthrough;
     public final boolean secure;
     public final boolean tunneling;
-
-    public static MediaCodecInfo newPassthroughInstance(String name2) {
-        return new MediaCodecInfo(name2, null, null, true, false, false);
-    }
-
-    public static MediaCodecInfo newInstance(String name2, String mimeType2, MediaCodecInfo.CodecCapabilities capabilities2) {
-        return new MediaCodecInfo(name2, mimeType2, capabilities2, false, false, false);
-    }
-
-    public static MediaCodecInfo newInstance(String name2, String mimeType2, MediaCodecInfo.CodecCapabilities capabilities2, boolean forceDisableAdaptive, boolean forceSecure) {
-        return new MediaCodecInfo(name2, mimeType2, capabilities2, false, forceDisableAdaptive, forceSecure);
-    }
+    private final boolean isVideo;
 
     private MediaCodecInfo(String name2, @Nullable String mimeType2, @Nullable MediaCodecInfo.CodecCapabilities capabilities2, boolean passthrough2, boolean forceDisableAdaptive, boolean forceSecure) {
         this.name = (String) Assertions.checkNotNull(name2);
@@ -51,6 +38,82 @@ public final class MediaCodecInfo {
         }
         this.secure = z;
         this.isVideo = MimeTypes.isVideo(mimeType2);
+    }
+
+    public static MediaCodecInfo newPassthroughInstance(String name2) {
+        return new MediaCodecInfo(name2, null, null, true, false, false);
+    }
+
+    public static MediaCodecInfo newInstance(String name2, String mimeType2, MediaCodecInfo.CodecCapabilities capabilities2) {
+        return new MediaCodecInfo(name2, mimeType2, capabilities2, false, false, false);
+    }
+
+    public static MediaCodecInfo newInstance(String name2, String mimeType2, MediaCodecInfo.CodecCapabilities capabilities2, boolean forceDisableAdaptive, boolean forceSecure) {
+        return new MediaCodecInfo(name2, mimeType2, capabilities2, false, forceDisableAdaptive, forceSecure);
+    }
+
+    private static int adjustMaxInputChannelCount(String name2, String mimeType2, int maxChannelCount) {
+        int assumedMaxChannelCount;
+        if (maxChannelCount > 1 || ((Util.SDK_INT >= 26 && maxChannelCount > 0) || MimeTypes.AUDIO_MPEG.equals(mimeType2) || MimeTypes.AUDIO_AMR_NB.equals(mimeType2) || MimeTypes.AUDIO_AMR_WB.equals(mimeType2) || MimeTypes.AUDIO_AAC.equals(mimeType2) || MimeTypes.AUDIO_VORBIS.equals(mimeType2) || MimeTypes.AUDIO_OPUS.equals(mimeType2) || MimeTypes.AUDIO_RAW.equals(mimeType2) || MimeTypes.AUDIO_FLAC.equals(mimeType2) || MimeTypes.AUDIO_ALAW.equals(mimeType2) || MimeTypes.AUDIO_MLAW.equals(mimeType2) || MimeTypes.AUDIO_MSGSM.equals(mimeType2))) {
+            return maxChannelCount;
+        }
+        if (MimeTypes.AUDIO_AC3.equals(mimeType2)) {
+            assumedMaxChannelCount = 6;
+        } else if (MimeTypes.AUDIO_E_AC3.equals(mimeType2)) {
+            assumedMaxChannelCount = 16;
+        } else {
+            assumedMaxChannelCount = 30;
+        }
+        StringBuilder sb = new StringBuilder(String.valueOf(name2).length() + 59);
+        sb.append("AssumedMaxChannelAdjustment: ");
+        sb.append(name2);
+        sb.append(", [");
+        sb.append(maxChannelCount);
+        sb.append(" to ");
+        sb.append(assumedMaxChannelCount);
+        sb.append("]");
+        Log.m30w(TAG, sb.toString());
+        return assumedMaxChannelCount;
+    }
+
+    private static boolean isAdaptive(MediaCodecInfo.CodecCapabilities capabilities2) {
+        return Util.SDK_INT >= 19 && isAdaptiveV19(capabilities2);
+    }
+
+    @TargetApi(19)
+    private static boolean isAdaptiveV19(MediaCodecInfo.CodecCapabilities capabilities2) {
+        return capabilities2.isFeatureSupported("adaptive-playback");
+    }
+
+    private static boolean isTunneling(MediaCodecInfo.CodecCapabilities capabilities2) {
+        return Util.SDK_INT >= 21 && isTunnelingV21(capabilities2);
+    }
+
+    @TargetApi(21)
+    private static boolean isTunnelingV21(MediaCodecInfo.CodecCapabilities capabilities2) {
+        return capabilities2.isFeatureSupported("tunneled-playback");
+    }
+
+    private static boolean isSecure(MediaCodecInfo.CodecCapabilities capabilities2) {
+        return Util.SDK_INT >= 21 && isSecureV21(capabilities2);
+    }
+
+    @TargetApi(21)
+    private static boolean isSecureV21(MediaCodecInfo.CodecCapabilities capabilities2) {
+        return capabilities2.isFeatureSupported("secure-playback");
+    }
+
+    @TargetApi(21)
+    private static boolean areSizeAndRateSupportedV21(MediaCodecInfo.VideoCapabilities capabilities2, int width, int height, double frameRate) {
+        if (frameRate == -1.0d || frameRate <= 0.0d) {
+            return capabilities2.isSizeSupported(width, height);
+        }
+        return capabilities2.areSizeAndRateSupported(width, height, frameRate);
+    }
+
+    @TargetApi(23)
+    private static int getMaxSupportedInstancesV23(MediaCodecInfo.CodecCapabilities capabilities2) {
+        return capabilities2.getMaxSupportedInstances();
     }
 
     public String toString() {
@@ -311,69 +374,5 @@ public final class MediaCodecInfo {
         sb.append(str3);
         sb.append("]");
         Log.m24d(TAG, sb.toString());
-    }
-
-    private static int adjustMaxInputChannelCount(String name2, String mimeType2, int maxChannelCount) {
-        int assumedMaxChannelCount;
-        if (maxChannelCount > 1 || ((Util.SDK_INT >= 26 && maxChannelCount > 0) || MimeTypes.AUDIO_MPEG.equals(mimeType2) || MimeTypes.AUDIO_AMR_NB.equals(mimeType2) || MimeTypes.AUDIO_AMR_WB.equals(mimeType2) || MimeTypes.AUDIO_AAC.equals(mimeType2) || MimeTypes.AUDIO_VORBIS.equals(mimeType2) || MimeTypes.AUDIO_OPUS.equals(mimeType2) || MimeTypes.AUDIO_RAW.equals(mimeType2) || MimeTypes.AUDIO_FLAC.equals(mimeType2) || MimeTypes.AUDIO_ALAW.equals(mimeType2) || MimeTypes.AUDIO_MLAW.equals(mimeType2) || MimeTypes.AUDIO_MSGSM.equals(mimeType2))) {
-            return maxChannelCount;
-        }
-        if (MimeTypes.AUDIO_AC3.equals(mimeType2)) {
-            assumedMaxChannelCount = 6;
-        } else if (MimeTypes.AUDIO_E_AC3.equals(mimeType2)) {
-            assumedMaxChannelCount = 16;
-        } else {
-            assumedMaxChannelCount = 30;
-        }
-        StringBuilder sb = new StringBuilder(String.valueOf(name2).length() + 59);
-        sb.append("AssumedMaxChannelAdjustment: ");
-        sb.append(name2);
-        sb.append(", [");
-        sb.append(maxChannelCount);
-        sb.append(" to ");
-        sb.append(assumedMaxChannelCount);
-        sb.append("]");
-        Log.m30w(TAG, sb.toString());
-        return assumedMaxChannelCount;
-    }
-
-    private static boolean isAdaptive(MediaCodecInfo.CodecCapabilities capabilities2) {
-        return Util.SDK_INT >= 19 && isAdaptiveV19(capabilities2);
-    }
-
-    @TargetApi(19)
-    private static boolean isAdaptiveV19(MediaCodecInfo.CodecCapabilities capabilities2) {
-        return capabilities2.isFeatureSupported("adaptive-playback");
-    }
-
-    private static boolean isTunneling(MediaCodecInfo.CodecCapabilities capabilities2) {
-        return Util.SDK_INT >= 21 && isTunnelingV21(capabilities2);
-    }
-
-    @TargetApi(21)
-    private static boolean isTunnelingV21(MediaCodecInfo.CodecCapabilities capabilities2) {
-        return capabilities2.isFeatureSupported("tunneled-playback");
-    }
-
-    private static boolean isSecure(MediaCodecInfo.CodecCapabilities capabilities2) {
-        return Util.SDK_INT >= 21 && isSecureV21(capabilities2);
-    }
-
-    @TargetApi(21)
-    private static boolean isSecureV21(MediaCodecInfo.CodecCapabilities capabilities2) {
-        return capabilities2.isFeatureSupported("secure-playback");
-    }
-
-    @TargetApi(21)
-    private static boolean areSizeAndRateSupportedV21(MediaCodecInfo.VideoCapabilities capabilities2, int width, int height, double frameRate) {
-        if (frameRate == -1.0d || frameRate <= 0.0d) {
-            return capabilities2.isSizeSupported(width, height);
-        }
-        return capabilities2.areSizeAndRateSupported(width, height, frameRate);
-    }
-
-    @TargetApi(23)
-    private static int getMaxSupportedInstancesV23(MediaCodecInfo.CodecCapabilities capabilities2) {
-        return capabilities2.getMaxSupportedInstances();
     }
 }

@@ -33,6 +33,7 @@ import android.view.accessibility.AccessibilityEvent;
 import android.view.animation.Interpolator;
 import android.widget.EdgeEffect;
 import android.widget.Scroller;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
@@ -45,6 +46,10 @@ import java.util.List;
 
 /* renamed from: android.support.v4.view.ViewPager */
 public class ViewPager extends ViewGroup {
+    public static final int SCROLL_STATE_DRAGGING = 1;
+    public static final int SCROLL_STATE_IDLE = 0;
+    public static final int SCROLL_STATE_SETTLING = 2;
+    static final int[] LAYOUT_ATTRS = {16842931};
     private static final int CLOSE_ENOUGH = 2;
     private static final Comparator<ItemInfo> COMPARATOR = new Comparator<ItemInfo>() {
         public int compare(ItemInfo lhs, ItemInfo rhs) {
@@ -58,13 +63,9 @@ public class ViewPager extends ViewGroup {
     private static final int DRAW_ORDER_FORWARD = 1;
     private static final int DRAW_ORDER_REVERSE = 2;
     private static final int INVALID_POINTER = -1;
-    static final int[] LAYOUT_ATTRS = {16842931};
     private static final int MAX_SETTLE_DURATION = 600;
     private static final int MIN_DISTANCE_FOR_FLING = 25;
     private static final int MIN_FLING_VELOCITY = 400;
-    public static final int SCROLL_STATE_DRAGGING = 1;
-    public static final int SCROLL_STATE_IDLE = 0;
-    public static final int SCROLL_STATE_SETTLING = 2;
     private static final String TAG = "ViewPager";
     private static final boolean USE_CACHE = false;
     private static final Interpolator sInterpolator = new Interpolator() {
@@ -74,24 +75,21 @@ public class ViewPager extends ViewGroup {
         }
     };
     private static final ViewPositionComparator sPositionComparator = new ViewPositionComparator();
-    private int mActivePointerId = -1;
+    private final ArrayList<ItemInfo> mItems = new ArrayList<>();
+    private final ItemInfo mTempItem = new ItemInfo();
+    private final Rect mTempRect = new Rect();
     PagerAdapter mAdapter;
+    int mCurItem;
+    private int mActivePointerId = -1;
     private List<OnAdapterChangeListener> mAdapterChangeListeners;
     private int mBottomPageBounds;
     private boolean mCalledSuper;
     private int mCloseEnough;
-    int mCurItem;
     private int mDecorChildCount;
     private int mDefaultGutterSize;
     private boolean mDragInGutterEnabled = true;
     private int mDrawingOrder;
     private ArrayList<View> mDrawingOrderedChildren;
-    private final Runnable mEndScrollRunnable = new Runnable() {
-        public void run() {
-            ViewPager.this.setScrollState(0);
-            ViewPager.this.populate();
-        }
-    };
     private int mExpectedAdapterCount;
     private long mFakeDragBeginTime;
     private boolean mFakeDragging;
@@ -106,7 +104,6 @@ public class ViewPager extends ViewGroup {
     private boolean mIsBeingDragged;
     private boolean mIsScrollStarted;
     private boolean mIsUnableToDrag;
-    private final ArrayList<ItemInfo> mItems = new ArrayList<>();
     private float mLastMotionX;
     private float mLastMotionY;
     private float mLastOffset = Float.MAX_VALUE;
@@ -127,63 +124,17 @@ public class ViewPager extends ViewGroup {
     private int mRestoredCurItem = -1;
     private EdgeEffect mRightEdge;
     private int mScrollState = 0;
+    private final Runnable mEndScrollRunnable = new Runnable() {
+        public void run() {
+            ViewPager.this.setScrollState(0);
+            ViewPager.this.populate();
+        }
+    };
     private Scroller mScroller;
     private boolean mScrollingCacheEnabled;
-    private final ItemInfo mTempItem = new ItemInfo();
-    private final Rect mTempRect = new Rect();
     private int mTopPageBounds;
     private int mTouchSlop;
     private VelocityTracker mVelocityTracker;
-
-    @Inherited
-    @Target({ElementType.TYPE})
-    @Retention(RetentionPolicy.RUNTIME)
-    /* renamed from: android.support.v4.view.ViewPager$DecorView */
-    public @interface DecorView {
-    }
-
-    /* renamed from: android.support.v4.view.ViewPager$OnAdapterChangeListener */
-    public interface OnAdapterChangeListener {
-        void onAdapterChanged(@NonNull ViewPager viewPager, @Nullable PagerAdapter pagerAdapter, @Nullable PagerAdapter pagerAdapter2);
-    }
-
-    /* renamed from: android.support.v4.view.ViewPager$OnPageChangeListener */
-    public interface OnPageChangeListener {
-        void onPageScrollStateChanged(int i);
-
-        void onPageScrolled(int i, float f, @C0013Px int i2);
-
-        void onPageSelected(int i);
-    }
-
-    /* renamed from: android.support.v4.view.ViewPager$PageTransformer */
-    public interface PageTransformer {
-        void transformPage(@NonNull View view, float f);
-    }
-
-    /* renamed from: android.support.v4.view.ViewPager$ItemInfo */
-    static class ItemInfo {
-        Object object;
-        float offset;
-        int position;
-        boolean scrolling;
-        float widthFactor;
-
-        ItemInfo() {
-        }
-    }
-
-    /* renamed from: android.support.v4.view.ViewPager$SimpleOnPageChangeListener */
-    public static class SimpleOnPageChangeListener implements OnPageChangeListener {
-        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-        }
-
-        public void onPageSelected(int position) {
-        }
-
-        public void onPageScrollStateChanged(int state) {
-        }
-    }
 
     public ViewPager(@NonNull Context context) {
         super(context);
@@ -193,6 +144,10 @@ public class ViewPager extends ViewGroup {
     public ViewPager(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         initViewPager();
+    }
+
+    private static boolean isDecorView(@NonNull View view) {
+        return view.getClass().getAnnotation(DecorView.class) != null;
     }
 
     /* access modifiers changed from: package-private */
@@ -263,6 +218,22 @@ public class ViewPager extends ViewGroup {
         }
     }
 
+    private void removeNonDecorViews() {
+        int i = 0;
+        while (i < getChildCount()) {
+            if (!((LayoutParams) getChildAt(i).getLayoutParams()).isDecor) {
+                removeViewAt(i);
+                i--;
+            }
+            i++;
+        }
+    }
+
+    @Nullable
+    public PagerAdapter getAdapter() {
+        return this.mAdapter;
+    }
+
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
      method: android.support.v4.view.PagerAdapter.destroyItem(android.view.ViewGroup, int, java.lang.Object):void
      arg types: [android.support.v4.view.ViewPager, int, java.lang.Object]
@@ -317,22 +288,6 @@ public class ViewPager extends ViewGroup {
         }
     }
 
-    private void removeNonDecorViews() {
-        int i = 0;
-        while (i < getChildCount()) {
-            if (!((LayoutParams) getChildAt(i).getLayoutParams()).isDecor) {
-                removeViewAt(i);
-                i--;
-            }
-            i++;
-        }
-    }
-
-    @Nullable
-    public PagerAdapter getAdapter() {
-        return this.mAdapter;
-    }
-
     public void addOnAdapterChangeListener(@NonNull OnAdapterChangeListener listener) {
         if (this.mAdapterChangeListeners == null) {
             this.mAdapterChangeListeners = new ArrayList();
@@ -351,11 +306,6 @@ public class ViewPager extends ViewGroup {
         return (getMeasuredWidth() - getPaddingLeft()) - getPaddingRight();
     }
 
-    public void setCurrentItem(int item) {
-        this.mPopulatePending = false;
-        setCurrentItemInternal(item, !this.mFirstLayout, false);
-    }
-
     public void setCurrentItem(int item, boolean smoothScroll) {
         this.mPopulatePending = false;
         setCurrentItemInternal(item, smoothScroll, false);
@@ -363,6 +313,11 @@ public class ViewPager extends ViewGroup {
 
     public int getCurrentItem() {
         return this.mCurItem;
+    }
+
+    public void setCurrentItem(int item) {
+        this.mPopulatePending = false;
+        setCurrentItemInternal(item, !this.mFirstLayout, false);
     }
 
     /* access modifiers changed from: package-private */
@@ -506,16 +461,16 @@ public class ViewPager extends ViewGroup {
         }
     }
 
+    public int getPageMargin() {
+        return this.mPageMargin;
+    }
+
     public void setPageMargin(int marginPixels) {
         int oldMargin = this.mPageMargin;
         this.mPageMargin = marginPixels;
         int width = getWidth();
         recomputeScrollPosition(width, width, marginPixels, oldMargin);
         requestLayout();
-    }
-
-    public int getPageMargin() {
-        return this.mPageMargin;
     }
 
     public void setPageMarginDrawable(@Nullable Drawable d) {
@@ -969,48 +924,6 @@ public class ViewPager extends ViewGroup {
         }
     }
 
-    /* renamed from: android.support.v4.view.ViewPager$SavedState */
-    public static class SavedState extends AbsSavedState {
-        public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.ClassLoaderCreator<SavedState>() {
-            public SavedState createFromParcel(Parcel in, ClassLoader loader) {
-                return new SavedState(in, loader);
-            }
-
-            public SavedState createFromParcel(Parcel in) {
-                return new SavedState(in, null);
-            }
-
-            public SavedState[] newArray(int size) {
-                return new SavedState[size];
-            }
-        };
-        Parcelable adapterState;
-        ClassLoader loader;
-        int position;
-
-        public SavedState(@NonNull Parcelable superState) {
-            super(superState);
-        }
-
-        public void writeToParcel(Parcel out, int flags) {
-            super.writeToParcel(out, flags);
-            out.writeInt(this.position);
-            out.writeParcelable(this.adapterState, flags);
-        }
-
-        public String toString() {
-            return "FragmentPager.SavedState{" + Integer.toHexString(System.identityHashCode(this)) + " position=" + this.position + "}";
-        }
-
-        SavedState(Parcel in, ClassLoader loader2) {
-            super(in, loader2);
-            loader2 = loader2 == null ? getClass().getClassLoader() : loader2;
-            this.position = in.readInt();
-            this.adapterState = in.readParcelable(loader2);
-            this.loader = loader2;
-        }
-    }
-
     public Parcelable onSaveInstanceState() {
         SavedState ss = new SavedState(super.onSaveInstanceState());
         ss.position = this.mCurItem;
@@ -1053,10 +966,6 @@ public class ViewPager extends ViewGroup {
         } else {
             throw new IllegalStateException("Cannot add pager decor view during layout");
         }
-    }
-
-    private static boolean isDecorView(@NonNull View view) {
-        return view.getClass().getAnnotation(DecorView.class) != null;
     }
 
     public void removeView(View view) {
@@ -2292,6 +2201,134 @@ public class ViewPager extends ViewGroup {
         return new LayoutParams(getContext(), attrs);
     }
 
+    @Inherited
+    @Target({ElementType.TYPE})
+    @Retention(RetentionPolicy.RUNTIME)
+    /* renamed from: android.support.v4.view.ViewPager$DecorView */
+    public @interface DecorView {
+    }
+
+    /* renamed from: android.support.v4.view.ViewPager$OnAdapterChangeListener */
+    public interface OnAdapterChangeListener {
+        void onAdapterChanged(@NonNull ViewPager viewPager, @Nullable PagerAdapter pagerAdapter, @Nullable PagerAdapter pagerAdapter2);
+    }
+
+    /* renamed from: android.support.v4.view.ViewPager$OnPageChangeListener */
+    public interface OnPageChangeListener {
+        void onPageScrollStateChanged(int i);
+
+        void onPageScrolled(int i, float f, @C0013Px int i2);
+
+        void onPageSelected(int i);
+    }
+
+    /* renamed from: android.support.v4.view.ViewPager$PageTransformer */
+    public interface PageTransformer {
+        void transformPage(@NonNull View view, float f);
+    }
+
+    /* renamed from: android.support.v4.view.ViewPager$ItemInfo */
+    static class ItemInfo {
+        Object object;
+        float offset;
+        int position;
+        boolean scrolling;
+        float widthFactor;
+
+        ItemInfo() {
+        }
+    }
+
+    /* renamed from: android.support.v4.view.ViewPager$SimpleOnPageChangeListener */
+    public static class SimpleOnPageChangeListener implements OnPageChangeListener {
+        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+        }
+
+        public void onPageSelected(int position) {
+        }
+
+        public void onPageScrollStateChanged(int state) {
+        }
+    }
+
+    /* renamed from: android.support.v4.view.ViewPager$SavedState */
+    public static class SavedState extends AbsSavedState {
+        public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.ClassLoaderCreator<SavedState>() {
+            public SavedState createFromParcel(Parcel in, ClassLoader loader) {
+                return new SavedState(in, loader);
+            }
+
+            public SavedState createFromParcel(Parcel in) {
+                return new SavedState(in, null);
+            }
+
+            public SavedState[] newArray(int size) {
+                return new SavedState[size];
+            }
+        };
+        Parcelable adapterState;
+        ClassLoader loader;
+        int position;
+
+        public SavedState(@NonNull Parcelable superState) {
+            super(superState);
+        }
+
+        SavedState(Parcel in, ClassLoader loader2) {
+            super(in, loader2);
+            loader2 = loader2 == null ? getClass().getClassLoader() : loader2;
+            this.position = in.readInt();
+            this.adapterState = in.readParcelable(loader2);
+            this.loader = loader2;
+        }
+
+        public void writeToParcel(Parcel out, int flags) {
+            super.writeToParcel(out, flags);
+            out.writeInt(this.position);
+            out.writeParcelable(this.adapterState, flags);
+        }
+
+        public String toString() {
+            return "FragmentPager.SavedState{" + Integer.toHexString(System.identityHashCode(this)) + " position=" + this.position + "}";
+        }
+    }
+
+    /* renamed from: android.support.v4.view.ViewPager$LayoutParams */
+    public static class LayoutParams extends ViewGroup.LayoutParams {
+        public int gravity;
+        public boolean isDecor;
+        int childIndex;
+        boolean needsMeasure;
+        int position;
+        float widthFactor = 0.0f;
+
+        public LayoutParams() {
+            super(-1, -1);
+        }
+
+        public LayoutParams(Context context, AttributeSet attrs) {
+            super(context, attrs);
+            TypedArray a = context.obtainStyledAttributes(attrs, ViewPager.LAYOUT_ATTRS);
+            this.gravity = a.getInteger(0, 48);
+            a.recycle();
+        }
+    }
+
+    /* renamed from: android.support.v4.view.ViewPager$ViewPositionComparator */
+    static class ViewPositionComparator implements Comparator<View> {
+        ViewPositionComparator() {
+        }
+
+        public int compare(View lhs, View rhs) {
+            LayoutParams llp = (LayoutParams) lhs.getLayoutParams();
+            LayoutParams rlp = (LayoutParams) rhs.getLayoutParams();
+            if (llp.isDecor != rlp.isDecor) {
+                return llp.isDecor ? 1 : -1;
+            }
+            return llp.position - rlp.position;
+        }
+    }
+
     /* renamed from: android.support.v4.view.ViewPager$MyAccessibilityDelegate */
     class MyAccessibilityDelegate extends AccessibilityDelegateCompat {
         MyAccessibilityDelegate() {
@@ -2356,42 +2393,6 @@ public class ViewPager extends ViewGroup {
 
         public void onInvalidated() {
             ViewPager.this.dataSetChanged();
-        }
-    }
-
-    /* renamed from: android.support.v4.view.ViewPager$LayoutParams */
-    public static class LayoutParams extends ViewGroup.LayoutParams {
-        int childIndex;
-        public int gravity;
-        public boolean isDecor;
-        boolean needsMeasure;
-        int position;
-        float widthFactor = 0.0f;
-
-        public LayoutParams() {
-            super(-1, -1);
-        }
-
-        public LayoutParams(Context context, AttributeSet attrs) {
-            super(context, attrs);
-            TypedArray a = context.obtainStyledAttributes(attrs, ViewPager.LAYOUT_ATTRS);
-            this.gravity = a.getInteger(0, 48);
-            a.recycle();
-        }
-    }
-
-    /* renamed from: android.support.v4.view.ViewPager$ViewPositionComparator */
-    static class ViewPositionComparator implements Comparator<View> {
-        ViewPositionComparator() {
-        }
-
-        public int compare(View lhs, View rhs) {
-            LayoutParams llp = (LayoutParams) lhs.getLayoutParams();
-            LayoutParams rlp = (LayoutParams) rhs.getLayoutParams();
-            if (llp.isDecor != rlp.isDecor) {
-                return llp.isDecor ? 1 : -1;
-            }
-            return llp.position - rlp.position;
         }
     }
 }

@@ -3,12 +3,13 @@ package com.google.android.exoplayer2.upstream;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+
 import com.google.android.exoplayer2.metadata.icy.IcyHeaders;
-import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.Predicate;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,9 +28,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class DefaultHttpDataSource extends BaseDataSource implements HttpDataSource {
-    private static final Pattern CONTENT_RANGE_HEADER = Pattern.compile("^bytes (\\d+)-(\\d+)/(\\d+)$");
     public static final int DEFAULT_CONNECT_TIMEOUT_MILLIS = 8000;
     public static final int DEFAULT_READ_TIMEOUT_MILLIS = 8000;
+    private static final Pattern CONTENT_RANGE_HEADER = Pattern.compile("^bytes (\\d+)-(\\d+)/(\\d+)$");
     private static final int HTTP_STATUS_PERMANENT_REDIRECT = 308;
     private static final int HTTP_STATUS_TEMPORARY_REDIRECT = 307;
     private static final long MAX_BYTES_TO_DRAIN = 2048;
@@ -37,25 +38,25 @@ public class DefaultHttpDataSource extends BaseDataSource implements HttpDataSou
     private static final String TAG = "DefaultHttpDataSource";
     private static final AtomicReference<byte[]> skipBufferReference = new AtomicReference<>();
     private final boolean allowCrossProtocolRedirects;
+    private final int connectTimeoutMillis;
+    @Nullable
+    private final Predicate<String> contentTypePredicate;
+    @Nullable
+    private final HttpDataSource.RequestProperties defaultRequestProperties;
+    private final int readTimeoutMillis;
+    private final HttpDataSource.RequestProperties requestProperties;
+    private final String userAgent;
     private long bytesRead;
     private long bytesSkipped;
     private long bytesToRead;
     private long bytesToSkip;
-    private final int connectTimeoutMillis;
     @Nullable
     private HttpURLConnection connection;
     @Nullable
-    private final Predicate<String> contentTypePredicate;
-    @Nullable
     private DataSpec dataSpec;
-    @Nullable
-    private final HttpDataSource.RequestProperties defaultRequestProperties;
     @Nullable
     private InputStream inputStream;
     private boolean opened;
-    private final int readTimeoutMillis;
-    private final HttpDataSource.RequestProperties requestProperties;
-    private final String userAgent;
 
     public DefaultHttpDataSource(String userAgent2, @Nullable Predicate<String> contentTypePredicate2) {
         this(userAgent2, contentTypePredicate2, 8000, 8000);
@@ -91,6 +92,89 @@ public class DefaultHttpDataSource extends BaseDataSource implements HttpDataSou
         this(userAgent2, contentTypePredicate2, connectTimeoutMillis2, readTimeoutMillis2, allowCrossProtocolRedirects2, defaultRequestProperties2);
         if (listener != null) {
             addTransferListener(listener);
+        }
+    }
+
+    private static URL handleRedirect(URL originalUrl, String location) throws IOException {
+        if (location != null) {
+            URL url = new URL(originalUrl, location);
+            String protocol = url.getProtocol();
+            if ("https".equals(protocol) || "http".equals(protocol)) {
+                return url;
+            }
+            String valueOf = String.valueOf(protocol);
+            throw new ProtocolException(valueOf.length() != 0 ? "Unsupported protocol redirect: ".concat(valueOf) : new String("Unsupported protocol redirect: "));
+        }
+        throw new ProtocolException("Null location redirect");
+    }
+
+    private static long getContentLength(HttpURLConnection connection2) {
+        long contentLength = -1;
+        String contentLengthHeader = connection2.getHeaderField("Content-Length");
+        if (!TextUtils.isEmpty(contentLengthHeader)) {
+            try {
+                contentLength = Long.parseLong(contentLengthHeader);
+            } catch (NumberFormatException e) {
+                StringBuilder sb = new StringBuilder(String.valueOf(contentLengthHeader).length() + 28);
+                sb.append("Unexpected Content-Length [");
+                sb.append(contentLengthHeader);
+                sb.append("]");
+                Log.m26e(TAG, sb.toString());
+            }
+        }
+        String contentRangeHeader = connection2.getHeaderField("Content-Range");
+        if (TextUtils.isEmpty(contentRangeHeader)) {
+            return contentLength;
+        }
+        Matcher matcher = CONTENT_RANGE_HEADER.matcher(contentRangeHeader);
+        if (!matcher.find()) {
+            return contentLength;
+        }
+        try {
+            long contentLengthFromRange = (Long.parseLong(matcher.group(2)) - Long.parseLong(matcher.group(1))) + 1;
+            if (contentLength < 0) {
+                return contentLengthFromRange;
+            }
+            if (contentLength == contentLengthFromRange) {
+                return contentLength;
+            }
+            StringBuilder sb2 = new StringBuilder(String.valueOf(contentLengthHeader).length() + 26 + String.valueOf(contentRangeHeader).length());
+            sb2.append("Inconsistent headers [");
+            sb2.append(contentLengthHeader);
+            sb2.append("] [");
+            sb2.append(contentRangeHeader);
+            sb2.append("]");
+            Log.m30w(TAG, sb2.toString());
+            return Math.max(contentLength, contentLengthFromRange);
+        } catch (NumberFormatException e2) {
+            StringBuilder sb3 = new StringBuilder(String.valueOf(contentRangeHeader).length() + 27);
+            sb3.append("Unexpected Content-Range [");
+            sb3.append(contentRangeHeader);
+            sb3.append("]");
+            Log.m26e(TAG, sb3.toString());
+            return contentLength;
+        }
+    }
+
+    private static void maybeTerminateInputStream(HttpURLConnection connection2, long bytesRemaining) {
+        if (Util.SDK_INT == 19 || Util.SDK_INT == 20) {
+            try {
+                InputStream inputStream2 = connection2.getInputStream();
+                if (bytesRemaining == -1) {
+                    if (inputStream2.read() == -1) {
+                        return;
+                    }
+                } else if (bytesRemaining <= 2048) {
+                    return;
+                }
+                String className = inputStream2.getClass().getName();
+                if ("com.android.okhttp.internal.http.HttpTransport$ChunkedInputStream".equals(className) || "com.android.okhttp.internal.http.HttpTransport$FixedLengthInputStream".equals(className)) {
+                    Method unexpectedEndOfInput = inputStream2.getClass().getSuperclass().getDeclaredMethod("unexpectedEndOfInput", new Class[0]);
+                    unexpectedEndOfInput.setAccessible(true);
+                    unexpectedEndOfInput.invoke(inputStream2, new Object[0]);
+                }
+            } catch (Exception e) {
+            }
         }
     }
 
@@ -343,67 +427,6 @@ public class DefaultHttpDataSource extends BaseDataSource implements HttpDataSou
         return connection2;
     }
 
-    private static URL handleRedirect(URL originalUrl, String location) throws IOException {
-        if (location != null) {
-            URL url = new URL(originalUrl, location);
-            String protocol = url.getProtocol();
-            if ("https".equals(protocol) || "http".equals(protocol)) {
-                return url;
-            }
-            String valueOf = String.valueOf(protocol);
-            throw new ProtocolException(valueOf.length() != 0 ? "Unsupported protocol redirect: ".concat(valueOf) : new String("Unsupported protocol redirect: "));
-        }
-        throw new ProtocolException("Null location redirect");
-    }
-
-    private static long getContentLength(HttpURLConnection connection2) {
-        long contentLength = -1;
-        String contentLengthHeader = connection2.getHeaderField("Content-Length");
-        if (!TextUtils.isEmpty(contentLengthHeader)) {
-            try {
-                contentLength = Long.parseLong(contentLengthHeader);
-            } catch (NumberFormatException e) {
-                StringBuilder sb = new StringBuilder(String.valueOf(contentLengthHeader).length() + 28);
-                sb.append("Unexpected Content-Length [");
-                sb.append(contentLengthHeader);
-                sb.append("]");
-                Log.m26e(TAG, sb.toString());
-            }
-        }
-        String contentRangeHeader = connection2.getHeaderField("Content-Range");
-        if (TextUtils.isEmpty(contentRangeHeader)) {
-            return contentLength;
-        }
-        Matcher matcher = CONTENT_RANGE_HEADER.matcher(contentRangeHeader);
-        if (!matcher.find()) {
-            return contentLength;
-        }
-        try {
-            long contentLengthFromRange = (Long.parseLong(matcher.group(2)) - Long.parseLong(matcher.group(1))) + 1;
-            if (contentLength < 0) {
-                return contentLengthFromRange;
-            }
-            if (contentLength == contentLengthFromRange) {
-                return contentLength;
-            }
-            StringBuilder sb2 = new StringBuilder(String.valueOf(contentLengthHeader).length() + 26 + String.valueOf(contentRangeHeader).length());
-            sb2.append("Inconsistent headers [");
-            sb2.append(contentLengthHeader);
-            sb2.append("] [");
-            sb2.append(contentRangeHeader);
-            sb2.append("]");
-            Log.m30w(TAG, sb2.toString());
-            return Math.max(contentLength, contentLengthFromRange);
-        } catch (NumberFormatException e2) {
-            StringBuilder sb3 = new StringBuilder(String.valueOf(contentRangeHeader).length() + 27);
-            sb3.append("Unexpected Content-Range [");
-            sb3.append(contentRangeHeader);
-            sb3.append("]");
-            Log.m26e(TAG, sb3.toString());
-            return contentLength;
-        }
-    }
-
     private void skipInternal() throws IOException {
         if (this.bytesSkipped != this.bytesToSkip) {
             byte[] skipBuffer = skipBufferReference.getAndSet(null);
@@ -452,28 +475,6 @@ public class DefaultHttpDataSource extends BaseDataSource implements HttpDataSou
             return -1;
         } else {
             throw new EOFException();
-        }
-    }
-
-    private static void maybeTerminateInputStream(HttpURLConnection connection2, long bytesRemaining) {
-        if (Util.SDK_INT == 19 || Util.SDK_INT == 20) {
-            try {
-                InputStream inputStream2 = connection2.getInputStream();
-                if (bytesRemaining == -1) {
-                    if (inputStream2.read() == -1) {
-                        return;
-                    }
-                } else if (bytesRemaining <= 2048) {
-                    return;
-                }
-                String className = inputStream2.getClass().getName();
-                if ("com.android.okhttp.internal.http.HttpTransport$ChunkedInputStream".equals(className) || "com.android.okhttp.internal.http.HttpTransport$FixedLengthInputStream".equals(className)) {
-                    Method unexpectedEndOfInput = inputStream2.getClass().getSuperclass().getDeclaredMethod("unexpectedEndOfInput", new Class[0]);
-                    unexpectedEndOfInput.setAccessible(true);
-                    unexpectedEndOfInput.invoke(inputStream2, new Object[0]);
-                }
-            } catch (Exception e) {
-            }
         }
     }
 

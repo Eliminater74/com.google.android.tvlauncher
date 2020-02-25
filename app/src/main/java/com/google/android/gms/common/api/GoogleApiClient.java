@@ -10,23 +10,22 @@ import android.support.annotation.Nullable;
 import android.support.p001v4.app.FragmentActivity;
 import android.support.p001v4.util.ArrayMap;
 import android.view.View;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.api.Api;
 import com.google.android.gms.common.api.internal.zzbb;
 import com.google.android.gms.common.api.internal.zzce;
 import com.google.android.gms.common.api.internal.zzcj;
 import com.google.android.gms.common.api.internal.zzda;
 import com.google.android.gms.common.api.internal.zzdo;
-import com.google.android.gms.common.api.internal.zzj;
 import com.google.android.gms.common.api.internal.zzn;
 import com.google.android.gms.common.api.internal.zzu;
 import com.google.android.gms.common.internal.ClientSettings;
 import com.google.android.gms.common.internal.Hide;
 import com.google.android.gms.common.internal.zzau;
 import com.google.android.gms.signin.SignInOptions;
-import com.google.android.gms.signin.zza;
 import com.google.android.gms.signin.zzd;
+
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -45,17 +44,25 @@ public abstract class GoogleApiClient {
     /* access modifiers changed from: private */
     public static final Set<GoogleApiClient> zza = Collections.newSetFromMap(new WeakHashMap());
 
-    public interface ConnectionCallbacks {
-        public static final int CAUSE_NETWORK_LOST = 2;
-        public static final int CAUSE_SERVICE_DISCONNECTED = 1;
-
-        void onConnected(@Nullable Bundle bundle);
-
-        void onConnectionSuspended(int i);
+    public static void dumpAll(String str, FileDescriptor fileDescriptor, PrintWriter printWriter, String[] strArr) {
+        synchronized (zza) {
+            int i = 0;
+            String concat = String.valueOf(str).concat("  ");
+            for (GoogleApiClient dump : zza) {
+                printWriter.append((CharSequence) str).append((CharSequence) "GoogleApiClient#").println(i);
+                dump.dump(concat, fileDescriptor, printWriter, strArr);
+                i++;
+            }
+        }
     }
 
-    public interface OnConnectionFailedListener {
-        void onConnectionFailed(@NonNull ConnectionResult connectionResult);
+    @Hide
+    public static Set<GoogleApiClient> zza() {
+        Set<GoogleApiClient> set;
+        synchronized (zza) {
+            set = zza;
+        }
+        return set;
     }
 
     public abstract ConnectionResult blockingConnect();
@@ -95,27 +102,6 @@ public abstract class GoogleApiClient {
 
     public abstract void unregisterConnectionFailedListener(@NonNull OnConnectionFailedListener onConnectionFailedListener);
 
-    public static void dumpAll(String str, FileDescriptor fileDescriptor, PrintWriter printWriter, String[] strArr) {
-        synchronized (zza) {
-            int i = 0;
-            String concat = String.valueOf(str).concat("  ");
-            for (GoogleApiClient dump : zza) {
-                printWriter.append((CharSequence) str).append((CharSequence) "GoogleApiClient#").println(i);
-                dump.dump(concat, fileDescriptor, printWriter, strArr);
-                i++;
-            }
-        }
-    }
-
-    @Hide
-    public static Set<GoogleApiClient> zza() {
-        Set<GoogleApiClient> set;
-        synchronized (zza) {
-            set = zza;
-        }
-        return set;
-    }
-
     @Hide
     public <A extends Api.zzb, R extends Result, T extends zzn<R, A>> T zza(@NonNull T t) {
         throw new UnsupportedOperationException();
@@ -131,25 +117,88 @@ public abstract class GoogleApiClient {
         throw new UnsupportedOperationException();
     }
 
+    @Hide
+    @NonNull
+    public <C extends Api.Client> C zza(@NonNull Api.zzc<C> zzc) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Hide
+    public boolean zza(@NonNull Api<?> api) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Hide
+    public Context zzb() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Hide
+    public Looper zzc() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Hide
+    public boolean zza(zzda zzda) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Hide
+    public void zzd() {
+        throw new UnsupportedOperationException();
+    }
+
+    public void connect(int i) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Hide
+    public void zza(ResultStore resultStore) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Hide
+    public void zza(zzdo zzdo) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Hide
+    public void zzb(zzdo zzdo) {
+        throw new UnsupportedOperationException();
+    }
+
+    public interface ConnectionCallbacks {
+        public static final int CAUSE_NETWORK_LOST = 2;
+        public static final int CAUSE_SERVICE_DISCONNECTED = 1;
+
+        void onConnected(@Nullable Bundle bundle);
+
+        void onConnectionSuspended(int i);
+    }
+
+    public interface OnConnectionFailedListener {
+        void onConnectionFailed(@NonNull ConnectionResult connectionResult);
+    }
+
     public static final class Builder {
-        private Account zza;
         private final Set<Scope> zzb;
         private final Set<Scope> zzc;
+        private final Map<Api<?>, ClientSettings.OptionalApiSettings> zzh;
+        private final Context zzi;
+        private final Map<Api<?>, Api.ApiOptions> zzj;
+        private final ArrayList<ConnectionCallbacks> zzq;
+        private final ArrayList<OnConnectionFailedListener> zzr;
+        private Account zza;
         private int zzd;
         private View zze;
         private String zzf;
         private String zzg;
-        private final Map<Api<?>, ClientSettings.OptionalApiSettings> zzh;
-        private final Context zzi;
-        private final Map<Api<?>, Api.ApiOptions> zzj;
         private zzce zzk;
         private int zzl;
         private OnConnectionFailedListener zzm;
         private Looper zzn;
         private GoogleApiAvailability zzo;
         private Api.zza<? extends zzd, SignInOptions> zzp;
-        private final ArrayList<ConnectionCallbacks> zzq;
-        private final ArrayList<OnConnectionFailedListener> zzr;
         private boolean zzs;
 
         public Builder(@NonNull Context context) {
@@ -377,55 +426,5 @@ public abstract class GoogleApiClient {
             }
             this.zzh.put(api, new ClientSettings.OptionalApiSettings(hashSet));
         }
-    }
-
-    @Hide
-    @NonNull
-    public <C extends Api.Client> C zza(@NonNull Api.zzc<C> zzc) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Hide
-    public boolean zza(@NonNull Api<?> api) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Hide
-    public Context zzb() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Hide
-    public Looper zzc() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Hide
-    public boolean zza(zzda zzda) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Hide
-    public void zzd() {
-        throw new UnsupportedOperationException();
-    }
-
-    public void connect(int i) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Hide
-    public void zza(ResultStore resultStore) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Hide
-    public void zza(zzdo zzdo) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Hide
-    public void zzb(zzdo zzdo) {
-        throw new UnsupportedOperationException();
     }
 }

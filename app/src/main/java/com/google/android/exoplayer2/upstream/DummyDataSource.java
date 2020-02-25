@@ -2,7 +2,7 @@ package com.google.android.exoplayer2.upstream;
 
 import android.net.Uri;
 import android.support.annotation.Nullable;
-import com.google.android.exoplayer2.upstream.DataSource;
+
 import java.io.IOException;
 import java.util.Map;
 
@@ -10,15 +10,15 @@ public final class DummyDataSource implements DataSource {
     public static final DataSource.Factory FACTORY = DummyDataSource$$Lambda$0.$instance;
     public static final DummyDataSource INSTANCE = new DummyDataSource();
 
+    private DummyDataSource() {
+    }
+
     static final /* bridge */ /* synthetic */ DummyDataSource bridge$lambda$0$DummyDataSource() {
         return new DummyDataSource();
     }
 
     public Map getResponseHeaders() {
         return DataSource$$CC.getResponseHeaders$$dflt$$(this);
-    }
-
-    private DummyDataSource() {
     }
 
     public void addTransferListener(TransferListener transferListener) {

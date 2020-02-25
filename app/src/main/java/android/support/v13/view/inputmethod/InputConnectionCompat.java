@@ -14,6 +14,7 @@ import android.view.inputmethod.InputConnectionWrapper;
 import android.view.inputmethod.InputContentInfo;
 
 public final class InputConnectionCompat {
+    public static final int INPUT_CONTENT_GRANT_READ_URI_PERMISSION = 1;
     private static final String COMMIT_CONTENT_ACTION = "android.support.v13.view.inputmethod.InputConnectionCompat.COMMIT_CONTENT";
     private static final String COMMIT_CONTENT_CONTENT_URI_KEY = "android.support.v13.view.inputmethod.InputConnectionCompat.CONTENT_URI";
     private static final String COMMIT_CONTENT_DESCRIPTION_KEY = "android.support.v13.view.inputmethod.InputConnectionCompat.CONTENT_DESCRIPTION";
@@ -21,11 +22,6 @@ public final class InputConnectionCompat {
     private static final String COMMIT_CONTENT_LINK_URI_KEY = "android.support.v13.view.inputmethod.InputConnectionCompat.CONTENT_LINK_URI";
     private static final String COMMIT_CONTENT_OPTS_KEY = "android.support.v13.view.inputmethod.InputConnectionCompat.CONTENT_OPTS";
     private static final String COMMIT_CONTENT_RESULT_RECEIVER = "android.support.v13.view.inputmethod.InputConnectionCompat.CONTENT_RESULT_RECEIVER";
-    public static final int INPUT_CONTENT_GRANT_READ_URI_PERMISSION = 1;
-
-    public interface OnCommitContentListener {
-        boolean onCommitContent(InputContentInfoCompat inputContentInfoCompat, int i, Bundle bundle);
-    }
 
     static boolean handlePerformPrivateCommand(@Nullable String action, @NonNull Bundle data, @NonNull OnCommitContentListener onCommitContentListener) {
         int i = 0;
@@ -114,5 +110,9 @@ public final class InputConnectionCompat {
                 }
             };
         }
+    }
+
+    public interface OnCommitContentListener {
+        boolean onCommitContent(InputContentInfoCompat inputContentInfoCompat, int i, Bundle bundle);
     }
 }

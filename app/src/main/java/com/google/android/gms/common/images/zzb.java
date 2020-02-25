@@ -1,8 +1,10 @@
 package com.google.android.gms.common.images;
 
 import android.net.Uri;
+
 import com.google.android.gms.common.internal.Hide;
 import com.google.android.gms.common.internal.zzak;
+
 import java.util.Arrays;
 
 @Hide

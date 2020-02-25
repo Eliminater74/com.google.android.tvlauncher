@@ -5,6 +5,7 @@ import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -13,13 +14,13 @@ public abstract class DataChunk extends Chunk {
     private byte[] data;
     private volatile boolean loadCanceled;
 
-    /* access modifiers changed from: protected */
-    public abstract void consume(byte[] bArr, int i) throws IOException;
-
     public DataChunk(DataSource dataSource, DataSpec dataSpec, int type, Format trackFormat, int trackSelectionReason, Object trackSelectionData, byte[] data2) {
         super(dataSource, dataSpec, type, trackFormat, trackSelectionReason, trackSelectionData, C0841C.TIME_UNSET, C0841C.TIME_UNSET);
         this.data = data2;
     }
+
+    /* access modifiers changed from: protected */
+    public abstract void consume(byte[] bArr, int i) throws IOException;
 
     public byte[] getDataHolder() {
         return this.data;

@@ -8,6 +8,7 @@ import android.os.Message;
 import android.support.annotation.MainThread;
 import android.support.annotation.VisibleForTesting;
 import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -21,15 +22,15 @@ public class ClearcutAppEventLogger extends AppEventLogger implements EventLogge
     private Handler mHandler;
     private LogEvent mPendingEvent;
 
+    @VisibleForTesting
+    ClearcutAppEventLogger(ClearcutEventLoggerEngine engine) {
+        this.mEngine = engine;
+    }
+
     @MainThread
     public static void init(Context context, ClearcutEventLoggerEngine engine) {
         sInstance = new ClearcutAppEventLogger(engine);
         checkOptedInForUsageReporting(context);
-    }
-
-    @VisibleForTesting
-    ClearcutAppEventLogger(ClearcutEventLoggerEngine engine) {
-        this.mEngine = engine;
     }
 
     /* access modifiers changed from: protected */

@@ -10,16 +10,11 @@ import android.support.p001v4.content.res.TypedArrayUtils;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.widget.EditText;
-import androidx.preference.Preference;
 
 public class EditTextPreference extends DialogPreference {
     @Nullable
     private OnBindEditTextListener mOnBindEditTextListener;
     private String mText;
-
-    public interface OnBindEditTextListener {
-        void onBindEditText(@NonNull EditText editText);
-    }
 
     public EditTextPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
@@ -42,6 +37,10 @@ public class EditTextPreference extends DialogPreference {
         this(context, null);
     }
 
+    public String getText() {
+        return this.mText;
+    }
+
     public void setText(String text) {
         boolean wasBlocking = shouldDisableDependents();
         this.mText = text;
@@ -51,10 +50,6 @@ public class EditTextPreference extends DialogPreference {
             notifyDependencyChange(isBlocking);
         }
         notifyChanged();
-    }
-
-    public String getText() {
-        return this.mText;
     }
 
     /* access modifiers changed from: protected */
@@ -93,13 +88,17 @@ public class EditTextPreference extends DialogPreference {
         setText(myState.mText);
     }
 
+    @Nullable
+    public OnBindEditTextListener getOnBindEditTextListener() {
+        return this.mOnBindEditTextListener;
+    }
+
     public void setOnBindEditTextListener(@Nullable OnBindEditTextListener onBindEditTextListener) {
         this.mOnBindEditTextListener = onBindEditTextListener;
     }
 
-    @Nullable
-    public OnBindEditTextListener getOnBindEditTextListener() {
-        return this.mOnBindEditTextListener;
+    public interface OnBindEditTextListener {
+        void onBindEditText(@NonNull EditText editText);
     }
 
     private static class SavedState extends Preference.BaseSavedState {

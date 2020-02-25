@@ -7,15 +7,20 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.internal.Hide;
 import com.google.android.gms.common.internal.ReflectedParcelable;
 import com.google.android.gms.common.internal.zzau;
 import com.google.android.gms.common.util.Clock;
-import com.google.android.gms.common.util.zzh;
 import com.google.android.gms.internal.zzbkv;
 import com.google.android.gms.internal.zzbky;
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -23,9 +28,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class GoogleSignInAccount extends zzbkv implements ReflectedParcelable {
     public static final Parcelable.Creator<GoogleSignInAccount> CREATOR = new zzb();
@@ -45,6 +47,21 @@ public class GoogleSignInAccount extends zzbkv implements ReflectedParcelable {
     private String zzl;
     private String zzm;
     private Set<Scope> zzn = new HashSet();
+
+    GoogleSignInAccount(int i, String str, String str2, String str3, String str4, Uri uri, String str5, long j, String str6, List<Scope> list, String str7, String str8) {
+        this.zzb = i;
+        this.zzc = str;
+        this.zzd = str2;
+        this.zze = str3;
+        this.zzf = str4;
+        this.zzg = uri;
+        this.zzh = str5;
+        this.zzi = j;
+        this.zzj = str6;
+        this.zzk = list;
+        this.zzl = str7;
+        this.zzm = str8;
+    }
 
     @Nullable
     @Hide
@@ -100,21 +117,6 @@ public class GoogleSignInAccount extends zzbkv implements ReflectedParcelable {
 
     private static GoogleSignInAccount zza(Account account, Set<Scope> set) {
         return zza(null, null, account.name, null, null, null, null, 0L, account.name, set);
-    }
-
-    GoogleSignInAccount(int i, String str, String str2, String str3, String str4, Uri uri, String str5, long j, String str6, List<Scope> list, String str7, String str8) {
-        this.zzb = i;
-        this.zzc = str;
-        this.zzd = str2;
-        this.zze = str3;
-        this.zzf = str4;
-        this.zzg = uri;
-        this.zzh = str5;
-        this.zzi = j;
-        this.zzj = str6;
-        this.zzk = list;
-        this.zzl = str7;
-        this.zzm = str8;
     }
 
     @Nullable

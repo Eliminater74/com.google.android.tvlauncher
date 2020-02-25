@@ -7,12 +7,15 @@ public final class WavUtil {
     public static final int DATA_FOURCC = Util.getIntegerCodeForString("data");
     public static final int FMT_FOURCC = Util.getIntegerCodeForString("fmt ");
     public static final int RIFF_FOURCC = Util.getIntegerCodeForString("RIFF");
+    public static final int WAVE_FOURCC = Util.getIntegerCodeForString("WAVE");
     private static final int TYPE_A_LAW = 6;
     private static final int TYPE_FLOAT = 3;
     private static final int TYPE_MU_LAW = 7;
     private static final int TYPE_PCM = 1;
     private static final int TYPE_WAVE_FORMAT_EXTENSIBLE = 65534;
-    public static final int WAVE_FOURCC = Util.getIntegerCodeForString("WAVE");
+
+    private WavUtil() {
+    }
 
     public static int getTypeForEncoding(int encoding) {
         if (encoding == Integer.MIN_VALUE) {
@@ -52,8 +55,5 @@ public final class WavUtil {
             }
         }
         return Util.getPcmEncoding(bitsPerSample);
-    }
-
-    private WavUtil() {
     }
 }

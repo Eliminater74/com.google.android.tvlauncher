@@ -12,6 +12,9 @@ public final class AudioManagerCompat {
     public static final int AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK = 3;
     private static final String TAG = "AudioManCompat";
 
+    private AudioManagerCompat() {
+    }
+
     public static int requestAudioFocus(@NonNull AudioManager audioManager, @NonNull AudioFocusRequestCompat focusRequest) {
         if (audioManager == null) {
             throw new IllegalArgumentException("AudioManager must not be null");
@@ -34,8 +37,5 @@ public final class AudioManagerCompat {
         } else {
             return audioManager.abandonAudioFocus(focusRequest.getOnAudioFocusChangeListener());
         }
-    }
-
-    private AudioManagerCompat() {
     }
 }

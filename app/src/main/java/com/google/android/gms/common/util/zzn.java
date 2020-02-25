@@ -1,12 +1,14 @@
 package com.google.android.gms.common.util;
 
 import android.text.TextUtils;
-import java.util.Iterator;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.Iterator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /* compiled from: JsonUtils */
 public final class zzn {

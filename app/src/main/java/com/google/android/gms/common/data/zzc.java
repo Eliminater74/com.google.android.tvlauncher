@@ -2,9 +2,11 @@ package com.google.android.gms.common.data;
 
 import android.database.CharArrayBuffer;
 import android.net.Uri;
+
 import com.google.android.gms.common.internal.Hide;
 import com.google.android.gms.common.internal.zzak;
 import com.google.android.gms.common.internal.zzau;
+
 import java.util.Arrays;
 
 @Hide

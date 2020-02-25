@@ -1,6 +1,7 @@
 package com.google.errorprone.annotations.concurrent;
 
 import com.google.errorprone.annotations.GoogleInternal;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

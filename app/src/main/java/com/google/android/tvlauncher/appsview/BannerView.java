@@ -20,21 +20,24 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.google.android.tvlauncher.C1188R;
 import com.google.android.tvlauncher.home.view.FavoriteLaunchItemView;
 import com.google.android.tvlauncher.util.Util;
 import com.google.android.tvrecommendations.shared.util.ColorUtils;
 
 public class BannerView extends LinearLayout implements FavoriteLaunchItemView {
+    /* access modifiers changed from: private */
+    public final int mCornerRadius;
+    /* access modifiers changed from: private */
+    public int mBannerImageHeight;
+    /* access modifiers changed from: private */
+    public TextView mTitleView;
     private ObjectAnimator mAnimBlink;
     private FrameLayout mBannerContainer;
     private ImageView mBannerImage;
     private float mBannerImageCurrentDimmingFactor;
     private float mBannerImageDimmedFactorValue;
-    /* access modifiers changed from: private */
-    public int mBannerImageHeight;
-    /* access modifiers changed from: private */
-    public final int mCornerRadius;
     private boolean mDefaultScaleAnimationsEnabled;
     private float mFocusedScale;
     private float mFocusedZDelta;
@@ -45,14 +48,8 @@ public class BannerView extends LinearLayout implements FavoriteLaunchItemView {
     private OnWindowVisibilityChangedListener mOnWindowVisibilityChangedListener;
     private InstallStateOverlayHelper mOverlayHelper;
     private int mScaleAnimDuration;
-    /* access modifiers changed from: private */
-    public TextView mTitleView;
     private int mTitleVisibility;
     private int mUnselectedTint;
-
-    public interface OnWindowVisibilityChangedListener {
-        void onWindowVisibilityChanged(int i);
-    }
 
     public BannerView(Context context) {
         this(context, null);
@@ -306,5 +303,9 @@ public class BannerView extends LinearLayout implements FavoriteLaunchItemView {
         if (this.mBannerImage.getAnimation() != null) {
             this.mBannerImage.getAnimation().cancel();
         }
+    }
+
+    public interface OnWindowVisibilityChangedListener {
+        void onWindowVisibilityChanged(int i);
     }
 }

@@ -1,6 +1,7 @@
 package com.google.android.libraries.stitch.util;
 
 import com.google.common.primitives.UnsignedBytes;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;

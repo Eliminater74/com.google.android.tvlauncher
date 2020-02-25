@@ -4,10 +4,10 @@ import java.io.IOException;
 
 public class LazyFieldLite {
     private static final ExtensionRegistryLite EMPTY_REGISTRY = ExtensionRegistryLite.getEmptyRegistry();
+    protected volatile MessageLite value;
     private ByteString delayedBytes;
     private ExtensionRegistryLite extensionRegistry;
     private volatile ByteString memoizedBytes;
-    protected volatile MessageLite value;
 
     public LazyFieldLite(ExtensionRegistryLite extensionRegistry2, ByteString bytes) {
         checkArguments(extensionRegistry2, bytes);
@@ -22,6 +22,22 @@ public class LazyFieldLite {
         LazyFieldLite lf = new LazyFieldLite();
         lf.setValue(value2);
         return lf;
+    }
+
+    private static MessageLite mergeValueAndBytes(MessageLite value2, ByteString otherBytes, ExtensionRegistryLite extensionRegistry2) {
+        try {
+            return value2.toBuilder().mergeFrom(otherBytes, extensionRegistry2).build();
+        } catch (InvalidProtocolBufferException e) {
+            return value2;
+        }
+    }
+
+    private static void checkArguments(ExtensionRegistryLite extensionRegistry2, ByteString bytes) {
+        if (extensionRegistry2 == null) {
+            throw new NullPointerException("found null ExtensionRegistry");
+        } else if (bytes == null) {
+            throw new NullPointerException("found null ByteString");
+        }
     }
 
     public boolean equals(Object o) {
@@ -126,14 +142,6 @@ public class LazyFieldLite {
         }
     }
 
-    private static MessageLite mergeValueAndBytes(MessageLite value2, ByteString otherBytes, ExtensionRegistryLite extensionRegistry2) {
-        try {
-            return value2.toBuilder().mergeFrom(otherBytes, extensionRegistry2).build();
-        } catch (InvalidProtocolBufferException e) {
-            return value2;
-        }
-    }
-
     public void setByteString(ByteString bytes, ExtensionRegistryLite extensionRegistry2) {
         checkArguments(extensionRegistry2, bytes);
         this.delayedBytes = bytes;
@@ -214,14 +222,6 @@ public class LazyFieldLite {
                     }
                 }
             }
-        }
-    }
-
-    private static void checkArguments(ExtensionRegistryLite extensionRegistry2, ByteString bytes) {
-        if (extensionRegistry2 == null) {
-            throw new NullPointerException("found null ExtensionRegistry");
-        } else if (bytes == null) {
-            throw new NullPointerException("found null ByteString");
         }
     }
 }

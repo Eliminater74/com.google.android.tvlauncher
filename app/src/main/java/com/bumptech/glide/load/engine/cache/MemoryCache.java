@@ -2,14 +2,11 @@ package com.bumptech.glide.load.engine.cache;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import com.bumptech.glide.load.Key;
 import com.bumptech.glide.load.engine.Resource;
 
 public interface MemoryCache {
-
-    public interface ResourceRemovedListener {
-        void onResourceRemoved(@NonNull Resource<?> resource);
-    }
 
     void clearMemory();
 
@@ -28,4 +25,8 @@ public interface MemoryCache {
     void setSizeMultiplier(float f);
 
     void trimMemory(int i);
+
+    public interface ResourceRemovedListener {
+        void onResourceRemoved(@NonNull Resource<?> resource);
+    }
 }

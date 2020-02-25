@@ -2,18 +2,19 @@ package com.google.android.exoplayer2.upstream;
 
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Util;
+
 import java.util.Arrays;
 
 public final class DefaultAllocator implements Allocator {
     private static final int AVAILABLE_EXTRA_CAPACITY = 100;
-    private int allocatedCount;
-    private Allocation[] availableAllocations;
-    private int availableCount;
     private final int individualAllocationSize;
     private final byte[] initialAllocationBlock;
     private final Allocation[] singleAllocationReleaseHolder;
-    private int targetBufferSize;
     private final boolean trimOnReset;
+    private int allocatedCount;
+    private Allocation[] availableAllocations;
+    private int availableCount;
+    private int targetBufferSize;
 
     public DefaultAllocator(boolean trimOnReset2, int individualAllocationSize2) {
         this(trimOnReset2, individualAllocationSize2, 0);

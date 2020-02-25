@@ -3,6 +3,7 @@ package com.google.android.tvlauncher.home.operatorbackground;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.view.View;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.MultiTransformation;
 import com.bumptech.glide.load.Transformation;

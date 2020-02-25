@@ -6,7 +6,6 @@ import android.support.annotation.VisibleForTesting;
 import android.support.p001v4.util.ArrayMap;
 import android.support.p001v4.util.LongSparseArray;
 import android.support.p001v4.util.Pools;
-import android.support.p004v7.widget.RecyclerView;
 
 /* renamed from: android.support.v7.widget.ViewInfoStore */
 class ViewInfoStore {
@@ -15,17 +14,6 @@ class ViewInfoStore {
     final ArrayMap<RecyclerView.ViewHolder, InfoRecord> mLayoutHolderMap = new ArrayMap<>();
     @VisibleForTesting
     final LongSparseArray<RecyclerView.ViewHolder> mOldChangedHolders = new LongSparseArray<>();
-
-    /* renamed from: android.support.v7.widget.ViewInfoStore$ProcessCallback */
-    interface ProcessCallback {
-        void processAppeared(RecyclerView.ViewHolder viewHolder, @Nullable RecyclerView.ItemAnimator.ItemHolderInfo itemHolderInfo, RecyclerView.ItemAnimator.ItemHolderInfo itemHolderInfo2);
-
-        void processDisappeared(RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ItemAnimator.ItemHolderInfo itemHolderInfo, @Nullable RecyclerView.ItemAnimator.ItemHolderInfo itemHolderInfo2);
-
-        void processPersistent(RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ItemAnimator.ItemHolderInfo itemHolderInfo, @NonNull RecyclerView.ItemAnimator.ItemHolderInfo itemHolderInfo2);
-
-        void unused(RecyclerView.ViewHolder viewHolder);
-    }
 
     ViewInfoStore() {
     }
@@ -197,6 +185,17 @@ class ViewInfoStore {
 
     public void onViewDetached(RecyclerView.ViewHolder viewHolder) {
         removeFromDisappearedInLayout(viewHolder);
+    }
+
+    /* renamed from: android.support.v7.widget.ViewInfoStore$ProcessCallback */
+    interface ProcessCallback {
+        void processAppeared(RecyclerView.ViewHolder viewHolder, @Nullable RecyclerView.ItemAnimator.ItemHolderInfo itemHolderInfo, RecyclerView.ItemAnimator.ItemHolderInfo itemHolderInfo2);
+
+        void processDisappeared(RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ItemAnimator.ItemHolderInfo itemHolderInfo, @Nullable RecyclerView.ItemAnimator.ItemHolderInfo itemHolderInfo2);
+
+        void processPersistent(RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ItemAnimator.ItemHolderInfo itemHolderInfo, @NonNull RecyclerView.ItemAnimator.ItemHolderInfo itemHolderInfo2);
+
+        void unused(RecyclerView.ViewHolder viewHolder);
     }
 
     /* renamed from: android.support.v7.widget.ViewInfoStore$InfoRecord */

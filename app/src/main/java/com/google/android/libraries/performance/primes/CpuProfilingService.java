@@ -11,13 +11,14 @@ import android.os.Debug;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.support.p001v4.content.ContextCompat;
+
 import com.google.android.libraries.clock.Clock;
 import com.google.android.libraries.clock.impl.SystemClockImpl;
-import com.google.android.libraries.performance.primes.MetricRecorder;
 import com.google.android.libraries.performance.primes.metriccapture.ProcessStats;
 import com.google.android.libraries.performance.primes.sampling.SamplingUtils;
 import com.google.android.libraries.performance.primes.transmitter.MetricTransmitter;
 import com.google.protobuf.ByteString;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -25,12 +26,13 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+
 import logs.proto.wireless.performance.mobile.CpuProfiling;
 import logs.proto.wireless.performance.mobile.SystemHealthProto;
 
 final class CpuProfilingService extends AbstractMetricService implements PrimesStartupListener {
-    private static final String TAG = "CpuProfilingService";
     static final String TRACE_DIR_PREFIX = "primes_profiling_";
+    private static final String TAG = "CpuProfilingService";
     /* access modifiers changed from: private */
     public final IntentFilter batteryIntentFilter = new IntentFilter("android.intent.action.BATTERY_CHANGED");
     /* access modifiers changed from: private */
@@ -47,14 +49,10 @@ final class CpuProfilingService extends AbstractMetricService implements PrimesS
     public final double samplesPerEpoch;
     /* access modifiers changed from: private */
     public final AtomicBoolean scheduled = new AtomicBoolean(false);
+    private final CpuProfilingServiceScheduler scheduler;
     /* access modifiers changed from: private */
     public ScheduledFuture<?> scheduledFutureCollectCpuUsage;
-    private final CpuProfilingServiceScheduler scheduler;
     private WifiManager wifi;
-
-    static CpuProfilingService createService(MetricTransmitter metricTransmitter, Application application, Supplier<MetricStamper> metricStamperSupplier, Supplier<ScheduledExecutorService> executorServiceSupplier, PrimesProfilingConfigurations config) {
-        return new CpuProfilingService(metricTransmitter, application, metricStamperSupplier, executorServiceSupplier, config.getMaxBufferSizeBytes(), config.getSampleFrequencyMicro(), config.getSampleDurationMs(), config.getSampleDurationSkewMs(), config.getSamplesPerEpoch(), new SystemClockImpl());
-    }
 
     @VisibleForTesting
     CpuProfilingService(MetricTransmitter transmitter, Application application, Supplier<MetricStamper> metricStamperSupplier, Supplier<ScheduledExecutorService> executorServiceSupplier, int maxBufferSizeBytes2, int frequencyMicro2, int sampleDurationMs2, int sampleDurationSkewMs2, double samplesPerEpoch2, Clock clock2) {
@@ -66,6 +64,33 @@ final class CpuProfilingService extends AbstractMetricService implements PrimesS
         this.samplesPerEpoch = samplesPerEpoch2;
         this.clock = clock2;
         this.scheduler = new CpuProfilingServiceScheduler(clock2, samplesPerEpoch2, sampleDurationMs2, ProcessStats.getCurrentProcessName(), getApplication());
+    }
+
+    static CpuProfilingService createService(MetricTransmitter metricTransmitter, Application application, Supplier<MetricStamper> metricStamperSupplier, Supplier<ScheduledExecutorService> executorServiceSupplier, PrimesProfilingConfigurations config) {
+        return new CpuProfilingService(metricTransmitter, application, metricStamperSupplier, executorServiceSupplier, config.getMaxBufferSizeBytes(), config.getSampleFrequencyMicro(), config.getSampleDurationMs(), config.getSampleDurationSkewMs(), config.getSamplesPerEpoch(), new SystemClockImpl());
+    }
+
+    /* access modifiers changed from: private */
+    public static byte[] readFile(File file, int maxSize) throws IOException {
+        FileInputStream fis = null;
+        try {
+            long fileLength = file.length();
+            if (fileLength <= 0 || fileLength > ((long) maxSize)) {
+                return new byte[0];
+            }
+            int len = (int) fileLength;
+            byte[] content = new byte[len];
+            FileInputStream fis2 = new FileInputStream(file);
+            for (int read = 0; read < len; read += fis2.read(content, read, len - read)) {
+            }
+            fis2.close();
+            fis2.close();
+            return content;
+        } finally {
+            if (fis != null) {
+                fis.close();
+            }
+        }
     }
 
     /* access modifiers changed from: package-private */
@@ -129,36 +154,6 @@ final class CpuProfilingService extends AbstractMetricService implements PrimesS
         throw new UnsupportedOperationException("Method not decompiled: com.google.android.libraries.performance.primes.CpuProfilingService.scheduleNextMonitoringWindow():void");
     }
 
-    private final class CpuCollectionStartTask implements Runnable {
-        private final long stopTimeMs;
-
-        CpuCollectionStartTask(long stopTimeMs2) {
-            this.stopTimeMs = stopTimeMs2;
-        }
-
-        @TargetApi(21)
-        public void run() {
-            long now = CpuProfilingService.this.clock.currentTimeMillis();
-            if (this.stopTimeMs <= now) {
-                CpuProfilingService.this.scheduleNextMonitoringWindow();
-                return;
-            }
-            Intent batteryStatus = CpuProfilingService.this.getApplication().registerReceiver(null, CpuProfilingService.this.batteryIntentFilter);
-            CpuProfiling.DeviceMetadata deviceMetadata = CpuProfilingService.this.createAndInitDeviceMetadata(batteryStatus);
-            File traceFile = CpuProfilingService.this.getTraceFile();
-            if (traceFile == null) {
-                PrimesLog.m54w(CpuProfilingService.TAG, "Can't create file, aborting method sampling", new Object[0]);
-                return;
-            }
-            CpuProfilingService.this.clearTraceFile();
-            Debug.startMethodTracingSampling(traceFile.getAbsolutePath(), CpuProfilingService.this.maxBufferSizeBytes, CpuProfilingService.this.frequencyMicro);
-            CpuProfilingService cpuProfilingService = CpuProfilingService.this;
-            ScheduledExecutorService scheduledExecutorService = cpuProfilingService.getScheduledExecutorService();
-            CpuProfilingService cpuProfilingService2 = CpuProfilingService.this;
-            ScheduledFuture unused = cpuProfilingService.scheduledFutureCollectCpuUsage = scheduledExecutorService.schedule(new CpuCollectionEndTask(traceFile, deviceMetadata, Float.valueOf(cpuProfilingService2.getBatteryPercent(batteryStatus)), Long.valueOf(this.stopTimeMs), Long.valueOf(now)), this.stopTimeMs - now, TimeUnit.MILLISECONDS);
-        }
-    }
-
     /* access modifiers changed from: private */
     @SuppressLint({"MissingPermission"})
     public CpuProfiling.DeviceMetadata createAndInitDeviceMetadata(Intent batteryStatus) {
@@ -184,61 +179,6 @@ final class CpuProfilingService extends AbstractMetricService implements PrimesS
     private boolean isCharging(Intent batteryStatus) {
         int status = batteryStatus.getIntExtra("status", -1);
         return status == 2 || status == 5;
-    }
-
-    private final class CpuCollectionEndTask implements Runnable {
-        private final Long actualStartTiemMs;
-        private final Float batteryPercent;
-        private final CpuProfiling.DeviceMetadata deviceMetadata;
-        private final Long stopTimeMs;
-        private final File traceFile;
-
-        CpuCollectionEndTask(File traceFile2, CpuProfiling.DeviceMetadata deviceMetadata2, Float batteryPercent2, Long stopTimeMs2, Long actualStartTimeMs) {
-            this.traceFile = traceFile2;
-            this.deviceMetadata = deviceMetadata2;
-            this.batteryPercent = batteryPercent2;
-            this.stopTimeMs = stopTimeMs2;
-            this.actualStartTiemMs = actualStartTimeMs;
-        }
-
-        public void run() {
-            CpuProfilingService.this.scheduled.set(false);
-            Debug.stopMethodTracing();
-            Long now = Long.valueOf(CpuProfilingService.this.clock.currentTimeMillis());
-            if (now.longValue() >= this.stopTimeMs.longValue() + ((long) CpuProfilingService.this.sampleDurationSkewMs)) {
-                CpuProfilingService.this.scheduleNextMonitoringWindow();
-                PrimesLog.m54w(CpuProfilingService.TAG, "Missed sample window by %d ms", Long.valueOf(now.longValue() - this.stopTimeMs.longValue()));
-                return;
-            }
-            Intent batteryStatus = CpuProfilingService.this.getApplication().registerReceiver(null, CpuProfilingService.this.batteryIntentFilter);
-            CpuProfiling.CpuProfilingMetric.Builder cpuProfilingMetric = CpuProfiling.CpuProfilingMetric.newBuilder().setDeviceMetadata((CpuProfiling.DeviceMetadata) ((CpuProfiling.DeviceMetadata.Builder) this.deviceMetadata.toBuilder()).setAfterState(CpuProfilingService.this.getDeviceState(batteryStatus)).setBatteryDropPercent(this.batteryPercent.floatValue() - CpuProfilingService.this.getBatteryPercent(batteryStatus)).build());
-            File file = this.traceFile;
-            if (file == null || !file.exists()) {
-                PrimesLog.m48e(CpuProfilingService.TAG, "Missing trace file", new Object[0]);
-            } else {
-                try {
-                    cpuProfilingMetric.setTraceBlob(ByteString.copyFrom(SamplingUtils.compressBytes(CpuProfilingService.readFile(this.traceFile, CpuProfilingService.this.maxBufferSizeBytes))));
-                    CpuProfilingService.this.clearTraceFile();
-                } catch (IOException e) {
-                    String valueOf = String.valueOf(this.traceFile);
-                    StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 20);
-                    sb.append("Unable to read file ");
-                    sb.append(valueOf);
-                    PrimesLog.m47e(CpuProfilingService.TAG, sb.toString(), e, new Object[0]);
-                }
-            }
-            cpuProfilingMetric.setSamplesPerEpoch(CpuProfilingService.this.samplesPerEpoch).setSampleFrequency(CpuProfilingService.this.frequencyMicro);
-            if (now.longValue() - this.actualStartTiemMs.longValue() < 2147483647L) {
-                cpuProfilingMetric.setSampleDurationActual((int) (now.longValue() - this.actualStartTiemMs.longValue()));
-            } else {
-                cpuProfilingMetric.setSampleDurationActual(-1);
-            }
-            cpuProfilingMetric.setSampleDurationScheduled(CpuProfilingService.this.sampleDurationMs).setSampleBufferSize(CpuProfilingService.this.maxBufferSizeBytes);
-            if (cpuProfilingMetric.getTraceBlob().size() > 0) {
-                CpuProfilingService.this.recordSystemHealthMetric((SystemHealthProto.SystemHealthMetric) SystemHealthProto.SystemHealthMetric.newBuilder().setCpuProfilingMetric(cpuProfilingMetric).build());
-            }
-            CpuProfilingService.this.scheduleNextMonitoringWindow();
-        }
     }
 
     private synchronized void shutdownService(boolean mayInterruptIfRunning) {
@@ -294,26 +234,88 @@ final class CpuProfilingService extends AbstractMetricService implements PrimesS
         return this.wifi;
     }
 
-    /* access modifiers changed from: private */
-    public static byte[] readFile(File file, int maxSize) throws IOException {
-        FileInputStream fis = null;
-        try {
-            long fileLength = file.length();
-            if (fileLength <= 0 || fileLength > ((long) maxSize)) {
-                return new byte[0];
+    private final class CpuCollectionStartTask implements Runnable {
+        private final long stopTimeMs;
+
+        CpuCollectionStartTask(long stopTimeMs2) {
+            this.stopTimeMs = stopTimeMs2;
+        }
+
+        @TargetApi(21)
+        public void run() {
+            long now = CpuProfilingService.this.clock.currentTimeMillis();
+            if (this.stopTimeMs <= now) {
+                CpuProfilingService.this.scheduleNextMonitoringWindow();
+                return;
             }
-            int len = (int) fileLength;
-            byte[] content = new byte[len];
-            FileInputStream fis2 = new FileInputStream(file);
-            for (int read = 0; read < len; read += fis2.read(content, read, len - read)) {
+            Intent batteryStatus = CpuProfilingService.this.getApplication().registerReceiver(null, CpuProfilingService.this.batteryIntentFilter);
+            CpuProfiling.DeviceMetadata deviceMetadata = CpuProfilingService.this.createAndInitDeviceMetadata(batteryStatus);
+            File traceFile = CpuProfilingService.this.getTraceFile();
+            if (traceFile == null) {
+                PrimesLog.m54w(CpuProfilingService.TAG, "Can't create file, aborting method sampling", new Object[0]);
+                return;
             }
-            fis2.close();
-            fis2.close();
-            return content;
-        } finally {
-            if (fis != null) {
-                fis.close();
+            CpuProfilingService.this.clearTraceFile();
+            Debug.startMethodTracingSampling(traceFile.getAbsolutePath(), CpuProfilingService.this.maxBufferSizeBytes, CpuProfilingService.this.frequencyMicro);
+            CpuProfilingService cpuProfilingService = CpuProfilingService.this;
+            ScheduledExecutorService scheduledExecutorService = cpuProfilingService.getScheduledExecutorService();
+            CpuProfilingService cpuProfilingService2 = CpuProfilingService.this;
+            ScheduledFuture unused = cpuProfilingService.scheduledFutureCollectCpuUsage = scheduledExecutorService.schedule(new CpuCollectionEndTask(traceFile, deviceMetadata, Float.valueOf(cpuProfilingService2.getBatteryPercent(batteryStatus)), Long.valueOf(this.stopTimeMs), Long.valueOf(now)), this.stopTimeMs - now, TimeUnit.MILLISECONDS);
+        }
+    }
+
+    private final class CpuCollectionEndTask implements Runnable {
+        private final Long actualStartTiemMs;
+        private final Float batteryPercent;
+        private final CpuProfiling.DeviceMetadata deviceMetadata;
+        private final Long stopTimeMs;
+        private final File traceFile;
+
+        CpuCollectionEndTask(File traceFile2, CpuProfiling.DeviceMetadata deviceMetadata2, Float batteryPercent2, Long stopTimeMs2, Long actualStartTimeMs) {
+            this.traceFile = traceFile2;
+            this.deviceMetadata = deviceMetadata2;
+            this.batteryPercent = batteryPercent2;
+            this.stopTimeMs = stopTimeMs2;
+            this.actualStartTiemMs = actualStartTimeMs;
+        }
+
+        public void run() {
+            CpuProfilingService.this.scheduled.set(false);
+            Debug.stopMethodTracing();
+            Long now = Long.valueOf(CpuProfilingService.this.clock.currentTimeMillis());
+            if (now.longValue() >= this.stopTimeMs.longValue() + ((long) CpuProfilingService.this.sampleDurationSkewMs)) {
+                CpuProfilingService.this.scheduleNextMonitoringWindow();
+                PrimesLog.m54w(CpuProfilingService.TAG, "Missed sample window by %d ms", Long.valueOf(now.longValue() - this.stopTimeMs.longValue()));
+                return;
             }
+            Intent batteryStatus = CpuProfilingService.this.getApplication().registerReceiver(null, CpuProfilingService.this.batteryIntentFilter);
+            CpuProfiling.CpuProfilingMetric.Builder cpuProfilingMetric = CpuProfiling.CpuProfilingMetric.newBuilder().setDeviceMetadata((CpuProfiling.DeviceMetadata) ((CpuProfiling.DeviceMetadata.Builder) this.deviceMetadata.toBuilder()).setAfterState(CpuProfilingService.this.getDeviceState(batteryStatus)).setBatteryDropPercent(this.batteryPercent.floatValue() - CpuProfilingService.this.getBatteryPercent(batteryStatus)).build());
+            File file = this.traceFile;
+            if (file == null || !file.exists()) {
+                PrimesLog.m48e(CpuProfilingService.TAG, "Missing trace file", new Object[0]);
+            } else {
+                try {
+                    cpuProfilingMetric.setTraceBlob(ByteString.copyFrom(SamplingUtils.compressBytes(CpuProfilingService.readFile(this.traceFile, CpuProfilingService.this.maxBufferSizeBytes))));
+                    CpuProfilingService.this.clearTraceFile();
+                } catch (IOException e) {
+                    String valueOf = String.valueOf(this.traceFile);
+                    StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 20);
+                    sb.append("Unable to read file ");
+                    sb.append(valueOf);
+                    PrimesLog.m47e(CpuProfilingService.TAG, sb.toString(), e, new Object[0]);
+                }
+            }
+            cpuProfilingMetric.setSamplesPerEpoch(CpuProfilingService.this.samplesPerEpoch).setSampleFrequency(CpuProfilingService.this.frequencyMicro);
+            if (now.longValue() - this.actualStartTiemMs.longValue() < 2147483647L) {
+                cpuProfilingMetric.setSampleDurationActual((int) (now.longValue() - this.actualStartTiemMs.longValue()));
+            } else {
+                cpuProfilingMetric.setSampleDurationActual(-1);
+            }
+            cpuProfilingMetric.setSampleDurationScheduled(CpuProfilingService.this.sampleDurationMs).setSampleBufferSize(CpuProfilingService.this.maxBufferSizeBytes);
+            if (cpuProfilingMetric.getTraceBlob().size() > 0) {
+                CpuProfilingService.this.recordSystemHealthMetric((SystemHealthProto.SystemHealthMetric) SystemHealthProto.SystemHealthMetric.newBuilder().setCpuProfilingMetric(cpuProfilingMetric).build());
+            }
+            CpuProfilingService.this.scheduleNextMonitoringWindow();
         }
     }
 }

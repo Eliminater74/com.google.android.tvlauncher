@@ -4,7 +4,6 @@ import android.accounts.Account;
 import android.os.Binder;
 import android.os.RemoteException;
 import android.util.Log;
-import com.google.android.gms.common.internal.IAccountAccessor;
 
 @Hide
 /* compiled from: AccountAccessor */

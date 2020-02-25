@@ -15,6 +15,7 @@ import com.google.protobuf.ProtoMessage;
 import com.google.protobuf.ProtoPresenceBits;
 import com.google.protobuf.ProtoPresenceCheckedField;
 import com.google.protobuf.ProtoSyntax;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -22,6 +23,12 @@ import java.util.Collections;
 import java.util.List;
 
 public final class ExtensionCalendar {
+
+    private ExtensionCalendar() {
+    }
+
+    public static void registerAllExtensions(ExtensionRegistryLite registry) {
+    }
 
     public interface CalendarExtensionOrBuilder extends MessageLiteOrBuilder {
         int getActiveExperiments(int i);
@@ -55,23 +62,22 @@ public final class ExtensionCalendar {
         boolean hasViewScreenType();
     }
 
-    private ExtensionCalendar() {
-    }
-
-    public static void registerAllExtensions(ExtensionRegistryLite registry) {
-    }
-
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
     public static final class CalendarExtension extends GeneratedMessageLite<CalendarExtension, Builder> implements CalendarExtensionOrBuilder {
         public static final int ACTIVE_EXPERIMENTS_FIELD_NUMBER = 1;
         /* access modifiers changed from: private */
         public static final CalendarExtension DEFAULT_INSTANCE = new CalendarExtension();
-        private static volatile Parser<CalendarExtension> PARSER = null;
         public static final int REMOTE_FEATURE_CONFIG_FIELD_NUMBER = 5;
         public static final int RESULT_CODE_FIELD_NUMBER = 4;
         public static final int RESULT_SOURCE_FIELD_NUMBER = 3;
         public static final int RESULT_STATUS_FIELD_NUMBER = 2;
         public static final int VIEW_SCREEN_TYPE_FIELD_NUMBER = 6;
+        private static volatile Parser<CalendarExtension> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(CalendarExtension.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoField(fieldNumber = 1, type = FieldType.INT32_LIST)
         private Internal.IntList activeExperiments_ = emptyIntList();
         @ProtoPresenceBits(mo28548id = 0)
@@ -94,137 +100,68 @@ public final class ExtensionCalendar {
         private CalendarExtension() {
         }
 
-        public enum ResultStatus implements Internal.EnumLite {
-            UNKNOWN(0),
-            SUCCESS(1),
-            FAILURE(2),
-            CANCEL(3);
-            
-            public static final int CANCEL_VALUE = 3;
-            public static final int FAILURE_VALUE = 2;
-            public static final int SUCCESS_VALUE = 1;
-            public static final int UNKNOWN_VALUE = 0;
-            private static final Internal.EnumLiteMap<ResultStatus> internalValueMap = new Internal.EnumLiteMap<ResultStatus>() {
-                public ResultStatus findValueByNumber(int number) {
-                    return ResultStatus.forNumber(number);
-                }
-            };
-            private final int value;
-
-            public final int getNumber() {
-                return this.value;
-            }
-
-            public static ResultStatus forNumber(int value2) {
-                if (value2 == 0) {
-                    return UNKNOWN;
-                }
-                if (value2 == 1) {
-                    return SUCCESS;
-                }
-                if (value2 == 2) {
-                    return FAILURE;
-                }
-                if (value2 != 3) {
-                    return null;
-                }
-                return CANCEL;
-            }
-
-            public static Internal.EnumLiteMap<ResultStatus> internalGetValueMap() {
-                return internalValueMap;
-            }
-
-            public static Internal.EnumVerifier internalGetVerifier() {
-                return ResultStatusVerifier.INSTANCE;
-            }
-
-            private static final class ResultStatusVerifier implements Internal.EnumVerifier {
-                static final Internal.EnumVerifier INSTANCE = new ResultStatusVerifier();
-
-                private ResultStatusVerifier() {
-                }
-
-                public boolean isInRange(int number) {
-                    return ResultStatus.forNumber(number) != null;
-                }
-            }
-
-            private ResultStatus(int value2) {
-                this.value = value2;
-            }
+        public static CalendarExtension parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (CalendarExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
         }
 
-        public enum ViewScreenType implements Internal.EnumLite {
-            VIEWSCREEN_UNKNOWN(0),
-            EVENT(1),
-            ICS(2),
-            SMARTMAIL(3),
-            GROOVE(4),
-            REMINDER(5),
-            BIRTHDAY(6);
-            
-            public static final int BIRTHDAY_VALUE = 6;
-            public static final int EVENT_VALUE = 1;
-            public static final int GROOVE_VALUE = 4;
-            public static final int ICS_VALUE = 2;
-            public static final int REMINDER_VALUE = 5;
-            public static final int SMARTMAIL_VALUE = 3;
-            public static final int VIEWSCREEN_UNKNOWN_VALUE = 0;
-            private static final Internal.EnumLiteMap<ViewScreenType> internalValueMap = new Internal.EnumLiteMap<ViewScreenType>() {
-                public ViewScreenType findValueByNumber(int number) {
-                    return ViewScreenType.forNumber(number);
-                }
-            };
-            private final int value;
+        public static CalendarExtension parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (CalendarExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-            public final int getNumber() {
-                return this.value;
-            }
+        public static CalendarExtension parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (CalendarExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
 
-            public static ViewScreenType forNumber(int value2) {
-                switch (value2) {
-                    case 0:
-                        return VIEWSCREEN_UNKNOWN;
-                    case 1:
-                        return EVENT;
-                    case 2:
-                        return ICS;
-                    case 3:
-                        return SMARTMAIL;
-                    case 4:
-                        return GROOVE;
-                    case 5:
-                        return REMINDER;
-                    case 6:
-                        return BIRTHDAY;
-                    default:
-                        return null;
-                }
-            }
+        public static CalendarExtension parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (CalendarExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-            public static Internal.EnumLiteMap<ViewScreenType> internalGetValueMap() {
-                return internalValueMap;
-            }
+        public static CalendarExtension parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (CalendarExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
 
-            public static Internal.EnumVerifier internalGetVerifier() {
-                return ViewScreenTypeVerifier.INSTANCE;
-            }
+        public static CalendarExtension parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (CalendarExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-            private static final class ViewScreenTypeVerifier implements Internal.EnumVerifier {
-                static final Internal.EnumVerifier INSTANCE = new ViewScreenTypeVerifier();
+        public static CalendarExtension parseFrom(InputStream input) throws IOException {
+            return (CalendarExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
 
-                private ViewScreenTypeVerifier() {
-                }
+        public static CalendarExtension parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (CalendarExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
 
-                public boolean isInRange(int number) {
-                    return ViewScreenType.forNumber(number) != null;
-                }
-            }
+        public static CalendarExtension parseDelimitedFrom(InputStream input) throws IOException {
+            return (CalendarExtension) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
 
-            private ViewScreenType(int value2) {
-                this.value = value2;
-            }
+        public static CalendarExtension parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (CalendarExtension) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static CalendarExtension parseFrom(CodedInputStream input) throws IOException {
+            return (CalendarExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static CalendarExtension parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (CalendarExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(CalendarExtension prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static CalendarExtension getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<CalendarExtension> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public List<Integer> getActiveExperimentsList() {
@@ -433,60 +370,169 @@ public final class ExtensionCalendar {
             this.viewScreenType_ = 0;
         }
 
-        public static CalendarExtension parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (CalendarExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new CalendarExtension();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0006\u0000\u0001\u0001\u0006\u0006\u0000\u0002\u0000\u0001\u0016\u0002\f\u0000\u0003\u0004\u0001\u0004\u0004\u0002\u0005\u001a\u0006\f\u0003", new Object[]{"bitField0_", "activeExperiments_", "resultStatus_", ResultStatus.internalGetVerifier(), "resultSource_", "resultCode_", "remoteFeatureConfig_", "viewScreenType_", ViewScreenType.internalGetVerifier()});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<CalendarExtension> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (CalendarExtension.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
-        public static CalendarExtension parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (CalendarExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        public enum ResultStatus implements Internal.EnumLite {
+            UNKNOWN(0),
+            SUCCESS(1),
+            FAILURE(2),
+            CANCEL(3);
+
+            public static final int CANCEL_VALUE = 3;
+            public static final int FAILURE_VALUE = 2;
+            public static final int SUCCESS_VALUE = 1;
+            public static final int UNKNOWN_VALUE = 0;
+            private static final Internal.EnumLiteMap<ResultStatus> internalValueMap = new Internal.EnumLiteMap<ResultStatus>() {
+                public ResultStatus findValueByNumber(int number) {
+                    return ResultStatus.forNumber(number);
+                }
+            };
+            private final int value;
+
+            private ResultStatus(int value2) {
+                this.value = value2;
+            }
+
+            public static ResultStatus forNumber(int value2) {
+                if (value2 == 0) {
+                    return UNKNOWN;
+                }
+                if (value2 == 1) {
+                    return SUCCESS;
+                }
+                if (value2 == 2) {
+                    return FAILURE;
+                }
+                if (value2 != 3) {
+                    return null;
+                }
+                return CANCEL;
+            }
+
+            public static Internal.EnumLiteMap<ResultStatus> internalGetValueMap() {
+                return internalValueMap;
+            }
+
+            public static Internal.EnumVerifier internalGetVerifier() {
+                return ResultStatusVerifier.INSTANCE;
+            }
+
+            public final int getNumber() {
+                return this.value;
+            }
+
+            private static final class ResultStatusVerifier implements Internal.EnumVerifier {
+                static final Internal.EnumVerifier INSTANCE = new ResultStatusVerifier();
+
+                private ResultStatusVerifier() {
+                }
+
+                public boolean isInRange(int number) {
+                    return ResultStatus.forNumber(number) != null;
+                }
+            }
         }
 
-        public static CalendarExtension parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (CalendarExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
+        public enum ViewScreenType implements Internal.EnumLite {
+            VIEWSCREEN_UNKNOWN(0),
+            EVENT(1),
+            ICS(2),
+            SMARTMAIL(3),
+            GROOVE(4),
+            REMINDER(5),
+            BIRTHDAY(6);
 
-        public static CalendarExtension parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (CalendarExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
+            public static final int BIRTHDAY_VALUE = 6;
+            public static final int EVENT_VALUE = 1;
+            public static final int GROOVE_VALUE = 4;
+            public static final int ICS_VALUE = 2;
+            public static final int REMINDER_VALUE = 5;
+            public static final int SMARTMAIL_VALUE = 3;
+            public static final int VIEWSCREEN_UNKNOWN_VALUE = 0;
+            private static final Internal.EnumLiteMap<ViewScreenType> internalValueMap = new Internal.EnumLiteMap<ViewScreenType>() {
+                public ViewScreenType findValueByNumber(int number) {
+                    return ViewScreenType.forNumber(number);
+                }
+            };
+            private final int value;
 
-        public static CalendarExtension parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (CalendarExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
+            private ViewScreenType(int value2) {
+                this.value = value2;
+            }
 
-        public static CalendarExtension parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (CalendarExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
+            public static ViewScreenType forNumber(int value2) {
+                switch (value2) {
+                    case 0:
+                        return VIEWSCREEN_UNKNOWN;
+                    case 1:
+                        return EVENT;
+                    case 2:
+                        return ICS;
+                    case 3:
+                        return SMARTMAIL;
+                    case 4:
+                        return GROOVE;
+                    case 5:
+                        return REMINDER;
+                    case 6:
+                        return BIRTHDAY;
+                    default:
+                        return null;
+                }
+            }
 
-        public static CalendarExtension parseFrom(InputStream input) throws IOException {
-            return (CalendarExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
+            public static Internal.EnumLiteMap<ViewScreenType> internalGetValueMap() {
+                return internalValueMap;
+            }
 
-        public static CalendarExtension parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (CalendarExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
+            public static Internal.EnumVerifier internalGetVerifier() {
+                return ViewScreenTypeVerifier.INSTANCE;
+            }
 
-        public static CalendarExtension parseDelimitedFrom(InputStream input) throws IOException {
-            return (CalendarExtension) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
+            public final int getNumber() {
+                return this.value;
+            }
 
-        public static CalendarExtension parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (CalendarExtension) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
+            private static final class ViewScreenTypeVerifier implements Internal.EnumVerifier {
+                static final Internal.EnumVerifier INSTANCE = new ViewScreenTypeVerifier();
 
-        public static CalendarExtension parseFrom(CodedInputStream input) throws IOException {
-            return (CalendarExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
+                private ViewScreenTypeVerifier() {
+                }
 
-        public static CalendarExtension parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (CalendarExtension) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(CalendarExtension prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+                public boolean isInRange(int number) {
+                    return ViewScreenType.forNumber(number) != null;
+                }
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<CalendarExtension, Builder> implements CalendarExtensionOrBuilder {
@@ -655,50 +701,6 @@ public final class ExtensionCalendar {
                 ((CalendarExtension) this.instance).clearViewScreenType();
                 return this;
             }
-        }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new CalendarExtension();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0006\u0000\u0001\u0001\u0006\u0006\u0000\u0002\u0000\u0001\u0016\u0002\f\u0000\u0003\u0004\u0001\u0004\u0004\u0002\u0005\u001a\u0006\f\u0003", new Object[]{"bitField0_", "activeExperiments_", "resultStatus_", ResultStatus.internalGetVerifier(), "resultSource_", "resultCode_", "remoteFeatureConfig_", "viewScreenType_", ViewScreenType.internalGetVerifier()});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<CalendarExtension> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (CalendarExtension.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(CalendarExtension.class, DEFAULT_INSTANCE);
-        }
-
-        public static CalendarExtension getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<CalendarExtension> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
         }
     }
 }

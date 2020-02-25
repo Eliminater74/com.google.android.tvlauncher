@@ -1,8 +1,10 @@
 package com.google.common.base;
 
 import com.google.common.annotations.GwtCompatible;
-import java.io.Serializable;
+
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
+import java.io.Serializable;
 
 @GwtCompatible
 public enum CaseFormat {
@@ -92,17 +94,29 @@ public enum CaseFormat {
             return CaseFormat.super.convert(format, s);
         }
     };
-    
+
     private final CharMatcher wordBoundary;
     private final String wordSeparator;
-
-    /* access modifiers changed from: package-private */
-    public abstract String normalizeWord(String str);
 
     private CaseFormat(CharMatcher wordBoundary2, String wordSeparator2) {
         this.wordBoundary = wordBoundary2;
         this.wordSeparator = wordSeparator2;
     }
+
+    private static String firstCharOnlyToUpper(String word) {
+        if (word.isEmpty()) {
+            return word;
+        }
+        char upperCase = Ascii.toUpperCase(word.charAt(0));
+        String lowerCase = Ascii.toLowerCase(word.substring(1));
+        StringBuilder sb = new StringBuilder(String.valueOf(lowerCase).length() + 1);
+        sb.append(upperCase);
+        sb.append(lowerCase);
+        return sb.toString();
+    }
+
+    /* access modifiers changed from: package-private */
+    public abstract String normalizeWord(String str);
 
     /* renamed from: to */
     public final String mo23000to(CaseFormat format, String str) {
@@ -140,6 +154,11 @@ public enum CaseFormat {
 
     public Converter<String, String> converterTo(CaseFormat targetFormat) {
         return new StringConverter(this, targetFormat);
+    }
+
+    /* access modifiers changed from: package-private */
+    public String normalizeFirstWord(String word) {
+        return normalizeWord(word);
     }
 
     private static final class StringConverter extends Converter<String, String> implements Serializable {
@@ -187,22 +206,5 @@ public enum CaseFormat {
             sb.append(")");
             return sb.toString();
         }
-    }
-
-    /* access modifiers changed from: package-private */
-    public String normalizeFirstWord(String word) {
-        return normalizeWord(word);
-    }
-
-    private static String firstCharOnlyToUpper(String word) {
-        if (word.isEmpty()) {
-            return word;
-        }
-        char upperCase = Ascii.toUpperCase(word.charAt(0));
-        String lowerCase = Ascii.toLowerCase(word.substring(1));
-        StringBuilder sb = new StringBuilder(String.valueOf(lowerCase).length() + 1);
-        sb.append(upperCase);
-        sb.append(lowerCase);
-        return sb.toString();
     }
 }

@@ -12,6 +12,11 @@ public final class Hprofs {
     public static final int NATIVE_STACK = 4;
     public static final int REFERENCE_CLEANUP = 140;
     public static final int STICKY_CLASS = 5;
+    public static final int THREAD_BLOCK = 6;
+    public static final int THREAD_OBJECT = 8;
+    public static final int UNKNOWN = 255;
+    public static final int UNREACHABLE = 144;
+    public static final int VM_INTERNAL = 141;
     static final int TAG_CLASS_DUMP = 32;
     static final int TAG_CLASS_NAME = 2;
     static final int TAG_END_HEAP_SEGMENT = 44;
@@ -24,15 +29,6 @@ public final class Hprofs {
     static final int TAG_PRIMITIVE_ARRAY_NODATA = 195;
     static final int TAG_STACK_TRACE = 5;
     static final int TAG_STRING = 1;
-    public static final int THREAD_BLOCK = 6;
-    public static final int THREAD_OBJECT = 8;
-    public static final int UNKNOWN = 255;
-    public static final int UNREACHABLE = 144;
-    public static final int VM_INTERNAL = 141;
-
-    public interface RootTagSizeMapper {
-        void addRootSize(int i, int i2);
-    }
 
     private Hprofs() {
     }
@@ -68,5 +64,9 @@ public final class Hprofs {
         mapper.addRootSize(142, idSize + 8);
         mapper.addRootSize(4, idSize + 4);
         mapper.addRootSize(6, idSize + 4);
+    }
+
+    public interface RootTagSizeMapper {
+        void addRootSize(int i, int i2);
     }
 }

@@ -15,6 +15,7 @@ import com.google.protobuf.ProtoMessage;
 import com.google.protobuf.ProtoPresenceBits;
 import com.google.protobuf.ProtoPresenceCheckedField;
 import com.google.protobuf.ProtoSyntax;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -22,6 +23,12 @@ import java.util.Collections;
 import java.util.List;
 
 public final class ExtensionYoutube {
+
+    private ExtensionYoutube() {
+    }
+
+    public static void registerAllExtensions(ExtensionRegistryLite registry) {
+    }
 
     public interface InnerTubeRequestInfoOrBuilder extends MessageLiteOrBuilder {
         long getParsingTimeMs();
@@ -47,18 +54,17 @@ public final class ExtensionYoutube {
         boolean hasInnertubeRequestInfo();
     }
 
-    private ExtensionYoutube() {
-    }
-
-    public static void registerAllExtensions(ExtensionRegistryLite registry) {
-    }
-
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
     public static final class YouTubeExtension extends GeneratedMessageLite<YouTubeExtension, Builder> implements YouTubeExtensionOrBuilder {
         /* access modifiers changed from: private */
         public static final YouTubeExtension DEFAULT_INSTANCE = new YouTubeExtension();
         public static final int INNERTUBE_REQUEST_INFO_FIELD_NUMBER = 1;
         private static volatile Parser<YouTubeExtension> PARSER;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(YouTubeExtension.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.MESSAGE)
@@ -66,52 +72,6 @@ public final class ExtensionYoutube {
         private InnerTubeRequestInfo innertubeRequestInfo_;
 
         private YouTubeExtension() {
-        }
-
-        public boolean hasInnertubeRequestInfo() {
-            return (this.bitField0_ & 1) != 0;
-        }
-
-        public InnerTubeRequestInfo getInnertubeRequestInfo() {
-            InnerTubeRequestInfo innerTubeRequestInfo = this.innertubeRequestInfo_;
-            return innerTubeRequestInfo == null ? InnerTubeRequestInfo.getDefaultInstance() : innerTubeRequestInfo;
-        }
-
-        /* access modifiers changed from: private */
-        public void setInnertubeRequestInfo(InnerTubeRequestInfo value) {
-            if (value != null) {
-                this.innertubeRequestInfo_ = value;
-                this.bitField0_ |= 1;
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        /* access modifiers changed from: private */
-        public void setInnertubeRequestInfo(InnerTubeRequestInfo.Builder builderForValue) {
-            this.innertubeRequestInfo_ = (InnerTubeRequestInfo) builderForValue.build();
-            this.bitField0_ |= 1;
-        }
-
-        /* access modifiers changed from: private */
-        public void mergeInnertubeRequestInfo(InnerTubeRequestInfo value) {
-            if (value != null) {
-                InnerTubeRequestInfo innerTubeRequestInfo = this.innertubeRequestInfo_;
-                if (innerTubeRequestInfo == null || innerTubeRequestInfo == InnerTubeRequestInfo.getDefaultInstance()) {
-                    this.innertubeRequestInfo_ = value;
-                } else {
-                    this.innertubeRequestInfo_ = (InnerTubeRequestInfo) ((InnerTubeRequestInfo.Builder) InnerTubeRequestInfo.newBuilder(this.innertubeRequestInfo_).mergeFrom((GeneratedMessageLite) value)).buildPartial();
-                }
-                this.bitField0_ |= 1;
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        /* access modifiers changed from: private */
-        public void clearInnertubeRequestInfo() {
-            this.innertubeRequestInfo_ = null;
-            this.bitField0_ &= -2;
         }
 
         public static YouTubeExtension parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
@@ -170,6 +130,92 @@ public final class ExtensionYoutube {
             return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
         }
 
+        public static YouTubeExtension getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<YouTubeExtension> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
+        }
+
+        public boolean hasInnertubeRequestInfo() {
+            return (this.bitField0_ & 1) != 0;
+        }
+
+        public InnerTubeRequestInfo getInnertubeRequestInfo() {
+            InnerTubeRequestInfo innerTubeRequestInfo = this.innertubeRequestInfo_;
+            return innerTubeRequestInfo == null ? InnerTubeRequestInfo.getDefaultInstance() : innerTubeRequestInfo;
+        }
+
+        /* access modifiers changed from: private */
+        public void setInnertubeRequestInfo(InnerTubeRequestInfo value) {
+            if (value != null) {
+                this.innertubeRequestInfo_ = value;
+                this.bitField0_ |= 1;
+                return;
+            }
+            throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void setInnertubeRequestInfo(InnerTubeRequestInfo.Builder builderForValue) {
+            this.innertubeRequestInfo_ = (InnerTubeRequestInfo) builderForValue.build();
+            this.bitField0_ |= 1;
+        }
+
+        /* access modifiers changed from: private */
+        public void mergeInnertubeRequestInfo(InnerTubeRequestInfo value) {
+            if (value != null) {
+                InnerTubeRequestInfo innerTubeRequestInfo = this.innertubeRequestInfo_;
+                if (innerTubeRequestInfo == null || innerTubeRequestInfo == InnerTubeRequestInfo.getDefaultInstance()) {
+                    this.innertubeRequestInfo_ = value;
+                } else {
+                    this.innertubeRequestInfo_ = (InnerTubeRequestInfo) ((InnerTubeRequestInfo.Builder) InnerTubeRequestInfo.newBuilder(this.innertubeRequestInfo_).mergeFrom((GeneratedMessageLite) value)).buildPartial();
+                }
+                this.bitField0_ |= 1;
+                return;
+            }
+            throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearInnertubeRequestInfo() {
+            this.innertubeRequestInfo_ = null;
+            this.bitField0_ &= -2;
+        }
+
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new YouTubeExtension();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0001\u0000\u0001\u0001\u0001\u0001\u0000\u0000\u0000\u0001\t\u0000", new Object[]{"bitField0_", "innertubeRequestInfo_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<YouTubeExtension> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (YouTubeExtension.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
+        }
+
         public static final class Builder extends GeneratedMessageLite.Builder<YouTubeExtension, Builder> implements YouTubeExtensionOrBuilder {
             private Builder() {
                 super(YouTubeExtension.DEFAULT_INSTANCE);
@@ -207,60 +253,21 @@ public final class ExtensionYoutube {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new YouTubeExtension();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0001\u0000\u0001\u0001\u0001\u0001\u0000\u0000\u0000\u0001\t\u0000", new Object[]{"bitField0_", "innertubeRequestInfo_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<YouTubeExtension> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (YouTubeExtension.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(YouTubeExtension.class, DEFAULT_INSTANCE);
-        }
-
-        public static YouTubeExtension getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<YouTubeExtension> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
     public static final class InnerTubeRequestInfo extends GeneratedMessageLite<InnerTubeRequestInfo, Builder> implements InnerTubeRequestInfoOrBuilder {
         /* access modifiers changed from: private */
         public static final InnerTubeRequestInfo DEFAULT_INSTANCE = new InnerTubeRequestInfo();
-        private static volatile Parser<InnerTubeRequestInfo> PARSER = null;
         public static final int PARSING_TIME_MS_FIELD_NUMBER = 1;
         public static final int RESPONSE_PROTO_SIZE_BYTES_FIELD_NUMBER = 2;
         public static final int SERVICE_ANNOTATION_FIELD_NUMBER = 3;
+        private static volatile Parser<InnerTubeRequestInfo> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(InnerTubeRequestInfo.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.INT64)
@@ -273,6 +280,70 @@ public final class ExtensionYoutube {
         private Internal.ProtobufList<String> serviceAnnotation_ = GeneratedMessageLite.emptyProtobufList();
 
         private InnerTubeRequestInfo() {
+        }
+
+        public static InnerTubeRequestInfo parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (InnerTubeRequestInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static InnerTubeRequestInfo parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (InnerTubeRequestInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static InnerTubeRequestInfo parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (InnerTubeRequestInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static InnerTubeRequestInfo parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (InnerTubeRequestInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static InnerTubeRequestInfo parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (InnerTubeRequestInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static InnerTubeRequestInfo parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (InnerTubeRequestInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static InnerTubeRequestInfo parseFrom(InputStream input) throws IOException {
+            return (InnerTubeRequestInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static InnerTubeRequestInfo parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (InnerTubeRequestInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static InnerTubeRequestInfo parseDelimitedFrom(InputStream input) throws IOException {
+            return (InnerTubeRequestInfo) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static InnerTubeRequestInfo parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (InnerTubeRequestInfo) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static InnerTubeRequestInfo parseFrom(CodedInputStream input) throws IOException {
+            return (InnerTubeRequestInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static InnerTubeRequestInfo parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (InnerTubeRequestInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(InnerTubeRequestInfo prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static InnerTubeRequestInfo getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<InnerTubeRequestInfo> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasParsingTimeMs() {
@@ -384,60 +455,36 @@ public final class ExtensionYoutube {
             throw new NullPointerException();
         }
 
-        public static InnerTubeRequestInfo parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (InnerTubeRequestInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static InnerTubeRequestInfo parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (InnerTubeRequestInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static InnerTubeRequestInfo parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (InnerTubeRequestInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static InnerTubeRequestInfo parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (InnerTubeRequestInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static InnerTubeRequestInfo parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (InnerTubeRequestInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static InnerTubeRequestInfo parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (InnerTubeRequestInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static InnerTubeRequestInfo parseFrom(InputStream input) throws IOException {
-            return (InnerTubeRequestInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static InnerTubeRequestInfo parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (InnerTubeRequestInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static InnerTubeRequestInfo parseDelimitedFrom(InputStream input) throws IOException {
-            return (InnerTubeRequestInfo) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static InnerTubeRequestInfo parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (InnerTubeRequestInfo) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static InnerTubeRequestInfo parseFrom(CodedInputStream input) throws IOException {
-            return (InnerTubeRequestInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static InnerTubeRequestInfo parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (InnerTubeRequestInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(InnerTubeRequestInfo prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new InnerTubeRequestInfo();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0003\u0000\u0001\u0001\u0003\u0003\u0000\u0001\u0000\u0001\u0002\u0000\u0002\u000b\u0001\u0003\u001a", new Object[]{"bitField0_", "parsingTimeMs_", "responseProtoSizeBytes_", "serviceAnnotation_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<InnerTubeRequestInfo> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (InnerTubeRequestInfo.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<InnerTubeRequestInfo, Builder> implements InnerTubeRequestInfoOrBuilder {
@@ -530,50 +577,6 @@ public final class ExtensionYoutube {
                 ((InnerTubeRequestInfo) this.instance).addServiceAnnotationBytes(value);
                 return this;
             }
-        }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new InnerTubeRequestInfo();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0003\u0000\u0001\u0001\u0003\u0003\u0000\u0001\u0000\u0001\u0002\u0000\u0002\u000b\u0001\u0003\u001a", new Object[]{"bitField0_", "parsingTimeMs_", "responseProtoSizeBytes_", "serviceAnnotation_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<InnerTubeRequestInfo> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (InnerTubeRequestInfo.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(InnerTubeRequestInfo.class, DEFAULT_INSTANCE);
-        }
-
-        public static InnerTubeRequestInfo getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<InnerTubeRequestInfo> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
         }
     }
 }

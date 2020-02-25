@@ -4,6 +4,7 @@ import android.support.p001v4.internal.view.SupportMenu;
 import android.support.p001v4.view.InputDeviceCompat;
 import android.support.p001v4.view.ViewCompat;
 import android.text.TextUtils;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -169,6 +170,9 @@ public final class ColorParser {
         COLOR_MAP.put("yellowgreen", -6632142);
     }
 
+    private ColorParser() {
+    }
+
     public static int parseTtmlColor(String colorExpression) {
         return parseColorInternal(colorExpression, false);
     }
@@ -221,8 +225,5 @@ public final class ColorParser {
 
     private static int rgb(int red, int green, int blue) {
         return argb(255, red, green, blue);
-    }
-
-    private ColorParser() {
     }
 }

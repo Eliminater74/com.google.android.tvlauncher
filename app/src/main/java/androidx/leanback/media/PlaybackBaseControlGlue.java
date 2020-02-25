@@ -5,15 +5,14 @@ import android.support.annotation.CallSuper;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
-import androidx.leanback.media.PlaybackGlue;
-import androidx.leanback.media.PlaybackGlueHost;
-import androidx.leanback.media.PlayerAdapter;
+
 import androidx.leanback.widget.Action;
 import androidx.leanback.widget.ArrayObjectAdapter;
 import androidx.leanback.widget.ControlButtonPresenterSelector;
 import androidx.leanback.widget.OnActionClickedListener;
 import androidx.leanback.widget.PlaybackControlsRow;
 import androidx.leanback.widget.PlaybackRowPresenter;
+
 import java.util.List;
 
 public abstract class PlaybackBaseControlGlue<T extends PlayerAdapter> extends PlaybackGlue implements OnActionClickedListener, View.OnKeyListener {
@@ -28,6 +27,22 @@ public abstract class PlaybackBaseControlGlue<T extends PlayerAdapter> extends P
     public static final int ACTION_SKIP_TO_PREVIOUS = 16;
     static final boolean DEBUG = false;
     static final String TAG = "PlaybackTransportGlue";
+    final T mPlayerAdapter;
+    boolean mBuffering = false;
+    PlaybackControlsRow mControlsRow;
+    PlaybackRowPresenter mControlsRowPresenter;
+    Drawable mCover;
+    int mErrorCode;
+    String mErrorMessage;
+    boolean mErrorSet = false;
+    boolean mFadeWhenPlaying = true;
+    boolean mIsPlaying = false;
+    PlaybackControlsRow.PlayPauseAction mPlayPauseAction;
+    PlaybackGlueHost.PlayerCallback mPlayerCallback;
+    CharSequence mSubtitle;
+    CharSequence mTitle;
+    int mVideoHeight = 0;
+    int mVideoWidth = 0;
     final PlayerAdapter.Callback mAdapterCallback = new PlayerAdapter.Callback() {
         public void onPlayStateChanged(PlayerAdapter wrapper) {
             PlaybackBaseControlGlue.this.onPlayStateChanged();
@@ -84,29 +99,6 @@ public abstract class PlaybackBaseControlGlue<T extends PlayerAdapter> extends P
             PlaybackBaseControlGlue.this.onMetadataChanged();
         }
     };
-    boolean mBuffering = false;
-    PlaybackControlsRow mControlsRow;
-    PlaybackRowPresenter mControlsRowPresenter;
-    Drawable mCover;
-    int mErrorCode;
-    String mErrorMessage;
-    boolean mErrorSet = false;
-    boolean mFadeWhenPlaying = true;
-    boolean mIsPlaying = false;
-    PlaybackControlsRow.PlayPauseAction mPlayPauseAction;
-    final T mPlayerAdapter;
-    PlaybackGlueHost.PlayerCallback mPlayerCallback;
-    CharSequence mSubtitle;
-    CharSequence mTitle;
-    int mVideoHeight = 0;
-    int mVideoWidth = 0;
-
-    public abstract void onActionClicked(Action action);
-
-    /* access modifiers changed from: protected */
-    public abstract PlaybackRowPresenter onCreateRowPresenter();
-
-    public abstract boolean onKey(View view, int i, KeyEvent keyEvent);
 
     /*  JADX ERROR: JadxRuntimeException in pass: MethodInvokeVisitor
         jadx.core.utils.exceptions.JadxRuntimeException: Not class type: T
@@ -144,6 +136,20 @@ public abstract class PlaybackBaseControlGlue<T extends PlayerAdapter> extends P
         */
         throw new UnsupportedOperationException("Method not decompiled: androidx.leanback.media.PlaybackBaseControlGlue.<init>(android.content.Context, androidx.leanback.media.PlayerAdapter):void");
     }
+
+    protected static void notifyItemChanged(ArrayObjectAdapter adapter, Object object) {
+        int index = adapter.indexOf(object);
+        if (index >= 0) {
+            adapter.notifyArrayItemRangeChanged(index, 1);
+        }
+    }
+
+    public abstract void onActionClicked(Action action);
+
+    /* access modifiers changed from: protected */
+    public abstract PlaybackRowPresenter onCreateRowPresenter();
+
+    public abstract boolean onKey(View view, int i, KeyEvent keyEvent);
 
     public final T getPlayerAdapter() {
         return this.mPlayerAdapter;
@@ -303,6 +309,10 @@ public abstract class PlaybackBaseControlGlue<T extends PlayerAdapter> extends P
         }
     }
 
+    public boolean isControlsOverlayAutoHideEnabled() {
+        return this.mFadeWhenPlaying;
+    }
+
     public void setControlsOverlayAutoHideEnabled(boolean enable) {
         this.mFadeWhenPlaying = enable;
         if (!this.mFadeWhenPlaying && getHost() != null) {
@@ -310,8 +320,8 @@ public abstract class PlaybackBaseControlGlue<T extends PlayerAdapter> extends P
         }
     }
 
-    public boolean isControlsOverlayAutoHideEnabled() {
-        return this.mFadeWhenPlaying;
+    public PlaybackControlsRow getControlsRow() {
+        return this.mControlsRow;
     }
 
     public void setControlsRow(PlaybackControlsRow controlsRow) {
@@ -332,16 +342,12 @@ public abstract class PlaybackBaseControlGlue<T extends PlayerAdapter> extends P
         updateControlsRow();
     }
 
-    public void setPlaybackRowPresenter(PlaybackRowPresenter presenter) {
-        this.mControlsRowPresenter = presenter;
-    }
-
-    public PlaybackControlsRow getControlsRow() {
-        return this.mControlsRow;
-    }
-
     public PlaybackRowPresenter getPlaybackRowPresenter() {
         return this.mControlsRowPresenter;
+    }
+
+    public void setPlaybackRowPresenter(PlaybackRowPresenter presenter) {
+        this.mControlsRowPresenter = presenter;
     }
 
     private void updateControlsRow() {
@@ -366,13 +372,6 @@ public abstract class PlaybackBaseControlGlue<T extends PlayerAdapter> extends P
 
     public void previous() {
         this.mPlayerAdapter.previous();
-    }
-
-    protected static void notifyItemChanged(ArrayObjectAdapter adapter, Object object) {
-        int index = adapter.indexOf(object);
-        if (index >= 0) {
-            adapter.notifyArrayItemRangeChanged(index, 1);
-        }
     }
 
     /* access modifiers changed from: protected */
@@ -439,6 +438,10 @@ public abstract class PlaybackBaseControlGlue<T extends PlayerAdapter> extends P
         }
     }
 
+    public Drawable getArt() {
+        return this.mCover;
+    }
+
     public void setArt(Drawable cover) {
         if (this.mCover != cover) {
             this.mCover = cover;
@@ -449,8 +452,8 @@ public abstract class PlaybackBaseControlGlue<T extends PlayerAdapter> extends P
         }
     }
 
-    public Drawable getArt() {
-        return this.mCover;
+    public CharSequence getSubtitle() {
+        return this.mSubtitle;
     }
 
     public void setSubtitle(CharSequence subtitle) {
@@ -462,8 +465,8 @@ public abstract class PlaybackBaseControlGlue<T extends PlayerAdapter> extends P
         }
     }
 
-    public CharSequence getSubtitle() {
-        return this.mSubtitle;
+    public CharSequence getTitle() {
+        return this.mTitle;
     }
 
     public void setTitle(CharSequence title) {
@@ -473,10 +476,6 @@ public abstract class PlaybackBaseControlGlue<T extends PlayerAdapter> extends P
                 getHost().notifyPlaybackRowChanged();
             }
         }
-    }
-
-    public CharSequence getTitle() {
-        return this.mTitle;
     }
 
     /* access modifiers changed from: protected */

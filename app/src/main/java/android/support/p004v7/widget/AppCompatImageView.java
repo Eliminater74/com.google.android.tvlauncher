@@ -82,14 +82,6 @@ public class AppCompatImageView extends ImageView implements TintableBackgroundV
         }
     }
 
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    public void setSupportBackgroundTintList(@Nullable ColorStateList tint) {
-        AppCompatBackgroundHelper appCompatBackgroundHelper = this.mBackgroundTintHelper;
-        if (appCompatBackgroundHelper != null) {
-            appCompatBackgroundHelper.setSupportBackgroundTintList(tint);
-        }
-    }
-
     @Nullable
     @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
     public ColorStateList getSupportBackgroundTintList() {
@@ -101,10 +93,10 @@ public class AppCompatImageView extends ImageView implements TintableBackgroundV
     }
 
     @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    public void setSupportBackgroundTintMode(@Nullable PorterDuff.Mode tintMode) {
+    public void setSupportBackgroundTintList(@Nullable ColorStateList tint) {
         AppCompatBackgroundHelper appCompatBackgroundHelper = this.mBackgroundTintHelper;
         if (appCompatBackgroundHelper != null) {
-            appCompatBackgroundHelper.setSupportBackgroundTintMode(tintMode);
+            appCompatBackgroundHelper.setSupportBackgroundTintList(tint);
         }
     }
 
@@ -119,10 +111,10 @@ public class AppCompatImageView extends ImageView implements TintableBackgroundV
     }
 
     @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    public void setSupportImageTintList(@Nullable ColorStateList tint) {
-        AppCompatImageHelper appCompatImageHelper = this.mImageHelper;
-        if (appCompatImageHelper != null) {
-            appCompatImageHelper.setSupportImageTintList(tint);
+    public void setSupportBackgroundTintMode(@Nullable PorterDuff.Mode tintMode) {
+        AppCompatBackgroundHelper appCompatBackgroundHelper = this.mBackgroundTintHelper;
+        if (appCompatBackgroundHelper != null) {
+            appCompatBackgroundHelper.setSupportBackgroundTintMode(tintMode);
         }
     }
 
@@ -137,10 +129,10 @@ public class AppCompatImageView extends ImageView implements TintableBackgroundV
     }
 
     @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    public void setSupportImageTintMode(@Nullable PorterDuff.Mode tintMode) {
+    public void setSupportImageTintList(@Nullable ColorStateList tint) {
         AppCompatImageHelper appCompatImageHelper = this.mImageHelper;
         if (appCompatImageHelper != null) {
-            appCompatImageHelper.setSupportImageTintMode(tintMode);
+            appCompatImageHelper.setSupportImageTintList(tint);
         }
     }
 
@@ -152,6 +144,14 @@ public class AppCompatImageView extends ImageView implements TintableBackgroundV
             return appCompatImageHelper.getSupportImageTintMode();
         }
         return null;
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    public void setSupportImageTintMode(@Nullable PorterDuff.Mode tintMode) {
+        AppCompatImageHelper appCompatImageHelper = this.mImageHelper;
+        if (appCompatImageHelper != null) {
+            appCompatImageHelper.setSupportImageTintMode(tintMode);
+        }
     }
 
     /* access modifiers changed from: protected */

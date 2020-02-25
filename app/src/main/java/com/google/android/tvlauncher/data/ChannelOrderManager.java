@@ -10,9 +10,11 @@ import android.support.annotation.VisibleForTesting;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.LongSparseArray;
+
 import com.google.android.tvlauncher.model.HomeChannel;
 import com.google.android.tvlauncher.util.ChannelConfigurationInfo;
 import com.google.android.tvrecommendations.shared.util.Constants;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
@@ -46,29 +48,25 @@ public class ChannelOrderManager {
     private static final int SPONSORED_GOOGLE_CHANNEL_NO_LAST_POSITION = -1;
     private static final int SPONSORED_GOOGLE_CHANNEL_NO_OOB_POSITION = -1;
     private static final String TAG = "ChannelOrderManager";
+    private final Context mContext;
+    private final List<ChannelConfigurationInfo> mOutOfBoxPackages;
     private LongSparseArray<Integer> mAllChannelPositions;
     private ChannelComparator mChannelComparator;
     private LongSparseArray<Integer> mChannelPositions;
     private List<HomeChannel> mChannels;
     private List<HomeChannelsObserver> mChannelsObservers;
-    private final Context mContext;
     private long mFirstStartTimestamp;
     private boolean mIsNewChannelAdded;
     private long mLiveTvChannelId;
     private int mLiveTvChannelLastPosition;
     private int mLiveTvChannelOobPosition;
     private Map<ChannelConfigurationInfo, List<Integer>> mOobPackageKeyPositions;
-    private final List<ChannelConfigurationInfo> mOutOfBoxPackages;
     private PinnedChannelOrderManager mPinnedChannelOrderManager;
     private long mSponsoredGoogleChannelId;
     private int mSponsoredGoogleChannelLastOobPosition;
     private int mSponsoredGoogleChannelLastPosition;
     private int mSponsoredGoogleChannelOobPosition;
     private boolean mUserHasManagedChannels;
-
-    @Retention(RetentionPolicy.SOURCE)
-    private @interface Direction {
-    }
 
     @VisibleForTesting
     ChannelOrderManager(Context context, List<ChannelConfigurationInfo> outOfBoxPackages) {
@@ -471,6 +469,10 @@ public class ChannelOrderManager {
             this.mContext.sendBroadcast(intent);
             prefs.edit().putString(KEY_LOGGED_CHANNEL_ID_ORDER, channelOrder).apply();
         }
+    }
+
+    @Retention(RetentionPolicy.SOURCE)
+    private @interface Direction {
     }
 
     private static class ChannelComparator implements Comparator<HomeChannel> {

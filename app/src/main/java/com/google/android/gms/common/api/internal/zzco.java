@@ -1,16 +1,22 @@
 package com.google.android.gms.common.api.internal;
 
 import android.app.Activity;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.common.internal.zzb;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
+
 import java.util.concurrent.CancellationException;
 
 /* compiled from: MakeGmsCoreAvailableLifecycleHelper */
 public class zzco extends zzp {
     private TaskCompletionSource<Void> zze = new TaskCompletionSource<>();
+
+    private zzco(zzcf zzcf) {
+        super(zzcf);
+        this.zzd.zza("GmsAvailabilityHelper", this);
+    }
 
     public static zzco zza(Activity activity) {
         zzcf zzb = zzb(activity);
@@ -22,11 +28,6 @@ public class zzco extends zzp {
             zzco.zze = new TaskCompletionSource<>();
         }
         return zzco;
-    }
-
-    private zzco(zzcf zzcf) {
-        super(zzcf);
-        this.zzd.zza("GmsAvailabilityHelper", this);
     }
 
     /* access modifiers changed from: protected */

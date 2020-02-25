@@ -14,10 +14,11 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
+
 import java.lang.reflect.Method;
 
 @RequiresApi(21)
-/* renamed from: android.support.v4.graphics.drawable.WrappedDrawableApi21 */
+        /* renamed from: android.support.v4.graphics.drawable.WrappedDrawableApi21 */
 class WrappedDrawableApi21 extends WrappedDrawableApi14 {
     private static final String TAG = "WrappedDrawableApi21";
     private static Method sIsProjectedDrawableMethod;

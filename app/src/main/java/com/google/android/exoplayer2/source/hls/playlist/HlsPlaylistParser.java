@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Base64;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.ParserException;
@@ -14,13 +15,12 @@ import com.google.android.exoplayer2.metadata.icy.IcyHeaders;
 import com.google.android.exoplayer2.offline.DownloadRequest;
 import com.google.android.exoplayer2.source.UnrecognizedInputFormatException;
 import com.google.android.exoplayer2.source.hls.HlsTrackMetadataEntry;
-import com.google.android.exoplayer2.source.hls.playlist.HlsMasterPlaylist;
-import com.google.android.exoplayer2.source.hls.playlist.HlsMediaPlaylist;
 import com.google.android.exoplayer2.upstream.ParsingLoadable;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.UriUtil;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -119,47 +119,6 @@ public final class HlsPlaylistParser implements ParsingLoadable.Parser<HlsPlayli
 
     public HlsPlaylistParser(HlsMasterPlaylist masterPlaylist2) {
         this.masterPlaylist = masterPlaylist2;
-    }
-
-    public HlsPlaylist parse(Uri uri, InputStream inputStream) throws IOException {
-        String line;
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-        Queue<String> extraLines = new ArrayDeque<>();
-        try {
-            if (checkPlaylistHeader(reader)) {
-                while (true) {
-                    String readLine = reader.readLine();
-                    String line2 = readLine;
-                    if (readLine != null) {
-                        line = line2.trim();
-                        if (!line.isEmpty()) {
-                            if (!line.startsWith(TAG_STREAM_INF)) {
-                                if (line.startsWith(TAG_TARGET_DURATION) || line.startsWith(TAG_MEDIA_SEQUENCE) || line.startsWith(TAG_MEDIA_DURATION) || line.startsWith(TAG_KEY) || line.startsWith(TAG_BYTERANGE) || line.equals(TAG_DISCONTINUITY) || line.equals(TAG_DISCONTINUITY_SEQUENCE)) {
-                                    break;
-                                } else if (line.equals(TAG_ENDLIST)) {
-                                    break;
-                                } else {
-                                    extraLines.add(line);
-                                }
-                            } else {
-                                extraLines.add(line);
-                                HlsMasterPlaylist parseMasterPlaylist = parseMasterPlaylist(new LineIterator(extraLines, reader), uri.toString());
-                                Util.closeQuietly(reader);
-                                return parseMasterPlaylist;
-                            }
-                        }
-                    } else {
-                        Util.closeQuietly(reader);
-                        throw new ParserException("Failed to parse the playlist, could not identify any tags.");
-                    }
-                }
-                extraLines.add(line);
-                return parseMediaPlaylist(this.masterPlaylist, new LineIterator(extraLines, reader), uri.toString());
-            }
-            throw new UnrecognizedInputFormatException("Input does not start with the #EXTM3U header.", uri);
-        } finally {
-            Util.closeQuietly(reader);
-        }
     }
 
     private static boolean checkPlaylistHeader(BufferedReader reader) throws IOException {
@@ -938,10 +897,51 @@ public final class HlsPlaylistParser implements ParsingLoadable.Parser<HlsPlayli
         return Pattern.compile(sb.toString());
     }
 
+    public HlsPlaylist parse(Uri uri, InputStream inputStream) throws IOException {
+        String line;
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        Queue<String> extraLines = new ArrayDeque<>();
+        try {
+            if (checkPlaylistHeader(reader)) {
+                while (true) {
+                    String readLine = reader.readLine();
+                    String line2 = readLine;
+                    if (readLine != null) {
+                        line = line2.trim();
+                        if (!line.isEmpty()) {
+                            if (!line.startsWith(TAG_STREAM_INF)) {
+                                if (line.startsWith(TAG_TARGET_DURATION) || line.startsWith(TAG_MEDIA_SEQUENCE) || line.startsWith(TAG_MEDIA_DURATION) || line.startsWith(TAG_KEY) || line.startsWith(TAG_BYTERANGE) || line.equals(TAG_DISCONTINUITY) || line.equals(TAG_DISCONTINUITY_SEQUENCE)) {
+                                    break;
+                                } else if (line.equals(TAG_ENDLIST)) {
+                                    break;
+                                } else {
+                                    extraLines.add(line);
+                                }
+                            } else {
+                                extraLines.add(line);
+                                HlsMasterPlaylist parseMasterPlaylist = parseMasterPlaylist(new LineIterator(extraLines, reader), uri.toString());
+                                Util.closeQuietly(reader);
+                                return parseMasterPlaylist;
+                            }
+                        }
+                    } else {
+                        Util.closeQuietly(reader);
+                        throw new ParserException("Failed to parse the playlist, could not identify any tags.");
+                    }
+                }
+                extraLines.add(line);
+                return parseMediaPlaylist(this.masterPlaylist, new LineIterator(extraLines, reader), uri.toString());
+            }
+            throw new UnrecognizedInputFormatException("Input does not start with the #EXTM3U header.", uri);
+        } finally {
+            Util.closeQuietly(reader);
+        }
+    }
+
     private static class LineIterator {
         private final Queue<String> extraLines;
-        private String next;
         private final BufferedReader reader;
+        private String next;
 
         public LineIterator(Queue<String> extraLines2, BufferedReader reader2) {
             this.extraLines = extraLines2;

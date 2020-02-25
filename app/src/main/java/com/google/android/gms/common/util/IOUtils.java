@@ -2,8 +2,10 @@ package com.google.android.gms.common.util;
 
 import android.os.ParcelFileDescriptor;
 import android.util.Log;
+
 import com.google.android.gms.common.internal.zzau;
 import com.google.common.primitives.UnsignedBytes;
+
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
@@ -17,16 +19,6 @@ import java.util.Arrays;
 
 public final class IOUtils {
 
-    static final class zza extends ByteArrayOutputStream {
-        private zza() {
-        }
-
-        /* access modifiers changed from: package-private */
-        public final void zza(byte[] bArr, int i) {
-            System.arraycopy(this.buf, 0, bArr, i, this.count);
-        }
-    }
-
     private IOUtils() {
     }
 
@@ -35,37 +27,6 @@ public final class IOUtils {
             try {
                 closeable.close();
             } catch (IOException e) {
-            }
-        }
-    }
-
-    static final class zzb {
-        private final File zza;
-
-        private zzb(File file) {
-            this.zza = (File) zzau.zza(file);
-        }
-
-        public final byte[] zza() throws IOException {
-            FileInputStream fileInputStream;
-            Throwable th;
-            try {
-                fileInputStream = new FileInputStream(this.zza);
-                try {
-                    byte[] zza2 = IOUtils.zzb(fileInputStream, fileInputStream.getChannel().size());
-                    IOUtils.closeQuietly(fileInputStream);
-                    return zza2;
-                } catch (Throwable th2) {
-                    th = th2;
-                    IOUtils.closeQuietly(fileInputStream);
-                    throw th;
-                }
-            } catch (Throwable th3) {
-                Throwable th4 = th3;
-                fileInputStream = null;
-                th = th4;
-                IOUtils.closeQuietly(fileInputStream);
-                throw th;
             }
         }
     }
@@ -265,6 +226,47 @@ public final class IOUtils {
             }
             outputStream.write(bArr, 0, read);
             j += (long) read;
+        }
+    }
+
+    static final class zza extends ByteArrayOutputStream {
+        private zza() {
+        }
+
+        /* access modifiers changed from: package-private */
+        public final void zza(byte[] bArr, int i) {
+            System.arraycopy(this.buf, 0, bArr, i, this.count);
+        }
+    }
+
+    static final class zzb {
+        private final File zza;
+
+        private zzb(File file) {
+            this.zza = (File) zzau.zza(file);
+        }
+
+        public final byte[] zza() throws IOException {
+            FileInputStream fileInputStream;
+            Throwable th;
+            try {
+                fileInputStream = new FileInputStream(this.zza);
+                try {
+                    byte[] zza2 = IOUtils.zzb(fileInputStream, fileInputStream.getChannel().size());
+                    IOUtils.closeQuietly(fileInputStream);
+                    return zza2;
+                } catch (Throwable th2) {
+                    th = th2;
+                    IOUtils.closeQuietly(fileInputStream);
+                    throw th;
+                }
+            } catch (Throwable th3) {
+                Throwable th4 = th3;
+                fileInputStream = null;
+                th = th4;
+                IOUtils.closeQuietly(fileInputStream);
+                throw th;
+            }
         }
     }
 }

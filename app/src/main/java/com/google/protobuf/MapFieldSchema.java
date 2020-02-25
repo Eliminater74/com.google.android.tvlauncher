@@ -1,6 +1,5 @@
 package com.google.protobuf;
 
-import com.google.protobuf.MapEntryLite;
 import java.util.Map;
 
 interface MapFieldSchema {

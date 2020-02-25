@@ -2,10 +2,13 @@ package com.google.android.libraries.performance.primes.aggregation.impl;
 
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
+
 import com.google.android.libraries.performance.primes.aggregation.MetricAggregatorIdentifier;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+
 import logs.proto.wireless.performance.mobile.AggregatedMetricProto;
 import logs.proto.wireless.performance.mobile.SystemHealthProto;
 

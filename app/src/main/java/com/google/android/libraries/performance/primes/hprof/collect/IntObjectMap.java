@@ -10,14 +10,6 @@ public final class IntObjectMap<E> {
     private int sizeIndex;
     private Object[] values;
 
-    public interface Enumerable<E> {
-        int getKey();
-
-        E getValue();
-
-        boolean next();
-    }
-
     public IntObjectMap() {
         init();
     }
@@ -135,12 +127,20 @@ public final class IntObjectMap<E> {
         return new Enumerator<>(this.keys, this.values);
     }
 
+    public interface Enumerable<E> {
+        int getKey();
+
+        E getValue();
+
+        boolean next();
+    }
+
     public static class Enumerator<E> implements Enumerable<E> {
-        private int key;
         private final int[] keys;
+        private final Object[] values;
+        private int key;
         private int nextIndex;
         private Object value;
-        private final Object[] values;
 
         private Enumerator(int[] keys2, Object[] values2) {
             this.keys = keys2;

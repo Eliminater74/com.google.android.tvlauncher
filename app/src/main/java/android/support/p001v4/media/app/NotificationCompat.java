@@ -12,7 +12,6 @@ import android.support.annotation.RestrictTo;
 import android.support.mediacompat.C0044R;
 import android.support.p001v4.app.BundleCompat;
 import android.support.p001v4.app.NotificationBuilderWithBuilderAccessor;
-import android.support.p001v4.app.NotificationCompat;
 import android.support.p001v4.media.session.MediaSessionCompat;
 import android.widget.RemoteViews;
 
@@ -29,6 +28,13 @@ public class NotificationCompat {
         PendingIntent mCancelButtonIntent;
         boolean mShowCancelButton;
         MediaSessionCompat.Token mToken;
+
+        public MediaStyle() {
+        }
+
+        public MediaStyle(NotificationCompat.Builder builder) {
+            setBuilder(builder);
+        }
 
         public static MediaSessionCompat.Token getMediaSession(Notification notification) {
             Bundle extras = android.support.p001v4.app.NotificationCompat.getExtras(notification);
@@ -52,13 +58,6 @@ public class NotificationCompat {
             MediaSessionCompat.Token token = MediaSessionCompat.Token.CREATOR.createFromParcel(p);
             p.recycle();
             return token;
-        }
-
-        public MediaStyle() {
-        }
-
-        public MediaStyle(NotificationCompat.Builder builder) {
-            setBuilder(builder);
         }
 
         public MediaStyle setShowActionsInCompactView(int... actions) {

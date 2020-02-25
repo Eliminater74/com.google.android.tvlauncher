@@ -10,6 +10,7 @@ import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.annotation.RestrictTo;
 import android.text.TextUtils;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
@@ -62,8 +63,6 @@ public final class PlaybackStateCompat implements Parcelable {
     public static final int ERROR_CODE_PREMIUM_ACCOUNT_REQUIRED = 4;
     public static final int ERROR_CODE_SKIP_LIMIT_REACHED = 9;
     public static final int ERROR_CODE_UNKNOWN_ERROR = 0;
-    private static final int KEYCODE_MEDIA_PAUSE = 127;
-    private static final int KEYCODE_MEDIA_PLAY = 126;
     public static final long PLAYBACK_POSITION_UNKNOWN = -1;
     public static final int REPEAT_MODE_ALL = 2;
     public static final int REPEAT_MODE_GROUP = 3;
@@ -86,53 +85,47 @@ public final class PlaybackStateCompat implements Parcelable {
     public static final int STATE_SKIPPING_TO_PREVIOUS = 9;
     public static final int STATE_SKIPPING_TO_QUEUE_ITEM = 11;
     public static final int STATE_STOPPED = 1;
+    private static final int KEYCODE_MEDIA_PAUSE = 127;
+    private static final int KEYCODE_MEDIA_PLAY = 126;
     final long mActions;
     final long mActiveItemId;
     final long mBufferedPosition;
-    List<CustomAction> mCustomActions;
     final int mErrorCode;
     final CharSequence mErrorMessage;
     final Bundle mExtras;
     final long mPosition;
     final float mSpeed;
     final int mState;
-    private PlaybackState mStateFwk;
     final long mUpdateTime;
+    List<CustomAction> mCustomActions;
+    private PlaybackState mStateFwk;
 
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    @Retention(RetentionPolicy.SOURCE)
-    /* renamed from: android.support.v4.media.session.PlaybackStateCompat$Actions */
-    public @interface Actions {
+    PlaybackStateCompat(int state, long position, long bufferedPosition, float rate, long actions, int errorCode, CharSequence errorMessage, long updateTime, List<CustomAction> customActions, long activeItemId, Bundle extras) {
+        this.mState = state;
+        this.mPosition = position;
+        this.mBufferedPosition = bufferedPosition;
+        this.mSpeed = rate;
+        this.mActions = actions;
+        this.mErrorCode = errorCode;
+        this.mErrorMessage = errorMessage;
+        this.mUpdateTime = updateTime;
+        this.mCustomActions = new ArrayList(customActions);
+        this.mActiveItemId = activeItemId;
+        this.mExtras = extras;
     }
 
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    @Retention(RetentionPolicy.SOURCE)
-    /* renamed from: android.support.v4.media.session.PlaybackStateCompat$ErrorCode */
-    public @interface ErrorCode {
-    }
-
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    @Retention(RetentionPolicy.SOURCE)
-    /* renamed from: android.support.v4.media.session.PlaybackStateCompat$MediaKeyAction */
-    public @interface MediaKeyAction {
-    }
-
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    @Retention(RetentionPolicy.SOURCE)
-    /* renamed from: android.support.v4.media.session.PlaybackStateCompat$RepeatMode */
-    public @interface RepeatMode {
-    }
-
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    @Retention(RetentionPolicy.SOURCE)
-    /* renamed from: android.support.v4.media.session.PlaybackStateCompat$ShuffleMode */
-    public @interface ShuffleMode {
-    }
-
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    @Retention(RetentionPolicy.SOURCE)
-    /* renamed from: android.support.v4.media.session.PlaybackStateCompat$State */
-    public @interface State {
+    PlaybackStateCompat(Parcel in) {
+        this.mState = in.readInt();
+        this.mPosition = in.readLong();
+        this.mSpeed = in.readFloat();
+        this.mUpdateTime = in.readLong();
+        this.mBufferedPosition = in.readLong();
+        this.mActions = in.readLong();
+        this.mErrorMessage = (CharSequence) TextUtils.CHAR_SEQUENCE_CREATOR.createFromParcel(in);
+        this.mCustomActions = in.createTypedArrayList(CustomAction.CREATOR);
+        this.mActiveItemId = in.readLong();
+        this.mExtras = in.readBundle(MediaSessionCompat.class.getClassLoader());
+        this.mErrorCode = in.readInt();
     }
 
     public static int toKeyCode(long action) {
@@ -163,32 +156,28 @@ public final class PlaybackStateCompat implements Parcelable {
         return 0;
     }
 
-    PlaybackStateCompat(int state, long position, long bufferedPosition, float rate, long actions, int errorCode, CharSequence errorMessage, long updateTime, List<CustomAction> customActions, long activeItemId, Bundle extras) {
-        this.mState = state;
-        this.mPosition = position;
-        this.mBufferedPosition = bufferedPosition;
-        this.mSpeed = rate;
-        this.mActions = actions;
-        this.mErrorCode = errorCode;
-        this.mErrorMessage = errorMessage;
-        this.mUpdateTime = updateTime;
-        this.mCustomActions = new ArrayList(customActions);
-        this.mActiveItemId = activeItemId;
-        this.mExtras = extras;
-    }
-
-    PlaybackStateCompat(Parcel in) {
-        this.mState = in.readInt();
-        this.mPosition = in.readLong();
-        this.mSpeed = in.readFloat();
-        this.mUpdateTime = in.readLong();
-        this.mBufferedPosition = in.readLong();
-        this.mActions = in.readLong();
-        this.mErrorMessage = (CharSequence) TextUtils.CHAR_SEQUENCE_CREATOR.createFromParcel(in);
-        this.mCustomActions = in.createTypedArrayList(CustomAction.CREATOR);
-        this.mActiveItemId = in.readLong();
-        this.mExtras = in.readBundle(MediaSessionCompat.class.getClassLoader());
-        this.mErrorCode = in.readInt();
+    public static PlaybackStateCompat fromPlaybackState(Object stateObj) {
+        Bundle extras;
+        if (stateObj == null || Build.VERSION.SDK_INT < 21) {
+            return null;
+        }
+        PlaybackState stateFwk = (PlaybackState) stateObj;
+        List<PlaybackState.CustomAction> customActionFwks = stateFwk.getCustomActions();
+        List<CustomAction> customActions = null;
+        if (customActionFwks != null) {
+            customActions = new ArrayList<>(customActionFwks.size());
+            for (Object customActionFwk : customActionFwks) {
+                customActions.add(CustomAction.fromCustomAction(customActionFwk));
+            }
+        }
+        if (Build.VERSION.SDK_INT >= 22) {
+            extras = stateFwk.getExtras();
+        } else {
+            extras = null;
+        }
+        PlaybackStateCompat playbackStateCompat = new PlaybackStateCompat(stateFwk.getState(), stateFwk.getPosition(), stateFwk.getBufferedPosition(), stateFwk.getPlaybackSpeed(), stateFwk.getActions(), 0, stateFwk.getErrorMessage(), stateFwk.getLastPositionUpdateTime(), customActions, stateFwk.getActiveQueueItemId(), extras);
+        playbackStateCompat.mStateFwk = stateFwk;
+        return playbackStateCompat;
     }
 
     public String toString() {
@@ -271,30 +260,6 @@ public final class PlaybackStateCompat implements Parcelable {
         return this.mExtras;
     }
 
-    public static PlaybackStateCompat fromPlaybackState(Object stateObj) {
-        Bundle extras;
-        if (stateObj == null || Build.VERSION.SDK_INT < 21) {
-            return null;
-        }
-        PlaybackState stateFwk = (PlaybackState) stateObj;
-        List<PlaybackState.CustomAction> customActionFwks = stateFwk.getCustomActions();
-        List<CustomAction> customActions = null;
-        if (customActionFwks != null) {
-            customActions = new ArrayList<>(customActionFwks.size());
-            for (Object customActionFwk : customActionFwks) {
-                customActions.add(CustomAction.fromCustomAction(customActionFwk));
-            }
-        }
-        if (Build.VERSION.SDK_INT >= 22) {
-            extras = stateFwk.getExtras();
-        } else {
-            extras = null;
-        }
-        PlaybackStateCompat playbackStateCompat = new PlaybackStateCompat(stateFwk.getState(), stateFwk.getPosition(), stateFwk.getBufferedPosition(), stateFwk.getPlaybackSpeed(), stateFwk.getActions(), 0, stateFwk.getErrorMessage(), stateFwk.getLastPositionUpdateTime(), customActions, stateFwk.getActiveQueueItemId(), extras);
-        playbackStateCompat.mStateFwk = stateFwk;
-        return playbackStateCompat;
-    }
-
     public Object getPlaybackState() {
         if (this.mStateFwk == null && Build.VERSION.SDK_INT >= 21) {
             PlaybackState.Builder builder = new PlaybackState.Builder();
@@ -314,6 +279,42 @@ public final class PlaybackStateCompat implements Parcelable {
         return this.mStateFwk;
     }
 
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    @Retention(RetentionPolicy.SOURCE)
+    /* renamed from: android.support.v4.media.session.PlaybackStateCompat$Actions */
+    public @interface Actions {
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    @Retention(RetentionPolicy.SOURCE)
+    /* renamed from: android.support.v4.media.session.PlaybackStateCompat$ErrorCode */
+    public @interface ErrorCode {
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    @Retention(RetentionPolicy.SOURCE)
+    /* renamed from: android.support.v4.media.session.PlaybackStateCompat$MediaKeyAction */
+    public @interface MediaKeyAction {
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    @Retention(RetentionPolicy.SOURCE)
+    /* renamed from: android.support.v4.media.session.PlaybackStateCompat$RepeatMode */
+    public @interface RepeatMode {
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    @Retention(RetentionPolicy.SOURCE)
+    /* renamed from: android.support.v4.media.session.PlaybackStateCompat$ShuffleMode */
+    public @interface ShuffleMode {
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    @Retention(RetentionPolicy.SOURCE)
+    /* renamed from: android.support.v4.media.session.PlaybackStateCompat$State */
+    public @interface State {
+    }
+
     /* renamed from: android.support.v4.media.session.PlaybackStateCompat$CustomAction */
     public static final class CustomAction implements Parcelable {
         public static final Parcelable.Creator<CustomAction> CREATOR = new Parcelable.Creator<CustomAction>() {
@@ -326,10 +327,10 @@ public final class PlaybackStateCompat implements Parcelable {
             }
         };
         private final String mAction;
-        private PlaybackState.CustomAction mCustomActionFwk;
         private final Bundle mExtras;
         private final int mIcon;
         private final CharSequence mName;
+        private PlaybackState.CustomAction mCustomActionFwk;
 
         CustomAction(String action, CharSequence name, int icon, Bundle extras) {
             this.mAction = action;
@@ -345,6 +346,16 @@ public final class PlaybackStateCompat implements Parcelable {
             this.mExtras = in.readBundle(MediaSessionCompat.class.getClassLoader());
         }
 
+        public static CustomAction fromCustomAction(Object customActionObj) {
+            if (customActionObj == null || Build.VERSION.SDK_INT < 21) {
+                return null;
+            }
+            PlaybackState.CustomAction customActionFwk = (PlaybackState.CustomAction) customActionObj;
+            CustomAction customActionCompat = new CustomAction(customActionFwk.getAction(), customActionFwk.getName(), customActionFwk.getIcon(), customActionFwk.getExtras());
+            customActionCompat.mCustomActionFwk = customActionFwk;
+            return customActionCompat;
+        }
+
         public void writeToParcel(Parcel dest, int flags) {
             dest.writeString(this.mAction);
             TextUtils.writeToParcel(this.mName, dest, flags);
@@ -354,16 +365,6 @@ public final class PlaybackStateCompat implements Parcelable {
 
         public int describeContents() {
             return 0;
-        }
-
-        public static CustomAction fromCustomAction(Object customActionObj) {
-            if (customActionObj == null || Build.VERSION.SDK_INT < 21) {
-                return null;
-            }
-            PlaybackState.CustomAction customActionFwk = (PlaybackState.CustomAction) customActionObj;
-            CustomAction customActionCompat = new CustomAction(customActionFwk.getAction(), customActionFwk.getName(), customActionFwk.getIcon(), customActionFwk.getExtras());
-            customActionCompat.mCustomActionFwk = customActionFwk;
-            return customActionCompat;
         }
 
         public Object getCustomAction() {
@@ -398,9 +399,9 @@ public final class PlaybackStateCompat implements Parcelable {
         /* renamed from: android.support.v4.media.session.PlaybackStateCompat$CustomAction$Builder */
         public static final class Builder {
             private final String mAction;
-            private Bundle mExtras;
             private final int mIcon;
             private final CharSequence mName;
+            private Bundle mExtras;
 
             public Builder(String action, CharSequence name, int icon) {
                 if (TextUtils.isEmpty(action)) {
@@ -429,10 +430,10 @@ public final class PlaybackStateCompat implements Parcelable {
 
     /* renamed from: android.support.v4.media.session.PlaybackStateCompat$Builder */
     public static final class Builder {
+        private final List<CustomAction> mCustomActions = new ArrayList();
         private long mActions;
         private long mActiveItemId = -1;
         private long mBufferedPosition;
-        private final List<CustomAction> mCustomActions = new ArrayList();
         private int mErrorCode;
         private CharSequence mErrorMessage;
         private Bundle mExtras;

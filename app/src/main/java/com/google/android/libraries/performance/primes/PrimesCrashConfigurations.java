@@ -1,6 +1,7 @@
 package com.google.android.libraries.performance.primes;
 
 import android.support.annotation.Nullable;
+
 import com.google.android.libraries.performance.primes.transmitter.StackTraceTransmitter;
 
 public class PrimesCrashConfigurations {
@@ -56,6 +57,10 @@ public class PrimesCrashConfigurations {
         this.deferredInitLogging = deferredInitLogging2;
     }
 
+    public static Builder newBuilder() {
+        return new Builder();
+    }
+
     public boolean isEnabled() {
         return this.enabled;
     }
@@ -99,10 +104,6 @@ public class PrimesCrashConfigurations {
         CrashMetricExtensionProvider unused5 = builder.metricExtensionProvider = this.metricExtensionProvider;
         boolean unused6 = builder.deferredInitLogging = this.deferredInitLogging;
         return builder;
-    }
-
-    public static Builder newBuilder() {
-        return new Builder();
     }
 
     public static final class Builder {

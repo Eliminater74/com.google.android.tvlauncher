@@ -8,8 +8,9 @@ import android.os.SystemClock;
 import android.support.annotation.VisibleForTesting;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import com.google.android.libraries.performance.primes.PrimesStartupMeasureListener;
+
 import com.google.android.libraries.stitch.util.ThreadUtil;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -20,34 +21,26 @@ public final class PrimesStartupMeasure {
     private static final List<PrimesStartupMeasureListener.OnDraw> ON_DRAW_EMPTY_LIST = Collections.emptyList();
     private static final String TAG = "PrimesStartupMeasure";
     private static volatile PrimesStartupMeasure instance = new PrimesStartupMeasure();
-    private volatile long appClassLoadedAt;
-    private volatile long appOnCreateAt;
-    private volatile long firstAppInteractiveAt;
+    private final Object onActivityInitListenerLock = new Object();
+    private final Object onDrawListenerLock = new Object();
+    private final List<StartupActivityInfo> startupActivityInfos = new ArrayList();
     /* access modifiers changed from: private */
     public volatile long firstDrawnAt;
     /* access modifiers changed from: private */
     public volatile long firstOnActivityCreatedAt;
-    private volatile long firstOnActivityInitAt;
     /* access modifiers changed from: private */
     public volatile long firstOnActivityResumedAt;
     /* access modifiers changed from: private */
     public volatile long firstOnActivityStartedAt;
-    private final Object onActivityInitListenerLock = new Object();
-    private volatile List<PrimesStartupMeasureListener.OnActivityInit> onActivityInitListeners = ON_ACTIVITY_INIT_EMPTY_LIST;
-    private final Object onDrawListenerLock = new Object();
-    private volatile List<PrimesStartupMeasureListener.OnDraw> onDrawListeners = ON_DRAW_EMPTY_LIST;
     /* access modifiers changed from: private */
     public volatile boolean startedByUser;
-    private final List<StartupActivityInfo> startupActivityInfos = new ArrayList();
+    private volatile long appClassLoadedAt;
+    private volatile long appOnCreateAt;
+    private volatile long firstAppInteractiveAt;
+    private volatile long firstOnActivityInitAt;
+    private volatile List<PrimesStartupMeasureListener.OnActivityInit> onActivityInitListeners = ON_ACTIVITY_INIT_EMPTY_LIST;
+    private volatile List<PrimesStartupMeasureListener.OnDraw> onDrawListeners = ON_DRAW_EMPTY_LIST;
     private volatile NoPiiString startupType;
-
-    static final class StartupActivityInfo {
-        volatile String activityName;
-        volatile long onActivityCreatedAt;
-
-        StartupActivityInfo() {
-        }
-    }
 
     @VisibleForTesting
     PrimesStartupMeasure() {
@@ -55,6 +48,27 @@ public final class PrimesStartupMeasure {
 
     public static PrimesStartupMeasure get() {
         return instance;
+    }
+
+    private static void runOnActivityInit(PrimesStartupMeasureListener.OnActivityInit listener) {
+        try {
+            listener.onActivityInit();
+        } catch (RuntimeException e) {
+            PrimesLog.m45d(TAG, "Error running onActivityInit listener", e, new Object[0]);
+        }
+    }
+
+    private static void runOnDraw(PrimesStartupMeasureListener.OnDraw listener) {
+        try {
+            listener.onDraw();
+        } catch (RuntimeException e) {
+            PrimesLog.m45d(TAG, "Error running onDraw listener", e, new Object[0]);
+        }
+    }
+
+    @VisibleForTesting(otherwise = 5)
+    static void reset() {
+        instance = new PrimesStartupMeasure();
     }
 
     public void onAppClassLoaded() {
@@ -120,12 +134,6 @@ public final class PrimesStartupMeasure {
         }
     }
 
-    public void setStartupType(NoPiiString startupType2) {
-        if (this.startupType == null) {
-            this.startupType = startupType2;
-        }
-    }
-
     /* access modifiers changed from: private */
     public void addToOrReplaceStartupActivityInfos(StartupActivityInfo currentActivityInfo) {
         synchronized (this.startupActivityInfos) {
@@ -134,6 +142,133 @@ public final class PrimesStartupMeasure {
             } else {
                 this.startupActivityInfos.add(currentActivityInfo);
             }
+        }
+    }
+
+    /* access modifiers changed from: package-private */
+    public void registerOrRunOnActivityInitListener(PrimesStartupMeasureListener.OnActivityInit listener) {
+        synchronized (this.onActivityInitListenerLock) {
+            if (this.firstOnActivityInitAt > 0) {
+                runOnActivityInit(listener);
+            } else {
+                if (this.onActivityInitListeners == ON_ACTIVITY_INIT_EMPTY_LIST) {
+                    this.onActivityInitListeners = new ArrayList();
+                }
+                this.onActivityInitListeners.add(listener);
+            }
+        }
+    }
+
+    /* access modifiers changed from: package-private */
+    public void registerOrRunOnDrawListener(PrimesStartupMeasureListener.OnDraw listener) {
+        synchronized (this.onDrawListenerLock) {
+            if (this.firstDrawnAt > 0) {
+                runOnDraw(listener);
+            } else {
+                if (this.onDrawListeners == ON_DRAW_EMPTY_LIST) {
+                    this.onDrawListeners = new ArrayList();
+                }
+                this.onDrawListeners.add(listener);
+            }
+        }
+    }
+
+    private void runOnActivityInitListeners() {
+        synchronized (this.onActivityInitListenerLock) {
+            for (PrimesStartupMeasureListener.OnActivityInit listener : this.onActivityInitListeners) {
+                runOnActivityInit(listener);
+            }
+            this.onActivityInitListeners = Collections.emptyList();
+        }
+    }
+
+    /* access modifiers changed from: private */
+    public void runOnDrawListeners() {
+        synchronized (this.onDrawListenerLock) {
+            for (PrimesStartupMeasureListener.OnDraw listener : this.onDrawListeners) {
+                runOnDraw(listener);
+            }
+            this.onDrawListeners = Collections.emptyList();
+        }
+    }
+
+    /* access modifiers changed from: package-private */
+    public boolean isColdStartup() {
+        return this.startedByUser;
+    }
+
+    /* access modifiers changed from: package-private */
+    public long getAppClassLoadedAt() {
+        return this.appClassLoadedAt;
+    }
+
+    /* access modifiers changed from: package-private */
+    public long getAppOnCreateAt() {
+        return this.appOnCreateAt;
+    }
+
+    /* access modifiers changed from: package-private */
+    public long getFirstOnActivityInitAt() {
+        return this.firstOnActivityInitAt;
+    }
+
+    /* access modifiers changed from: package-private */
+    public StartupActivityInfo[] getStartupActivityInfos() {
+        StartupActivityInfo[] startupActivityInfoArr;
+        synchronized (this.startupActivityInfos) {
+            startupActivityInfoArr = (StartupActivityInfo[]) this.startupActivityInfos.toArray(new StartupActivityInfo[this.startupActivityInfos.size()]);
+        }
+        return startupActivityInfoArr;
+    }
+
+    /* access modifiers changed from: package-private */
+    public long getFirstOnActivityStartedAt() {
+        return this.firstOnActivityStartedAt;
+    }
+
+    /* access modifiers changed from: package-private */
+    public long getFirstOnActivityResumedAt() {
+        return this.firstOnActivityResumedAt;
+    }
+
+    /* access modifiers changed from: package-private */
+    public long getFirstDrawnAt() {
+        return this.firstDrawnAt;
+    }
+
+    /* access modifiers changed from: package-private */
+    public long getFirstAppInteractiveAt() {
+        return this.firstAppInteractiveAt;
+    }
+
+    /* access modifiers changed from: package-private */
+    public NoPiiString getStartupType() {
+        return this.startupType;
+    }
+
+    public void setStartupType(NoPiiString startupType2) {
+        if (this.startupType == null) {
+            this.startupType = startupType2;
+        }
+    }
+
+    /* access modifiers changed from: package-private */
+    @VisibleForTesting
+    public List<PrimesStartupMeasureListener.OnActivityInit> getOnActivityInitListeners() {
+        return this.onActivityInitListeners;
+    }
+
+    /* access modifiers changed from: package-private */
+    @VisibleForTesting
+    public List<PrimesStartupMeasureListener.OnDraw> getOnDrawListeners() {
+        return this.onDrawListeners;
+    }
+
+    static final class StartupActivityInfo {
+        volatile String activityName;
+        volatile long onActivityCreatedAt;
+
+        StartupActivityInfo() {
         }
     }
 
@@ -219,139 +354,5 @@ public final class PrimesStartupMeasure {
                 }
             }
         }
-    }
-
-    /* access modifiers changed from: package-private */
-    public void registerOrRunOnActivityInitListener(PrimesStartupMeasureListener.OnActivityInit listener) {
-        synchronized (this.onActivityInitListenerLock) {
-            if (this.firstOnActivityInitAt > 0) {
-                runOnActivityInit(listener);
-            } else {
-                if (this.onActivityInitListeners == ON_ACTIVITY_INIT_EMPTY_LIST) {
-                    this.onActivityInitListeners = new ArrayList();
-                }
-                this.onActivityInitListeners.add(listener);
-            }
-        }
-    }
-
-    /* access modifiers changed from: package-private */
-    public void registerOrRunOnDrawListener(PrimesStartupMeasureListener.OnDraw listener) {
-        synchronized (this.onDrawListenerLock) {
-            if (this.firstDrawnAt > 0) {
-                runOnDraw(listener);
-            } else {
-                if (this.onDrawListeners == ON_DRAW_EMPTY_LIST) {
-                    this.onDrawListeners = new ArrayList();
-                }
-                this.onDrawListeners.add(listener);
-            }
-        }
-    }
-
-    private void runOnActivityInitListeners() {
-        synchronized (this.onActivityInitListenerLock) {
-            for (PrimesStartupMeasureListener.OnActivityInit listener : this.onActivityInitListeners) {
-                runOnActivityInit(listener);
-            }
-            this.onActivityInitListeners = Collections.emptyList();
-        }
-    }
-
-    private static void runOnActivityInit(PrimesStartupMeasureListener.OnActivityInit listener) {
-        try {
-            listener.onActivityInit();
-        } catch (RuntimeException e) {
-            PrimesLog.m45d(TAG, "Error running onActivityInit listener", e, new Object[0]);
-        }
-    }
-
-    /* access modifiers changed from: private */
-    public void runOnDrawListeners() {
-        synchronized (this.onDrawListenerLock) {
-            for (PrimesStartupMeasureListener.OnDraw listener : this.onDrawListeners) {
-                runOnDraw(listener);
-            }
-            this.onDrawListeners = Collections.emptyList();
-        }
-    }
-
-    private static void runOnDraw(PrimesStartupMeasureListener.OnDraw listener) {
-        try {
-            listener.onDraw();
-        } catch (RuntimeException e) {
-            PrimesLog.m45d(TAG, "Error running onDraw listener", e, new Object[0]);
-        }
-    }
-
-    /* access modifiers changed from: package-private */
-    public boolean isColdStartup() {
-        return this.startedByUser;
-    }
-
-    /* access modifiers changed from: package-private */
-    public long getAppClassLoadedAt() {
-        return this.appClassLoadedAt;
-    }
-
-    /* access modifiers changed from: package-private */
-    public long getAppOnCreateAt() {
-        return this.appOnCreateAt;
-    }
-
-    /* access modifiers changed from: package-private */
-    public long getFirstOnActivityInitAt() {
-        return this.firstOnActivityInitAt;
-    }
-
-    /* access modifiers changed from: package-private */
-    public StartupActivityInfo[] getStartupActivityInfos() {
-        StartupActivityInfo[] startupActivityInfoArr;
-        synchronized (this.startupActivityInfos) {
-            startupActivityInfoArr = (StartupActivityInfo[]) this.startupActivityInfos.toArray(new StartupActivityInfo[this.startupActivityInfos.size()]);
-        }
-        return startupActivityInfoArr;
-    }
-
-    /* access modifiers changed from: package-private */
-    public long getFirstOnActivityStartedAt() {
-        return this.firstOnActivityStartedAt;
-    }
-
-    /* access modifiers changed from: package-private */
-    public long getFirstOnActivityResumedAt() {
-        return this.firstOnActivityResumedAt;
-    }
-
-    /* access modifiers changed from: package-private */
-    public long getFirstDrawnAt() {
-        return this.firstDrawnAt;
-    }
-
-    /* access modifiers changed from: package-private */
-    public long getFirstAppInteractiveAt() {
-        return this.firstAppInteractiveAt;
-    }
-
-    /* access modifiers changed from: package-private */
-    public NoPiiString getStartupType() {
-        return this.startupType;
-    }
-
-    @VisibleForTesting(otherwise = 5)
-    static void reset() {
-        instance = new PrimesStartupMeasure();
-    }
-
-    /* access modifiers changed from: package-private */
-    @VisibleForTesting
-    public List<PrimesStartupMeasureListener.OnActivityInit> getOnActivityInitListeners() {
-        return this.onActivityInitListeners;
-    }
-
-    /* access modifiers changed from: package-private */
-    @VisibleForTesting
-    public List<PrimesStartupMeasureListener.OnDraw> getOnDrawListeners() {
-        return this.onDrawListeners;
     }
 }

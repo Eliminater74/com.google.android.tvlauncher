@@ -4,8 +4,10 @@ import com.google.common.annotations.GwtCompatible;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Supplier;
-import com.google.common.collect.Maps;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Comparator;
@@ -16,12 +18,32 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible(serializable = true)
 public class TreeBasedTable<R, C, V> extends StandardRowSortedTable<R, C, V> {
     private static final long serialVersionUID = 0;
     private final Comparator<? super C> columnComparator;
+
+    TreeBasedTable(Comparator<? super R> rowComparator, Comparator<? super C> columnComparator2) {
+        super(new TreeMap(rowComparator), new Factory(columnComparator2));
+        this.columnComparator = columnComparator2;
+    }
+
+    public static <R extends Comparable, C extends Comparable, V> TreeBasedTable<R, C, V> create() {
+        return new TreeBasedTable<>(Ordering.natural(), Ordering.natural());
+    }
+
+    public static <R, C, V> TreeBasedTable<R, C, V> create(Comparator<? super R> rowComparator, Comparator<? super C> columnComparator2) {
+        Preconditions.checkNotNull(rowComparator);
+        Preconditions.checkNotNull(columnComparator2);
+        return new TreeBasedTable<>(rowComparator, columnComparator2);
+    }
+
+    public static <R, C, V> TreeBasedTable<R, C, V> create(TreeBasedTable<R, C, ? extends V> table) {
+        TreeBasedTable<R, C, V> result = new TreeBasedTable<>(table.rowComparator(), table.columnComparator());
+        result.putAll(table);
+        return result;
+    }
 
     public /* bridge */ /* synthetic */ Set cellSet() {
         return super.cellSet();
@@ -101,40 +123,6 @@ public class TreeBasedTable<R, C, V> extends StandardRowSortedTable<R, C, V> {
         return super.values();
     }
 
-    private static class Factory<C, V> implements Supplier<TreeMap<C, V>>, Serializable {
-        private static final long serialVersionUID = 0;
-        final Comparator<? super C> comparator;
-
-        Factory(Comparator<? super C> comparator2) {
-            this.comparator = comparator2;
-        }
-
-        public TreeMap<C, V> get() {
-            return new TreeMap<>(this.comparator);
-        }
-    }
-
-    public static <R extends Comparable, C extends Comparable, V> TreeBasedTable<R, C, V> create() {
-        return new TreeBasedTable<>(Ordering.natural(), Ordering.natural());
-    }
-
-    public static <R, C, V> TreeBasedTable<R, C, V> create(Comparator<? super R> rowComparator, Comparator<? super C> columnComparator2) {
-        Preconditions.checkNotNull(rowComparator);
-        Preconditions.checkNotNull(columnComparator2);
-        return new TreeBasedTable<>(rowComparator, columnComparator2);
-    }
-
-    public static <R, C, V> TreeBasedTable<R, C, V> create(TreeBasedTable<R, C, ? extends V> table) {
-        TreeBasedTable<R, C, V> result = new TreeBasedTable<>(table.rowComparator(), table.columnComparator());
-        result.putAll(table);
-        return result;
-    }
-
-    TreeBasedTable(Comparator<? super R> rowComparator, Comparator<? super C> columnComparator2) {
-        super(new TreeMap(rowComparator), new Factory(columnComparator2));
-        this.columnComparator = columnComparator2;
-    }
-
     @Deprecated
     public Comparator<? super R> rowComparator() {
         return rowKeySet().comparator();
@@ -147,6 +135,63 @@ public class TreeBasedTable<R, C, V> extends StandardRowSortedTable<R, C, V> {
 
     public SortedMap<C, V> row(R rowKey) {
         return new TreeRow(this, rowKey);
+    }
+
+    public SortedSet<R> rowKeySet() {
+        return super.rowKeySet();
+    }
+
+    public SortedMap<R, Map<C, V>> rowMap() {
+        return super.rowMap();
+    }
+
+    /* access modifiers changed from: package-private */
+    public Iterator<C> createColumnKeyIterator() {
+        final Comparator<? super C> comparator = columnComparator();
+        final Iterator<C> merged = Iterators.mergeSorted(Iterables.transform(this.backingMap.values(), new Function<Map<C, V>, Iterator<C>>(this) {
+            public Iterator<C> apply(Map<C, V> input) {
+                return input.keySet().iterator();
+            }
+        }), comparator);
+        return new AbstractIterator<C>(this) {
+            @NullableDecl
+            C lastValue;
+
+            /* access modifiers changed from: protected */
+            public C computeNext() {
+                boolean duplicate;
+                while (merged.hasNext()) {
+                    C next = merged.next();
+                    C c = this.lastValue;
+                    if (c == null || comparator.compare(next, c) != 0) {
+                        duplicate = false;
+                        continue;
+                    } else {
+                        duplicate = true;
+                        continue;
+                    }
+                    if (!duplicate) {
+                        this.lastValue = next;
+                        return this.lastValue;
+                    }
+                }
+                this.lastValue = null;
+                return endOfData();
+            }
+        };
+    }
+
+    private static class Factory<C, V> implements Supplier<TreeMap<C, V>>, Serializable {
+        private static final long serialVersionUID = 0;
+        final Comparator<? super C> comparator;
+
+        Factory(Comparator<? super C> comparator2) {
+            this.comparator = comparator2;
+        }
+
+        public TreeMap<C, V> get() {
+            return new TreeMap<>(this.comparator);
+        }
     }
 
     private class TreeRow extends StandardTable<R, C, V>.Row implements SortedMap<C, V> {
@@ -265,49 +310,5 @@ public class TreeBasedTable<R, C, V> extends StandardRowSortedTable<R, C, V> {
             Preconditions.checkArgument(rangeContains(Preconditions.checkNotNull(key)));
             return super.put(key, value);
         }
-    }
-
-    public SortedSet<R> rowKeySet() {
-        return super.rowKeySet();
-    }
-
-    public SortedMap<R, Map<C, V>> rowMap() {
-        return super.rowMap();
-    }
-
-    /* access modifiers changed from: package-private */
-    public Iterator<C> createColumnKeyIterator() {
-        final Comparator<? super C> comparator = columnComparator();
-        final Iterator<C> merged = Iterators.mergeSorted(Iterables.transform(this.backingMap.values(), new Function<Map<C, V>, Iterator<C>>(this) {
-            public Iterator<C> apply(Map<C, V> input) {
-                return input.keySet().iterator();
-            }
-        }), comparator);
-        return new AbstractIterator<C>(this) {
-            @NullableDecl
-            C lastValue;
-
-            /* access modifiers changed from: protected */
-            public C computeNext() {
-                boolean duplicate;
-                while (merged.hasNext()) {
-                    C next = merged.next();
-                    C c = this.lastValue;
-                    if (c == null || comparator.compare(next, c) != 0) {
-                        duplicate = false;
-                        continue;
-                    } else {
-                        duplicate = true;
-                        continue;
-                    }
-                    if (!duplicate) {
-                        this.lastValue = next;
-                        return this.lastValue;
-                    }
-                }
-                this.lastValue = null;
-                return endOfData();
-            }
-        };
     }
 }

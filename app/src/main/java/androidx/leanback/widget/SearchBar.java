@@ -28,9 +28,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 import androidx.leanback.C0364R;
-import androidx.leanback.widget.SearchEditText;
-import androidx.leanback.widget.SearchOrbView;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,20 +42,14 @@ public class SearchBar extends RelativeLayout {
     static final float FULL_LEFT_VOLUME = 1.0f;
     static final float FULL_RIGHT_VOLUME = 1.0f;
     static final String TAG = SearchBar.class.getSimpleName();
-    private AudioManager mAudioManager;
-    boolean mAutoStartRecognition;
-    private int mBackgroundAlpha;
-    private int mBackgroundSpeechAlpha;
-    private Drawable mBadgeDrawable;
-    private ImageView mBadgeView;
-    private Drawable mBarBackground;
-    private int mBarHeight;
-    private final Context mContext;
     final Handler mHandler;
-    private String mHint;
+    private final Context mContext;
     private final InputMethodManager mInputMethodManager;
-    private boolean mListening;
-    private SearchBarPermissionListener mPermissionListener;
+    private final int mTextColor;
+    private final int mTextColorSpeechMode;
+    private final int mTextHintColor;
+    private final int mTextHintColorSpeechMode;
+    boolean mAutoStartRecognition;
     boolean mRecognizing;
     SearchBarListener mSearchBarListener;
     String mSearchQuery;
@@ -63,25 +57,19 @@ public class SearchBar extends RelativeLayout {
     SparseIntArray mSoundMap;
     SoundPool mSoundPool;
     SpeechOrbView mSpeechOrbView;
+    private AudioManager mAudioManager;
+    private int mBackgroundAlpha;
+    private int mBackgroundSpeechAlpha;
+    private Drawable mBadgeDrawable;
+    private ImageView mBadgeView;
+    private Drawable mBarBackground;
+    private int mBarHeight;
+    private String mHint;
+    private boolean mListening;
+    private SearchBarPermissionListener mPermissionListener;
     private SpeechRecognitionCallback mSpeechRecognitionCallback;
     private SpeechRecognizer mSpeechRecognizer;
-    private final int mTextColor;
-    private final int mTextColorSpeechMode;
-    private final int mTextHintColor;
-    private final int mTextHintColorSpeechMode;
     private String mTitle;
-
-    public interface SearchBarListener {
-        void onKeyboardDismiss(String str);
-
-        void onSearchQueryChange(String str);
-
-        void onSearchQuerySubmit(String str);
-    }
-
-    public interface SearchBarPermissionListener {
-        void requestAudioPermission();
-    }
 
     public SearchBar(Context context) {
         this(context, null);
@@ -262,11 +250,6 @@ public class SearchBar extends RelativeLayout {
         }
     }
 
-    public void setTitle(String title) {
-        this.mTitle = title;
-        updateHint();
-    }
-
     public void setSearchAffordanceColors(SearchOrbView.Colors colors) {
         SpeechOrbView speechOrbView = this.mSpeechOrbView;
         if (speechOrbView != null) {
@@ -285,8 +268,17 @@ public class SearchBar extends RelativeLayout {
         return this.mTitle;
     }
 
+    public void setTitle(String title) {
+        this.mTitle = title;
+        updateHint();
+    }
+
     public CharSequence getHint() {
         return this.mHint;
+    }
+
+    public Drawable getBadgeDrawable() {
+        return this.mBadgeDrawable;
     }
 
     public void setBadgeDrawable(Drawable drawable) {
@@ -300,10 +292,6 @@ public class SearchBar extends RelativeLayout {
                 this.mBadgeView.setVisibility(8);
             }
         }
-    }
-
-    public Drawable getBadgeDrawable() {
-        return this.mBadgeDrawable;
     }
 
     public void displayCompletions(List<String> completions) {
@@ -612,5 +600,17 @@ public class SearchBar extends RelativeLayout {
     public void setNextFocusDownId(int viewId) {
         this.mSpeechOrbView.setNextFocusDownId(viewId);
         this.mSearchTextEditor.setNextFocusDownId(viewId);
+    }
+
+    public interface SearchBarListener {
+        void onKeyboardDismiss(String str);
+
+        void onSearchQueryChange(String str);
+
+        void onSearchQuerySubmit(String str);
+    }
+
+    public interface SearchBarPermissionListener {
+        void requestAudioPermission();
     }
 }

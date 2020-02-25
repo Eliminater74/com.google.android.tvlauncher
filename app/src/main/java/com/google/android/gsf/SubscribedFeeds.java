@@ -7,6 +7,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -15,25 +16,6 @@ import java.util.Map;
 public class SubscribedFeeds {
     private static final String SELECT_FEEDS_BY_ID = "_id=?";
     private static final String SELECT_SUBSCRIBED_FEEDS_BY_ACCOUNT_AND_AUTHORITY = "_sync_account=? AND _sync_account_type=? AND authority=?";
-
-    public interface AccountColumns {
-        public static final String _SYNC_ACCOUNT = "_sync_account";
-        public static final String _SYNC_ACCOUNT_TYPE = "_sync_account_type";
-    }
-
-    public interface FeedColumns {
-        public static final String AUTHORITY = "authority";
-        public static final String FEED = "feed";
-        public static final String SERVICE = "service";
-        public static final String _SYNC_ACCOUNT = "_sync_account";
-        public static final String _SYNC_ACCOUNT_TYPE = "_sync_account_type";
-        public static final String _SYNC_DIRTY = "_sync_dirty";
-        public static final String _SYNC_ID = "_sync_id";
-        public static final String _SYNC_LOCAL_ID = "_sync_local_id";
-        public static final String _SYNC_MARK = "_sync_mark";
-        public static final String _SYNC_TIME = "_sync_time";
-        public static final String _SYNC_VERSION = "_sync_version";
-    }
 
     private SubscribedFeeds() {
     }
@@ -96,6 +78,43 @@ public class SubscribedFeeds {
         return manageSubscriptions(contentResolver, account, authority, serviceName, expectedFeedUrls);
     }
 
+    public static Uri addFeed(ContentResolver resolver, String feed, Account account, String authority, String service) {
+        ContentValues values = new ContentValues();
+        values.put(FeedColumns.FEED, feed);
+        values.put("_sync_account", account.name);
+        values.put("_sync_account_type", account.type);
+        values.put(FeedColumns.AUTHORITY, authority);
+        values.put("service", service);
+        return resolver.insert(Feeds.CONTENT_URI, values);
+    }
+
+    public static int deleteFeed(ContentResolver resolver, String feed, Account account, String authority) {
+        return resolver.delete(Feeds.CONTENT_URI, "_sync_account=?" + " AND _sync_account_type=?" + " AND feed=?" + " AND authority=?", new String[]{account.name, account.type, feed, authority});
+    }
+
+    public static int deleteFeeds(ContentResolver resolver, Account account, String authority) {
+        return resolver.delete(Feeds.CONTENT_URI, "_sync_account=?" + " AND _sync_account_type=?" + " AND authority=?", new String[]{account.name, account.type, authority});
+    }
+
+    public interface AccountColumns {
+        public static final String _SYNC_ACCOUNT = "_sync_account";
+        public static final String _SYNC_ACCOUNT_TYPE = "_sync_account_type";
+    }
+
+    public interface FeedColumns {
+        public static final String AUTHORITY = "authority";
+        public static final String FEED = "feed";
+        public static final String SERVICE = "service";
+        public static final String _SYNC_ACCOUNT = "_sync_account";
+        public static final String _SYNC_ACCOUNT_TYPE = "_sync_account_type";
+        public static final String _SYNC_DIRTY = "_sync_dirty";
+        public static final String _SYNC_ID = "_sync_id";
+        public static final String _SYNC_LOCAL_ID = "_sync_local_id";
+        public static final String _SYNC_MARK = "_sync_mark";
+        public static final String _SYNC_TIME = "_sync_time";
+        public static final String _SYNC_VERSION = "_sync_version";
+    }
+
     public static final class Feeds implements BaseColumns, FeedColumns {
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/subscribedfeed";
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/subscribedfeeds";
@@ -113,24 +132,6 @@ public class SubscribedFeeds {
         public static Cursor query(ContentResolver cr, String[] projection, String where, String[] whereArgs, String orderBy) {
             return cr.query(CONTENT_URI, projection, where, whereArgs, orderBy == null ? "_SYNC_ACCOUNT_TYPE, _SYNC_ACCOUNT ASC" : orderBy);
         }
-    }
-
-    public static Uri addFeed(ContentResolver resolver, String feed, Account account, String authority, String service) {
-        ContentValues values = new ContentValues();
-        values.put(FeedColumns.FEED, feed);
-        values.put("_sync_account", account.name);
-        values.put("_sync_account_type", account.type);
-        values.put(FeedColumns.AUTHORITY, authority);
-        values.put("service", service);
-        return resolver.insert(Feeds.CONTENT_URI, values);
-    }
-
-    public static int deleteFeed(ContentResolver resolver, String feed, Account account, String authority) {
-        return resolver.delete(Feeds.CONTENT_URI, "_sync_account=?" + " AND _sync_account_type=?" + " AND feed=?" + " AND authority=?", new String[]{account.name, account.type, feed, authority});
-    }
-
-    public static int deleteFeeds(ContentResolver resolver, Account account, String authority) {
-        return resolver.delete(Feeds.CONTENT_URI, "_sync_account=?" + " AND _sync_account_type=?" + " AND authority=?", new String[]{account.name, account.type, authority});
     }
 
     public static final class Accounts implements BaseColumns, AccountColumns {

@@ -3,12 +3,15 @@ package com.google.android.gms.auth.api.signin.internal;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
+
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.internal.zzau;
+
+import org.json.JSONException;
+
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import org.json.JSONException;
 
 /* compiled from: Storage */
 public final class zzaa {
@@ -16,6 +19,10 @@ public final class zzaa {
     private static zzaa zzb;
     private final Lock zzc = new ReentrantLock();
     private final SharedPreferences zzd;
+
+    private zzaa(Context context) {
+        this.zzd = context.getSharedPreferences("com.google.android.gms.signin", 0);
+    }
 
     public static zzaa zza(Context context) {
         zzau.zza(context);
@@ -30,8 +37,12 @@ public final class zzaa {
         }
     }
 
-    private zzaa(Context context) {
-        this.zzd = context.getSharedPreferences("com.google.android.gms.signin", 0);
+    private static String zzb(String str, String str2) {
+        StringBuilder sb = new StringBuilder(String.valueOf(str).length() + 1 + String.valueOf(str2).length());
+        sb.append(str);
+        sb.append(":");
+        sb.append(str2);
+        return sb.toString();
     }
 
     /* access modifiers changed from: package-private */
@@ -120,13 +131,5 @@ public final class zzaa {
         } finally {
             this.zzc.unlock();
         }
-    }
-
-    private static String zzb(String str, String str2) {
-        StringBuilder sb = new StringBuilder(String.valueOf(str).length() + 1 + String.valueOf(str2).length());
-        sb.append(str);
-        sb.append(":");
-        sb.append(str2);
-        return sb.toString();
     }
 }

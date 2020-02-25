@@ -7,9 +7,7 @@ import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Pair;
-import com.google.android.exoplayer2.DefaultMediaClock;
-import com.google.android.exoplayer2.PlayerMessage;
-import com.google.android.exoplayer2.Timeline;
+
 import com.google.android.exoplayer2.source.MediaPeriod;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.SampleStream;
@@ -24,18 +22,19 @@ import com.google.android.exoplayer2.util.HandlerWrapper;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.TraceUtil;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 final class ExoPlayerImplInternal implements Handler.Callback, MediaPeriod.Callback, TrackSelector.InvalidationListener, MediaSource.SourceInfoRefreshListener, DefaultMediaClock.PlaybackParameterListener, PlayerMessage.Sender {
-    private static final int IDLE_INTERVAL_MS = 1000;
-    private static final int MSG_DO_SOME_WORK = 2;
     public static final int MSG_ERROR = 2;
-    private static final int MSG_PERIOD_PREPARED = 9;
     public static final int MSG_PLAYBACK_INFO_CHANGED = 0;
     public static final int MSG_PLAYBACK_PARAMETERS_CHANGED = 1;
+    private static final int IDLE_INTERVAL_MS = 1000;
+    private static final int MSG_DO_SOME_WORK = 2;
+    private static final int MSG_PERIOD_PREPARED = 9;
     private static final int MSG_PLAYBACK_PARAMETERS_CHANGED_INTERNAL = 17;
     private static final int MSG_PREPARE = 0;
     private static final int MSG_REFRESH_SOURCE_INFO = 8;
@@ -59,34 +58,34 @@ final class ExoPlayerImplInternal implements Handler.Callback, MediaPeriod.Callb
     private final BandwidthMeter bandwidthMeter;
     private final Clock clock;
     private final TrackSelectorResult emptyTrackSelectorResult;
-    private Renderer[] enabledRenderers;
     private final Handler eventHandler;
-    private boolean foregroundMode;
     private final HandlerWrapper handler;
     private final HandlerThread internalPlaybackThread;
     private final LoadControl loadControl;
     private final DefaultMediaClock mediaClock;
+    private final ArrayList<PendingMessageInfo> pendingMessages;
+    private final Timeline.Period period;
+    private final PlaybackInfoUpdate playbackInfoUpdate;
+    private final MediaPeriodQueue queue = new MediaPeriodQueue();
+    private final RendererCapabilities[] rendererCapabilities;
+    private final Renderer[] renderers;
+    private final boolean retainBackBufferFromKeyframe;
+    private final TrackSelector trackSelector;
+    private final Timeline.Window window;
+    private Renderer[] enabledRenderers;
+    private boolean foregroundMode;
     private MediaSource mediaSource;
     private int nextPendingMessageIndex;
     private SeekPosition pendingInitialSeekPosition;
-    private final ArrayList<PendingMessageInfo> pendingMessages;
     private int pendingPrepareCount;
-    private final Timeline.Period period;
     private boolean playWhenReady;
     private PlaybackInfo playbackInfo;
-    private final PlaybackInfoUpdate playbackInfoUpdate;
-    private final MediaPeriodQueue queue = new MediaPeriodQueue();
     private boolean rebuffering;
     private boolean released;
-    private final RendererCapabilities[] rendererCapabilities;
     private long rendererPositionUs;
-    private final Renderer[] renderers;
     private int repeatMode;
-    private final boolean retainBackBufferFromKeyframe;
     private SeekParameters seekParameters;
     private boolean shuffleModeEnabled;
-    private final TrackSelector trackSelector;
-    private final Timeline.Window window;
 
     public ExoPlayerImplInternal(Renderer[] renderers2, TrackSelector trackSelector2, TrackSelectorResult emptyTrackSelectorResult2, LoadControl loadControl2, BandwidthMeter bandwidthMeter2, boolean playWhenReady2, int repeatMode2, boolean shuffleModeEnabled2, Handler eventHandler2, Clock clock2) {
         this.renderers = renderers2;
@@ -118,6 +117,15 @@ final class ExoPlayerImplInternal implements Handler.Callback, MediaPeriod.Callb
         this.internalPlaybackThread = new HandlerThread("ExoPlayerImplInternal:Handler", -16);
         this.internalPlaybackThread.start();
         this.handler = clock2.createHandler(this.internalPlaybackThread.getLooper(), this);
+    }
+
+    private static Format[] getFormats(TrackSelection newSelection) {
+        int length = newSelection != null ? newSelection.length() : 0;
+        Format[] formats = new Format[length];
+        for (int i = 0; i < length; i++) {
+            formats[i] = newSelection.getFormat(i);
+        }
+        return formats;
     }
 
     public void prepare(MediaSource mediaSource2, boolean resetPosition, boolean resetState) {
@@ -1841,15 +1849,6 @@ final class ExoPlayerImplInternal implements Handler.Callback, MediaPeriod.Callb
         this.loadControl.onTracksSelected(this.renderers, trackGroups, trackSelectorResult.selections);
     }
 
-    private static Format[] getFormats(TrackSelection newSelection) {
-        int length = newSelection != null ? newSelection.length() : 0;
-        Format[] formats = new Format[length];
-        for (int i = 0; i < length; i++) {
-            formats[i] = newSelection.getFormat(i);
-        }
-        return formats;
-    }
-
     private static final class SeekPosition {
         public final Timeline timeline;
         public final int windowIndex;
@@ -1912,11 +1911,11 @@ final class ExoPlayerImplInternal implements Handler.Callback, MediaPeriod.Callb
     private static final class PlaybackInfoUpdate {
         /* access modifiers changed from: private */
         public int discontinuityReason;
-        private PlaybackInfo lastPlaybackInfo;
         /* access modifiers changed from: private */
         public int operationAcks;
         /* access modifiers changed from: private */
         public boolean positionDiscontinuity;
+        private PlaybackInfo lastPlaybackInfo;
 
         private PlaybackInfoUpdate() {
         }

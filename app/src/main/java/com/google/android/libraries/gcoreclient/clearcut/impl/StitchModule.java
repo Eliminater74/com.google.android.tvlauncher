@@ -1,11 +1,11 @@
 package com.google.android.libraries.gcoreclient.clearcut.impl;
 
 import android.content.Context;
+
 import com.google.android.libraries.gcoreclient.clearcut.GcoreClearcutApi;
 import com.google.android.libraries.gcoreclient.clearcut.GcoreClearcutLoggerFactory;
 import com.google.android.libraries.gcoreclient.clearcut.GcoreCountersBucketAliasFactory;
 import com.google.android.libraries.gcoreclient.clearcut.GcoreCountersFactory;
-import com.google.android.libraries.gcoreclient.clearcut.impl.GcoreClearcutApiImpl;
 import com.google.android.libraries.gcoreclient.common.api.support.GcoreWrapper;
 import com.google.android.libraries.stitch.binder.Binder;
 import com.google.android.libraries.stitch.binder.BinderModule;
@@ -26,6 +26,18 @@ class StitchModule {
     @Provides
     public GcoreClearcutApi.Builder getGcoreClearcutApiBuilder() {
         return new GcoreClearcutApiImpl.Builder();
+    }
+
+    /* access modifiers changed from: package-private */
+    @Provides
+    public GcoreCountersFactory getGcoreCountersFactory() {
+        return new GcoreCountersFactoryImpl(new GcoreWrapper());
+    }
+
+    /* access modifiers changed from: package-private */
+    @Provides
+    public GcoreCountersBucketAliasFactory getGcoreCountersBucketAliasFactory() {
+        return new GcoreCountersBucketAliasFactoryImpl();
     }
 
     public final class Adapter {
@@ -70,17 +82,5 @@ class StitchModule {
             }
             binder.bind(GcoreCountersFactory.class, module.getGcoreCountersFactory());
         }
-    }
-
-    /* access modifiers changed from: package-private */
-    @Provides
-    public GcoreCountersFactory getGcoreCountersFactory() {
-        return new GcoreCountersFactoryImpl(new GcoreWrapper());
-    }
-
-    /* access modifiers changed from: package-private */
-    @Provides
-    public GcoreCountersBucketAliasFactory getGcoreCountersBucketAliasFactory() {
-        return new GcoreCountersBucketAliasFactoryImpl();
     }
 }

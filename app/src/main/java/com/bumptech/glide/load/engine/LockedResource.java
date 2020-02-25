@@ -2,6 +2,7 @@ package com.bumptech.glide.load.engine;
 
 import android.support.annotation.NonNull;
 import android.support.p001v4.util.Pools;
+
 import com.bumptech.glide.util.Preconditions;
 import com.bumptech.glide.util.pool.FactoryPools;
 import com.bumptech.glide.util.pool.StateVerifier;
@@ -12,19 +13,19 @@ final class LockedResource<Z> implements Resource<Z>, FactoryPools.Poolable {
             return new LockedResource<>();
         }
     });
+    private final StateVerifier stateVerifier = StateVerifier.newInstance();
     private boolean isLocked;
     private boolean isRecycled;
-    private final StateVerifier stateVerifier = StateVerifier.newInstance();
     private Resource<Z> toWrap;
+
+    LockedResource() {
+    }
 
     @NonNull
     static <Z> LockedResource<Z> obtain(Resource<Z> resource) {
         LockedResource<Z> result = (LockedResource) Preconditions.checkNotNull(POOL.acquire());
         result.init(resource);
         return result;
-    }
-
-    LockedResource() {
     }
 
     private void init(Resource<Z> toWrap2) {

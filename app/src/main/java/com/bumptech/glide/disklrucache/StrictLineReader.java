@@ -15,13 +15,12 @@ class StrictLineReader implements Closeable {
 
     /* renamed from: LF */
     private static final byte f43LF = 10;
-    private byte[] buf;
     /* access modifiers changed from: private */
     public final Charset charset;
-    private int end;
-
     /* renamed from: in */
     private final InputStream f44in;
+    private byte[] buf;
+    private int end;
     private int pos;
 
     public StrictLineReader(InputStream in, Charset charset2) {

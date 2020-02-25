@@ -11,18 +11,19 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.annotation.RestrictTo;
 import android.support.p001v4.content.res.TypedArrayUtils;
-import android.support.p004v7.graphics.drawable.DrawableContainer;
 import android.support.p004v7.resources.C0245R;
 import android.support.p004v7.widget.ResourceManagerInternal;
 import android.util.AttributeSet;
 import android.util.StateSet;
-import java.io.IOException;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
+import java.io.IOException;
+
 @SuppressLint({"RestrictedAPI"})
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-/* renamed from: android.support.v7.graphics.drawable.StateListDrawable */
+        /* renamed from: android.support.v7.graphics.drawable.StateListDrawable */
 class StateListDrawable extends DrawableContainer {
     private static final boolean DEBUG = false;
     private static final String TAG = "StateListDrawable";
@@ -31,6 +32,17 @@ class StateListDrawable extends DrawableContainer {
 
     StateListDrawable() {
         this(null, null);
+    }
+
+    StateListDrawable(StateListState state, Resources res) {
+        setConstantState(new StateListState(state, this, res));
+        onStateChange(getState());
+    }
+
+    StateListDrawable(@Nullable StateListState state) {
+        if (state != null) {
+            setConstantState(state);
+        }
     }
 
     public void addState(int[] stateSet, Drawable drawable) {
@@ -192,6 +204,20 @@ class StateListDrawable extends DrawableContainer {
         this.mMutated = false;
     }
 
+    @RequiresApi(21)
+    public void applyTheme(@NonNull Resources.Theme theme) {
+        super.applyTheme(theme);
+        onStateChange(getState());
+    }
+
+    /* access modifiers changed from: package-private */
+    public void setConstantState(@NonNull DrawableContainer.DrawableContainerState state) {
+        super.setConstantState(state);
+        if (state instanceof StateListState) {
+            this.mStateListState = (StateListState) state;
+        }
+    }
+
     /* renamed from: android.support.v7.graphics.drawable.StateListDrawable$StateListState */
     static class StateListState extends DrawableContainer.DrawableContainerState {
         int[][] mStateSets;
@@ -250,31 +276,6 @@ class StateListDrawable extends DrawableContainer {
             int[][] newStateSets = new int[newSize][];
             System.arraycopy(this.mStateSets, 0, newStateSets, 0, oldSize);
             this.mStateSets = newStateSets;
-        }
-    }
-
-    @RequiresApi(21)
-    public void applyTheme(@NonNull Resources.Theme theme) {
-        super.applyTheme(theme);
-        onStateChange(getState());
-    }
-
-    /* access modifiers changed from: package-private */
-    public void setConstantState(@NonNull DrawableContainer.DrawableContainerState state) {
-        super.setConstantState(state);
-        if (state instanceof StateListState) {
-            this.mStateListState = (StateListState) state;
-        }
-    }
-
-    StateListDrawable(StateListState state, Resources res) {
-        setConstantState(new StateListState(state, this, res));
-        onStateChange(getState());
-    }
-
-    StateListDrawable(@Nullable StateListState state) {
-        if (state != null) {
-            setConstantState(state);
         }
     }
 }

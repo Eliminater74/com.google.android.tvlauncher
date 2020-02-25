@@ -9,10 +9,10 @@ public interface TintableCompoundDrawablesView {
     @Nullable
     ColorStateList getSupportCompoundDrawablesTintList();
 
+    void setSupportCompoundDrawablesTintList(@Nullable ColorStateList colorStateList);
+
     @Nullable
     PorterDuff.Mode getSupportCompoundDrawablesTintMode();
-
-    void setSupportCompoundDrawablesTintList(@Nullable ColorStateList colorStateList);
 
     void setSupportCompoundDrawablesTintMode(@Nullable PorterDuff.Mode mode);
 }

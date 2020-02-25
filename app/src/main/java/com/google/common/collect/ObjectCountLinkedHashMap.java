@@ -2,23 +2,16 @@ package com.google.common.collect;
 
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.VisibleForTesting;
+
 import java.util.Arrays;
 
 @GwtCompatible(emulated = true, serializable = true)
 class ObjectCountLinkedHashMap<K> extends ObjectCountHashMap<K> {
     private static final int ENDPOINT = -2;
-    private transient int firstEntry;
-    private transient int lastEntry;
     @VisibleForTesting
     transient long[] links;
-
-    public static <K> ObjectCountLinkedHashMap<K> create() {
-        return new ObjectCountLinkedHashMap<>();
-    }
-
-    public static <K> ObjectCountLinkedHashMap<K> createWithExpectedSize(int expectedSize) {
-        return new ObjectCountLinkedHashMap<>(expectedSize);
-    }
+    private transient int firstEntry;
+    private transient int lastEntry;
 
     ObjectCountLinkedHashMap() {
         this(3);
@@ -39,6 +32,14 @@ class ObjectCountLinkedHashMap<K> extends ObjectCountHashMap<K> {
             put(objectCountHashMap.getKey(i), objectCountHashMap.getValue(i));
             i = objectCountHashMap.nextIndex(i);
         }
+    }
+
+    public static <K> ObjectCountLinkedHashMap<K> create() {
+        return new ObjectCountLinkedHashMap<>();
+    }
+
+    public static <K> ObjectCountLinkedHashMap<K> createWithExpectedSize(int expectedSize) {
+        return new ObjectCountLinkedHashMap<>(expectedSize);
     }
 
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead

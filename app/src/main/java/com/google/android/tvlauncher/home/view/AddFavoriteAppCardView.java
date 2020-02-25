@@ -8,6 +8,7 @@ import android.util.AttributeSet;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.google.android.tvlauncher.C1188R;
 import com.google.android.tvlauncher.util.Util;
 import com.google.android.tvrecommendations.shared.util.ColorUtils;

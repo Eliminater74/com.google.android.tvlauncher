@@ -2,7 +2,9 @@ package com.google.android.exoplayer2.util;
 
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.util.ArrayList;
 
 public final class MimeTypes {
@@ -75,6 +77,9 @@ public final class MimeTypes {
     public static final String VIDEO_VP9 = "video/x-vnd.on2.vp9";
     public static final String VIDEO_WEBM = "video/webm";
     private static final ArrayList<CustomMimeType> customMimeTypes = new ArrayList<>();
+
+    private MimeTypes() {
+    }
 
     public static void registerCustomMimeType(String mimeType, String codecPrefix, int trackType) {
         CustomMimeType customMimeType = new CustomMimeType(mimeType, codecPrefix, trackType);
@@ -397,9 +402,6 @@ public final class MimeTypes {
             }
         }
         return -1;
-    }
-
-    private MimeTypes() {
     }
 
     private static final class CustomMimeType {

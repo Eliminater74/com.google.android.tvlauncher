@@ -5,24 +5,12 @@ import android.content.pm.PermissionInfo;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RestrictTo;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /* renamed from: android.support.v4.content.pm.PermissionInfoCompat */
 public final class PermissionInfoCompat {
-
-    @RestrictTo({RestrictTo.Scope.LIBRARY})
-    @Retention(RetentionPolicy.SOURCE)
-    /* renamed from: android.support.v4.content.pm.PermissionInfoCompat$Protection */
-    public @interface Protection {
-    }
-
-    @SuppressLint({"UniqueConstants"})
-    @RestrictTo({RestrictTo.Scope.LIBRARY})
-    @Retention(RetentionPolicy.SOURCE)
-    /* renamed from: android.support.v4.content.pm.PermissionInfoCompat$ProtectionFlags */
-    public @interface ProtectionFlags {
-    }
 
     private PermissionInfoCompat() {
     }
@@ -41,5 +29,18 @@ public final class PermissionInfoCompat {
             return permissionInfo.getProtectionFlags();
         }
         return permissionInfo.protectionLevel & -16;
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY})
+    @Retention(RetentionPolicy.SOURCE)
+    /* renamed from: android.support.v4.content.pm.PermissionInfoCompat$Protection */
+    public @interface Protection {
+    }
+
+    @SuppressLint({"UniqueConstants"})
+    @RestrictTo({RestrictTo.Scope.LIBRARY})
+    @Retention(RetentionPolicy.SOURCE)
+    /* renamed from: android.support.v4.content.pm.PermissionInfoCompat$ProtectionFlags */
+    public @interface ProtectionFlags {
     }
 }

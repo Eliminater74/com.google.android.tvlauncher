@@ -1,7 +1,5 @@
 package com.google.android.exoplayer2.offline;
 
-import com.google.android.exoplayer2.offline.DownloadService;
-
 final /* synthetic */ class DownloadService$ForegroundNotificationUpdater$$Lambda$0 implements Runnable {
     private final DownloadService.ForegroundNotificationUpdater arg$1;
 

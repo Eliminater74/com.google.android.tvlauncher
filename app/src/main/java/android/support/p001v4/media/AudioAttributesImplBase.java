@@ -3,8 +3,9 @@ package android.support.p001v4.media;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.RestrictTo;
-import android.support.p001v4.media.AudioAttributesImpl;
+
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.util.Arrays;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
@@ -27,6 +28,13 @@ public class AudioAttributesImplBase implements AudioAttributesImpl {
         this.mFlags = flags;
         this.mUsage = usage;
         this.mLegacyStream = legacyStream;
+    }
+
+    public static AudioAttributesImpl fromBundle(Bundle bundle) {
+        if (bundle == null) {
+            return null;
+        }
+        return new AudioAttributesImplBase(bundle.getInt("android.support.v4.media.audio_attrs.CONTENT_TYPE", 0), bundle.getInt("android.support.v4.media.audio_attrs.FLAGS", 0), bundle.getInt("android.support.v4.media.audio_attrs.USAGE", 0), bundle.getInt("android.support.v4.media.audio_attrs.LEGACY_STREAM_TYPE", -1));
     }
 
     public Object getAudioAttributes() {
@@ -110,13 +118,6 @@ public class AudioAttributesImplBase implements AudioAttributesImpl {
         sb.append(" flags=0x");
         sb.append(Integer.toHexString(this.mFlags).toUpperCase());
         return sb.toString();
-    }
-
-    public static AudioAttributesImpl fromBundle(Bundle bundle) {
-        if (bundle == null) {
-            return null;
-        }
-        return new AudioAttributesImplBase(bundle.getInt("android.support.v4.media.audio_attrs.CONTENT_TYPE", 0), bundle.getInt("android.support.v4.media.audio_attrs.FLAGS", 0), bundle.getInt("android.support.v4.media.audio_attrs.USAGE", 0), bundle.getInt("android.support.v4.media.audio_attrs.LEGACY_STREAM_TYPE", -1));
     }
 
     /* renamed from: android.support.v4.media.AudioAttributesImplBase$Builder */

@@ -4,47 +4,36 @@ import com.google.android.tvlauncher.notifications.NotificationsContract;
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Multiset;
-import com.google.common.collect.Multisets;
 import com.google.common.primitives.Ints;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.lang.Enum;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible(emulated = true)
 public final class EnumMultiset<E extends Enum<E>> extends AbstractMultiset<E> implements Serializable {
     @GwtIncompatible
     private static final long serialVersionUID = 0;
     /* access modifiers changed from: private */
+    public transient E[] enumConstants;
+    /* access modifiers changed from: private */
     public transient int[] counts = new int[this.enumConstants.length];
     private transient int distinctElements;
-    /* access modifiers changed from: private */
-    public transient E[] enumConstants;
     private transient long size;
     private transient Class<E> type;
 
-    public /* bridge */ /* synthetic */ boolean contains(@NullableDecl Object obj) {
-        return super.contains(obj);
-    }
-
-    public /* bridge */ /* synthetic */ Set elementSet() {
-        return super.elementSet();
-    }
-
-    public /* bridge */ /* synthetic */ Set entrySet() {
-        return super.entrySet();
-    }
-
-    public /* bridge */ /* synthetic */ boolean isEmpty() {
-        return super.isEmpty();
+    private EnumMultiset(Class<E> type2) {
+        this.type = type2;
+        Preconditions.checkArgument(type2.isEnum());
+        this.enumConstants = (Enum[]) type2.getEnumConstants();
     }
 
     static /* synthetic */ int access$210(EnumMultiset x0) {
@@ -77,10 +66,20 @@ public final class EnumMultiset<E extends Enum<E>> extends AbstractMultiset<E> i
         return result;
     }
 
-    private EnumMultiset(Class<E> type2) {
-        this.type = type2;
-        Preconditions.checkArgument(type2.isEnum());
-        this.enumConstants = (Enum[]) type2.getEnumConstants();
+    public /* bridge */ /* synthetic */ boolean contains(@NullableDecl Object obj) {
+        return super.contains(obj);
+    }
+
+    public /* bridge */ /* synthetic */ Set elementSet() {
+        return super.elementSet();
+    }
+
+    public /* bridge */ /* synthetic */ Set entrySet() {
+        return super.entrySet();
+    }
+
+    public /* bridge */ /* synthetic */ boolean isEmpty() {
+        return super.isEmpty();
     }
 
     private boolean isActuallyE(@NullableDecl Object o) {
@@ -196,51 +195,6 @@ public final class EnumMultiset<E extends Enum<E>> extends AbstractMultiset<E> i
         this.distinctElements = 0;
     }
 
-    abstract class Itr<T> implements Iterator<T> {
-        int index = 0;
-        int toRemove = -1;
-
-        /* access modifiers changed from: package-private */
-        public abstract T output(int i);
-
-        Itr() {
-        }
-
-        public boolean hasNext() {
-            while (this.index < EnumMultiset.this.enumConstants.length) {
-                int[] access$100 = EnumMultiset.this.counts;
-                int i = this.index;
-                if (access$100[i] > 0) {
-                    return true;
-                }
-                this.index = i + 1;
-            }
-            return false;
-        }
-
-        public T next() {
-            if (hasNext()) {
-                T result = output(this.index);
-                int i = this.index;
-                this.toRemove = i;
-                this.index = i + 1;
-                return result;
-            }
-            throw new NoSuchElementException();
-        }
-
-        public void remove() {
-            CollectPreconditions.checkRemove(this.toRemove >= 0);
-            if (EnumMultiset.this.counts[this.toRemove] > 0) {
-                EnumMultiset.access$210(EnumMultiset.this);
-                EnumMultiset enumMultiset = EnumMultiset.this;
-                EnumMultiset.access$322(enumMultiset, (long) enumMultiset.counts[this.toRemove]);
-                EnumMultiset.this.counts[this.toRemove] = 0;
-            }
-            this.toRemove = -1;
-        }
-    }
-
     /* access modifiers changed from: package-private */
     public Iterator<E> elementIterator() {
         return new EnumMultiset<E>.Itr<E>() {
@@ -287,5 +241,50 @@ public final class EnumMultiset<E extends Enum<E>> extends AbstractMultiset<E> i
         this.enumConstants = (Enum[]) this.type.getEnumConstants();
         this.counts = new int[this.enumConstants.length];
         Serialization.populateMultiset(this, stream);
+    }
+
+    abstract class Itr<T> implements Iterator<T> {
+        int index = 0;
+        int toRemove = -1;
+
+        Itr() {
+        }
+
+        /* access modifiers changed from: package-private */
+        public abstract T output(int i);
+
+        public boolean hasNext() {
+            while (this.index < EnumMultiset.this.enumConstants.length) {
+                int[] access$100 = EnumMultiset.this.counts;
+                int i = this.index;
+                if (access$100[i] > 0) {
+                    return true;
+                }
+                this.index = i + 1;
+            }
+            return false;
+        }
+
+        public T next() {
+            if (hasNext()) {
+                T result = output(this.index);
+                int i = this.index;
+                this.toRemove = i;
+                this.index = i + 1;
+                return result;
+            }
+            throw new NoSuchElementException();
+        }
+
+        public void remove() {
+            CollectPreconditions.checkRemove(this.toRemove >= 0);
+            if (EnumMultiset.this.counts[this.toRemove] > 0) {
+                EnumMultiset.access$210(EnumMultiset.this);
+                EnumMultiset enumMultiset = EnumMultiset.this;
+                EnumMultiset.access$322(enumMultiset, (long) enumMultiset.counts[this.toRemove]);
+                EnumMultiset.this.counts[this.toRemove] = 0;
+            }
+            this.toRemove = -1;
+        }
     }
 }

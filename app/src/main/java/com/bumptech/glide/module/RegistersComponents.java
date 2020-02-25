@@ -2,6 +2,7 @@ package com.bumptech.glide.module;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Registry;
 

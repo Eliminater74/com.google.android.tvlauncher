@@ -7,6 +7,13 @@ import java.util.RandomAccess;
 /* compiled from: BooleanArrayList */
 final class zzgmz extends zzgms<Boolean> implements zzgos<Boolean>, RandomAccess {
     private static final zzgmz zza;
+
+    static {
+        zzgmz zzgmz = new zzgmz();
+        zza = zzgmz;
+        zzgmz.zzb();
+    }
+
     private boolean[] zzb;
     private int zzc;
 
@@ -166,11 +173,5 @@ final class zzgmz extends zzgms<Boolean> implements zzgos<Boolean>, RandomAccess
     public final /* synthetic */ Object get(int i) {
         zzb(i);
         return Boolean.valueOf(this.zzb[i]);
-    }
-
-    static {
-        zzgmz zzgmz = new zzgmz();
-        zza = zzgmz;
-        zzgmz.zzb();
     }
 }

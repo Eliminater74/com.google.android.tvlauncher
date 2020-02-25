@@ -1,8 +1,7 @@
 package com.google.android.exoplayer2.source;
 
 import android.support.annotation.Nullable;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.MediaSourceEventListener;
+
 import java.io.IOException;
 
 public abstract class DefaultMediaSourceEventListener implements MediaSourceEventListener {

@@ -5,6 +5,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.request.transition.Transition;
 
@@ -21,13 +22,13 @@ public final class PreloadTarget<Z> extends SimpleTarget<Z> {
     private static final int MESSAGE_CLEAR = 1;
     private final RequestManager requestManager;
 
-    public static <Z> PreloadTarget<Z> obtain(RequestManager requestManager2, int width, int height) {
-        return new PreloadTarget<>(requestManager2, width, height);
-    }
-
     private PreloadTarget(RequestManager requestManager2, int width, int height) {
         super(width, height);
         this.requestManager = requestManager2;
+    }
+
+    public static <Z> PreloadTarget<Z> obtain(RequestManager requestManager2, int width, int height) {
+        return new PreloadTarget<>(requestManager2, width, height);
     }
 
     public void onResourceReady(@NonNull Z z, @Nullable Transition<? super Z> transition) {

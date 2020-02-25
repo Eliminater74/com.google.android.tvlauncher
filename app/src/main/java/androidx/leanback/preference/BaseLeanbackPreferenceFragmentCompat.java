@@ -10,6 +10,7 @@ import android.util.TypedValue;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+
 import androidx.leanback.widget.VerticalGridView;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceRecyclerViewAccessibilityDelegate;

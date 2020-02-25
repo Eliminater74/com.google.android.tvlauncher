@@ -5,14 +5,26 @@ import android.content.res.TypedArray;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.view.View;
+
 import androidx.leanback.C0364R;
 
 public final class ColorFilterDimmer {
     private final float mActiveLevel;
     private final ColorFilterCache mColorDimmer;
     private final float mDimmedLevel;
-    private ColorFilter mFilter;
     private final Paint mPaint;
+    private ColorFilter mFilter;
+
+    private ColorFilterDimmer(ColorFilterCache dimmer, float activeLevel, float dimmedLevel) {
+        this.mColorDimmer = dimmer;
+        activeLevel = activeLevel > 1.0f ? 1.0f : activeLevel;
+        activeLevel = activeLevel < 0.0f ? 0.0f : activeLevel;
+        dimmedLevel = dimmedLevel > 1.0f ? 1.0f : dimmedLevel;
+        dimmedLevel = dimmedLevel < 0.0f ? 0.0f : dimmedLevel;
+        this.mActiveLevel = activeLevel;
+        this.mDimmedLevel = dimmedLevel;
+        this.mPaint = new Paint();
+    }
 
     public static ColorFilterDimmer createDefault(Context context) {
         TypedArray a = context.obtainStyledAttributes(C0364R.styleable.LeanbackTheme);
@@ -25,17 +37,6 @@ public final class ColorFilterDimmer {
 
     public static ColorFilterDimmer create(ColorFilterCache dimmer, float activeLevel, float dimmedLevel) {
         return new ColorFilterDimmer(dimmer, activeLevel, dimmedLevel);
-    }
-
-    private ColorFilterDimmer(ColorFilterCache dimmer, float activeLevel, float dimmedLevel) {
-        this.mColorDimmer = dimmer;
-        activeLevel = activeLevel > 1.0f ? 1.0f : activeLevel;
-        activeLevel = activeLevel < 0.0f ? 0.0f : activeLevel;
-        dimmedLevel = dimmedLevel > 1.0f ? 1.0f : dimmedLevel;
-        dimmedLevel = dimmedLevel < 0.0f ? 0.0f : dimmedLevel;
-        this.mActiveLevel = activeLevel;
-        this.mDimmedLevel = dimmedLevel;
-        this.mPaint = new Paint();
     }
 
     public void applyFilterToView(View view) {

@@ -6,6 +6,9 @@ import android.support.annotation.NonNull;
 
 /* renamed from: android.support.v4.os.TraceCompat */
 public final class TraceCompat {
+    private TraceCompat() {
+    }
+
     public static void beginSection(@NonNull String sectionName) {
         if (Build.VERSION.SDK_INT >= 18) {
             Trace.beginSection(sectionName);
@@ -16,8 +19,5 @@ public final class TraceCompat {
         if (Build.VERSION.SDK_INT >= 18) {
             Trace.endSection();
         }
-    }
-
-    private TraceCompat() {
     }
 }

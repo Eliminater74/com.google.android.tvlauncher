@@ -1,10 +1,7 @@
 package com.google.protobuf;
 
 import com.google.protobuf.FieldSet.FieldDescriptorLite;
-import com.google.protobuf.Internal;
-import com.google.protobuf.LazyField;
-import com.google.protobuf.MessageLite;
-import com.google.protobuf.WireFormat;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,24 +14,6 @@ final class FieldSet<FieldDescriptorType extends FieldDescriptorLite<FieldDescri
     final SmallSortedMap<FieldDescriptorType, Object> fields = SmallSortedMap.newFieldMap(16);
     private boolean hasLazyField = false;
     private boolean isImmutable;
-
-    public interface FieldDescriptorLite<T extends FieldDescriptorLite<T>> extends Comparable<T> {
-        Internal.EnumLiteMap<?> getEnumType();
-
-        WireFormat.JavaType getLiteJavaType();
-
-        WireFormat.FieldType getLiteType();
-
-        int getNumber();
-
-        MessageLite.Builder internalMergeFrom(MessageLite.Builder builder, MessageLite messageLite);
-
-        MutableMessageLite internalMergeFrom(MutableMessageLite mutableMessageLite, MutableMessageLite mutableMessageLite2);
-
-        boolean isPacked();
-
-        boolean isRepeated();
-    }
 
     private FieldSet() {
     }
@@ -49,6 +28,272 @@ final class FieldSet<FieldDescriptorType extends FieldDescriptorLite<FieldDescri
 
     public static <T extends FieldDescriptorLite<T>> FieldSet<T> emptySet() {
         return DEFAULT_INSTANCE;
+    }
+
+    private static void verifyType(WireFormat.FieldType type, Object value) {
+        Internal.checkNotNull(value);
+        boolean isValid = false;
+        boolean z = false;
+        switch (type.getJavaType()) {
+            case INT:
+                isValid = value instanceof Integer;
+                break;
+            case LONG:
+                isValid = value instanceof Long;
+                break;
+            case FLOAT:
+                isValid = value instanceof Float;
+                break;
+            case DOUBLE:
+                isValid = value instanceof Double;
+                break;
+            case BOOLEAN:
+                isValid = value instanceof Boolean;
+                break;
+            case STRING:
+                isValid = value instanceof String;
+                break;
+            case BYTE_STRING:
+                if ((value instanceof ByteString) || (value instanceof byte[])) {
+                    z = true;
+                }
+                isValid = z;
+                break;
+            case ENUM:
+                if ((value instanceof Integer) || (value instanceof Internal.EnumLite)) {
+                    z = true;
+                }
+                isValid = z;
+                break;
+            case MESSAGE:
+                if ((value instanceof MessageLite) || (value instanceof LazyField)) {
+                    z = true;
+                }
+                isValid = z;
+                break;
+        }
+        if (!isValid) {
+            throw new IllegalArgumentException("Wrong object type used with protocol message reflection.");
+        }
+    }
+
+    static int getWireFormatForFieldType(WireFormat.FieldType type, boolean isPacked) {
+        if (isPacked) {
+            return 2;
+        }
+        return type.getWireType();
+    }
+
+    public static Object readPrimitiveField(CodedInputStream input, WireFormat.FieldType type, boolean checkUtf8) throws IOException {
+        if (checkUtf8) {
+            return WireFormat.readPrimitiveField(input, type, WireFormat.Utf8Validation.STRICT);
+        }
+        return WireFormat.readPrimitiveField(input, type, WireFormat.Utf8Validation.LOOSE);
+    }
+
+    public static Object readPrimitiveFieldForMutable(CodedInputStream input, WireFormat.FieldType type, boolean checkUtf8) throws IOException {
+        if (type == WireFormat.FieldType.BYTES) {
+            return input.readByteArray();
+        }
+        return readPrimitiveField(input, type, checkUtf8);
+    }
+
+    static void writeElement(CodedOutputStream output, WireFormat.FieldType type, int number, Object value) throws IOException {
+        if (type != WireFormat.FieldType.GROUP) {
+            output.writeTag(number, getWireFormatForFieldType(type, false));
+            writeElementNoTag(output, type, value);
+        } else if (Internal.isProto1Group((MessageLite) value)) {
+            output.writeTag(number, 3);
+            output.writeGroupNoTag((MessageLite) value);
+        } else {
+            output.writeGroup(number, (MessageLite) value);
+        }
+    }
+
+    static void writeElementNoTag(CodedOutputStream output, WireFormat.FieldType type, Object value) throws IOException {
+        switch (type) {
+            case DOUBLE:
+                output.writeDoubleNoTag(((Double) value).doubleValue());
+                return;
+            case FLOAT:
+                output.writeFloatNoTag(((Float) value).floatValue());
+                return;
+            case INT64:
+                output.writeInt64NoTag(((Long) value).longValue());
+                return;
+            case UINT64:
+                output.writeUInt64NoTag(((Long) value).longValue());
+                return;
+            case INT32:
+                output.writeInt32NoTag(((Integer) value).intValue());
+                return;
+            case FIXED64:
+                output.writeFixed64NoTag(((Long) value).longValue());
+                return;
+            case FIXED32:
+                output.writeFixed32NoTag(((Integer) value).intValue());
+                return;
+            case BOOL:
+                output.writeBoolNoTag(((Boolean) value).booleanValue());
+                return;
+            case GROUP:
+                output.writeGroupNoTag((MessageLite) value);
+                return;
+            case MESSAGE:
+                output.writeMessageNoTag((MessageLite) value);
+                return;
+            case STRING:
+                if (value instanceof ByteString) {
+                    output.writeBytesNoTag((ByteString) value);
+                    return;
+                } else {
+                    output.writeStringNoTag((String) value);
+                    return;
+                }
+            case BYTES:
+                if (value instanceof ByteString) {
+                    output.writeBytesNoTag((ByteString) value);
+                    return;
+                } else {
+                    output.writeByteArrayNoTag((byte[]) value);
+                    return;
+                }
+            case UINT32:
+                output.writeUInt32NoTag(((Integer) value).intValue());
+                return;
+            case SFIXED32:
+                output.writeSFixed32NoTag(((Integer) value).intValue());
+                return;
+            case SFIXED64:
+                output.writeSFixed64NoTag(((Long) value).longValue());
+                return;
+            case SINT32:
+                output.writeSInt32NoTag(((Integer) value).intValue());
+                return;
+            case SINT64:
+                output.writeSInt64NoTag(((Long) value).longValue());
+                return;
+            case ENUM:
+                if (value instanceof Internal.EnumLite) {
+                    output.writeEnumNoTag(((Internal.EnumLite) value).getNumber());
+                    return;
+                } else {
+                    output.writeEnumNoTag(((Integer) value).intValue());
+                    return;
+                }
+            default:
+                return;
+        }
+    }
+
+    public static void writeField(FieldDescriptorLite<?> descriptor, Object value, CodedOutputStream output) throws IOException {
+        WireFormat.FieldType type = descriptor.getLiteType();
+        int number = descriptor.getNumber();
+        if (descriptor.isRepeated()) {
+            List<?> valueList = (List) value;
+            if (descriptor.isPacked()) {
+                output.writeTag(number, 2);
+                int dataSize = 0;
+                for (Object element : valueList) {
+                    dataSize += computeElementSizeNoTag(type, element);
+                }
+                output.writeRawVarint32(dataSize);
+                for (Object element2 : valueList) {
+                    writeElementNoTag(output, type, element2);
+                }
+                return;
+            }
+            for (Object element3 : valueList) {
+                writeElement(output, type, number, element3);
+            }
+        } else if (value instanceof LazyField) {
+            writeElement(output, type, number, ((LazyField) value).getValue());
+        } else {
+            writeElement(output, type, number, value);
+        }
+    }
+
+    static int computeElementSize(WireFormat.FieldType type, int number, Object value) {
+        int tagSize = CodedOutputStream.computeTagSize(number);
+        if (type == WireFormat.FieldType.GROUP && !Internal.isProto1Group((MessageLite) value)) {
+            tagSize *= 2;
+        }
+        return computeElementSizeNoTag(type, value) + tagSize;
+    }
+
+    static int computeElementSizeNoTag(WireFormat.FieldType type, Object value) {
+        switch (type) {
+            case DOUBLE:
+                return CodedOutputStream.computeDoubleSizeNoTag(((Double) value).doubleValue());
+            case FLOAT:
+                return CodedOutputStream.computeFloatSizeNoTag(((Float) value).floatValue());
+            case INT64:
+                return CodedOutputStream.computeInt64SizeNoTag(((Long) value).longValue());
+            case UINT64:
+                return CodedOutputStream.computeUInt64SizeNoTag(((Long) value).longValue());
+            case INT32:
+                return CodedOutputStream.computeInt32SizeNoTag(((Integer) value).intValue());
+            case FIXED64:
+                return CodedOutputStream.computeFixed64SizeNoTag(((Long) value).longValue());
+            case FIXED32:
+                return CodedOutputStream.computeFixed32SizeNoTag(((Integer) value).intValue());
+            case BOOL:
+                return CodedOutputStream.computeBoolSizeNoTag(((Boolean) value).booleanValue());
+            case GROUP:
+                return CodedOutputStream.computeGroupSizeNoTag((MessageLite) value);
+            case MESSAGE:
+                if (value instanceof LazyField) {
+                    return CodedOutputStream.computeLazyFieldSizeNoTag((LazyField) value);
+                }
+                return CodedOutputStream.computeMessageSizeNoTag((MessageLite) value);
+            case STRING:
+                if (value instanceof ByteString) {
+                    return CodedOutputStream.computeBytesSizeNoTag((ByteString) value);
+                }
+                return CodedOutputStream.computeStringSizeNoTag((String) value);
+            case BYTES:
+                if (value instanceof ByteString) {
+                    return CodedOutputStream.computeBytesSizeNoTag((ByteString) value);
+                }
+                return CodedOutputStream.computeByteArraySizeNoTag((byte[]) value);
+            case UINT32:
+                return CodedOutputStream.computeUInt32SizeNoTag(((Integer) value).intValue());
+            case SFIXED32:
+                return CodedOutputStream.computeSFixed32SizeNoTag(((Integer) value).intValue());
+            case SFIXED64:
+                return CodedOutputStream.computeSFixed64SizeNoTag(((Long) value).longValue());
+            case SINT32:
+                return CodedOutputStream.computeSInt32SizeNoTag(((Integer) value).intValue());
+            case SINT64:
+                return CodedOutputStream.computeSInt64SizeNoTag(((Long) value).longValue());
+            case ENUM:
+                if (value instanceof Internal.EnumLite) {
+                    return CodedOutputStream.computeEnumSizeNoTag(((Internal.EnumLite) value).getNumber());
+                }
+                return CodedOutputStream.computeEnumSizeNoTag(((Integer) value).intValue());
+            default:
+                throw new RuntimeException("There is no way to get here, but the compiler thinks otherwise.");
+        }
+    }
+
+    public static int computeFieldSize(FieldDescriptorLite<?> descriptor, Object value) {
+        WireFormat.FieldType type = descriptor.getLiteType();
+        int number = descriptor.getNumber();
+        if (!descriptor.isRepeated()) {
+            return computeElementSize(type, number, value);
+        }
+        if (descriptor.isPacked()) {
+            int dataSize = 0;
+            for (Object element : (List) value) {
+                dataSize += computeElementSizeNoTag(type, element);
+            }
+            return CodedOutputStream.computeTagSize(number) + dataSize + CodedOutputStream.computeRawVarint32Size(dataSize);
+        }
+        int size = 0;
+        for (Object element2 : (List) value) {
+            size += computeElementSize(type, number, element2);
+        }
+        return size;
     }
 
     /* access modifiers changed from: package-private */
@@ -338,53 +583,6 @@ final class FieldSet<FieldDescriptorType extends FieldDescriptorLite<FieldDescri
         throw new IllegalArgumentException("addRepeatedField() can only be called on repeated fields.");
     }
 
-    private static void verifyType(WireFormat.FieldType type, Object value) {
-        Internal.checkNotNull(value);
-        boolean isValid = false;
-        boolean z = false;
-        switch (type.getJavaType()) {
-            case INT:
-                isValid = value instanceof Integer;
-                break;
-            case LONG:
-                isValid = value instanceof Long;
-                break;
-            case FLOAT:
-                isValid = value instanceof Float;
-                break;
-            case DOUBLE:
-                isValid = value instanceof Double;
-                break;
-            case BOOLEAN:
-                isValid = value instanceof Boolean;
-                break;
-            case STRING:
-                isValid = value instanceof String;
-                break;
-            case BYTE_STRING:
-                if ((value instanceof ByteString) || (value instanceof byte[])) {
-                    z = true;
-                }
-                isValid = z;
-                break;
-            case ENUM:
-                if ((value instanceof Integer) || (value instanceof Internal.EnumLite)) {
-                    z = true;
-                }
-                isValid = z;
-                break;
-            case MESSAGE:
-                if ((value instanceof MessageLite) || (value instanceof LazyField)) {
-                    z = true;
-                }
-                isValid = z;
-                break;
-        }
-        if (!isValid) {
-            throw new IllegalArgumentException("Wrong object type used with protocol message reflection.");
-        }
-    }
-
     public boolean isInitialized() {
         for (int i = 0; i < this.fields.getNumArrayEntries(); i++) {
             if (!isInitialized(this.fields.getArrayEntryAt(i))) {
@@ -422,13 +620,6 @@ final class FieldSet<FieldDescriptorType extends FieldDescriptorLite<FieldDescri
             }
         }
         return true;
-    }
-
-    static int getWireFormatForFieldType(WireFormat.FieldType type, boolean isPacked) {
-        if (isPacked) {
-            return 2;
-        }
-        return type.getWireType();
     }
 
     public void mergeFrom(FieldSet<FieldDescriptorType> other) {
@@ -552,20 +743,6 @@ final class FieldSet<FieldDescriptorType extends FieldDescriptorLite<FieldDescri
         throw new UnsupportedOperationException("Method not decompiled: com.google.protobuf.FieldSet.mergeFromField(java.util.Map$Entry):void");
     }
 
-    public static Object readPrimitiveField(CodedInputStream input, WireFormat.FieldType type, boolean checkUtf8) throws IOException {
-        if (checkUtf8) {
-            return WireFormat.readPrimitiveField(input, type, WireFormat.Utf8Validation.STRICT);
-        }
-        return WireFormat.readPrimitiveField(input, type, WireFormat.Utf8Validation.LOOSE);
-    }
-
-    public static Object readPrimitiveFieldForMutable(CodedInputStream input, WireFormat.FieldType type, boolean checkUtf8) throws IOException {
-        if (type == WireFormat.FieldType.BYTES) {
-            return input.readByteArray();
-        }
-        return readPrimitiveField(input, type, checkUtf8);
-    }
-
     public void writeTo(CodedOutputStream output) throws IOException {
         for (int i = 0; i < this.fields.getNumArrayEntries(); i++) {
             Map.Entry<FieldDescriptorType, Object> entry = this.fields.getArrayEntryAt(i);
@@ -596,121 +773,6 @@ final class FieldSet<FieldDescriptorType extends FieldDescriptorLite<FieldDescri
             value = ((LazyField) value).getValue();
         }
         output.writeMessageSetExtension(((FieldDescriptorLite) entry.getKey()).getNumber(), (MessageLite) value);
-    }
-
-    static void writeElement(CodedOutputStream output, WireFormat.FieldType type, int number, Object value) throws IOException {
-        if (type != WireFormat.FieldType.GROUP) {
-            output.writeTag(number, getWireFormatForFieldType(type, false));
-            writeElementNoTag(output, type, value);
-        } else if (Internal.isProto1Group((MessageLite) value)) {
-            output.writeTag(number, 3);
-            output.writeGroupNoTag((MessageLite) value);
-        } else {
-            output.writeGroup(number, (MessageLite) value);
-        }
-    }
-
-    static void writeElementNoTag(CodedOutputStream output, WireFormat.FieldType type, Object value) throws IOException {
-        switch (type) {
-            case DOUBLE:
-                output.writeDoubleNoTag(((Double) value).doubleValue());
-                return;
-            case FLOAT:
-                output.writeFloatNoTag(((Float) value).floatValue());
-                return;
-            case INT64:
-                output.writeInt64NoTag(((Long) value).longValue());
-                return;
-            case UINT64:
-                output.writeUInt64NoTag(((Long) value).longValue());
-                return;
-            case INT32:
-                output.writeInt32NoTag(((Integer) value).intValue());
-                return;
-            case FIXED64:
-                output.writeFixed64NoTag(((Long) value).longValue());
-                return;
-            case FIXED32:
-                output.writeFixed32NoTag(((Integer) value).intValue());
-                return;
-            case BOOL:
-                output.writeBoolNoTag(((Boolean) value).booleanValue());
-                return;
-            case GROUP:
-                output.writeGroupNoTag((MessageLite) value);
-                return;
-            case MESSAGE:
-                output.writeMessageNoTag((MessageLite) value);
-                return;
-            case STRING:
-                if (value instanceof ByteString) {
-                    output.writeBytesNoTag((ByteString) value);
-                    return;
-                } else {
-                    output.writeStringNoTag((String) value);
-                    return;
-                }
-            case BYTES:
-                if (value instanceof ByteString) {
-                    output.writeBytesNoTag((ByteString) value);
-                    return;
-                } else {
-                    output.writeByteArrayNoTag((byte[]) value);
-                    return;
-                }
-            case UINT32:
-                output.writeUInt32NoTag(((Integer) value).intValue());
-                return;
-            case SFIXED32:
-                output.writeSFixed32NoTag(((Integer) value).intValue());
-                return;
-            case SFIXED64:
-                output.writeSFixed64NoTag(((Long) value).longValue());
-                return;
-            case SINT32:
-                output.writeSInt32NoTag(((Integer) value).intValue());
-                return;
-            case SINT64:
-                output.writeSInt64NoTag(((Long) value).longValue());
-                return;
-            case ENUM:
-                if (value instanceof Internal.EnumLite) {
-                    output.writeEnumNoTag(((Internal.EnumLite) value).getNumber());
-                    return;
-                } else {
-                    output.writeEnumNoTag(((Integer) value).intValue());
-                    return;
-                }
-            default:
-                return;
-        }
-    }
-
-    public static void writeField(FieldDescriptorLite<?> descriptor, Object value, CodedOutputStream output) throws IOException {
-        WireFormat.FieldType type = descriptor.getLiteType();
-        int number = descriptor.getNumber();
-        if (descriptor.isRepeated()) {
-            List<?> valueList = (List) value;
-            if (descriptor.isPacked()) {
-                output.writeTag(number, 2);
-                int dataSize = 0;
-                for (Object element : valueList) {
-                    dataSize += computeElementSizeNoTag(type, element);
-                }
-                output.writeRawVarint32(dataSize);
-                for (Object element2 : valueList) {
-                    writeElementNoTag(output, type, element2);
-                }
-                return;
-            }
-            for (Object element3 : valueList) {
-                writeElement(output, type, number, element3);
-            }
-        } else if (value instanceof LazyField) {
-            writeElement(output, type, number, ((LazyField) value).getValue());
-        } else {
-            writeElement(output, type, number, value);
-        }
     }
 
     public int getSerializedSize() {
@@ -748,86 +810,21 @@ final class FieldSet<FieldDescriptorType extends FieldDescriptorLite<FieldDescri
         return CodedOutputStream.computeMessageSetExtensionSize(((FieldDescriptorLite) entry.getKey()).getNumber(), (MessageLite) value);
     }
 
-    static int computeElementSize(WireFormat.FieldType type, int number, Object value) {
-        int tagSize = CodedOutputStream.computeTagSize(number);
-        if (type == WireFormat.FieldType.GROUP && !Internal.isProto1Group((MessageLite) value)) {
-            tagSize *= 2;
-        }
-        return computeElementSizeNoTag(type, value) + tagSize;
-    }
+    public interface FieldDescriptorLite<T extends FieldDescriptorLite<T>> extends Comparable<T> {
+        Internal.EnumLiteMap<?> getEnumType();
 
-    static int computeElementSizeNoTag(WireFormat.FieldType type, Object value) {
-        switch (type) {
-            case DOUBLE:
-                return CodedOutputStream.computeDoubleSizeNoTag(((Double) value).doubleValue());
-            case FLOAT:
-                return CodedOutputStream.computeFloatSizeNoTag(((Float) value).floatValue());
-            case INT64:
-                return CodedOutputStream.computeInt64SizeNoTag(((Long) value).longValue());
-            case UINT64:
-                return CodedOutputStream.computeUInt64SizeNoTag(((Long) value).longValue());
-            case INT32:
-                return CodedOutputStream.computeInt32SizeNoTag(((Integer) value).intValue());
-            case FIXED64:
-                return CodedOutputStream.computeFixed64SizeNoTag(((Long) value).longValue());
-            case FIXED32:
-                return CodedOutputStream.computeFixed32SizeNoTag(((Integer) value).intValue());
-            case BOOL:
-                return CodedOutputStream.computeBoolSizeNoTag(((Boolean) value).booleanValue());
-            case GROUP:
-                return CodedOutputStream.computeGroupSizeNoTag((MessageLite) value);
-            case MESSAGE:
-                if (value instanceof LazyField) {
-                    return CodedOutputStream.computeLazyFieldSizeNoTag((LazyField) value);
-                }
-                return CodedOutputStream.computeMessageSizeNoTag((MessageLite) value);
-            case STRING:
-                if (value instanceof ByteString) {
-                    return CodedOutputStream.computeBytesSizeNoTag((ByteString) value);
-                }
-                return CodedOutputStream.computeStringSizeNoTag((String) value);
-            case BYTES:
-                if (value instanceof ByteString) {
-                    return CodedOutputStream.computeBytesSizeNoTag((ByteString) value);
-                }
-                return CodedOutputStream.computeByteArraySizeNoTag((byte[]) value);
-            case UINT32:
-                return CodedOutputStream.computeUInt32SizeNoTag(((Integer) value).intValue());
-            case SFIXED32:
-                return CodedOutputStream.computeSFixed32SizeNoTag(((Integer) value).intValue());
-            case SFIXED64:
-                return CodedOutputStream.computeSFixed64SizeNoTag(((Long) value).longValue());
-            case SINT32:
-                return CodedOutputStream.computeSInt32SizeNoTag(((Integer) value).intValue());
-            case SINT64:
-                return CodedOutputStream.computeSInt64SizeNoTag(((Long) value).longValue());
-            case ENUM:
-                if (value instanceof Internal.EnumLite) {
-                    return CodedOutputStream.computeEnumSizeNoTag(((Internal.EnumLite) value).getNumber());
-                }
-                return CodedOutputStream.computeEnumSizeNoTag(((Integer) value).intValue());
-            default:
-                throw new RuntimeException("There is no way to get here, but the compiler thinks otherwise.");
-        }
-    }
+        WireFormat.JavaType getLiteJavaType();
 
-    public static int computeFieldSize(FieldDescriptorLite<?> descriptor, Object value) {
-        WireFormat.FieldType type = descriptor.getLiteType();
-        int number = descriptor.getNumber();
-        if (!descriptor.isRepeated()) {
-            return computeElementSize(type, number, value);
-        }
-        if (descriptor.isPacked()) {
-            int dataSize = 0;
-            for (Object element : (List) value) {
-                dataSize += computeElementSizeNoTag(type, element);
-            }
-            return CodedOutputStream.computeTagSize(number) + dataSize + CodedOutputStream.computeRawVarint32Size(dataSize);
-        }
-        int size = 0;
-        for (Object element2 : (List) value) {
-            size += computeElementSize(type, number, element2);
-        }
-        return size;
+        WireFormat.FieldType getLiteType();
+
+        int getNumber();
+
+        MessageLite.Builder internalMergeFrom(MessageLite.Builder builder, MessageLite messageLite);
+
+        MutableMessageLite internalMergeFrom(MutableMessageLite mutableMessageLite, MutableMessageLite mutableMessageLite2);
+
+        boolean isPacked();
+
+        boolean isRepeated();
     }
 }

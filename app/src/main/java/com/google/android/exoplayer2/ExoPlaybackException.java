@@ -1,7 +1,9 @@
 package com.google.android.exoplayer2;
 
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.util.Assertions;
+
 import java.io.IOException;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -13,14 +15,23 @@ public final class ExoPlaybackException extends Exception {
     public static final int TYPE_RENDERER = 1;
     public static final int TYPE_SOURCE = 0;
     public static final int TYPE_UNEXPECTED = 2;
-    @Nullable
-    private final Throwable cause;
     public final int rendererIndex;
     public final int type;
+    @Nullable
+    private final Throwable cause;
 
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface Type {
+    private ExoPlaybackException(int type2, Throwable cause2, int rendererIndex2) {
+        super(cause2);
+        this.type = type2;
+        this.cause = cause2;
+        this.rendererIndex = rendererIndex2;
+    }
+
+    private ExoPlaybackException(int type2, String message) {
+        super(message);
+        this.type = type2;
+        this.rendererIndex = -1;
+        this.cause = null;
     }
 
     public static ExoPlaybackException createForSource(IOException cause2) {
@@ -41,20 +52,6 @@ public final class ExoPlaybackException extends Exception {
 
     public static ExoPlaybackException createForOutOfMemoryError(OutOfMemoryError cause2) {
         return new ExoPlaybackException(4, cause2, -1);
-    }
-
-    private ExoPlaybackException(int type2, Throwable cause2, int rendererIndex2) {
-        super(cause2);
-        this.type = type2;
-        this.cause = cause2;
-        this.rendererIndex = rendererIndex2;
-    }
-
-    private ExoPlaybackException(int type2, String message) {
-        super(message);
-        this.type = type2;
-        this.rendererIndex = -1;
-        this.cause = null;
     }
 
     public IOException getSourceException() {
@@ -79,5 +76,10 @@ public final class ExoPlaybackException extends Exception {
     public OutOfMemoryError getOutOfMemoryError() {
         Assertions.checkState(this.type == 4);
         return (OutOfMemoryError) Assertions.checkNotNull(this.cause);
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface Type {
     }
 }

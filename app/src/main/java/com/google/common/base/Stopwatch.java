@@ -2,14 +2,23 @@ package com.google.common.base;
 
 import com.google.common.annotations.GwtCompatible;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
 import java.util.concurrent.TimeUnit;
 
 @GwtCompatible
 public final class Stopwatch {
+    private final Ticker ticker;
     private long elapsedNanos;
     private boolean isRunning;
     private long startTick;
-    private final Ticker ticker;
+
+    Stopwatch() {
+        this.ticker = Ticker.systemTicker();
+    }
+
+    Stopwatch(Ticker ticker2) {
+        this.ticker = (Ticker) Preconditions.checkNotNull(ticker2, "ticker");
+    }
 
     public static Stopwatch createUnstarted() {
         return new Stopwatch();
@@ -27,12 +36,47 @@ public final class Stopwatch {
         return new Stopwatch(ticker2).start();
     }
 
-    Stopwatch() {
-        this.ticker = Ticker.systemTicker();
+    private static TimeUnit chooseUnit(long nanos) {
+        if (TimeUnit.DAYS.convert(nanos, TimeUnit.NANOSECONDS) > 0) {
+            return TimeUnit.DAYS;
+        }
+        if (TimeUnit.HOURS.convert(nanos, TimeUnit.NANOSECONDS) > 0) {
+            return TimeUnit.HOURS;
+        }
+        if (TimeUnit.MINUTES.convert(nanos, TimeUnit.NANOSECONDS) > 0) {
+            return TimeUnit.MINUTES;
+        }
+        if (TimeUnit.SECONDS.convert(nanos, TimeUnit.NANOSECONDS) > 0) {
+            return TimeUnit.SECONDS;
+        }
+        if (TimeUnit.MILLISECONDS.convert(nanos, TimeUnit.NANOSECONDS) > 0) {
+            return TimeUnit.MILLISECONDS;
+        }
+        if (TimeUnit.MICROSECONDS.convert(nanos, TimeUnit.NANOSECONDS) > 0) {
+            return TimeUnit.MICROSECONDS;
+        }
+        return TimeUnit.NANOSECONDS;
     }
 
-    Stopwatch(Ticker ticker2) {
-        this.ticker = (Ticker) Preconditions.checkNotNull(ticker2, "ticker");
+    private static String abbreviate(TimeUnit unit) {
+        switch (C15091.$SwitchMap$java$util$concurrent$TimeUnit[unit.ordinal()]) {
+            case 1:
+                return "ns";
+            case 2:
+                return "μs";
+            case 3:
+                return "ms";
+            case 4:
+                return "s";
+            case 5:
+                return "min";
+            case 6:
+                return "h";
+            case 7:
+                return "d";
+            default:
+                throw new AssertionError();
+        }
     }
 
     public boolean isRunning() {
@@ -87,28 +131,6 @@ public final class Stopwatch {
         return sb.toString();
     }
 
-    private static TimeUnit chooseUnit(long nanos) {
-        if (TimeUnit.DAYS.convert(nanos, TimeUnit.NANOSECONDS) > 0) {
-            return TimeUnit.DAYS;
-        }
-        if (TimeUnit.HOURS.convert(nanos, TimeUnit.NANOSECONDS) > 0) {
-            return TimeUnit.HOURS;
-        }
-        if (TimeUnit.MINUTES.convert(nanos, TimeUnit.NANOSECONDS) > 0) {
-            return TimeUnit.MINUTES;
-        }
-        if (TimeUnit.SECONDS.convert(nanos, TimeUnit.NANOSECONDS) > 0) {
-            return TimeUnit.SECONDS;
-        }
-        if (TimeUnit.MILLISECONDS.convert(nanos, TimeUnit.NANOSECONDS) > 0) {
-            return TimeUnit.MILLISECONDS;
-        }
-        if (TimeUnit.MICROSECONDS.convert(nanos, TimeUnit.NANOSECONDS) > 0) {
-            return TimeUnit.MICROSECONDS;
-        }
-        return TimeUnit.NANOSECONDS;
-    }
-
     /* renamed from: com.google.common.base.Stopwatch$1 */
     static /* synthetic */ class C15091 {
         static final /* synthetic */ int[] $SwitchMap$java$util$concurrent$TimeUnit = new int[TimeUnit.values().length];
@@ -142,27 +164,6 @@ public final class Stopwatch {
                 $SwitchMap$java$util$concurrent$TimeUnit[TimeUnit.DAYS.ordinal()] = 7;
             } catch (NoSuchFieldError e7) {
             }
-        }
-    }
-
-    private static String abbreviate(TimeUnit unit) {
-        switch (C15091.$SwitchMap$java$util$concurrent$TimeUnit[unit.ordinal()]) {
-            case 1:
-                return "ns";
-            case 2:
-                return "μs";
-            case 3:
-                return "ms";
-            case 4:
-                return "s";
-            case 5:
-                return "min";
-            case 6:
-                return "h";
-            case 7:
-                return "d";
-            default:
-                throw new AssertionError();
         }
     }
 }

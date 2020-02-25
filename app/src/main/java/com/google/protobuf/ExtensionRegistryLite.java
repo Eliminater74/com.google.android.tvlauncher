@@ -1,7 +1,7 @@
 package com.google.protobuf;
 
 import android.support.p001v4.internal.view.SupportMenu;
-import com.google.protobuf.GeneratedMessageLite;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,11 +9,27 @@ import java.util.Map;
 public class ExtensionRegistryLite {
     static final ExtensionRegistryLite EMPTY_REGISTRY_LITE = new ExtensionRegistryLite(true);
     static final String EXTENSION_CLASS_NAME = "com.google.protobuf.Extension";
+    private static final Class<?> extensionClass = resolveExtensionClass();
     private static volatile boolean eagerlyParseMessageSets = false;
     private static volatile ExtensionRegistryLite emptyRegistry;
-    private static final Class<?> extensionClass = resolveExtensionClass();
     private static volatile ExtensionRegistryLite generatedRegistry;
     private final Map<ObjectIntPair, GeneratedMessageLite.GeneratedExtension<?, ?>> extensionsByNumber;
+
+    ExtensionRegistryLite() {
+        this.extensionsByNumber = new HashMap();
+    }
+
+    ExtensionRegistryLite(ExtensionRegistryLite other) {
+        if (other == EMPTY_REGISTRY_LITE) {
+            this.extensionsByNumber = Collections.emptyMap();
+        } else {
+            this.extensionsByNumber = Collections.unmodifiableMap(other.extensionsByNumber);
+        }
+    }
+
+    ExtensionRegistryLite(boolean empty) {
+        this.extensionsByNumber = Collections.emptyMap();
+    }
 
     static Class<?> resolveExtensionClass() {
         try {
@@ -92,22 +108,6 @@ public class ExtensionRegistryLite {
                 throw new IllegalArgumentException(String.format("Could not invoke ExtensionRegistry#add for %s", extension), e);
             }
         }
-    }
-
-    ExtensionRegistryLite() {
-        this.extensionsByNumber = new HashMap();
-    }
-
-    ExtensionRegistryLite(ExtensionRegistryLite other) {
-        if (other == EMPTY_REGISTRY_LITE) {
-            this.extensionsByNumber = Collections.emptyMap();
-        } else {
-            this.extensionsByNumber = Collections.unmodifiableMap(other.extensionsByNumber);
-        }
-    }
-
-    ExtensionRegistryLite(boolean empty) {
-        this.extensionsByNumber = Collections.emptyMap();
     }
 
     private static final class ObjectIntPair {

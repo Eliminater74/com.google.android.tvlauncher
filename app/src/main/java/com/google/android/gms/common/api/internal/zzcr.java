@@ -1,6 +1,7 @@
 package com.google.android.gms.common.api.internal;
 
 import android.support.annotation.NonNull;
+
 import com.google.android.gms.common.api.Result;
 import com.google.android.gms.common.api.ResultCallback;
 

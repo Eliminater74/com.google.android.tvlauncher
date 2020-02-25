@@ -2,8 +2,10 @@ package com.google.android.libraries.performance.primes;
 
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
+
 import com.google.android.libraries.performance.primes.scenario.ScenarioEvent;
 import com.google.common.base.Optional;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -13,14 +15,63 @@ final class ScenarioData {
     @VisibleForTesting
     static final int DEFAULT_MAX_SCENARIO_EVENTS = 200;
     private static final String TAG = "ScenarioData";
-    ScheduledFuture<?> cancelFuture;
-    @Nullable
-    private String end;
     private final String name;
+    ScheduledFuture<?> cancelFuture;
     @VisibleForTesting
     ScenarioEventStore scenarioEventStore;
     @Nullable
+    private String end;
+    @Nullable
     private String start;
+
+    ScenarioData(String scenarioName) {
+        this.name = scenarioName;
+    }
+
+    /* access modifiers changed from: package-private */
+    public void addEvent(ScenarioEvent scenarioEvent) {
+        if (this.scenarioEventStore == null) {
+            this.scenarioEventStore = new ScenarioEventStore();
+        }
+        this.scenarioEventStore.addEvent(scenarioEvent);
+    }
+
+    /* access modifiers changed from: package-private */
+    public Optional<List<ScenarioEvent>> getEventsSinceMostRecentOf(Set<String> startEvents) {
+        ScenarioEventStore scenarioEventStore2 = this.scenarioEventStore;
+        if (scenarioEventStore2 != null) {
+            return scenarioEventStore2.getEventsAfter(startEvents);
+        }
+        PrimesLog.m54w(TAG, "Get event subset on null event store...", new Object[0]);
+        return Optional.absent();
+    }
+
+    /* access modifiers changed from: package-private */
+    public String getName() {
+        return this.name;
+    }
+
+    /* access modifiers changed from: package-private */
+    @Nullable
+    public String getStart() {
+        return this.start;
+    }
+
+    /* access modifiers changed from: package-private */
+    public void setStart(@Nullable String start2) {
+        this.start = start2;
+    }
+
+    /* access modifiers changed from: package-private */
+    @Nullable
+    public String getEnd() {
+        return this.end;
+    }
+
+    /* access modifiers changed from: package-private */
+    public void setEnd(@Nullable String end2) {
+        this.end = end2;
+    }
 
     static final class ScenarioEventStore {
         @VisibleForTesting
@@ -93,54 +144,5 @@ final class ScenarioData {
         private int nextIndex(int index) {
             return (index + 1) % this.events.length;
         }
-    }
-
-    ScenarioData(String scenarioName) {
-        this.name = scenarioName;
-    }
-
-    /* access modifiers changed from: package-private */
-    public void addEvent(ScenarioEvent scenarioEvent) {
-        if (this.scenarioEventStore == null) {
-            this.scenarioEventStore = new ScenarioEventStore();
-        }
-        this.scenarioEventStore.addEvent(scenarioEvent);
-    }
-
-    /* access modifiers changed from: package-private */
-    public Optional<List<ScenarioEvent>> getEventsSinceMostRecentOf(Set<String> startEvents) {
-        ScenarioEventStore scenarioEventStore2 = this.scenarioEventStore;
-        if (scenarioEventStore2 != null) {
-            return scenarioEventStore2.getEventsAfter(startEvents);
-        }
-        PrimesLog.m54w(TAG, "Get event subset on null event store...", new Object[0]);
-        return Optional.absent();
-    }
-
-    /* access modifiers changed from: package-private */
-    public void setStart(@Nullable String start2) {
-        this.start = start2;
-    }
-
-    /* access modifiers changed from: package-private */
-    public void setEnd(@Nullable String end2) {
-        this.end = end2;
-    }
-
-    /* access modifiers changed from: package-private */
-    public String getName() {
-        return this.name;
-    }
-
-    /* access modifiers changed from: package-private */
-    @Nullable
-    public String getStart() {
-        return this.start;
-    }
-
-    /* access modifiers changed from: package-private */
-    @Nullable
-    public String getEnd() {
-        return this.end;
     }
 }

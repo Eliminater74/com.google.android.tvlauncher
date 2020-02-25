@@ -7,10 +7,10 @@ import com.bumptech.glide.load.Encoder;
 import com.bumptech.glide.load.Key;
 import com.bumptech.glide.load.Options;
 import com.bumptech.glide.load.Transformation;
-import com.bumptech.glide.load.engine.DecodeJob;
 import com.bumptech.glide.load.engine.bitmap_recycle.ArrayPool;
 import com.bumptech.glide.load.engine.cache.DiskCache;
 import com.bumptech.glide.load.model.ModelLoader;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +18,7 @@ import java.util.Map;
 
 final class DecodeHelper<Transcode> {
     private final List<Key> cacheKeys = new ArrayList();
+    private final List<ModelLoader.LoadData<?>> loadData = new ArrayList();
     private DecodeJob.DiskCacheProvider diskCacheProvider;
     private DiskCacheStrategy diskCacheStrategy;
     private GlideContext glideContext;
@@ -26,7 +27,6 @@ final class DecodeHelper<Transcode> {
     private boolean isLoadDataSet;
     private boolean isScaleOnlyOrNoTransform;
     private boolean isTransformationRequired;
-    private final List<ModelLoader.LoadData<?>> loadData = new ArrayList();
     private Object model;
     private Options options;
     private Priority priority;

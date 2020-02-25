@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,26 +33,26 @@ import java.util.List;
 import java.util.WeakHashMap;
 
 @SuppressLint({"RestrictedAPI"})
-/* renamed from: android.support.v7.widget.SuggestionsAdapter */
+        /* renamed from: android.support.v7.widget.SuggestionsAdapter */
 class SuggestionsAdapter extends ResourceCursorAdapter implements View.OnClickListener {
-    private static final boolean DBG = false;
     static final int INVALID_INDEX = -1;
-    private static final String LOG_TAG = "SuggestionsAdapter";
-    private static final int QUERY_LIMIT = 50;
     static final int REFINE_ALL = 2;
     static final int REFINE_BY_ENTRY = 1;
     static final int REFINE_NONE = 0;
-    private boolean mClosed = false;
+    private static final boolean DBG = false;
+    private static final String LOG_TAG = "SuggestionsAdapter";
+    private static final int QUERY_LIMIT = 50;
     private final int mCommitIconResId;
-    private int mFlagsCol = -1;
-    private int mIconName1Col = -1;
-    private int mIconName2Col = -1;
     private final WeakHashMap<String, Drawable.ConstantState> mOutsideDrawablesCache;
     private final Context mProviderContext;
-    private int mQueryRefinement = 1;
     private final SearchManager mSearchManager = ((SearchManager) this.mContext.getSystemService("search"));
     private final SearchView mSearchView;
     private final SearchableInfo mSearchable;
+    private boolean mClosed = false;
+    private int mFlagsCol = -1;
+    private int mIconName1Col = -1;
+    private int mIconName2Col = -1;
+    private int mQueryRefinement = 1;
     private int mText1Col = -1;
     private int mText2Col = -1;
     private int mText2UrlCol = -1;
@@ -72,12 +73,28 @@ class SuggestionsAdapter extends ResourceCursorAdapter implements View.OnClickLi
         this.mOutsideDrawablesCache = outsideDrawablesCache;
     }
 
-    public void setQueryRefinement(int refineWhat) {
-        this.mQueryRefinement = refineWhat;
+    public static String getColumnString(Cursor cursor, String columnName) {
+        return getStringOrNull(cursor, cursor.getColumnIndex(columnName));
+    }
+
+    private static String getStringOrNull(Cursor cursor, int col) {
+        if (col == -1) {
+            return null;
+        }
+        try {
+            return cursor.getString(col);
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "unexpected error retrieving valid column from cursor, did the remote process die?", e);
+            return null;
+        }
     }
 
     public int getQueryRefinement() {
         return this.mQueryRefinement;
+    }
+
+    public void setQueryRefinement(int refineWhat) {
+        this.mQueryRefinement = refineWhat;
     }
 
     public boolean hasStableIds() {
@@ -151,23 +168,6 @@ class SuggestionsAdapter extends ResourceCursorAdapter implements View.OnClickLi
         v.setTag(new ChildViewCache(v));
         ((ImageView) v.findViewById(C0233R.C0235id.edit_query)).setImageResource(this.mCommitIconResId);
         return v;
-    }
-
-    /* renamed from: android.support.v7.widget.SuggestionsAdapter$ChildViewCache */
-    private static final class ChildViewCache {
-        public final ImageView mIcon1;
-        public final ImageView mIcon2;
-        public final ImageView mIconRefine;
-        public final TextView mText1;
-        public final TextView mText2;
-
-        public ChildViewCache(View v) {
-            this.mText1 = (TextView) v.findViewById(16908308);
-            this.mText2 = (TextView) v.findViewById(16908309);
-            this.mIcon1 = (ImageView) v.findViewById(16908295);
-            this.mIcon2 = (ImageView) v.findViewById(16908296);
-            this.mIconRefine = (ImageView) v.findViewById(C0233R.C0235id.edit_query);
-        }
     }
 
     public void bindView(View view, Context context, Cursor cursor) {
@@ -439,22 +439,6 @@ class SuggestionsAdapter extends ResourceCursorAdapter implements View.OnClickLi
         }
     }
 
-    public static String getColumnString(Cursor cursor, String columnName) {
-        return getStringOrNull(cursor, cursor.getColumnIndex(columnName));
-    }
-
-    private static String getStringOrNull(Cursor cursor, int col) {
-        if (col == -1) {
-            return null;
-        }
-        try {
-            return cursor.getString(col);
-        } catch (Exception e) {
-            Log.e(LOG_TAG, "unexpected error retrieving valid column from cursor, did the remote process die?", e);
-            return null;
-        }
-    }
-
     /* access modifiers changed from: package-private */
     public Drawable getDrawableFromResourceUri(Uri uri) throws FileNotFoundException {
         int id;
@@ -514,5 +498,22 @@ class SuggestionsAdapter extends ResourceCursorAdapter implements View.OnClickLi
             uriBuilder.appendQueryParameter("limit", String.valueOf(limit));
         }
         return this.mContext.getContentResolver().query(uriBuilder.build(), null, selection, selArgs, null);
+    }
+
+    /* renamed from: android.support.v7.widget.SuggestionsAdapter$ChildViewCache */
+    private static final class ChildViewCache {
+        public final ImageView mIcon1;
+        public final ImageView mIcon2;
+        public final ImageView mIconRefine;
+        public final TextView mText1;
+        public final TextView mText2;
+
+        public ChildViewCache(View v) {
+            this.mText1 = (TextView) v.findViewById(16908308);
+            this.mText2 = (TextView) v.findViewById(16908309);
+            this.mIcon1 = (ImageView) v.findViewById(16908295);
+            this.mIcon2 = (ImageView) v.findViewById(16908296);
+            this.mIconRefine = (ImageView) v.findViewById(C0233R.C0235id.edit_query);
+        }
     }
 }

@@ -3,6 +3,7 @@ package com.google.android.tvlauncher.util;
 import android.content.ContentValues;
 import android.content.Context;
 import android.media.tv.TvContract;
+
 import java.util.List;
 
 class FlavorSpecificOemConfiguration extends OemConfiguration {

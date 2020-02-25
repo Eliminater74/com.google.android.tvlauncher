@@ -7,6 +7,7 @@ import com.google.protobuf.nano.InvalidProtocolBufferNanoException;
 import com.google.protobuf.nano.MessageNano;
 import com.google.protobuf.nano.WireFormatNano;
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.io.IOException;
 
 public interface VideoCreative {
@@ -38,6 +39,10 @@ public interface VideoCreative {
         public String vastSchemaValidationErrors;
         public int vastVersion;
 
+        public VastXml() {
+            clear();
+        }
+
         public static VastXml[] emptyArray() {
             if (_emptyArray == null) {
                 synchronized (InternalNano.LAZY_INIT_LOCK) {
@@ -49,8 +54,12 @@ public interface VideoCreative {
             return _emptyArray;
         }
 
-        public VastXml() {
-            clear();
+        public static VastXml parseFrom(byte[] data) throws InvalidProtocolBufferNanoException {
+            return (VastXml) MessageNano.mergeFrom(new VastXml(), data);
+        }
+
+        public static VastXml parseFrom(CodedInputByteBufferNano input) throws IOException {
+            return new VastXml().mergeFrom(input);
         }
 
         public VastXml clear() {
@@ -627,14 +636,6 @@ public interface VideoCreative {
                 }
             }
         }
-
-        public static VastXml parseFrom(byte[] data) throws InvalidProtocolBufferNanoException {
-            return (VastXml) MessageNano.mergeFrom(new VastXml(), data);
-        }
-
-        public static VastXml parseFrom(CodedInputByteBufferNano input) throws IOException {
-            return new VastXml().mergeFrom(input);
-        }
     }
 
     public static final class VastCompanion extends MessageNano {
@@ -651,6 +652,10 @@ public interface VideoCreative {
         public String type;
         public int width;
 
+        public VastCompanion() {
+            clear();
+        }
+
         public static VastCompanion[] emptyArray() {
             if (_emptyArray == null) {
                 synchronized (InternalNano.LAZY_INIT_LOCK) {
@@ -662,8 +667,12 @@ public interface VideoCreative {
             return _emptyArray;
         }
 
-        public VastCompanion() {
-            clear();
+        public static VastCompanion parseFrom(byte[] data) throws InvalidProtocolBufferNanoException {
+            return (VastCompanion) MessageNano.mergeFrom(new VastCompanion(), data);
+        }
+
+        public static VastCompanion parseFrom(CodedInputByteBufferNano input) throws IOException {
+            return new VastCompanion().mergeFrom(input);
         }
 
         public VastCompanion clear() {
@@ -853,14 +862,6 @@ public interface VideoCreative {
                 }
             }
         }
-
-        public static VastCompanion parseFrom(byte[] data) throws InvalidProtocolBufferNanoException {
-            return (VastCompanion) MessageNano.mergeFrom(new VastCompanion(), data);
-        }
-
-        public static VastCompanion parseFrom(CodedInputByteBufferNano input) throws IOException {
-            return new VastCompanion().mergeFrom(input);
-        }
     }
 
     public static final class VastNonLinear extends MessageNano {
@@ -880,6 +881,10 @@ public interface VideoCreative {
         public String type;
         public int width;
 
+        public VastNonLinear() {
+            clear();
+        }
+
         public static VastNonLinear[] emptyArray() {
             if (_emptyArray == null) {
                 synchronized (InternalNano.LAZY_INIT_LOCK) {
@@ -891,8 +896,12 @@ public interface VideoCreative {
             return _emptyArray;
         }
 
-        public VastNonLinear() {
-            clear();
+        public static VastNonLinear parseFrom(byte[] data) throws InvalidProtocolBufferNanoException {
+            return (VastNonLinear) MessageNano.mergeFrom(new VastNonLinear(), data);
+        }
+
+        public static VastNonLinear parseFrom(CodedInputByteBufferNano input) throws IOException {
+            return new VastNonLinear().mergeFrom(input);
         }
 
         public VastNonLinear clear() {
@@ -1079,14 +1088,6 @@ public interface VideoCreative {
                 }
             }
         }
-
-        public static VastNonLinear parseFrom(byte[] data) throws InvalidProtocolBufferNanoException {
-            return (VastNonLinear) MessageNano.mergeFrom(new VastNonLinear(), data);
-        }
-
-        public static VastNonLinear parseFrom(CodedInputByteBufferNano input) throws IOException {
-            return new VastNonLinear().mergeFrom(input);
-        }
     }
 
     public static final class VastMedia extends MessageNano {
@@ -1101,6 +1102,10 @@ public interface VideoCreative {
         public String url;
         public int width;
 
+        public VastMedia() {
+            clear();
+        }
+
         public static VastMedia[] emptyArray() {
             if (_emptyArray == null) {
                 synchronized (InternalNano.LAZY_INIT_LOCK) {
@@ -1112,8 +1117,12 @@ public interface VideoCreative {
             return _emptyArray;
         }
 
-        public VastMedia() {
-            clear();
+        public static VastMedia parseFrom(byte[] data) throws InvalidProtocolBufferNanoException {
+            return (VastMedia) MessageNano.mergeFrom(new VastMedia(), data);
+        }
+
+        public static VastMedia parseFrom(CodedInputByteBufferNano input) throws IOException {
+            return new VastMedia().mergeFrom(input);
         }
 
         public VastMedia clear() {
@@ -1218,14 +1227,6 @@ public interface VideoCreative {
                 }
             }
         }
-
-        public static VastMedia parseFrom(byte[] data) throws InvalidProtocolBufferNanoException {
-            return (VastMedia) MessageNano.mergeFrom(new VastMedia(), data);
-        }
-
-        public static VastMedia parseFrom(CodedInputByteBufferNano input) throws IOException {
-            return new VastMedia().mergeFrom(input);
-        }
     }
 
     public static final class VastImpression extends MessageNano {
@@ -1234,6 +1235,10 @@ public interface VideoCreative {
         /* renamed from: id */
         public String f137id;
         public String url;
+
+        public VastImpression() {
+            clear();
+        }
 
         public static VastImpression[] emptyArray() {
             if (_emptyArray == null) {
@@ -1246,8 +1251,12 @@ public interface VideoCreative {
             return _emptyArray;
         }
 
-        public VastImpression() {
-            clear();
+        public static VastImpression parseFrom(byte[] data) throws InvalidProtocolBufferNanoException {
+            return (VastImpression) MessageNano.mergeFrom(new VastImpression(), data);
+        }
+
+        public static VastImpression parseFrom(CodedInputByteBufferNano input) throws IOException {
+            return new VastImpression().mergeFrom(input);
         }
 
         public VastImpression clear() {
@@ -1294,20 +1303,16 @@ public interface VideoCreative {
                 }
             }
         }
-
-        public static VastImpression parseFrom(byte[] data) throws InvalidProtocolBufferNanoException {
-            return (VastImpression) MessageNano.mergeFrom(new VastImpression(), data);
-        }
-
-        public static VastImpression parseFrom(CodedInputByteBufferNano input) throws IOException {
-            return new VastImpression().mergeFrom(input);
-        }
     }
 
     public static final class VastTracking extends MessageNano {
         private static volatile VastTracking[] _emptyArray;
         public String eventName;
         public String eventUrl;
+
+        public VastTracking() {
+            clear();
+        }
 
         public static VastTracking[] emptyArray() {
             if (_emptyArray == null) {
@@ -1320,8 +1325,12 @@ public interface VideoCreative {
             return _emptyArray;
         }
 
-        public VastTracking() {
-            clear();
+        public static VastTracking parseFrom(byte[] data) throws InvalidProtocolBufferNanoException {
+            return (VastTracking) MessageNano.mergeFrom(new VastTracking(), data);
+        }
+
+        public static VastTracking parseFrom(CodedInputByteBufferNano input) throws IOException {
+            return new VastTracking().mergeFrom(input);
         }
 
         public VastTracking clear() {
@@ -1356,14 +1365,6 @@ public interface VideoCreative {
                     return this;
                 }
             }
-        }
-
-        public static VastTracking parseFrom(byte[] data) throws InvalidProtocolBufferNanoException {
-            return (VastTracking) MessageNano.mergeFrom(new VastTracking(), data);
-        }
-
-        public static VastTracking parseFrom(CodedInputByteBufferNano input) throws IOException {
-            return new VastTracking().mergeFrom(input);
         }
     }
 }

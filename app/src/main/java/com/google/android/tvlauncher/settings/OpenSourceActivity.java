@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.webkit.WebView;
 import android.widget.Toast;
+
 import com.google.android.tvlauncher.C1188R;
 
 public class OpenSourceActivity extends Activity {

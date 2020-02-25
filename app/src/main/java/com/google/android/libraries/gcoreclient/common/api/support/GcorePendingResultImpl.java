@@ -5,6 +5,7 @@ import com.google.android.gms.common.api.Result;
 import com.google.android.libraries.gcoreclient.common.api.GcorePendingResult;
 import com.google.android.libraries.gcoreclient.common.api.GcoreResult;
 import com.google.android.libraries.gcoreclient.common.api.GcoreResultCallback;
+
 import java.util.concurrent.TimeUnit;
 
 public class GcorePendingResultImpl<GR extends GcoreResult, R extends Result> implements GcorePendingResult<GR> {

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.health.HealthStats;
 import android.os.health.SystemHealthManager;
 import android.support.annotation.Nullable;
+
 import logs.proto.wireless.performance.mobile.BatteryMetric;
 
 public class SystemHealthCapture {

@@ -28,18 +28,18 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.preference.PreferenceManager;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 public class Preference implements Comparable<Preference> {
-    private static final String CLIPBOARD_ID = "Preference";
     public static final int DEFAULT_ORDER = Integer.MAX_VALUE;
+    private static final String CLIPBOARD_ID = "Preference";
+    private final View.OnClickListener mClickListener;
     private boolean mAllowDividerAbove;
     private boolean mAllowDividerBelow;
     private boolean mBaseMethodCalled;
-    private final View.OnClickListener mClickListener;
     private Context mContext;
     private boolean mCopyingEnabled;
     private Object mDefaultValue;
@@ -81,26 +81,6 @@ public class Preference implements Comparable<Preference> {
     private boolean mVisible;
     private boolean mWasDetached;
     private int mWidgetLayoutResId;
-
-    interface OnPreferenceChangeInternalListener {
-        void onPreferenceChange(Preference preference);
-
-        void onPreferenceHierarchyChange(Preference preference);
-
-        void onPreferenceVisibilityChange(Preference preference);
-    }
-
-    public interface OnPreferenceChangeListener {
-        boolean onPreferenceChange(Preference preference, Object obj);
-    }
-
-    public interface OnPreferenceClickListener {
-        boolean onPreferenceClick(Preference preference);
-    }
-
-    public interface SummaryProvider<T extends Preference> {
-        CharSequence provideSummary(Preference preference);
-    }
 
     public Preference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         this.mOrder = Integer.MAX_VALUE;
@@ -170,24 +150,20 @@ public class Preference implements Comparable<Preference> {
         return null;
     }
 
-    public void setIntent(Intent intent) {
-        this.mIntent = intent;
-    }
-
     public Intent getIntent() {
         return this.mIntent;
     }
 
-    public void setFragment(String fragment) {
-        this.mFragment = fragment;
+    public void setIntent(Intent intent) {
+        this.mIntent = intent;
     }
 
     public String getFragment() {
         return this.mFragment;
     }
 
-    public void setPreferenceDataStore(PreferenceDataStore dataStore) {
-        this.mPreferenceDataStore = dataStore;
+    public void setFragment(String fragment) {
+        this.mFragment = fragment;
     }
 
     @Nullable
@@ -203,6 +179,10 @@ public class Preference implements Comparable<Preference> {
         return null;
     }
 
+    public void setPreferenceDataStore(PreferenceDataStore dataStore) {
+        this.mPreferenceDataStore = dataStore;
+    }
+
     public Bundle getExtras() {
         if (this.mExtras == null) {
             this.mExtras = new Bundle();
@@ -214,20 +194,20 @@ public class Preference implements Comparable<Preference> {
         return this.mExtras;
     }
 
-    public void setLayoutResource(int layoutResId) {
-        this.mLayoutResId = layoutResId;
-    }
-
     public final int getLayoutResource() {
         return this.mLayoutResId;
     }
 
-    public void setWidgetLayoutResource(int widgetLayoutResId) {
-        this.mWidgetLayoutResId = widgetLayoutResId;
+    public void setLayoutResource(int layoutResId) {
+        this.mLayoutResId = layoutResId;
     }
 
     public final int getWidgetLayoutResource() {
         return this.mWidgetLayoutResId;
+    }
+
+    public void setWidgetLayoutResource(int widgetLayoutResId) {
+        this.mWidgetLayoutResId = widgetLayoutResId;
     }
 
     public void onBindViewHolder(PreferenceViewHolder holder) {
@@ -325,6 +305,10 @@ public class Preference implements Comparable<Preference> {
         }
     }
 
+    public int getOrder() {
+        return this.mOrder;
+    }
+
     public void setOrder(int order) {
         if (order != this.mOrder) {
             this.mOrder = order;
@@ -332,12 +316,12 @@ public class Preference implements Comparable<Preference> {
         }
     }
 
-    public int getOrder() {
-        return this.mOrder;
-    }
-
     public void setViewId(int viewId) {
         this.mViewId = viewId;
+    }
+
+    public CharSequence getTitle() {
+        return this.mTitle;
     }
 
     public void setTitle(CharSequence title) {
@@ -351,8 +335,12 @@ public class Preference implements Comparable<Preference> {
         setTitle(this.mContext.getString(titleResId));
     }
 
-    public CharSequence getTitle() {
-        return this.mTitle;
+    public Drawable getIcon() {
+        int i;
+        if (this.mIcon == null && (i = this.mIconResId) != 0) {
+            this.mIcon = AppCompatResources.getDrawable(this.mContext, i);
+        }
+        return this.mIcon;
     }
 
     public void setIcon(Drawable icon) {
@@ -366,14 +354,6 @@ public class Preference implements Comparable<Preference> {
     public void setIcon(int iconResId) {
         setIcon(AppCompatResources.getDrawable(this.mContext, iconResId));
         this.mIconResId = iconResId;
-    }
-
-    public Drawable getIcon() {
-        int i;
-        if (this.mIcon == null && (i = this.mIconResId) != 0) {
-            this.mIcon = AppCompatResources.getDrawable(this.mContext, i);
-        }
-        return this.mIcon;
     }
 
     public CharSequence getSummary() {
@@ -396,6 +376,10 @@ public class Preference implements Comparable<Preference> {
         setSummary(this.mContext.getString(summaryResId));
     }
 
+    public boolean isEnabled() {
+        return this.mEnabled && this.mDependencyMet && this.mParentDependencyMet;
+    }
+
     public void setEnabled(boolean enabled) {
         if (this.mEnabled != enabled) {
             this.mEnabled = enabled;
@@ -404,8 +388,8 @@ public class Preference implements Comparable<Preference> {
         }
     }
 
-    public boolean isEnabled() {
-        return this.mEnabled && this.mDependencyMet && this.mParentDependencyMet;
+    public boolean isSelectable() {
+        return this.mSelectable;
     }
 
     public void setSelectable(boolean selectable) {
@@ -415,8 +399,8 @@ public class Preference implements Comparable<Preference> {
         }
     }
 
-    public boolean isSelectable() {
-        return this.mSelectable;
+    public boolean getShouldDisableView() {
+        return this.mShouldDisableView;
     }
 
     public void setShouldDisableView(boolean shouldDisableView) {
@@ -426,8 +410,8 @@ public class Preference implements Comparable<Preference> {
         }
     }
 
-    public boolean getShouldDisableView() {
-        return this.mShouldDisableView;
+    public final boolean isVisible() {
+        return this.mVisible;
     }
 
     public final void setVisible(boolean visible) {
@@ -438,10 +422,6 @@ public class Preference implements Comparable<Preference> {
                 onPreferenceChangeInternalListener.onPreferenceVisibilityChange(this);
             }
         }
-    }
-
-    public final boolean isVisible() {
-        return this.mVisible;
     }
 
     public final boolean isShown() {
@@ -467,15 +447,15 @@ public class Preference implements Comparable<Preference> {
     public void onClick() {
     }
 
+    public String getKey() {
+        return this.mKey;
+    }
+
     public void setKey(String key) {
         this.mKey = key;
         if (this.mRequiresKey && !hasKey()) {
             requireKey();
         }
-    }
-
-    public String getKey() {
-        return this.mKey;
     }
 
     /* access modifiers changed from: package-private */
@@ -495,13 +475,17 @@ public class Preference implements Comparable<Preference> {
         return this.mPersistent;
     }
 
+    public void setPersistent(boolean persistent) {
+        this.mPersistent = persistent;
+    }
+
     /* access modifiers changed from: protected */
     public boolean shouldPersist() {
         return this.mPreferenceManager != null && isPersistent() && hasKey();
     }
 
-    public void setPersistent(boolean persistent) {
-        this.mPersistent = persistent;
+    public boolean isSingleLineTitle() {
+        return this.mSingleLineTitle;
     }
 
     public void setSingleLineTitle(boolean singleLineTitle) {
@@ -509,8 +493,8 @@ public class Preference implements Comparable<Preference> {
         this.mSingleLineTitle = singleLineTitle;
     }
 
-    public boolean isSingleLineTitle() {
-        return this.mSingleLineTitle;
+    public boolean isIconSpaceReserved() {
+        return this.mIconSpaceReserved;
     }
 
     public void setIconSpaceReserved(boolean iconSpaceReserved) {
@@ -520,8 +504,8 @@ public class Preference implements Comparable<Preference> {
         }
     }
 
-    public boolean isIconSpaceReserved() {
-        return this.mIconSpaceReserved;
+    public boolean isCopyingEnabled() {
+        return this.mCopyingEnabled;
     }
 
     public void setCopyingEnabled(boolean enabled) {
@@ -531,8 +515,9 @@ public class Preference implements Comparable<Preference> {
         }
     }
 
-    public boolean isCopyingEnabled() {
-        return this.mCopyingEnabled;
+    @Nullable
+    public final SummaryProvider getSummaryProvider() {
+        return this.mSummaryProvider;
     }
 
     public final void setSummaryProvider(@Nullable SummaryProvider summaryProvider) {
@@ -540,30 +525,25 @@ public class Preference implements Comparable<Preference> {
         notifyChanged();
     }
 
-    @Nullable
-    public final SummaryProvider getSummaryProvider() {
-        return this.mSummaryProvider;
-    }
-
     public boolean callChangeListener(Object newValue) {
         OnPreferenceChangeListener onPreferenceChangeListener = this.mOnChangeListener;
         return onPreferenceChangeListener == null || onPreferenceChangeListener.onPreferenceChange(this, newValue);
-    }
-
-    public void setOnPreferenceChangeListener(OnPreferenceChangeListener onPreferenceChangeListener) {
-        this.mOnChangeListener = onPreferenceChangeListener;
     }
 
     public OnPreferenceChangeListener getOnPreferenceChangeListener() {
         return this.mOnChangeListener;
     }
 
-    public void setOnPreferenceClickListener(OnPreferenceClickListener onPreferenceClickListener) {
-        this.mOnClickListener = onPreferenceClickListener;
+    public void setOnPreferenceChangeListener(OnPreferenceChangeListener onPreferenceChangeListener) {
+        this.mOnChangeListener = onPreferenceChangeListener;
     }
 
     public OnPreferenceClickListener getOnPreferenceClickListener() {
         return this.mOnClickListener;
+    }
+
+    public void setOnPreferenceClickListener(OnPreferenceClickListener onPreferenceClickListener) {
+        this.mOnClickListener = onPreferenceClickListener;
     }
 
     /* access modifiers changed from: protected */
@@ -766,14 +746,14 @@ public class Preference implements Comparable<Preference> {
         return !isEnabled();
     }
 
+    public String getDependency() {
+        return this.mDependencyKey;
+    }
+
     public void setDependency(String dependencyKey) {
         unregisterDependency();
         this.mDependencyKey = dependencyKey;
         registerDependency();
-    }
-
-    public String getDependency() {
-        return this.mDependencyKey;
     }
 
     @Nullable
@@ -1075,6 +1055,26 @@ public class Preference implements Comparable<Preference> {
 
     @CallSuper
     public void onInitializeAccessibilityNodeInfo(AccessibilityNodeInfoCompat info) {
+    }
+
+    interface OnPreferenceChangeInternalListener {
+        void onPreferenceChange(Preference preference);
+
+        void onPreferenceHierarchyChange(Preference preference);
+
+        void onPreferenceVisibilityChange(Preference preference);
+    }
+
+    public interface OnPreferenceChangeListener {
+        boolean onPreferenceChange(Preference preference, Object obj);
+    }
+
+    public interface OnPreferenceClickListener {
+        boolean onPreferenceClick(Preference preference);
+    }
+
+    public interface SummaryProvider<T extends Preference> {
+        CharSequence provideSummary(Preference preference);
     }
 
     public static class BaseSavedState extends AbsSavedState {

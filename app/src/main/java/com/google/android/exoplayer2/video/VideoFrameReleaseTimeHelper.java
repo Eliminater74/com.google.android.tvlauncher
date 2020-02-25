@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.view.Choreographer;
 import android.view.Display;
 import android.view.WindowManager;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.util.Util;
 
@@ -18,8 +19,10 @@ public final class VideoFrameReleaseTimeHelper {
     private static final long MAX_ALLOWED_DRIFT_NS = 20000000;
     private static final int MIN_FRAMES_FOR_ADJUSTMENT = 6;
     private static final long VSYNC_OFFSET_PERCENTAGE = 80;
-    private long adjustedLastFrameTimeNs;
     private final DefaultDisplayListener displayListener;
+    private final VSyncSampler vsyncSampler;
+    private final WindowManager windowManager;
+    private long adjustedLastFrameTimeNs;
     private long frameCount;
     private boolean haveSync;
     private long lastFramePresentationTimeUs;
@@ -28,8 +31,6 @@ public final class VideoFrameReleaseTimeHelper {
     private long syncUnadjustedReleaseTimeNs;
     private long vsyncDurationNs;
     private long vsyncOffsetNs;
-    private final VSyncSampler vsyncSampler;
-    private final WindowManager windowManager;
 
     public VideoFrameReleaseTimeHelper() {
         this(null);
@@ -52,6 +53,20 @@ public final class VideoFrameReleaseTimeHelper {
         }
         this.vsyncDurationNs = C0841C.TIME_UNSET;
         this.vsyncOffsetNs = C0841C.TIME_UNSET;
+    }
+
+    private static long closestVsync(long releaseTime, long sampledVsyncTime, long vsyncDuration) {
+        long snappedAfterNs;
+        long snappedBeforeNs;
+        long snappedTimeNs = sampledVsyncTime + (vsyncDuration * ((releaseTime - sampledVsyncTime) / vsyncDuration));
+        if (releaseTime <= snappedTimeNs) {
+            snappedBeforeNs = snappedTimeNs - vsyncDuration;
+            snappedAfterNs = snappedTimeNs;
+        } else {
+            snappedBeforeNs = snappedTimeNs;
+            snappedAfterNs = snappedTimeNs + vsyncDuration;
+        }
+        return snappedAfterNs - releaseTime < releaseTime - snappedBeforeNs ? snappedAfterNs : snappedBeforeNs;
     }
 
     public void enable() {
@@ -151,68 +166,25 @@ public final class VideoFrameReleaseTimeHelper {
         return Math.abs((releaseTimeNs - this.syncUnadjustedReleaseTimeNs) - (frameTimeNs - this.syncFramePresentationTimeNs)) > MAX_ALLOWED_DRIFT_NS;
     }
 
-    private static long closestVsync(long releaseTime, long sampledVsyncTime, long vsyncDuration) {
-        long snappedAfterNs;
-        long snappedBeforeNs;
-        long snappedTimeNs = sampledVsyncTime + (vsyncDuration * ((releaseTime - sampledVsyncTime) / vsyncDuration));
-        if (releaseTime <= snappedTimeNs) {
-            snappedBeforeNs = snappedTimeNs - vsyncDuration;
-            snappedAfterNs = snappedTimeNs;
-        } else {
-            snappedBeforeNs = snappedTimeNs;
-            snappedAfterNs = snappedTimeNs + vsyncDuration;
-        }
-        return snappedAfterNs - releaseTime < releaseTime - snappedBeforeNs ? snappedAfterNs : snappedBeforeNs;
-    }
-
-    @TargetApi(17)
-    private final class DefaultDisplayListener implements DisplayManager.DisplayListener {
-        private final DisplayManager displayManager;
-
-        public DefaultDisplayListener(DisplayManager displayManager2) {
-            this.displayManager = displayManager2;
-        }
-
-        public void register() {
-            this.displayManager.registerDisplayListener(this, null);
-        }
-
-        public void unregister() {
-            this.displayManager.unregisterDisplayListener(this);
-        }
-
-        public void onDisplayAdded(int displayId) {
-        }
-
-        public void onDisplayRemoved(int displayId) {
-        }
-
-        public void onDisplayChanged(int displayId) {
-            if (displayId == 0) {
-                VideoFrameReleaseTimeHelper.this.updateDefaultDisplayRefreshRateParams();
-            }
-        }
-    }
-
     private static final class VSyncSampler implements Choreographer.FrameCallback, Handler.Callback {
         private static final int CREATE_CHOREOGRAPHER = 0;
         private static final VSyncSampler INSTANCE = new VSyncSampler();
         private static final int MSG_ADD_OBSERVER = 1;
         private static final int MSG_REMOVE_OBSERVER = 2;
-        private Choreographer choreographer;
         private final HandlerThread choreographerOwnerThread = new HandlerThread("ChoreographerOwner:Handler");
         private final Handler handler;
-        private int observerCount;
         public volatile long sampledVsyncTimeNs = C0841C.TIME_UNSET;
-
-        public static VSyncSampler getInstance() {
-            return INSTANCE;
-        }
+        private Choreographer choreographer;
+        private int observerCount;
 
         private VSyncSampler() {
             this.choreographerOwnerThread.start();
             this.handler = Util.createHandler(this.choreographerOwnerThread.getLooper(), this);
             this.handler.sendEmptyMessage(0);
+        }
+
+        public static VSyncSampler getInstance() {
+            return INSTANCE;
         }
 
         public void addObserver() {
@@ -260,6 +232,35 @@ public final class VideoFrameReleaseTimeHelper {
             if (this.observerCount == 0) {
                 this.choreographer.removeFrameCallback(this);
                 this.sampledVsyncTimeNs = C0841C.TIME_UNSET;
+            }
+        }
+    }
+
+    @TargetApi(17)
+    private final class DefaultDisplayListener implements DisplayManager.DisplayListener {
+        private final DisplayManager displayManager;
+
+        public DefaultDisplayListener(DisplayManager displayManager2) {
+            this.displayManager = displayManager2;
+        }
+
+        public void register() {
+            this.displayManager.registerDisplayListener(this, null);
+        }
+
+        public void unregister() {
+            this.displayManager.unregisterDisplayListener(this);
+        }
+
+        public void onDisplayAdded(int displayId) {
+        }
+
+        public void onDisplayRemoved(int displayId) {
+        }
+
+        public void onDisplayChanged(int displayId) {
+            if (displayId == 0) {
+                VideoFrameReleaseTimeHelper.this.updateDefaultDisplayRefreshRateParams();
             }
         }
     }

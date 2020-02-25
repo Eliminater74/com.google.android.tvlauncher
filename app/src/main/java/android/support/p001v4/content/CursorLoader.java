@@ -5,23 +5,36 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.p001v4.content.Loader;
 import android.support.p001v4.p003os.CancellationSignal;
 import android.support.p001v4.p003os.OperationCanceledException;
+
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.Arrays;
 
 /* renamed from: android.support.v4.content.CursorLoader */
 public class CursorLoader extends AsyncTaskLoader<Cursor> {
+    private final Loader<Cursor>.ForceLoadContentObserver mObserver = new Loader.ForceLoadContentObserver();
     private CancellationSignal mCancellationSignal;
     private Cursor mCursor;
-    private final Loader<Cursor>.ForceLoadContentObserver mObserver = new Loader.ForceLoadContentObserver();
     private String[] mProjection;
     private String mSelection;
     private String[] mSelectionArgs;
     private String mSortOrder;
     private Uri mUri;
+
+    public CursorLoader(@NonNull Context context) {
+        super(context);
+    }
+
+    public CursorLoader(@NonNull Context context, @NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
+        super(context);
+        this.mUri = uri;
+        this.mProjection = projection;
+        this.mSelection = selection;
+        this.mSelectionArgs = selectionArgs;
+        this.mSortOrder = sortOrder;
+    }
 
     public Cursor loadInBackground() {
         Cursor cursor;
@@ -75,19 +88,6 @@ public class CursorLoader extends AsyncTaskLoader<Cursor> {
         } else if (cursor != null) {
             cursor.close();
         }
-    }
-
-    public CursorLoader(@NonNull Context context) {
-        super(context);
-    }
-
-    public CursorLoader(@NonNull Context context, @NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
-        super(context);
-        this.mUri = uri;
-        this.mProjection = projection;
-        this.mSelection = selection;
-        this.mSelectionArgs = selectionArgs;
-        this.mSortOrder = sortOrder;
     }
 
     /* access modifiers changed from: protected */

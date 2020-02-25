@@ -1,14 +1,11 @@
 package com.google.android.exoplayer2.offline;
 
 import android.support.annotation.Nullable;
+
 import java.io.File;
 import java.io.IOException;
 
 public final class ActionFileUpgradeUtil {
-
-    public interface DownloadIdProvider {
-        String getId(DownloadRequest downloadRequest);
-    }
 
     private ActionFileUpgradeUtil() {
     }
@@ -45,5 +42,9 @@ public final class ActionFileUpgradeUtil {
             download = new Download(request, 0, nowMs, nowMs, -1, 0, 0);
         }
         defaultDownloadIndex.putDownload(download);
+    }
+
+    public interface DownloadIdProvider {
+        String getId(DownloadRequest downloadRequest);
     }
 }

@@ -3,11 +3,13 @@ package com.google.android.libraries.performance.primes.transmitter.impl;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.text.TextUtils;
+
 import com.google.android.libraries.performance.primes.Config;
 import com.google.android.libraries.performance.primes.Hashing;
 import com.google.android.libraries.performance.primes.PrimesLog;
 import com.google.android.libraries.performance.primes.transmitter.MetricTransmitter;
 import com.google.protobuf.MessageLite;
+
 import logs.proto.wireless.performance.mobile.BatteryMetric;
 import logs.proto.wireless.performance.mobile.NetworkMetric;
 import logs.proto.wireless.performance.mobile.PrimesTraceOuterClass;
@@ -44,7 +46,6 @@ public abstract class HashedNamesTransmitter implements MetricTransmitter {
             }
         }
     };
-    private static final String PATH_DELIMITER = "/+";
     @VisibleForTesting
     static final MetricNameAccess<SystemHealthProto.SystemHealthMetric.Builder> SHM_METRIC_NAME_ACCESS = new MetricNameAccess<SystemHealthProto.SystemHealthMetric.Builder>() {
         public String getConstantName(SystemHealthProto.SystemHealthMetric.Builder message) {
@@ -105,23 +106,8 @@ public abstract class HashedNamesTransmitter implements MetricTransmitter {
             }
         }
     };
+    private static final String PATH_DELIMITER = "/+";
     private static final String TAG = "HashedNamesTransmitter";
-
-    @VisibleForTesting
-    interface MetricNameAccess<T extends MessageLite.Builder> {
-        void clearConstantName(T t);
-
-        String getConstantName(T t);
-
-        String getCustomName(T t);
-
-        void setCustomName(T t, @Nullable String str);
-
-        void setHashedName(T t, @Nullable Long l);
-    }
-
-    /* access modifiers changed from: protected */
-    public abstract void sendHashedEvent(SystemHealthProto.SystemHealthMetric systemHealthMetric);
 
     @VisibleForTesting
     static <T extends MessageLite.Builder> void ensureNoPiiName(MetricNameAccess<T> messageAccess, T message) {
@@ -136,16 +122,6 @@ public abstract class HashedNamesTransmitter implements MetricTransmitter {
             messageAccess.setHashedName(message, null);
         }
         messageAccess.setCustomName(message, null);
-    }
-
-    public void send(SystemHealthProto.SystemHealthMetric message) {
-        if (PrimesLog.vLoggable(TAG)) {
-            PrimesLog.m52v(TAG, "unhashed: %s", message);
-        }
-        SystemHealthProto.SystemHealthMetric.Builder messageBuilder = (SystemHealthProto.SystemHealthMetric.Builder) message.toBuilder();
-        convertTopLevelFields(messageBuilder);
-        convertMetricSpecificFields(messageBuilder);
-        sendHashedEvent((SystemHealthProto.SystemHealthMetric) messageBuilder.build());
     }
 
     private static void convertTopLevelFields(SystemHealthProto.SystemHealthMetric.Builder message) {
@@ -226,5 +202,31 @@ public abstract class HashedNamesTransmitter implements MetricTransmitter {
             }
             metric.setPrimesTrace(primesTrace);
         }
+    }
+
+    /* access modifiers changed from: protected */
+    public abstract void sendHashedEvent(SystemHealthProto.SystemHealthMetric systemHealthMetric);
+
+    public void send(SystemHealthProto.SystemHealthMetric message) {
+        if (PrimesLog.vLoggable(TAG)) {
+            PrimesLog.m52v(TAG, "unhashed: %s", message);
+        }
+        SystemHealthProto.SystemHealthMetric.Builder messageBuilder = (SystemHealthProto.SystemHealthMetric.Builder) message.toBuilder();
+        convertTopLevelFields(messageBuilder);
+        convertMetricSpecificFields(messageBuilder);
+        sendHashedEvent((SystemHealthProto.SystemHealthMetric) messageBuilder.build());
+    }
+
+    @VisibleForTesting
+    interface MetricNameAccess<T extends MessageLite.Builder> {
+        void clearConstantName(T t);
+
+        String getConstantName(T t);
+
+        String getCustomName(T t);
+
+        void setCustomName(T t, @Nullable String str);
+
+        void setHashedName(T t, @Nullable Long l);
     }
 }

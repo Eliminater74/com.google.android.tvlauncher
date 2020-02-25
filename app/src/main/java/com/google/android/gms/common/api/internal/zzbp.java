@@ -8,9 +8,9 @@ import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.Api;
-import com.google.android.gms.common.api.Api.ApiOptions;
 import com.google.android.gms.common.api.GoogleApi;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
@@ -18,6 +18,7 @@ import com.google.android.gms.common.internal.zzau;
 import com.google.android.gms.common.internal.zzbd;
 import com.google.android.gms.signin.zzd;
 import com.google.android.gms.tasks.TaskCompletionSource;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -27,10 +28,10 @@ import java.util.Set;
 
 /* compiled from: GoogleApiManager */
 public final class zzbp<O extends Api.ApiOptions> implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, zzv {
-    final /* synthetic */ zzbn zza;
-    private final Queue<zzb> zzb = new LinkedList();
     /* access modifiers changed from: private */
     public final Api.Client zzc;
+    final /* synthetic */ zzbn zza;
+    private final Queue<zzb> zzb = new LinkedList();
     private final Api.zzb zzd;
     private final zzi<O> zze;
     private final zzaf zzf;

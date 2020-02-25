@@ -1,6 +1,5 @@
 package com.google.android.exoplayer2;
 
-import com.google.android.exoplayer2.BasePlayer;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 final /* synthetic */ class ExoPlayerImpl$$Lambda$6 implements Runnable {

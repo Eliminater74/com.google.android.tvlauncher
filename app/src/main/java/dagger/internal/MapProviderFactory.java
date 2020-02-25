@@ -1,17 +1,18 @@
 package dagger.internal;
 
-import dagger.Lazy;
-import dagger.internal.AbstractMapFactory;
 import java.util.Map;
+
 import javax.inject.Provider;
 
-public final class MapProviderFactory<K, V> extends AbstractMapFactory<K, V, Provider<V>> implements Lazy<Map<K, Provider<V>>> {
-    public static <K, V> Builder<K, V> builder(int size) {
-        return new Builder<>(size);
-    }
+import dagger.Lazy;
 
+public final class MapProviderFactory<K, V> extends AbstractMapFactory<K, V, Provider<V>> implements Lazy<Map<K, Provider<V>>> {
     private MapProviderFactory(Map<K, Provider<V>> contributingMap) {
         super(contributingMap);
+    }
+
+    public static <K, V> Builder<K, V> builder(int size) {
+        return new Builder<>(size);
     }
 
     public Map<K, Provider<V>> get() {

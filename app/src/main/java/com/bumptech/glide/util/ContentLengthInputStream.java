@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
+
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,6 +14,11 @@ public final class ContentLengthInputStream extends FilterInputStream {
     private static final int UNKNOWN = -1;
     private final long contentLength;
     private int readSoFar;
+
+    private ContentLengthInputStream(@NonNull InputStream in, long contentLength2) {
+        super(in);
+        this.contentLength = contentLength2;
+    }
 
     @NonNull
     public static InputStream obtain(@NonNull InputStream other, @Nullable String contentLengthHeader) {
@@ -38,11 +44,6 @@ public final class ContentLengthInputStream extends FilterInputStream {
             Log.d(TAG, valueOf.length() != 0 ? "failed to parse content length header: ".concat(valueOf) : new String("failed to parse content length header: "), e);
             return -1;
         }
-    }
-
-    private ContentLengthInputStream(@NonNull InputStream in, long contentLength2) {
-        super(in);
-        this.contentLength = contentLength2;
     }
 
     public synchronized int available() throws IOException {

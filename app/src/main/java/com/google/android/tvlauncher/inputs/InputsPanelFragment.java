@@ -9,18 +9,20 @@ import android.os.Message;
 import android.support.annotation.VisibleForTesting;
 import android.text.TextUtils;
 import android.util.Log;
+
 import androidx.leanback.preference.LeanbackPreferenceFragment;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceScreen;
+
 import com.google.android.tvlauncher.TvlauncherLogEnum;
 import com.google.android.tvlauncher.analytics.ClickEvent;
 import com.google.android.tvlauncher.analytics.FragmentEventLogger;
 import com.google.android.tvlauncher.analytics.LogEvent;
 import com.google.android.tvlauncher.analytics.UserActionEvent;
-import com.google.android.tvlauncher.inputs.InputPreference;
 import com.google.android.tvlauncher.util.OemConfiguration;
 import com.google.logs.tvlauncher.config.TvLauncherConstants;
 import com.google.protos.logs.proto.wireless.android.tvlauncher.TvlauncherClientLog;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,19 +37,17 @@ public class InputsPanelFragment extends LeanbackPreferenceFragment implements O
     private static final int SINGLE_INPUT_CLICK_TIMEOUT_MS = 2000;
     private static final String TAG = "InputsPanelFragment";
     private final List<String> mAllPreferenceIds = new ArrayList(20);
+    private final Map<String, List<String>> mGroupIds = new HashMap(5);
+    private final InteractionHandler mInteractionHandler = new InteractionHandler();
+    private final InputPreference.OnPreferenceFocusedListener mOnPreferenceFocusedListener = new InputsPanelFragment$$Lambda$0(this);
     private Callbacks mCallbacks;
     private Context mContext;
     private FragmentEventLogger mEventLogger;
     private boolean mFirstInputRefreshDone;
-    private final Map<String, List<String>> mGroupIds = new HashMap(5);
-    private final InteractionHandler mInteractionHandler = new InteractionHandler();
-    private final InputPreference.OnPreferenceFocusedListener mOnPreferenceFocusedListener = new InputsPanelFragment$$Lambda$0(this);
     private String mSelectedPreferenceKey = null;
 
-    interface Callbacks {
-        void onInputClicked(int i);
-
-        void onInputsPanelFragmentAttached(InputsPanelFragment inputsPanelFragment);
+    static InputsPanelFragment newInstance() {
+        return new InputsPanelFragment();
     }
 
     /* access modifiers changed from: package-private */
@@ -56,10 +56,6 @@ public class InputsPanelFragment extends LeanbackPreferenceFragment implements O
             this.mSelectedPreferenceKey = preferenceKey;
             cancelPreferenceClickTimeout();
         }
-    }
-
-    static InputsPanelFragment newInstance() {
-        return new InputsPanelFragment();
     }
 
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -291,6 +287,12 @@ public class InputsPanelFragment extends LeanbackPreferenceFragment implements O
         if (!TextUtils.isEmpty(label)) {
             input.setDisplayName(label);
         }
+    }
+
+    interface Callbacks {
+        void onInputClicked(int i);
+
+        void onInputsPanelFragmentAttached(InputsPanelFragment inputsPanelFragment);
     }
 
     private static class InteractionHandler extends Handler {

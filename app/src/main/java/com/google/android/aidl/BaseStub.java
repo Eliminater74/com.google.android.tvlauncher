@@ -9,6 +9,10 @@ import android.os.RemoteException;
 public abstract class BaseStub extends Binder implements IInterface {
     private static TransactionInterceptor globalInterceptor = null;
 
+    protected BaseStub(String descriptor) {
+        attachInterface(this, descriptor);
+    }
+
     static synchronized void installTransactionInterceptorPackagePrivate(TransactionInterceptor interceptor) {
         synchronized (BaseStub.class) {
             if (interceptor != null) {
@@ -25,10 +29,6 @@ public abstract class BaseStub extends Binder implements IInterface {
                 throw new IllegalArgumentException("null interceptor");
             }
         }
-    }
-
-    protected BaseStub(String descriptor) {
-        attachInterface(this, descriptor);
     }
 
     public IBinder asBinder() {

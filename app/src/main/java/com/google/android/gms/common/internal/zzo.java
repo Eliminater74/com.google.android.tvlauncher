@@ -5,7 +5,9 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
+
 import com.google.android.gms.common.api.GoogleApiClient;
+
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -15,11 +17,11 @@ public final class zzo implements Handler.Callback {
     private final ArrayList<GoogleApiClient.ConnectionCallbacks> zzb = new ArrayList<>();
     private final ArrayList<GoogleApiClient.ConnectionCallbacks> zzc = new ArrayList<>();
     private final ArrayList<GoogleApiClient.OnConnectionFailedListener> zzd = new ArrayList<>();
-    private volatile boolean zze = false;
     private final AtomicInteger zzf = new AtomicInteger(0);
-    private boolean zzg = false;
     private final Handler zzh;
     private final Object zzi = new Object();
+    private volatile boolean zze = false;
+    private boolean zzg = false;
 
     public zzo(Looper looper, zzp zzp) {
         this.zza = zzp;

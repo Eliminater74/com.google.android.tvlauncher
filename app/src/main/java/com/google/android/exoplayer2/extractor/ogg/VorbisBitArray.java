@@ -4,10 +4,10 @@ import com.google.android.exoplayer2.util.Assertions;
 import com.google.common.primitives.UnsignedBytes;
 
 final class VorbisBitArray {
-    private int bitOffset;
     private final int byteLimit;
-    private int byteOffset;
     private final byte[] data;
+    private int bitOffset;
+    private int byteOffset;
 
     public VorbisBitArray(byte[] data2) {
         this.data = data2;

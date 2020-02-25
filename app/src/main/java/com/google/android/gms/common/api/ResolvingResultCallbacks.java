@@ -4,8 +4,8 @@ import android.app.Activity;
 import android.content.IntentSender;
 import android.support.annotation.NonNull;
 import android.util.Log;
+
 import com.google.android.gms.common.annotation.KeepForSdk;
-import com.google.android.gms.common.api.Result;
 import com.google.android.gms.common.internal.Hide;
 import com.google.android.gms.common.internal.zzau;
 

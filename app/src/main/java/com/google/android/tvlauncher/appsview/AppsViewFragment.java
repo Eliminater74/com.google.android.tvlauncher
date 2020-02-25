@@ -13,7 +13,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.Toast;
+
 import androidx.leanback.widget.VerticalGridView;
+
 import com.google.android.libraries.social.analytics.visualelement.VisualElementTag;
 import com.google.android.tvlauncher.C1188R;
 import com.google.android.tvlauncher.TvlauncherLogEnum;
@@ -31,16 +33,13 @@ import com.google.android.tvrecommendations.shared.util.Constants;
 
 public class AppsViewFragment extends Fragment {
     private static final String TAG = "AppsViewFragment";
-    private View mAppsView;
-    private boolean mAppsViewOnStopped = true;
     /* access modifiers changed from: private */
     public final FragmentEventLogger mEventLogger = new FragmentEventLogger(this);
+    private final OnEditModeOrderChangeCallback mOnEditModeOrderChangeCallback = new OnEditModeOrderChangeCallback();
     /* access modifiers changed from: private */
     public VerticalGridView mGridView;
     /* access modifiers changed from: private */
     public LaunchItemsManager mLaunchItemsManager;
-    private OnAppsViewActionListener mOnAppsViewActionListener;
-    private final OnEditModeOrderChangeCallback mOnEditModeOrderChangeCallback = new OnEditModeOrderChangeCallback();
     /* access modifiers changed from: private */
     public RowListAdapter mRowListAdapter;
     private final RecyclerView.AdapterDataObserver mRowListAdapterDataObserver = new RecyclerView.AdapterDataObserver() {
@@ -66,25 +65,9 @@ public class AppsViewFragment extends Fragment {
     };
     /* access modifiers changed from: private */
     public boolean mScrollToTopWhenResume = true;
-
-    class OnEditModeOrderChangeCallback {
-        OnEditModeOrderChangeCallback() {
-        }
-
-        /* access modifiers changed from: package-private */
-        public void onEditModeExited(int rowIndex, final int colIndex) {
-            AppsViewFragment.this.mGridView.scrollToPosition(rowIndex);
-            AppsViewFragment.this.mGridView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                public void onGlobalLayout() {
-                    View row = AppsViewFragment.this.mGridView.getFocusedChild();
-                    if (row instanceof LaunchItemsRowView) {
-                        ((LaunchItemsRowView) row).setOneTimeFocusPosition(colIndex);
-                    }
-                    AppsViewFragment.this.mGridView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                }
-            });
-        }
-    }
+    private View mAppsView;
+    private boolean mAppsViewOnStopped = true;
+    private OnAppsViewActionListener mOnAppsViewActionListener;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -263,5 +246,24 @@ public class AppsViewFragment extends Fragment {
                 }
             }
         };
+    }
+
+    class OnEditModeOrderChangeCallback {
+        OnEditModeOrderChangeCallback() {
+        }
+
+        /* access modifiers changed from: package-private */
+        public void onEditModeExited(int rowIndex, final int colIndex) {
+            AppsViewFragment.this.mGridView.scrollToPosition(rowIndex);
+            AppsViewFragment.this.mGridView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                public void onGlobalLayout() {
+                    View row = AppsViewFragment.this.mGridView.getFocusedChild();
+                    if (row instanceof LaunchItemsRowView) {
+                        ((LaunchItemsRowView) row).setOneTimeFocusPosition(colIndex);
+                    }
+                    AppsViewFragment.this.mGridView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }
+            });
+        }
     }
 }

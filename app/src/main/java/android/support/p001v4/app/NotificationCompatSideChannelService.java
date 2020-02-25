@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.support.p001v4.app.INotificationSideChannel;
 
 /* renamed from: android.support.v4.app.NotificationCompatSideChannelService */
 public abstract class NotificationCompatSideChannelService extends Service {
@@ -21,6 +20,21 @@ public abstract class NotificationCompatSideChannelService extends Service {
             return null;
         }
         return new NotificationSideChannelStub();
+    }
+
+    /* access modifiers changed from: package-private */
+    public void checkPermission(int callingUid, String packageName) {
+        String[] packagesForUid = getPackageManager().getPackagesForUid(callingUid);
+        int length = packagesForUid.length;
+        int i = 0;
+        while (i < length) {
+            if (!packagesForUid[i].equals(packageName)) {
+                i++;
+            } else {
+                return;
+            }
+        }
+        throw new SecurityException("NotificationSideChannelService: Uid " + callingUid + " is not authorized for package " + packageName);
     }
 
     /* renamed from: android.support.v4.app.NotificationCompatSideChannelService$NotificationSideChannelStub */
@@ -57,20 +71,5 @@ public abstract class NotificationCompatSideChannelService extends Service {
                 restoreCallingIdentity(idToken);
             }
         }
-    }
-
-    /* access modifiers changed from: package-private */
-    public void checkPermission(int callingUid, String packageName) {
-        String[] packagesForUid = getPackageManager().getPackagesForUid(callingUid);
-        int length = packagesForUid.length;
-        int i = 0;
-        while (i < length) {
-            if (!packagesForUid[i].equals(packageName)) {
-                i++;
-            } else {
-                return;
-            }
-        }
-        throw new SecurityException("NotificationSideChannelService: Uid " + callingUid + " is not authorized for package " + packageName);
     }
 }

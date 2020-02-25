@@ -2,13 +2,12 @@ package com.google.android.exoplayer2.extractor.mp4;
 
 import android.support.annotation.Nullable;
 import android.util.Pair;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.drm.DrmInitData;
 import com.google.android.exoplayer2.extractor.GaplessInfoHolder;
-import com.google.android.exoplayer2.extractor.mp4.Atom;
-import com.google.android.exoplayer2.extractor.mp4.FixedSampleSizeRechunker;
 import com.google.android.exoplayer2.metadata.Metadata;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Log;
@@ -16,6 +15,7 @@ import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.Util;
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -34,12 +34,7 @@ final class AtomParsers {
     private static final int TYPE_vide = Util.getIntegerCodeForString("vide");
     private static final byte[] opusMagic = Util.getUtf8Bytes("OpusHead");
 
-    private interface SampleSizeBox {
-        int getSampleCount();
-
-        boolean isFixedSampleSize();
-
-        int readNextSampleSize();
+    private AtomParsers() {
     }
 
     /* JADX DEBUG: Multi-variable search result rejected for TypeSearchVarInfo{r7v1, resolved type: java.lang.Object} */
@@ -1830,19 +1825,24 @@ final class AtomParsers {
         return true;
     }
 
-    private AtomParsers() {
+    private interface SampleSizeBox {
+        int getSampleCount();
+
+        boolean isFixedSampleSize();
+
+        int readNextSampleSize();
     }
 
     private static final class ChunkIterator {
+        public final int length;
         private final ParsableByteArray chunkOffsets;
         private final boolean chunkOffsetsAreLongs;
+        private final ParsableByteArray stsc;
         public int index;
-        public final int length;
-        private int nextSamplesPerChunkChangeIndex;
         public int numSamples;
         public long offset;
+        private int nextSamplesPerChunkChangeIndex;
         private int remainingSamplesPerChunkChanges;
-        private final ParsableByteArray stsc;
 
         public ChunkIterator(ParsableByteArray stsc2, ParsableByteArray chunkOffsets2, boolean chunkOffsetsAreLongs2) {
             this.stsc = stsc2;
@@ -1899,10 +1899,10 @@ final class AtomParsers {
 
     private static final class StsdData {
         public static final int STSD_HEADER_SIZE = 8;
+        public final TrackEncryptionBox[] trackEncryptionBoxes;
         public Format format;
         public int nalUnitLengthFieldLength;
         public int requiredSampleTransformation = 0;
-        public final TrackEncryptionBox[] trackEncryptionBoxes;
 
         public StsdData(int numberOfEntries) {
             this.trackEncryptionBoxes = new TrackEncryptionBox[numberOfEntries];
@@ -1934,10 +1934,10 @@ final class AtomParsers {
     }
 
     static final class Stz2SampleSizeBox implements SampleSizeBox {
-        private int currentByte;
         private final ParsableByteArray data;
         private final int fieldSize = (this.data.readUnsignedIntToInt() & 255);
         private final int sampleCount = this.data.readUnsignedIntToInt();
+        private int currentByte;
         private int sampleIndex;
 
         public Stz2SampleSizeBox(Atom.LeafAtom stz2Atom) {

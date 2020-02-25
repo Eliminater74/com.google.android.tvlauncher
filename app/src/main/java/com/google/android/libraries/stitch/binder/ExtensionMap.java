@@ -1,7 +1,7 @@
 package com.google.android.libraries.stitch.binder;
 
 import android.content.Context;
-import com.google.android.libraries.stitch.binder.Extension;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 

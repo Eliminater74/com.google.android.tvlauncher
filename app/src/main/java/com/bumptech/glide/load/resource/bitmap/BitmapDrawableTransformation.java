@@ -5,9 +5,11 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
+
 import com.bumptech.glide.load.Transformation;
 import com.bumptech.glide.load.engine.Resource;
 import com.bumptech.glide.util.Preconditions;
+
 import java.security.MessageDigest;
 
 @Deprecated
@@ -16,11 +18,6 @@ public class BitmapDrawableTransformation implements Transformation<BitmapDrawab
 
     public BitmapDrawableTransformation(Transformation<Bitmap> wrapped2) {
         this.wrapped = (Transformation) Preconditions.checkNotNull(new DrawableTransformation(wrapped2, false));
-    }
-
-    @NonNull
-    public Resource<BitmapDrawable> transform(@NonNull Context context, @NonNull Resource<BitmapDrawable> drawableResourceToTransform, int outWidth, int outHeight) {
-        return convertToBitmapDrawableResource(this.wrapped.transform(context, convertToDrawableResource(drawableResourceToTransform), outWidth, outHeight));
     }
 
     /* JADX WARN: Type inference failed for: r4v0, types: [com.bumptech.glide.load.engine.Resource, com.bumptech.glide.load.engine.Resource<android.graphics.drawable.BitmapDrawable>, com.bumptech.glide.load.engine.Resource<android.graphics.drawable.Drawable>] */
@@ -53,6 +50,11 @@ public class BitmapDrawableTransformation implements Transformation<BitmapDrawab
 
     private static Resource<Drawable> convertToDrawableResource(Resource<BitmapDrawable> toConvert) {
         return toConvert;
+    }
+
+    @NonNull
+    public Resource<BitmapDrawable> transform(@NonNull Context context, @NonNull Resource<BitmapDrawable> drawableResourceToTransform, int outWidth, int outHeight) {
+        return convertToBitmapDrawableResource(this.wrapped.transform(context, convertToDrawableResource(drawableResourceToTransform), outWidth, outHeight));
     }
 
     public boolean equals(Object o) {

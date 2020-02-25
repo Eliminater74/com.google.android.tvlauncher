@@ -2,11 +2,13 @@ package com.google.android.gms.clearcut.internal;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
 import com.google.android.gms.common.internal.Hide;
 import com.google.android.gms.common.internal.zzak;
 import com.google.android.gms.common.internal.zzau;
 import com.google.android.gms.internal.zzbkv;
 import com.google.android.gms.internal.zzbky;
+
 import java.util.Arrays;
 
 @Hide

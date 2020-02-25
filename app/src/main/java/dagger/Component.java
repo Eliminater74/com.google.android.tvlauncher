@@ -11,6 +11,10 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Component {
 
+    Class<?>[] dependencies() default {};
+
+    Class<?>[] modules() default {};
+
     @Documented
     @Target({ElementType.TYPE})
     @Retention(RetentionPolicy.RUNTIME)
@@ -22,8 +26,4 @@ public @interface Component {
     @Retention(RetentionPolicy.RUNTIME)
     public @interface Factory {
     }
-
-    Class<?>[] dependencies() default {};
-
-    Class<?>[] modules() default {};
 }

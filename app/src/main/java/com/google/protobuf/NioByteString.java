@@ -1,7 +1,7 @@
 package com.google.protobuf;
 
 import com.google.common.primitives.UnsignedBytes;
-import com.google.protobuf.ByteString;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InvalidObjectException;

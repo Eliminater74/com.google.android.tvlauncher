@@ -14,6 +14,10 @@ public class AccessibilityWindowInfoCompat {
     private static final int UNDEFINED = -1;
     private Object mInfo;
 
+    private AccessibilityWindowInfoCompat(Object info) {
+        this.mInfo = info;
+    }
+
     static AccessibilityWindowInfoCompat wrapNonNullInstance(Object object) {
         if (object != null) {
             return new AccessibilityWindowInfoCompat(object);
@@ -21,8 +25,34 @@ public class AccessibilityWindowInfoCompat {
         return null;
     }
 
-    private AccessibilityWindowInfoCompat(Object info) {
-        this.mInfo = info;
+    public static AccessibilityWindowInfoCompat obtain() {
+        if (Build.VERSION.SDK_INT >= 21) {
+            return wrapNonNullInstance(AccessibilityWindowInfo.obtain());
+        }
+        return null;
+    }
+
+    public static AccessibilityWindowInfoCompat obtain(AccessibilityWindowInfoCompat info) {
+        if (Build.VERSION.SDK_INT < 21 || info == null) {
+            return null;
+        }
+        return wrapNonNullInstance(AccessibilityWindowInfo.obtain((AccessibilityWindowInfo) info.mInfo));
+    }
+
+    private static String typeToString(int type) {
+        if (type == 1) {
+            return "TYPE_APPLICATION";
+        }
+        if (type == 2) {
+            return "TYPE_INPUT_METHOD";
+        }
+        if (type == 3) {
+            return "TYPE_SYSTEM";
+        }
+        if (type != 4) {
+            return "<UNKNOWN>";
+        }
+        return "TYPE_ACCESSIBILITY_OVERLAY";
     }
 
     public int getType() {
@@ -115,20 +145,6 @@ public class AccessibilityWindowInfoCompat {
         return null;
     }
 
-    public static AccessibilityWindowInfoCompat obtain() {
-        if (Build.VERSION.SDK_INT >= 21) {
-            return wrapNonNullInstance(AccessibilityWindowInfo.obtain());
-        }
-        return null;
-    }
-
-    public static AccessibilityWindowInfoCompat obtain(AccessibilityWindowInfoCompat info) {
-        if (Build.VERSION.SDK_INT < 21 || info == null) {
-            return null;
-        }
-        return wrapNonNullInstance(AccessibilityWindowInfo.obtain((AccessibilityWindowInfo) info.mInfo));
-    }
-
     public void recycle() {
         if (Build.VERSION.SDK_INT >= 21) {
             ((AccessibilityWindowInfo) this.mInfo).recycle();
@@ -189,21 +205,5 @@ public class AccessibilityWindowInfoCompat {
         builder.append(z);
         builder.append(']');
         return builder.toString();
-    }
-
-    private static String typeToString(int type) {
-        if (type == 1) {
-            return "TYPE_APPLICATION";
-        }
-        if (type == 2) {
-            return "TYPE_INPUT_METHOD";
-        }
-        if (type == 3) {
-            return "TYPE_SYSTEM";
-        }
-        if (type != 4) {
-            return "<UNKNOWN>";
-        }
-        return "TYPE_ACCESSIBILITY_OVERLAY";
     }
 }

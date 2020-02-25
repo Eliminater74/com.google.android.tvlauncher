@@ -3,10 +3,12 @@ package com.google.common.collect;
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
-import java.io.Serializable;
-import java.util.Comparator;
+
 import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
+import java.io.Serializable;
+import java.util.Comparator;
 
 @GwtCompatible(serializable = true)
 final class GeneralRange<T> implements Serializable {
@@ -16,11 +18,35 @@ final class GeneralRange<T> implements Serializable {
     private final BoundType lowerBoundType;
     @NullableDecl
     private final T lowerEndpoint;
-    @MonotonicNonNullDecl
-    private transient GeneralRange<T> reverse;
     private final BoundType upperBoundType;
     @NullableDecl
     private final T upperEndpoint;
+    @MonotonicNonNullDecl
+    private transient GeneralRange<T> reverse;
+
+    private GeneralRange(Comparator<? super T> comparator2, boolean hasLowerBound2, @NullableDecl T lowerEndpoint2, BoundType lowerBoundType2, boolean hasUpperBound2, @NullableDecl T upperEndpoint2, BoundType upperBoundType2) {
+        this.comparator = (Comparator) Preconditions.checkNotNull(comparator2);
+        this.hasLowerBound = hasLowerBound2;
+        this.hasUpperBound = hasUpperBound2;
+        this.lowerEndpoint = lowerEndpoint2;
+        this.lowerBoundType = (BoundType) Preconditions.checkNotNull(lowerBoundType2);
+        this.upperEndpoint = upperEndpoint2;
+        this.upperBoundType = (BoundType) Preconditions.checkNotNull(upperBoundType2);
+        if (hasLowerBound2) {
+            comparator2.compare(lowerEndpoint2, lowerEndpoint2);
+        }
+        if (hasUpperBound2) {
+            comparator2.compare(upperEndpoint2, upperEndpoint2);
+        }
+        if (hasLowerBound2 && hasUpperBound2) {
+            int cmp = comparator2.compare(lowerEndpoint2, upperEndpoint2);
+            boolean z = true;
+            Preconditions.checkArgument(cmp <= 0, "lowerEndpoint (%s) > upperEndpoint (%s)", lowerEndpoint2, upperEndpoint2);
+            if (cmp == 0) {
+                Preconditions.checkArgument((upperBoundType2 == BoundType.OPEN ? false : z) | (lowerBoundType2 != BoundType.OPEN));
+            }
+        }
+    }
 
     static <T extends Comparable> GeneralRange<T> from(Range<T> range) {
         T upperEndpoint2 = null;
@@ -46,30 +72,6 @@ final class GeneralRange<T> implements Serializable {
 
     static <T> GeneralRange<T> range(Comparator<? super T> comparator2, @NullableDecl T lower, BoundType lowerType, @NullableDecl T upper, BoundType upperType) {
         return new GeneralRange(comparator2, true, lower, lowerType, true, upper, upperType);
-    }
-
-    private GeneralRange(Comparator<? super T> comparator2, boolean hasLowerBound2, @NullableDecl T lowerEndpoint2, BoundType lowerBoundType2, boolean hasUpperBound2, @NullableDecl T upperEndpoint2, BoundType upperBoundType2) {
-        this.comparator = (Comparator) Preconditions.checkNotNull(comparator2);
-        this.hasLowerBound = hasLowerBound2;
-        this.hasUpperBound = hasUpperBound2;
-        this.lowerEndpoint = lowerEndpoint2;
-        this.lowerBoundType = (BoundType) Preconditions.checkNotNull(lowerBoundType2);
-        this.upperEndpoint = upperEndpoint2;
-        this.upperBoundType = (BoundType) Preconditions.checkNotNull(upperBoundType2);
-        if (hasLowerBound2) {
-            comparator2.compare(lowerEndpoint2, lowerEndpoint2);
-        }
-        if (hasUpperBound2) {
-            comparator2.compare(upperEndpoint2, upperEndpoint2);
-        }
-        if (hasLowerBound2 && hasUpperBound2) {
-            int cmp = comparator2.compare(lowerEndpoint2, upperEndpoint2);
-            boolean z = true;
-            Preconditions.checkArgument(cmp <= 0, "lowerEndpoint (%s) > upperEndpoint (%s)", lowerEndpoint2, upperEndpoint2);
-            if (cmp == 0) {
-                Preconditions.checkArgument((upperBoundType2 == BoundType.OPEN ? false : z) | (lowerBoundType2 != BoundType.OPEN));
-            }
-        }
     }
 
     /* access modifiers changed from: package-private */

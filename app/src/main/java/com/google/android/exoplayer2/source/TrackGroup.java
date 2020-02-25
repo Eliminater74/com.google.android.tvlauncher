@@ -3,8 +3,10 @@ package com.google.android.exoplayer2.source;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.util.Assertions;
+
 import java.util.Arrays;
 
 public final class TrackGroup implements Parcelable {
@@ -17,9 +19,9 @@ public final class TrackGroup implements Parcelable {
             return new TrackGroup[size];
         }
     };
+    public final int length;
     private final Format[] formats;
     private int hashCode;
-    public final int length;
 
     public TrackGroup(Format... formats2) {
         Assertions.checkState(formats2.length > 0);

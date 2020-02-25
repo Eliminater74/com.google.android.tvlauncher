@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.annotation.RestrictTo;
 import android.util.Log;
+
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;

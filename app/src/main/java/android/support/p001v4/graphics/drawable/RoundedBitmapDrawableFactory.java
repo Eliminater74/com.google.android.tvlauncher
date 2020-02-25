@@ -10,33 +10,14 @@ import android.support.annotation.Nullable;
 import android.support.p001v4.graphics.BitmapCompat;
 import android.support.p001v4.view.GravityCompat;
 import android.util.Log;
+
 import java.io.InputStream;
 
 /* renamed from: android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory */
 public final class RoundedBitmapDrawableFactory {
     private static final String TAG = "RoundedBitmapDrawableFa";
 
-    /* renamed from: android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory$DefaultRoundedBitmapDrawable */
-    private static class DefaultRoundedBitmapDrawable extends RoundedBitmapDrawable {
-        DefaultRoundedBitmapDrawable(Resources res, Bitmap bitmap) {
-            super(res, bitmap);
-        }
-
-        public void setMipMap(boolean mipMap) {
-            if (this.mBitmap != null) {
-                BitmapCompat.setHasMipMap(this.mBitmap, mipMap);
-                invalidateSelf();
-            }
-        }
-
-        public boolean hasMipMap() {
-            return this.mBitmap != null && BitmapCompat.hasMipMap(this.mBitmap);
-        }
-
-        /* access modifiers changed from: package-private */
-        public void gravityCompatApply(int gravity, int bitmapWidth, int bitmapHeight, Rect bounds, Rect outRect) {
-            GravityCompat.apply(gravity, bitmapWidth, bitmapHeight, bounds, outRect, 0);
-        }
+    private RoundedBitmapDrawableFactory() {
     }
 
     @NonNull
@@ -65,6 +46,26 @@ public final class RoundedBitmapDrawableFactory {
         return drawable;
     }
 
-    private RoundedBitmapDrawableFactory() {
+    /* renamed from: android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory$DefaultRoundedBitmapDrawable */
+    private static class DefaultRoundedBitmapDrawable extends RoundedBitmapDrawable {
+        DefaultRoundedBitmapDrawable(Resources res, Bitmap bitmap) {
+            super(res, bitmap);
+        }
+
+        public void setMipMap(boolean mipMap) {
+            if (this.mBitmap != null) {
+                BitmapCompat.setHasMipMap(this.mBitmap, mipMap);
+                invalidateSelf();
+            }
+        }
+
+        public boolean hasMipMap() {
+            return this.mBitmap != null && BitmapCompat.hasMipMap(this.mBitmap);
+        }
+
+        /* access modifiers changed from: package-private */
+        public void gravityCompatApply(int gravity, int bitmapWidth, int bitmapHeight, Rect bounds, Rect outRect) {
+            GravityCompat.apply(gravity, bitmapWidth, bitmapHeight, bounds, outRect, 0);
+        }
     }
 }

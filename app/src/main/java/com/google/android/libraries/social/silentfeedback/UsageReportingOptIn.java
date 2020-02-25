@@ -5,6 +5,7 @@ import android.os.Build;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.util.Log;
+
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.usagereporting.UsageReporting;

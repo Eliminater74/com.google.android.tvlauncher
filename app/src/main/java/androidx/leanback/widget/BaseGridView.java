@@ -10,6 +10,7 @@ import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+
 import androidx.leanback.C0364R;
 
 public abstract class BaseGridView extends RecyclerView {
@@ -20,7 +21,6 @@ public abstract class BaseGridView extends RecyclerView {
     @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
     public static final int FOCUS_SCROLL_PAGE = 2;
     public static final float ITEM_ALIGN_OFFSET_PERCENT_DISABLED = -1.0f;
-    private static final int PFLAG_RETAIN_FOCUS_FOR_CHILD = 1;
     public static final int SAVE_ALL_CHILD = 3;
     public static final int SAVE_LIMITED_CHILD = 2;
     public static final int SAVE_NO_CHILD = 0;
@@ -30,33 +30,18 @@ public abstract class BaseGridView extends RecyclerView {
     public static final int WINDOW_ALIGN_LOW_EDGE = 1;
     public static final int WINDOW_ALIGN_NO_EDGE = 0;
     public static final float WINDOW_ALIGN_OFFSET_PERCENT_DISABLED = -1.0f;
-    private boolean mAnimateChildLayout = true;
-    RecyclerView.RecyclerListener mChainedRecyclerListener;
-    private boolean mHasOverlappingRendering = true;
-    int mInitialPrefetchItemCount = 4;
+    private static final int PFLAG_RETAIN_FOCUS_FOR_CHILD = 1;
     final GridLayoutManager mLayoutManager = new GridLayoutManager(this);
+    RecyclerView.RecyclerListener mChainedRecyclerListener;
+    int mInitialPrefetchItemCount = 4;
+    private boolean mAnimateChildLayout = true;
+    private boolean mHasOverlappingRendering = true;
     private OnKeyInterceptListener mOnKeyInterceptListener;
     private OnMotionInterceptListener mOnMotionInterceptListener;
     private OnTouchInterceptListener mOnTouchInterceptListener;
     private OnUnhandledKeyListener mOnUnhandledKeyListener;
     private int mPrivateFlag;
     private RecyclerView.ItemAnimator mSavedItemAnimator;
-
-    public interface OnKeyInterceptListener {
-        boolean onInterceptKeyEvent(KeyEvent keyEvent);
-    }
-
-    public interface OnMotionInterceptListener {
-        boolean onInterceptMotionEvent(MotionEvent motionEvent);
-    }
-
-    public interface OnTouchInterceptListener {
-        boolean onInterceptTouchEvent(MotionEvent motionEvent);
-    }
-
-    public interface OnUnhandledKeyListener {
-        boolean onUnhandledKey(KeyEvent keyEvent);
-    }
 
     BaseGridView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -92,6 +77,11 @@ public abstract class BaseGridView extends RecyclerView {
     }
 
     @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    public int getFocusScrollStrategy() {
+        return this.mLayoutManager.getFocusScrollStrategy();
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
     public void setFocusScrollStrategy(int scrollStrategy) {
         if (scrollStrategy == 0 || scrollStrategy == 1 || scrollStrategy == 2) {
             this.mLayoutManager.setFocusScrollStrategy(scrollStrategy);
@@ -101,9 +91,8 @@ public abstract class BaseGridView extends RecyclerView {
         throw new IllegalArgumentException("Invalid scrollStrategy");
     }
 
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    public int getFocusScrollStrategy() {
-        return this.mLayoutManager.getFocusScrollStrategy();
+    public int getWindowAlignment() {
+        return this.mLayoutManager.getWindowAlignment();
     }
 
     public void setWindowAlignment(int windowAlignment) {
@@ -111,8 +100,8 @@ public abstract class BaseGridView extends RecyclerView {
         requestLayout();
     }
 
-    public int getWindowAlignment() {
-        return this.mLayoutManager.getWindowAlignment();
+    public boolean isWindowAlignmentPreferKeyLineOverLowEdge() {
+        return this.mLayoutManager.mWindowAlignment.mainAxis().isPreferKeylineOverLowEdge();
     }
 
     public void setWindowAlignmentPreferKeyLineOverLowEdge(boolean preferKeyLineOverLowEdge) {
@@ -120,21 +109,12 @@ public abstract class BaseGridView extends RecyclerView {
         requestLayout();
     }
 
-    public void setWindowAlignmentPreferKeyLineOverHighEdge(boolean preferKeyLineOverHighEdge) {
-        this.mLayoutManager.mWindowAlignment.mainAxis().setPreferKeylineOverHighEdge(preferKeyLineOverHighEdge);
-        requestLayout();
-    }
-
-    public boolean isWindowAlignmentPreferKeyLineOverLowEdge() {
-        return this.mLayoutManager.mWindowAlignment.mainAxis().isPreferKeylineOverLowEdge();
-    }
-
     public boolean isWindowAlignmentPreferKeyLineOverHighEdge() {
         return this.mLayoutManager.mWindowAlignment.mainAxis().isPreferKeylineOverHighEdge();
     }
 
-    public void setWindowAlignmentOffset(int offset) {
-        this.mLayoutManager.setWindowAlignmentOffset(offset);
+    public void setWindowAlignmentPreferKeyLineOverHighEdge(boolean preferKeyLineOverHighEdge) {
+        this.mLayoutManager.mWindowAlignment.mainAxis().setPreferKeylineOverHighEdge(preferKeyLineOverHighEdge);
         requestLayout();
     }
 
@@ -142,8 +122,8 @@ public abstract class BaseGridView extends RecyclerView {
         return this.mLayoutManager.getWindowAlignmentOffset();
     }
 
-    public void setWindowAlignmentOffsetPercent(float offsetPercent) {
-        this.mLayoutManager.setWindowAlignmentOffsetPercent(offsetPercent);
+    public void setWindowAlignmentOffset(int offset) {
+        this.mLayoutManager.setWindowAlignmentOffset(offset);
         requestLayout();
     }
 
@@ -151,8 +131,8 @@ public abstract class BaseGridView extends RecyclerView {
         return this.mLayoutManager.getWindowAlignmentOffsetPercent();
     }
 
-    public void setItemAlignmentOffset(int offset) {
-        this.mLayoutManager.setItemAlignmentOffset(offset);
+    public void setWindowAlignmentOffsetPercent(float offsetPercent) {
+        this.mLayoutManager.setWindowAlignmentOffsetPercent(offsetPercent);
         requestLayout();
     }
 
@@ -160,8 +140,8 @@ public abstract class BaseGridView extends RecyclerView {
         return this.mLayoutManager.getItemAlignmentOffset();
     }
 
-    public void setItemAlignmentOffsetWithPadding(boolean withPadding) {
-        this.mLayoutManager.setItemAlignmentOffsetWithPadding(withPadding);
+    public void setItemAlignmentOffset(int offset) {
+        this.mLayoutManager.setItemAlignmentOffset(offset);
         requestLayout();
     }
 
@@ -169,8 +149,8 @@ public abstract class BaseGridView extends RecyclerView {
         return this.mLayoutManager.isItemAlignmentOffsetWithPadding();
     }
 
-    public void setItemAlignmentOffsetPercent(float offsetPercent) {
-        this.mLayoutManager.setItemAlignmentOffsetPercent(offsetPercent);
+    public void setItemAlignmentOffsetWithPadding(boolean withPadding) {
+        this.mLayoutManager.setItemAlignmentOffsetWithPadding(withPadding);
         requestLayout();
     }
 
@@ -178,12 +158,17 @@ public abstract class BaseGridView extends RecyclerView {
         return this.mLayoutManager.getItemAlignmentOffsetPercent();
     }
 
-    public void setItemAlignmentViewId(int viewId) {
-        this.mLayoutManager.setItemAlignmentViewId(viewId);
+    public void setItemAlignmentOffsetPercent(float offsetPercent) {
+        this.mLayoutManager.setItemAlignmentOffsetPercent(offsetPercent);
+        requestLayout();
     }
 
     public int getItemAlignmentViewId() {
         return this.mLayoutManager.getItemAlignmentViewId();
+    }
+
+    public void setItemAlignmentViewId(int viewId) {
+        this.mLayoutManager.setItemAlignmentViewId(viewId);
     }
 
     @Deprecated
@@ -197,18 +182,13 @@ public abstract class BaseGridView extends RecyclerView {
     }
 
     @Deprecated
-    public void setVerticalMargin(int margin) {
-        setVerticalSpacing(margin);
-    }
-
-    @Deprecated
     public int getVerticalMargin() {
         return this.mLayoutManager.getVerticalSpacing();
     }
 
     @Deprecated
-    public void setHorizontalMargin(int margin) {
-        setHorizontalSpacing(margin);
+    public void setVerticalMargin(int margin) {
+        setVerticalSpacing(margin);
     }
 
     @Deprecated
@@ -216,22 +196,27 @@ public abstract class BaseGridView extends RecyclerView {
         return this.mLayoutManager.getHorizontalSpacing();
     }
 
-    public void setVerticalSpacing(int spacing) {
-        this.mLayoutManager.setVerticalSpacing(spacing);
-        requestLayout();
+    @Deprecated
+    public void setHorizontalMargin(int margin) {
+        setHorizontalSpacing(margin);
     }
 
     public int getVerticalSpacing() {
         return this.mLayoutManager.getVerticalSpacing();
     }
 
-    public void setHorizontalSpacing(int spacing) {
-        this.mLayoutManager.setHorizontalSpacing(spacing);
+    public void setVerticalSpacing(int spacing) {
+        this.mLayoutManager.setVerticalSpacing(spacing);
         requestLayout();
     }
 
     public int getHorizontalSpacing() {
         return this.mLayoutManager.getHorizontalSpacing();
+    }
+
+    public void setHorizontalSpacing(int spacing) {
+        this.mLayoutManager.setHorizontalSpacing(spacing);
+        requestLayout();
     }
 
     public void setOnChildLaidOutListener(OnChildLaidOutListener listener) {
@@ -252,10 +237,6 @@ public abstract class BaseGridView extends RecyclerView {
 
     public void removeOnChildViewHolderSelectedListener(OnChildViewHolderSelectedListener listener) {
         this.mLayoutManager.removeOnChildViewHolderSelectedListener(listener);
-    }
-
-    public void setSelectedPosition(int position) {
-        this.mLayoutManager.setSelection(position, 0);
     }
 
     @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
@@ -323,6 +304,10 @@ public abstract class BaseGridView extends RecyclerView {
         return this.mLayoutManager.getSelection();
     }
 
+    public void setSelectedPosition(int position) {
+        this.mLayoutManager.setSelection(position, 0);
+    }
+
     @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
     public int getSelectedSubPosition() {
         return this.mLayoutManager.getSubSelection();
@@ -386,13 +371,13 @@ public abstract class BaseGridView extends RecyclerView {
         this.mLayoutManager.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
     }
 
+    public final boolean isFocusSearchDisabled() {
+        return this.mLayoutManager.isFocusSearchDisabled();
+    }
+
     public final void setFocusSearchDisabled(boolean disabled) {
         setDescendantFocusability(disabled ? 393216 : 262144);
         this.mLayoutManager.setFocusSearchDisabled(disabled);
-    }
-
-    public final boolean isFocusSearchDisabled() {
-        return this.mLayoutManager.isFocusSearchDisabled();
     }
 
     public void setLayoutEnabled(boolean layoutEnabled) {
@@ -407,24 +392,24 @@ public abstract class BaseGridView extends RecyclerView {
         this.mLayoutManager.setPruneChild(pruneChild);
     }
 
-    public void setScrollEnabled(boolean scrollEnabled) {
-        this.mLayoutManager.setScrollEnabled(scrollEnabled);
-    }
-
     public boolean isScrollEnabled() {
         return this.mLayoutManager.isScrollEnabled();
+    }
+
+    public void setScrollEnabled(boolean scrollEnabled) {
+        this.mLayoutManager.setScrollEnabled(scrollEnabled);
     }
 
     public boolean hasPreviousViewInSameRow(int position) {
         return this.mLayoutManager.hasPreviousViewInSameRow(position);
     }
 
-    public void setFocusDrawingOrderEnabled(boolean enabled) {
-        super.setChildrenDrawingOrderEnabled(enabled);
-    }
-
     public boolean isFocusDrawingOrderEnabled() {
         return super.isChildrenDrawingOrderEnabled();
+    }
+
+    public void setFocusDrawingOrderEnabled(boolean enabled) {
+        super.setChildrenDrawingOrderEnabled(enabled);
     }
 
     public void setOnTouchInterceptListener(OnTouchInterceptListener listener) {
@@ -439,12 +424,12 @@ public abstract class BaseGridView extends RecyclerView {
         this.mOnKeyInterceptListener = listener;
     }
 
-    public void setOnUnhandledKeyListener(OnUnhandledKeyListener listener) {
-        this.mOnUnhandledKeyListener = listener;
-    }
-
     public OnUnhandledKeyListener getOnUnhandledKeyListener() {
         return this.mOnUnhandledKeyListener;
+    }
+
+    public void setOnUnhandledKeyListener(OnUnhandledKeyListener listener) {
+        this.mOnUnhandledKeyListener = listener;
     }
 
     public boolean dispatchKeyEvent(KeyEvent event) {
@@ -480,12 +465,12 @@ public abstract class BaseGridView extends RecyclerView {
         return this.mLayoutManager.mChildrenStates.getSavePolicy();
     }
 
-    public final int getSaveChildrenLimitNumber() {
-        return this.mLayoutManager.mChildrenStates.getLimitNumber();
-    }
-
     public final void setSaveChildrenPolicy(int savePolicy) {
         this.mLayoutManager.mChildrenStates.setSavePolicy(savePolicy);
+    }
+
+    public final int getSaveChildrenLimitNumber() {
+        return this.mLayoutManager.mChildrenStates.getLimitNumber();
     }
 
     public final void setSaveChildrenLimitNumber(int limitNumber) {
@@ -509,13 +494,13 @@ public abstract class BaseGridView extends RecyclerView {
     }
 
     @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    public void setExtraLayoutSpace(int extraLayoutSpace) {
-        this.mLayoutManager.setExtraLayoutSpace(extraLayoutSpace);
+    public int getExtraLayoutSpace() {
+        return this.mLayoutManager.getExtraLayoutSpace();
     }
 
     @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    public int getExtraLayoutSpace() {
-        return this.mLayoutManager.getExtraLayoutSpace();
+    public void setExtraLayoutSpace(int extraLayoutSpace) {
+        this.mLayoutManager.setExtraLayoutSpace(extraLayoutSpace);
     }
 
     public void animateOut() {
@@ -542,12 +527,12 @@ public abstract class BaseGridView extends RecyclerView {
         }
     }
 
-    public void setInitialPrefetchItemCount(int itemCount) {
-        this.mInitialPrefetchItemCount = itemCount;
-    }
-
     public int getInitialPrefetchItemCount() {
         return this.mInitialPrefetchItemCount;
+    }
+
+    public void setInitialPrefetchItemCount(int itemCount) {
+        this.mInitialPrefetchItemCount = itemCount;
     }
 
     public void removeView(View view) {
@@ -572,5 +557,21 @@ public abstract class BaseGridView extends RecyclerView {
         if (retainFocusForChild) {
             this.mPrivateFlag ^= -2;
         }
+    }
+
+    public interface OnKeyInterceptListener {
+        boolean onInterceptKeyEvent(KeyEvent keyEvent);
+    }
+
+    public interface OnMotionInterceptListener {
+        boolean onInterceptMotionEvent(MotionEvent motionEvent);
+    }
+
+    public interface OnTouchInterceptListener {
+        boolean onInterceptTouchEvent(MotionEvent motionEvent);
+    }
+
+    public interface OnUnhandledKeyListener {
+        boolean onUnhandledKey(KeyEvent keyEvent);
     }
 }

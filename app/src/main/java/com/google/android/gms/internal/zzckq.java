@@ -9,12 +9,14 @@ import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.internal.ClientSettings;
 import com.google.android.gms.common.internal.zzl;
 import com.google.android.gms.feedback.ErrorReport;
 import com.google.android.gms.feedback.FeedbackOptions;
 import com.google.android.gms.feedback.FileTeleporter;
+
 import java.io.File;
 import java.util.List;
 
@@ -26,33 +28,6 @@ public final class zzckq extends zzl<zzckt> {
     public zzckq(@NonNull Context context, Looper looper, GoogleApiClient.ConnectionCallbacks connectionCallbacks, GoogleApiClient.OnConnectionFailedListener onConnectionFailedListener, ClientSettings clientSettings) {
         super(context, looper, 29, clientSettings, connectionCallbacks, onConnectionFailedListener);
         this.zzc = context;
-    }
-
-    /* access modifiers changed from: protected */
-    public final String getStartServiceAction() {
-        return "com.google.android.gms.feedback.internal.IFeedbackService";
-    }
-
-    /* access modifiers changed from: protected */
-    public final String getServiceDescriptor() {
-        return "com.google.android.gms.feedback.internal.IFeedbackService";
-    }
-
-    @Deprecated
-    public final void zza(FeedbackOptions feedbackOptions) throws RemoteException {
-        ((zzckt) zzag()).zza(zzc(feedbackOptions));
-    }
-
-    public final void zza(@Nullable FeedbackOptions feedbackOptions, long j) throws RemoteException {
-        ((zzckt) zzag()).zza(zzc(feedbackOptions), j);
-    }
-
-    public final void zzb(FeedbackOptions feedbackOptions) throws RemoteException {
-        ((zzckt) zzag()).zzb(zzc(feedbackOptions));
-    }
-
-    private final ErrorReport zzc(FeedbackOptions feedbackOptions) {
-        return zza(feedbackOptions, this.zzc.getCacheDir());
     }
 
     public static ErrorReport zza(FeedbackOptions feedbackOptions, File file) {
@@ -117,6 +92,33 @@ public final class zzckq extends zzl<zzckt> {
                 fileTeleporter.setTempDir(file);
             }
         }
+    }
+
+    /* access modifiers changed from: protected */
+    public final String getStartServiceAction() {
+        return "com.google.android.gms.feedback.internal.IFeedbackService";
+    }
+
+    /* access modifiers changed from: protected */
+    public final String getServiceDescriptor() {
+        return "com.google.android.gms.feedback.internal.IFeedbackService";
+    }
+
+    @Deprecated
+    public final void zza(FeedbackOptions feedbackOptions) throws RemoteException {
+        ((zzckt) zzag()).zza(zzc(feedbackOptions));
+    }
+
+    public final void zza(@Nullable FeedbackOptions feedbackOptions, long j) throws RemoteException {
+        ((zzckt) zzag()).zza(zzc(feedbackOptions), j);
+    }
+
+    public final void zzb(FeedbackOptions feedbackOptions) throws RemoteException {
+        ((zzckt) zzag()).zzb(zzc(feedbackOptions));
+    }
+
+    private final ErrorReport zzc(FeedbackOptions feedbackOptions) {
+        return zza(feedbackOptions, this.zzc.getCacheDir());
     }
 
     /* access modifiers changed from: protected */

@@ -1,12 +1,14 @@
 package com.google.android.tvlauncher.doubleclick;
 
 import android.util.Size;
+
 import com.google.android.exoplayer2.metadata.icy.IcyHeaders;
 import com.google.android.tvlauncher.doubleclick.customcreative.CustomCreativeAdRequest;
 import com.google.android.tvlauncher.doubleclick.customcreative.CustomCreativeAdTagModel;
 import com.google.android.tvlauncher.doubleclick.vast.VastVideoAdRequest;
 import com.google.android.tvlauncher.doubleclick.vast.VastVideoAdTagModel;
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,11 +28,11 @@ class DoubleClickAdRequestFactory {
     private static final String VAST_TARGETING_VALUE = "companion,parameter";
     private static final String VAST_URL = "www.google.com";
 
-    DoubleClickAdRequestFactory() {
-    }
-
     static {
         VAST_TARGETING.put(VAST_TARGETING_KEY, VAST_TARGETING_VALUE);
+    }
+
+    DoubleClickAdRequestFactory() {
     }
 
     /* access modifiers changed from: package-private */

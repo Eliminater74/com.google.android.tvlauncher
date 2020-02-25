@@ -14,11 +14,13 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TabHost;
 import android.widget.TabWidget;
+
 import java.util.ArrayList;
 
 @Deprecated
 /* renamed from: android.support.v4.app.FragmentTabHost */
 public class FragmentTabHost extends TabHost implements TabHost.OnTabChangeListener {
+    private final ArrayList<TabInfo> mTabs = new ArrayList<>();
     private boolean mAttached;
     private int mContainerId;
     private Context mContext;
@@ -26,72 +28,6 @@ public class FragmentTabHost extends TabHost implements TabHost.OnTabChangeListe
     private TabInfo mLastTab;
     private TabHost.OnTabChangeListener mOnTabChangeListener;
     private FrameLayout mRealTabContent;
-    private final ArrayList<TabInfo> mTabs = new ArrayList<>();
-
-    /* renamed from: android.support.v4.app.FragmentTabHost$TabInfo */
-    static final class TabInfo {
-        @Nullable
-        final Bundle args;
-        @NonNull
-        final Class<?> clss;
-        Fragment fragment;
-        @NonNull
-        final String tag;
-
-        TabInfo(@NonNull String _tag, @NonNull Class<?> _class, @Nullable Bundle _args) {
-            this.tag = _tag;
-            this.clss = _class;
-            this.args = _args;
-        }
-    }
-
-    /* renamed from: android.support.v4.app.FragmentTabHost$DummyTabFactory */
-    static class DummyTabFactory implements TabHost.TabContentFactory {
-        private final Context mContext;
-
-        public DummyTabFactory(Context context) {
-            this.mContext = context;
-        }
-
-        public View createTabContent(String tag) {
-            View v = new View(this.mContext);
-            v.setMinimumWidth(0);
-            v.setMinimumHeight(0);
-            return v;
-        }
-    }
-
-    /* renamed from: android.support.v4.app.FragmentTabHost$SavedState */
-    static class SavedState extends View.BaseSavedState {
-        public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.Creator<SavedState>() {
-            public SavedState createFromParcel(Parcel in) {
-                return new SavedState(in);
-            }
-
-            public SavedState[] newArray(int size) {
-                return new SavedState[size];
-            }
-        };
-        String curTab;
-
-        SavedState(Parcelable superState) {
-            super(superState);
-        }
-
-        SavedState(Parcel in) {
-            super(in);
-            this.curTab = in.readString();
-        }
-
-        public void writeToParcel(Parcel out, int flags) {
-            super.writeToParcel(out, flags);
-            out.writeString(this.curTab);
-        }
-
-        public String toString() {
-            return "FragmentTabHost.SavedState{" + Integer.toHexString(System.identityHashCode(this)) + " curTab=" + this.curTab + "}";
-        }
-    }
 
     @Deprecated
     public FragmentTabHost(@NonNull Context context) {
@@ -294,5 +230,70 @@ public class FragmentTabHost extends TabHost implements TabHost.OnTabChangeListe
             }
         }
         return null;
+    }
+
+    /* renamed from: android.support.v4.app.FragmentTabHost$TabInfo */
+    static final class TabInfo {
+        @Nullable
+        final Bundle args;
+        @NonNull
+        final Class<?> clss;
+        @NonNull
+        final String tag;
+        Fragment fragment;
+
+        TabInfo(@NonNull String _tag, @NonNull Class<?> _class, @Nullable Bundle _args) {
+            this.tag = _tag;
+            this.clss = _class;
+            this.args = _args;
+        }
+    }
+
+    /* renamed from: android.support.v4.app.FragmentTabHost$DummyTabFactory */
+    static class DummyTabFactory implements TabHost.TabContentFactory {
+        private final Context mContext;
+
+        public DummyTabFactory(Context context) {
+            this.mContext = context;
+        }
+
+        public View createTabContent(String tag) {
+            View v = new View(this.mContext);
+            v.setMinimumWidth(0);
+            v.setMinimumHeight(0);
+            return v;
+        }
+    }
+
+    /* renamed from: android.support.v4.app.FragmentTabHost$SavedState */
+    static class SavedState extends View.BaseSavedState {
+        public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.Creator<SavedState>() {
+            public SavedState createFromParcel(Parcel in) {
+                return new SavedState(in);
+            }
+
+            public SavedState[] newArray(int size) {
+                return new SavedState[size];
+            }
+        };
+        String curTab;
+
+        SavedState(Parcelable superState) {
+            super(superState);
+        }
+
+        SavedState(Parcel in) {
+            super(in);
+            this.curTab = in.readString();
+        }
+
+        public void writeToParcel(Parcel out, int flags) {
+            super.writeToParcel(out, flags);
+            out.writeString(this.curTab);
+        }
+
+        public String toString() {
+            return "FragmentTabHost.SavedState{" + Integer.toHexString(System.identityHashCode(this)) + " curTab=" + this.curTab + "}";
+        }
     }
 }

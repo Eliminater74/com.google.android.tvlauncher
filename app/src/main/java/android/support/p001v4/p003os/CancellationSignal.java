@@ -10,11 +10,6 @@ public final class CancellationSignal {
     private boolean mIsCanceled;
     private OnCancelListener mOnCancelListener;
 
-    /* renamed from: android.support.v4.os.CancellationSignal$OnCancelListener */
-    public interface OnCancelListener {
-        void onCancel();
-    }
-
     public boolean isCanceled() {
         boolean z;
         synchronized (this) {
@@ -169,5 +164,10 @@ public final class CancellationSignal {
             } catch (InterruptedException e) {
             }
         }
+    }
+
+    /* renamed from: android.support.v4.os.CancellationSignal$OnCancelListener */
+    public interface OnCancelListener {
+        void onCancel();
     }
 }

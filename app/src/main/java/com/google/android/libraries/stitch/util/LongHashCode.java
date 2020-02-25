@@ -1,6 +1,9 @@
 package com.google.android.libraries.stitch.util;
 
 public final class LongHashCode {
+    private LongHashCode() {
+    }
+
     public static String hashCode(String string) {
         long code = 1125899906842597L;
         int i = string.length();
@@ -11,8 +14,5 @@ public final class LongHashCode {
             }
             code = (31 * code) + ((long) string.charAt(i));
         }
-    }
-
-    private LongHashCode() {
     }
 }

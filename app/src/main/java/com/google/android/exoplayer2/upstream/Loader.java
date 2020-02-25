@@ -6,11 +6,13 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.TraceUtil;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.IOException;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -18,20 +20,77 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.concurrent.ExecutorService;
 
 public final class Loader implements LoaderErrorThrower {
-    private static final int ACTION_TYPE_DONT_RETRY = 2;
-    private static final int ACTION_TYPE_DONT_RETRY_FATAL = 3;
-    private static final int ACTION_TYPE_RETRY = 0;
-    private static final int ACTION_TYPE_RETRY_AND_RESET_ERROR_COUNT = 1;
     public static final LoadErrorAction DONT_RETRY = new LoadErrorAction(2, C0841C.TIME_UNSET);
     public static final LoadErrorAction DONT_RETRY_FATAL = new LoadErrorAction(3, C0841C.TIME_UNSET);
     public static final LoadErrorAction RETRY = createRetryAction(false, C0841C.TIME_UNSET);
     public static final LoadErrorAction RETRY_RESET_ERROR_COUNT = createRetryAction(true, C0841C.TIME_UNSET);
-    /* access modifiers changed from: private */
-    public LoadTask<? extends Loadable> currentTask;
+    private static final int ACTION_TYPE_DONT_RETRY = 2;
+    private static final int ACTION_TYPE_DONT_RETRY_FATAL = 3;
+    private static final int ACTION_TYPE_RETRY = 0;
+    private static final int ACTION_TYPE_RETRY_AND_RESET_ERROR_COUNT = 1;
     /* access modifiers changed from: private */
     public final ExecutorService downloadExecutorService;
     /* access modifiers changed from: private */
+    public LoadTask<? extends Loadable> currentTask;
+    /* access modifiers changed from: private */
     public IOException fatalError;
+
+    public Loader(String threadName) {
+        this.downloadExecutorService = Util.newSingleThreadExecutor(threadName);
+    }
+
+    public static LoadErrorAction createRetryAction(boolean resetErrorCount, long retryDelayMillis) {
+        return new LoadErrorAction(resetErrorCount, retryDelayMillis);
+    }
+
+    public <T extends Loadable> long startLoading(T loadable, Callback<T> callback, int defaultMinRetryCount) {
+        Looper looper = Looper.myLooper();
+        Assertions.checkState(looper != null);
+        this.fatalError = null;
+        long startTimeMs = SystemClock.elapsedRealtime();
+        new LoadTask(looper, loadable, callback, defaultMinRetryCount, startTimeMs).start(0);
+        return startTimeMs;
+    }
+
+    public boolean isLoading() {
+        return this.currentTask != null;
+    }
+
+    public void cancelLoading() {
+        this.currentTask.cancel(false);
+    }
+
+    public void release() {
+        release(null);
+    }
+
+    public void release(@Nullable ReleaseCallback callback) {
+        LoadTask<? extends Loadable> loadTask = this.currentTask;
+        if (loadTask != null) {
+            loadTask.cancel(true);
+        }
+        if (callback != null) {
+            this.downloadExecutorService.execute(new ReleaseTask(callback));
+        }
+        this.downloadExecutorService.shutdown();
+    }
+
+    public void maybeThrowError() throws IOException {
+        maybeThrowError(Integer.MIN_VALUE);
+    }
+
+    public void maybeThrowError(int minRetryCount) throws IOException {
+        IOException iOException = this.fatalError;
+        if (iOException == null) {
+            LoadTask<? extends Loadable> loadTask = this.currentTask;
+            if (loadTask != null) {
+                loadTask.maybeThrowError(minRetryCount == Integer.MIN_VALUE ? loadTask.defaultMinRetryCount : minRetryCount);
+                return;
+            }
+            return;
+        }
+        throw iOException;
+    }
 
     public interface Callback<T extends Loadable> {
         void onLoadCanceled(Loadable loadable, long j, long j2, boolean z);
@@ -104,61 +163,16 @@ public final class Loader implements LoaderErrorThrower {
         }
     }
 
-    public Loader(String threadName) {
-        this.downloadExecutorService = Util.newSingleThreadExecutor(threadName);
-    }
+    private static final class ReleaseTask implements Runnable {
+        private final ReleaseCallback callback;
 
-    public static LoadErrorAction createRetryAction(boolean resetErrorCount, long retryDelayMillis) {
-        return new LoadErrorAction(resetErrorCount, retryDelayMillis);
-    }
-
-    public <T extends Loadable> long startLoading(T loadable, Callback<T> callback, int defaultMinRetryCount) {
-        Looper looper = Looper.myLooper();
-        Assertions.checkState(looper != null);
-        this.fatalError = null;
-        long startTimeMs = SystemClock.elapsedRealtime();
-        new LoadTask(looper, loadable, callback, defaultMinRetryCount, startTimeMs).start(0);
-        return startTimeMs;
-    }
-
-    public boolean isLoading() {
-        return this.currentTask != null;
-    }
-
-    public void cancelLoading() {
-        this.currentTask.cancel(false);
-    }
-
-    public void release() {
-        release(null);
-    }
-
-    public void release(@Nullable ReleaseCallback callback) {
-        LoadTask<? extends Loadable> loadTask = this.currentTask;
-        if (loadTask != null) {
-            loadTask.cancel(true);
+        public ReleaseTask(ReleaseCallback callback2) {
+            this.callback = callback2;
         }
-        if (callback != null) {
-            this.downloadExecutorService.execute(new ReleaseTask(callback));
-        }
-        this.downloadExecutorService.shutdown();
-    }
 
-    public void maybeThrowError() throws IOException {
-        maybeThrowError(Integer.MIN_VALUE);
-    }
-
-    public void maybeThrowError(int minRetryCount) throws IOException {
-        IOException iOException = this.fatalError;
-        if (iOException == null) {
-            LoadTask<? extends Loadable> loadTask = this.currentTask;
-            if (loadTask != null) {
-                loadTask.maybeThrowError(minRetryCount == Integer.MIN_VALUE ? loadTask.defaultMinRetryCount : minRetryCount);
-                return;
-            }
-            return;
+        public void run() {
+            this.callback.onLoaderReleased();
         }
-        throw iOException;
     }
 
     @SuppressLint({"HandlerLeak"})
@@ -169,16 +183,16 @@ public final class Loader implements LoaderErrorThrower {
         private static final int MSG_IO_EXCEPTION = 3;
         private static final int MSG_START = 0;
         private static final String TAG = "LoadTask";
+        public final int defaultMinRetryCount;
+        private final T loadable;
+        private final long startTimeMs;
         @Nullable
         private Callback<T> callback;
         private volatile boolean canceled;
         private IOException currentError;
-        public final int defaultMinRetryCount;
         private int errorCount;
         private volatile Thread executorThread;
-        private final T loadable;
         private volatile boolean released;
-        private final long startTimeMs;
 
         public LoadTask(Looper looper, T loadable2, Callback<T> callback2, int defaultMinRetryCount2, long startTimeMs2) {
             super(looper);
@@ -330,18 +344,6 @@ public final class Loader implements LoaderErrorThrower {
 
         private long getRetryDelayMillis() {
             return (long) Math.min((this.errorCount - 1) * 1000, 5000);
-        }
-    }
-
-    private static final class ReleaseTask implements Runnable {
-        private final ReleaseCallback callback;
-
-        public ReleaseTask(ReleaseCallback callback2) {
-            this.callback = callback2;
-        }
-
-        public void run() {
-            this.callback.onLoaderReleased();
         }
     }
 }

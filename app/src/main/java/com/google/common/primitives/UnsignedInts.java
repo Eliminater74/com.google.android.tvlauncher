@@ -4,6 +4,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -82,24 +83,6 @@ public final class UnsignedInts {
 
     public static Comparator<int[]> lexicographicalComparator() {
         return LexicographicalComparator.INSTANCE;
-    }
-
-    enum LexicographicalComparator implements Comparator<int[]> {
-        INSTANCE;
-
-        public int compare(int[] left, int[] right) {
-            int minLength = Math.min(left.length, right.length);
-            for (int i = 0; i < minLength; i++) {
-                if (left[i] != right[i]) {
-                    return UnsignedInts.compare(left[i], right[i]);
-                }
-            }
-            return left.length - right.length;
-        }
-
-        public String toString() {
-            return "UnsignedInts.lexicographicalComparator()";
-        }
     }
 
     public static void sort(int[] array) {
@@ -184,5 +167,23 @@ public final class UnsignedInts {
 
     public static String toString(int x, int radix) {
         return Long.toString(((long) x) & INT_MASK, radix);
+    }
+
+    enum LexicographicalComparator implements Comparator<int[]> {
+        INSTANCE;
+
+        public int compare(int[] left, int[] right) {
+            int minLength = Math.min(left.length, right.length);
+            for (int i = 0; i < minLength; i++) {
+                if (left[i] != right[i]) {
+                    return UnsignedInts.compare(left[i], right[i]);
+                }
+            }
+            return left.length - right.length;
+        }
+
+        public String toString() {
+            return "UnsignedInts.lexicographicalComparator()";
+        }
     }
 }

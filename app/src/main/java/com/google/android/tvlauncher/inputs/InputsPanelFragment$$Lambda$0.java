@@ -1,7 +1,5 @@
 package com.google.android.tvlauncher.inputs;
 
-import com.google.android.tvlauncher.inputs.InputPreference;
-
 final /* synthetic */ class InputsPanelFragment$$Lambda$0 implements InputPreference.OnPreferenceFocusedListener {
     private final InputsPanelFragment arg$1;
 

@@ -6,9 +6,9 @@ import java.util.Map;
 
 final class PreFillQueue {
     private final Map<PreFillType, Integer> bitmapsPerType;
+    private final List<PreFillType> keyList;
     private int bitmapsRemaining;
     private int keyIndex;
-    private final List<PreFillType> keyList;
 
     public PreFillQueue(Map<PreFillType, Integer> bitmapsPerType2) {
         this.bitmapsPerType = bitmapsPerType2;

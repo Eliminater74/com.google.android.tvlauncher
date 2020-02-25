@@ -5,12 +5,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.VisibleForTesting;
 import android.util.Pair;
+
 import com.google.android.tvlauncher.C1188R;
 import com.google.android.tvlauncher.appsview.LaunchItem;
-import com.google.android.tvlauncher.appsview.data.LaunchItemsManager;
 import com.google.android.tvlauncher.settings.FavoriteLaunchItemsActivity;
 import com.google.android.tvlauncher.util.OemConfiguration;
 import com.google.android.tvlauncher.util.Util;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -26,39 +27,17 @@ public class FavoriteLaunchItemsManager implements LaunchItemsManager.AppsViewCh
     private static final String MORE_FAVORITES_PKGNAME = "com.google.android.tvlauncher.appsview.FavoriteItemsManager.MORE_FAVORITES_PKGNAME";
     private static final String PREF_FILE_NAME = "com.google.android.tvlauncher.appsview.FavoriteItemsManager.PREFERENCE_KEY";
     private static final String USER_CUSTOMIZATION_KEY = "com.google.android.tvlauncher.appsview.FavoriteItemsManager.USER_CUSTOMIZATION_KEY";
-    private final Context mContext;
-    private boolean mCustomizedByUser;
-    private final Map<String, Integer> mDefaultItemsOrder = new HashMap();
     /* access modifiers changed from: private */
     public final Map<LaunchItem, Integer> mFavoriteItemsToDesiredPosition = new HashMap();
-    private LaunchItemsManager.HomeScreenItemsChangeListener mHomeScreenItemsChangeListener;
+    private final Context mContext;
+    private final Map<String, Integer> mDefaultItemsOrder = new HashMap();
     private final LaunchItem mMoreFavoritesItem;
     private final SharedPreferences mPackageNamePrefs;
+    private final SharedPreferences mUserCustomizationPref;
+    private boolean mCustomizedByUser;
+    private LaunchItemsManager.HomeScreenItemsChangeListener mHomeScreenItemsChangeListener;
     private Map<String, Integer> mPinnedAppPackagesToPosition;
     private LaunchItem[] mPinnedItems;
-    private final SharedPreferences mUserCustomizationPref;
-
-    private class LaunchItemUserOrderComparator implements Comparator<LaunchItem> {
-        private LaunchItemUserOrderComparator() {
-        }
-
-        public int compare(LaunchItem o1, LaunchItem o2) {
-            if (o1 == null || o2 == null) {
-                return 0;
-            }
-            Integer o1Index = (Integer) FavoriteLaunchItemsManager.this.mFavoriteItemsToDesiredPosition.get(o1);
-            Integer o2Index = (Integer) FavoriteLaunchItemsManager.this.mFavoriteItemsToDesiredPosition.get(o2);
-            Integer o1Index2 = Integer.valueOf(o1Index == null ? FavoriteLaunchItemsManager.this.mFavoriteItemsToDesiredPosition.keySet().size() : o1Index.intValue());
-            Integer o2Index2 = Integer.valueOf(o2Index == null ? FavoriteLaunchItemsManager.this.mFavoriteItemsToDesiredPosition.keySet().size() : o2Index.intValue());
-            if (o1Index2.intValue() < o2Index2.intValue()) {
-                return -1;
-            }
-            if (o1Index2.intValue() > o2Index2.intValue()) {
-                return 1;
-            }
-            return o1.compareTo(o2);
-        }
-    }
 
     FavoriteLaunchItemsManager(Context context) {
         this.mPackageNamePrefs = context.getSharedPreferences(PREF_FILE_NAME, 0);
@@ -66,6 +45,14 @@ public class FavoriteLaunchItemsManager implements LaunchItemsManager.AppsViewCh
         this.mContext = context;
         this.mMoreFavoritesItem = createMoreFavoritesLaunchItem(this.mContext.getString(C1188R.string.favorite_more_apps), new Intent(this.mContext, FavoriteLaunchItemsActivity.class));
         this.mCustomizedByUser = this.mUserCustomizationPref.getBoolean(USER_CUSTOMIZATION_KEY, false);
+    }
+
+    private static LaunchItem createMoreFavoritesLaunchItem(CharSequence appLabel, Intent intent) {
+        LaunchItem item = new LaunchItem();
+        item.setLabel(appLabel);
+        item.setPackageName(MORE_FAVORITES_PKGNAME);
+        item.setIntent(intent);
+        return item;
     }
 
     /* access modifiers changed from: package-private */
@@ -328,11 +315,25 @@ public class FavoriteLaunchItemsManager implements LaunchItemsManager.AppsViewCh
         }
     }
 
-    private static LaunchItem createMoreFavoritesLaunchItem(CharSequence appLabel, Intent intent) {
-        LaunchItem item = new LaunchItem();
-        item.setLabel(appLabel);
-        item.setPackageName(MORE_FAVORITES_PKGNAME);
-        item.setIntent(intent);
-        return item;
+    private class LaunchItemUserOrderComparator implements Comparator<LaunchItem> {
+        private LaunchItemUserOrderComparator() {
+        }
+
+        public int compare(LaunchItem o1, LaunchItem o2) {
+            if (o1 == null || o2 == null) {
+                return 0;
+            }
+            Integer o1Index = (Integer) FavoriteLaunchItemsManager.this.mFavoriteItemsToDesiredPosition.get(o1);
+            Integer o2Index = (Integer) FavoriteLaunchItemsManager.this.mFavoriteItemsToDesiredPosition.get(o2);
+            Integer o1Index2 = Integer.valueOf(o1Index == null ? FavoriteLaunchItemsManager.this.mFavoriteItemsToDesiredPosition.keySet().size() : o1Index.intValue());
+            Integer o2Index2 = Integer.valueOf(o2Index == null ? FavoriteLaunchItemsManager.this.mFavoriteItemsToDesiredPosition.keySet().size() : o2Index.intValue());
+            if (o1Index2.intValue() < o2Index2.intValue()) {
+                return -1;
+            }
+            if (o1Index2.intValue() > o2Index2.intValue()) {
+                return 1;
+            }
+            return o1.compareTo(o2);
+        }
     }
 }

@@ -5,34 +5,24 @@ import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /* renamed from: com.google.android.exoplayer2.ui.AspectRatioFrameLayout */
 public final class AspectRatioFrameLayout extends FrameLayout {
-    private static final float MAX_ASPECT_RATIO_DEFORMATION_FRACTION = 0.01f;
     public static final int RESIZE_MODE_FILL = 3;
     public static final int RESIZE_MODE_FIT = 0;
     public static final int RESIZE_MODE_FIXED_HEIGHT = 2;
     public static final int RESIZE_MODE_FIXED_WIDTH = 1;
     public static final int RESIZE_MODE_ZOOM = 4;
+    private static final float MAX_ASPECT_RATIO_DEFORMATION_FRACTION = 0.01f;
+    private final AspectRatioUpdateDispatcher aspectRatioUpdateDispatcher;
     /* access modifiers changed from: private */
     public AspectRatioListener aspectRatioListener;
-    private final AspectRatioUpdateDispatcher aspectRatioUpdateDispatcher;
     private int resizeMode;
     private float videoAspectRatio;
-
-    /* renamed from: com.google.android.exoplayer2.ui.AspectRatioFrameLayout$AspectRatioListener */
-    public interface AspectRatioListener {
-        void onAspectRatioUpdated(float f, float f2, boolean z);
-    }
-
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    /* renamed from: com.google.android.exoplayer2.ui.AspectRatioFrameLayout$ResizeMode */
-    public @interface ResizeMode {
-    }
 
     public AspectRatioFrameLayout(Context context) {
         this(context, null);
@@ -107,6 +97,17 @@ public final class AspectRatioFrameLayout extends FrameLayout {
             this.aspectRatioUpdateDispatcher.scheduleUpdate(this.videoAspectRatio, viewAspectRatio, true);
             super.onMeasure(View.MeasureSpec.makeMeasureSpec(width, 1073741824), View.MeasureSpec.makeMeasureSpec(height, 1073741824));
         }
+    }
+
+    /* renamed from: com.google.android.exoplayer2.ui.AspectRatioFrameLayout$AspectRatioListener */
+    public interface AspectRatioListener {
+        void onAspectRatioUpdated(float f, float f2, boolean z);
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    /* renamed from: com.google.android.exoplayer2.ui.AspectRatioFrameLayout$ResizeMode */
+    public @interface ResizeMode {
     }
 
     /* renamed from: com.google.android.exoplayer2.ui.AspectRatioFrameLayout$AspectRatioUpdateDispatcher */

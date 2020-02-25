@@ -1,6 +1,7 @@
 package com.google.android.exoplayer2.upstream.cache;
 
 import android.support.annotation.Nullable;
+
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.Arrays;
@@ -12,8 +13,8 @@ import java.util.Set;
 
 public final class DefaultContentMetadata implements ContentMetadata {
     public static final DefaultContentMetadata EMPTY = new DefaultContentMetadata(Collections.emptyMap());
-    private int hashCode;
     private final Map<String, byte[]> metadata;
+    private int hashCode;
 
     public DefaultContentMetadata() {
         this(Collections.emptyMap());
@@ -21,6 +22,50 @@ public final class DefaultContentMetadata implements ContentMetadata {
 
     public DefaultContentMetadata(Map<String, byte[]> metadata2) {
         this.metadata = Collections.unmodifiableMap(metadata2);
+    }
+
+    private static boolean isMetadataEqual(Map<String, byte[]> first, Map<String, byte[]> second) {
+        if (first.size() != second.size()) {
+            return false;
+        }
+        for (Map.Entry<String, byte[]> entry : first.entrySet()) {
+            if (!Arrays.equals((byte[]) entry.getValue(), second.get(entry.getKey()))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static Map<String, byte[]> applyMutations(Map<String, byte[]> otherMetadata, ContentMetadataMutations mutations) {
+        HashMap<String, byte[]> metadata2 = new HashMap<>(otherMetadata);
+        removeValues(metadata2, mutations.getRemovedValues());
+        addValues(metadata2, mutations.getEditedValues());
+        return metadata2;
+    }
+
+    private static void removeValues(HashMap<String, byte[]> metadata2, List<String> names) {
+        for (int i = 0; i < names.size(); i++) {
+            metadata2.remove(names.get(i));
+        }
+    }
+
+    private static void addValues(HashMap<String, byte[]> metadata2, Map<String, Object> values) {
+        for (String name : values.keySet()) {
+            metadata2.put(name, getBytes(values.get(name)));
+        }
+    }
+
+    private static byte[] getBytes(Object value) {
+        if (value instanceof Long) {
+            return ByteBuffer.allocate(8).putLong(((Long) value).longValue()).array();
+        }
+        if (value instanceof String) {
+            return ((String) value).getBytes(Charset.forName("UTF-8"));
+        }
+        if (value instanceof byte[]) {
+            return (byte[]) value;
+        }
+        throw new IllegalArgumentException();
     }
 
     public DefaultContentMetadata copyWithMutationsApplied(ContentMetadataMutations mutations) {
@@ -82,49 +127,5 @@ public final class DefaultContentMetadata implements ContentMetadata {
             this.hashCode = result;
         }
         return this.hashCode;
-    }
-
-    private static boolean isMetadataEqual(Map<String, byte[]> first, Map<String, byte[]> second) {
-        if (first.size() != second.size()) {
-            return false;
-        }
-        for (Map.Entry<String, byte[]> entry : first.entrySet()) {
-            if (!Arrays.equals((byte[]) entry.getValue(), second.get(entry.getKey()))) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private static Map<String, byte[]> applyMutations(Map<String, byte[]> otherMetadata, ContentMetadataMutations mutations) {
-        HashMap<String, byte[]> metadata2 = new HashMap<>(otherMetadata);
-        removeValues(metadata2, mutations.getRemovedValues());
-        addValues(metadata2, mutations.getEditedValues());
-        return metadata2;
-    }
-
-    private static void removeValues(HashMap<String, byte[]> metadata2, List<String> names) {
-        for (int i = 0; i < names.size(); i++) {
-            metadata2.remove(names.get(i));
-        }
-    }
-
-    private static void addValues(HashMap<String, byte[]> metadata2, Map<String, Object> values) {
-        for (String name : values.keySet()) {
-            metadata2.put(name, getBytes(values.get(name)));
-        }
-    }
-
-    private static byte[] getBytes(Object value) {
-        if (value instanceof Long) {
-            return ByteBuffer.allocate(8).putLong(((Long) value).longValue()).array();
-        }
-        if (value instanceof String) {
-            return ((String) value).getBytes(Charset.forName("UTF-8"));
-        }
-        if (value instanceof byte[]) {
-            return (byte[]) value;
-        }
-        throw new IllegalArgumentException();
     }
 }

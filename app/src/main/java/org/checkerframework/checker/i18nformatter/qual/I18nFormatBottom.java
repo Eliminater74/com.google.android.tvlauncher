@@ -1,13 +1,14 @@
 package org.checkerframework.checker.i18nformatter.qual;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Target;
 import org.checkerframework.framework.qual.DefaultFor;
 import org.checkerframework.framework.qual.ImplicitFor;
 import org.checkerframework.framework.qual.LiteralKind;
 import org.checkerframework.framework.qual.SubtypeOf;
 import org.checkerframework.framework.qual.TargetLocations;
 import org.checkerframework.framework.qual.TypeUseLocation;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Target;
 
 @DefaultFor({TypeUseLocation.LOWER_BOUND})
 @SubtypeOf({I18nFormat.class, I18nInvalidFormat.class, I18nFormatFor.class})

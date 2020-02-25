@@ -1,7 +1,5 @@
 package com.google.android.exoplayer2.upstream;
 
-import com.google.android.exoplayer2.upstream.DataSource;
-
 final /* synthetic */ class DummyDataSource$$Lambda$0 implements DataSource.Factory {
     static final DataSource.Factory $instance = new DummyDataSource$$Lambda$0();
 

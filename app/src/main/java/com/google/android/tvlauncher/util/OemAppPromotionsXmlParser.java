@@ -6,7 +6,13 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
+
 import com.google.android.tvlauncher.C1188R;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -16,9 +22,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-import org.xmlpull.v1.XmlPullParserFactory;
 
 class OemAppPromotionsXmlParser {
     private static final String APP_PROMOTION_TAG = "app";
@@ -94,60 +97,6 @@ class OemAppPromotionsXmlParser {
     OemAppPromotionsXmlParser() {
     }
 
-    static class PromotionsData {
-        private HashSet<OemPromotionApp> mDedupeCheckSet = new HashSet<>();
-        private List<OemPromotionApp> mPromotions = new ArrayList();
-        private String mRowTitle;
-
-        PromotionsData() {
-        }
-
-        /* access modifiers changed from: package-private */
-        public void setRowTitle(String title) {
-            this.mRowTitle = title;
-        }
-
-        /* access modifiers changed from: package-private */
-        public String getRowTitle() {
-            return this.mRowTitle;
-        }
-
-        /* access modifiers changed from: package-private */
-        public void add(OemPromotionApp promotion) {
-            if (!this.mDedupeCheckSet.contains(promotion)) {
-                this.mPromotions.add(promotion);
-                this.mDedupeCheckSet.add(promotion);
-            }
-        }
-
-        /* access modifiers changed from: package-private */
-        public List<OemPromotionApp> getPromotions() {
-            return this.mPromotions;
-        }
-
-        /* access modifiers changed from: package-private */
-        public int size() {
-            return this.mPromotions.size();
-        }
-    }
-
-    private static class ParentPromotion {
-        private OemPromotionApp mPromotion;
-
-        private ParentPromotion() {
-        }
-
-        /* access modifiers changed from: package-private */
-        public OemPromotionApp getPromotion() {
-            return this.mPromotion;
-        }
-
-        /* access modifiers changed from: package-private */
-        public void setPromotion(OemPromotionApp promotion) {
-            this.mPromotion = promotion;
-        }
-    }
-
     static OemAppPromotionsXmlParser getInstance(Context context) {
         if (sOemAppPromotionsXmlParser == null) {
             synchronized (OemAppPromotionsXmlParser.class) {
@@ -158,40 +107,6 @@ class OemAppPromotionsXmlParser {
             }
         }
         return sOemAppPromotionsXmlParser;
-    }
-
-    /* access modifiers changed from: package-private */
-    public PromotionsData parse(@NonNull InputStream inputStream) {
-        PromotionsData promotions = new PromotionsData();
-        try {
-            XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
-            parser.setInput(new InputStreamReader(inputStream));
-            ArrayDeque<String> startTags = new ArrayDeque<>(2);
-            int eventType = parser.getEventType();
-            boolean error = false;
-            ParentPromotion parentPromotion = new ParentPromotion();
-            while (!error && eventType != 1) {
-                if (eventType != 0) {
-                    if (eventType == 2) {
-                        startTags.push(parser.getName());
-                        if (!parseTag(parser, promotions, parentPromotion)) {
-                            error = true;
-                        }
-                    } else if (eventType == 3) {
-                        if (startTags.isEmpty()) {
-                            throw new XmlPullParserException("end tag without start tag");
-                        } else if (!TextUtils.equals((String) startTags.pop(), parser.getName())) {
-                            throw new XmlPullParserException("start and end tags don't match");
-                        }
-                    }
-                }
-                eventType = parser.next();
-            }
-            return promotions;
-        } catch (IOException | XmlPullParserException e) {
-            Log.e(TAG, "Error parsing configuration file", e);
-            return null;
-        }
     }
 
     /* JADX INFO: Multiple debug info for r4v5 com.google.android.tvlauncher.util.OemPromotionApp: [D('title' java.lang.String), D('parent' com.google.android.tvlauncher.util.OemPromotionApp)] */
@@ -505,5 +420,93 @@ class OemAppPromotionsXmlParser {
         sCategoryMap.put(CATEGORY_KEY_STRATEGY_GAMES, context.getString(C1188R.string.category_strategy_games));
         sCategoryMap.put(CATEGORY_KEY_TRIVIA_GAMES, context.getString(C1188R.string.category_trivia_games));
         sCategoryMap.put(CATEGORY_KEY_WORD_GAMES, context.getString(C1188R.string.category_word_games));
+    }
+
+    /* access modifiers changed from: package-private */
+    public PromotionsData parse(@NonNull InputStream inputStream) {
+        PromotionsData promotions = new PromotionsData();
+        try {
+            XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
+            parser.setInput(new InputStreamReader(inputStream));
+            ArrayDeque<String> startTags = new ArrayDeque<>(2);
+            int eventType = parser.getEventType();
+            boolean error = false;
+            ParentPromotion parentPromotion = new ParentPromotion();
+            while (!error && eventType != 1) {
+                if (eventType != 0) {
+                    if (eventType == 2) {
+                        startTags.push(parser.getName());
+                        if (!parseTag(parser, promotions, parentPromotion)) {
+                            error = true;
+                        }
+                    } else if (eventType == 3) {
+                        if (startTags.isEmpty()) {
+                            throw new XmlPullParserException("end tag without start tag");
+                        } else if (!TextUtils.equals((String) startTags.pop(), parser.getName())) {
+                            throw new XmlPullParserException("start and end tags don't match");
+                        }
+                    }
+                }
+                eventType = parser.next();
+            }
+            return promotions;
+        } catch (IOException | XmlPullParserException e) {
+            Log.e(TAG, "Error parsing configuration file", e);
+            return null;
+        }
+    }
+
+    static class PromotionsData {
+        private HashSet<OemPromotionApp> mDedupeCheckSet = new HashSet<>();
+        private List<OemPromotionApp> mPromotions = new ArrayList();
+        private String mRowTitle;
+
+        PromotionsData() {
+        }
+
+        /* access modifiers changed from: package-private */
+        public String getRowTitle() {
+            return this.mRowTitle;
+        }
+
+        /* access modifiers changed from: package-private */
+        public void setRowTitle(String title) {
+            this.mRowTitle = title;
+        }
+
+        /* access modifiers changed from: package-private */
+        public void add(OemPromotionApp promotion) {
+            if (!this.mDedupeCheckSet.contains(promotion)) {
+                this.mPromotions.add(promotion);
+                this.mDedupeCheckSet.add(promotion);
+            }
+        }
+
+        /* access modifiers changed from: package-private */
+        public List<OemPromotionApp> getPromotions() {
+            return this.mPromotions;
+        }
+
+        /* access modifiers changed from: package-private */
+        public int size() {
+            return this.mPromotions.size();
+        }
+    }
+
+    private static class ParentPromotion {
+        private OemPromotionApp mPromotion;
+
+        private ParentPromotion() {
+        }
+
+        /* access modifiers changed from: package-private */
+        public OemPromotionApp getPromotion() {
+            return this.mPromotion;
+        }
+
+        /* access modifiers changed from: package-private */
+        public void setPromotion(OemPromotionApp promotion) {
+            this.mPromotion = promotion;
+        }
     }
 }

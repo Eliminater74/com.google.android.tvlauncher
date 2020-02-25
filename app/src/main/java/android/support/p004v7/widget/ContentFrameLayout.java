@@ -13,21 +13,14 @@ import android.widget.FrameLayout;
 @RestrictTo({RestrictTo.Scope.LIBRARY})
 /* renamed from: android.support.v7.widget.ContentFrameLayout */
 public class ContentFrameLayout extends FrameLayout {
-    private OnAttachListener mAttachListener;
     private final Rect mDecorPadding;
+    private OnAttachListener mAttachListener;
     private TypedValue mFixedHeightMajor;
     private TypedValue mFixedHeightMinor;
     private TypedValue mFixedWidthMajor;
     private TypedValue mFixedWidthMinor;
     private TypedValue mMinWidthMajor;
     private TypedValue mMinWidthMinor;
-
-    /* renamed from: android.support.v7.widget.ContentFrameLayout$OnAttachListener */
-    public interface OnAttachListener {
-        void onAttachedFromWindow();
-
-        void onDetachedFromWindow();
-    }
 
     public ContentFrameLayout(Context context) {
         this(context, null);
@@ -180,5 +173,12 @@ public class ContentFrameLayout extends FrameLayout {
         if (onAttachListener != null) {
             onAttachListener.onDetachedFromWindow();
         }
+    }
+
+    /* renamed from: android.support.v7.widget.ContentFrameLayout$OnAttachListener */
+    public interface OnAttachListener {
+        void onAttachedFromWindow();
+
+        void onDetachedFromWindow();
     }
 }

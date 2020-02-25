@@ -1,10 +1,12 @@
 package com.google.android.gms.common.api.internal;
 
 import android.support.annotation.WorkerThread;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.Api;
 import com.google.android.gms.common.internal.BaseGmsClient;
 import com.google.android.gms.common.internal.zzv;
+
 import java.util.ArrayList;
 import java.util.Map;
 

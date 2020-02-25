@@ -1,25 +1,26 @@
 package com.google.common.collect;
 
 import com.google.common.annotations.GwtCompatible;
-import com.google.common.collect.AbstractMapBasedMultimap;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.NavigableSet;
 import java.util.SortedSet;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible
 abstract class AbstractSortedSetMultimap<K, V> extends AbstractSetMultimap<K, V> implements SortedSetMultimap<K, V> {
     private static final long serialVersionUID = 430848587173315748L;
 
-    /* access modifiers changed from: package-private */
-    public abstract SortedSet<V> createCollection();
-
     protected AbstractSortedSetMultimap(Map<K, Collection<V>> map) {
         super(map);
     }
+
+    /* access modifiers changed from: package-private */
+    public abstract SortedSet<V> createCollection();
 
     /* access modifiers changed from: package-private */
     public SortedSet<V> createUnmodifiableEmptyCollection() {

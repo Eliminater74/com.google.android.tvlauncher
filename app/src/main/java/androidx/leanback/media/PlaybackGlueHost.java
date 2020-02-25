@@ -1,6 +1,7 @@
 package androidx.leanback.media;
 
 import android.view.View;
+
 import androidx.leanback.widget.OnActionClickedListener;
 import androidx.leanback.widget.PlaybackRowPresenter;
 import androidx.leanback.widget.Row;
@@ -8,44 +9,16 @@ import androidx.leanback.widget.Row;
 public abstract class PlaybackGlueHost {
     PlaybackGlue mGlue;
 
-    public static abstract class HostCallback {
-        public void onHostStart() {
-        }
-
-        public void onHostStop() {
-        }
-
-        public void onHostPause() {
-        }
-
-        public void onHostResume() {
-        }
-
-        public void onHostDestroy() {
-        }
-    }
-
-    public static class PlayerCallback {
-        public void onVideoSizeChanged(int videoWidth, int videoHeight) {
-        }
-
-        public void onBufferingStateChanged(boolean start) {
-        }
-
-        public void onError(int errorCode, CharSequence errorMessage) {
-        }
-    }
-
     @Deprecated
     public void setFadingEnabled(boolean enable) {
     }
 
-    public void setControlsOverlayAutoHideEnabled(boolean enabled) {
-        setFadingEnabled(enabled);
-    }
-
     public boolean isControlsOverlayAutoHideEnabled() {
         return false;
+    }
+
+    public void setControlsOverlayAutoHideEnabled(boolean enabled) {
+        setFadingEnabled(enabled);
     }
 
     @Deprecated
@@ -95,5 +68,33 @@ public abstract class PlaybackGlueHost {
 
     public PlayerCallback getPlayerCallback() {
         return null;
+    }
+
+    public static abstract class HostCallback {
+        public void onHostStart() {
+        }
+
+        public void onHostStop() {
+        }
+
+        public void onHostPause() {
+        }
+
+        public void onHostResume() {
+        }
+
+        public void onHostDestroy() {
+        }
+    }
+
+    public static class PlayerCallback {
+        public void onVideoSizeChanged(int videoWidth, int videoHeight) {
+        }
+
+        public void onBufferingStateChanged(boolean start) {
+        }
+
+        public void onError(int errorCode, CharSequence errorMessage) {
+        }
     }
 }

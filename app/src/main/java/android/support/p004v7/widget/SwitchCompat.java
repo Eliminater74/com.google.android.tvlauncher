@@ -53,6 +53,11 @@ public class SwitchCompat extends CompoundButton {
     private static final int TOUCH_MODE_DOWN = 1;
     private static final int TOUCH_MODE_DRAGGING = 2;
     private static final int TOUCH_MODE_IDLE = 0;
+    private final Rect mTempRect;
+    private final AppCompatTextHelper mTextHelper;
+    private final TextPaint mTextPaint;
+    ObjectAnimator mPositionAnimator;
+    float mThumbPosition;
     private boolean mHasThumbTint;
     private boolean mHasThumbTintMode;
     private boolean mHasTrackTint;
@@ -60,7 +65,6 @@ public class SwitchCompat extends CompoundButton {
     private int mMinFlingVelocity;
     private Layout mOffLayout;
     private Layout mOnLayout;
-    ObjectAnimator mPositionAnimator;
     private boolean mShowText;
     private boolean mSplitTrack;
     private int mSwitchBottom;
@@ -72,14 +76,10 @@ public class SwitchCompat extends CompoundButton {
     private int mSwitchTop;
     private TransformationMethod mSwitchTransformationMethod;
     private int mSwitchWidth;
-    private final Rect mTempRect;
     private ColorStateList mTextColors;
-    private final AppCompatTextHelper mTextHelper;
     private CharSequence mTextOff;
     private CharSequence mTextOn;
-    private final TextPaint mTextPaint;
     private Drawable mThumbDrawable;
-    float mThumbPosition;
     private int mThumbTextPadding;
     private ColorStateList mThumbTintList;
     private PorterDuff.Mode mThumbTintMode;
@@ -174,6 +174,13 @@ public class SwitchCompat extends CompoundButton {
         setChecked(isChecked());
     }
 
+    private static float constrain(float amount, float low, float high) {
+        if (amount < low) {
+            return low;
+        }
+        return amount > high ? high : amount;
+    }
+
     public void setSwitchTextAppearance(Context context, int resid) {
         TintTypedArray appearance = TintTypedArray.obtainStyledAttributes(context, resid, C0233R.styleable.TextAppearance);
         ColorStateList colors = appearance.getColorStateList(C0233R.styleable.TextAppearance_android_textColor);
@@ -245,17 +252,12 @@ public class SwitchCompat extends CompoundButton {
         }
     }
 
-    public void setSwitchPadding(int pixels) {
-        this.mSwitchPadding = pixels;
-        requestLayout();
-    }
-
     public int getSwitchPadding() {
         return this.mSwitchPadding;
     }
 
-    public void setSwitchMinWidth(int pixels) {
-        this.mSwitchMinWidth = pixels;
+    public void setSwitchPadding(int pixels) {
+        this.mSwitchPadding = pixels;
         requestLayout();
     }
 
@@ -263,13 +265,26 @@ public class SwitchCompat extends CompoundButton {
         return this.mSwitchMinWidth;
     }
 
-    public void setThumbTextPadding(int pixels) {
-        this.mThumbTextPadding = pixels;
+    public void setSwitchMinWidth(int pixels) {
+        this.mSwitchMinWidth = pixels;
         requestLayout();
     }
 
     public int getThumbTextPadding() {
         return this.mThumbTextPadding;
+    }
+
+    public void setThumbTextPadding(int pixels) {
+        this.mThumbTextPadding = pixels;
+        requestLayout();
+    }
+
+    public void setTrackResource(int resId) {
+        setTrackDrawable(AppCompatResources.getDrawable(getContext(), resId));
+    }
+
+    public Drawable getTrackDrawable() {
+        return this.mTrackDrawable;
     }
 
     public void setTrackDrawable(Drawable track) {
@@ -284,12 +299,9 @@ public class SwitchCompat extends CompoundButton {
         requestLayout();
     }
 
-    public void setTrackResource(int resId) {
-        setTrackDrawable(AppCompatResources.getDrawable(getContext(), resId));
-    }
-
-    public Drawable getTrackDrawable() {
-        return this.mTrackDrawable;
+    @Nullable
+    public ColorStateList getTrackTintList() {
+        return this.mTrackTintList;
     }
 
     public void setTrackTintList(@Nullable ColorStateList tint) {
@@ -299,19 +311,14 @@ public class SwitchCompat extends CompoundButton {
     }
 
     @Nullable
-    public ColorStateList getTrackTintList() {
-        return this.mTrackTintList;
+    public PorterDuff.Mode getTrackTintMode() {
+        return this.mTrackTintMode;
     }
 
     public void setTrackTintMode(@Nullable PorterDuff.Mode tintMode) {
         this.mTrackTintMode = tintMode;
         this.mHasTrackTintMode = true;
         applyTrackTint();
-    }
-
-    @Nullable
-    public PorterDuff.Mode getTrackTintMode() {
-        return this.mTrackTintMode;
     }
 
     private void applyTrackTint() {
@@ -332,6 +339,14 @@ public class SwitchCompat extends CompoundButton {
         }
     }
 
+    public void setThumbResource(int resId) {
+        setThumbDrawable(AppCompatResources.getDrawable(getContext(), resId));
+    }
+
+    public Drawable getThumbDrawable() {
+        return this.mThumbDrawable;
+    }
+
     public void setThumbDrawable(Drawable thumb) {
         Drawable drawable = this.mThumbDrawable;
         if (drawable != null) {
@@ -344,12 +359,9 @@ public class SwitchCompat extends CompoundButton {
         requestLayout();
     }
 
-    public void setThumbResource(int resId) {
-        setThumbDrawable(AppCompatResources.getDrawable(getContext(), resId));
-    }
-
-    public Drawable getThumbDrawable() {
-        return this.mThumbDrawable;
+    @Nullable
+    public ColorStateList getThumbTintList() {
+        return this.mThumbTintList;
     }
 
     public void setThumbTintList(@Nullable ColorStateList tint) {
@@ -359,19 +371,14 @@ public class SwitchCompat extends CompoundButton {
     }
 
     @Nullable
-    public ColorStateList getThumbTintList() {
-        return this.mThumbTintList;
+    public PorterDuff.Mode getThumbTintMode() {
+        return this.mThumbTintMode;
     }
 
     public void setThumbTintMode(@Nullable PorterDuff.Mode tintMode) {
         this.mThumbTintMode = tintMode;
         this.mHasThumbTintMode = true;
         applyThumbTint();
-    }
-
-    @Nullable
-    public PorterDuff.Mode getThumbTintMode() {
-        return this.mThumbTintMode;
     }
 
     private void applyThumbTint() {
@@ -392,13 +399,13 @@ public class SwitchCompat extends CompoundButton {
         }
     }
 
+    public boolean getSplitTrack() {
+        return this.mSplitTrack;
+    }
+
     public void setSplitTrack(boolean splitTrack) {
         this.mSplitTrack = splitTrack;
         invalidate();
-    }
-
-    public boolean getSplitTrack() {
-        return this.mSplitTrack;
     }
 
     public CharSequence getTextOn() {
@@ -419,15 +426,15 @@ public class SwitchCompat extends CompoundButton {
         requestLayout();
     }
 
+    public boolean getShowText() {
+        return this.mShowText;
+    }
+
     public void setShowText(boolean showText) {
         if (this.mShowText != showText) {
             this.mShowText = showText;
             requestLayout();
         }
-    }
-
-    public boolean getShowText() {
-        return this.mShowText;
     }
 
     public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -995,12 +1002,5 @@ public class SwitchCompat extends CompoundButton {
 
     public void setCustomSelectionActionModeCallback(ActionMode.Callback actionModeCallback) {
         super.setCustomSelectionActionModeCallback(TextViewCompat.wrapCustomSelectionActionModeCallback(this, actionModeCallback));
-    }
-
-    private static float constrain(float amount, float low, float high) {
-        if (amount < low) {
-            return low;
-        }
-        return amount > high ? high : amount;
     }
 }

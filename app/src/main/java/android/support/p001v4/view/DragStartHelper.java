@@ -6,9 +6,6 @@ import android.view.View;
 
 /* renamed from: android.support.v4.view.DragStartHelper */
 public class DragStartHelper {
-    private boolean mDragging;
-    private int mLastTouchX;
-    private int mLastTouchY;
     private final OnDragStartListener mListener;
     private final View.OnLongClickListener mLongClickListener = new View.OnLongClickListener() {
         public boolean onLongClick(View v) {
@@ -21,11 +18,9 @@ public class DragStartHelper {
         }
     };
     private final View mView;
-
-    /* renamed from: android.support.v4.view.DragStartHelper$OnDragStartListener */
-    public interface OnDragStartListener {
-        boolean onDragStart(View view, DragStartHelper dragStartHelper);
-    }
+    private boolean mDragging;
+    private int mLastTouchX;
+    private int mLastTouchY;
 
     public DragStartHelper(View view, OnDragStartListener listener) {
         this.mView = view;
@@ -107,5 +102,10 @@ public class DragStartHelper {
 
     public void getTouchPosition(Point point) {
         point.set(this.mLastTouchX, this.mLastTouchY);
+    }
+
+    /* renamed from: android.support.v4.view.DragStartHelper$OnDragStartListener */
+    public interface OnDragStartListener {
+        boolean onDragStart(View view, DragStartHelper dragStartHelper);
     }
 }

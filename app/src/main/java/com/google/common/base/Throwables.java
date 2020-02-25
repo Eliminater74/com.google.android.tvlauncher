@@ -6,6 +6,9 @@ import com.google.common.annotations.GwtIncompatible;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.devtools.build.android.desugar.runtime.ThrowableExtension;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
@@ -15,27 +18,34 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible(emulated = true)
 public final class Throwables {
+    /* access modifiers changed from: private */
+    @NullableDecl
     @GwtIncompatible
-    private static final String JAVA_LANG_ACCESS_CLASSNAME = "sun.misc.JavaLangAccess";
+    public static final Method getStackTraceDepthMethod;
     @GwtIncompatible
     @VisibleForTesting
     static final String SHARED_SECRETS_CLASSNAME = "sun.misc.SharedSecrets";
     /* access modifiers changed from: private */
     @NullableDecl
     @GwtIncompatible
-    public static final Method getStackTraceDepthMethod;
+    public static final Object jla = getJLA();
+    @GwtIncompatible
+    private static final String JAVA_LANG_ACCESS_CLASSNAME = "sun.misc.JavaLangAccess";
     /* access modifiers changed from: private */
     @NullableDecl
     @GwtIncompatible
     public static final Method getStackTraceElementMethod = (jla == null ? null : getGetMethod());
-    /* access modifiers changed from: private */
-    @NullableDecl
-    @GwtIncompatible
-    public static final Object jla = getJLA();
+
+    static {
+        Method method = null;
+        if (jla != null) {
+            method = getSizeMethod();
+        }
+        getStackTraceDepthMethod = method;
+    }
 
     private Throwables() {
     }
@@ -198,14 +208,6 @@ public final class Throwables {
         } catch (InvocationTargetException e2) {
             throw propagate(e2.getCause());
         }
-    }
-
-    static {
-        Method method = null;
-        if (jla != null) {
-            method = getSizeMethod();
-        }
-        getStackTraceDepthMethod = method;
     }
 
     @NullableDecl

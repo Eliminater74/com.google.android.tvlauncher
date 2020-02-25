@@ -8,17 +8,22 @@ import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.os.Build;
 import android.support.annotation.RestrictTo;
+
 import androidx.leanback.widget.ShadowOverlayContainer;
 
 public class Settings {
-    private static final String ACTION_PARTNER_CUSTOMIZATION = "android.support.v17.leanback.action.PARTNER_CUSTOMIZATION";
-    private static final boolean DEBUG = false;
     public static final String OUTLINE_CLIPPING_DISABLED = "OUTLINE_CLIPPING_DISABLED";
     public static final String PREFER_STATIC_SHADOWS = "PREFER_STATIC_SHADOWS";
+    private static final String ACTION_PARTNER_CUSTOMIZATION = "android.support.v17.leanback.action.PARTNER_CUSTOMIZATION";
+    private static final boolean DEBUG = false;
     private static final String TAG = "Settings";
     private static Settings sInstance;
     private boolean mOutlineClippingDisabled;
     private boolean mPreferStaticShadows;
+
+    private Settings(Context context) {
+        generateSetting(getCustomizations(context), context);
+    }
 
     public static Settings getInstance(Context context) {
         if (sInstance == null) {
@@ -27,8 +32,8 @@ public class Settings {
         return sInstance;
     }
 
-    private Settings(Context context) {
-        generateSetting(getCustomizations(context), context);
+    private static boolean isSystemApp(ResolveInfo info) {
+        return (info.activityInfo == null || (info.activityInfo.applicationInfo.flags & 1) == 0) ? false : true;
     }
 
     @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
@@ -87,21 +92,6 @@ public class Settings {
         this.mOutlineClippingDisabled = true;
     }
 
-    static class Customizations {
-        String mPackageName;
-        Resources mResources;
-
-        public Customizations(Resources resources, String packageName) {
-            this.mResources = resources;
-            this.mPackageName = packageName;
-        }
-
-        public boolean getBoolean(String resourceName, boolean defaultValue) {
-            int resId = this.mResources.getIdentifier(resourceName, "bool", this.mPackageName);
-            return resId > 0 ? this.mResources.getBoolean(resId) : defaultValue;
-        }
-    }
-
     private Customizations getCustomizations(Context context) {
         PackageManager pm = context.getPackageManager();
         Resources resources = null;
@@ -126,7 +116,18 @@ public class Settings {
         return new Customizations(resources, packageName);
     }
 
-    private static boolean isSystemApp(ResolveInfo info) {
-        return (info.activityInfo == null || (info.activityInfo.applicationInfo.flags & 1) == 0) ? false : true;
+    static class Customizations {
+        String mPackageName;
+        Resources mResources;
+
+        public Customizations(Resources resources, String packageName) {
+            this.mResources = resources;
+            this.mPackageName = packageName;
+        }
+
+        public boolean getBoolean(String resourceName, boolean defaultValue) {
+            int resId = this.mResources.getIdentifier(resourceName, "bool", this.mPackageName);
+            return resId > 0 ? this.mResources.getBoolean(resId) : defaultValue;
+        }
     }
 }

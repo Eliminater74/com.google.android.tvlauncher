@@ -15,12 +15,12 @@ import android.support.annotation.RequiresApi;
 /* renamed from: android.support.v4.graphics.drawable.WrappedDrawableApi14 */
 class WrappedDrawableApi14 extends Drawable implements Drawable.Callback, WrappedDrawable, TintAwareDrawable {
     static final PorterDuff.Mode DEFAULT_TINT_MODE = PorterDuff.Mode.SRC_IN;
+    Drawable mDrawable;
+    WrappedDrawableState mState;
     private boolean mColorFilterSet;
     private int mCurrentColor;
     private PorterDuff.Mode mCurrentMode;
-    Drawable mDrawable;
     private boolean mMutated;
-    WrappedDrawableState mState;
 
     WrappedDrawableApi14(@NonNull WrappedDrawableState state, @Nullable Resources res) {
         this.mState = state;
@@ -55,14 +55,14 @@ class WrappedDrawableApi14 extends Drawable implements Drawable.Callback, Wrappe
         }
     }
 
-    public void setChangingConfigurations(int configs) {
-        this.mDrawable.setChangingConfigurations(configs);
-    }
-
     public int getChangingConfigurations() {
         int changingConfigurations = super.getChangingConfigurations();
         WrappedDrawableState wrappedDrawableState = this.mState;
         return changingConfigurations | (wrappedDrawableState != null ? wrappedDrawableState.getChangingConfigurations() : 0) | this.mDrawable.getChangingConfigurations();
+    }
+
+    public void setChangingConfigurations(int configs) {
+        this.mDrawable.setChangingConfigurations(configs);
     }
 
     public void setDither(boolean dither) {
@@ -134,13 +134,13 @@ class WrappedDrawableApi14 extends Drawable implements Drawable.Callback, Wrappe
     }
 
     @RequiresApi(19)
-    public void setAutoMirrored(boolean mirrored) {
-        this.mDrawable.setAutoMirrored(mirrored);
+    public boolean isAutoMirrored() {
+        return this.mDrawable.isAutoMirrored();
     }
 
     @RequiresApi(19)
-    public boolean isAutoMirrored() {
-        return this.mDrawable.isAutoMirrored();
+    public void setAutoMirrored(boolean mirrored) {
+        this.mDrawable.setAutoMirrored(mirrored);
     }
 
     @Nullable

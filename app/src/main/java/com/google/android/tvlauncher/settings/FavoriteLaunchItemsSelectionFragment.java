@@ -6,9 +6,11 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.p001v4.content.ContextCompat;
 import android.util.Pair;
+
 import androidx.leanback.preference.LeanbackPreferenceFragment;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceScreen;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.RequestManager;
@@ -24,6 +26,7 @@ import com.google.android.tvlauncher.appsview.data.LaunchItemsManager;
 import com.google.android.tvlauncher.appsview.data.LaunchItemsManagerProvider;
 import com.google.android.tvlauncher.appsview.data.PackageImageDataSource;
 import com.google.android.tvlauncher.util.AddBackgroundColorTransformation;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 

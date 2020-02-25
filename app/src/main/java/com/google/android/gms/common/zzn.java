@@ -2,10 +2,11 @@ package com.google.android.gms.common;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
+
 import com.google.android.gms.common.internal.Hide;
 
 @Hide
-/* compiled from: GoogleCertificatesResult */
+        /* compiled from: GoogleCertificatesResult */
 class zzn {
     private static final zzn zzb = new zzn(true, null, null);
     final boolean zza;

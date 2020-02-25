@@ -4,6 +4,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
+
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.Status;
 

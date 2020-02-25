@@ -15,6 +15,11 @@ public class Pair<F, S> {
         this.second = second2;
     }
 
+    @NonNull
+    public static <A, B> Pair<A, B> create(@Nullable A a, @Nullable B b) {
+        return new Pair<>(a, b);
+    }
+
     public boolean equals(Object o) {
         if (!(o instanceof Pair)) {
             return false;
@@ -39,10 +44,5 @@ public class Pair<F, S> {
 
     public String toString() {
         return "Pair{" + String.valueOf(this.first) + " " + String.valueOf(this.second) + "}";
-    }
-
-    @NonNull
-    public static <A, B> Pair<A, B> create(@Nullable A a, @Nullable B b) {
-        return new Pair<>(a, b);
     }
 }

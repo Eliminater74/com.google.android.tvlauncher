@@ -21,12 +21,13 @@ import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 import android.text.TextUtils;
 import android.util.Log;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Feature;
 import com.google.android.gms.common.GoogleApiAvailabilityLight;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.common.api.Scope;
-import com.google.android.gms.common.internal.IGmsCallbacks;
+
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
@@ -47,540 +48,42 @@ public abstract class BaseGmsClient<T extends IInterface> {
     public static final String KEY_PENDING_INTENT = "pendingIntent";
     @Hide
     public static final String[] zzb = {"service_esmobile", FEATURE_GOOGLE_ME};
+    /* access modifiers changed from: private */
+    public final Object zzn;
+    /* access modifiers changed from: private */
+    public final ArrayList<zzc<?>> zzq;
+    /* access modifiers changed from: private */
+    public final BaseConnectionCallbacks zzt;
+    /* access modifiers changed from: private */
+    public final BaseOnConnectionFailedListener zzu;
+    final Handler zza;
+    private final Context zzi;
+    private final Looper zzj;
+    private final GmsClientSupervisor zzk;
+    private final GoogleApiAvailabilityLight zzl;
+    private final Object zzm;
+    private final int zzv;
+    private final String zzw;
+    /* access modifiers changed from: private */
+    public IGmsServiceBroker zzo;
+    /* access modifiers changed from: private */
+    public ConnectionResult zzx;
+    /* access modifiers changed from: private */
+    public boolean zzy;
     protected ConnectionProgressReportCallbacks mConnectionProgressReportCallbacks;
     protected AtomicInteger mDisconnectCount;
-    final Handler zza;
     private int zzc;
     private long zzd;
     private long zze;
     private int zzf;
     private long zzg;
     private zzu zzh;
-    private final Context zzi;
-    private final Looper zzj;
-    private final GmsClientSupervisor zzk;
-    private final GoogleApiAvailabilityLight zzl;
-    private final Object zzm;
-    /* access modifiers changed from: private */
-    public final Object zzn;
-    /* access modifiers changed from: private */
-    public IGmsServiceBroker zzo;
     private T zzp;
-    /* access modifiers changed from: private */
-    public final ArrayList<zzc<?>> zzq;
     private zze zzr;
     private int zzs;
-    /* access modifiers changed from: private */
-    public final BaseConnectionCallbacks zzt;
-    /* access modifiers changed from: private */
-    public final BaseOnConnectionFailedListener zzu;
-    private final int zzv;
-    private final String zzw;
-    /* access modifiers changed from: private */
-    public ConnectionResult zzx;
-    /* access modifiers changed from: private */
-    public boolean zzy;
-
-    public interface BaseConnectionCallbacks {
-        public static final int CAUSE_NETWORK_LOST = 2;
-        public static final int CAUSE_SERVICE_DISCONNECTED = 1;
-
-        void onConnected(@Nullable Bundle bundle);
-
-        void onConnectionSuspended(int i);
-    }
-
-    public interface BaseOnConnectionFailedListener {
-        void onConnectionFailed(@NonNull ConnectionResult connectionResult);
-    }
-
-    @Hide
-    public interface ConnectionProgressReportCallbacks {
-        void onReportServiceBinding(@NonNull ConnectionResult connectionResult);
-    }
-
-    @Hide
-    public interface SignOutCallbacks {
-        void onSignOutComplete();
-    }
-
-    public class zzf implements ConnectionProgressReportCallbacks {
-        public zzf() {
-        }
-
-        public final void onReportServiceBinding(@NonNull ConnectionResult connectionResult) {
-            if (connectionResult.isSuccess()) {
-                BaseGmsClient baseGmsClient = BaseGmsClient.this;
-                baseGmsClient.getRemoteService(null, baseGmsClient.getScopes());
-            } else if (BaseGmsClient.this.zzu != null) {
-                BaseGmsClient.this.zzu.onConnectionFailed(connectionResult);
-            }
-        }
-    }
 
     protected BaseGmsClient(Context context, Looper looper, int i, BaseConnectionCallbacks baseConnectionCallbacks, BaseOnConnectionFailedListener baseOnConnectionFailedListener, String str) {
         this(context, looper, GmsClientSupervisor.getInstance(context), GoogleApiAvailabilityLight.getInstance(), i, (BaseConnectionCallbacks) zzau.zza(baseConnectionCallbacks), (BaseOnConnectionFailedListener) zzau.zza(baseOnConnectionFailedListener), str);
-    }
-
-    /* access modifiers changed from: protected */
-    @Hide
-    @NonNull
-    public abstract String getServiceDescriptor();
-
-    /* access modifiers changed from: protected */
-    @Hide
-    @NonNull
-    public abstract String getStartServiceAction();
-
-    /* access modifiers changed from: protected */
-    @Nullable
-    @Hide
-    public abstract T zza(IBinder iBinder);
-
-    @Hide
-    final class zzb extends Handler {
-        public zzb(Looper looper) {
-            super(looper);
-        }
-
-        /* JADX DEBUG: Multi-variable search result rejected for TypeSearchVarInfo{r0v24, resolved type: java.lang.Object} */
-        /* JADX DEBUG: Multi-variable search result rejected for TypeSearchVarInfo{r6v2, resolved type: android.app.PendingIntent} */
-        /* JADX WARNING: Multi-variable type inference failed */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
-        public final void handleMessage(android.os.Message r8) {
-            /*
-                r7 = this;
-                com.google.android.gms.common.internal.BaseGmsClient r0 = com.google.android.gms.common.internal.BaseGmsClient.this
-                java.util.concurrent.atomic.AtomicInteger r0 = r0.mDisconnectCount
-                int r0 = r0.get()
-                int r1 = r8.arg1
-                if (r0 == r1) goto L_0x0016
-                boolean r0 = zzb(r8)
-                if (r0 == 0) goto L_0x0015
-                zza(r8)
-            L_0x0015:
-                return
-            L_0x0016:
-                int r0 = r8.what
-                r1 = 4
-                r2 = 1
-                r3 = 5
-                if (r0 == r2) goto L_0x002a
-                int r0 = r8.what
-                r4 = 7
-                if (r0 == r4) goto L_0x002a
-                int r0 = r8.what
-                if (r0 == r1) goto L_0x002a
-                int r0 = r8.what
-                if (r0 != r3) goto L_0x0036
-            L_0x002a:
-                com.google.android.gms.common.internal.BaseGmsClient r0 = com.google.android.gms.common.internal.BaseGmsClient.this
-                boolean r0 = r0.isConnecting()
-                if (r0 != 0) goto L_0x0036
-                zza(r8)
-                return
-            L_0x0036:
-                int r0 = r8.what
-                r4 = 8
-                r5 = 3
-                r6 = 0
-                if (r0 != r1) goto L_0x0081
-                com.google.android.gms.common.internal.BaseGmsClient r0 = com.google.android.gms.common.internal.BaseGmsClient.this
-                com.google.android.gms.common.ConnectionResult r1 = new com.google.android.gms.common.ConnectionResult
-                int r8 = r8.arg2
-                r1.<init>(r8)
-                com.google.android.gms.common.ConnectionResult unused = r0.zzx = r1
-                com.google.android.gms.common.internal.BaseGmsClient r8 = com.google.android.gms.common.internal.BaseGmsClient.this
-                boolean r8 = r8.zze()
-                if (r8 == 0) goto L_0x0060
-                com.google.android.gms.common.internal.BaseGmsClient r8 = com.google.android.gms.common.internal.BaseGmsClient.this
-                boolean r8 = r8.zzy
-                if (r8 != 0) goto L_0x0060
-                com.google.android.gms.common.internal.BaseGmsClient r8 = com.google.android.gms.common.internal.BaseGmsClient.this
-                r8.zzb(r5, null)
-                return
-            L_0x0060:
-                com.google.android.gms.common.internal.BaseGmsClient r8 = com.google.android.gms.common.internal.BaseGmsClient.this
-                com.google.android.gms.common.ConnectionResult r8 = r8.zzx
-                if (r8 == 0) goto L_0x006f
-                com.google.android.gms.common.internal.BaseGmsClient r8 = com.google.android.gms.common.internal.BaseGmsClient.this
-                com.google.android.gms.common.ConnectionResult r8 = r8.zzx
-                goto L_0x0074
-            L_0x006f:
-                com.google.android.gms.common.ConnectionResult r8 = new com.google.android.gms.common.ConnectionResult
-                r8.<init>(r4)
-            L_0x0074:
-                com.google.android.gms.common.internal.BaseGmsClient r0 = com.google.android.gms.common.internal.BaseGmsClient.this
-                com.google.android.gms.common.internal.BaseGmsClient$ConnectionProgressReportCallbacks r0 = r0.mConnectionProgressReportCallbacks
-                r0.onReportServiceBinding(r8)
-                com.google.android.gms.common.internal.BaseGmsClient r0 = com.google.android.gms.common.internal.BaseGmsClient.this
-                r0.onConnectionFailed(r8)
-                return
-            L_0x0081:
-                int r0 = r8.what
-                if (r0 != r3) goto L_0x00a6
-                com.google.android.gms.common.internal.BaseGmsClient r8 = com.google.android.gms.common.internal.BaseGmsClient.this
-                com.google.android.gms.common.ConnectionResult r8 = r8.zzx
-                if (r8 == 0) goto L_0x0094
-                com.google.android.gms.common.internal.BaseGmsClient r8 = com.google.android.gms.common.internal.BaseGmsClient.this
-                com.google.android.gms.common.ConnectionResult r8 = r8.zzx
-                goto L_0x0099
-            L_0x0094:
-                com.google.android.gms.common.ConnectionResult r8 = new com.google.android.gms.common.ConnectionResult
-                r8.<init>(r4)
-            L_0x0099:
-                com.google.android.gms.common.internal.BaseGmsClient r0 = com.google.android.gms.common.internal.BaseGmsClient.this
-                com.google.android.gms.common.internal.BaseGmsClient$ConnectionProgressReportCallbacks r0 = r0.mConnectionProgressReportCallbacks
-                r0.onReportServiceBinding(r8)
-                com.google.android.gms.common.internal.BaseGmsClient r0 = com.google.android.gms.common.internal.BaseGmsClient.this
-                r0.onConnectionFailed(r8)
-                return
-            L_0x00a6:
-                int r0 = r8.what
-                if (r0 != r5) goto L_0x00c9
-                java.lang.Object r0 = r8.obj
-                boolean r0 = r0 instanceof android.app.PendingIntent
-                if (r0 == 0) goto L_0x00b5
-                java.lang.Object r0 = r8.obj
-                r6 = r0
-                android.app.PendingIntent r6 = (android.app.PendingIntent) r6
-            L_0x00b5:
-                com.google.android.gms.common.ConnectionResult r0 = new com.google.android.gms.common.ConnectionResult
-                int r8 = r8.arg2
-                r0.<init>(r8, r6)
-                com.google.android.gms.common.internal.BaseGmsClient r8 = com.google.android.gms.common.internal.BaseGmsClient.this
-                com.google.android.gms.common.internal.BaseGmsClient$ConnectionProgressReportCallbacks r8 = r8.mConnectionProgressReportCallbacks
-                r8.onReportServiceBinding(r0)
-                com.google.android.gms.common.internal.BaseGmsClient r8 = com.google.android.gms.common.internal.BaseGmsClient.this
-                r8.onConnectionFailed(r0)
-                return
-            L_0x00c9:
-                int r0 = r8.what
-                r1 = 6
-                if (r0 != r1) goto L_0x00f3
-                com.google.android.gms.common.internal.BaseGmsClient r0 = com.google.android.gms.common.internal.BaseGmsClient.this
-                r0.zzb(r3, null)
-                com.google.android.gms.common.internal.BaseGmsClient r0 = com.google.android.gms.common.internal.BaseGmsClient.this
-                com.google.android.gms.common.internal.BaseGmsClient$BaseConnectionCallbacks r0 = r0.zzt
-                if (r0 == 0) goto L_0x00e6
-                com.google.android.gms.common.internal.BaseGmsClient r0 = com.google.android.gms.common.internal.BaseGmsClient.this
-                com.google.android.gms.common.internal.BaseGmsClient$BaseConnectionCallbacks r0 = r0.zzt
-                int r1 = r8.arg2
-                r0.onConnectionSuspended(r1)
-            L_0x00e6:
-                com.google.android.gms.common.internal.BaseGmsClient r0 = com.google.android.gms.common.internal.BaseGmsClient.this
-                int r8 = r8.arg2
-                r0.onConnectionSuspended(r8)
-                com.google.android.gms.common.internal.BaseGmsClient r8 = com.google.android.gms.common.internal.BaseGmsClient.this
-                boolean unused = r8.zza(r3, r2, r6)
-                return
-            L_0x00f3:
-                int r0 = r8.what
-                r1 = 2
-                if (r0 != r1) goto L_0x0104
-                com.google.android.gms.common.internal.BaseGmsClient r0 = com.google.android.gms.common.internal.BaseGmsClient.this
-                boolean r0 = r0.isConnected()
-                if (r0 != 0) goto L_0x0104
-                zza(r8)
-                return
-            L_0x0104:
-                boolean r0 = zzb(r8)
-                if (r0 == 0) goto L_0x0112
-                java.lang.Object r8 = r8.obj
-                com.google.android.gms.common.internal.BaseGmsClient$zzc r8 = (com.google.android.gms.common.internal.BaseGmsClient.zzc) r8
-                r8.zzc()
-                return
-            L_0x0112:
-                int r8 = r8.what
-                r0 = 45
-                java.lang.StringBuilder r1 = new java.lang.StringBuilder
-                r1.<init>(r0)
-                java.lang.String r0 = "Don't know how to handle message: "
-                r1.append(r0)
-                r1.append(r8)
-                java.lang.String r8 = r1.toString()
-                java.lang.Exception r0 = new java.lang.Exception
-                r0.<init>()
-                java.lang.String r1 = "GmsClient"
-                android.util.Log.wtf(r1, r8, r0)
-                return
-            */
-            throw new UnsupportedOperationException("Method not decompiled: com.google.android.gms.common.internal.BaseGmsClient.zzb.handleMessage(android.os.Message):void");
-        }
-
-        private static void zza(Message message) {
-            zzc zzc = (zzc) message.obj;
-            zzc.zzb();
-            zzc.zzd();
-        }
-
-        private static boolean zzb(Message message) {
-            return message.what == 2 || message.what == 1 || message.what == 7;
-        }
-    }
-
-    public final class zze implements ServiceConnection {
-        private final int zza;
-
-        public zze(int i) {
-            this.zza = i;
-        }
-
-        public final void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            IGmsServiceBroker iGmsServiceBroker;
-            if (iBinder == null) {
-                BaseGmsClient.this.zzb(16);
-                return;
-            }
-            synchronized (BaseGmsClient.this.zzn) {
-                BaseGmsClient baseGmsClient = BaseGmsClient.this;
-                IInterface queryLocalInterface = iBinder.queryLocalInterface("com.google.android.gms.common.internal.IGmsServiceBroker");
-                if (queryLocalInterface == null || !(queryLocalInterface instanceof IGmsServiceBroker)) {
-                    iGmsServiceBroker = new zzad(iBinder);
-                } else {
-                    iGmsServiceBroker = (IGmsServiceBroker) queryLocalInterface;
-                }
-                IGmsServiceBroker unused = baseGmsClient.zzo = iGmsServiceBroker;
-            }
-            BaseGmsClient.this.zza(0, (Bundle) null, this.zza);
-        }
-
-        public final void onServiceDisconnected(ComponentName componentName) {
-            synchronized (BaseGmsClient.this.zzn) {
-                IGmsServiceBroker unused = BaseGmsClient.this.zzo = (IGmsServiceBroker) null;
-            }
-            BaseGmsClient.this.zza.sendMessage(BaseGmsClient.this.zza.obtainMessage(6, this.zza, 1));
-        }
-    }
-
-    @Hide
-    public final class zzh extends zza {
-        @BinderThread
-        public zzh(int i, @Nullable Bundle bundle) {
-            super(i, null);
-        }
-
-        /* access modifiers changed from: protected */
-        public final void zza(ConnectionResult connectionResult) {
-            BaseGmsClient.this.mConnectionProgressReportCallbacks.onReportServiceBinding(connectionResult);
-            BaseGmsClient.this.onConnectionFailed(connectionResult);
-        }
-
-        /* access modifiers changed from: protected */
-        public final boolean zza() {
-            BaseGmsClient.this.mConnectionProgressReportCallbacks.onReportServiceBinding(ConnectionResult.zza);
-            return true;
-        }
-    }
-
-    @Hide
-    public abstract class zzc<TListener> {
-        private TListener zza;
-        private boolean zzb = false;
-
-        public zzc(TListener tlistener) {
-            this.zza = tlistener;
-        }
-
-        /* access modifiers changed from: protected */
-        public abstract void zza(TListener tlistener);
-
-        /* access modifiers changed from: protected */
-        public abstract void zzb();
-
-        public final void zzc() {
-            TListener tlistener;
-            synchronized (this) {
-                tlistener = this.zza;
-                if (this.zzb) {
-                    String valueOf = String.valueOf(this);
-                    StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 47);
-                    sb.append("Callback proxy ");
-                    sb.append(valueOf);
-                    sb.append(" being reused. This is not safe.");
-                    Log.w("GmsClient", sb.toString());
-                }
-            }
-            if (tlistener != null) {
-                try {
-                    zza(tlistener);
-                } catch (RuntimeException e) {
-                    zzb();
-                    throw e;
-                }
-            } else {
-                zzb();
-            }
-            synchronized (this) {
-                this.zzb = true;
-            }
-            zzd();
-        }
-
-        public final void zzd() {
-            zze();
-            synchronized (BaseGmsClient.this.zzq) {
-                BaseGmsClient.this.zzq.remove(this);
-            }
-        }
-
-        public final void zze() {
-            synchronized (this) {
-                this.zza = null;
-            }
-        }
-    }
-
-    @Hide
-    public static final class zzd extends IGmsCallbacks.zza {
-        private BaseGmsClient zza;
-        private final int zzb;
-
-        public zzd(@NonNull BaseGmsClient baseGmsClient, int i) {
-            this.zza = baseGmsClient;
-            this.zzb = i;
-        }
-
-        @BinderThread
-        public final void onAccountValidationComplete(int i, @Nullable Bundle bundle) {
-            Log.wtf("GmsClient", "received deprecated onAccountValidationComplete callback, ignoring", new Exception());
-        }
-
-        @BinderThread
-        public final void onPostInitComplete(int i, @NonNull IBinder iBinder, @Nullable Bundle bundle) {
-            zzau.zza(this.zza, "onPostInitComplete can be called only once per call to getRemoteService");
-            this.zza.onPostInitHandler(i, iBinder, bundle, this.zzb);
-            this.zza = null;
-        }
-    }
-
-    @Hide
-    public final class zzg extends zza {
-        private final IBinder zza;
-
-        @BinderThread
-        public zzg(int i, IBinder iBinder, Bundle bundle) {
-            super(i, bundle);
-            this.zza = iBinder;
-        }
-
-        /* access modifiers changed from: protected */
-        public final void zza(ConnectionResult connectionResult) {
-            if (BaseGmsClient.this.zzu != null) {
-                BaseGmsClient.this.zzu.onConnectionFailed(connectionResult);
-            }
-            BaseGmsClient.this.onConnectionFailed(connectionResult);
-        }
-
-        /* access modifiers changed from: protected */
-        public final boolean zza() {
-            try {
-                String interfaceDescriptor = this.zza.getInterfaceDescriptor();
-                if (!BaseGmsClient.this.getServiceDescriptor().equals(interfaceDescriptor)) {
-                    String serviceDescriptor = BaseGmsClient.this.getServiceDescriptor();
-                    StringBuilder sb = new StringBuilder(String.valueOf(serviceDescriptor).length() + 34 + String.valueOf(interfaceDescriptor).length());
-                    sb.append("service descriptor mismatch: ");
-                    sb.append(serviceDescriptor);
-                    sb.append(" vs. ");
-                    sb.append(interfaceDescriptor);
-                    Log.e("GmsClient", sb.toString());
-                    return false;
-                }
-                IInterface zza2 = BaseGmsClient.this.zza(this.zza);
-                if (zza2 == null || (!BaseGmsClient.this.zza(2, 4, zza2) && !BaseGmsClient.this.zza(3, 4, zza2))) {
-                    return false;
-                }
-                ConnectionResult unused = BaseGmsClient.this.zzx = (ConnectionResult) null;
-                Bundle connectionHint = BaseGmsClient.this.getConnectionHint();
-                if (BaseGmsClient.this.zzt == null) {
-                    return true;
-                }
-                BaseGmsClient.this.zzt.onConnected(connectionHint);
-                return true;
-            } catch (RemoteException e) {
-                Log.w("GmsClient", "service probably died");
-                return false;
-            }
-        }
-    }
-
-    @Hide
-    abstract class zza extends zzc<Boolean> {
-        private final int zza;
-        private final Bundle zzb;
-
-        @BinderThread
-        protected zza(int i, Bundle bundle) {
-            super(true);
-            this.zza = i;
-            this.zzb = bundle;
-        }
-
-        /* access modifiers changed from: protected */
-        public abstract void zza(ConnectionResult connectionResult);
-
-        /* access modifiers changed from: protected */
-        public abstract boolean zza();
-
-        /* access modifiers changed from: protected */
-        public final void zzb() {
-        }
-
-        /* JADX WARN: Type inference failed for: r4v11, types: [android.os.Parcelable] */
-        /* access modifiers changed from: protected */
-        /* JADX WARNING: Multi-variable type inference failed */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
-        public final /* synthetic */ void zza(java.lang.Object r4) {
-            /*
-                r3 = this;
-                java.lang.Boolean r4 = (java.lang.Boolean) r4
-                r0 = 1
-                r1 = 0
-                if (r4 != 0) goto L_0x000c
-                com.google.android.gms.common.internal.BaseGmsClient r4 = com.google.android.gms.common.internal.BaseGmsClient.this
-                r4.zzb(r0, null)
-                return
-            L_0x000c:
-                int r4 = r3.zza
-                if (r4 == 0) goto L_0x0040
-                r2 = 10
-                if (r4 == r2) goto L_0x0033
-                com.google.android.gms.common.internal.BaseGmsClient r4 = com.google.android.gms.common.internal.BaseGmsClient.this
-                r4.zzb(r0, null)
-                android.os.Bundle r4 = r3.zzb
-                if (r4 == 0) goto L_0x0028
-                java.lang.String r0 = "pendingIntent"
-                android.os.Parcelable r4 = r4.getParcelable(r0)
-                r1 = r4
-                android.app.PendingIntent r1 = (android.app.PendingIntent) r1
-            L_0x0028:
-                com.google.android.gms.common.ConnectionResult r4 = new com.google.android.gms.common.ConnectionResult
-                int r0 = r3.zza
-                r4.<init>(r0, r1)
-                r3.zza(r4)
-                goto L_0x0056
-            L_0x0033:
-                com.google.android.gms.common.internal.BaseGmsClient r4 = com.google.android.gms.common.internal.BaseGmsClient.this
-                r4.zzb(r0, null)
-                java.lang.IllegalStateException r4 = new java.lang.IllegalStateException
-                java.lang.String r0 = "A fatal developer error has occurred. Check the logs for further information."
-                r4.<init>(r0)
-                throw r4
-            L_0x0040:
-                boolean r4 = r3.zza()
-                if (r4 != 0) goto L_0x0056
-                com.google.android.gms.common.internal.BaseGmsClient r4 = com.google.android.gms.common.internal.BaseGmsClient.this
-                r4.zzb(r0, null)
-                com.google.android.gms.common.ConnectionResult r4 = new com.google.android.gms.common.ConnectionResult
-                r0 = 8
-                r4.<init>(r0, r1)
-                r3.zza(r4)
-                return
-            L_0x0056:
-                return
-            */
-            throw new UnsupportedOperationException("Method not decompiled: com.google.android.gms.common.internal.BaseGmsClient.zza.zza(java.lang.Object):void");
-        }
     }
 
     protected BaseGmsClient(Context context, Looper looper, GmsClientSupervisor gmsClientSupervisor, GoogleApiAvailabilityLight googleApiAvailabilityLight, int i, BaseConnectionCallbacks baseConnectionCallbacks, BaseOnConnectionFailedListener baseOnConnectionFailedListener, String str) {
@@ -620,6 +123,21 @@ public abstract class BaseGmsClient<T extends IInterface> {
         this.zzu = baseOnConnectionFailedListener;
         this.zzw = null;
     }
+
+    /* access modifiers changed from: protected */
+    @Hide
+    @NonNull
+    public abstract String getServiceDescriptor();
+
+    /* access modifiers changed from: protected */
+    @Hide
+    @NonNull
+    public abstract String getStartServiceAction();
+
+    /* access modifiers changed from: protected */
+    @Nullable
+    @Hide
+    public abstract T zza(IBinder iBinder);
 
     /* access modifiers changed from: protected */
     @Hide
@@ -899,18 +417,18 @@ public abstract class BaseGmsClient<T extends IInterface> {
         zzb(t != null ? (char) 4 : 1, t);
     }
 
-    public final void setServiceBrokerForTesting(IGmsServiceBroker iGmsServiceBroker) {
-        synchronized (this.zzn) {
-            this.zzo = iGmsServiceBroker;
-        }
-    }
-
     public final IGmsServiceBroker getServiceBrokerForTesting() {
         IGmsServiceBroker iGmsServiceBroker;
         synchronized (this.zzn) {
             iGmsServiceBroker = this.zzo;
         }
         return iGmsServiceBroker;
+    }
+
+    public final void setServiceBrokerForTesting(IGmsServiceBroker iGmsServiceBroker) {
+        synchronized (this.zzn) {
+            this.zzo = iGmsServiceBroker;
+        }
     }
 
     @Hide
@@ -1095,5 +613,488 @@ public abstract class BaseGmsClient<T extends IInterface> {
             return zzu2.zzb();
         }
         throw new RuntimeException("Failed to connect when checking package");
+    }
+
+    public interface BaseConnectionCallbacks {
+        public static final int CAUSE_NETWORK_LOST = 2;
+        public static final int CAUSE_SERVICE_DISCONNECTED = 1;
+
+        void onConnected(@Nullable Bundle bundle);
+
+        void onConnectionSuspended(int i);
+    }
+
+    public interface BaseOnConnectionFailedListener {
+        void onConnectionFailed(@NonNull ConnectionResult connectionResult);
+    }
+
+    @Hide
+    public interface ConnectionProgressReportCallbacks {
+        void onReportServiceBinding(@NonNull ConnectionResult connectionResult);
+    }
+
+    @Hide
+    public interface SignOutCallbacks {
+        void onSignOutComplete();
+    }
+
+    @Hide
+    public static final class zzd extends IGmsCallbacks.zza {
+        private final int zzb;
+        private BaseGmsClient zza;
+
+        public zzd(@NonNull BaseGmsClient baseGmsClient, int i) {
+            this.zza = baseGmsClient;
+            this.zzb = i;
+        }
+
+        @BinderThread
+        public final void onAccountValidationComplete(int i, @Nullable Bundle bundle) {
+            Log.wtf("GmsClient", "received deprecated onAccountValidationComplete callback, ignoring", new Exception());
+        }
+
+        @BinderThread
+        public final void onPostInitComplete(int i, @NonNull IBinder iBinder, @Nullable Bundle bundle) {
+            zzau.zza(this.zza, "onPostInitComplete can be called only once per call to getRemoteService");
+            this.zza.onPostInitHandler(i, iBinder, bundle, this.zzb);
+            this.zza = null;
+        }
+    }
+
+    public class zzf implements ConnectionProgressReportCallbacks {
+        public zzf() {
+        }
+
+        public final void onReportServiceBinding(@NonNull ConnectionResult connectionResult) {
+            if (connectionResult.isSuccess()) {
+                BaseGmsClient baseGmsClient = BaseGmsClient.this;
+                baseGmsClient.getRemoteService(null, baseGmsClient.getScopes());
+            } else if (BaseGmsClient.this.zzu != null) {
+                BaseGmsClient.this.zzu.onConnectionFailed(connectionResult);
+            }
+        }
+    }
+
+    @Hide
+    final class zzb extends Handler {
+        public zzb(Looper looper) {
+            super(looper);
+        }
+
+        private static void zza(Message message) {
+            zzc zzc = (zzc) message.obj;
+            zzc.zzb();
+            zzc.zzd();
+        }
+
+        private static boolean zzb(Message message) {
+            return message.what == 2 || message.what == 1 || message.what == 7;
+        }
+
+        /* JADX DEBUG: Multi-variable search result rejected for TypeSearchVarInfo{r0v24, resolved type: java.lang.Object} */
+        /* JADX DEBUG: Multi-variable search result rejected for TypeSearchVarInfo{r6v2, resolved type: android.app.PendingIntent} */
+        /* JADX WARNING: Multi-variable type inference failed */
+        /* Code decompiled incorrectly, please refer to instructions dump. */
+        public final void handleMessage(android.os.Message r8) {
+            /*
+                r7 = this;
+                com.google.android.gms.common.internal.BaseGmsClient r0 = com.google.android.gms.common.internal.BaseGmsClient.this
+                java.util.concurrent.atomic.AtomicInteger r0 = r0.mDisconnectCount
+                int r0 = r0.get()
+                int r1 = r8.arg1
+                if (r0 == r1) goto L_0x0016
+                boolean r0 = zzb(r8)
+                if (r0 == 0) goto L_0x0015
+                zza(r8)
+            L_0x0015:
+                return
+            L_0x0016:
+                int r0 = r8.what
+                r1 = 4
+                r2 = 1
+                r3 = 5
+                if (r0 == r2) goto L_0x002a
+                int r0 = r8.what
+                r4 = 7
+                if (r0 == r4) goto L_0x002a
+                int r0 = r8.what
+                if (r0 == r1) goto L_0x002a
+                int r0 = r8.what
+                if (r0 != r3) goto L_0x0036
+            L_0x002a:
+                com.google.android.gms.common.internal.BaseGmsClient r0 = com.google.android.gms.common.internal.BaseGmsClient.this
+                boolean r0 = r0.isConnecting()
+                if (r0 != 0) goto L_0x0036
+                zza(r8)
+                return
+            L_0x0036:
+                int r0 = r8.what
+                r4 = 8
+                r5 = 3
+                r6 = 0
+                if (r0 != r1) goto L_0x0081
+                com.google.android.gms.common.internal.BaseGmsClient r0 = com.google.android.gms.common.internal.BaseGmsClient.this
+                com.google.android.gms.common.ConnectionResult r1 = new com.google.android.gms.common.ConnectionResult
+                int r8 = r8.arg2
+                r1.<init>(r8)
+                com.google.android.gms.common.ConnectionResult unused = r0.zzx = r1
+                com.google.android.gms.common.internal.BaseGmsClient r8 = com.google.android.gms.common.internal.BaseGmsClient.this
+                boolean r8 = r8.zze()
+                if (r8 == 0) goto L_0x0060
+                com.google.android.gms.common.internal.BaseGmsClient r8 = com.google.android.gms.common.internal.BaseGmsClient.this
+                boolean r8 = r8.zzy
+                if (r8 != 0) goto L_0x0060
+                com.google.android.gms.common.internal.BaseGmsClient r8 = com.google.android.gms.common.internal.BaseGmsClient.this
+                r8.zzb(r5, null)
+                return
+            L_0x0060:
+                com.google.android.gms.common.internal.BaseGmsClient r8 = com.google.android.gms.common.internal.BaseGmsClient.this
+                com.google.android.gms.common.ConnectionResult r8 = r8.zzx
+                if (r8 == 0) goto L_0x006f
+                com.google.android.gms.common.internal.BaseGmsClient r8 = com.google.android.gms.common.internal.BaseGmsClient.this
+                com.google.android.gms.common.ConnectionResult r8 = r8.zzx
+                goto L_0x0074
+            L_0x006f:
+                com.google.android.gms.common.ConnectionResult r8 = new com.google.android.gms.common.ConnectionResult
+                r8.<init>(r4)
+            L_0x0074:
+                com.google.android.gms.common.internal.BaseGmsClient r0 = com.google.android.gms.common.internal.BaseGmsClient.this
+                com.google.android.gms.common.internal.BaseGmsClient$ConnectionProgressReportCallbacks r0 = r0.mConnectionProgressReportCallbacks
+                r0.onReportServiceBinding(r8)
+                com.google.android.gms.common.internal.BaseGmsClient r0 = com.google.android.gms.common.internal.BaseGmsClient.this
+                r0.onConnectionFailed(r8)
+                return
+            L_0x0081:
+                int r0 = r8.what
+                if (r0 != r3) goto L_0x00a6
+                com.google.android.gms.common.internal.BaseGmsClient r8 = com.google.android.gms.common.internal.BaseGmsClient.this
+                com.google.android.gms.common.ConnectionResult r8 = r8.zzx
+                if (r8 == 0) goto L_0x0094
+                com.google.android.gms.common.internal.BaseGmsClient r8 = com.google.android.gms.common.internal.BaseGmsClient.this
+                com.google.android.gms.common.ConnectionResult r8 = r8.zzx
+                goto L_0x0099
+            L_0x0094:
+                com.google.android.gms.common.ConnectionResult r8 = new com.google.android.gms.common.ConnectionResult
+                r8.<init>(r4)
+            L_0x0099:
+                com.google.android.gms.common.internal.BaseGmsClient r0 = com.google.android.gms.common.internal.BaseGmsClient.this
+                com.google.android.gms.common.internal.BaseGmsClient$ConnectionProgressReportCallbacks r0 = r0.mConnectionProgressReportCallbacks
+                r0.onReportServiceBinding(r8)
+                com.google.android.gms.common.internal.BaseGmsClient r0 = com.google.android.gms.common.internal.BaseGmsClient.this
+                r0.onConnectionFailed(r8)
+                return
+            L_0x00a6:
+                int r0 = r8.what
+                if (r0 != r5) goto L_0x00c9
+                java.lang.Object r0 = r8.obj
+                boolean r0 = r0 instanceof android.app.PendingIntent
+                if (r0 == 0) goto L_0x00b5
+                java.lang.Object r0 = r8.obj
+                r6 = r0
+                android.app.PendingIntent r6 = (android.app.PendingIntent) r6
+            L_0x00b5:
+                com.google.android.gms.common.ConnectionResult r0 = new com.google.android.gms.common.ConnectionResult
+                int r8 = r8.arg2
+                r0.<init>(r8, r6)
+                com.google.android.gms.common.internal.BaseGmsClient r8 = com.google.android.gms.common.internal.BaseGmsClient.this
+                com.google.android.gms.common.internal.BaseGmsClient$ConnectionProgressReportCallbacks r8 = r8.mConnectionProgressReportCallbacks
+                r8.onReportServiceBinding(r0)
+                com.google.android.gms.common.internal.BaseGmsClient r8 = com.google.android.gms.common.internal.BaseGmsClient.this
+                r8.onConnectionFailed(r0)
+                return
+            L_0x00c9:
+                int r0 = r8.what
+                r1 = 6
+                if (r0 != r1) goto L_0x00f3
+                com.google.android.gms.common.internal.BaseGmsClient r0 = com.google.android.gms.common.internal.BaseGmsClient.this
+                r0.zzb(r3, null)
+                com.google.android.gms.common.internal.BaseGmsClient r0 = com.google.android.gms.common.internal.BaseGmsClient.this
+                com.google.android.gms.common.internal.BaseGmsClient$BaseConnectionCallbacks r0 = r0.zzt
+                if (r0 == 0) goto L_0x00e6
+                com.google.android.gms.common.internal.BaseGmsClient r0 = com.google.android.gms.common.internal.BaseGmsClient.this
+                com.google.android.gms.common.internal.BaseGmsClient$BaseConnectionCallbacks r0 = r0.zzt
+                int r1 = r8.arg2
+                r0.onConnectionSuspended(r1)
+            L_0x00e6:
+                com.google.android.gms.common.internal.BaseGmsClient r0 = com.google.android.gms.common.internal.BaseGmsClient.this
+                int r8 = r8.arg2
+                r0.onConnectionSuspended(r8)
+                com.google.android.gms.common.internal.BaseGmsClient r8 = com.google.android.gms.common.internal.BaseGmsClient.this
+                boolean unused = r8.zza(r3, r2, r6)
+                return
+            L_0x00f3:
+                int r0 = r8.what
+                r1 = 2
+                if (r0 != r1) goto L_0x0104
+                com.google.android.gms.common.internal.BaseGmsClient r0 = com.google.android.gms.common.internal.BaseGmsClient.this
+                boolean r0 = r0.isConnected()
+                if (r0 != 0) goto L_0x0104
+                zza(r8)
+                return
+            L_0x0104:
+                boolean r0 = zzb(r8)
+                if (r0 == 0) goto L_0x0112
+                java.lang.Object r8 = r8.obj
+                com.google.android.gms.common.internal.BaseGmsClient$zzc r8 = (com.google.android.gms.common.internal.BaseGmsClient.zzc) r8
+                r8.zzc()
+                return
+            L_0x0112:
+                int r8 = r8.what
+                r0 = 45
+                java.lang.StringBuilder r1 = new java.lang.StringBuilder
+                r1.<init>(r0)
+                java.lang.String r0 = "Don't know how to handle message: "
+                r1.append(r0)
+                r1.append(r8)
+                java.lang.String r8 = r1.toString()
+                java.lang.Exception r0 = new java.lang.Exception
+                r0.<init>()
+                java.lang.String r1 = "GmsClient"
+                android.util.Log.wtf(r1, r8, r0)
+                return
+            */
+            throw new UnsupportedOperationException("Method not decompiled: com.google.android.gms.common.internal.BaseGmsClient.zzb.handleMessage(android.os.Message):void");
+        }
+    }
+
+    public final class zze implements ServiceConnection {
+        private final int zza;
+
+        public zze(int i) {
+            this.zza = i;
+        }
+
+        public final void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            IGmsServiceBroker iGmsServiceBroker;
+            if (iBinder == null) {
+                BaseGmsClient.this.zzb(16);
+                return;
+            }
+            synchronized (BaseGmsClient.this.zzn) {
+                BaseGmsClient baseGmsClient = BaseGmsClient.this;
+                IInterface queryLocalInterface = iBinder.queryLocalInterface("com.google.android.gms.common.internal.IGmsServiceBroker");
+                if (queryLocalInterface == null || !(queryLocalInterface instanceof IGmsServiceBroker)) {
+                    iGmsServiceBroker = new zzad(iBinder);
+                } else {
+                    iGmsServiceBroker = (IGmsServiceBroker) queryLocalInterface;
+                }
+                IGmsServiceBroker unused = baseGmsClient.zzo = iGmsServiceBroker;
+            }
+            BaseGmsClient.this.zza(0, (Bundle) null, this.zza);
+        }
+
+        public final void onServiceDisconnected(ComponentName componentName) {
+            synchronized (BaseGmsClient.this.zzn) {
+                IGmsServiceBroker unused = BaseGmsClient.this.zzo = (IGmsServiceBroker) null;
+            }
+            BaseGmsClient.this.zza.sendMessage(BaseGmsClient.this.zza.obtainMessage(6, this.zza, 1));
+        }
+    }
+
+    @Hide
+    public final class zzh extends zza {
+        @BinderThread
+        public zzh(int i, @Nullable Bundle bundle) {
+            super(i, null);
+        }
+
+        /* access modifiers changed from: protected */
+        public final void zza(ConnectionResult connectionResult) {
+            BaseGmsClient.this.mConnectionProgressReportCallbacks.onReportServiceBinding(connectionResult);
+            BaseGmsClient.this.onConnectionFailed(connectionResult);
+        }
+
+        /* access modifiers changed from: protected */
+        public final boolean zza() {
+            BaseGmsClient.this.mConnectionProgressReportCallbacks.onReportServiceBinding(ConnectionResult.zza);
+            return true;
+        }
+    }
+
+    @Hide
+    public abstract class zzc<TListener> {
+        private TListener zza;
+        private boolean zzb = false;
+
+        public zzc(TListener tlistener) {
+            this.zza = tlistener;
+        }
+
+        /* access modifiers changed from: protected */
+        public abstract void zza(TListener tlistener);
+
+        /* access modifiers changed from: protected */
+        public abstract void zzb();
+
+        public final void zzc() {
+            TListener tlistener;
+            synchronized (this) {
+                tlistener = this.zza;
+                if (this.zzb) {
+                    String valueOf = String.valueOf(this);
+                    StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 47);
+                    sb.append("Callback proxy ");
+                    sb.append(valueOf);
+                    sb.append(" being reused. This is not safe.");
+                    Log.w("GmsClient", sb.toString());
+                }
+            }
+            if (tlistener != null) {
+                try {
+                    zza(tlistener);
+                } catch (RuntimeException e) {
+                    zzb();
+                    throw e;
+                }
+            } else {
+                zzb();
+            }
+            synchronized (this) {
+                this.zzb = true;
+            }
+            zzd();
+        }
+
+        public final void zzd() {
+            zze();
+            synchronized (BaseGmsClient.this.zzq) {
+                BaseGmsClient.this.zzq.remove(this);
+            }
+        }
+
+        public final void zze() {
+            synchronized (this) {
+                this.zza = null;
+            }
+        }
+    }
+
+    @Hide
+    public final class zzg extends zza {
+        private final IBinder zza;
+
+        @BinderThread
+        public zzg(int i, IBinder iBinder, Bundle bundle) {
+            super(i, bundle);
+            this.zza = iBinder;
+        }
+
+        /* access modifiers changed from: protected */
+        public final void zza(ConnectionResult connectionResult) {
+            if (BaseGmsClient.this.zzu != null) {
+                BaseGmsClient.this.zzu.onConnectionFailed(connectionResult);
+            }
+            BaseGmsClient.this.onConnectionFailed(connectionResult);
+        }
+
+        /* access modifiers changed from: protected */
+        public final boolean zza() {
+            try {
+                String interfaceDescriptor = this.zza.getInterfaceDescriptor();
+                if (!BaseGmsClient.this.getServiceDescriptor().equals(interfaceDescriptor)) {
+                    String serviceDescriptor = BaseGmsClient.this.getServiceDescriptor();
+                    StringBuilder sb = new StringBuilder(String.valueOf(serviceDescriptor).length() + 34 + String.valueOf(interfaceDescriptor).length());
+                    sb.append("service descriptor mismatch: ");
+                    sb.append(serviceDescriptor);
+                    sb.append(" vs. ");
+                    sb.append(interfaceDescriptor);
+                    Log.e("GmsClient", sb.toString());
+                    return false;
+                }
+                IInterface zza2 = BaseGmsClient.this.zza(this.zza);
+                if (zza2 == null || (!BaseGmsClient.this.zza(2, 4, zza2) && !BaseGmsClient.this.zza(3, 4, zza2))) {
+                    return false;
+                }
+                ConnectionResult unused = BaseGmsClient.this.zzx = (ConnectionResult) null;
+                Bundle connectionHint = BaseGmsClient.this.getConnectionHint();
+                if (BaseGmsClient.this.zzt == null) {
+                    return true;
+                }
+                BaseGmsClient.this.zzt.onConnected(connectionHint);
+                return true;
+            } catch (RemoteException e) {
+                Log.w("GmsClient", "service probably died");
+                return false;
+            }
+        }
+    }
+
+    @Hide
+    abstract class zza extends zzc<Boolean> {
+        private final int zza;
+        private final Bundle zzb;
+
+        @BinderThread
+        protected zza(int i, Bundle bundle) {
+            super(true);
+            this.zza = i;
+            this.zzb = bundle;
+        }
+
+        /* access modifiers changed from: protected */
+        public abstract void zza(ConnectionResult connectionResult);
+
+        /* access modifiers changed from: protected */
+        public abstract boolean zza();
+
+        /* access modifiers changed from: protected */
+        public final void zzb() {
+        }
+
+        /* JADX WARN: Type inference failed for: r4v11, types: [android.os.Parcelable] */
+        /* access modifiers changed from: protected */
+        /* JADX WARNING: Multi-variable type inference failed */
+        /* Code decompiled incorrectly, please refer to instructions dump. */
+        public final /* synthetic */ void zza(java.lang.Object r4) {
+            /*
+                r3 = this;
+                java.lang.Boolean r4 = (java.lang.Boolean) r4
+                r0 = 1
+                r1 = 0
+                if (r4 != 0) goto L_0x000c
+                com.google.android.gms.common.internal.BaseGmsClient r4 = com.google.android.gms.common.internal.BaseGmsClient.this
+                r4.zzb(r0, null)
+                return
+            L_0x000c:
+                int r4 = r3.zza
+                if (r4 == 0) goto L_0x0040
+                r2 = 10
+                if (r4 == r2) goto L_0x0033
+                com.google.android.gms.common.internal.BaseGmsClient r4 = com.google.android.gms.common.internal.BaseGmsClient.this
+                r4.zzb(r0, null)
+                android.os.Bundle r4 = r3.zzb
+                if (r4 == 0) goto L_0x0028
+                java.lang.String r0 = "pendingIntent"
+                android.os.Parcelable r4 = r4.getParcelable(r0)
+                r1 = r4
+                android.app.PendingIntent r1 = (android.app.PendingIntent) r1
+            L_0x0028:
+                com.google.android.gms.common.ConnectionResult r4 = new com.google.android.gms.common.ConnectionResult
+                int r0 = r3.zza
+                r4.<init>(r0, r1)
+                r3.zza(r4)
+                goto L_0x0056
+            L_0x0033:
+                com.google.android.gms.common.internal.BaseGmsClient r4 = com.google.android.gms.common.internal.BaseGmsClient.this
+                r4.zzb(r0, null)
+                java.lang.IllegalStateException r4 = new java.lang.IllegalStateException
+                java.lang.String r0 = "A fatal developer error has occurred. Check the logs for further information."
+                r4.<init>(r0)
+                throw r4
+            L_0x0040:
+                boolean r4 = r3.zza()
+                if (r4 != 0) goto L_0x0056
+                com.google.android.gms.common.internal.BaseGmsClient r4 = com.google.android.gms.common.internal.BaseGmsClient.this
+                r4.zzb(r0, null)
+                com.google.android.gms.common.ConnectionResult r4 = new com.google.android.gms.common.ConnectionResult
+                r0 = 8
+                r4.<init>(r0, r1)
+                r3.zza(r4)
+                return
+            L_0x0056:
+                return
+            */
+            throw new UnsupportedOperationException("Method not decompiled: com.google.android.gms.common.internal.BaseGmsClient.zza.zza(java.lang.Object):void");
+        }
     }
 }

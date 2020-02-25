@@ -10,6 +10,10 @@ final class zzgng {
         this.zza = zzgnp.zza(this.zzb);
     }
 
+    /* synthetic */ zzgng(int i, zzgnc zzgnc) {
+        this(i);
+    }
+
     public final zzgnb zza() {
         this.zza.zzc();
         return new zzgni(this.zzb);
@@ -17,9 +21,5 @@ final class zzgng {
 
     public final zzgnp zzb() {
         return this.zza;
-    }
-
-    /* synthetic */ zzgng(int i, zzgnc zzgnc) {
-        this(i);
     }
 }

@@ -17,6 +17,7 @@ import com.google.protobuf.ProtoPresenceBits;
 import com.google.protobuf.ProtoPresenceCheckedField;
 import com.google.protobuf.ProtoSyntax;
 import com.google.protobuf.WireFormat;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -52,14 +53,6 @@ public final class LogsAnnotations {
     public static final GeneratedMessageLite.GeneratedExtension<DescriptorProtos.FieldOptions, Boolean> notLoggedInSawmill = GeneratedMessageLite.newSingularGeneratedExtension(DescriptorProtos.FieldOptions.getDefaultInstance(), null, null, null, 21596320, WireFormat.FieldType.BOOL, Boolean.class);
     public static final GeneratedMessageLite.GeneratedExtension<DescriptorProtos.FieldOptions, String> sawmillFilterOverrideApprovedByLogsAccess = GeneratedMessageLite.newSingularGeneratedExtension(DescriptorProtos.FieldOptions.getDefaultInstance(), "", null, null, SAWMILL_FILTER_OVERRIDE_APPROVED_BY_LOGS_ACCESS_FIELD_NUMBER, WireFormat.FieldType.STRING, String.class);
     public static final GeneratedMessageLite.GeneratedExtension<DescriptorProtos.FieldOptions, Boolean> tempLogsOnly = GeneratedMessageLite.newSingularGeneratedExtension(DescriptorProtos.FieldOptions.getDefaultInstance(), null, null, null, 21623477, WireFormat.FieldType.BOOL, Boolean.class);
-
-    public interface MessageDetailsOrBuilder extends MessageLiteOrBuilder {
-        MessageDetails.Type getMayAppearIn(int i);
-
-        int getMayAppearInCount();
-
-        List<MessageDetails.Type> getMayAppearInList();
-    }
 
     private LogsAnnotations() {
     }
@@ -127,7 +120,7 @@ public final class LogsAnnotations {
         LOGSID_COOKIE(204),
         LOGSID_URL(205),
         LOGSID_HTTPHEADER(206);
-        
+
         public static final int LOGSID_ANDROID_LOGGING_ID_VALUE = 56;
         public static final int LOGSID_APPROXIMATE_LOCATION_VALUE = 15;
         public static final int LOGSID_BISCOTTI_VALUE = 13;
@@ -180,8 +173,8 @@ public final class LogsAnnotations {
         };
         private final int value;
 
-        public final int getNumber() {
-            return this.value;
+        private IdentifierType(int value2) {
+            this.value = value2;
         }
 
         public static IdentifierType forNumber(int value2) {
@@ -302,6 +295,10 @@ public final class LogsAnnotations {
             return IdentifierTypeVerifier.INSTANCE;
         }
 
+        public final int getNumber() {
+            return this.value;
+        }
+
         private static final class IdentifierTypeVerifier implements Internal.EnumVerifier {
             static final Internal.EnumVerifier INSTANCE = new IdentifierTypeVerifier();
 
@@ -312,10 +309,14 @@ public final class LogsAnnotations {
                 return IdentifierType.forNumber(number) != null;
             }
         }
+    }
 
-        private IdentifierType(int value2) {
-            this.value = value2;
-        }
+    public interface MessageDetailsOrBuilder extends MessageLiteOrBuilder {
+        MessageDetails.Type getMayAppearIn(int i);
+
+        int getMayAppearInCount();
+
+        List<MessageDetails.Type> getMayAppearInList();
     }
 
     @ProtoMessage(checkInitialized = {1}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -324,293 +325,80 @@ public final class LogsAnnotations {
         public static final MessageDetails DEFAULT_INSTANCE = new MessageDetails();
         public static final int MAY_APPEAR_IN_FIELD_NUMBER = 1;
         private static volatile Parser<MessageDetails> PARSER;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(MessageDetails.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoField(fieldNumber = 1, type = FieldType.MESSAGE_LIST)
         private Internal.ProtobufList<Type> mayAppearIn_ = emptyProtobufList();
         private byte memoizedIsInitialized = 2;
 
-        public interface TypeOrBuilder extends MessageLiteOrBuilder {
-            String getLogType();
-
-            ByteString getLogTypeBytes();
-
-            String getSourceType();
-
-            ByteString getSourceTypeBytes();
-
-            boolean hasLogType();
-
-            boolean hasSourceType();
-        }
-
         private MessageDetails() {
         }
 
-        @ProtoMessage(checkInitialized = {1, 2}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
-        public static final class Type extends GeneratedMessageLite<Type, Builder> implements TypeOrBuilder {
-            /* access modifiers changed from: private */
-            public static final Type DEFAULT_INSTANCE = new Type();
-            public static final int LOG_TYPE_FIELD_NUMBER = 2;
-            private static volatile Parser<Type> PARSER = null;
-            public static final int SOURCE_TYPE_FIELD_NUMBER = 1;
-            @ProtoPresenceBits(mo28548id = 0)
-            private int bitField0_;
-            @ProtoField(fieldNumber = 2, isEnforceUtf8 = false, isRequired = true, type = FieldType.STRING)
-            @ProtoPresenceCheckedField(mask = 2, presenceBitsId = 0)
-            private String logType_ = "";
-            private byte memoizedIsInitialized = 2;
-            @ProtoField(fieldNumber = 1, isEnforceUtf8 = false, isRequired = true, type = FieldType.STRING)
-            @ProtoPresenceCheckedField(mask = 1, presenceBitsId = 0)
-            private String sourceType_ = "";
+        public static MessageDetails parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (MessageDetails) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
 
-            private Type() {
-            }
+        public static MessageDetails parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (MessageDetails) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-            public boolean hasSourceType() {
-                return (this.bitField0_ & 1) != 0;
-            }
+        public static MessageDetails parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (MessageDetails) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
 
-            public String getSourceType() {
-                return this.sourceType_;
-            }
+        public static MessageDetails parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (MessageDetails) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-            public ByteString getSourceTypeBytes() {
-                return ByteString.copyFromUtf8(this.sourceType_);
-            }
+        public static MessageDetails parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (MessageDetails) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
 
-            /* access modifiers changed from: private */
-            public void setSourceType(String value) {
-                if (value != null) {
-                    this.bitField0_ |= 1;
-                    this.sourceType_ = value;
-                    return;
-                }
-                throw new NullPointerException();
-            }
+        public static MessageDetails parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (MessageDetails) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-            /* access modifiers changed from: private */
-            public void clearSourceType() {
-                this.bitField0_ &= -2;
-                this.sourceType_ = getDefaultInstance().getSourceType();
-            }
+        public static MessageDetails parseFrom(InputStream input) throws IOException {
+            return (MessageDetails) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
 
-            /* access modifiers changed from: private */
-            public void setSourceTypeBytes(ByteString value) {
-                if (value != null) {
-                    this.bitField0_ |= 1;
-                    this.sourceType_ = value.toStringUtf8();
-                    return;
-                }
-                throw new NullPointerException();
-            }
+        public static MessageDetails parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (MessageDetails) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
 
-            public boolean hasLogType() {
-                return (this.bitField0_ & 2) != 0;
-            }
+        public static MessageDetails parseDelimitedFrom(InputStream input) throws IOException {
+            return (MessageDetails) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
 
-            public String getLogType() {
-                return this.logType_;
-            }
+        public static MessageDetails parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (MessageDetails) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
 
-            public ByteString getLogTypeBytes() {
-                return ByteString.copyFromUtf8(this.logType_);
-            }
+        public static MessageDetails parseFrom(CodedInputStream input) throws IOException {
+            return (MessageDetails) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
 
-            /* access modifiers changed from: private */
-            public void setLogType(String value) {
-                if (value != null) {
-                    this.bitField0_ |= 2;
-                    this.logType_ = value;
-                    return;
-                }
-                throw new NullPointerException();
-            }
+        public static MessageDetails parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (MessageDetails) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
 
-            /* access modifiers changed from: private */
-            public void clearLogType() {
-                this.bitField0_ &= -3;
-                this.logType_ = getDefaultInstance().getLogType();
-            }
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
 
-            /* access modifiers changed from: private */
-            public void setLogTypeBytes(ByteString value) {
-                if (value != null) {
-                    this.bitField0_ |= 2;
-                    this.logType_ = value.toStringUtf8();
-                    return;
-                }
-                throw new NullPointerException();
-            }
+        public static Builder newBuilder(MessageDetails prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
 
-            public static Type parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-                return (Type) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-            }
+        public static MessageDetails getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
 
-            public static Type parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-                return (Type) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-            }
-
-            public static Type parseFrom(ByteString data) throws InvalidProtocolBufferException {
-                return (Type) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-            }
-
-            public static Type parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-                return (Type) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-            }
-
-            public static Type parseFrom(byte[] data) throws InvalidProtocolBufferException {
-                return (Type) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-            }
-
-            public static Type parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-                return (Type) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-            }
-
-            public static Type parseFrom(InputStream input) throws IOException {
-                return (Type) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-            }
-
-            public static Type parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-                return (Type) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-            }
-
-            public static Type parseDelimitedFrom(InputStream input) throws IOException {
-                return (Type) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-            }
-
-            public static Type parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-                return (Type) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-            }
-
-            public static Type parseFrom(CodedInputStream input) throws IOException {
-                return (Type) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-            }
-
-            public static Type parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-                return (Type) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-            }
-
-            public static Builder newBuilder() {
-                return (Builder) DEFAULT_INSTANCE.createBuilder();
-            }
-
-            public static Builder newBuilder(Type prototype) {
-                return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
-            }
-
-            public static final class Builder extends GeneratedMessageLite.Builder<Type, Builder> implements TypeOrBuilder {
-                private Builder() {
-                    super(Type.DEFAULT_INSTANCE);
-                }
-
-                public boolean hasSourceType() {
-                    return ((Type) this.instance).hasSourceType();
-                }
-
-                public String getSourceType() {
-                    return ((Type) this.instance).getSourceType();
-                }
-
-                public ByteString getSourceTypeBytes() {
-                    return ((Type) this.instance).getSourceTypeBytes();
-                }
-
-                public Builder setSourceType(String value) {
-                    copyOnWrite();
-                    ((Type) this.instance).setSourceType(value);
-                    return this;
-                }
-
-                public Builder clearSourceType() {
-                    copyOnWrite();
-                    ((Type) this.instance).clearSourceType();
-                    return this;
-                }
-
-                public Builder setSourceTypeBytes(ByteString value) {
-                    copyOnWrite();
-                    ((Type) this.instance).setSourceTypeBytes(value);
-                    return this;
-                }
-
-                public boolean hasLogType() {
-                    return ((Type) this.instance).hasLogType();
-                }
-
-                public String getLogType() {
-                    return ((Type) this.instance).getLogType();
-                }
-
-                public ByteString getLogTypeBytes() {
-                    return ((Type) this.instance).getLogTypeBytes();
-                }
-
-                public Builder setLogType(String value) {
-                    copyOnWrite();
-                    ((Type) this.instance).setLogType(value);
-                    return this;
-                }
-
-                public Builder clearLogType() {
-                    copyOnWrite();
-                    ((Type) this.instance).clearLogType();
-                    return this;
-                }
-
-                public Builder setLogTypeBytes(ByteString value) {
-                    copyOnWrite();
-                    ((Type) this.instance).setLogTypeBytes(value);
-                    return this;
-                }
-            }
-
-            /* access modifiers changed from: protected */
-            public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-                int i = 1;
-                switch (method) {
-                    case NEW_MUTABLE_INSTANCE:
-                        return new Type();
-                    case NEW_BUILDER:
-                        return new Builder();
-                    case BUILD_MESSAGE_INFO:
-                        return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0000\u0002\u0001Ԉ\u0000\u0002Ԉ\u0001", new Object[]{"bitField0_", "sourceType_", "logType_"});
-                    case GET_DEFAULT_INSTANCE:
-                        return DEFAULT_INSTANCE;
-                    case GET_PARSER:
-                        Parser<Type> parser = PARSER;
-                        if (parser == null) {
-                            synchronized (Type.class) {
-                                parser = PARSER;
-                                if (parser == null) {
-                                    parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                    PARSER = parser;
-                                }
-                            }
-                        }
-                        return parser;
-                    case GET_MEMOIZED_IS_INITIALIZED:
-                        return Byte.valueOf(this.memoizedIsInitialized);
-                    case SET_MEMOIZED_IS_INITIALIZED:
-                        if (arg0 == null) {
-                            i = 0;
-                        }
-                        this.memoizedIsInitialized = (byte) i;
-                        return null;
-                    default:
-                        throw new UnsupportedOperationException();
-                }
-            }
-
-            static {
-                GeneratedMessageLite.registerDefaultInstance(Type.class, DEFAULT_INSTANCE);
-            }
-
-            public static Type getDefaultInstance() {
-                return DEFAULT_INSTANCE;
-            }
-
-            public static Parser<Type> parser() {
-                return DEFAULT_INSTANCE.getParserForType();
-            }
+        public static Parser<MessageDetails> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public List<Type> getMayAppearInList() {
@@ -710,60 +498,324 @@ public final class LogsAnnotations {
             this.mayAppearIn_.remove(index);
         }
 
-        public static MessageDetails parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (MessageDetails) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            int i = 1;
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new MessageDetails();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0001\u0000\u0000\u0001\u0001\u0001\u0000\u0001\u0001\u0001Л", new Object[]{"mayAppearIn_", Type.class});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<MessageDetails> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (MessageDetails.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return Byte.valueOf(this.memoizedIsInitialized);
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    if (arg0 == null) {
+                        i = 0;
+                    }
+                    this.memoizedIsInitialized = (byte) i;
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
-        public static MessageDetails parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (MessageDetails) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        public interface TypeOrBuilder extends MessageLiteOrBuilder {
+            String getLogType();
+
+            ByteString getLogTypeBytes();
+
+            String getSourceType();
+
+            ByteString getSourceTypeBytes();
+
+            boolean hasLogType();
+
+            boolean hasSourceType();
         }
 
-        public static MessageDetails parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (MessageDetails) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
+        @ProtoMessage(checkInitialized = {1, 2}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
+        public static final class Type extends GeneratedMessageLite<Type, Builder> implements TypeOrBuilder {
+            /* access modifiers changed from: private */
+            public static final Type DEFAULT_INSTANCE = new Type();
+            public static final int LOG_TYPE_FIELD_NUMBER = 2;
+            public static final int SOURCE_TYPE_FIELD_NUMBER = 1;
+            private static volatile Parser<Type> PARSER = null;
 
-        public static MessageDetails parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (MessageDetails) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
+            static {
+                GeneratedMessageLite.registerDefaultInstance(Type.class, DEFAULT_INSTANCE);
+            }
 
-        public static MessageDetails parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (MessageDetails) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
+            @ProtoPresenceBits(mo28548id = 0)
+            private int bitField0_;
+            @ProtoField(fieldNumber = 2, isEnforceUtf8 = false, isRequired = true, type = FieldType.STRING)
+            @ProtoPresenceCheckedField(mask = 2, presenceBitsId = 0)
+            private String logType_ = "";
+            private byte memoizedIsInitialized = 2;
+            @ProtoField(fieldNumber = 1, isEnforceUtf8 = false, isRequired = true, type = FieldType.STRING)
+            @ProtoPresenceCheckedField(mask = 1, presenceBitsId = 0)
+            private String sourceType_ = "";
 
-        public static MessageDetails parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (MessageDetails) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
+            private Type() {
+            }
 
-        public static MessageDetails parseFrom(InputStream input) throws IOException {
-            return (MessageDetails) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
+            public static Type parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+                return (Type) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+            }
 
-        public static MessageDetails parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (MessageDetails) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
+            public static Type parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+                return (Type) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+            }
 
-        public static MessageDetails parseDelimitedFrom(InputStream input) throws IOException {
-            return (MessageDetails) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
+            public static Type parseFrom(ByteString data) throws InvalidProtocolBufferException {
+                return (Type) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+            }
 
-        public static MessageDetails parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (MessageDetails) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
+            public static Type parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+                return (Type) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+            }
 
-        public static MessageDetails parseFrom(CodedInputStream input) throws IOException {
-            return (MessageDetails) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
+            public static Type parseFrom(byte[] data) throws InvalidProtocolBufferException {
+                return (Type) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+            }
 
-        public static MessageDetails parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (MessageDetails) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
+            public static Type parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+                return (Type) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+            }
 
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
+            public static Type parseFrom(InputStream input) throws IOException {
+                return (Type) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+            }
 
-        public static Builder newBuilder(MessageDetails prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+            public static Type parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+                return (Type) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+            }
+
+            public static Type parseDelimitedFrom(InputStream input) throws IOException {
+                return (Type) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+            }
+
+            public static Type parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+                return (Type) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+            }
+
+            public static Type parseFrom(CodedInputStream input) throws IOException {
+                return (Type) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+            }
+
+            public static Type parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+                return (Type) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+            }
+
+            public static Builder newBuilder() {
+                return (Builder) DEFAULT_INSTANCE.createBuilder();
+            }
+
+            public static Builder newBuilder(Type prototype) {
+                return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+            }
+
+            public static Type getDefaultInstance() {
+                return DEFAULT_INSTANCE;
+            }
+
+            public static Parser<Type> parser() {
+                return DEFAULT_INSTANCE.getParserForType();
+            }
+
+            public boolean hasSourceType() {
+                return (this.bitField0_ & 1) != 0;
+            }
+
+            public String getSourceType() {
+                return this.sourceType_;
+            }
+
+            /* access modifiers changed from: private */
+            public void setSourceType(String value) {
+                if (value != null) {
+                    this.bitField0_ |= 1;
+                    this.sourceType_ = value;
+                    return;
+                }
+                throw new NullPointerException();
+            }
+
+            public ByteString getSourceTypeBytes() {
+                return ByteString.copyFromUtf8(this.sourceType_);
+            }
+
+            /* access modifiers changed from: private */
+            public void setSourceTypeBytes(ByteString value) {
+                if (value != null) {
+                    this.bitField0_ |= 1;
+                    this.sourceType_ = value.toStringUtf8();
+                    return;
+                }
+                throw new NullPointerException();
+            }
+
+            /* access modifiers changed from: private */
+            public void clearSourceType() {
+                this.bitField0_ &= -2;
+                this.sourceType_ = getDefaultInstance().getSourceType();
+            }
+
+            public boolean hasLogType() {
+                return (this.bitField0_ & 2) != 0;
+            }
+
+            public String getLogType() {
+                return this.logType_;
+            }
+
+            /* access modifiers changed from: private */
+            public void setLogType(String value) {
+                if (value != null) {
+                    this.bitField0_ |= 2;
+                    this.logType_ = value;
+                    return;
+                }
+                throw new NullPointerException();
+            }
+
+            public ByteString getLogTypeBytes() {
+                return ByteString.copyFromUtf8(this.logType_);
+            }
+
+            /* access modifiers changed from: private */
+            public void setLogTypeBytes(ByteString value) {
+                if (value != null) {
+                    this.bitField0_ |= 2;
+                    this.logType_ = value.toStringUtf8();
+                    return;
+                }
+                throw new NullPointerException();
+            }
+
+            /* access modifiers changed from: private */
+            public void clearLogType() {
+                this.bitField0_ &= -3;
+                this.logType_ = getDefaultInstance().getLogType();
+            }
+
+            /* access modifiers changed from: protected */
+            public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+                int i = 1;
+                switch (method) {
+                    case NEW_MUTABLE_INSTANCE:
+                        return new Type();
+                    case NEW_BUILDER:
+                        return new Builder();
+                    case BUILD_MESSAGE_INFO:
+                        return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0000\u0002\u0001Ԉ\u0000\u0002Ԉ\u0001", new Object[]{"bitField0_", "sourceType_", "logType_"});
+                    case GET_DEFAULT_INSTANCE:
+                        return DEFAULT_INSTANCE;
+                    case GET_PARSER:
+                        Parser<Type> parser = PARSER;
+                        if (parser == null) {
+                            synchronized (Type.class) {
+                                parser = PARSER;
+                                if (parser == null) {
+                                    parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                    PARSER = parser;
+                                }
+                            }
+                        }
+                        return parser;
+                    case GET_MEMOIZED_IS_INITIALIZED:
+                        return Byte.valueOf(this.memoizedIsInitialized);
+                    case SET_MEMOIZED_IS_INITIALIZED:
+                        if (arg0 == null) {
+                            i = 0;
+                        }
+                        this.memoizedIsInitialized = (byte) i;
+                        return null;
+                    default:
+                        throw new UnsupportedOperationException();
+                }
+            }
+
+            public static final class Builder extends GeneratedMessageLite.Builder<Type, Builder> implements TypeOrBuilder {
+                private Builder() {
+                    super(Type.DEFAULT_INSTANCE);
+                }
+
+                public boolean hasSourceType() {
+                    return ((Type) this.instance).hasSourceType();
+                }
+
+                public String getSourceType() {
+                    return ((Type) this.instance).getSourceType();
+                }
+
+                public Builder setSourceType(String value) {
+                    copyOnWrite();
+                    ((Type) this.instance).setSourceType(value);
+                    return this;
+                }
+
+                public ByteString getSourceTypeBytes() {
+                    return ((Type) this.instance).getSourceTypeBytes();
+                }
+
+                public Builder setSourceTypeBytes(ByteString value) {
+                    copyOnWrite();
+                    ((Type) this.instance).setSourceTypeBytes(value);
+                    return this;
+                }
+
+                public Builder clearSourceType() {
+                    copyOnWrite();
+                    ((Type) this.instance).clearSourceType();
+                    return this;
+                }
+
+                public boolean hasLogType() {
+                    return ((Type) this.instance).hasLogType();
+                }
+
+                public String getLogType() {
+                    return ((Type) this.instance).getLogType();
+                }
+
+                public Builder setLogType(String value) {
+                    copyOnWrite();
+                    ((Type) this.instance).setLogType(value);
+                    return this;
+                }
+
+                public ByteString getLogTypeBytes() {
+                    return ((Type) this.instance).getLogTypeBytes();
+                }
+
+                public Builder setLogTypeBytes(ByteString value) {
+                    copyOnWrite();
+                    ((Type) this.instance).setLogTypeBytes(value);
+                    return this;
+                }
+
+                public Builder clearLogType() {
+                    copyOnWrite();
+                    ((Type) this.instance).clearLogType();
+                    return this;
+                }
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<MessageDetails, Builder> implements MessageDetailsOrBuilder {
@@ -836,55 +888,6 @@ public final class LogsAnnotations {
                 ((MessageDetails) this.instance).removeMayAppearIn(index);
                 return this;
             }
-        }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            int i = 1;
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new MessageDetails();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0001\u0000\u0000\u0001\u0001\u0001\u0000\u0001\u0001\u0001Л", new Object[]{"mayAppearIn_", Type.class});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<MessageDetails> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (MessageDetails.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return Byte.valueOf(this.memoizedIsInitialized);
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    if (arg0 == null) {
-                        i = 0;
-                    }
-                    this.memoizedIsInitialized = (byte) i;
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(MessageDetails.class, DEFAULT_INSTANCE);
-        }
-
-        public static MessageDetails getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<MessageDetails> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
         }
     }
 }

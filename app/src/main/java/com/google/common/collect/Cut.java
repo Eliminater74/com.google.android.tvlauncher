@@ -3,16 +3,37 @@ package com.google.common.collect;
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.base.Preconditions;
 import com.google.common.primitives.Booleans;
-import java.io.Serializable;
-import java.lang.Comparable;
-import java.util.NoSuchElementException;
+
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
+import java.io.Serializable;
+import java.util.NoSuchElementException;
 
 @GwtCompatible
 abstract class Cut<C extends Comparable> implements Comparable<Cut<C>>, Serializable {
     private static final long serialVersionUID = 0;
     @NullableDecl
     final C endpoint;
+
+    Cut(@NullableDecl C endpoint2) {
+        this.endpoint = endpoint2;
+    }
+
+    static <C extends Comparable> Cut<C> belowAll() {
+        return BelowAll.INSTANCE;
+    }
+
+    static <C extends Comparable> Cut<C> aboveAll() {
+        return AboveAll.INSTANCE;
+    }
+
+    static <C extends Comparable> Cut<C> belowValue(C endpoint2) {
+        return new BelowValue(endpoint2);
+    }
+
+    static <C extends Comparable> Cut<C> aboveValue(C endpoint2) {
+        return new AboveValue(endpoint2);
+    }
 
     /* access modifiers changed from: package-private */
     public abstract void describeAsLowerBound(StringBuilder sb);
@@ -42,10 +63,6 @@ abstract class Cut<C extends Comparable> implements Comparable<Cut<C>>, Serializ
 
     /* access modifiers changed from: package-private */
     public abstract Cut<C> withUpperBoundType(BoundType boundType, DiscreteDomain<C> discreteDomain);
-
-    Cut(@NullableDecl C endpoint2) {
-        this.endpoint = endpoint2;
-    }
 
     /* access modifiers changed from: package-private */
     public Cut<C> canonical(DiscreteDomain<C> discreteDomain) {
@@ -84,21 +101,17 @@ abstract class Cut<C extends Comparable> implements Comparable<Cut<C>>, Serializ
         return false;
     }
 
-    static <C extends Comparable> Cut<C> belowAll() {
-        return BelowAll.INSTANCE;
-    }
-
     private static final class BelowAll extends Cut<Comparable<?>> {
         /* access modifiers changed from: private */
         public static final BelowAll INSTANCE = new BelowAll();
         private static final long serialVersionUID = 0;
 
-        public /* bridge */ /* synthetic */ int compareTo(Object obj) {
-            return compareTo((Cut<Comparable<?>>) ((Cut) obj));
-        }
-
         private BelowAll() {
             super(null);
+        }
+
+        public /* bridge */ /* synthetic */ int compareTo(Object obj) {
+            return compareTo((Cut<Comparable<?>>) ((Cut) obj));
         }
 
         /* access modifiers changed from: package-private */
@@ -177,21 +190,17 @@ abstract class Cut<C extends Comparable> implements Comparable<Cut<C>>, Serializ
         }
     }
 
-    static <C extends Comparable> Cut<C> aboveAll() {
-        return AboveAll.INSTANCE;
-    }
-
     private static final class AboveAll extends Cut<Comparable<?>> {
         /* access modifiers changed from: private */
         public static final AboveAll INSTANCE = new AboveAll();
         private static final long serialVersionUID = 0;
 
-        public /* bridge */ /* synthetic */ int compareTo(Object obj) {
-            return compareTo((Cut<Comparable<?>>) ((Cut) obj));
-        }
-
         private AboveAll() {
             super(null);
+        }
+
+        public /* bridge */ /* synthetic */ int compareTo(Object obj) {
+            return compareTo((Cut<Comparable<?>>) ((Cut) obj));
         }
 
         /* access modifiers changed from: package-private */
@@ -259,10 +268,6 @@ abstract class Cut<C extends Comparable> implements Comparable<Cut<C>>, Serializ
         private Object readResolve() {
             return INSTANCE;
         }
-    }
-
-    static <C extends Comparable> Cut<C> belowValue(C endpoint2) {
-        return new BelowValue(endpoint2);
     }
 
     private static final class BelowValue<C extends Comparable> extends Cut<C> {
@@ -363,10 +368,6 @@ abstract class Cut<C extends Comparable> implements Comparable<Cut<C>>, Serializ
             } catch (NoSuchFieldError e2) {
             }
         }
-    }
-
-    static <C extends Comparable> Cut<C> aboveValue(C endpoint2) {
-        return new AboveValue(endpoint2);
     }
 
     private static final class AboveValue<C extends Comparable> extends Cut<C> {

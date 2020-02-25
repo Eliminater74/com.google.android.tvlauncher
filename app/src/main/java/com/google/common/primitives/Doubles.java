@@ -5,6 +5,9 @@ import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.base.Converter;
 import com.google.common.base.Preconditions;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.Serializable;
 import java.util.AbstractList;
 import java.util.Arrays;
@@ -14,7 +17,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.RandomAccess;
 import java.util.regex.Pattern;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible(emulated = true)
 public final class Doubles {
@@ -133,32 +135,6 @@ public final class Doubles {
         return result;
     }
 
-    private static final class DoubleConverter extends Converter<String, Double> implements Serializable {
-        static final DoubleConverter INSTANCE = new DoubleConverter();
-        private static final long serialVersionUID = 1;
-
-        private DoubleConverter() {
-        }
-
-        /* access modifiers changed from: protected */
-        public Double doForward(String value) {
-            return Double.valueOf(value);
-        }
-
-        /* access modifiers changed from: protected */
-        public String doBackward(Double value) {
-            return value.toString();
-        }
-
-        public String toString() {
-            return "Doubles.stringConverter()";
-        }
-
-        private Object readResolve() {
-            return INSTANCE;
-        }
-    }
-
     @Beta
     public static Converter<String, Double> stringConverter() {
         return DoubleConverter.INSTANCE;
@@ -190,25 +166,6 @@ public final class Doubles {
 
     public static Comparator<double[]> lexicographicalComparator() {
         return LexicographicalComparator.INSTANCE;
-    }
-
-    private enum LexicographicalComparator implements Comparator<double[]> {
-        INSTANCE;
-
-        public int compare(double[] left, double[] right) {
-            int minLength = Math.min(left.length, right.length);
-            for (int i = 0; i < minLength; i++) {
-                int result = Double.compare(left[i], right[i]);
-                if (result != 0) {
-                    return result;
-                }
-            }
-            return left.length - right.length;
-        }
-
-        public String toString() {
-            return "Doubles.lexicographicalComparator()";
-        }
     }
 
     public static void sortDescending(double[] array) {
@@ -258,6 +215,82 @@ public final class Doubles {
             return Collections.emptyList();
         }
         return new DoubleArrayAsList(backingArray);
+    }
+
+    @GwtIncompatible
+    private static Pattern fpPattern() {
+        String completeDec = String.valueOf("(?:\\d+#(?:\\.\\d*#)?|\\.\\d+#)").concat("(?:[eE][+-]?\\d+#)?[fFdD]?");
+        StringBuilder sb = new StringBuilder(String.valueOf("(?:[0-9a-fA-F]+#(?:\\.[0-9a-fA-F]*#)?|\\.[0-9a-fA-F]+#)").length() + 25);
+        sb.append("0[xX]");
+        sb.append("(?:[0-9a-fA-F]+#(?:\\.[0-9a-fA-F]*#)?|\\.[0-9a-fA-F]+#)");
+        sb.append("[pP][+-]?\\d+#[fFdD]?");
+        String completeHex = sb.toString();
+        StringBuilder sb2 = new StringBuilder(String.valueOf(completeDec).length() + 23 + String.valueOf(completeHex).length());
+        sb2.append("[+-]?(?:NaN|Infinity|");
+        sb2.append(completeDec);
+        sb2.append("|");
+        sb2.append(completeHex);
+        sb2.append(")");
+        return Pattern.compile(sb2.toString().replace("#", "+"));
+    }
+
+    @NullableDecl
+    @GwtIncompatible
+    @Beta
+    public static Double tryParse(String string) {
+        if (!FLOATING_POINT_PATTERN.matcher(string).matches()) {
+            return null;
+        }
+        try {
+            return Double.valueOf(Double.parseDouble(string));
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    private enum LexicographicalComparator implements Comparator<double[]> {
+        INSTANCE;
+
+        public int compare(double[] left, double[] right) {
+            int minLength = Math.min(left.length, right.length);
+            for (int i = 0; i < minLength; i++) {
+                int result = Double.compare(left[i], right[i]);
+                if (result != 0) {
+                    return result;
+                }
+            }
+            return left.length - right.length;
+        }
+
+        public String toString() {
+            return "Doubles.lexicographicalComparator()";
+        }
+    }
+
+    private static final class DoubleConverter extends Converter<String, Double> implements Serializable {
+        static final DoubleConverter INSTANCE = new DoubleConverter();
+        private static final long serialVersionUID = 1;
+
+        private DoubleConverter() {
+        }
+
+        /* access modifiers changed from: protected */
+        public Double doForward(String value) {
+            return Double.valueOf(value);
+        }
+
+        /* access modifiers changed from: protected */
+        public String doBackward(Double value) {
+            return value.toString();
+        }
+
+        public String toString() {
+            return "Doubles.stringConverter()";
+        }
+
+        private Object readResolve() {
+            return INSTANCE;
+        }
     }
 
     @GwtCompatible
@@ -377,37 +410,6 @@ public final class Doubles {
         /* access modifiers changed from: package-private */
         public double[] toDoubleArray() {
             return Arrays.copyOfRange(this.array, this.start, this.end);
-        }
-    }
-
-    @GwtIncompatible
-    private static Pattern fpPattern() {
-        String completeDec = String.valueOf("(?:\\d+#(?:\\.\\d*#)?|\\.\\d+#)").concat("(?:[eE][+-]?\\d+#)?[fFdD]?");
-        StringBuilder sb = new StringBuilder(String.valueOf("(?:[0-9a-fA-F]+#(?:\\.[0-9a-fA-F]*#)?|\\.[0-9a-fA-F]+#)").length() + 25);
-        sb.append("0[xX]");
-        sb.append("(?:[0-9a-fA-F]+#(?:\\.[0-9a-fA-F]*#)?|\\.[0-9a-fA-F]+#)");
-        sb.append("[pP][+-]?\\d+#[fFdD]?");
-        String completeHex = sb.toString();
-        StringBuilder sb2 = new StringBuilder(String.valueOf(completeDec).length() + 23 + String.valueOf(completeHex).length());
-        sb2.append("[+-]?(?:NaN|Infinity|");
-        sb2.append(completeDec);
-        sb2.append("|");
-        sb2.append(completeHex);
-        sb2.append(")");
-        return Pattern.compile(sb2.toString().replace("#", "+"));
-    }
-
-    @NullableDecl
-    @GwtIncompatible
-    @Beta
-    public static Double tryParse(String string) {
-        if (!FLOATING_POINT_PATTERN.matcher(string).matches()) {
-            return null;
-        }
-        try {
-            return Double.valueOf(Double.parseDouble(string));
-        } catch (NumberFormatException e) {
-            return null;
         }
     }
 }

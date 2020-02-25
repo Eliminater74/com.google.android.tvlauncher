@@ -15,15 +15,23 @@ import com.google.protobuf.ProtoMessage;
 import com.google.protobuf.ProtoPresenceBits;
 import com.google.protobuf.ProtoPresenceCheckedField;
 import com.google.protobuf.ProtoSyntax;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.Collections;
 import java.util.List;
+
 import logs.proto.wireless.performance.mobile.BatteryMetric;
 import logs.proto.wireless.performance.mobile.ExtensionMetric;
 
 public final class PersistentFormat {
+
+    private PersistentFormat() {
+    }
+
+    public static void registerAllExtensions(ExtensionRegistryLite registry) {
+    }
 
     public interface BatterySnapshotOrBuilder extends MessageLiteOrBuilder {
         long getCurrentTime();
@@ -83,12 +91,6 @@ public final class PersistentFormat {
         boolean hasVersionNameHash();
     }
 
-    private PersistentFormat() {
-    }
-
-    public static void registerAllExtensions(ExtensionRegistryLite registry) {
-    }
-
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
     public static final class BatterySnapshot extends GeneratedMessageLite<BatterySnapshot, Builder> implements BatterySnapshotOrBuilder {
         public static final int CURRENT_TIME_FIELD_NUMBER = 3;
@@ -98,11 +100,16 @@ public final class PersistentFormat {
         public static final int ELAPSED_TIME_FIELD_NUMBER = 2;
         public static final int IS_EVENT_NAME_CONSTANT_FIELD_NUMBER = 8;
         public static final int METRIC_EXTENSION_FIELD_NUMBER = 9;
-        private static volatile Parser<BatterySnapshot> PARSER = null;
         public static final int PRIMES_VERSION_FIELD_NUMBER = 4;
         public static final int SAMPLE_INFO_FIELD_NUMBER = 6;
         public static final int UID_HEALTH_PROTO_FIELD_NUMBER = 1;
         public static final int VERSION_NAME_HASH_FIELD_NUMBER = 5;
+        private static volatile Parser<BatterySnapshot> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(BatterySnapshot.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 3, isRequired = false, type = FieldType.INT64)
@@ -134,6 +141,70 @@ public final class PersistentFormat {
         private long versionNameHash_;
 
         private BatterySnapshot() {
+        }
+
+        public static BatterySnapshot parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (BatterySnapshot) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static BatterySnapshot parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (BatterySnapshot) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static BatterySnapshot parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (BatterySnapshot) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static BatterySnapshot parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (BatterySnapshot) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static BatterySnapshot parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (BatterySnapshot) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static BatterySnapshot parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (BatterySnapshot) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static BatterySnapshot parseFrom(InputStream input) throws IOException {
+            return (BatterySnapshot) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static BatterySnapshot parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (BatterySnapshot) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static BatterySnapshot parseDelimitedFrom(InputStream input) throws IOException {
+            return (BatterySnapshot) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static BatterySnapshot parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (BatterySnapshot) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static BatterySnapshot parseFrom(CodedInputStream input) throws IOException {
+            return (BatterySnapshot) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static BatterySnapshot parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (BatterySnapshot) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(BatterySnapshot prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static BatterySnapshot getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<BatterySnapshot> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasUidHealthProto() {
@@ -290,10 +361,6 @@ public final class PersistentFormat {
             return this.customEventName_;
         }
 
-        public ByteString getCustomEventNameBytes() {
-            return ByteString.copyFromUtf8(this.customEventName_);
-        }
-
         /* access modifiers changed from: private */
         public void setCustomEventName(String value) {
             if (value != null) {
@@ -304,10 +371,8 @@ public final class PersistentFormat {
             throw new NullPointerException();
         }
 
-        /* access modifiers changed from: private */
-        public void clearCustomEventName() {
-            this.bitField0_ &= -65;
-            this.customEventName_ = getDefaultInstance().getCustomEventName();
+        public ByteString getCustomEventNameBytes() {
+            return ByteString.copyFromUtf8(this.customEventName_);
         }
 
         /* access modifiers changed from: private */
@@ -318,6 +383,12 @@ public final class PersistentFormat {
                 return;
             }
             throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearCustomEventName() {
+            this.bitField0_ &= -65;
+            this.customEventName_ = getDefaultInstance().getCustomEventName();
         }
 
         public boolean hasIsEventNameConstant() {
@@ -386,60 +457,36 @@ public final class PersistentFormat {
             this.bitField0_ &= -257;
         }
 
-        public static BatterySnapshot parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (BatterySnapshot) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static BatterySnapshot parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (BatterySnapshot) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static BatterySnapshot parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (BatterySnapshot) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static BatterySnapshot parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (BatterySnapshot) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static BatterySnapshot parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (BatterySnapshot) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static BatterySnapshot parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (BatterySnapshot) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static BatterySnapshot parseFrom(InputStream input) throws IOException {
-            return (BatterySnapshot) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static BatterySnapshot parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (BatterySnapshot) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static BatterySnapshot parseDelimitedFrom(InputStream input) throws IOException {
-            return (BatterySnapshot) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static BatterySnapshot parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (BatterySnapshot) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static BatterySnapshot parseFrom(CodedInputStream input) throws IOException {
-            return (BatterySnapshot) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static BatterySnapshot parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (BatterySnapshot) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(BatterySnapshot prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new BatterySnapshot();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\t\u0000\u0001\u0001\t\t\u0000\u0000\u0000\u0001\t\u0000\u0002\u0002\u0001\u0003\u0002\u0002\u0004\u0002\u0003\u0005\u0005\u0004\u0006\u0004\u0005\u0007\b\u0006\b\u0007\u0007\t\t\b", new Object[]{"bitField0_", "uidHealthProto_", "elapsedTime_", "currentTime_", "primesVersion_", "versionNameHash_", "sampleInfo_", "customEventName_", "isEventNameConstant_", "metricExtension_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<BatterySnapshot> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (BatterySnapshot.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<BatterySnapshot, Builder> implements BatterySnapshotOrBuilder {
@@ -587,25 +634,25 @@ public final class PersistentFormat {
                 return ((BatterySnapshot) this.instance).getCustomEventName();
             }
 
-            public ByteString getCustomEventNameBytes() {
-                return ((BatterySnapshot) this.instance).getCustomEventNameBytes();
-            }
-
             public Builder setCustomEventName(String value) {
                 copyOnWrite();
                 ((BatterySnapshot) this.instance).setCustomEventName(value);
                 return this;
             }
 
-            public Builder clearCustomEventName() {
-                copyOnWrite();
-                ((BatterySnapshot) this.instance).clearCustomEventName();
-                return this;
+            public ByteString getCustomEventNameBytes() {
+                return ((BatterySnapshot) this.instance).getCustomEventNameBytes();
             }
 
             public Builder setCustomEventNameBytes(ByteString value) {
                 copyOnWrite();
                 ((BatterySnapshot) this.instance).setCustomEventNameBytes(value);
+                return this;
+            }
+
+            public Builder clearCustomEventName() {
+                copyOnWrite();
+                ((BatterySnapshot) this.instance).clearCustomEventName();
                 return this;
             }
 
@@ -661,59 +708,20 @@ public final class PersistentFormat {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new BatterySnapshot();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\t\u0000\u0001\u0001\t\t\u0000\u0000\u0000\u0001\t\u0000\u0002\u0002\u0001\u0003\u0002\u0002\u0004\u0002\u0003\u0005\u0005\u0004\u0006\u0004\u0005\u0007\b\u0006\b\u0007\u0007\t\t\b", new Object[]{"bitField0_", "uidHealthProto_", "elapsedTime_", "currentTime_", "primesVersion_", "versionNameHash_", "sampleInfo_", "customEventName_", "isEventNameConstant_", "metricExtension_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<BatterySnapshot> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (BatterySnapshot.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(BatterySnapshot.class, DEFAULT_INSTANCE);
-        }
-
-        public static BatterySnapshot getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<BatterySnapshot> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
     public static final class PersistentMemorySamples extends GeneratedMessageLite<PersistentMemorySamples, Builder> implements PersistentMemorySamplesOrBuilder {
         /* access modifiers changed from: private */
         public static final PersistentMemorySamples DEFAULT_INSTANCE = new PersistentMemorySamples();
-        private static volatile Parser<PersistentMemorySamples> PARSER = null;
         public static final int SAMPLES_FIELD_NUMBER = 1;
         public static final int VERSION_NAME_HASH_FIELD_NUMBER = 2;
+        private static volatile Parser<PersistentMemorySamples> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(PersistentMemorySamples.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 1, type = FieldType.MESSAGE_LIST)
@@ -723,6 +731,70 @@ public final class PersistentFormat {
         private int versionNameHash_;
 
         private PersistentMemorySamples() {
+        }
+
+        public static PersistentMemorySamples parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (PersistentMemorySamples) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static PersistentMemorySamples parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (PersistentMemorySamples) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static PersistentMemorySamples parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (PersistentMemorySamples) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static PersistentMemorySamples parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (PersistentMemorySamples) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static PersistentMemorySamples parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (PersistentMemorySamples) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static PersistentMemorySamples parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (PersistentMemorySamples) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static PersistentMemorySamples parseFrom(InputStream input) throws IOException {
+            return (PersistentMemorySamples) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static PersistentMemorySamples parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (PersistentMemorySamples) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static PersistentMemorySamples parseDelimitedFrom(InputStream input) throws IOException {
+            return (PersistentMemorySamples) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static PersistentMemorySamples parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (PersistentMemorySamples) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static PersistentMemorySamples parseFrom(CodedInputStream input) throws IOException {
+            return (PersistentMemorySamples) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static PersistentMemorySamples parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (PersistentMemorySamples) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(PersistentMemorySamples prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static PersistentMemorySamples getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<PersistentMemorySamples> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public List<MemorySample> getSamplesList() {
@@ -842,60 +914,36 @@ public final class PersistentFormat {
             this.versionNameHash_ = 0;
         }
 
-        public static PersistentMemorySamples parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (PersistentMemorySamples) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static PersistentMemorySamples parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (PersistentMemorySamples) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static PersistentMemorySamples parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (PersistentMemorySamples) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static PersistentMemorySamples parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (PersistentMemorySamples) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static PersistentMemorySamples parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (PersistentMemorySamples) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static PersistentMemorySamples parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (PersistentMemorySamples) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static PersistentMemorySamples parseFrom(InputStream input) throws IOException {
-            return (PersistentMemorySamples) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static PersistentMemorySamples parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (PersistentMemorySamples) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static PersistentMemorySamples parseDelimitedFrom(InputStream input) throws IOException {
-            return (PersistentMemorySamples) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static PersistentMemorySamples parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (PersistentMemorySamples) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static PersistentMemorySamples parseFrom(CodedInputStream input) throws IOException {
-            return (PersistentMemorySamples) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static PersistentMemorySamples parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (PersistentMemorySamples) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(PersistentMemorySamples prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new PersistentMemorySamples();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0001\u0000\u0001\u001b\u0002\u0004\u0000", new Object[]{"bitField0_", "samples_", MemorySample.class, "versionNameHash_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<PersistentMemorySamples> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (PersistentMemorySamples.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<PersistentMemorySamples, Builder> implements PersistentMemorySamplesOrBuilder {
@@ -989,58 +1037,19 @@ public final class PersistentFormat {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new PersistentMemorySamples();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0001\u0000\u0001\u001b\u0002\u0004\u0000", new Object[]{"bitField0_", "samples_", MemorySample.class, "versionNameHash_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<PersistentMemorySamples> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (PersistentMemorySamples.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(PersistentMemorySamples.class, DEFAULT_INSTANCE);
-        }
-
-        public static PersistentMemorySamples getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<PersistentMemorySamples> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
     public static final class MemorySample extends GeneratedMessageLite<MemorySample, Builder> implements MemorySampleOrBuilder {
         /* access modifiers changed from: private */
         public static final MemorySample DEFAULT_INSTANCE = new MemorySample();
-        private static volatile Parser<MemorySample> PARSER = null;
         public static final int TOTAL_PSS_KB_FIELD_NUMBER = 1;
+        private static volatile Parser<MemorySample> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(MemorySample.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.INT32)
@@ -1048,26 +1057,6 @@ public final class PersistentFormat {
         private int totalPssKb_;
 
         private MemorySample() {
-        }
-
-        public boolean hasTotalPssKb() {
-            return (this.bitField0_ & 1) != 0;
-        }
-
-        public int getTotalPssKb() {
-            return this.totalPssKb_;
-        }
-
-        /* access modifiers changed from: private */
-        public void setTotalPssKb(int value) {
-            this.bitField0_ |= 1;
-            this.totalPssKb_ = value;
-        }
-
-        /* access modifiers changed from: private */
-        public void clearTotalPssKb() {
-            this.bitField0_ &= -2;
-            this.totalPssKb_ = 0;
         }
 
         public static MemorySample parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
@@ -1126,30 +1115,32 @@ public final class PersistentFormat {
             return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
         }
 
-        public static final class Builder extends GeneratedMessageLite.Builder<MemorySample, Builder> implements MemorySampleOrBuilder {
-            private Builder() {
-                super(MemorySample.DEFAULT_INSTANCE);
-            }
+        public static MemorySample getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
 
-            public boolean hasTotalPssKb() {
-                return ((MemorySample) this.instance).hasTotalPssKb();
-            }
+        public static Parser<MemorySample> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
+        }
 
-            public int getTotalPssKb() {
-                return ((MemorySample) this.instance).getTotalPssKb();
-            }
+        public boolean hasTotalPssKb() {
+            return (this.bitField0_ & 1) != 0;
+        }
 
-            public Builder setTotalPssKb(int value) {
-                copyOnWrite();
-                ((MemorySample) this.instance).setTotalPssKb(value);
-                return this;
-            }
+        public int getTotalPssKb() {
+            return this.totalPssKb_;
+        }
 
-            public Builder clearTotalPssKb() {
-                copyOnWrite();
-                ((MemorySample) this.instance).clearTotalPssKb();
-                return this;
-            }
+        /* access modifiers changed from: private */
+        public void setTotalPssKb(int value) {
+            this.bitField0_ |= 1;
+            this.totalPssKb_ = value;
+        }
+
+        /* access modifiers changed from: private */
+        public void clearTotalPssKb() {
+            this.bitField0_ &= -2;
+            this.totalPssKb_ = 0;
         }
 
         /* access modifiers changed from: protected */
@@ -1184,16 +1175,30 @@ public final class PersistentFormat {
             }
         }
 
-        static {
-            GeneratedMessageLite.registerDefaultInstance(MemorySample.class, DEFAULT_INSTANCE);
-        }
+        public static final class Builder extends GeneratedMessageLite.Builder<MemorySample, Builder> implements MemorySampleOrBuilder {
+            private Builder() {
+                super(MemorySample.DEFAULT_INSTANCE);
+            }
 
-        public static MemorySample getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
+            public boolean hasTotalPssKb() {
+                return ((MemorySample) this.instance).hasTotalPssKb();
+            }
 
-        public static Parser<MemorySample> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
+            public int getTotalPssKb() {
+                return ((MemorySample) this.instance).getTotalPssKb();
+            }
+
+            public Builder setTotalPssKb(int value) {
+                copyOnWrite();
+                ((MemorySample) this.instance).setTotalPssKb(value);
+                return this;
+            }
+
+            public Builder clearTotalPssKb() {
+                copyOnWrite();
+                ((MemorySample) this.instance).clearTotalPssKb();
+                return this;
+            }
         }
     }
 }

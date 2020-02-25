@@ -5,15 +5,12 @@ import java.util.List;
 
 final class ProtobufArrayList<E> extends AbstractProtobufList<E> {
     private static final ProtobufArrayList<Object> EMPTY_LIST = new ProtobufArrayList<>(new ArrayList(0));
-    private final List<E> list;
 
     static {
         EMPTY_LIST.makeImmutable();
     }
 
-    public static <E> ProtobufArrayList<E> emptyList() {
-        return EMPTY_LIST;
-    }
+    private final List<E> list;
 
     ProtobufArrayList() {
         this(new ArrayList(10));
@@ -21,6 +18,10 @@ final class ProtobufArrayList<E> extends AbstractProtobufList<E> {
 
     private ProtobufArrayList(List<E> list2) {
         this.list = list2;
+    }
+
+    public static <E> ProtobufArrayList<E> emptyList() {
+        return EMPTY_LIST;
     }
 
     public ProtobufArrayList<E> mutableCopyWithCapacity(int capacity) {

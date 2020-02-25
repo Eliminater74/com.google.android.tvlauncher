@@ -1,7 +1,7 @@
 package com.google.android.tvlauncher.appsview;
 
 import android.view.View;
-import com.google.android.tvlauncher.appsview.RowListAdapter;
+
 import com.google.android.tvlauncher.util.ContextMenu;
 import com.google.android.tvlauncher.util.ContextMenuItem;
 

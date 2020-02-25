@@ -5,6 +5,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -20,12 +21,12 @@ import java.util.concurrent.TimeoutException;
 abstract class WrappingExecutorService implements ExecutorService {
     private final ExecutorService delegate;
 
-    /* access modifiers changed from: protected */
-    public abstract <T> Callable<T> wrapTask(Callable<T> callable);
-
     protected WrappingExecutorService(ExecutorService delegate2) {
         this.delegate = (ExecutorService) Preconditions.checkNotNull(delegate2);
     }
+
+    /* access modifiers changed from: protected */
+    public abstract <T> Callable<T> wrapTask(Callable<T> callable);
 
     /* access modifiers changed from: protected */
     public Runnable wrapTask(Runnable command) {

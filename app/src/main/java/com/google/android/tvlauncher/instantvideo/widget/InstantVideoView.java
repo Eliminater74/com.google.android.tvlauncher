@@ -11,6 +11,7 @@ import android.view.ViewPropertyAnimator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+
 import com.google.android.tvlauncher.instantvideo.media.MediaPlayer;
 import com.google.android.tvlauncher.instantvideo.preload.InstantVideoPreloadManager;
 
@@ -25,10 +26,10 @@ public class InstantVideoView extends FrameLayout {
     public ImageView mImageView;
     /* access modifiers changed from: private */
     public ViewPropertyAnimator mImageViewFadeOut;
-    private MediaPlayer mPlayer;
-    private Runnable mStopVideoRunnable;
     /* access modifiers changed from: private */
     public boolean mVideoStarted;
+    private MediaPlayer mPlayer;
+    private Runnable mStopVideoRunnable;
     private Uri mVideoUri;
     private View mVideoView;
     private float mVolume;
@@ -53,12 +54,12 @@ public class InstantVideoView extends FrameLayout {
         setDisplayedChild(0);
     }
 
-    public void setVideoUri(Uri uri) {
-        this.mVideoUri = uri;
-    }
-
     public Uri getVideoUri() {
         return this.mVideoUri;
+    }
+
+    public void setVideoUri(Uri uri) {
+        this.mVideoUri = uri;
     }
 
     public void setImageDrawable(Drawable drawable) {

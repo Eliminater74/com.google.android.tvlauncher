@@ -12,7 +12,6 @@ import android.support.p004v7.content.res.AppCompatResources;
 import android.support.p004v7.view.menu.ActionMenuItem;
 import android.support.p004v7.view.menu.MenuBuilder;
 import android.support.p004v7.view.menu.MenuPresenter;
-import android.support.p004v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseArray;
@@ -31,6 +30,10 @@ public class ToolbarWidgetWrapper implements DecorToolbar {
     private static final int AFFECTS_LOGO_MASK = 3;
     private static final long DEFAULT_FADE_DURATION_MS = 200;
     private static final String TAG = "ToolbarWidgetWrapper";
+    boolean mMenuPrepared;
+    CharSequence mTitle;
+    Toolbar mToolbar;
+    Window.Callback mWindowCallback;
     private ActionMenuPresenter mActionMenuPresenter;
     private View mCustomView;
     private int mDefaultNavigationContentDescription;
@@ -39,16 +42,12 @@ public class ToolbarWidgetWrapper implements DecorToolbar {
     private CharSequence mHomeDescription;
     private Drawable mIcon;
     private Drawable mLogo;
-    boolean mMenuPrepared;
     private Drawable mNavIcon;
     private int mNavigationMode;
     private Spinner mSpinner;
     private CharSequence mSubtitle;
     private View mTabView;
-    CharSequence mTitle;
     private boolean mTitleSet;
-    Toolbar mToolbar;
-    Window.Callback mWindowCallback;
 
     public ToolbarWidgetWrapper(Toolbar toolbar, boolean style) {
         this(toolbar, style, C0233R.string.abc_action_bar_up_description, C0233R.C0234drawable.abc_ic_ab_back_material);
@@ -420,6 +419,14 @@ public class ToolbarWidgetWrapper implements DecorToolbar {
         this.mSpinner.setOnItemSelectedListener(listener);
     }
 
+    public int getDropdownSelectedPosition() {
+        Spinner spinner = this.mSpinner;
+        if (spinner != null) {
+            return spinner.getSelectedItemPosition();
+        }
+        return 0;
+    }
+
     public void setDropdownSelectedPosition(int position) {
         Spinner spinner = this.mSpinner;
         if (spinner != null) {
@@ -429,20 +436,16 @@ public class ToolbarWidgetWrapper implements DecorToolbar {
         throw new IllegalStateException("Can't set dropdown selected position without an adapter");
     }
 
-    public int getDropdownSelectedPosition() {
-        Spinner spinner = this.mSpinner;
-        if (spinner != null) {
-            return spinner.getSelectedItemPosition();
-        }
-        return 0;
-    }
-
     public int getDropdownItemCount() {
         Spinner spinner = this.mSpinner;
         if (spinner != null) {
             return spinner.getCount();
         }
         return 0;
+    }
+
+    public View getCustomView() {
+        return this.mCustomView;
     }
 
     public void setCustomView(View view) {
@@ -454,10 +457,6 @@ public class ToolbarWidgetWrapper implements DecorToolbar {
         if (view != null && (this.mDisplayOpts & 16) != 0) {
             this.mToolbar.addView(this.mCustomView);
         }
-    }
-
-    public View getCustomView() {
-        return this.mCustomView;
     }
 
     public void animateToVisibility(int visibility) {
@@ -552,12 +551,12 @@ public class ToolbarWidgetWrapper implements DecorToolbar {
         return this.mToolbar.getHeight();
     }
 
-    public void setVisibility(int visible) {
-        this.mToolbar.setVisibility(visible);
-    }
-
     public int getVisibility() {
         return this.mToolbar.getVisibility();
+    }
+
+    public void setVisibility(int visible) {
+        this.mToolbar.setVisibility(visible);
     }
 
     public void setMenuCallbacks(MenuPresenter.Callback actionMenuPresenterCallback, MenuBuilder.Callback menuBuilderCallback) {

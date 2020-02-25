@@ -7,14 +7,15 @@ import android.os.IBinder;
 import android.os.IInterface;
 import android.os.Looper;
 import android.support.annotation.Nullable;
+
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.api.Api.ApiOptions;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.internal.BaseGmsClient;
 import com.google.android.gms.common.internal.ClientSettings;
 import com.google.android.gms.common.internal.Hide;
 import com.google.android.gms.common.internal.IAccountAccessor;
 import com.google.android.gms.common.internal.zzau;
+
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.Collections;
@@ -27,108 +28,6 @@ public final class Api<O extends ApiOptions> {
     private final ClientKey<?> zzc;
     private final zzg<?> zzd;
     private final String zze;
-
-    public interface ApiOptions {
-
-        public interface HasAccountOptions extends HasOptions, NotRequiredOptions {
-            Account getAccount();
-        }
-
-        public interface HasGoogleSignInAccountOptions extends HasOptions {
-            GoogleSignInAccount getGoogleSignInAccount();
-        }
-
-        public interface HasOptions extends ApiOptions {
-        }
-
-        public static final class NoOptions implements NotRequiredOptions {
-            private NoOptions() {
-            }
-        }
-
-        public interface NotRequiredOptions extends ApiOptions {
-        }
-
-        public interface Optional extends HasOptions, NotRequiredOptions {
-        }
-    }
-
-    @Hide
-    public interface Client extends zzb {
-        void connect(BaseGmsClient.ConnectionProgressReportCallbacks connectionProgressReportCallbacks);
-
-        void disconnect();
-
-        void dump(String str, FileDescriptor fileDescriptor, PrintWriter printWriter, String[] strArr);
-
-        void getRemoteService(IAccountAccessor iAccountAccessor, Set<Scope> set);
-
-        @Nullable
-        IBinder getServiceBrokerBinder();
-
-        Intent getSignInIntent();
-
-        boolean isConnected();
-
-        boolean isConnecting();
-
-        void onUserSignOut(BaseGmsClient.SignOutCallbacks signOutCallbacks);
-
-        boolean providesSignIn();
-
-        boolean requiresAccount();
-
-        boolean requiresGooglePlayServices();
-
-        boolean requiresSignIn();
-
-        @Hide
-        int zza();
-
-        @Hide
-        String zzab();
-    }
-
-    @Hide
-    public static final class ClientKey<C extends Client> extends zzc<C> {
-    }
-
-    @Hide
-    public static abstract class zza<T extends Client, O> extends zzd<T, O> {
-        @Hide
-        public abstract T zza(Context context, Looper looper, ClientSettings clientSettings, O o, GoogleApiClient.ConnectionCallbacks connectionCallbacks, GoogleApiClient.OnConnectionFailedListener onConnectionFailedListener);
-    }
-
-    @Hide
-    public interface zzb {
-    }
-
-    @Hide
-    public static class zzc<C extends zzb> {
-    }
-
-    @Hide
-    public static abstract class zzd<T extends zzb, O> {
-        public int zza() {
-            return Integer.MAX_VALUE;
-        }
-
-        public List<Scope> zza(O o) {
-            return Collections.emptyList();
-        }
-    }
-
-    @Hide
-    public interface zze<T extends IInterface> extends zzb {
-    }
-
-    @Hide
-    public static abstract class zzf<T extends zze, O> extends zzd<T, O> {
-    }
-
-    @Hide
-    public static final class zzg<C extends zze> extends zzc<C> {
-    }
 
     /* JADX WARN: Type inference failed for: r3v0, types: [com.google.android.gms.common.api.Api$zza<?, O>, com.google.android.gms.common.api.Api$zza<C, O>, java.lang.Object] */
     /* JADX WARN: Type inference failed for: r4v0, types: [com.google.android.gms.common.api.Api$ClientKey<C>, java.lang.Object, com.google.android.gms.common.api.Api$ClientKey<?>] */
@@ -186,5 +85,107 @@ public final class Api<O extends ApiOptions> {
     @Hide
     public final String zzd() {
         return this.zze;
+    }
+
+    public interface ApiOptions {
+
+        public interface HasAccountOptions extends HasOptions, NotRequiredOptions {
+            Account getAccount();
+        }
+
+        public interface HasGoogleSignInAccountOptions extends HasOptions {
+            GoogleSignInAccount getGoogleSignInAccount();
+        }
+
+        public interface HasOptions extends ApiOptions {
+        }
+
+        public interface NotRequiredOptions extends ApiOptions {
+        }
+
+        public interface Optional extends HasOptions, NotRequiredOptions {
+        }
+
+        public static final class NoOptions implements NotRequiredOptions {
+            private NoOptions() {
+            }
+        }
+    }
+
+    @Hide
+    public interface Client extends zzb {
+        void connect(BaseGmsClient.ConnectionProgressReportCallbacks connectionProgressReportCallbacks);
+
+        void disconnect();
+
+        void dump(String str, FileDescriptor fileDescriptor, PrintWriter printWriter, String[] strArr);
+
+        void getRemoteService(IAccountAccessor iAccountAccessor, Set<Scope> set);
+
+        @Nullable
+        IBinder getServiceBrokerBinder();
+
+        Intent getSignInIntent();
+
+        boolean isConnected();
+
+        boolean isConnecting();
+
+        void onUserSignOut(BaseGmsClient.SignOutCallbacks signOutCallbacks);
+
+        boolean providesSignIn();
+
+        boolean requiresAccount();
+
+        boolean requiresGooglePlayServices();
+
+        boolean requiresSignIn();
+
+        @Hide
+        int zza();
+
+        @Hide
+        String zzab();
+    }
+
+    @Hide
+    public interface zzb {
+    }
+
+    @Hide
+    public interface zze<T extends IInterface> extends zzb {
+    }
+
+    @Hide
+    public static final class ClientKey<C extends Client> extends zzc<C> {
+    }
+
+    @Hide
+    public static abstract class zza<T extends Client, O> extends zzd<T, O> {
+        @Hide
+        public abstract T zza(Context context, Looper looper, ClientSettings clientSettings, O o, GoogleApiClient.ConnectionCallbacks connectionCallbacks, GoogleApiClient.OnConnectionFailedListener onConnectionFailedListener);
+    }
+
+    @Hide
+    public static class zzc<C extends zzb> {
+    }
+
+    @Hide
+    public static abstract class zzd<T extends zzb, O> {
+        public int zza() {
+            return Integer.MAX_VALUE;
+        }
+
+        public List<Scope> zza(O o) {
+            return Collections.emptyList();
+        }
+    }
+
+    @Hide
+    public static abstract class zzf<T extends zze, O> extends zzd<T, O> {
+    }
+
+    @Hide
+    public static final class zzg<C extends zze> extends zzc<C> {
     }
 }

@@ -1,10 +1,12 @@
 package com.google.common.collect;
 
 import com.google.common.annotations.GwtCompatible;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Iterator;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible(serializable = true)
 final class LexicographicalOrdering<T> extends Ordering<Iterable<T>> implements Serializable {

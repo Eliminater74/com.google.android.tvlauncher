@@ -1,7 +1,6 @@
 package com.google.android.exoplayer2.upstream;
 
 import android.support.annotation.Nullable;
-import com.google.android.exoplayer2.upstream.DataSource;
 
 public final class FileDataSourceFactory implements DataSource.Factory {
     @Nullable

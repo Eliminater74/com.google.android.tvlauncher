@@ -1,8 +1,10 @@
 package com.google.android.exoplayer2.util;
 
 import android.support.annotation.Nullable;
+
 import com.google.common.base.Ascii;
 import com.google.common.primitives.UnsignedBytes;
+
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 
@@ -66,13 +68,13 @@ public final class ParsableByteArray {
         return this.position;
     }
 
-    public int capacity() {
-        return this.data.length;
-    }
-
     public void setPosition(int position2) {
         Assertions.checkArgument(position2 >= 0 && position2 <= this.limit);
         this.position = position2;
+    }
+
+    public int capacity() {
+        return this.data.length;
     }
 
     public void skipBytes(int bytes) {

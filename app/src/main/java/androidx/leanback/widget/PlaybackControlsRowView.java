@@ -10,10 +10,6 @@ import android.widget.LinearLayout;
 class PlaybackControlsRowView extends LinearLayout {
     private OnUnhandledKeyListener mOnUnhandledKeyListener;
 
-    public interface OnUnhandledKeyListener {
-        boolean onUnhandledKey(KeyEvent keyEvent);
-    }
-
     public PlaybackControlsRowView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
@@ -22,12 +18,12 @@ class PlaybackControlsRowView extends LinearLayout {
         super(context, attrs, defStyle);
     }
 
-    public void setOnUnhandledKeyListener(OnUnhandledKeyListener listener) {
-        this.mOnUnhandledKeyListener = listener;
-    }
-
     public OnUnhandledKeyListener getOnUnhandledKeyListener() {
         return this.mOnUnhandledKeyListener;
+    }
+
+    public void setOnUnhandledKeyListener(OnUnhandledKeyListener listener) {
+        this.mOnUnhandledKeyListener = listener;
     }
 
     public boolean dispatchKeyEvent(KeyEvent event) {
@@ -52,5 +48,9 @@ class PlaybackControlsRowView extends LinearLayout {
 
     public boolean hasOverlappingRendering() {
         return false;
+    }
+
+    public interface OnUnhandledKeyListener {
+        boolean onUnhandledKey(KeyEvent keyEvent);
     }
 }

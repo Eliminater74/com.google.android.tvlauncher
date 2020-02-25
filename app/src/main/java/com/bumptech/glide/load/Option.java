@@ -2,7 +2,9 @@ package com.bumptech.glide.load;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import com.bumptech.glide.util.Preconditions;
+
 import java.security.MessageDigest;
 
 public final class Option<T> {
@@ -15,8 +17,10 @@ public final class Option<T> {
     private final String key;
     private volatile byte[] keyBytes;
 
-    public interface CacheKeyUpdater<T> {
-        void update(@NonNull byte[] bArr, @NonNull T t, @NonNull MessageDigest messageDigest);
+    private Option(@NonNull String key2, @Nullable T defaultValue2, @NonNull CacheKeyUpdater<T> cacheKeyUpdater2) {
+        this.key = Preconditions.checkNotEmpty(key2);
+        this.defaultValue = defaultValue2;
+        this.cacheKeyUpdater = (CacheKeyUpdater) Preconditions.checkNotNull(cacheKeyUpdater2);
     }
 
     @NonNull
@@ -39,10 +43,9 @@ public final class Option<T> {
         return new Option<>(key2, defaultValue2, cacheKeyUpdater2);
     }
 
-    private Option(@NonNull String key2, @Nullable T defaultValue2, @NonNull CacheKeyUpdater<T> cacheKeyUpdater2) {
-        this.key = Preconditions.checkNotEmpty(key2);
-        this.defaultValue = defaultValue2;
-        this.cacheKeyUpdater = (CacheKeyUpdater) Preconditions.checkNotNull(cacheKeyUpdater2);
+    @NonNull
+    private static <T> CacheKeyUpdater<T> emptyUpdater() {
+        return EMPTY_UPDATER;
     }
 
     @Nullable
@@ -73,11 +76,6 @@ public final class Option<T> {
         return this.key.hashCode();
     }
 
-    @NonNull
-    private static <T> CacheKeyUpdater<T> emptyUpdater() {
-        return EMPTY_UPDATER;
-    }
-
     public String toString() {
         String str = this.key;
         StringBuilder sb = new StringBuilder(String.valueOf(str).length() + 14);
@@ -86,5 +84,9 @@ public final class Option<T> {
         sb.append('\'');
         sb.append('}');
         return sb.toString();
+    }
+
+    public interface CacheKeyUpdater<T> {
+        void update(@NonNull byte[] bArr, @NonNull T t, @NonNull MessageDigest messageDigest);
     }
 }

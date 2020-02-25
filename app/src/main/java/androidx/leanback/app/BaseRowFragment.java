@@ -8,6 +8,7 @@ import android.support.p004v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.leanback.widget.ItemBridgeAdapter;
 import androidx.leanback.widget.ListRow;
 import androidx.leanback.widget.ObjectAdapter;
@@ -19,11 +20,9 @@ import androidx.leanback.widget.VerticalGridView;
 @Deprecated
 abstract class BaseRowFragment extends Fragment {
     private static final String CURRENT_SELECTED_POSITION = "currentSelectedPosition";
-    private ObjectAdapter mAdapter;
     final ItemBridgeAdapter mBridgeAdapter = new ItemBridgeAdapter();
     LateSelectionObserver mLateSelectionObserver = new LateSelectionObserver();
-    private boolean mPendingTransitionPrepare;
-    private PresenterSelector mPresenterSelector;
+    int mSelectedPosition = -1;
     private final OnChildViewHolderSelectedListener mRowSelectedListener = new OnChildViewHolderSelectedListener() {
         public void onChildViewHolderSelected(RecyclerView parent, RecyclerView.ViewHolder view, int position, int subposition) {
             if (!BaseRowFragment.this.mLateSelectionObserver.mIsLateSelection) {
@@ -33,14 +32,16 @@ abstract class BaseRowFragment extends Fragment {
             }
         }
     };
-    int mSelectedPosition = -1;
     VerticalGridView mVerticalGridView;
-
-    /* access modifiers changed from: package-private */
-    public abstract int getLayoutResourceId();
+    private ObjectAdapter mAdapter;
+    private boolean mPendingTransitionPrepare;
+    private PresenterSelector mPresenterSelector;
 
     BaseRowFragment() {
     }
+
+    /* access modifiers changed from: package-private */
+    public abstract int getLayoutResourceId();
 
     /* access modifiers changed from: package-private */
     public void onRowSelected(RecyclerView parent, RecyclerView.ViewHolder view, int position, int subposition) {
@@ -75,43 +76,6 @@ abstract class BaseRowFragment extends Fragment {
         this.mVerticalGridView.setOnChildViewHolderSelectedListener(this.mRowSelectedListener);
     }
 
-    private class LateSelectionObserver extends RecyclerView.AdapterDataObserver {
-        boolean mIsLateSelection = false;
-
-        LateSelectionObserver() {
-        }
-
-        public void onChanged() {
-            performLateSelection();
-        }
-
-        public void onItemRangeInserted(int positionStart, int itemCount) {
-            performLateSelection();
-        }
-
-        /* access modifiers changed from: package-private */
-        public void startLateSelection() {
-            this.mIsLateSelection = true;
-            BaseRowFragment.this.mBridgeAdapter.registerAdapterDataObserver(this);
-        }
-
-        /* access modifiers changed from: package-private */
-        public void performLateSelection() {
-            clear();
-            if (BaseRowFragment.this.mVerticalGridView != null) {
-                BaseRowFragment.this.mVerticalGridView.setSelectedPosition(BaseRowFragment.this.mSelectedPosition);
-            }
-        }
-
-        /* access modifiers changed from: package-private */
-        public void clear() {
-            if (this.mIsLateSelection) {
-                this.mIsLateSelection = false;
-                BaseRowFragment.this.mBridgeAdapter.unregisterAdapterDataObserver(this);
-            }
-        }
-    }
-
     /* access modifiers changed from: package-private */
     public void setAdapterAndSelection() {
         if (this.mAdapter != null) {
@@ -142,6 +106,10 @@ abstract class BaseRowFragment extends Fragment {
         outState.putInt(CURRENT_SELECTED_POSITION, this.mSelectedPosition);
     }
 
+    public final PresenterSelector getPresenterSelector() {
+        return this.mPresenterSelector;
+    }
+
     public final void setPresenterSelector(PresenterSelector presenterSelector) {
         if (this.mPresenterSelector != presenterSelector) {
             this.mPresenterSelector = presenterSelector;
@@ -149,8 +117,8 @@ abstract class BaseRowFragment extends Fragment {
         }
     }
 
-    public final PresenterSelector getPresenterSelector() {
-        return this.mPresenterSelector;
+    public final ObjectAdapter getAdapter() {
+        return this.mAdapter;
     }
 
     public final void setAdapter(ObjectAdapter rowsAdapter) {
@@ -160,20 +128,16 @@ abstract class BaseRowFragment extends Fragment {
         }
     }
 
-    public final ObjectAdapter getAdapter() {
-        return this.mAdapter;
-    }
-
     public final ItemBridgeAdapter getBridgeAdapter() {
         return this.mBridgeAdapter;
     }
 
-    public void setSelectedPosition(int position) {
-        setSelectedPosition(position, true);
-    }
-
     public int getSelectedPosition() {
         return this.mSelectedPosition;
+    }
+
+    public void setSelectedPosition(int position) {
+        setSelectedPosition(position, true);
     }
 
     public void setSelectedPosition(int position, boolean smooth) {
@@ -249,6 +213,43 @@ abstract class BaseRowFragment extends Fragment {
             this.mVerticalGridView.setWindowAlignmentOffset(windowAlignOffsetTop);
             this.mVerticalGridView.setWindowAlignmentOffsetPercent(-1.0f);
             this.mVerticalGridView.setWindowAlignment(0);
+        }
+    }
+
+    private class LateSelectionObserver extends RecyclerView.AdapterDataObserver {
+        boolean mIsLateSelection = false;
+
+        LateSelectionObserver() {
+        }
+
+        public void onChanged() {
+            performLateSelection();
+        }
+
+        public void onItemRangeInserted(int positionStart, int itemCount) {
+            performLateSelection();
+        }
+
+        /* access modifiers changed from: package-private */
+        public void startLateSelection() {
+            this.mIsLateSelection = true;
+            BaseRowFragment.this.mBridgeAdapter.registerAdapterDataObserver(this);
+        }
+
+        /* access modifiers changed from: package-private */
+        public void performLateSelection() {
+            clear();
+            if (BaseRowFragment.this.mVerticalGridView != null) {
+                BaseRowFragment.this.mVerticalGridView.setSelectedPosition(BaseRowFragment.this.mSelectedPosition);
+            }
+        }
+
+        /* access modifiers changed from: package-private */
+        public void clear() {
+            if (this.mIsLateSelection) {
+                this.mIsLateSelection = false;
+                BaseRowFragment.this.mBridgeAdapter.unregisterAdapterDataObserver(this);
+            }
         }
     }
 }

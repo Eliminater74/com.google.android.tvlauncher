@@ -3,11 +3,11 @@ package com.google.android.tvlauncher.notifications;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.p004v7.widget.RecyclerView;
-import android.support.p004v7.widget.RecyclerView.ViewHolder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.google.android.tvlauncher.C1188R;
 import com.google.android.tvlauncher.TvlauncherLogEnum;
 import com.google.android.tvlauncher.analytics.EventLogger;
@@ -15,11 +15,11 @@ import com.google.android.tvlauncher.analytics.LogEvent;
 import com.google.android.tvlauncher.analytics.LogEventParameters;
 
 public class NotificationsTrayAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<NotificationsTrayViewHolder> {
-    private static final boolean DEBUG = false;
     public static final String TAG = "NotifsTrayAdapter";
+    private static final boolean DEBUG = false;
     private final Context mContext;
-    private Cursor mCursor;
     private final EventLogger mEventLogger;
+    private Cursor mCursor;
 
     public NotificationsTrayAdapter(Context context, EventLogger eventLogger, Cursor cursor) {
         this.mContext = context;
@@ -68,16 +68,6 @@ public class NotificationsTrayAdapter<VH extends RecyclerView.ViewHolder> extend
         return -1;
     }
 
-    public static class NotificationsTrayViewHolder extends RecyclerView.ViewHolder {
-        public NotificationsTrayViewHolder(View itemView) {
-            super(itemView);
-        }
-
-        public void setNotification(TvNotification notification, EventLogger eventLogger) {
-            ((NotificationsTrayItemView) this.itemView).setNotification(notification, eventLogger);
-        }
-    }
-
     public void changeCursor(Cursor newCursor) {
         this.mCursor = newCursor;
         notifyDataSetChanged();
@@ -87,5 +77,15 @@ public class NotificationsTrayAdapter<VH extends RecyclerView.ViewHolder> extend
             event.getNotificationCollection().setMaxPriorityCount(this.mCursor.getCount());
         }
         this.mEventLogger.log(event);
+    }
+
+    public static class NotificationsTrayViewHolder extends RecyclerView.ViewHolder {
+        public NotificationsTrayViewHolder(View itemView) {
+            super(itemView);
+        }
+
+        public void setNotification(TvNotification notification, EventLogger eventLogger) {
+            ((NotificationsTrayItemView) this.itemView).setNotification(notification, eventLogger);
+        }
     }
 }

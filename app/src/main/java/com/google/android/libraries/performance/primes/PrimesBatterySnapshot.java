@@ -2,8 +2,10 @@ package com.google.android.libraries.performance.primes;
 
 import com.google.android.libraries.performance.primes.battery.BatteryCapture;
 import com.google.android.libraries.stitch.util.Preconditions;
+
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+
 import javax.annotation.Nullable;
 
 public class PrimesBatterySnapshot {

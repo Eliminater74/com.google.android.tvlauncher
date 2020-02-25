@@ -10,8 +10,8 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.annotation.RestrictTo;
-import android.support.p001v4.media.AudioAttributesCompat;
 import android.support.p001v4.util.ObjectsCompat;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -24,12 +24,6 @@ public class AudioFocusRequestCompat {
     private final Object mFrameworkAudioFocusRequest;
     private final AudioManager.OnAudioFocusChangeListener mOnAudioFocusChangeListener;
     private final boolean mPauseOnDuck;
-
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    @Retention(RetentionPolicy.SOURCE)
-    /* renamed from: android.support.v4.media.AudioFocusRequestCompat$FocusGainType */
-    public @interface FocusGainType {
-    }
 
     AudioFocusRequestCompat(int focusGain, AudioManager.OnAudioFocusChangeListener onAudioFocusChangeListener, Handler focusChangeHandler, AudioAttributesCompat audioFocusRequestCompat, boolean pauseOnDuck) {
         this.mFocusGain = focusGain;
@@ -105,6 +99,12 @@ public class AudioFocusRequestCompat {
         return (AudioFocusRequest) this.mFrameworkAudioFocusRequest;
     }
 
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    @Retention(RetentionPolicy.SOURCE)
+    /* renamed from: android.support.v4.media.AudioFocusRequestCompat$FocusGainType */
+    public @interface FocusGainType {
+    }
+
     /* renamed from: android.support.v4.media.AudioFocusRequestCompat$Builder */
     public static final class Builder {
         private boolean mAcceptsDelayedFocusGain;
@@ -128,6 +128,14 @@ public class AudioFocusRequestCompat {
                 return;
             }
             throw new IllegalArgumentException("AudioFocusRequestCompat to copy must not be null");
+        }
+
+        @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+        static boolean isValidFocusGain(int focusGain) {
+            if (focusGain == 1 || focusGain == 2 || focusGain == 3 || focusGain == 4) {
+                return true;
+            }
+            return false;
         }
 
         @NonNull
@@ -181,14 +189,6 @@ public class AudioFocusRequestCompat {
                 return new AudioFocusRequestCompat(this.mFocusGain, onAudioFocusChangeListener, this.mFocusChangeHandler, this.mAudioAttributesCompat, this.mPauseOnDuck);
             }
             throw new IllegalStateException("Can't build an AudioFocusRequestCompat instance without a listener");
-        }
-
-        @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-        static boolean isValidFocusGain(int focusGain) {
-            if (focusGain == 1 || focusGain == 2 || focusGain == 3 || focusGain == 4) {
-                return true;
-            }
-            return false;
         }
     }
 

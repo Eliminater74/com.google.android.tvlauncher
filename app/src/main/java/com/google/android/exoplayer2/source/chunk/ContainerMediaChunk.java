@@ -6,21 +6,21 @@ import com.google.android.exoplayer2.extractor.DefaultExtractorInput;
 import com.google.android.exoplayer2.extractor.Extractor;
 import com.google.android.exoplayer2.extractor.ExtractorInput;
 import com.google.android.exoplayer2.extractor.PositionHolder;
-import com.google.android.exoplayer2.source.chunk.ChunkExtractorWrapper;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.IOException;
 
 public class ContainerMediaChunk extends BaseMediaChunk {
     private static final PositionHolder DUMMY_POSITION_HOLDER = new PositionHolder();
     private final int chunkCount;
     private final ChunkExtractorWrapper extractorWrapper;
+    private final long sampleOffsetUs;
     private volatile boolean loadCanceled;
     private boolean loadCompleted;
     private long nextLoadPosition;
-    private final long sampleOffsetUs;
 
     public ContainerMediaChunk(DataSource dataSource, DataSpec dataSpec, Format trackFormat, int trackSelectionReason, Object trackSelectionData, long startTimeUs, long endTimeUs, long clippedStartTimeUs, long clippedEndTimeUs, long chunkIndex, int chunkCount2, long sampleOffsetUs2, ChunkExtractorWrapper extractorWrapper2) {
         super(dataSource, dataSpec, trackFormat, trackSelectionReason, trackSelectionData, startTimeUs, endTimeUs, clippedStartTimeUs, clippedEndTimeUs, chunkIndex);

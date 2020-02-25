@@ -8,6 +8,13 @@ import java.util.Set;
 /* compiled from: MapFieldLite */
 public final class zzgpn<K, V> extends LinkedHashMap<K, V> {
     private static final zzgpn zzb;
+
+    static {
+        zzgpn zzgpn = new zzgpn();
+        zzb = zzgpn;
+        zzgpn.zza = false;
+    }
+
     private boolean zza = true;
 
     private zzgpn() {
@@ -19,6 +26,16 @@ public final class zzgpn<K, V> extends LinkedHashMap<K, V> {
 
     public static <K, V> zzgpn<K, V> zza() {
         return zzb;
+    }
+
+    private static int zza(Object obj) {
+        if (obj instanceof byte[]) {
+            return zzgon.zzc((byte[]) obj);
+        }
+        if (!(obj instanceof zzgoo)) {
+            return obj.hashCode();
+        }
+        throw new UnsupportedOperationException();
     }
 
     public final void zza(zzgpn<K, V> zzgpn) {
@@ -118,16 +135,6 @@ public final class zzgpn<K, V> extends LinkedHashMap<K, V> {
         throw new UnsupportedOperationException("Method not decompiled: com.google.android.gms.internal.zzgpn.equals(java.lang.Object):boolean");
     }
 
-    private static int zza(Object obj) {
-        if (obj instanceof byte[]) {
-            return zzgon.zzc((byte[]) obj);
-        }
-        if (!(obj instanceof zzgoo)) {
-            return obj.hashCode();
-        }
-        throw new UnsupportedOperationException();
-    }
-
     public final int hashCode() {
         int i = 0;
         for (Map.Entry entry : entrySet()) {
@@ -152,11 +159,5 @@ public final class zzgpn<K, V> extends LinkedHashMap<K, V> {
         if (!this.zza) {
             throw new UnsupportedOperationException();
         }
-    }
-
-    static {
-        zzgpn zzgpn = new zzgpn();
-        zzb = zzgpn;
-        zzgpn.zza = false;
     }
 }

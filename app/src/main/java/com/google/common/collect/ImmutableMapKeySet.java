@@ -2,8 +2,10 @@ package com.google.common.collect;
 
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.GwtIncompatible;
-import java.io.Serializable;
+
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
+import java.io.Serializable;
 
 @GwtCompatible(emulated = true)
 final class ImmutableMapKeySet<K, V> extends IndexedImmutableSet<K> {

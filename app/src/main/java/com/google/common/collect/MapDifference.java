@@ -1,21 +1,13 @@
 package com.google.common.collect;
 
 import com.google.common.annotations.GwtCompatible;
-import java.util.Map;
+
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
+import java.util.Map;
 
 @GwtCompatible
 public interface MapDifference<K, V> {
-
-    public interface ValueDifference<V> {
-        boolean equals(@NullableDecl Object obj);
-
-        int hashCode();
-
-        V leftValue();
-
-        V rightValue();
-    }
 
     boolean areEqual();
 
@@ -30,4 +22,14 @@ public interface MapDifference<K, V> {
     boolean equals(@NullableDecl Object obj);
 
     int hashCode();
+
+    public interface ValueDifference<V> {
+        boolean equals(@NullableDecl Object obj);
+
+        int hashCode();
+
+        V leftValue();
+
+        V rightValue();
+    }
 }

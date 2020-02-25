@@ -2,6 +2,7 @@ package com.google.android.tvlauncher.instantvideo.util;
 
 import android.net.Uri;
 import android.text.TextUtils;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;

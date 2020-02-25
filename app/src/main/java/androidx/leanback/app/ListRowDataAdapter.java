@@ -8,8 +8,8 @@ class ListRowDataAdapter extends ObjectAdapter {
     public static final int ON_ITEM_RANGE_CHANGED = 2;
     public static final int ON_ITEM_RANGE_INSERTED = 4;
     public static final int ON_ITEM_RANGE_REMOVED = 8;
-    private final ObjectAdapter mAdapter;
     final ObjectAdapter.DataObserver mDataObserver;
+    private final ObjectAdapter mAdapter;
     int mLastVisibleRowIndex;
 
     public ListRowDataAdapter(ObjectAdapter adapter) {

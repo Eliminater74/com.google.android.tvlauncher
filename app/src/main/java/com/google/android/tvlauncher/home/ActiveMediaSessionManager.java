@@ -5,6 +5,7 @@ import android.content.Context;
 import android.media.session.MediaController;
 import android.media.session.MediaSessionManager;
 import android.media.session.PlaybackState;
+
 import java.util.List;
 
 public class ActiveMediaSessionManager implements MediaSessionManager.OnActiveSessionsChangedListener {
@@ -15,15 +16,15 @@ public class ActiveMediaSessionManager implements MediaSessionManager.OnActiveSe
     private MediaController mActiveMediaController;
     private Context mContext;
 
+    private ActiveMediaSessionManager(Context context) {
+        this.mContext = context.getApplicationContext();
+    }
+
     public static ActiveMediaSessionManager getInstance(Context context) {
         if (sMediaSessionListener == null) {
             sMediaSessionListener = new ActiveMediaSessionManager(context);
         }
         return sMediaSessionListener;
-    }
-
-    private ActiveMediaSessionManager(Context context) {
-        this.mContext = context.getApplicationContext();
     }
 
     public void onActiveSessionsChanged(List<MediaController> controllers) {

@@ -4,8 +4,8 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.support.annotation.WorkerThread;
 import android.util.Log;
+
 import com.google.android.gms.clearcut.internal.PlayLoggerContext;
-import com.google.android.gms.clearcut.internal.zzb;
 import com.google.android.gms.clearcut.internal.zzi;
 import com.google.android.gms.clearcut.internal.zzs;
 import com.google.android.gms.common.annotation.KeepForSdk;
@@ -17,35 +17,43 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.common.internal.Hide;
 import com.google.android.gms.common.internal.zzau;
 import com.google.android.gms.common.util.Clock;
-import com.google.android.gms.common.util.zzh;
 import com.google.android.gms.internal.zzgtd;
 import com.google.android.gms.phenotype.ExperimentTokens;
+
 import java.util.ArrayList;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 @KeepForSdk
 public final class ClearcutLogger {
-    @Deprecated
-    public static final Api<Api.ApiOptions.NoOptions> API = new Api<>("ClearcutLogger.API", zzb, zza);
     public static final int QOS_TIER_DEFAULT = 0;
     public static final int QOS_TIER_FAST_IF_RADIO_AWAKE = 3;
     public static final int QOS_TIER_UNMETERED_ONLY = 1;
     public static final int QOS_TIER_UNMETERED_OR_DAILY = 2;
-    @Hide
-    private static final Api.ClientKey<zzi> zza = new Api.ClientKey<>();
-    @Hide
-    private static final Api.zza<zzi, Api.ApiOptions.NoOptions> zzb = new zzd();
     /* access modifiers changed from: private */
     public static final ExperimentTokens[] zzc = new ExperimentTokens[0];
     /* access modifiers changed from: private */
     public static final String[] zzd = new String[0];
     /* access modifiers changed from: private */
     public static final byte[][] zze = new byte[0][];
+    @Hide
+    private static final Api.ClientKey<zzi> zza = new Api.ClientKey<>();
+    @Hide
+    private static final Api.zza<zzi, Api.ApiOptions.NoOptions> zzb = new zzd();
+    @Deprecated
+    public static final Api<Api.ApiOptions.NoOptions> API = new Api<>("ClearcutLogger.API", zzb, zza);
     /* access modifiers changed from: private */
     public final String zzf;
     /* access modifiers changed from: private */
     public final int zzg;
+    /* access modifiers changed from: private */
+    public final boolean zzl;
+    /* access modifiers changed from: private */
+    public final ClearcutLoggerApi zzn;
+    /* access modifiers changed from: private */
+    public final Clock zzo;
+    /* access modifiers changed from: private */
+    public final LogSampler zzq;
     /* access modifiers changed from: private */
     public String zzh;
     /* access modifiers changed from: private */
@@ -55,17 +63,163 @@ public final class ClearcutLogger {
     /* access modifiers changed from: private */
     public String zzk;
     /* access modifiers changed from: private */
-    public final boolean zzl;
-    /* access modifiers changed from: private */
     public int zzm;
     /* access modifiers changed from: private */
-    public final ClearcutLoggerApi zzn;
-    /* access modifiers changed from: private */
-    public final Clock zzo;
-    /* access modifiers changed from: private */
     public TimeZoneOffsetProvider zzp;
+
+    @Deprecated
+    public ClearcutLogger(Context context, String str, String str2, String str3) {
+        this(context, -1, str, str2, str3, false, zzb.zza(context), zzh.zza(), null, new zzs(context));
+    }
+
+    public ClearcutLogger(Context context, String str, String str2) {
+        this(context, -1, str, str2, null, false, zzb.zza(context), zzh.zza(), null, new zzs(context));
+    }
+
+    @Deprecated
+    public ClearcutLogger(Context context, String str, String str2, String str3, ClearcutLoggerApi clearcutLoggerApi, Clock clock, TimeZoneOffsetProvider timeZoneOffsetProvider) {
+        this(context, -1, str, str2, str3, false, clearcutLoggerApi, clock, timeZoneOffsetProvider, new zzs(context));
+    }
+
+    /* JADX INFO: this call moved to the top of the method (can break code semantics) */
+    public ClearcutLogger(Context context, String str, String str2, ClearcutLoggerApi clearcutLoggerApi, Clock clock, TimeZoneOffsetProvider timeZoneOffsetProvider) {
+        this(context, -1, str, str2, null, false, clearcutLoggerApi, clock != null ? clock : zzh.zza(), timeZoneOffsetProvider, new zzs(context));
+    }
+
+    @Deprecated
+    public ClearcutLogger(Context context, int i, String str, String str2) {
+        this(context, i, str, str2, zzb.zza(context), zzh.zza(), new TimeZoneOffsetProvider());
+    }
+
+    @Deprecated
+    public ClearcutLogger(Context context, int i, String str, String str2, ClearcutLoggerApi clearcutLoggerApi, Clock clock, TimeZoneOffsetProvider timeZoneOffsetProvider) {
+        this(context, i, "", str, str2, false, clearcutLoggerApi, clock, timeZoneOffsetProvider, new zzs(context));
+    }
+
+    public ClearcutLogger(Context context, int i, String str, String str2, String str3, boolean z, ClearcutLoggerApi clearcutLoggerApi, Clock clock, TimeZoneOffsetProvider timeZoneOffsetProvider) {
+        this(context, i, str, str2, str3, z, clearcutLoggerApi, clock, timeZoneOffsetProvider, new zze());
+    }
+
+    public ClearcutLogger(Context context, int i, String str, String str2, String str3, boolean z, ClearcutLoggerApi clearcutLoggerApi, Clock clock, TimeZoneOffsetProvider timeZoneOffsetProvider, LogSampler logSampler) {
+        this.zzi = -1;
+        boolean z2 = false;
+        this.zzm = 0;
+        this.zzf = context.getPackageName();
+        this.zzg = zza(context);
+        this.zzi = i;
+        this.zzh = str;
+        this.zzj = str2;
+        this.zzk = str3;
+        this.zzl = z;
+        this.zzn = clearcutLoggerApi;
+        this.zzo = clock;
+        this.zzp = timeZoneOffsetProvider == null ? new TimeZoneOffsetProvider() : timeZoneOffsetProvider;
+        this.zzm = 0;
+        this.zzq = logSampler;
+        if (z) {
+            zzau.zzb(str2 == null ? true : z2, "can't be anonymous with an upload account");
+        }
+    }
+
+    @KeepForSdk
+    public static ClearcutLogger anonymousLogger(Context context, String str) {
+        return new ClearcutLogger(context, -1, str, null, null, true, zzb.zza(context), zzh.zza(), null, new zzs(context));
+    }
+
+    private static int zza(Context context) {
+        try {
+            return context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.wtf("ClearcutLogger", "This can't happen.", e);
+            return 0;
+        }
+    }
+
     /* access modifiers changed from: private */
-    public final LogSampler zzq;
+    public static int[] zzb(ArrayList<Integer> arrayList) {
+        if (arrayList == null) {
+            return null;
+        }
+        int[] iArr = new int[arrayList.size()];
+        ArrayList arrayList2 = arrayList;
+        int size = arrayList2.size();
+        int i = 0;
+        int i2 = 0;
+        while (i < size) {
+            Object obj = arrayList2.get(i);
+            i++;
+            iArr[i2] = ((Integer) obj).intValue();
+            i2++;
+        }
+        return iArr;
+    }
+
+    public final boolean isAnonymous() {
+        return this.zzl;
+    }
+
+    public final ClearcutLogger setTimeZoneOffsetProvider(TimeZoneOffsetProvider timeZoneOffsetProvider) {
+        if (timeZoneOffsetProvider == null) {
+            timeZoneOffsetProvider = new TimeZoneOffsetProvider();
+        }
+        this.zzp = timeZoneOffsetProvider;
+        return this;
+    }
+
+    public final ClearcutLogger setQosTier(int i) {
+        if (i < 0 || i > 4) {
+            i = 0;
+        }
+        this.zzm = i;
+        return this;
+    }
+
+    @KeepForSdk
+    public final LogEventBuilder newEvent(byte[] bArr) {
+        return new LogEventBuilder(this, bArr, (zzd) null);
+    }
+
+    public final LogEventBuilder newEvent(MessageProducer messageProducer) {
+        return new LogEventBuilder(this, messageProducer, (zzd) null);
+    }
+
+    @Deprecated
+    public final boolean flush(GoogleApiClient googleApiClient, long j, TimeUnit timeUnit) {
+        return flush(j, timeUnit);
+    }
+
+    @WorkerThread
+    public final boolean flush(long j, TimeUnit timeUnit) {
+        return this.zzn.flush(null, j, timeUnit);
+    }
+
+    @Deprecated
+    public final void disconnectAsync(GoogleApiClient googleApiClient) {
+        googleApiClient.disconnect();
+    }
+
+    @Deprecated
+    public final int getLogSource() {
+        return this.zzi;
+    }
+
+    public final String getLogSourceName() {
+        return this.zzh;
+    }
+
+    public final String getUploadAccountName() {
+        return this.zzj;
+    }
+
+    @Deprecated
+    public final String getLoggingId() {
+        return this.zzk;
+    }
+
+    @Deprecated
+    public final PendingResult<Status> forceUpload() {
+        return this.zzn.forceUpload();
+    }
 
     public interface LogSampler {
         boolean shouldLog(String str, int i);
@@ -81,18 +235,14 @@ public final class ClearcutLogger {
         }
     }
 
-    @Deprecated
-    public ClearcutLogger(Context context, String str, String str2, String str3) {
-        this(context, -1, str, str2, str3, false, zzb.zza(context), zzh.zza(), null, new zzs(context));
-    }
-
     public class LogEventBuilder {
+        private final MessageProducer zzf;
+        private final zzgtd zzn;
         private int zza;
         private String zzb;
         private String zzc;
         private String zzd;
         private int zze;
-        private final MessageProducer zzf;
         private MessageProducer zzg;
         private ArrayList<Integer> zzh;
         private ArrayList<String> zzi;
@@ -100,7 +250,6 @@ public final class ClearcutLogger {
         private ArrayList<ExperimentTokens> zzk;
         private ArrayList<byte[]> zzl;
         private boolean zzm;
-        private final zzgtd zzn;
         private boolean zzo;
 
         private LogEventBuilder(ClearcutLogger clearcutLogger, byte[] bArr) {
@@ -134,6 +283,14 @@ public final class ClearcutLogger {
                 this.zzn.zzf = bArr;
             }
             this.zzf = messageProducer;
+        }
+
+        /* synthetic */ LogEventBuilder(ClearcutLogger clearcutLogger, byte[] bArr, zzd zzd2) {
+            this(clearcutLogger, bArr);
+        }
+
+        /* synthetic */ LogEventBuilder(ClearcutLogger clearcutLogger, MessageProducer messageProducer, zzd zzd2) {
+            this(clearcutLogger, messageProducer);
         }
 
         @Deprecated
@@ -324,162 +481,5 @@ public final class ClearcutLogger {
             }
             throw new IllegalStateException("do not reuse LogEventBuilder");
         }
-
-        /* synthetic */ LogEventBuilder(ClearcutLogger clearcutLogger, byte[] bArr, zzd zzd2) {
-            this(clearcutLogger, bArr);
-        }
-
-        /* synthetic */ LogEventBuilder(ClearcutLogger clearcutLogger, MessageProducer messageProducer, zzd zzd2) {
-            this(clearcutLogger, messageProducer);
-        }
-    }
-
-    public ClearcutLogger(Context context, String str, String str2) {
-        this(context, -1, str, str2, null, false, zzb.zza(context), zzh.zza(), null, new zzs(context));
-    }
-
-    @Deprecated
-    public ClearcutLogger(Context context, String str, String str2, String str3, ClearcutLoggerApi clearcutLoggerApi, Clock clock, TimeZoneOffsetProvider timeZoneOffsetProvider) {
-        this(context, -1, str, str2, str3, false, clearcutLoggerApi, clock, timeZoneOffsetProvider, new zzs(context));
-    }
-
-    /* JADX INFO: this call moved to the top of the method (can break code semantics) */
-    public ClearcutLogger(Context context, String str, String str2, ClearcutLoggerApi clearcutLoggerApi, Clock clock, TimeZoneOffsetProvider timeZoneOffsetProvider) {
-        this(context, -1, str, str2, null, false, clearcutLoggerApi, clock != null ? clock : zzh.zza(), timeZoneOffsetProvider, new zzs(context));
-    }
-
-    @Deprecated
-    public ClearcutLogger(Context context, int i, String str, String str2) {
-        this(context, i, str, str2, zzb.zza(context), zzh.zza(), new TimeZoneOffsetProvider());
-    }
-
-    @Deprecated
-    public ClearcutLogger(Context context, int i, String str, String str2, ClearcutLoggerApi clearcutLoggerApi, Clock clock, TimeZoneOffsetProvider timeZoneOffsetProvider) {
-        this(context, i, "", str, str2, false, clearcutLoggerApi, clock, timeZoneOffsetProvider, new zzs(context));
-    }
-
-    public ClearcutLogger(Context context, int i, String str, String str2, String str3, boolean z, ClearcutLoggerApi clearcutLoggerApi, Clock clock, TimeZoneOffsetProvider timeZoneOffsetProvider) {
-        this(context, i, str, str2, str3, z, clearcutLoggerApi, clock, timeZoneOffsetProvider, new zze());
-    }
-
-    public ClearcutLogger(Context context, int i, String str, String str2, String str3, boolean z, ClearcutLoggerApi clearcutLoggerApi, Clock clock, TimeZoneOffsetProvider timeZoneOffsetProvider, LogSampler logSampler) {
-        this.zzi = -1;
-        boolean z2 = false;
-        this.zzm = 0;
-        this.zzf = context.getPackageName();
-        this.zzg = zza(context);
-        this.zzi = i;
-        this.zzh = str;
-        this.zzj = str2;
-        this.zzk = str3;
-        this.zzl = z;
-        this.zzn = clearcutLoggerApi;
-        this.zzo = clock;
-        this.zzp = timeZoneOffsetProvider == null ? new TimeZoneOffsetProvider() : timeZoneOffsetProvider;
-        this.zzm = 0;
-        this.zzq = logSampler;
-        if (z) {
-            zzau.zzb(str2 == null ? true : z2, "can't be anonymous with an upload account");
-        }
-    }
-
-    @KeepForSdk
-    public static ClearcutLogger anonymousLogger(Context context, String str) {
-        return new ClearcutLogger(context, -1, str, null, null, true, zzb.zza(context), zzh.zza(), null, new zzs(context));
-    }
-
-    public final boolean isAnonymous() {
-        return this.zzl;
-    }
-
-    private static int zza(Context context) {
-        try {
-            return context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionCode;
-        } catch (PackageManager.NameNotFoundException e) {
-            Log.wtf("ClearcutLogger", "This can't happen.", e);
-            return 0;
-        }
-    }
-
-    public final ClearcutLogger setTimeZoneOffsetProvider(TimeZoneOffsetProvider timeZoneOffsetProvider) {
-        if (timeZoneOffsetProvider == null) {
-            timeZoneOffsetProvider = new TimeZoneOffsetProvider();
-        }
-        this.zzp = timeZoneOffsetProvider;
-        return this;
-    }
-
-    public final ClearcutLogger setQosTier(int i) {
-        if (i < 0 || i > 4) {
-            i = 0;
-        }
-        this.zzm = i;
-        return this;
-    }
-
-    @KeepForSdk
-    public final LogEventBuilder newEvent(byte[] bArr) {
-        return new LogEventBuilder(this, bArr, (zzd) null);
-    }
-
-    public final LogEventBuilder newEvent(MessageProducer messageProducer) {
-        return new LogEventBuilder(this, messageProducer, (zzd) null);
-    }
-
-    @Deprecated
-    public final boolean flush(GoogleApiClient googleApiClient, long j, TimeUnit timeUnit) {
-        return flush(j, timeUnit);
-    }
-
-    @WorkerThread
-    public final boolean flush(long j, TimeUnit timeUnit) {
-        return this.zzn.flush(null, j, timeUnit);
-    }
-
-    @Deprecated
-    public final void disconnectAsync(GoogleApiClient googleApiClient) {
-        googleApiClient.disconnect();
-    }
-
-    @Deprecated
-    public final int getLogSource() {
-        return this.zzi;
-    }
-
-    public final String getLogSourceName() {
-        return this.zzh;
-    }
-
-    public final String getUploadAccountName() {
-        return this.zzj;
-    }
-
-    @Deprecated
-    public final String getLoggingId() {
-        return this.zzk;
-    }
-
-    @Deprecated
-    public final PendingResult<Status> forceUpload() {
-        return this.zzn.forceUpload();
-    }
-
-    /* access modifiers changed from: private */
-    public static int[] zzb(ArrayList<Integer> arrayList) {
-        if (arrayList == null) {
-            return null;
-        }
-        int[] iArr = new int[arrayList.size()];
-        ArrayList arrayList2 = arrayList;
-        int size = arrayList2.size();
-        int i = 0;
-        int i2 = 0;
-        while (i < size) {
-            Object obj = arrayList2.get(i);
-            i++;
-            iArr[i2] = ((Integer) obj).intValue();
-            i2++;
-        }
-        return iArr;
     }
 }

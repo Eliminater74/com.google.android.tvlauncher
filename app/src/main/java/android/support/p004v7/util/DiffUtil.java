@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.support.p004v7.widget.RecyclerView;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -239,6 +240,7 @@ public class DiffUtil {
 
     /* renamed from: android.support.v7.util.DiffUtil$DiffResult */
     public static class DiffResult {
+        public static final int NO_POSITION = -1;
         private static final int FLAG_CHANGED = 2;
         private static final int FLAG_IGNORE = 16;
         private static final int FLAG_MASK = 31;
@@ -246,7 +248,6 @@ public class DiffUtil {
         private static final int FLAG_MOVED_NOT_CHANGED = 8;
         private static final int FLAG_NOT_CHANGED = 1;
         private static final int FLAG_OFFSET = 5;
-        public static final int NO_POSITION = -1;
         private final Callback mCallback;
         private final boolean mDetectMoves;
         private final int[] mNewItemStatuses;
@@ -267,6 +268,20 @@ public class DiffUtil {
             this.mDetectMoves = detectMoves;
             addRootSnake();
             findMatchingItems();
+        }
+
+        private static PostponedUpdate removePostponedUpdate(List<PostponedUpdate> updates, int pos, boolean removal) {
+            for (int i = updates.size() - 1; i >= 0; i--) {
+                PostponedUpdate update = updates.get(i);
+                if (update.posInOwnerList == pos && update.removal == removal) {
+                    updates.remove(i);
+                    for (int j = i; j < updates.size(); j++) {
+                        updates.get(j).currentPos += removal ? 1 : -1;
+                    }
+                    return update;
+                }
+            }
+            return null;
         }
 
         private void addRootSnake() {
@@ -437,20 +452,6 @@ public class DiffUtil {
                 posNew = snake.f25y;
             }
             batchingCallback.dispatchLastEvent();
-        }
-
-        private static PostponedUpdate removePostponedUpdate(List<PostponedUpdate> updates, int pos, boolean removal) {
-            for (int i = updates.size() - 1; i >= 0; i--) {
-                PostponedUpdate update = updates.get(i);
-                if (update.posInOwnerList == pos && update.removal == removal) {
-                    updates.remove(i);
-                    for (int j = i; j < updates.size(); j++) {
-                        updates.get(j).currentPos += removal ? 1 : -1;
-                    }
-                    return update;
-                }
-            }
-            return null;
         }
 
         private void dispatchAdditions(List<PostponedUpdate> postponedUpdates, ListUpdateCallback updateCallback, int start, int count, int globalIndex) {

@@ -7,13 +7,14 @@ import com.google.android.exoplayer2.extractor.TrackOutput;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.IOException;
 
 public final class SingleSampleMediaChunk extends BaseMediaChunk {
-    private boolean loadCompleted;
-    private long nextLoadPosition;
     private final Format sampleFormat;
     private final int trackType;
+    private boolean loadCompleted;
+    private long nextLoadPosition;
 
     public SingleSampleMediaChunk(DataSource dataSource, DataSpec dataSpec, Format trackFormat, int trackSelectionReason, Object trackSelectionData, long startTimeUs, long endTimeUs, long chunkIndex, int trackType2, Format sampleFormat2) {
         super(dataSource, dataSpec, trackFormat, trackSelectionReason, trackSelectionData, startTimeUs, endTimeUs, C0841C.TIME_UNSET, C0841C.TIME_UNSET, chunkIndex);

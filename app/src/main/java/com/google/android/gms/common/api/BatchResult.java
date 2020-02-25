@@ -1,6 +1,7 @@
 package com.google.android.gms.common.api;
 
 import com.google.android.gms.common.internal.zzau;
+
 import java.util.concurrent.TimeUnit;
 
 public final class BatchResult implements Result {

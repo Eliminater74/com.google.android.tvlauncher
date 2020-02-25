@@ -5,8 +5,8 @@ import java.util.Map;
 /* compiled from: SmallSortedMap */
 final class zzgqv implements Comparable<zzgqv>, Map.Entry<K, V> {
     private final K zza;
-    private V zzb;
     private final /* synthetic */ zzgqo zzc;
+    private V zzb;
 
     zzgqv(zzgqo zzgqo, Map.Entry<K, V> entry) {
         this(zzgqo, (Comparable) entry.getKey(), entry.getValue());
@@ -16,6 +16,13 @@ final class zzgqv implements Comparable<zzgqv>, Map.Entry<K, V> {
         this.zzc = zzgqo;
         this.zza = k;
         this.zzb = v;
+    }
+
+    private static boolean zza(Object obj, Object obj2) {
+        if (obj == null) {
+            return obj2 == null;
+        }
+        return obj.equals(obj2);
     }
 
     public final V getValue() {
@@ -62,13 +69,6 @@ final class zzgqv implements Comparable<zzgqv>, Map.Entry<K, V> {
         sb.append("=");
         sb.append(valueOf2);
         return sb.toString();
-    }
-
-    private static boolean zza(Object obj, Object obj2) {
-        if (obj == null) {
-            return obj2 == null;
-        }
-        return obj.equals(obj2);
     }
 
     public final /* synthetic */ Object getKey() {

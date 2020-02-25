@@ -3,21 +3,22 @@ package com.google.common.collect;
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.base.Objects;
-import com.google.common.collect.Maps;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible
 public abstract class ForwardingMap<K, V> extends ForwardingObject implements Map<K, V> {
-    /* access modifiers changed from: protected */
-    public abstract Map<K, V> delegate();
-
     protected ForwardingMap() {
     }
+
+    /* access modifiers changed from: protected */
+    public abstract Map<K, V> delegate();
 
     public int size() {
         return delegate().size();
@@ -102,40 +103,15 @@ public abstract class ForwardingMap<K, V> extends ForwardingObject implements Ma
         Iterators.clear(entrySet().iterator());
     }
 
-    @Beta
-    protected class StandardKeySet extends Maps.KeySet<K, V> {
-        public StandardKeySet(ForwardingMap this$0) {
-            super(this$0);
-        }
-    }
-
     /* access modifiers changed from: protected */
     @Beta
     public boolean standardContainsKey(@NullableDecl Object key) {
         return Maps.containsKeyImpl(this, key);
     }
 
-    @Beta
-    protected class StandardValues extends Maps.Values<K, V> {
-        public StandardValues(ForwardingMap this$0) {
-            super(this$0);
-        }
-    }
-
     /* access modifiers changed from: protected */
     public boolean standardContainsValue(@NullableDecl Object value) {
         return Maps.containsValueImpl(this, value);
-    }
-
-    @Beta
-    protected abstract class StandardEntrySet extends Maps.EntrySet<K, V> {
-        public StandardEntrySet() {
-        }
-
-        /* access modifiers changed from: package-private */
-        public Map<K, V> map() {
-            return ForwardingMap.this;
-        }
     }
 
     /* access modifiers changed from: protected */
@@ -156,5 +132,30 @@ public abstract class ForwardingMap<K, V> extends ForwardingObject implements Ma
     /* access modifiers changed from: protected */
     public String standardToString() {
         return Maps.toStringImpl(this);
+    }
+
+    @Beta
+    protected class StandardKeySet extends Maps.KeySet<K, V> {
+        public StandardKeySet(ForwardingMap this$0) {
+            super(this$0);
+        }
+    }
+
+    @Beta
+    protected class StandardValues extends Maps.Values<K, V> {
+        public StandardValues(ForwardingMap this$0) {
+            super(this$0);
+        }
+    }
+
+    @Beta
+    protected abstract class StandardEntrySet extends Maps.EntrySet<K, V> {
+        public StandardEntrySet() {
+        }
+
+        /* access modifiers changed from: package-private */
+        public Map<K, V> map() {
+            return ForwardingMap.this;
+        }
     }
 }

@@ -1,12 +1,11 @@
 package com.google.android.exoplayer2.extractor.mp4;
 
 import com.google.android.exoplayer2.ParserException;
-import com.google.android.exoplayer2.extractor.mp4.Atom;
-import com.google.android.exoplayer2.extractor.mp4.HeifMetaItem;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.Util;
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -15,14 +14,17 @@ class HeifAtomParsers {
     public static final int TYPE_idat = Util.getIntegerCodeForString("idat");
     public static final int TYPE_iinf = Util.getIntegerCodeForString("iinf");
     public static final int TYPE_iloc = Util.getIntegerCodeForString("iloc");
+    public static final int TYPE_iprp = Util.getIntegerCodeForString("iprp");
+    public static final int TYPE_iref = Util.getIntegerCodeForString("iref");
+    public static final int TYPE_pitm = Util.getIntegerCodeForString("pitm");
     private static final int TYPE_infe = Util.getIntegerCodeForString("infe");
     private static final int TYPE_ipco = Util.getIntegerCodeForString("ipco");
     private static final int TYPE_ipma = Util.getIntegerCodeForString("ipma");
-    public static final int TYPE_iprp = Util.getIntegerCodeForString("iprp");
-    public static final int TYPE_iref = Util.getIntegerCodeForString("iref");
     private static final int TYPE_mime = Util.getIntegerCodeForString("mime");
-    public static final int TYPE_pitm = Util.getIntegerCodeForString("pitm");
     private static final int TYPE_url_ = Util.getIntegerCodeForString("url ");
+
+    private HeifAtomParsers() {
+    }
 
     /* JADX INFO: Multiple debug info for r1v8 'constructionMethod'  int: [D('ilocData' com.google.android.exoplayer2.util.ParsableByteArray), D('constructionMethod' int)] */
     public static void parseIloc(Atom.LeafAtom ilocAtom, HeifMetaItem.HeifMetaItemsBuilder builder) throws ParserException {
@@ -261,8 +263,5 @@ class HeifAtomParsers {
         ParsableByteArray data = idatAtom.data;
         data.setPosition(8);
         builder.setItemData(Arrays.copyOfRange(data.data, data.getPosition(), data.limit()));
-    }
-
-    private HeifAtomParsers() {
     }
 }

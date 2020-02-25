@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+
 import javax.inject.Provider;
 
 public final class SetFactory<T> implements Factory<Set<T>> {
@@ -12,46 +13,17 @@ public final class SetFactory<T> implements Factory<Set<T>> {
     private final List<Provider<Collection<T>>> collectionProviders;
     private final List<Provider<T>> individualProviders;
 
+    private SetFactory(List<Provider<T>> individualProviders2, List<Provider<Collection<T>>> collectionProviders2) {
+        this.individualProviders = individualProviders2;
+        this.collectionProviders = collectionProviders2;
+    }
+
     public static <T> Factory<Set<T>> empty() {
         return EMPTY_FACTORY;
     }
 
     public static <T> Builder<T> builder(int individualProviderSize, int collectionProviderSize) {
         return new Builder<>(individualProviderSize, collectionProviderSize);
-    }
-
-    public static final class Builder<T> {
-        static final /* synthetic */ boolean $assertionsDisabled = false;
-        private final List<Provider<Collection<T>>> collectionProviders;
-        private final List<Provider<T>> individualProviders;
-
-        static {
-            Class<SetFactory> cls = SetFactory.class;
-        }
-
-        private Builder(int individualProviderSize, int collectionProviderSize) {
-            this.individualProviders = DaggerCollections.presizedList(individualProviderSize);
-            this.collectionProviders = DaggerCollections.presizedList(collectionProviderSize);
-        }
-
-        public Builder<T> addProvider(Provider<? extends T> individualProvider) {
-            this.individualProviders.add(individualProvider);
-            return this;
-        }
-
-        public Builder<T> addCollectionProvider(Provider<? extends Collection<? extends T>> collectionProvider) {
-            this.collectionProviders.add(collectionProvider);
-            return this;
-        }
-
-        public SetFactory<T> build() {
-            return new SetFactory<>(this.individualProviders, this.collectionProviders);
-        }
-    }
-
-    private SetFactory(List<Provider<T>> individualProviders2, List<Provider<Collection<T>>> collectionProviders2) {
-        this.individualProviders = individualProviders2;
-        this.collectionProviders = collectionProviders2;
     }
 
     /* JADX INFO: Multiple debug info for r2v4 java.util.HashSet: [D('i' int), D('providedValues' java.util.Set<T>)] */
@@ -76,5 +48,35 @@ public final class SetFactory<T> implements Factory<Set<T>> {
             }
         }
         return Collections.unmodifiableSet(providedValues);
+    }
+
+    public static final class Builder<T> {
+        static final /* synthetic */ boolean $assertionsDisabled = false;
+
+        static {
+            Class<SetFactory> cls = SetFactory.class;
+        }
+
+        private final List<Provider<Collection<T>>> collectionProviders;
+        private final List<Provider<T>> individualProviders;
+
+        private Builder(int individualProviderSize, int collectionProviderSize) {
+            this.individualProviders = DaggerCollections.presizedList(individualProviderSize);
+            this.collectionProviders = DaggerCollections.presizedList(collectionProviderSize);
+        }
+
+        public Builder<T> addProvider(Provider<? extends T> individualProvider) {
+            this.individualProviders.add(individualProvider);
+            return this;
+        }
+
+        public Builder<T> addCollectionProvider(Provider<? extends Collection<? extends T>> collectionProvider) {
+            this.collectionProviders.add(collectionProvider);
+            return this;
+        }
+
+        public SetFactory<T> build() {
+            return new SetFactory<>(this.individualProviders, this.collectionProviders);
+        }
     }
 }

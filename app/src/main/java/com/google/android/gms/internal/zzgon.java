@@ -5,11 +5,19 @@ import java.nio.charset.Charset;
 
 /* compiled from: Internal */
 public final class zzgon {
-    static final Charset zza = Charset.forName("UTF-8");
     public static final byte[] zzb;
+    static final Charset zza = Charset.forName("UTF-8");
     private static final Charset zzc = Charset.forName("ISO-8859-1");
     private static final ByteBuffer zzd;
     private static final zzgnk zze;
+
+    static {
+        byte[] bArr = new byte[0];
+        zzb = bArr;
+        zzd = ByteBuffer.wrap(bArr);
+        byte[] bArr2 = zzb;
+        zze = zzgnk.zza(bArr2, 0, bArr2.length, false);
+    }
 
     static <T> T zza(Object obj) {
         if (obj != null) {
@@ -64,13 +72,5 @@ public final class zzgon {
 
     static Object zza(Object obj, Object obj2) {
         return ((zzgpt) obj).zzp().zza((zzgpt) obj2).zze();
-    }
-
-    static {
-        byte[] bArr = new byte[0];
-        zzb = bArr;
-        zzd = ByteBuffer.wrap(bArr);
-        byte[] bArr2 = zzb;
-        zze = zzgnk.zza(bArr2, 0, bArr2.length, false);
     }
 }

@@ -7,6 +7,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.common.primitives.Ints;
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.math.RoundingMode;
 
 @GwtCompatible(emulated = true)
@@ -18,14 +19,17 @@ public final class IntMath {
     @VisibleForTesting
     static final int MAX_SIGNED_POWER_OF_TWO = 1073741824;
     @VisibleForTesting
-    static int[] biggestBinomials = {Integer.MAX_VALUE, Integer.MAX_VALUE, 65536, 2345, ClientAnalytics.LogRequest.LogSource.TANGO_CORE_VALUE, ClientAnalytics.LogRequest.LogSource.GMSCORE_ANDROID_PRIMES_VALUE, 110, 75, 58, 49, 43, 39, 37, 35, 34, 34, 33};
-    private static final int[] factorials = {1, 1, 2, 6, 24, 120, ClientAnalytics.LogRequest.LogSource.CARRIER_SETUP_VALUE, 5040, 40320, 362880, 3628800, 39916800, 479001600};
-    @VisibleForTesting
     static final int[] halfPowersOf10 = {3, 31, ClientAnalytics.LogRequest.LogSource.NAZDEEK_CAB_ANDROID_PRIMES_VALUE, 3162, 31622, 316227, 3162277, 31622776, 316227766, Integer.MAX_VALUE};
     @VisibleForTesting
     static final byte[] maxLog10ForLeadingZeros = {9, 9, 9, 8, 8, 8, 7, 7, 7, 6, 6, 6, 6, 5, 5, 5, 4, 4, 4, 3, 3, 3, 3, 2, 2, 2, 1, 1, 1, 0, 0, 0, 0};
     @VisibleForTesting
     static final int[] powersOf10 = {1, 10, 100, 1000, 10000, DefaultOggSeeker.MATCH_BYTE_RANGE, 1000000, 10000000, 100000000, 1000000000};
+    private static final int[] factorials = {1, 1, 2, 6, 24, 120, ClientAnalytics.LogRequest.LogSource.CARRIER_SETUP_VALUE, 5040, 40320, 362880, 3628800, 39916800, 479001600};
+    @VisibleForTesting
+    static int[] biggestBinomials = {Integer.MAX_VALUE, Integer.MAX_VALUE, 65536, 2345, ClientAnalytics.LogRequest.LogSource.TANGO_CORE_VALUE, ClientAnalytics.LogRequest.LogSource.GMSCORE_ANDROID_PRIMES_VALUE, 110, 75, 58, 49, 43, 39, 37, 35, 34, 34, 33};
+
+    private IntMath() {
+    }
 
     @Beta
     public static int ceilingPowerOfTwo(int x) {
@@ -58,46 +62,6 @@ public final class IntMath {
     @VisibleForTesting
     static int lessThanBranchFree(int x, int y) {
         return (((x - y) ^ -1) ^ -1) >>> 31;
-    }
-
-    /* renamed from: com.google.common.math.IntMath$1 */
-    static /* synthetic */ class C17421 {
-        static final /* synthetic */ int[] $SwitchMap$java$math$RoundingMode = new int[RoundingMode.values().length];
-
-        static {
-            try {
-                $SwitchMap$java$math$RoundingMode[RoundingMode.UNNECESSARY.ordinal()] = 1;
-            } catch (NoSuchFieldError e) {
-            }
-            try {
-                $SwitchMap$java$math$RoundingMode[RoundingMode.DOWN.ordinal()] = 2;
-            } catch (NoSuchFieldError e2) {
-            }
-            try {
-                $SwitchMap$java$math$RoundingMode[RoundingMode.FLOOR.ordinal()] = 3;
-            } catch (NoSuchFieldError e3) {
-            }
-            try {
-                $SwitchMap$java$math$RoundingMode[RoundingMode.UP.ordinal()] = 4;
-            } catch (NoSuchFieldError e4) {
-            }
-            try {
-                $SwitchMap$java$math$RoundingMode[RoundingMode.CEILING.ordinal()] = 5;
-            } catch (NoSuchFieldError e5) {
-            }
-            try {
-                $SwitchMap$java$math$RoundingMode[RoundingMode.HALF_DOWN.ordinal()] = 6;
-            } catch (NoSuchFieldError e6) {
-            }
-            try {
-                $SwitchMap$java$math$RoundingMode[RoundingMode.HALF_UP.ordinal()] = 7;
-            } catch (NoSuchFieldError e7) {
-            }
-            try {
-                $SwitchMap$java$math$RoundingMode[RoundingMode.HALF_EVEN.ordinal()] = 8;
-            } catch (NoSuchFieldError e8) {
-            }
-        }
     }
 
     /* JADX INFO: Can't fix incorrect switch cases order, some code will duplicate */
@@ -494,6 +458,43 @@ public final class IntMath {
         return LongMath.isPrime((long) n);
     }
 
-    private IntMath() {
+    /* renamed from: com.google.common.math.IntMath$1 */
+    static /* synthetic */ class C17421 {
+        static final /* synthetic */ int[] $SwitchMap$java$math$RoundingMode = new int[RoundingMode.values().length];
+
+        static {
+            try {
+                $SwitchMap$java$math$RoundingMode[RoundingMode.UNNECESSARY.ordinal()] = 1;
+            } catch (NoSuchFieldError e) {
+            }
+            try {
+                $SwitchMap$java$math$RoundingMode[RoundingMode.DOWN.ordinal()] = 2;
+            } catch (NoSuchFieldError e2) {
+            }
+            try {
+                $SwitchMap$java$math$RoundingMode[RoundingMode.FLOOR.ordinal()] = 3;
+            } catch (NoSuchFieldError e3) {
+            }
+            try {
+                $SwitchMap$java$math$RoundingMode[RoundingMode.UP.ordinal()] = 4;
+            } catch (NoSuchFieldError e4) {
+            }
+            try {
+                $SwitchMap$java$math$RoundingMode[RoundingMode.CEILING.ordinal()] = 5;
+            } catch (NoSuchFieldError e5) {
+            }
+            try {
+                $SwitchMap$java$math$RoundingMode[RoundingMode.HALF_DOWN.ordinal()] = 6;
+            } catch (NoSuchFieldError e6) {
+            }
+            try {
+                $SwitchMap$java$math$RoundingMode[RoundingMode.HALF_UP.ordinal()] = 7;
+            } catch (NoSuchFieldError e7) {
+            }
+            try {
+                $SwitchMap$java$math$RoundingMode[RoundingMode.HALF_EVEN.ordinal()] = 8;
+            } catch (NoSuchFieldError e8) {
+            }
+        }
     }
 }

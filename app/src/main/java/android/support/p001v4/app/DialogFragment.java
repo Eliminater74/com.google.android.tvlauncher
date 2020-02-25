@@ -16,20 +16,27 @@ import android.view.View;
 
 /* renamed from: android.support.v4.app.DialogFragment */
 public class DialogFragment extends Fragment implements DialogInterface.OnCancelListener, DialogInterface.OnDismissListener {
+    public static final int STYLE_NORMAL = 0;
+    public static final int STYLE_NO_FRAME = 2;
+    public static final int STYLE_NO_INPUT = 3;
+    public static final int STYLE_NO_TITLE = 1;
     private static final String SAVED_BACK_STACK_ID = "android:backStackId";
     private static final String SAVED_CANCELABLE = "android:cancelable";
     private static final String SAVED_DIALOG_STATE_TAG = "android:savedDialogState";
     private static final String SAVED_SHOWS_DIALOG = "android:showsDialog";
     private static final String SAVED_STYLE = "android:style";
     private static final String SAVED_THEME = "android:theme";
-    public static final int STYLE_NORMAL = 0;
-    public static final int STYLE_NO_FRAME = 2;
-    public static final int STYLE_NO_INPUT = 3;
-    public static final int STYLE_NO_TITLE = 1;
     int mBackStackId = -1;
     boolean mCancelable = true;
     @Nullable
     Dialog mDialog;
+    boolean mDismissed;
+    boolean mShownByMe;
+    boolean mShowsDialog = true;
+    int mStyle = 0;
+    int mTheme = 0;
+    boolean mViewDestroyed;
+    private Handler mHandler;
     private Runnable mDismissRunnable = new Runnable() {
         public void run() {
             if (DialogFragment.this.mDialog != null) {
@@ -38,13 +45,6 @@ public class DialogFragment extends Fragment implements DialogInterface.OnCancel
             }
         }
     };
-    boolean mDismissed;
-    private Handler mHandler;
-    boolean mShownByMe;
-    boolean mShowsDialog = true;
-    int mStyle = 0;
-    int mTheme = 0;
-    boolean mViewDestroyed;
 
     public void setStyle(int style, @StyleRes int theme) {
         this.mStyle = style;
@@ -142,6 +142,10 @@ public class DialogFragment extends Fragment implements DialogInterface.OnCancel
         return this.mTheme;
     }
 
+    public boolean isCancelable() {
+        return this.mCancelable;
+    }
+
     public void setCancelable(boolean cancelable) {
         this.mCancelable = cancelable;
         Dialog dialog = this.mDialog;
@@ -150,16 +154,12 @@ public class DialogFragment extends Fragment implements DialogInterface.OnCancel
         }
     }
 
-    public boolean isCancelable() {
-        return this.mCancelable;
+    public boolean getShowsDialog() {
+        return this.mShowsDialog;
     }
 
     public void setShowsDialog(boolean showsDialog) {
         this.mShowsDialog = showsDialog;
-    }
-
-    public boolean getShowsDialog() {
-        return this.mShowsDialog;
     }
 
     public void onAttach(@NonNull Context context) {

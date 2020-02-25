@@ -5,7 +5,9 @@ import android.content.Context;
 import android.support.annotation.VisibleForTesting;
 import android.util.AttributeSet;
 import android.view.View;
+
 import androidx.leanback.widget.VerticalGridView;
+
 import com.google.android.tvlauncher.C1188R;
 import com.google.android.tvlauncher.util.AccessibilityContextMenu;
 import com.google.android.tvlauncher.util.ContextMenu;

@@ -1,7 +1,5 @@
 package com.google.android.tvlauncher.util;
 
-import com.google.android.tvlauncher.util.OemAppBase;
-
 public class OemOutOfBoxApp extends OemAppBase {
     private final boolean mCanHide;
     private final boolean mCanMove;
@@ -10,6 +8,14 @@ public class OemOutOfBoxApp extends OemAppBase {
         super(builder);
         this.mCanMove = builder.mCanMove;
         this.mCanHide = builder.mCanHide;
+    }
+
+    public boolean canMove() {
+        return this.mCanMove;
+    }
+
+    public boolean canHide() {
+        return this.mCanHide;
     }
 
     public static final class Builder extends OemAppBase.Builder<Builder> {
@@ -27,13 +33,5 @@ public class OemOutOfBoxApp extends OemAppBase {
         public OemOutOfBoxApp build() {
             return new OemOutOfBoxApp(this);
         }
-    }
-
-    public boolean canMove() {
-        return this.mCanMove;
-    }
-
-    public boolean canHide() {
-        return this.mCanHide;
     }
 }

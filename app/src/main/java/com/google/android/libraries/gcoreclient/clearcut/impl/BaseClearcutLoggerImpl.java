@@ -2,6 +2,7 @@ package com.google.android.libraries.gcoreclient.clearcut.impl;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
+
 import com.google.android.gms.clearcut.ClearcutLogger;
 import com.google.android.gms.common.api.Status;
 import com.google.android.libraries.gcoreclient.clearcut.GcoreClearcutLogEventBuilder;
@@ -10,6 +11,7 @@ import com.google.android.libraries.gcoreclient.clearcut.GcoreClearcutMessagePro
 import com.google.android.libraries.gcoreclient.common.api.GcoreStatus;
 import com.google.android.libraries.gcoreclient.common.api.support.GcoreStatusImpl;
 import com.google.android.libraries.gcoreclient.common.api.support.ResultWrapper;
+
 import java.util.concurrent.TimeUnit;
 
 abstract class BaseClearcutLoggerImpl implements GcoreClearcutLogger {

@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.util.SparseArray;
 import android.util.SparseBooleanArray;
+
 import com.google.android.exoplayer2.database.DatabaseIOException;
 import com.google.android.exoplayer2.database.DatabaseProvider;
 import com.google.android.exoplayer2.database.VersionTable;
@@ -16,6 +17,7 @@ import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.AtomicFile;
 import com.google.android.exoplayer2.util.ReusableBufferedOutputStream;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.DataInputStream;
@@ -32,6 +34,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+
 import javax.crypto.Cipher;
 import javax.crypto.CipherOutputStream;
 import javax.crypto.NoSuchPaddingException;
@@ -43,36 +46,10 @@ class CachedContentIndex {
     private static final int INCREMENTAL_METADATA_READ_LENGTH = 10485760;
     private final SparseArray<String> idToKey;
     private final HashMap<String, CachedContent> keyToContent;
+    private final SparseBooleanArray removedIds;
     @Nullable
     private Storage previousStorage;
-    private final SparseBooleanArray removedIds;
     private Storage storage;
-
-    private interface Storage {
-        void delete() throws IOException;
-
-        boolean exists() throws IOException;
-
-        void initialize(long j);
-
-        void load(HashMap<String, CachedContent> hashMap, SparseArray<String> sparseArray) throws IOException;
-
-        void onRemove(CachedContent cachedContent);
-
-        void onUpdate(CachedContent cachedContent);
-
-        void storeFully(HashMap<String, CachedContent> hashMap) throws IOException;
-
-        void storeIncremental(HashMap<String, CachedContent> hashMap) throws IOException;
-    }
-
-    public static final boolean isIndexFile(String fileName) {
-        return fileName.startsWith(FILE_NAME_ATOMIC);
-    }
-
-    public static void delete(DatabaseProvider databaseProvider, long uid) throws DatabaseIOException {
-        DatabaseStorage.delete(databaseProvider, uid);
-    }
 
     public CachedContentIndex(DatabaseProvider databaseProvider) {
         this(databaseProvider, null, null, false, false);
@@ -93,6 +70,81 @@ class CachedContentIndex {
         }
         this.storage = databaseStorage;
         this.previousStorage = legacyStorage;
+    }
+
+    public static final boolean isIndexFile(String fileName) {
+        return fileName.startsWith(FILE_NAME_ATOMIC);
+    }
+
+    public static void delete(DatabaseProvider databaseProvider, long uid) throws DatabaseIOException {
+        DatabaseStorage.delete(databaseProvider, uid);
+    }
+
+    /* access modifiers changed from: private */
+    @SuppressLint({"GetInstance"})
+    public static Cipher getCipher() throws NoSuchPaddingException, NoSuchAlgorithmException {
+        if (Util.SDK_INT == 18) {
+            try {
+                return Cipher.getInstance("AES/CBC/PKCS5PADDING", "BC");
+            } catch (Throwable th) {
+            }
+        }
+        return Cipher.getInstance("AES/CBC/PKCS5PADDING");
+    }
+
+    @VisibleForTesting
+    static int getNewId(SparseArray<String> idToKey2) {
+        int size = idToKey2.size();
+        int id = size == 0 ? 0 : idToKey2.keyAt(size - 1) + 1;
+        if (id < 0) {
+            int id2 = 0;
+            while (id < size && id == idToKey2.keyAt(id)) {
+                id2 = id + 1;
+            }
+        }
+        return id;
+    }
+
+    /* access modifiers changed from: private */
+    public static DefaultContentMetadata readContentMetadata(DataInputStream input) throws IOException {
+        int size = input.readInt();
+        HashMap<String, byte[]> metadata = new HashMap<>();
+        int i = 0;
+        while (i < size) {
+            String name = input.readUTF();
+            int valueSize = input.readInt();
+            if (valueSize >= 0) {
+                int bytesRead = 0;
+                int nextBytesToRead = Math.min(valueSize, (int) INCREMENTAL_METADATA_READ_LENGTH);
+                byte[] value = Util.EMPTY_BYTE_ARRAY;
+                while (bytesRead != valueSize) {
+                    value = Arrays.copyOf(value, bytesRead + nextBytesToRead);
+                    input.readFully(value, bytesRead, nextBytesToRead);
+                    bytesRead += nextBytesToRead;
+                    nextBytesToRead = Math.min(valueSize - bytesRead, (int) INCREMENTAL_METADATA_READ_LENGTH);
+                }
+                metadata.put(name, value);
+                i++;
+            } else {
+                StringBuilder sb = new StringBuilder(31);
+                sb.append("Invalid value size: ");
+                sb.append(valueSize);
+                throw new IOException(sb.toString());
+            }
+        }
+        return new DefaultContentMetadata(metadata);
+    }
+
+    /* access modifiers changed from: private */
+    public static void writeContentMetadata(DefaultContentMetadata metadata, DataOutputStream output) throws IOException {
+        Set<Map.Entry<String, byte[]>> entrySet = metadata.entrySet();
+        output.writeInt(entrySet.size());
+        for (Map.Entry<String, byte[]> entry : entrySet) {
+            output.writeUTF((String) entry.getKey());
+            byte[] value = (byte[]) entry.getValue();
+            output.writeInt(value.length);
+            output.write(value);
+        }
     }
 
     public void initialize(long uid) throws IOException {
@@ -187,71 +239,22 @@ class CachedContentIndex {
         return cachedContent;
     }
 
-    /* access modifiers changed from: private */
-    @SuppressLint({"GetInstance"})
-    public static Cipher getCipher() throws NoSuchPaddingException, NoSuchAlgorithmException {
-        if (Util.SDK_INT == 18) {
-            try {
-                return Cipher.getInstance("AES/CBC/PKCS5PADDING", "BC");
-            } catch (Throwable th) {
-            }
-        }
-        return Cipher.getInstance("AES/CBC/PKCS5PADDING");
-    }
+    private interface Storage {
+        void delete() throws IOException;
 
-    @VisibleForTesting
-    static int getNewId(SparseArray<String> idToKey2) {
-        int size = idToKey2.size();
-        int id = size == 0 ? 0 : idToKey2.keyAt(size - 1) + 1;
-        if (id < 0) {
-            int id2 = 0;
-            while (id < size && id == idToKey2.keyAt(id)) {
-                id2 = id + 1;
-            }
-        }
-        return id;
-    }
+        boolean exists() throws IOException;
 
-    /* access modifiers changed from: private */
-    public static DefaultContentMetadata readContentMetadata(DataInputStream input) throws IOException {
-        int size = input.readInt();
-        HashMap<String, byte[]> metadata = new HashMap<>();
-        int i = 0;
-        while (i < size) {
-            String name = input.readUTF();
-            int valueSize = input.readInt();
-            if (valueSize >= 0) {
-                int bytesRead = 0;
-                int nextBytesToRead = Math.min(valueSize, (int) INCREMENTAL_METADATA_READ_LENGTH);
-                byte[] value = Util.EMPTY_BYTE_ARRAY;
-                while (bytesRead != valueSize) {
-                    value = Arrays.copyOf(value, bytesRead + nextBytesToRead);
-                    input.readFully(value, bytesRead, nextBytesToRead);
-                    bytesRead += nextBytesToRead;
-                    nextBytesToRead = Math.min(valueSize - bytesRead, (int) INCREMENTAL_METADATA_READ_LENGTH);
-                }
-                metadata.put(name, value);
-                i++;
-            } else {
-                StringBuilder sb = new StringBuilder(31);
-                sb.append("Invalid value size: ");
-                sb.append(valueSize);
-                throw new IOException(sb.toString());
-            }
-        }
-        return new DefaultContentMetadata(metadata);
-    }
+        void initialize(long j);
 
-    /* access modifiers changed from: private */
-    public static void writeContentMetadata(DefaultContentMetadata metadata, DataOutputStream output) throws IOException {
-        Set<Map.Entry<String, byte[]>> entrySet = metadata.entrySet();
-        output.writeInt(entrySet.size());
-        for (Map.Entry<String, byte[]> entry : entrySet) {
-            output.writeUTF((String) entry.getKey());
-            byte[] value = (byte[]) entry.getValue();
-            output.writeInt(value.length);
-            output.write(value);
-        }
+        void load(HashMap<String, CachedContent> hashMap, SparseArray<String> sparseArray) throws IOException;
+
+        void onRemove(CachedContent cachedContent);
+
+        void onUpdate(CachedContent cachedContent);
+
+        void storeFully(HashMap<String, CachedContent> hashMap) throws IOException;
+
+        void storeIncremental(HashMap<String, CachedContent> hashMap) throws IOException;
     }
 
     private static class LegacyStorage implements Storage {
@@ -260,15 +263,15 @@ class CachedContentIndex {
         private static final int VERSION_METADATA_INTRODUCED = 2;
         private final AtomicFile atomicFile;
         @Nullable
-        private ReusableBufferedOutputStream bufferedOutputStream;
-        private boolean changed;
-        @Nullable
         private final Cipher cipher;
         private final boolean encrypt;
         @Nullable
         private final Random random;
         @Nullable
         private final SecretKeySpec secretKeySpec;
+        @Nullable
+        private ReusableBufferedOutputStream bufferedOutputStream;
+        private boolean changed;
 
         public LegacyStorage(File file, @Nullable byte[] secretKey, boolean encrypt2) {
             Cipher cipher2 = null;
@@ -535,16 +538,45 @@ class CachedContentIndex {
         private static final int TABLE_VERSION = 1;
         private static final String WHERE_ID_EQUALS = "id = ?";
         private final DatabaseProvider databaseProvider;
-        private String hexUid;
         private final SparseArray<CachedContent> pendingUpdates = new SparseArray<>();
+        private String hexUid;
         private String tableName;
+
+        public DatabaseStorage(DatabaseProvider databaseProvider2) {
+            this.databaseProvider = databaseProvider2;
+        }
 
         public static void delete(DatabaseProvider databaseProvider2, long uid) throws DatabaseIOException {
             delete(databaseProvider2, Long.toHexString(uid));
         }
 
-        public DatabaseStorage(DatabaseProvider databaseProvider2) {
-            this.databaseProvider = databaseProvider2;
+        private static void delete(DatabaseProvider databaseProvider2, String hexUid2) throws DatabaseIOException {
+            SQLiteDatabase writableDatabase;
+            try {
+                String tableName2 = getTableName(hexUid2);
+                writableDatabase = databaseProvider2.getWritableDatabase();
+                writableDatabase.beginTransaction();
+                VersionTable.removeVersion(writableDatabase, 1, hexUid2);
+                dropTable(writableDatabase, tableName2);
+                writableDatabase.setTransactionSuccessful();
+                writableDatabase.endTransaction();
+            } catch (SQLException e) {
+                throw new DatabaseIOException(e);
+            } catch (Throwable th) {
+                writableDatabase.endTransaction();
+                throw th;
+            }
+        }
+
+        private static void dropTable(SQLiteDatabase writableDatabase, String tableName2) {
+            String valueOf = String.valueOf(tableName2);
+            writableDatabase.execSQL(valueOf.length() != 0 ? "DROP TABLE IF EXISTS ".concat(valueOf) : new String("DROP TABLE IF EXISTS "));
+        }
+
+        private static String getTableName(String hexUid2) {
+            String valueOf = String.valueOf(TABLE_PREFIX);
+            String valueOf2 = String.valueOf(hexUid2);
+            return valueOf2.length() != 0 ? valueOf.concat(valueOf2) : new String(valueOf);
         }
 
         public void initialize(long uid) {
@@ -737,35 +769,6 @@ class CachedContentIndex {
             values.put("key", cachedContent.key);
             values.put("metadata", data);
             writableDatabase.replaceOrThrow(this.tableName, null, values);
-        }
-
-        private static void delete(DatabaseProvider databaseProvider2, String hexUid2) throws DatabaseIOException {
-            SQLiteDatabase writableDatabase;
-            try {
-                String tableName2 = getTableName(hexUid2);
-                writableDatabase = databaseProvider2.getWritableDatabase();
-                writableDatabase.beginTransaction();
-                VersionTable.removeVersion(writableDatabase, 1, hexUid2);
-                dropTable(writableDatabase, tableName2);
-                writableDatabase.setTransactionSuccessful();
-                writableDatabase.endTransaction();
-            } catch (SQLException e) {
-                throw new DatabaseIOException(e);
-            } catch (Throwable th) {
-                writableDatabase.endTransaction();
-                throw th;
-            }
-        }
-
-        private static void dropTable(SQLiteDatabase writableDatabase, String tableName2) {
-            String valueOf = String.valueOf(tableName2);
-            writableDatabase.execSQL(valueOf.length() != 0 ? "DROP TABLE IF EXISTS ".concat(valueOf) : new String("DROP TABLE IF EXISTS "));
-        }
-
-        private static String getTableName(String hexUid2) {
-            String valueOf = String.valueOf(TABLE_PREFIX);
-            String valueOf2 = String.valueOf(hexUid2);
-            return valueOf2.length() != 0 ? valueOf.concat(valueOf2) : new String(valueOf);
         }
     }
 }

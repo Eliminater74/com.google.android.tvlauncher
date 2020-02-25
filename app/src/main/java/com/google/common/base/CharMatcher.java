@@ -1,9 +1,11 @@
 package com.google.common.base;
 
 import android.support.p001v4.internal.view.SupportMenu;
+
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.annotations.VisibleForTesting;
+
 import java.util.Arrays;
 import java.util.BitSet;
 
@@ -11,7 +13,8 @@ import java.util.BitSet;
 public abstract class CharMatcher implements Predicate<Character> {
     private static final int DISTINCT_CHARS = 65536;
 
-    public abstract boolean matches(char c);
+    protected CharMatcher() {
+    }
 
     public static CharMatcher any() {
         return Any.INSTANCE;
@@ -112,8 +115,44 @@ public abstract class CharMatcher implements Predicate<Character> {
         return predicate instanceof CharMatcher ? (CharMatcher) predicate : new ForPredicate(predicate);
     }
 
-    protected CharMatcher() {
+    @GwtIncompatible
+    private static CharMatcher precomputedPositive(int totalCharacters, BitSet table, String description) {
+        if (totalCharacters == 0) {
+            return none();
+        }
+        if (totalCharacters == 1) {
+            return m72is((char) table.nextSetBit(0));
+        }
+        if (totalCharacters == 2) {
+            char c1 = (char) table.nextSetBit(0);
+            return isEither(c1, (char) table.nextSetBit(c1 + 1));
+        } else if (isSmall(totalCharacters, table.length())) {
+            return SmallCharMatcher.from(table, description);
+        } else {
+            return new BitSetMatcher(table, description);
+        }
     }
+
+    @GwtIncompatible
+    private static boolean isSmall(int totalCharacters, int tableLength) {
+        return totalCharacters <= 1023 && tableLength > (totalCharacters * 4) * 16;
+    }
+
+    /* access modifiers changed from: private */
+    public static String showCharacter(char c) {
+        char[] tmp = {'\\', 'u', 0, 0, 0, 0};
+        for (int i = 0; i < 4; i++) {
+            tmp[5 - i] = "0123456789ABCDEF".charAt(c & 15);
+            c = (char) (c >> 4);
+        }
+        return String.copyValueOf(tmp);
+    }
+
+    private static IsEither isEither(char c1, char c2) {
+        return new IsEither(c1, c2);
+    }
+
+    public abstract boolean matches(char c);
 
     public CharMatcher negate() {
         return new Negated(this);
@@ -157,29 +196,6 @@ public abstract class CharMatcher implements Predicate<Character> {
                 return description;
             }
         };
-    }
-
-    @GwtIncompatible
-    private static CharMatcher precomputedPositive(int totalCharacters, BitSet table, String description) {
-        if (totalCharacters == 0) {
-            return none();
-        }
-        if (totalCharacters == 1) {
-            return m72is((char) table.nextSetBit(0));
-        }
-        if (totalCharacters == 2) {
-            char c1 = (char) table.nextSetBit(0);
-            return isEither(c1, (char) table.nextSetBit(c1 + 1));
-        } else if (isSmall(totalCharacters, table.length())) {
-            return SmallCharMatcher.from(table, description);
-        } else {
-            return new BitSetMatcher(table, description);
-        }
-    }
-
-    @GwtIncompatible
-    private static boolean isSmall(int totalCharacters, int tableLength) {
-        return totalCharacters <= 1023 && tableLength > (totalCharacters * 4) * 16;
     }
 
     /* access modifiers changed from: package-private */
@@ -415,16 +431,6 @@ public abstract class CharMatcher implements Predicate<Character> {
 
     public String toString() {
         return super.toString();
-    }
-
-    /* access modifiers changed from: private */
-    public static String showCharacter(char c) {
-        char[] tmp = {'\\', 'u', 0, 0, 0, 0};
-        for (int i = 0; i < 4; i++) {
-            tmp[5 - i] = "0123456789ABCDEF".charAt(c & 15);
-            c = (char) (c >> 4);
-        }
-        return String.copyValueOf(tmp);
     }
 
     static abstract class FastMatcher extends CharMatcher {
@@ -670,8 +676,8 @@ public abstract class CharMatcher implements Predicate<Character> {
     static final class Whitespace extends NamedFastMatcher {
         static final Whitespace INSTANCE = new Whitespace();
         static final int MULTIPLIER = 1682554634;
-        static final int SHIFT = Integer.numberOfLeadingZeros(TABLE.length() - 1);
         static final String TABLE = " 　\r   　 \u000b　   　 \t     \f 　 　　 \n 　";
+        static final int SHIFT = Integer.numberOfLeadingZeros(TABLE.length() - 1);
 
         Whitespace() {
             super("CharMatcher.whitespace()");
@@ -773,6 +779,10 @@ public abstract class CharMatcher implements Predicate<Character> {
         static final Digit INSTANCE = new Digit();
         private static final String ZEROES = "0٠۰߀०০੦૦୦௦౦೦൦෦๐໐༠၀႐០᠐᥆᧐᪀᪐᭐᮰᱀᱐꘠꣐꤀꧐꧰꩐꯰０";
 
+        private Digit() {
+            super("CharMatcher.digit()", zeroes(), nines());
+        }
+
         private static char[] zeroes() {
             return ZEROES.toCharArray();
         }
@@ -783,10 +793,6 @@ public abstract class CharMatcher implements Predicate<Character> {
                 nines[i] = (char) (ZEROES.charAt(i) + 9);
             }
             return nines;
-        }
-
-        private Digit() {
-            super("CharMatcher.digit()", zeroes(), nines());
         }
     }
 
@@ -1095,10 +1101,6 @@ public abstract class CharMatcher implements Predicate<Character> {
             sb.append("')");
             return sb.toString();
         }
-    }
-
-    private static IsEither isEither(char c1, char c2) {
-        return new IsEither(c1, c2);
     }
 
     private static final class IsEither extends FastMatcher {

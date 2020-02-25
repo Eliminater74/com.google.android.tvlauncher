@@ -5,11 +5,13 @@ import android.content.Context;
 import android.os.IInterface;
 import android.os.Looper;
 import android.support.annotation.NonNull;
+
 import com.google.android.gms.common.Feature;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.Api;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
+
 import java.util.Set;
 
 /* compiled from: GmsClient */

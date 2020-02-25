@@ -5,7 +5,9 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.offline.Download;
+
 import java.util.List;
 
 @Deprecated

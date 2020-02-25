@@ -22,9 +22,7 @@ import android.view.FocusFinder;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import androidx.leanback.widget.Grid;
-import androidx.leanback.widget.ItemAlignmentFacet;
-import androidx.leanback.widget.WindowAlignment;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -33,8 +31,6 @@ final class GridLayoutManager extends RecyclerView.LayoutManager {
     static final boolean DEBUG = false;
     static final int DEFAULT_MAX_PENDING_MOVES = 10;
     static final int MIN_MS_SMOOTH_SCROLL_MAIN_SCREEN = 30;
-    private static final int NEXT_ITEM = 1;
-    private static final int NEXT_ROW = 3;
     static final int PF_FAST_RELAYOUT = 4;
     static final int PF_FAST_RELAYOUT_UPDATED_SELECTED_POSITION = 8;
     static final int PF_FOCUS_OUT_END = 4096;
@@ -59,30 +55,62 @@ final class GridLayoutManager extends RecyclerView.LayoutManager {
     static final int PF_STAGE_LAYOUT = 1;
     static final int PF_STAGE_MASK = 3;
     static final int PF_STAGE_SCROLL = 2;
+    static final boolean TRACE = false;
+    private static final int NEXT_ITEM = 1;
+    private static final int NEXT_ROW = 3;
     private static final int PREV_ITEM = 0;
     private static final int PREV_ROW = 2;
     private static final String TAG = "GridLayoutManager";
-    static final boolean TRACE = false;
     private static final Rect sTempRect = new Rect();
     static int[] sTwoInts = new int[2];
     final BaseGridView mBaseGridView;
-    OnChildLaidOutListener mChildLaidOutListener = null;
-    private OnChildSelectedListener mChildSelectedListener = null;
-    private ArrayList<OnChildViewHolderSelectedListener> mChildViewHolderSelectedListeners = null;
-    int mChildVisibility;
     final ViewsStateBundle mChildrenStates = new ViewsStateBundle();
+    final SparseIntArray mPositionToRowInPostLayout = new SparseIntArray();
+    final WindowAlignment mWindowAlignment = new WindowAlignment();
+    private final ItemAlignment mItemAlignment = new ItemAlignment();
+    private final Runnable mRequestLayoutRunnable = new Runnable() {
+        public void run() {
+            GridLayoutManager.this.requestLayout();
+        }
+    };
+    OnChildLaidOutListener mChildLaidOutListener = null;
+    int mChildVisibility;
     GridLinearSmoothScroller mCurrentSmoothScroller;
     int[] mDisappearingPositions;
-    private int mExtraLayoutSpace;
     int mExtraLayoutSpaceInPreLayout;
-    private FacetProviderAdapter mFacetProviderAdapter;
-    private int mFixedRowSizeSecondary;
     int mFlag = 221696;
     int mFocusPosition = -1;
+    Grid mGrid;
+    @VisibleForTesting
+    OnLayoutCompleteListener mLayoutCompleteListener;
+    int mMaxPendingMoves = 10;
+    int mNumRows;
+    int mOrientation = 0;
+    PendingMoveSmoothScroller mPendingMoveSmoothScroller;
+    int mPositionDeltaInPreLayout;
+    RecyclerView.Recycler mRecycler;
+    int mScrollOffsetSecondary;
+    RecyclerView.State mState;
+    int mSubFocusPosition = 0;
+    private OnChildSelectedListener mChildSelectedListener = null;
+    private ArrayList<OnChildViewHolderSelectedListener> mChildViewHolderSelectedListeners = null;
+    private int mExtraLayoutSpace;
+    private FacetProviderAdapter mFacetProviderAdapter;
+    private int mFixedRowSizeSecondary;
     private int mFocusPositionOffset = 0;
     private int mFocusScrollStrategy = 0;
     private int mGravity = 8388659;
-    Grid mGrid;
+    private int mHorizontalSpacing;
+    private int mMaxSizeSecondary;
+    private int[] mMeasuredDimension = new int[2];
+    private int mNumRowsRequested = 1;
+    private OrientationHelper mOrientationHelper = OrientationHelper.createHorizontalHelper(this);
+    private int mPrimaryScrollExtra;
+    private int[] mRowSizeSecondary;
+    private int mRowSizeSecondaryRequested;
+    private int mSizePrimary;
+    private int mSpacingPrimary;
+    private int mSpacingSecondary;
     private Grid.Provider mGridProvider = new Grid.Provider() {
         public int getMinIndex() {
             return GridLayoutManager.this.mPositionDeltaInPreLayout;
@@ -210,360 +238,17 @@ final class GridLayoutManager extends RecyclerView.LayoutManager {
             return gridLayoutManager.getViewPrimarySize(gridLayoutManager.findViewByPosition(index - gridLayoutManager.mPositionDeltaInPreLayout));
         }
     };
-    private int mHorizontalSpacing;
-    private final ItemAlignment mItemAlignment = new ItemAlignment();
-    @VisibleForTesting
-    OnLayoutCompleteListener mLayoutCompleteListener;
-    int mMaxPendingMoves = 10;
-    private int mMaxSizeSecondary;
-    private int[] mMeasuredDimension = new int[2];
-    int mNumRows;
-    private int mNumRowsRequested = 1;
-    int mOrientation = 0;
-    private OrientationHelper mOrientationHelper = OrientationHelper.createHorizontalHelper(this);
-    PendingMoveSmoothScroller mPendingMoveSmoothScroller;
-    int mPositionDeltaInPreLayout;
-    final SparseIntArray mPositionToRowInPostLayout = new SparseIntArray();
-    private int mPrimaryScrollExtra;
-    RecyclerView.Recycler mRecycler;
-    private final Runnable mRequestLayoutRunnable = new Runnable() {
-        public void run() {
-            GridLayoutManager.this.requestLayout();
-        }
-    };
-    private int[] mRowSizeSecondary;
-    private int mRowSizeSecondaryRequested;
-    int mScrollOffsetSecondary;
-    private int mSizePrimary;
-    private int mSpacingPrimary;
-    private int mSpacingSecondary;
-    RecyclerView.State mState;
-    int mSubFocusPosition = 0;
     private int mVerticalSpacing;
-    final WindowAlignment mWindowAlignment = new WindowAlignment();
-
-    static final class LayoutParams extends RecyclerView.LayoutParams {
-        private int[] mAlignMultiple;
-        private int mAlignX;
-        private int mAlignY;
-        private ItemAlignmentFacet mAlignmentFacet;
-        int mBottomInset;
-        int mLeftInset;
-        int mRightInset;
-        int mTopInset;
-
-        public LayoutParams(Context c, AttributeSet attrs) {
-            super(c, attrs);
-        }
-
-        public LayoutParams(int width, int height) {
-            super(width, height);
-        }
-
-        public LayoutParams(ViewGroup.MarginLayoutParams source) {
-            super(source);
-        }
-
-        public LayoutParams(ViewGroup.LayoutParams source) {
-            super(source);
-        }
-
-        public LayoutParams(RecyclerView.LayoutParams source) {
-            super(source);
-        }
-
-        public LayoutParams(LayoutParams source) {
-            super((RecyclerView.LayoutParams) source);
-        }
-
-        /* access modifiers changed from: package-private */
-        public int getAlignX() {
-            return this.mAlignX;
-        }
-
-        /* access modifiers changed from: package-private */
-        public int getAlignY() {
-            return this.mAlignY;
-        }
-
-        /* access modifiers changed from: package-private */
-        public int getOpticalLeft(View view) {
-            return view.getLeft() + this.mLeftInset;
-        }
-
-        /* access modifiers changed from: package-private */
-        public int getOpticalTop(View view) {
-            return view.getTop() + this.mTopInset;
-        }
-
-        /* access modifiers changed from: package-private */
-        public int getOpticalRight(View view) {
-            return view.getRight() - this.mRightInset;
-        }
-
-        /* access modifiers changed from: package-private */
-        public int getOpticalBottom(View view) {
-            return view.getBottom() - this.mBottomInset;
-        }
-
-        /* access modifiers changed from: package-private */
-        public int getOpticalWidth(View view) {
-            return (view.getWidth() - this.mLeftInset) - this.mRightInset;
-        }
-
-        /* access modifiers changed from: package-private */
-        public int getOpticalHeight(View view) {
-            return (view.getHeight() - this.mTopInset) - this.mBottomInset;
-        }
-
-        /* access modifiers changed from: package-private */
-        public int getOpticalLeftInset() {
-            return this.mLeftInset;
-        }
-
-        /* access modifiers changed from: package-private */
-        public int getOpticalRightInset() {
-            return this.mRightInset;
-        }
-
-        /* access modifiers changed from: package-private */
-        public int getOpticalTopInset() {
-            return this.mTopInset;
-        }
-
-        /* access modifiers changed from: package-private */
-        public int getOpticalBottomInset() {
-            return this.mBottomInset;
-        }
-
-        /* access modifiers changed from: package-private */
-        public void setAlignX(int alignX) {
-            this.mAlignX = alignX;
-        }
-
-        /* access modifiers changed from: package-private */
-        public void setAlignY(int alignY) {
-            this.mAlignY = alignY;
-        }
-
-        /* access modifiers changed from: package-private */
-        public void setItemAlignmentFacet(ItemAlignmentFacet facet) {
-            this.mAlignmentFacet = facet;
-        }
-
-        /* access modifiers changed from: package-private */
-        public ItemAlignmentFacet getItemAlignmentFacet() {
-            return this.mAlignmentFacet;
-        }
-
-        /* access modifiers changed from: package-private */
-        public void calculateItemAlignments(int orientation, View view) {
-            ItemAlignmentFacet.ItemAlignmentDef[] defs = this.mAlignmentFacet.getAlignmentDefs();
-            int[] iArr = this.mAlignMultiple;
-            if (iArr == null || iArr.length != defs.length) {
-                this.mAlignMultiple = new int[defs.length];
-            }
-            for (int i = 0; i < defs.length; i++) {
-                this.mAlignMultiple[i] = ItemAlignmentFacetHelper.getAlignmentPosition(view, defs[i], orientation);
-            }
-            if (orientation == 0) {
-                this.mAlignX = this.mAlignMultiple[0];
-            } else {
-                this.mAlignY = this.mAlignMultiple[0];
-            }
-        }
-
-        /* access modifiers changed from: package-private */
-        public int[] getAlignMultiple() {
-            return this.mAlignMultiple;
-        }
-
-        /* access modifiers changed from: package-private */
-        public void setOpticalInsets(int leftInset, int topInset, int rightInset, int bottomInset) {
-            this.mLeftInset = leftInset;
-            this.mTopInset = topInset;
-            this.mRightInset = rightInset;
-            this.mBottomInset = bottomInset;
-        }
-    }
-
-    abstract class GridLinearSmoothScroller extends LinearSmoothScroller {
-        boolean mSkipOnStopInternal;
-
-        GridLinearSmoothScroller() {
-            super(GridLayoutManager.this.mBaseGridView.getContext());
-        }
-
-        /* access modifiers changed from: protected */
-        public void onStop() {
-            super.onStop();
-            if (!this.mSkipOnStopInternal) {
-                onStopInternal();
-            }
-            if (GridLayoutManager.this.mCurrentSmoothScroller == this) {
-                GridLayoutManager.this.mCurrentSmoothScroller = null;
-            }
-            if (GridLayoutManager.this.mPendingMoveSmoothScroller == this) {
-                GridLayoutManager.this.mPendingMoveSmoothScroller = null;
-            }
-        }
-
-        /* access modifiers changed from: protected */
-        public void onStopInternal() {
-            View targetView = findViewByPosition(getTargetPosition());
-            if (targetView != null) {
-                if (GridLayoutManager.this.mFocusPosition != getTargetPosition()) {
-                    GridLayoutManager.this.mFocusPosition = getTargetPosition();
-                }
-                if (GridLayoutManager.this.hasFocus()) {
-                    GridLayoutManager.this.mFlag |= 32;
-                    targetView.requestFocus();
-                    GridLayoutManager.this.mFlag &= -33;
-                }
-                GridLayoutManager.this.dispatchChildSelected();
-                GridLayoutManager.this.dispatchChildSelectedAndPositioned();
-            } else if (getTargetPosition() >= 0) {
-                GridLayoutManager.this.scrollToSelection(getTargetPosition(), 0, false, 0);
-            }
-        }
-
-        /* access modifiers changed from: protected */
-        public int calculateTimeForScrolling(int dx) {
-            int ms = super.calculateTimeForScrolling(dx);
-            if (GridLayoutManager.this.mWindowAlignment.mainAxis().getSize() <= 0) {
-                return ms;
-            }
-            float minMs = (30.0f / ((float) GridLayoutManager.this.mWindowAlignment.mainAxis().getSize())) * ((float) dx);
-            if (((float) ms) < minMs) {
-                return (int) minMs;
-            }
-            return ms;
-        }
-
-        /* access modifiers changed from: protected */
-        public void onTargetFound(View targetView, RecyclerView.State state, RecyclerView.SmoothScroller.Action action) {
-            int dy;
-            int dx;
-            if (GridLayoutManager.this.getScrollPosition(targetView, null, GridLayoutManager.sTwoInts)) {
-                if (GridLayoutManager.this.mOrientation == 0) {
-                    dx = GridLayoutManager.sTwoInts[0];
-                    dy = GridLayoutManager.sTwoInts[1];
-                } else {
-                    dx = GridLayoutManager.sTwoInts[1];
-                    dy = GridLayoutManager.sTwoInts[0];
-                }
-                action.update(dx, dy, calculateTimeForDeceleration((int) Math.sqrt((double) ((dx * dx) + (dy * dy)))), this.mDecelerateInterpolator);
-            }
-        }
-    }
-
-    final class PendingMoveSmoothScroller extends GridLinearSmoothScroller {
-        static final int TARGET_UNDEFINED = -2;
-        private int mPendingMoves;
-        private final boolean mStaggeredGrid;
-
-        PendingMoveSmoothScroller(int initialPendingMoves, boolean staggeredGrid) {
-            super();
-            this.mPendingMoves = initialPendingMoves;
-            this.mStaggeredGrid = staggeredGrid;
-            setTargetPosition(-2);
-        }
-
-        /* access modifiers changed from: package-private */
-        public void increasePendingMoves() {
-            if (this.mPendingMoves < GridLayoutManager.this.mMaxPendingMoves) {
-                this.mPendingMoves++;
-            }
-        }
-
-        /* access modifiers changed from: package-private */
-        public void decreasePendingMoves() {
-            if (this.mPendingMoves > (-GridLayoutManager.this.mMaxPendingMoves)) {
-                this.mPendingMoves--;
-            }
-        }
-
-        /* access modifiers changed from: package-private */
-        public void consumePendingMovesBeforeLayout() {
-            int i;
-            View v;
-            if (!this.mStaggeredGrid && (i = this.mPendingMoves) != 0) {
-                View newSelected = null;
-                int pos = i > 0 ? GridLayoutManager.this.mFocusPosition + GridLayoutManager.this.mNumRows : GridLayoutManager.this.mFocusPosition - GridLayoutManager.this.mNumRows;
-                while (this.mPendingMoves != 0 && (v = findViewByPosition(pos)) != null) {
-                    if (GridLayoutManager.this.canScrollTo(v)) {
-                        newSelected = v;
-                        GridLayoutManager gridLayoutManager = GridLayoutManager.this;
-                        gridLayoutManager.mFocusPosition = pos;
-                        gridLayoutManager.mSubFocusPosition = 0;
-                        int i2 = this.mPendingMoves;
-                        if (i2 > 0) {
-                            this.mPendingMoves = i2 - 1;
-                        } else {
-                            this.mPendingMoves = i2 + 1;
-                        }
-                    }
-                    pos = this.mPendingMoves > 0 ? GridLayoutManager.this.mNumRows + pos : pos - GridLayoutManager.this.mNumRows;
-                }
-                if (newSelected != null && GridLayoutManager.this.hasFocus()) {
-                    GridLayoutManager.this.mFlag |= 32;
-                    newSelected.requestFocus();
-                    GridLayoutManager.this.mFlag &= -33;
-                }
-            }
-        }
-
-        /* access modifiers changed from: package-private */
-        public void consumePendingMovesAfterLayout() {
-            int i;
-            if (this.mStaggeredGrid && (i = this.mPendingMoves) != 0) {
-                this.mPendingMoves = GridLayoutManager.this.processSelectionMoves(true, i);
-            }
-            int i2 = this.mPendingMoves;
-            if (i2 == 0 || ((i2 > 0 && GridLayoutManager.this.hasCreatedLastItem()) || (this.mPendingMoves < 0 && GridLayoutManager.this.hasCreatedFirstItem()))) {
-                setTargetPosition(GridLayoutManager.this.mFocusPosition);
-                stop();
-            }
-        }
-
-        /* access modifiers changed from: protected */
-        public void updateActionForInterimTarget(RecyclerView.SmoothScroller.Action action) {
-            if (this.mPendingMoves != 0) {
-                super.updateActionForInterimTarget(action);
-            }
-        }
-
-        public PointF computeScrollVectorForPosition(int targetPosition) {
-            if (this.mPendingMoves == 0) {
-                return null;
-            }
-            int direction = ((GridLayoutManager.this.mFlag & 262144) == 0 ? this.mPendingMoves >= 0 : this.mPendingMoves <= 0) ? 1 : -1;
-            if (GridLayoutManager.this.mOrientation == 0) {
-                return new PointF((float) direction, 0.0f);
-            }
-            return new PointF(0.0f, (float) direction);
-        }
-
-        /* access modifiers changed from: protected */
-        public void onStopInternal() {
-            super.onStopInternal();
-            this.mPendingMoves = 0;
-            View v = findViewByPosition(getTargetPosition());
-            if (v != null) {
-                GridLayoutManager.this.scrollToView(v, true);
-            }
-        }
-    }
-
-    /* access modifiers changed from: package-private */
-    public String getTag() {
-        return "GridLayoutManager:" + this.mBaseGridView.getId();
-    }
 
     public GridLayoutManager(BaseGridView baseGridView) {
         this.mBaseGridView = baseGridView;
         this.mChildVisibility = -1;
         setItemPrefetchEnabled(false);
+    }
+
+    /* access modifiers changed from: package-private */
+    public String getTag() {
+        return "GridLayoutManager:" + this.mBaseGridView.getId();
     }
 
     public void setOrientation(int orientation) {
@@ -604,28 +289,32 @@ final class GridLayoutManager extends RecyclerView.LayoutManager {
         this.mFocusScrollStrategy = focusScrollStrategy;
     }
 
-    public void setWindowAlignment(int windowAlignment) {
-        this.mWindowAlignment.mainAxis().setWindowAlignment(windowAlignment);
-    }
-
     public int getWindowAlignment() {
         return this.mWindowAlignment.mainAxis().getWindowAlignment();
     }
 
-    public void setWindowAlignmentOffset(int alignmentOffset) {
-        this.mWindowAlignment.mainAxis().setWindowAlignmentOffset(alignmentOffset);
+    public void setWindowAlignment(int windowAlignment) {
+        this.mWindowAlignment.mainAxis().setWindowAlignment(windowAlignment);
     }
 
     public int getWindowAlignmentOffset() {
         return this.mWindowAlignment.mainAxis().getWindowAlignmentOffset();
     }
 
-    public void setWindowAlignmentOffsetPercent(float offsetPercent) {
-        this.mWindowAlignment.mainAxis().setWindowAlignmentOffsetPercent(offsetPercent);
+    public void setWindowAlignmentOffset(int alignmentOffset) {
+        this.mWindowAlignment.mainAxis().setWindowAlignmentOffset(alignmentOffset);
     }
 
     public float getWindowAlignmentOffsetPercent() {
         return this.mWindowAlignment.mainAxis().getWindowAlignmentOffsetPercent();
+    }
+
+    public void setWindowAlignmentOffsetPercent(float offsetPercent) {
+        this.mWindowAlignment.mainAxis().setWindowAlignmentOffsetPercent(offsetPercent);
+    }
+
+    public int getItemAlignmentOffset() {
+        return this.mItemAlignment.mainAxis().getItemAlignmentOffset();
     }
 
     public void setItemAlignmentOffset(int alignmentOffset) {
@@ -633,8 +322,8 @@ final class GridLayoutManager extends RecyclerView.LayoutManager {
         updateChildAlignments();
     }
 
-    public int getItemAlignmentOffset() {
-        return this.mItemAlignment.mainAxis().getItemAlignmentOffset();
+    public boolean isItemAlignmentOffsetWithPadding() {
+        return this.mItemAlignment.mainAxis().isItemAlignmentOffsetWithPadding();
     }
 
     public void setItemAlignmentOffsetWithPadding(boolean withPadding) {
@@ -642,8 +331,8 @@ final class GridLayoutManager extends RecyclerView.LayoutManager {
         updateChildAlignments();
     }
 
-    public boolean isItemAlignmentOffsetWithPadding() {
-        return this.mItemAlignment.mainAxis().isItemAlignmentOffsetWithPadding();
+    public float getItemAlignmentOffsetPercent() {
+        return this.mItemAlignment.mainAxis().getItemAlignmentOffsetPercent();
     }
 
     public void setItemAlignmentOffsetPercent(float offsetPercent) {
@@ -651,17 +340,13 @@ final class GridLayoutManager extends RecyclerView.LayoutManager {
         updateChildAlignments();
     }
 
-    public float getItemAlignmentOffsetPercent() {
-        return this.mItemAlignment.mainAxis().getItemAlignmentOffsetPercent();
+    public int getItemAlignmentViewId() {
+        return this.mItemAlignment.mainAxis().getItemAlignmentViewId();
     }
 
     public void setItemAlignmentViewId(int viewId) {
         this.mItemAlignment.mainAxis().setItemAlignmentViewId(viewId);
         updateChildAlignments();
-    }
-
-    public int getItemAlignmentViewId() {
-        return this.mItemAlignment.mainAxis().getItemAlignmentViewId();
     }
 
     public void setFocusOutAllowed(boolean throughFront, boolean throughEnd) {
@@ -705,6 +390,10 @@ final class GridLayoutManager extends RecyclerView.LayoutManager {
         this.mSpacingPrimary = space;
     }
 
+    public int getVerticalSpacing() {
+        return this.mVerticalSpacing;
+    }
+
     public void setVerticalSpacing(int space) {
         if (this.mOrientation == 1) {
             this.mVerticalSpacing = space;
@@ -715,6 +404,10 @@ final class GridLayoutManager extends RecyclerView.LayoutManager {
         this.mSpacingSecondary = space;
     }
 
+    public int getHorizontalSpacing() {
+        return this.mHorizontalSpacing;
+    }
+
     public void setHorizontalSpacing(int space) {
         if (this.mOrientation == 0) {
             this.mHorizontalSpacing = space;
@@ -723,14 +416,6 @@ final class GridLayoutManager extends RecyclerView.LayoutManager {
         }
         this.mHorizontalSpacing = space;
         this.mSpacingSecondary = space;
-    }
-
-    public int getVerticalSpacing() {
-        return this.mVerticalSpacing;
-    }
-
-    public int getHorizontalSpacing() {
-        return this.mHorizontalSpacing;
     }
 
     public void setGravity(int gravity) {
@@ -1619,6 +1304,11 @@ final class GridLayoutManager extends RecyclerView.LayoutManager {
     }
 
     /* access modifiers changed from: package-private */
+    public int getExtraLayoutSpace() {
+        return this.mExtraLayoutSpace;
+    }
+
+    /* access modifiers changed from: package-private */
     public void setExtraLayoutSpace(int extraLayoutSpace) {
         int i = this.mExtraLayoutSpace;
         if (i != extraLayoutSpace) {
@@ -1629,11 +1319,6 @@ final class GridLayoutManager extends RecyclerView.LayoutManager {
             }
             throw new IllegalArgumentException("ExtraLayoutSpace must >= 0");
         }
-    }
-
-    /* access modifiers changed from: package-private */
-    public int getExtraLayoutSpace() {
-        return this.mExtraLayoutSpace;
     }
 
     private void removeInvisibleViewsAtEnd() {
@@ -1918,12 +1603,6 @@ final class GridLayoutManager extends RecyclerView.LayoutManager {
             if (alignToView && focusView != null && focusView.hasFocus()) {
                 scrollToView(focusView, false, extraDelta, extraDeltaSecondary);
             }
-        }
-    }
-
-    @VisibleForTesting
-    public static class OnLayoutCompleteListener {
-        public void onLayoutCompleted(RecyclerView.State state) {
         }
     }
 
@@ -2904,6 +2583,10 @@ final class GridLayoutManager extends RecyclerView.LayoutManager {
         dispatchChildSelectedAndPositioned();
     }
 
+    public boolean getPruneChild() {
+        return (this.mFlag & 65536) != 0;
+    }
+
     public void setPruneChild(boolean pruneChild) {
         int i = 65536;
         if (((this.mFlag & 65536) != 0) != pruneChild) {
@@ -2918,8 +2601,8 @@ final class GridLayoutManager extends RecyclerView.LayoutManager {
         }
     }
 
-    public boolean getPruneChild() {
-        return (this.mFlag & 65536) != 0;
+    public boolean isScrollEnabled() {
+        return (this.mFlag & 131072) != 0;
     }
 
     public void setScrollEnabled(boolean scrollEnabled) {
@@ -2935,10 +2618,6 @@ final class GridLayoutManager extends RecyclerView.LayoutManager {
                 scrollToSelection(i, this.mSubFocusPosition, true, this.mPrimaryScrollExtra);
             }
         }
-    }
-
-    public boolean isScrollEnabled() {
-        return (this.mFlag & 131072) != 0;
     }
 
     private int findImmediateChildIndex(View view) {
@@ -2977,13 +2656,13 @@ final class GridLayoutManager extends RecyclerView.LayoutManager {
     }
 
     /* access modifiers changed from: package-private */
-    public void setFocusSearchDisabled(boolean disabled) {
-        this.mFlag = (this.mFlag & -32769) | (disabled ? 32768 : 0);
+    public boolean isFocusSearchDisabled() {
+        return (this.mFlag & 32768) != 0;
     }
 
     /* access modifiers changed from: package-private */
-    public boolean isFocusSearchDisabled() {
-        return (this.mFlag & 32768) != 0;
+    public void setFocusSearchDisabled(boolean disabled) {
+        this.mFlag = (this.mFlag & -32769) | (disabled ? 32768 : 0);
     }
 
     public View onInterceptFocusSearch(View focused, int direction) {
@@ -3403,38 +3082,6 @@ final class GridLayoutManager extends RecyclerView.LayoutManager {
         }
     }
 
-    @SuppressLint({"BanParcelableUsage"})
-    static final class SavedState implements Parcelable {
-        public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.Creator<SavedState>() {
-            public SavedState createFromParcel(Parcel in) {
-                return new SavedState(in);
-            }
-
-            public SavedState[] newArray(int size) {
-                return new SavedState[size];
-            }
-        };
-        Bundle childStates = Bundle.EMPTY;
-        int index;
-
-        public void writeToParcel(Parcel out, int flags) {
-            out.writeInt(this.index);
-            out.writeBundle(this.childStates);
-        }
-
-        public int describeContents() {
-            return 0;
-        }
-
-        SavedState(Parcel in) {
-            this.index = in.readInt();
-            this.childStates = in.readBundle(GridLayoutManager.class.getClassLoader());
-        }
-
-        SavedState() {
-        }
-    }
-
     public Parcelable onSaveInstanceState() {
         SavedState ss = new SavedState();
         ss.index = getSelection();
@@ -3606,5 +3253,356 @@ final class GridLayoutManager extends RecyclerView.LayoutManager {
         }
         info.setCollectionInfo(AccessibilityNodeInfoCompat.CollectionInfoCompat.obtain(getRowCountForAccessibility(recycler, state), getColumnCountForAccessibility(recycler, state), isLayoutHierarchical(recycler, state), getSelectionModeForAccessibility(recycler, state)));
         leaveContext();
+    }
+
+    static final class LayoutParams extends RecyclerView.LayoutParams {
+        int mBottomInset;
+        int mLeftInset;
+        int mRightInset;
+        int mTopInset;
+        private int[] mAlignMultiple;
+        private int mAlignX;
+        private int mAlignY;
+        private ItemAlignmentFacet mAlignmentFacet;
+
+        public LayoutParams(Context c, AttributeSet attrs) {
+            super(c, attrs);
+        }
+
+        public LayoutParams(int width, int height) {
+            super(width, height);
+        }
+
+        public LayoutParams(ViewGroup.MarginLayoutParams source) {
+            super(source);
+        }
+
+        public LayoutParams(ViewGroup.LayoutParams source) {
+            super(source);
+        }
+
+        public LayoutParams(RecyclerView.LayoutParams source) {
+            super(source);
+        }
+
+        public LayoutParams(LayoutParams source) {
+            super((RecyclerView.LayoutParams) source);
+        }
+
+        /* access modifiers changed from: package-private */
+        public int getAlignX() {
+            return this.mAlignX;
+        }
+
+        /* access modifiers changed from: package-private */
+        public void setAlignX(int alignX) {
+            this.mAlignX = alignX;
+        }
+
+        /* access modifiers changed from: package-private */
+        public int getAlignY() {
+            return this.mAlignY;
+        }
+
+        /* access modifiers changed from: package-private */
+        public void setAlignY(int alignY) {
+            this.mAlignY = alignY;
+        }
+
+        /* access modifiers changed from: package-private */
+        public int getOpticalLeft(View view) {
+            return view.getLeft() + this.mLeftInset;
+        }
+
+        /* access modifiers changed from: package-private */
+        public int getOpticalTop(View view) {
+            return view.getTop() + this.mTopInset;
+        }
+
+        /* access modifiers changed from: package-private */
+        public int getOpticalRight(View view) {
+            return view.getRight() - this.mRightInset;
+        }
+
+        /* access modifiers changed from: package-private */
+        public int getOpticalBottom(View view) {
+            return view.getBottom() - this.mBottomInset;
+        }
+
+        /* access modifiers changed from: package-private */
+        public int getOpticalWidth(View view) {
+            return (view.getWidth() - this.mLeftInset) - this.mRightInset;
+        }
+
+        /* access modifiers changed from: package-private */
+        public int getOpticalHeight(View view) {
+            return (view.getHeight() - this.mTopInset) - this.mBottomInset;
+        }
+
+        /* access modifiers changed from: package-private */
+        public int getOpticalLeftInset() {
+            return this.mLeftInset;
+        }
+
+        /* access modifiers changed from: package-private */
+        public int getOpticalRightInset() {
+            return this.mRightInset;
+        }
+
+        /* access modifiers changed from: package-private */
+        public int getOpticalTopInset() {
+            return this.mTopInset;
+        }
+
+        /* access modifiers changed from: package-private */
+        public int getOpticalBottomInset() {
+            return this.mBottomInset;
+        }
+
+        /* access modifiers changed from: package-private */
+        public ItemAlignmentFacet getItemAlignmentFacet() {
+            return this.mAlignmentFacet;
+        }
+
+        /* access modifiers changed from: package-private */
+        public void setItemAlignmentFacet(ItemAlignmentFacet facet) {
+            this.mAlignmentFacet = facet;
+        }
+
+        /* access modifiers changed from: package-private */
+        public void calculateItemAlignments(int orientation, View view) {
+            ItemAlignmentFacet.ItemAlignmentDef[] defs = this.mAlignmentFacet.getAlignmentDefs();
+            int[] iArr = this.mAlignMultiple;
+            if (iArr == null || iArr.length != defs.length) {
+                this.mAlignMultiple = new int[defs.length];
+            }
+            for (int i = 0; i < defs.length; i++) {
+                this.mAlignMultiple[i] = ItemAlignmentFacetHelper.getAlignmentPosition(view, defs[i], orientation);
+            }
+            if (orientation == 0) {
+                this.mAlignX = this.mAlignMultiple[0];
+            } else {
+                this.mAlignY = this.mAlignMultiple[0];
+            }
+        }
+
+        /* access modifiers changed from: package-private */
+        public int[] getAlignMultiple() {
+            return this.mAlignMultiple;
+        }
+
+        /* access modifiers changed from: package-private */
+        public void setOpticalInsets(int leftInset, int topInset, int rightInset, int bottomInset) {
+            this.mLeftInset = leftInset;
+            this.mTopInset = topInset;
+            this.mRightInset = rightInset;
+            this.mBottomInset = bottomInset;
+        }
+    }
+
+    @VisibleForTesting
+    public static class OnLayoutCompleteListener {
+        public void onLayoutCompleted(RecyclerView.State state) {
+        }
+    }
+
+    @SuppressLint({"BanParcelableUsage"})
+    static final class SavedState implements Parcelable {
+        public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.Creator<SavedState>() {
+            public SavedState createFromParcel(Parcel in) {
+                return new SavedState(in);
+            }
+
+            public SavedState[] newArray(int size) {
+                return new SavedState[size];
+            }
+        };
+        Bundle childStates = Bundle.EMPTY;
+        int index;
+
+        SavedState(Parcel in) {
+            this.index = in.readInt();
+            this.childStates = in.readBundle(GridLayoutManager.class.getClassLoader());
+        }
+
+        SavedState() {
+        }
+
+        public void writeToParcel(Parcel out, int flags) {
+            out.writeInt(this.index);
+            out.writeBundle(this.childStates);
+        }
+
+        public int describeContents() {
+            return 0;
+        }
+    }
+
+    abstract class GridLinearSmoothScroller extends LinearSmoothScroller {
+        boolean mSkipOnStopInternal;
+
+        GridLinearSmoothScroller() {
+            super(GridLayoutManager.this.mBaseGridView.getContext());
+        }
+
+        /* access modifiers changed from: protected */
+        public void onStop() {
+            super.onStop();
+            if (!this.mSkipOnStopInternal) {
+                onStopInternal();
+            }
+            if (GridLayoutManager.this.mCurrentSmoothScroller == this) {
+                GridLayoutManager.this.mCurrentSmoothScroller = null;
+            }
+            if (GridLayoutManager.this.mPendingMoveSmoothScroller == this) {
+                GridLayoutManager.this.mPendingMoveSmoothScroller = null;
+            }
+        }
+
+        /* access modifiers changed from: protected */
+        public void onStopInternal() {
+            View targetView = findViewByPosition(getTargetPosition());
+            if (targetView != null) {
+                if (GridLayoutManager.this.mFocusPosition != getTargetPosition()) {
+                    GridLayoutManager.this.mFocusPosition = getTargetPosition();
+                }
+                if (GridLayoutManager.this.hasFocus()) {
+                    GridLayoutManager.this.mFlag |= 32;
+                    targetView.requestFocus();
+                    GridLayoutManager.this.mFlag &= -33;
+                }
+                GridLayoutManager.this.dispatchChildSelected();
+                GridLayoutManager.this.dispatchChildSelectedAndPositioned();
+            } else if (getTargetPosition() >= 0) {
+                GridLayoutManager.this.scrollToSelection(getTargetPosition(), 0, false, 0);
+            }
+        }
+
+        /* access modifiers changed from: protected */
+        public int calculateTimeForScrolling(int dx) {
+            int ms = super.calculateTimeForScrolling(dx);
+            if (GridLayoutManager.this.mWindowAlignment.mainAxis().getSize() <= 0) {
+                return ms;
+            }
+            float minMs = (30.0f / ((float) GridLayoutManager.this.mWindowAlignment.mainAxis().getSize())) * ((float) dx);
+            if (((float) ms) < minMs) {
+                return (int) minMs;
+            }
+            return ms;
+        }
+
+        /* access modifiers changed from: protected */
+        public void onTargetFound(View targetView, RecyclerView.State state, RecyclerView.SmoothScroller.Action action) {
+            int dy;
+            int dx;
+            if (GridLayoutManager.this.getScrollPosition(targetView, null, GridLayoutManager.sTwoInts)) {
+                if (GridLayoutManager.this.mOrientation == 0) {
+                    dx = GridLayoutManager.sTwoInts[0];
+                    dy = GridLayoutManager.sTwoInts[1];
+                } else {
+                    dx = GridLayoutManager.sTwoInts[1];
+                    dy = GridLayoutManager.sTwoInts[0];
+                }
+                action.update(dx, dy, calculateTimeForDeceleration((int) Math.sqrt((double) ((dx * dx) + (dy * dy)))), this.mDecelerateInterpolator);
+            }
+        }
+    }
+
+    final class PendingMoveSmoothScroller extends GridLinearSmoothScroller {
+        static final int TARGET_UNDEFINED = -2;
+        private final boolean mStaggeredGrid;
+        private int mPendingMoves;
+
+        PendingMoveSmoothScroller(int initialPendingMoves, boolean staggeredGrid) {
+            super();
+            this.mPendingMoves = initialPendingMoves;
+            this.mStaggeredGrid = staggeredGrid;
+            setTargetPosition(-2);
+        }
+
+        /* access modifiers changed from: package-private */
+        public void increasePendingMoves() {
+            if (this.mPendingMoves < GridLayoutManager.this.mMaxPendingMoves) {
+                this.mPendingMoves++;
+            }
+        }
+
+        /* access modifiers changed from: package-private */
+        public void decreasePendingMoves() {
+            if (this.mPendingMoves > (-GridLayoutManager.this.mMaxPendingMoves)) {
+                this.mPendingMoves--;
+            }
+        }
+
+        /* access modifiers changed from: package-private */
+        public void consumePendingMovesBeforeLayout() {
+            int i;
+            View v;
+            if (!this.mStaggeredGrid && (i = this.mPendingMoves) != 0) {
+                View newSelected = null;
+                int pos = i > 0 ? GridLayoutManager.this.mFocusPosition + GridLayoutManager.this.mNumRows : GridLayoutManager.this.mFocusPosition - GridLayoutManager.this.mNumRows;
+                while (this.mPendingMoves != 0 && (v = findViewByPosition(pos)) != null) {
+                    if (GridLayoutManager.this.canScrollTo(v)) {
+                        newSelected = v;
+                        GridLayoutManager gridLayoutManager = GridLayoutManager.this;
+                        gridLayoutManager.mFocusPosition = pos;
+                        gridLayoutManager.mSubFocusPosition = 0;
+                        int i2 = this.mPendingMoves;
+                        if (i2 > 0) {
+                            this.mPendingMoves = i2 - 1;
+                        } else {
+                            this.mPendingMoves = i2 + 1;
+                        }
+                    }
+                    pos = this.mPendingMoves > 0 ? GridLayoutManager.this.mNumRows + pos : pos - GridLayoutManager.this.mNumRows;
+                }
+                if (newSelected != null && GridLayoutManager.this.hasFocus()) {
+                    GridLayoutManager.this.mFlag |= 32;
+                    newSelected.requestFocus();
+                    GridLayoutManager.this.mFlag &= -33;
+                }
+            }
+        }
+
+        /* access modifiers changed from: package-private */
+        public void consumePendingMovesAfterLayout() {
+            int i;
+            if (this.mStaggeredGrid && (i = this.mPendingMoves) != 0) {
+                this.mPendingMoves = GridLayoutManager.this.processSelectionMoves(true, i);
+            }
+            int i2 = this.mPendingMoves;
+            if (i2 == 0 || ((i2 > 0 && GridLayoutManager.this.hasCreatedLastItem()) || (this.mPendingMoves < 0 && GridLayoutManager.this.hasCreatedFirstItem()))) {
+                setTargetPosition(GridLayoutManager.this.mFocusPosition);
+                stop();
+            }
+        }
+
+        /* access modifiers changed from: protected */
+        public void updateActionForInterimTarget(RecyclerView.SmoothScroller.Action action) {
+            if (this.mPendingMoves != 0) {
+                super.updateActionForInterimTarget(action);
+            }
+        }
+
+        public PointF computeScrollVectorForPosition(int targetPosition) {
+            if (this.mPendingMoves == 0) {
+                return null;
+            }
+            int direction = ((GridLayoutManager.this.mFlag & 262144) == 0 ? this.mPendingMoves >= 0 : this.mPendingMoves <= 0) ? 1 : -1;
+            if (GridLayoutManager.this.mOrientation == 0) {
+                return new PointF((float) direction, 0.0f);
+            }
+            return new PointF(0.0f, (float) direction);
+        }
+
+        /* access modifiers changed from: protected */
+        public void onStopInternal() {
+            super.onStopInternal();
+            this.mPendingMoves = 0;
+            View v = findViewByPosition(getTargetPosition());
+            if (v != null) {
+                GridLayoutManager.this.scrollToView(v, true);
+            }
+        }
     }
 }

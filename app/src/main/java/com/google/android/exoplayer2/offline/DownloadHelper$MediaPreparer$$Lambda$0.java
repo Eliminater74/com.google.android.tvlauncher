@@ -2,7 +2,6 @@ package com.google.android.exoplayer2.offline;
 
 import android.os.Handler;
 import android.os.Message;
-import com.google.android.exoplayer2.offline.DownloadHelper;
 
 final /* synthetic */ class DownloadHelper$MediaPreparer$$Lambda$0 implements Handler.Callback {
     private final DownloadHelper.MediaPreparer arg$1;

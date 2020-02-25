@@ -2,6 +2,7 @@ package com.google.android.libraries.gcoreclient.tasks;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import java.util.concurrent.Executor;
 
 public interface GcoreTask<TResult> {

@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+
 import androidx.tvprovider.media.p005tv.TvContractCompat;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.BaseRequestOptions;
 import com.bumptech.glide.request.RequestOptions;
@@ -44,22 +46,6 @@ public class CustomTvInputEntry implements Comparable<CustomTvInputEntry> {
         this.mGroupId = groupId;
     }
 
-    /* access modifiers changed from: package-private */
-    public void preloadIcon(Context context, RequestOptions requestOptions) {
-        if (this.mIconUri != null) {
-            Glide.with(context).load(this.mIconUri).apply((BaseRequestOptions<?>) requestOptions).preload();
-        }
-        if (this.mSelectedIconUri != null) {
-            Glide.with(context).load(this.mSelectedIconUri).apply((BaseRequestOptions<?>) requestOptions).preload();
-        }
-        if (this.mActiveIconUri != null) {
-            Glide.with(context).load(this.mActiveIconUri).apply((BaseRequestOptions<?>) requestOptions).preload();
-        }
-        if (this.mSelectedActiveIconUri != null) {
-            Glide.with(context).load(this.mSelectedActiveIconUri).apply((BaseRequestOptions<?>) requestOptions).preload();
-        }
-    }
-
     /* JADX INFO: Multiple debug info for r1v6 java.lang.String: [D('index' int), D('iconUri' java.lang.String)] */
     /* JADX INFO: Multiple debug info for r2v7 java.lang.String: [D('index' int), D('selectedIconUri' java.lang.String)] */
     /* JADX INFO: Multiple debug info for r3v1 java.lang.String: [D('activeIconUri' java.lang.String), D('index' int)] */
@@ -82,6 +68,22 @@ public class CustomTvInputEntry implements Comparable<CustomTvInputEntry> {
         int index10 = index9 + 1;
         builder.setIconUri(Util.getUri(cursor.getString(index6))).setSelectedIconUri(Util.getUri(cursor.getString(index7))).setActiveIconUri(Util.getUri(cursor.getString(index8))).setSelectedActiveIconUri(Util.getUri(cursor.getString(index9))).setGroupId(cursor.getString(index10));
         return builder.build(context);
+    }
+
+    /* access modifiers changed from: package-private */
+    public void preloadIcon(Context context, RequestOptions requestOptions) {
+        if (this.mIconUri != null) {
+            Glide.with(context).load(this.mIconUri).apply((BaseRequestOptions<?>) requestOptions).preload();
+        }
+        if (this.mSelectedIconUri != null) {
+            Glide.with(context).load(this.mSelectedIconUri).apply((BaseRequestOptions<?>) requestOptions).preload();
+        }
+        if (this.mActiveIconUri != null) {
+            Glide.with(context).load(this.mActiveIconUri).apply((BaseRequestOptions<?>) requestOptions).preload();
+        }
+        if (this.mSelectedActiveIconUri != null) {
+            Glide.with(context).load(this.mSelectedActiveIconUri).apply((BaseRequestOptions<?>) requestOptions).preload();
+        }
     }
 
     public String getId() {
@@ -144,12 +146,12 @@ public class CustomTvInputEntry implements Comparable<CustomTvInputEntry> {
         this.mParentLabel = parentLabel;
     }
 
-    public void setInitialSortIndex(int initialSortIndex) {
-        this.mInitialSortIndex = initialSortIndex;
-    }
-
     public int getInitialSortIndex() {
         return this.mInitialSortIndex;
+    }
+
+    public void setInitialSortIndex(int initialSortIndex) {
+        this.mInitialSortIndex = initialSortIndex;
     }
 
     public void setFinalSortIndex(int finalSortIndex) {

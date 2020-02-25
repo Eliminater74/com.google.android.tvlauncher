@@ -1,22 +1,14 @@
 package com.google.android.libraries.performance.primes.hprof.collect;
 
 import android.support.p001v4.util.SparseArrayCompat;
+
 import com.google.android.libraries.stitch.util.Preconditions;
+
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 
 public final class TrieMap<E> {
     private final Edge<E> head = new Edge<>();
-
-    private static class Edge<E> {
-        /* access modifiers changed from: private */
-        public SparseArrayCompat<Edge<E>> edges;
-        /* access modifiers changed from: private */
-        public E value;
-
-        private Edge() {
-        }
-    }
 
     public E putIfAbsent(String key, E value) {
         Preconditions.checkArgument(key.length() > 0);
@@ -57,5 +49,15 @@ public final class TrieMap<E> {
             curr = next;
         }
         return curr.value;
+    }
+
+    private static class Edge<E> {
+        /* access modifiers changed from: private */
+        public SparseArrayCompat<Edge<E>> edges;
+        /* access modifiers changed from: private */
+        public E value;
+
+        private Edge() {
+        }
     }
 }

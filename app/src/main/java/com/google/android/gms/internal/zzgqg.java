@@ -6,11 +6,14 @@ import java.util.List;
 /* compiled from: ProtobufArrayList */
 final class zzgqg<E> extends zzgms<E> {
     private static final zzgqg<Object> zza;
-    private final List<E> zzb;
 
-    public static <E> zzgqg<E> zzd() {
-        return zza;
+    static {
+        zzgqg<Object> zzgqg = new zzgqg<>();
+        zza = zzgqg;
+        zzgqg.zzb();
     }
+
+    private final List<E> zzb;
 
     zzgqg() {
         this(new ArrayList(10));
@@ -18,6 +21,10 @@ final class zzgqg<E> extends zzgms<E> {
 
     private zzgqg(List<E> list) {
         this.zzb = list;
+    }
+
+    public static <E> zzgqg<E> zzd() {
+        return zza;
     }
 
     public final void add(int i, E e) {
@@ -55,11 +62,5 @@ final class zzgqg<E> extends zzgms<E> {
             return new zzgqg(arrayList);
         }
         throw new IllegalArgumentException();
-    }
-
-    static {
-        zzgqg<Object> zzgqg = new zzgqg<>();
-        zza = zzgqg;
-        zzgqg.zzb();
     }
 }

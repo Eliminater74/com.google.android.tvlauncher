@@ -14,6 +14,7 @@ import android.support.p001v4.view.ViewCompat;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.util.TimingLogger;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -47,19 +48,16 @@ public final class Palette {
     static final boolean LOG_TIMINGS = false;
     static final float MIN_CONTRAST_BODY_TEXT = 4.5f;
     static final float MIN_CONTRAST_TITLE_TEXT = 3.0f;
-    @Nullable
-    private final Swatch mDominantSwatch = findDominantSwatch();
     private final Map<Target, Swatch> mSelectedSwatches = new ArrayMap();
     private final List<Swatch> mSwatches;
+    @Nullable
+    private final Swatch mDominantSwatch = findDominantSwatch();
     private final List<Target> mTargets;
     private final SparseBooleanArray mUsedColors = new SparseBooleanArray();
 
-    public interface Filter {
-        boolean isAllowed(@ColorInt int i, @NonNull float[] fArr);
-    }
-
-    public interface PaletteAsyncListener {
-        void onGenerated(@Nullable Palette palette);
+    Palette(List<Swatch> swatches, List<Target> targets) {
+        this.mSwatches = swatches;
+        this.mTargets = targets;
     }
 
     @NonNull
@@ -94,11 +92,6 @@ public final class Palette {
     @NonNull
     public static AsyncTask<Bitmap, Void, Palette> generateAsync(@NonNull Bitmap bitmap, int numColors, @NonNull PaletteAsyncListener listener) {
         return from(bitmap).maximumColorCount(numColors).generate(listener);
-    }
-
-    Palette(List<Swatch> swatches, List<Target> targets) {
-        this.mSwatches = swatches;
-        this.mTargets = targets;
     }
 
     @NonNull
@@ -273,16 +266,24 @@ public final class Palette {
         return maxSwatch;
     }
 
+    public interface Filter {
+        boolean isAllowed(@ColorInt int i, @NonNull float[] fArr);
+    }
+
+    public interface PaletteAsyncListener {
+        void onGenerated(@Nullable Palette palette);
+    }
+
     public static final class Swatch {
         private final int mBlue;
-        private int mBodyTextColor;
-        private boolean mGeneratedTextColors;
         private final int mGreen;
-        @Nullable
-        private float[] mHsl;
         private final int mPopulation;
         private final int mRed;
         private final int mRgb;
+        private int mBodyTextColor;
+        private boolean mGeneratedTextColors;
+        @Nullable
+        private float[] mHsl;
         private int mTitleTextColor;
 
         public Swatch(@ColorInt int color, int population) {
@@ -387,14 +388,14 @@ public final class Palette {
         @Nullable
         private final Bitmap mBitmap;
         private final List<Filter> mFilters = new ArrayList();
+        @Nullable
+        private final List<Swatch> mSwatches;
+        private final List<Target> mTargets = new ArrayList();
         private int mMaxColors = 16;
         @Nullable
         private Rect mRegion;
         private int mResizeArea = Palette.DEFAULT_RESIZE_BITMAP_AREA;
         private int mResizeMaxDimension = -1;
-        @Nullable
-        private final List<Swatch> mSwatches;
-        private final List<Target> mTargets = new ArrayList();
 
         public Builder(@NonNull Bitmap bitmap) {
             if (bitmap == null || bitmap.isRecycled()) {

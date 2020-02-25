@@ -3,6 +3,7 @@ package com.google.android.exoplayer2.source.hls;
 import android.net.Uri;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.FormatHolder;
@@ -21,7 +22,6 @@ import com.google.android.exoplayer2.source.SequenceableLoader;
 import com.google.android.exoplayer2.source.TrackGroup;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.source.chunk.Chunk;
-import com.google.android.exoplayer2.source.hls.HlsChunkSource;
 import com.google.android.exoplayer2.upstream.Allocator;
 import com.google.android.exoplayer2.upstream.LoadErrorHandlingPolicy;
 import com.google.android.exoplayer2.upstream.Loader;
@@ -29,6 +29,7 @@ import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,35 +44,36 @@ final class HlsSampleStreamWrapper implements Loader.Callback<Chunk>, Loader.Rel
     public static final int SAMPLE_QUEUE_INDEX_PENDING = -1;
     private static final String TAG = "HlsSampleStreamWrapper";
     private final Allocator allocator;
-    private int audioSampleQueueIndex = -1;
-    private boolean audioSampleQueueMappingDone;
     private final Callback callback;
     private final HlsChunkSource chunkSource;
-    private int chunkUid;
-    private Format downstreamTrackFormat;
-    private int enabledTrackGroupCount;
     private final MediaSourceEventListener.EventDispatcher eventDispatcher;
     private final Handler handler = new Handler();
-    private boolean haveAudioVideoSampleQueues;
     private final ArrayList<HlsSampleStream> hlsSampleStreams = new ArrayList<>();
-    private long lastSeekPositionUs;
     private final LoadErrorHandlingPolicy loadErrorHandlingPolicy;
     private final Loader loader = new Loader("Loader:HlsSampleStreamWrapper");
-    private boolean loadingFinished;
     private final Runnable maybeFinishPrepareRunnable = new HlsSampleStreamWrapper$$Lambda$0(this);
     private final ArrayList<HlsMediaChunk> mediaChunks = new ArrayList<>();
     private final Format muxedAudioFormat;
     private final HlsChunkSource.HlsChunkHolder nextChunkHolder = new HlsChunkSource.HlsChunkHolder();
     private final Runnable onTracksEndedRunnable = new HlsSampleStreamWrapper$$Lambda$1(this);
-    private TrackGroupArray optionalTrackGroups;
     private final Map<String, DrmInitData> overridingDrmInitData;
+    private final List<HlsMediaChunk> readOnlyMediaChunks = Collections.unmodifiableList(this.mediaChunks);
+    private final int trackType;
+    private int audioSampleQueueIndex = -1;
+    private boolean audioSampleQueueMappingDone;
+    private int chunkUid;
+    private Format downstreamTrackFormat;
+    private int enabledTrackGroupCount;
+    private boolean haveAudioVideoSampleQueues;
+    private long lastSeekPositionUs;
+    private boolean loadingFinished;
+    private TrackGroupArray optionalTrackGroups;
     private long pendingResetPositionUs;
     private boolean pendingResetUpstreamFormats;
     private boolean prepared;
     private int primarySampleQueueIndex;
     private int primarySampleQueueType;
     private int primaryTrackGroupIndex;
-    private final List<HlsMediaChunk> readOnlyMediaChunks = Collections.unmodifiableList(this.mediaChunks);
     private boolean released;
     private long sampleOffsetUs;
     private boolean[] sampleQueueIsAudioVideoFlags = new boolean[0];
@@ -82,17 +84,10 @@ final class HlsSampleStreamWrapper implements Loader.Callback<Chunk>, Loader.Rel
     private boolean seenFirstTrackSelection;
     private int[] trackGroupToSampleQueueIndex;
     private TrackGroupArray trackGroups;
-    private final int trackType;
     private boolean tracksEnded;
     private Format upstreamTrackFormat;
     private int videoSampleQueueIndex = -1;
     private boolean videoSampleQueueMappingDone;
-
-    public interface Callback extends SequenceableLoader.Callback<HlsSampleStreamWrapper> {
-        void onPlaylistRefreshRequired(Uri uri);
-
-        void onPrepared();
-    }
 
     public HlsSampleStreamWrapper(int trackType2, Callback callback2, HlsChunkSource chunkSource2, Map<String, DrmInitData> overridingDrmInitData2, Allocator allocator2, long positionUs, Format muxedAudioFormat2, LoadErrorHandlingPolicy loadErrorHandlingPolicy2, MediaSourceEventListener.EventDispatcher eventDispatcher2) {
         this.trackType = trackType2;
@@ -105,6 +100,76 @@ final class HlsSampleStreamWrapper implements Loader.Callback<Chunk>, Loader.Rel
         this.eventDispatcher = eventDispatcher2;
         this.lastSeekPositionUs = positionUs;
         this.pendingResetPositionUs = positionUs;
+    }
+
+    private static int getTrackTypeScore(int trackType2) {
+        if (trackType2 == 1) {
+            return 2;
+        }
+        if (trackType2 == 2) {
+            return 3;
+        }
+        if (trackType2 != 3) {
+            return 0;
+        }
+        return 1;
+    }
+
+    private static Format deriveFormat(Format playlistFormat, Format sampleFormat, boolean propagateBitrate) {
+        int channelCount;
+        String mimeType;
+        Format format = playlistFormat;
+        Format format2 = sampleFormat;
+        if (format == null) {
+            return format2;
+        }
+        int bitrate = propagateBitrate ? format.bitrate : -1;
+        if (format.channelCount != -1) {
+            channelCount = format.channelCount;
+        } else {
+            channelCount = format2.channelCount;
+        }
+        String codecs = Util.getCodecsOfType(format.codecs, MimeTypes.getTrackType(format2.sampleMimeType));
+        String mimeType2 = MimeTypes.getMediaMimeType(codecs);
+        if (mimeType2 == null) {
+            mimeType = format2.sampleMimeType;
+        } else {
+            mimeType = mimeType2;
+        }
+        return sampleFormat.copyWithContainerInfo(format.f72id, format.label, mimeType, codecs, format.metadata, bitrate, format.width, format.height, channelCount, format.selectionFlags, format.language);
+    }
+
+    private static boolean isMediaChunk(Chunk chunk) {
+        return chunk instanceof HlsMediaChunk;
+    }
+
+    private static boolean formatsMatch(Format manifestFormat, Format sampleFormat) {
+        String manifestFormatMimeType = manifestFormat.sampleMimeType;
+        String sampleFormatMimeType = sampleFormat.sampleMimeType;
+        int manifestFormatTrackType = MimeTypes.getTrackType(manifestFormatMimeType);
+        if (manifestFormatTrackType != 3) {
+            if (manifestFormatTrackType == MimeTypes.getTrackType(sampleFormatMimeType)) {
+                return true;
+            }
+            return false;
+        } else if (!Util.areEqual(manifestFormatMimeType, sampleFormatMimeType)) {
+            return false;
+        } else {
+            if ((MimeTypes.APPLICATION_CEA608.equals(manifestFormatMimeType) || MimeTypes.APPLICATION_CEA708.equals(manifestFormatMimeType)) && manifestFormat.accessibilityChannel != sampleFormat.accessibilityChannel) {
+                return false;
+            }
+            return true;
+        }
+    }
+
+    private static DummyTrackOutput createDummyTrackOutput(int id, int type) {
+        StringBuilder sb = new StringBuilder(54);
+        sb.append("Unmapped track with id ");
+        sb.append(id);
+        sb.append(" of type ");
+        sb.append(type);
+        Log.m30w(TAG, sb.toString());
+        return new DummyTrackOutput();
     }
 
     public void continuePreparing() {
@@ -947,74 +1012,10 @@ final class HlsSampleStreamWrapper implements Loader.Callback<Chunk>, Loader.Rel
         return false;
     }
 
-    private static int getTrackTypeScore(int trackType2) {
-        if (trackType2 == 1) {
-            return 2;
-        }
-        if (trackType2 == 2) {
-            return 3;
-        }
-        if (trackType2 != 3) {
-            return 0;
-        }
-        return 1;
-    }
+    public interface Callback extends SequenceableLoader.Callback<HlsSampleStreamWrapper> {
+        void onPlaylistRefreshRequired(Uri uri);
 
-    private static Format deriveFormat(Format playlistFormat, Format sampleFormat, boolean propagateBitrate) {
-        int channelCount;
-        String mimeType;
-        Format format = playlistFormat;
-        Format format2 = sampleFormat;
-        if (format == null) {
-            return format2;
-        }
-        int bitrate = propagateBitrate ? format.bitrate : -1;
-        if (format.channelCount != -1) {
-            channelCount = format.channelCount;
-        } else {
-            channelCount = format2.channelCount;
-        }
-        String codecs = Util.getCodecsOfType(format.codecs, MimeTypes.getTrackType(format2.sampleMimeType));
-        String mimeType2 = MimeTypes.getMediaMimeType(codecs);
-        if (mimeType2 == null) {
-            mimeType = format2.sampleMimeType;
-        } else {
-            mimeType = mimeType2;
-        }
-        return sampleFormat.copyWithContainerInfo(format.f72id, format.label, mimeType, codecs, format.metadata, bitrate, format.width, format.height, channelCount, format.selectionFlags, format.language);
-    }
-
-    private static boolean isMediaChunk(Chunk chunk) {
-        return chunk instanceof HlsMediaChunk;
-    }
-
-    private static boolean formatsMatch(Format manifestFormat, Format sampleFormat) {
-        String manifestFormatMimeType = manifestFormat.sampleMimeType;
-        String sampleFormatMimeType = sampleFormat.sampleMimeType;
-        int manifestFormatTrackType = MimeTypes.getTrackType(manifestFormatMimeType);
-        if (manifestFormatTrackType != 3) {
-            if (manifestFormatTrackType == MimeTypes.getTrackType(sampleFormatMimeType)) {
-                return true;
-            }
-            return false;
-        } else if (!Util.areEqual(manifestFormatMimeType, sampleFormatMimeType)) {
-            return false;
-        } else {
-            if ((MimeTypes.APPLICATION_CEA608.equals(manifestFormatMimeType) || MimeTypes.APPLICATION_CEA708.equals(manifestFormatMimeType)) && manifestFormat.accessibilityChannel != sampleFormat.accessibilityChannel) {
-                return false;
-            }
-            return true;
-        }
-    }
-
-    private static DummyTrackOutput createDummyTrackOutput(int id, int type) {
-        StringBuilder sb = new StringBuilder(54);
-        sb.append("Unmapped track with id ");
-        sb.append(id);
-        sb.append(" of type ");
-        sb.append(type);
-        Log.m30w(TAG, sb.toString());
-        return new DummyTrackOutput();
+        void onPrepared();
     }
 
     private static final class PrivTimestampStrippingSampleQueue extends SampleQueue {

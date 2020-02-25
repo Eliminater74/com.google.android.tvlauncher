@@ -3,11 +3,13 @@ package com.bumptech.glide.load.engine;
 import android.support.annotation.NonNull;
 import android.support.p001v4.util.Pools;
 import android.util.Log;
+
 import com.bumptech.glide.load.Options;
 import com.bumptech.glide.load.ResourceDecoder;
 import com.bumptech.glide.load.data.DataRewinder;
 import com.bumptech.glide.load.resource.transcode.ResourceTranscoder;
 import com.bumptech.glide.util.Preconditions;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,11 +21,6 @@ public class DecodePath<DataType, ResourceType, Transcode> {
     private final String failureMessage;
     private final Pools.Pool<List<Throwable>> listPool;
     private final ResourceTranscoder<ResourceType, Transcode> transcoder;
-
-    interface DecodeCallback<ResourceType> {
-        @NonNull
-        Resource<ResourceType> onResourceDecoded(@NonNull Resource<ResourceType> resource);
-    }
 
     public DecodePath(Class<DataType> dataClass2, Class<ResourceType> resourceClass, Class<Transcode> transcodeClass, List<? extends ResourceDecoder<DataType, ResourceType>> decoders2, ResourceTranscoder<ResourceType, Transcode> transcoder2, Pools.Pool<List<Throwable>> listPool2) {
         this.dataClass = dataClass2;
@@ -126,5 +123,10 @@ public class DecodePath<DataType, ResourceType, Transcode> {
         sb.append(valueOf3);
         sb.append('}');
         return sb.toString();
+    }
+
+    interface DecodeCallback<ResourceType> {
+        @NonNull
+        Resource<ResourceType> onResourceDecoded(@NonNull Resource<ResourceType> resource);
     }
 }

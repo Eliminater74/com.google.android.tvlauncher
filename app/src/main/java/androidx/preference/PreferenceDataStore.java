@@ -1,6 +1,7 @@
 package androidx.preference;
 
 import android.support.annotation.Nullable;
+
 import java.util.Set;
 
 public abstract class PreferenceDataStore {

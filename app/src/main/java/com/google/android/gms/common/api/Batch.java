@@ -1,20 +1,21 @@
 package com.google.android.gms.common.api;
 
 import com.google.android.gms.common.api.internal.BasePendingResult;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public final class Batch extends BasePendingResult<BatchResult> {
+    /* access modifiers changed from: private */
+    public final PendingResult<?>[] zze;
+    /* access modifiers changed from: private */
+    public final Object zzf;
     /* access modifiers changed from: private */
     public int zza;
     /* access modifiers changed from: private */
     public boolean zzb;
     /* access modifiers changed from: private */
     public boolean zzd;
-    /* access modifiers changed from: private */
-    public final PendingResult<?>[] zze;
-    /* access modifiers changed from: private */
-    public final Object zzf;
 
     private Batch(List<PendingResult<?>> list, GoogleApiClient googleApiClient) {
         super(googleApiClient);
@@ -30,6 +31,28 @@ public final class Batch extends BasePendingResult<BatchResult> {
             this.zze[i] = pendingResult;
             pendingResult.zza(new zza(this));
         }
+    }
+
+    /* synthetic */ Batch(List list, GoogleApiClient googleApiClient, zza zza2) {
+        this(list, googleApiClient);
+    }
+
+    static /* synthetic */ int zzb(Batch batch) {
+        int i = batch.zza;
+        batch.zza = i - 1;
+        return i;
+    }
+
+    public final void cancel() {
+        super.cancel();
+        for (PendingResult<?> cancel : this.zze) {
+            cancel.cancel();
+        }
+    }
+
+    /* renamed from: createFailedResult */
+    public final BatchResult zza(Status status) {
+        return new BatchResult(status, this.zze);
     }
 
     public static final class Builder {
@@ -49,27 +72,5 @@ public final class Batch extends BasePendingResult<BatchResult> {
         public final Batch build() {
             return new Batch(this.zza, this.zzb, null);
         }
-    }
-
-    public final void cancel() {
-        super.cancel();
-        for (PendingResult<?> cancel : this.zze) {
-            cancel.cancel();
-        }
-    }
-
-    /* renamed from: createFailedResult */
-    public final BatchResult zza(Status status) {
-        return new BatchResult(status, this.zze);
-    }
-
-    /* synthetic */ Batch(List list, GoogleApiClient googleApiClient, zza zza2) {
-        this(list, googleApiClient);
-    }
-
-    static /* synthetic */ int zzb(Batch batch) {
-        int i = batch.zza;
-        batch.zza = i - 1;
-        return i;
     }
 }

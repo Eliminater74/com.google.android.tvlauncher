@@ -10,22 +10,21 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import androidx.preference.Preference;
 
 public class SeekBarPreference extends Preference {
     private static final String TAG = "SeekBarPreference";
     boolean mAdjustable;
-    private int mMax;
     int mMin;
     SeekBar mSeekBar;
+    int mSeekBarValue;
+    boolean mTrackingTouch;
+    boolean mUpdatesContinuously;
+    private int mMax;
     private SeekBar.OnSeekBarChangeListener mSeekBarChangeListener;
     private int mSeekBarIncrement;
     private View.OnKeyListener mSeekBarKeyListener;
-    int mSeekBarValue;
     private TextView mSeekBarValueTextView;
     private boolean mShowSeekBarValue;
-    boolean mTrackingTouch;
-    boolean mUpdatesContinuously;
 
     public SeekBarPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);

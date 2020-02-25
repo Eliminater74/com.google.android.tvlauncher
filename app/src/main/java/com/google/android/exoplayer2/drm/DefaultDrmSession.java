@@ -9,23 +9,22 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.Pair;
+
 import com.google.android.exoplayer2.C0841C;
-import com.google.android.exoplayer2.drm.DrmInitData;
-import com.google.android.exoplayer2.drm.DrmSession;
-import com.google.android.exoplayer2.drm.ExoMediaCrypto;
-import com.google.android.exoplayer2.drm.ExoMediaDrm;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.EventDispatcher;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.Util;
+
+import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
+import org.checkerframework.checker.nullness.qual.RequiresNonNull;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
-import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 @TargetApi(18)
 class DefaultDrmSession<T extends ExoMediaCrypto> implements DrmSession<T> {
@@ -33,41 +32,33 @@ class DefaultDrmSession<T extends ExoMediaCrypto> implements DrmSession<T> {
     private static final int MSG_KEYS = 1;
     private static final int MSG_PROVISION = 0;
     private static final String TAG = "DefaultDrmSession";
+    /* access modifiers changed from: private */
+    public final int initialDrmRequestRetryCount;
+    @Nullable
+    public final List<DrmInitData.SchemeData> schemeDatas;
     final MediaDrmCallback callback;
+    final DefaultDrmSession<T>.PostResponseHandler postResponseHandler;
+    final UUID uuid;
+    private final EventDispatcher<DefaultDrmSessionEventListener> eventDispatcher;
+    private final ExoMediaDrm<T> mediaDrm;
+    private final int mode;
+    @Nullable
+    private final HashMap<String, String> optionalKeyRequestParameters;
+    private final ProvisioningManager<T> provisioningManager;
     @Nullable
     private ExoMediaDrm.KeyRequest currentKeyRequest;
     @Nullable
     private ExoMediaDrm.ProvisionRequest currentProvisionRequest;
-    private final EventDispatcher<DefaultDrmSessionEventListener> eventDispatcher;
-    /* access modifiers changed from: private */
-    public final int initialDrmRequestRetryCount;
     @Nullable
     private DrmSession.DrmSessionException lastException;
     @Nullable
     private T mediaCrypto;
-    private final ExoMediaDrm<T> mediaDrm;
-    private final int mode;
     private byte[] offlineLicenseKeySetId;
     private int openCount;
-    @Nullable
-    private final HashMap<String, String> optionalKeyRequestParameters;
     private DefaultDrmSession<T>.PostRequestHandler postRequestHandler;
-    final DefaultDrmSession<T>.PostResponseHandler postResponseHandler;
-    private final ProvisioningManager<T> provisioningManager;
     private HandlerThread requestHandlerThread;
-    @Nullable
-    public final List<DrmInitData.SchemeData> schemeDatas;
     private byte[] sessionId;
     private int state;
-    final UUID uuid;
-
-    public interface ProvisioningManager<T extends ExoMediaCrypto> {
-        void onProvisionCompleted();
-
-        void onProvisionError(Exception exc);
-
-        void provisionRequired(DefaultDrmSession<T> defaultDrmSession);
-    }
 
     public DefaultDrmSession(UUID uuid2, ExoMediaDrm<T> mediaDrm2, ProvisioningManager<T> provisioningManager2, @Nullable List<DrmInitData.SchemeData> schemeDatas2, int mode2, @Nullable byte[] offlineLicenseKeySetId2, @Nullable HashMap<String, String> optionalKeyRequestParameters2, MediaDrmCallback callback2, Looper playbackLooper, EventDispatcher<DefaultDrmSessionEventListener> eventDispatcher2, int initialDrmRequestRetryCount2) {
         if (mode2 == 1 || mode2 == 3) {
@@ -345,6 +336,14 @@ class DefaultDrmSession<T extends ExoMediaCrypto> implements DrmSession<T> {
     private boolean isOpen() {
         int i = this.state;
         return i == 3 || i == 4;
+    }
+
+    public interface ProvisioningManager<T extends ExoMediaCrypto> {
+        void onProvisionCompleted();
+
+        void onProvisionError(Exception exc);
+
+        void provisionRequired(DefaultDrmSession<T> defaultDrmSession);
     }
 
     @SuppressLint({"HandlerLeak"})

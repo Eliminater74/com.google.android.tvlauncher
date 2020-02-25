@@ -3,17 +3,19 @@ package com.google.android.libraries.performance.primes;
 import android.app.Application;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import com.google.android.libraries.performance.primes.MetricRecorder;
+
 import com.google.android.libraries.performance.primes.sampling.ProbabilitySampler;
 import com.google.android.libraries.performance.primes.tracing.TraceData;
 import com.google.android.libraries.performance.primes.tracing.Tracer;
 import com.google.android.libraries.performance.primes.transmitter.MetricTransmitter;
 import com.google.common.base.Optional;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.UUID;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
+
 import logs.proto.wireless.performance.mobile.ExtensionMetric;
 import logs.proto.wireless.performance.mobile.PrimesTraceOuterClass;
 import logs.proto.wireless.performance.mobile.SystemHealthProto;
@@ -24,6 +26,13 @@ class TraceMetricService extends AbstractMetricService {
     private final int maxTracingBufferSize;
     private final int minSpanDurationMs;
     private final ProbabilitySampler probabilitySampler;
+
+    TraceMetricService(MetricTransmitter transmitter, Application application, Supplier<MetricStamper> metricStamperSupplier, Supplier<ScheduledExecutorService> executorServiceSupplier, int samplingRatePerSecond, float samplingProbability, int minSpanDurationMs2, int maxTracingBufferSize2) {
+        super(transmitter, application, metricStamperSupplier, executorServiceSupplier, MetricRecorder.RunIn.BACKGROUND_THREAD, samplingRatePerSecond);
+        this.probabilitySampler = new ProbabilitySampler(samplingProbability);
+        this.minSpanDurationMs = minSpanDurationMs2;
+        this.maxTracingBufferSize = maxTracingBufferSize2;
+    }
 
     static synchronized TraceMetricService createServiceWithTikTokTracing(MetricTransmitter transmitter, Application application, Supplier<MetricStamper> metricStamperSupplier, Supplier<ScheduledExecutorService> executorServiceSupplier, Optional<PrimesTikTokTraceConfigurations> optionalTiktokConfig) {
         TraceMetricService traceMetricService;
@@ -44,13 +53,6 @@ class TraceMetricService extends AbstractMetricService {
             traceMetricService = new TraceMetricService(transmitter, application, metricStamperSupplier, executorServiceSupplier, 10, config.getSamplingPropability(), config.getMinSpanDurationMs(), config.getMaxTracingBufferSize());
         }
         return traceMetricService;
-    }
-
-    TraceMetricService(MetricTransmitter transmitter, Application application, Supplier<MetricStamper> metricStamperSupplier, Supplier<ScheduledExecutorService> executorServiceSupplier, int samplingRatePerSecond, float samplingProbability, int minSpanDurationMs2, int maxTracingBufferSize2) {
-        super(transmitter, application, metricStamperSupplier, executorServiceSupplier, MetricRecorder.RunIn.BACKGROUND_THREAD, samplingRatePerSecond);
-        this.probabilitySampler = new ProbabilitySampler(samplingProbability);
-        this.minSpanDurationMs = minSpanDurationMs2;
-        this.maxTracingBufferSize = maxTracingBufferSize2;
     }
 
     private boolean isTraceWithinSamplingRate() {

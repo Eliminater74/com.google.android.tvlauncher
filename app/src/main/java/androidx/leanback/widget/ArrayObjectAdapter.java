@@ -4,6 +4,7 @@ import android.support.annotation.Nullable;
 import android.support.p004v7.util.DiffUtil;
 import android.support.p004v7.util.ListUpdateCallback;
 import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -13,9 +14,9 @@ public class ArrayObjectAdapter extends ObjectAdapter {
     /* access modifiers changed from: private */
     public static final Boolean DEBUG = false;
     private static final String TAG = "ArrayObjectAdapter";
+    final List mOldItems = new ArrayList();
     private final List mItems = new ArrayList();
     ListUpdateCallback mListUpdateCallback;
-    final List mOldItems = new ArrayList();
     private List mUnmodifiableItems;
 
     public ArrayObjectAdapter(PresenterSelector presenterSelector) {

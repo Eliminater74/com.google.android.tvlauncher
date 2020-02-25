@@ -10,6 +10,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.MapMaker;
 import com.google.common.math.IntMath;
+
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
@@ -41,41 +42,7 @@ public abstract class Striped<L> {
         }
     };
 
-    public abstract L get(Object obj);
-
-    public abstract L getAt(int i);
-
-    /* access modifiers changed from: package-private */
-    public abstract int indexFor(Object obj);
-
-    public abstract int size();
-
     private Striped() {
-    }
-
-    /* JADX INFO: Multiple debug info for r2v5 java.util.List: [D('i' int), D('asList' java.util.List<L>)] */
-    public Iterable<L> bulkGet(Iterable<?> keys) {
-        Object[] array = Iterables.toArray(keys, Object.class);
-        if (array.length == 0) {
-            return ImmutableList.m107of();
-        }
-        int[] stripes = new int[array.length];
-        for (int i = 0; i < array.length; i++) {
-            stripes[i] = indexFor(array[i]);
-        }
-        Arrays.sort(stripes);
-        int previousStripe = stripes[0];
-        array[0] = getAt(previousStripe);
-        for (int i2 = 1; i2 < array.length; i2++) {
-            int currentStripe = stripes[i2];
-            if (currentStripe == previousStripe) {
-                array[i2] = array[i2 - 1];
-            } else {
-                array[i2] = getAt(currentStripe);
-                previousStripe = currentStripe;
-            }
-        }
-        return Collections.unmodifiableList(Arrays.asList(array));
     }
 
     static <L> Striped<L> custom(int stripes, Supplier<L> supplier) {
@@ -127,6 +94,51 @@ public abstract class Striped<L> {
 
     public static Striped<ReadWriteLock> lazyWeakReadWriteLock(int stripes) {
         return lazy(stripes, WEAK_SAFE_READ_WRITE_LOCK_SUPPLIER);
+    }
+
+    /* access modifiers changed from: private */
+    public static int ceilToPowerOfTwo(int x) {
+        return 1 << IntMath.log2(x, RoundingMode.CEILING);
+    }
+
+    /* access modifiers changed from: private */
+    public static int smear(int hashCode) {
+        int hashCode2 = hashCode ^ ((hashCode >>> 20) ^ (hashCode >>> 12));
+        return ((hashCode2 >>> 7) ^ hashCode2) ^ (hashCode2 >>> 4);
+    }
+
+    public abstract L get(Object obj);
+
+    public abstract L getAt(int i);
+
+    /* access modifiers changed from: package-private */
+    public abstract int indexFor(Object obj);
+
+    public abstract int size();
+
+    /* JADX INFO: Multiple debug info for r2v5 java.util.List: [D('i' int), D('asList' java.util.List<L>)] */
+    public Iterable<L> bulkGet(Iterable<?> keys) {
+        Object[] array = Iterables.toArray(keys, Object.class);
+        if (array.length == 0) {
+            return ImmutableList.m107of();
+        }
+        int[] stripes = new int[array.length];
+        for (int i = 0; i < array.length; i++) {
+            stripes[i] = indexFor(array[i]);
+        }
+        Arrays.sort(stripes);
+        int previousStripe = stripes[0];
+        array[0] = getAt(previousStripe);
+        for (int i2 = 1; i2 < array.length; i2++) {
+            int currentStripe = stripes[i2];
+            if (currentStripe == previousStripe) {
+                array[i2] = array[i2 - 1];
+            } else {
+                array[i2] = getAt(currentStripe);
+                previousStripe = currentStripe;
+            }
+        }
+        return Collections.unmodifiableList(Arrays.asList(array));
     }
 
     private static final class WeakSafeReadWriteLock implements ReadWriteLock {
@@ -316,17 +328,6 @@ public abstract class Striped<L> {
         public int size() {
             return this.size;
         }
-    }
-
-    /* access modifiers changed from: private */
-    public static int ceilToPowerOfTwo(int x) {
-        return 1 << IntMath.log2(x, RoundingMode.CEILING);
-    }
-
-    /* access modifiers changed from: private */
-    public static int smear(int hashCode) {
-        int hashCode2 = hashCode ^ ((hashCode >>> 20) ^ (hashCode >>> 12));
-        return ((hashCode2 >>> 7) ^ hashCode2) ^ (hashCode2 >>> 4);
     }
 
     private static class PaddedLock extends ReentrantLock {

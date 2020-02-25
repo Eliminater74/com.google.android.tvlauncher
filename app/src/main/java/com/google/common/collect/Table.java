@@ -3,28 +3,15 @@ package com.google.common.collect;
 import com.google.common.annotations.GwtCompatible;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.CompatibleWith;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible
 public interface Table<R, C, V> {
-
-    public interface Cell<R, C, V> {
-        boolean equals(@NullableDecl Object obj);
-
-        @NullableDecl
-        C getColumnKey();
-
-        @NullableDecl
-        R getRowKey();
-
-        @NullableDecl
-        V getValue();
-
-        int hashCode();
-    }
 
     Set<Cell<R, C, V>> cellSet();
 
@@ -71,4 +58,19 @@ public interface Table<R, C, V> {
     int size();
 
     Collection<V> values();
+
+    public interface Cell<R, C, V> {
+        boolean equals(@NullableDecl Object obj);
+
+        @NullableDecl
+        C getColumnKey();
+
+        @NullableDecl
+        R getRowKey();
+
+        @NullableDecl
+        V getValue();
+
+        int hashCode();
+    }
 }

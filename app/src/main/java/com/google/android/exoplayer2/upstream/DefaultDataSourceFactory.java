@@ -2,7 +2,6 @@ package com.google.android.exoplayer2.upstream;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
-import com.google.android.exoplayer2.upstream.DataSource;
 
 public final class DefaultDataSourceFactory implements DataSource.Factory {
     private final DataSource.Factory baseDataSourceFactory;

@@ -8,10 +8,12 @@ import android.transition.Slide;
 import android.transition.Transition;
 import android.transition.TransitionManager;
 import android.view.ViewGroup;
+
 import androidx.leanback.preference.LeanbackSettingsFragment;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragment;
 import androidx.preference.PreferenceScreen;
+
 import com.google.android.tvlauncher.analytics.LoggingActivity;
 import com.google.android.tvlauncher.util.Util;
 

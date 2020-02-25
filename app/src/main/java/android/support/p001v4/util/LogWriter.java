@@ -2,13 +2,14 @@ package android.support.p001v4.util;
 
 import android.support.annotation.RestrictTo;
 import android.util.Log;
+
 import java.io.Writer;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
 /* renamed from: android.support.v4.util.LogWriter */
 public class LogWriter extends Writer {
-    private StringBuilder mBuilder = new StringBuilder(128);
     private final String mTag;
+    private StringBuilder mBuilder = new StringBuilder(128);
 
     public LogWriter(String tag) {
         this.mTag = tag;

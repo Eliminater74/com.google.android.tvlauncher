@@ -9,7 +9,6 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.TextView;
-import androidx.preference.Preference;
 
 public abstract class TwoStatePreference extends Preference {
     protected boolean mChecked;
@@ -67,6 +66,10 @@ public abstract class TwoStatePreference extends Preference {
         return false;
     }
 
+    public CharSequence getSummaryOn() {
+        return this.mSummaryOn;
+    }
+
     public void setSummaryOn(CharSequence summary) {
         this.mSummaryOn = summary;
         if (isChecked()) {
@@ -74,12 +77,12 @@ public abstract class TwoStatePreference extends Preference {
         }
     }
 
-    public CharSequence getSummaryOn() {
-        return this.mSummaryOn;
-    }
-
     public void setSummaryOn(int summaryResId) {
         setSummaryOn(getContext().getString(summaryResId));
+    }
+
+    public CharSequence getSummaryOff() {
+        return this.mSummaryOff;
     }
 
     public void setSummaryOff(CharSequence summary) {
@@ -87,10 +90,6 @@ public abstract class TwoStatePreference extends Preference {
         if (!isChecked()) {
             notifyChanged();
         }
-    }
-
-    public CharSequence getSummaryOff() {
-        return this.mSummaryOff;
     }
 
     public void setSummaryOff(int summaryResId) {

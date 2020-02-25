@@ -14,200 +14,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+
 import androidx.leanback.C0364R;
-import androidx.leanback.widget.BaseGridView;
-import androidx.leanback.widget.DetailsOverviewRow;
-import androidx.leanback.widget.ItemBridgeAdapter;
-import androidx.leanback.widget.Presenter;
-import androidx.leanback.widget.RowPresenter;
 
 @Deprecated
 public class DetailsOverviewRowPresenter extends RowPresenter {
     static final boolean DEBUG = false;
+    static final String TAG = "DetailsOverviewRowP";
     private static final long DEFAULT_TIMEOUT = 5000;
     private static final int MORE_ACTIONS_FADE_MS = 100;
-    static final String TAG = "DetailsOverviewRowP";
+    final Presenter mDetailsPresenter;
     OnActionClickedListener mActionClickedListener;
     private int mBackgroundColor = 0;
     private boolean mBackgroundColorSet;
-    final Presenter mDetailsPresenter;
     private boolean mIsStyleLarge = true;
     private DetailsOverviewSharedElementHelper mSharedElementHelper;
-
-    class ActionsItemBridgeAdapter extends ItemBridgeAdapter {
-        ViewHolder mViewHolder;
-
-        ActionsItemBridgeAdapter(ViewHolder viewHolder) {
-            this.mViewHolder = viewHolder;
-        }
-
-        public void onBind(final ItemBridgeAdapter.ViewHolder ibvh) {
-            if (this.mViewHolder.getOnItemViewClickedListener() != null || DetailsOverviewRowPresenter.this.mActionClickedListener != null) {
-                ibvh.getPresenter().setOnClickListener(ibvh.getViewHolder(), new View.OnClickListener() {
-                    public void onClick(View v) {
-                        if (ActionsItemBridgeAdapter.this.mViewHolder.getOnItemViewClickedListener() != null) {
-                            ActionsItemBridgeAdapter.this.mViewHolder.getOnItemViewClickedListener().onItemClicked(ibvh.getViewHolder(), ibvh.getItem(), ActionsItemBridgeAdapter.this.mViewHolder, ActionsItemBridgeAdapter.this.mViewHolder.getRow());
-                        }
-                        if (DetailsOverviewRowPresenter.this.mActionClickedListener != null) {
-                            DetailsOverviewRowPresenter.this.mActionClickedListener.onActionClicked((Action) ibvh.getItem());
-                        }
-                    }
-                });
-            }
-        }
-
-        public void onUnbind(ItemBridgeAdapter.ViewHolder ibvh) {
-            if (this.mViewHolder.getOnItemViewClickedListener() != null || DetailsOverviewRowPresenter.this.mActionClickedListener != null) {
-                ibvh.getPresenter().setOnClickListener(ibvh.getViewHolder(), null);
-            }
-        }
-
-        public void onAttachedToWindow(ItemBridgeAdapter.ViewHolder viewHolder) {
-            viewHolder.itemView.removeOnLayoutChangeListener(this.mViewHolder.mLayoutChangeListener);
-            viewHolder.itemView.addOnLayoutChangeListener(this.mViewHolder.mLayoutChangeListener);
-        }
-
-        public void onDetachedFromWindow(ItemBridgeAdapter.ViewHolder viewHolder) {
-            viewHolder.itemView.removeOnLayoutChangeListener(this.mViewHolder.mLayoutChangeListener);
-            this.mViewHolder.checkFirstAndLastPosition(false);
-        }
-    }
-
-    public final class ViewHolder extends RowPresenter.ViewHolder {
-        ItemBridgeAdapter mActionBridgeAdapter;
-        final HorizontalGridView mActionsRow;
-        final OnChildSelectedListener mChildSelectedListener = new OnChildSelectedListener() {
-            public void onChildSelected(ViewGroup parent, View view, int position, long id) {
-                ViewHolder.this.dispatchItemSelection(view);
-            }
-        };
-        final FrameLayout mDetailsDescriptionFrame;
-        public final Presenter.ViewHolder mDetailsDescriptionViewHolder;
-        final Handler mHandler = new Handler();
-        final ImageView mImageView;
-        final View.OnLayoutChangeListener mLayoutChangeListener = new View.OnLayoutChangeListener() {
-            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                ViewHolder.this.checkFirstAndLastPosition(false);
-            }
-        };
-        final DetailsOverviewRow.Listener mListener = new DetailsOverviewRow.Listener() {
-            public void onImageDrawableChanged(DetailsOverviewRow row) {
-                ViewHolder.this.mHandler.removeCallbacks(ViewHolder.this.mUpdateDrawableCallback);
-                ViewHolder.this.mHandler.post(ViewHolder.this.mUpdateDrawableCallback);
-            }
-
-            public void onItemChanged(DetailsOverviewRow row) {
-                if (ViewHolder.this.mDetailsDescriptionViewHolder != null) {
-                    DetailsOverviewRowPresenter.this.mDetailsPresenter.onUnbindViewHolder(ViewHolder.this.mDetailsDescriptionViewHolder);
-                }
-                DetailsOverviewRowPresenter.this.mDetailsPresenter.onBindViewHolder(ViewHolder.this.mDetailsDescriptionViewHolder, row.getItem());
-            }
-
-            public void onActionsAdapterChanged(DetailsOverviewRow row) {
-                ViewHolder.this.bindActions(row.getActionsAdapter());
-            }
-        };
-        int mNumItems;
-        final FrameLayout mOverviewFrame;
-        final ViewGroup mOverviewView;
-        final ViewGroup mRightPanel;
-        final RecyclerView.OnScrollListener mScrollListener = new RecyclerView.OnScrollListener() {
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-            }
-
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                ViewHolder.this.checkFirstAndLastPosition(true);
-            }
-        };
-        boolean mShowMoreLeft;
-        boolean mShowMoreRight;
-        final Runnable mUpdateDrawableCallback = new Runnable() {
-            public void run() {
-                DetailsOverviewRowPresenter.this.bindImageDrawable(ViewHolder.this);
-            }
-        };
-
-        /* access modifiers changed from: package-private */
-        public void bindActions(ObjectAdapter adapter) {
-            this.mActionBridgeAdapter.setAdapter(adapter);
-            this.mActionsRow.setAdapter(this.mActionBridgeAdapter);
-            this.mNumItems = this.mActionBridgeAdapter.getItemCount();
-            this.mShowMoreRight = false;
-            this.mShowMoreLeft = true;
-            showMoreLeft(false);
-        }
-
-        /* access modifiers changed from: package-private */
-        public void dispatchItemSelection(View view) {
-            RecyclerView.ViewHolder viewHolder;
-            if (isSelected()) {
-                if (view != null) {
-                    viewHolder = this.mActionsRow.getChildViewHolder(view);
-                } else {
-                    HorizontalGridView horizontalGridView = this.mActionsRow;
-                    viewHolder = horizontalGridView.findViewHolderForPosition(horizontalGridView.getSelectedPosition());
-                }
-                ItemBridgeAdapter.ViewHolder ibvh = (ItemBridgeAdapter.ViewHolder) viewHolder;
-                if (ibvh == null) {
-                    if (getOnItemViewSelectedListener() != null) {
-                        getOnItemViewSelectedListener().onItemSelected(null, null, this, getRow());
-                    }
-                } else if (getOnItemViewSelectedListener() != null) {
-                    getOnItemViewSelectedListener().onItemSelected(ibvh.getViewHolder(), ibvh.getItem(), this, getRow());
-                }
-            }
-        }
-
-        private int getViewCenter(View view) {
-            return (view.getRight() - view.getLeft()) / 2;
-        }
-
-        /* access modifiers changed from: package-private */
-        public void checkFirstAndLastPosition(boolean fromScroll) {
-            RecyclerView.ViewHolder viewHolder = this.mActionsRow.findViewHolderForPosition(this.mNumItems - 1);
-            boolean showLeft = false;
-            boolean showRight = viewHolder == null || viewHolder.itemView.getRight() > this.mActionsRow.getWidth();
-            RecyclerView.ViewHolder viewHolder2 = this.mActionsRow.findViewHolderForPosition(0);
-            if (viewHolder2 == null || viewHolder2.itemView.getLeft() < 0) {
-                showLeft = true;
-            }
-            showMoreRight(showRight);
-            showMoreLeft(showLeft);
-        }
-
-        private void showMoreLeft(boolean show) {
-            if (show != this.mShowMoreLeft) {
-                this.mActionsRow.setFadingLeftEdge(show);
-                this.mShowMoreLeft = show;
-            }
-        }
-
-        private void showMoreRight(boolean show) {
-            if (show != this.mShowMoreRight) {
-                this.mActionsRow.setFadingRightEdge(show);
-                this.mShowMoreRight = show;
-            }
-        }
-
-        public ViewHolder(View rootView, Presenter detailsPresenter) {
-            super(rootView);
-            this.mOverviewFrame = (FrameLayout) rootView.findViewById(C0364R.C0366id.details_frame);
-            this.mOverviewView = (ViewGroup) rootView.findViewById(C0364R.C0366id.details_overview);
-            this.mImageView = (ImageView) rootView.findViewById(C0364R.C0366id.details_overview_image);
-            this.mRightPanel = (ViewGroup) rootView.findViewById(C0364R.C0366id.details_overview_right_panel);
-            this.mDetailsDescriptionFrame = (FrameLayout) this.mRightPanel.findViewById(C0364R.C0366id.details_overview_description);
-            this.mActionsRow = (HorizontalGridView) this.mRightPanel.findViewById(C0364R.C0366id.details_overview_actions);
-            this.mActionsRow.setHasOverlappingRendering(false);
-            this.mActionsRow.setOnScrollListener(this.mScrollListener);
-            this.mActionsRow.setAdapter(this.mActionBridgeAdapter);
-            this.mActionsRow.setOnChildSelectedListener(this.mChildSelectedListener);
-            int fadeLength = rootView.getResources().getDimensionPixelSize(C0364R.dimen.lb_details_overview_actions_fade_size);
-            this.mActionsRow.setFadingRightEdgeLength(fadeLength);
-            this.mActionsRow.setFadingLeftEdgeLength(fadeLength);
-            this.mDetailsDescriptionViewHolder = detailsPresenter.onCreateViewHolder(this.mDetailsDescriptionFrame);
-            this.mDetailsDescriptionFrame.addView(this.mDetailsDescriptionViewHolder.view);
-        }
-    }
 
     public DetailsOverviewRowPresenter(Presenter detailsPresenter) {
         setHeaderPresenter(null);
@@ -215,17 +36,28 @@ public class DetailsOverviewRowPresenter extends RowPresenter {
         this.mDetailsPresenter = detailsPresenter;
     }
 
-    public void setOnActionClickedListener(OnActionClickedListener listener) {
-        this.mActionClickedListener = listener;
+    private static int getNonNegativeWidth(Drawable drawable) {
+        int width = drawable == null ? 0 : drawable.getIntrinsicWidth();
+        if (width > 0) {
+            return width;
+        }
+        return 0;
+    }
+
+    private static int getNonNegativeHeight(Drawable drawable) {
+        int height = drawable == null ? 0 : drawable.getIntrinsicHeight();
+        if (height > 0) {
+            return height;
+        }
+        return 0;
     }
 
     public OnActionClickedListener getOnActionClickedListener() {
         return this.mActionClickedListener;
     }
 
-    public void setBackgroundColor(@ColorInt int color) {
-        this.mBackgroundColor = color;
-        this.mBackgroundColorSet = true;
+    public void setOnActionClickedListener(OnActionClickedListener listener) {
+        this.mActionClickedListener = listener;
     }
 
     @ColorInt
@@ -233,12 +65,17 @@ public class DetailsOverviewRowPresenter extends RowPresenter {
         return this.mBackgroundColor;
     }
 
-    public void setStyleLarge(boolean large) {
-        this.mIsStyleLarge = large;
+    public void setBackgroundColor(@ColorInt int color) {
+        this.mBackgroundColor = color;
+        this.mBackgroundColorSet = true;
     }
 
     public boolean isStyleLarge() {
         return this.mIsStyleLarge;
+    }
+
+    public void setStyleLarge(boolean large) {
+        this.mIsStyleLarge = large;
     }
 
     public final void setSharedElementEnterTransition(Activity activity, String sharedElementName, long timeoutMs) {
@@ -302,22 +139,6 @@ public class DetailsOverviewRowPresenter extends RowPresenter {
                 return true;
             }
         });
-    }
-
-    private static int getNonNegativeWidth(Drawable drawable) {
-        int width = drawable == null ? 0 : drawable.getIntrinsicWidth();
-        if (width > 0) {
-            return width;
-        }
-        return 0;
-    }
-
-    private static int getNonNegativeHeight(Drawable drawable) {
-        int height = drawable == null ? 0 : drawable.getIntrinsicHeight();
-        if (height > 0) {
-            return height;
-        }
-        return 0;
     }
 
     /* access modifiers changed from: package-private */
@@ -444,6 +265,181 @@ public class DetailsOverviewRowPresenter extends RowPresenter {
         Presenter presenter = this.mDetailsPresenter;
         if (presenter != null) {
             presenter.onViewDetachedFromWindow(((ViewHolder) vh).mDetailsDescriptionViewHolder);
+        }
+    }
+
+    class ActionsItemBridgeAdapter extends ItemBridgeAdapter {
+        ViewHolder mViewHolder;
+
+        ActionsItemBridgeAdapter(ViewHolder viewHolder) {
+            this.mViewHolder = viewHolder;
+        }
+
+        public void onBind(final ItemBridgeAdapter.ViewHolder ibvh) {
+            if (this.mViewHolder.getOnItemViewClickedListener() != null || DetailsOverviewRowPresenter.this.mActionClickedListener != null) {
+                ibvh.getPresenter().setOnClickListener(ibvh.getViewHolder(), new View.OnClickListener() {
+                    public void onClick(View v) {
+                        if (ActionsItemBridgeAdapter.this.mViewHolder.getOnItemViewClickedListener() != null) {
+                            ActionsItemBridgeAdapter.this.mViewHolder.getOnItemViewClickedListener().onItemClicked(ibvh.getViewHolder(), ibvh.getItem(), ActionsItemBridgeAdapter.this.mViewHolder, ActionsItemBridgeAdapter.this.mViewHolder.getRow());
+                        }
+                        if (DetailsOverviewRowPresenter.this.mActionClickedListener != null) {
+                            DetailsOverviewRowPresenter.this.mActionClickedListener.onActionClicked((Action) ibvh.getItem());
+                        }
+                    }
+                });
+            }
+        }
+
+        public void onUnbind(ItemBridgeAdapter.ViewHolder ibvh) {
+            if (this.mViewHolder.getOnItemViewClickedListener() != null || DetailsOverviewRowPresenter.this.mActionClickedListener != null) {
+                ibvh.getPresenter().setOnClickListener(ibvh.getViewHolder(), null);
+            }
+        }
+
+        public void onAttachedToWindow(ItemBridgeAdapter.ViewHolder viewHolder) {
+            viewHolder.itemView.removeOnLayoutChangeListener(this.mViewHolder.mLayoutChangeListener);
+            viewHolder.itemView.addOnLayoutChangeListener(this.mViewHolder.mLayoutChangeListener);
+        }
+
+        public void onDetachedFromWindow(ItemBridgeAdapter.ViewHolder viewHolder) {
+            viewHolder.itemView.removeOnLayoutChangeListener(this.mViewHolder.mLayoutChangeListener);
+            this.mViewHolder.checkFirstAndLastPosition(false);
+        }
+    }
+
+    public final class ViewHolder extends RowPresenter.ViewHolder {
+        public final Presenter.ViewHolder mDetailsDescriptionViewHolder;
+        final HorizontalGridView mActionsRow;
+        final OnChildSelectedListener mChildSelectedListener = new OnChildSelectedListener() {
+            public void onChildSelected(ViewGroup parent, View view, int position, long id) {
+                ViewHolder.this.dispatchItemSelection(view);
+            }
+        };
+        final FrameLayout mDetailsDescriptionFrame;
+        final Handler mHandler = new Handler();
+        final ImageView mImageView;
+        final FrameLayout mOverviewFrame;
+        final ViewGroup mOverviewView;
+        final ViewGroup mRightPanel;
+        final Runnable mUpdateDrawableCallback = new Runnable() {
+            public void run() {
+                DetailsOverviewRowPresenter.this.bindImageDrawable(ViewHolder.this);
+            }
+        };
+        ItemBridgeAdapter mActionBridgeAdapter;
+        int mNumItems;
+        boolean mShowMoreLeft;
+        boolean mShowMoreRight;
+        final View.OnLayoutChangeListener mLayoutChangeListener = new View.OnLayoutChangeListener() {
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                ViewHolder.this.checkFirstAndLastPosition(false);
+            }
+        };
+        final DetailsOverviewRow.Listener mListener = new DetailsOverviewRow.Listener() {
+            public void onImageDrawableChanged(DetailsOverviewRow row) {
+                ViewHolder.this.mHandler.removeCallbacks(ViewHolder.this.mUpdateDrawableCallback);
+                ViewHolder.this.mHandler.post(ViewHolder.this.mUpdateDrawableCallback);
+            }
+
+            public void onItemChanged(DetailsOverviewRow row) {
+                if (ViewHolder.this.mDetailsDescriptionViewHolder != null) {
+                    DetailsOverviewRowPresenter.this.mDetailsPresenter.onUnbindViewHolder(ViewHolder.this.mDetailsDescriptionViewHolder);
+                }
+                DetailsOverviewRowPresenter.this.mDetailsPresenter.onBindViewHolder(ViewHolder.this.mDetailsDescriptionViewHolder, row.getItem());
+            }
+
+            public void onActionsAdapterChanged(DetailsOverviewRow row) {
+                ViewHolder.this.bindActions(row.getActionsAdapter());
+            }
+        };
+        final RecyclerView.OnScrollListener mScrollListener = new RecyclerView.OnScrollListener() {
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            }
+
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                ViewHolder.this.checkFirstAndLastPosition(true);
+            }
+        };
+
+        public ViewHolder(View rootView, Presenter detailsPresenter) {
+            super(rootView);
+            this.mOverviewFrame = (FrameLayout) rootView.findViewById(C0364R.C0366id.details_frame);
+            this.mOverviewView = (ViewGroup) rootView.findViewById(C0364R.C0366id.details_overview);
+            this.mImageView = (ImageView) rootView.findViewById(C0364R.C0366id.details_overview_image);
+            this.mRightPanel = (ViewGroup) rootView.findViewById(C0364R.C0366id.details_overview_right_panel);
+            this.mDetailsDescriptionFrame = (FrameLayout) this.mRightPanel.findViewById(C0364R.C0366id.details_overview_description);
+            this.mActionsRow = (HorizontalGridView) this.mRightPanel.findViewById(C0364R.C0366id.details_overview_actions);
+            this.mActionsRow.setHasOverlappingRendering(false);
+            this.mActionsRow.setOnScrollListener(this.mScrollListener);
+            this.mActionsRow.setAdapter(this.mActionBridgeAdapter);
+            this.mActionsRow.setOnChildSelectedListener(this.mChildSelectedListener);
+            int fadeLength = rootView.getResources().getDimensionPixelSize(C0364R.dimen.lb_details_overview_actions_fade_size);
+            this.mActionsRow.setFadingRightEdgeLength(fadeLength);
+            this.mActionsRow.setFadingLeftEdgeLength(fadeLength);
+            this.mDetailsDescriptionViewHolder = detailsPresenter.onCreateViewHolder(this.mDetailsDescriptionFrame);
+            this.mDetailsDescriptionFrame.addView(this.mDetailsDescriptionViewHolder.view);
+        }
+
+        /* access modifiers changed from: package-private */
+        public void bindActions(ObjectAdapter adapter) {
+            this.mActionBridgeAdapter.setAdapter(adapter);
+            this.mActionsRow.setAdapter(this.mActionBridgeAdapter);
+            this.mNumItems = this.mActionBridgeAdapter.getItemCount();
+            this.mShowMoreRight = false;
+            this.mShowMoreLeft = true;
+            showMoreLeft(false);
+        }
+
+        /* access modifiers changed from: package-private */
+        public void dispatchItemSelection(View view) {
+            RecyclerView.ViewHolder viewHolder;
+            if (isSelected()) {
+                if (view != null) {
+                    viewHolder = this.mActionsRow.getChildViewHolder(view);
+                } else {
+                    HorizontalGridView horizontalGridView = this.mActionsRow;
+                    viewHolder = horizontalGridView.findViewHolderForPosition(horizontalGridView.getSelectedPosition());
+                }
+                ItemBridgeAdapter.ViewHolder ibvh = (ItemBridgeAdapter.ViewHolder) viewHolder;
+                if (ibvh == null) {
+                    if (getOnItemViewSelectedListener() != null) {
+                        getOnItemViewSelectedListener().onItemSelected(null, null, this, getRow());
+                    }
+                } else if (getOnItemViewSelectedListener() != null) {
+                    getOnItemViewSelectedListener().onItemSelected(ibvh.getViewHolder(), ibvh.getItem(), this, getRow());
+                }
+            }
+        }
+
+        private int getViewCenter(View view) {
+            return (view.getRight() - view.getLeft()) / 2;
+        }
+
+        /* access modifiers changed from: package-private */
+        public void checkFirstAndLastPosition(boolean fromScroll) {
+            RecyclerView.ViewHolder viewHolder = this.mActionsRow.findViewHolderForPosition(this.mNumItems - 1);
+            boolean showLeft = false;
+            boolean showRight = viewHolder == null || viewHolder.itemView.getRight() > this.mActionsRow.getWidth();
+            RecyclerView.ViewHolder viewHolder2 = this.mActionsRow.findViewHolderForPosition(0);
+            if (viewHolder2 == null || viewHolder2.itemView.getLeft() < 0) {
+                showLeft = true;
+            }
+            showMoreRight(showRight);
+            showMoreLeft(showLeft);
+        }
+
+        private void showMoreLeft(boolean show) {
+            if (show != this.mShowMoreLeft) {
+                this.mActionsRow.setFadingLeftEdge(show);
+                this.mShowMoreLeft = show;
+            }
+        }
+
+        private void showMoreRight(boolean show) {
+            if (show != this.mShowMoreRight) {
+                this.mActionsRow.setFadingRightEdge(show);
+                this.mShowMoreRight = show;
+            }
         }
     }
 }

@@ -12,6 +12,7 @@ import android.system.ErrnoException;
 import android.system.Os;
 import android.system.OsConstants;
 import android.util.Log;
+
 import java.io.File;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
@@ -20,7 +21,7 @@ import java.lang.reflect.Method;
 
 @RequiresApi(21)
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-/* renamed from: android.support.v4.graphics.TypefaceCompatApi21Impl */
+        /* renamed from: android.support.v4.graphics.TypefaceCompatApi21Impl */
 class TypefaceCompatApi21Impl extends TypefaceCompatBaseImpl {
     private static final String ADD_FONT_WEIGHT_STYLE_METHOD = "addFontWeightStyle";
     private static final String CREATE_FROM_FAMILIES_WITH_DEFAULT_METHOD = "createFromFamiliesWithDefault";
@@ -61,18 +62,6 @@ class TypefaceCompatApi21Impl extends TypefaceCompatBaseImpl {
         }
     }
 
-    private File getFile(@NonNull ParcelFileDescriptor fd) {
-        try {
-            String path = Os.readlink("/proc/self/fd/" + fd.getFd());
-            if (OsConstants.S_ISREG(Os.stat(path).st_mode)) {
-                return new File(path);
-            }
-            return null;
-        } catch (ErrnoException e) {
-            return null;
-        }
-    }
-
     private static Object newFamily() {
         init();
         try {
@@ -99,6 +88,18 @@ class TypefaceCompatApi21Impl extends TypefaceCompatBaseImpl {
             return ((Boolean) sAddFontWeightStyle.invoke(family, name, Integer.valueOf(weight), Boolean.valueOf(style))).booleanValue();
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private File getFile(@NonNull ParcelFileDescriptor fd) {
+        try {
+            String path = Os.readlink("/proc/self/fd/" + fd.getFd());
+            if (OsConstants.S_ISREG(Os.stat(path).st_mode)) {
+                return new File(path);
+            }
+            return null;
+        } catch (ErrnoException e) {
+            return null;
         }
     }
 

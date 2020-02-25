@@ -11,17 +11,15 @@ import android.view.ViewParent;
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
 /* renamed from: android.support.v7.widget.ForwardingListener */
 public abstract class ForwardingListener implements View.OnTouchListener, View.OnAttachStateChangeListener {
+    final View mSrc;
+    private final int mLongPressTimeout;
+    private final float mScaledTouchSlop;
+    private final int mTapTimeout;
+    private final int[] mTmpLocation = new int[2];
     private int mActivePointerId;
     private Runnable mDisallowIntercept;
     private boolean mForwarding;
-    private final int mLongPressTimeout;
-    private final float mScaledTouchSlop;
-    final View mSrc;
-    private final int mTapTimeout;
-    private final int[] mTmpLocation = new int[2];
     private Runnable mTriggerLongPress;
-
-    public abstract ShowableListMenu getPopup();
 
     public ForwardingListener(View src) {
         this.mSrc = src;
@@ -31,6 +29,12 @@ public abstract class ForwardingListener implements View.OnTouchListener, View.O
         this.mTapTimeout = ViewConfiguration.getTapTimeout();
         this.mLongPressTimeout = (this.mTapTimeout + ViewConfiguration.getLongPressTimeout()) / 2;
     }
+
+    private static boolean pointInView(View view, float localX, float localY, float slop) {
+        return localX >= (-slop) && localY >= (-slop) && localX < ((float) (view.getRight() - view.getLeft())) + slop && localY < ((float) (view.getBottom() - view.getTop())) + slop;
+    }
+
+    public abstract ShowableListMenu getPopup();
 
     public boolean onTouch(View v, MotionEvent event) {
         boolean forwarding;
@@ -198,10 +202,6 @@ public abstract class ForwardingListener implements View.OnTouchListener, View.O
             return false;
         }
         return true;
-    }
-
-    private static boolean pointInView(View view, float localX, float localY, float slop) {
-        return localX >= (-slop) && localY >= (-slop) && localX < ((float) (view.getRight() - view.getLeft())) + slop && localY < ((float) (view.getBottom() - view.getTop())) + slop;
     }
 
     private boolean toLocalMotionEvent(View view, MotionEvent event) {

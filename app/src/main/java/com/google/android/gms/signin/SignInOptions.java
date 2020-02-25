@@ -1,10 +1,16 @@
 package com.google.android.gms.signin;
 
 import android.support.annotation.Nullable;
+
 import com.google.android.gms.common.api.Api;
 
 public final class SignInOptions implements Api.ApiOptions.Optional {
     public static final SignInOptions DEFAULT = new SignInOptions(false, false, null, false, null, false, null, null);
+
+    static {
+        new zza();
+    }
+
     private final boolean zza = false;
     private final boolean zzb = false;
     private final String zzc = null;
@@ -13,9 +19,6 @@ public final class SignInOptions implements Api.ApiOptions.Optional {
     private final boolean zzf = false;
     private final Long zzg = null;
     private final Long zzh = null;
-
-    public static final class zza {
-    }
 
     private SignInOptions(boolean z, boolean z2, String str, boolean z3, String str2, boolean z4, Long l, Long l2) {
     }
@@ -55,7 +58,6 @@ public final class SignInOptions implements Api.ApiOptions.Optional {
         return this.zzh;
     }
 
-    static {
-        new zza();
+    public static final class zza {
     }
 }

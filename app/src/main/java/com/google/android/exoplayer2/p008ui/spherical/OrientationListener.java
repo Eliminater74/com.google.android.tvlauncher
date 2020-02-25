@@ -7,6 +7,7 @@ import android.hardware.SensorManager;
 import android.opengl.Matrix;
 import android.support.annotation.BinderThread;
 import android.view.Display;
+
 import com.google.android.exoplayer2.video.spherical.FrameRotationQueue;
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
 
@@ -17,17 +18,16 @@ final class OrientationListener implements SensorEventListener {
     private final Display display;
     private final Listener[] listeners;
     private final float[] recenterMatrix4x4 = new float[16];
-    private boolean recenterMatrixComputed;
     private final float[] tempMatrix4x4 = new float[16];
-
-    /* renamed from: com.google.android.exoplayer2.ui.spherical.OrientationListener$Listener */
-    public interface Listener {
-        void onOrientationChange(float[] fArr, float f);
-    }
+    private boolean recenterMatrixComputed;
 
     public OrientationListener(Display display2, Listener... listeners2) {
         this.display = display2;
         this.listeners = listeners2;
+    }
+
+    private static void rotateYtoSky(float[] matrix) {
+        Matrix.rotateM(matrix, 0, 90.0f, 1.0f, 0.0f, 0.0f);
     }
 
     @BinderThread
@@ -87,7 +87,8 @@ final class OrientationListener implements SensorEventListener {
         }
     }
 
-    private static void rotateYtoSky(float[] matrix) {
-        Matrix.rotateM(matrix, 0, 90.0f, 1.0f, 0.0f, 0.0f);
+    /* renamed from: com.google.android.exoplayer2.ui.spherical.OrientationListener$Listener */
+    public interface Listener {
+        void onOrientationChange(float[] fArr, float f);
     }
 }

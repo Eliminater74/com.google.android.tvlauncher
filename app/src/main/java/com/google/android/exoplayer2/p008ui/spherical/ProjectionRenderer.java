@@ -1,8 +1,10 @@
 package com.google.android.exoplayer2.p008ui.spherical;
 
 import android.opengl.GLES20;
+
 import com.google.android.exoplayer2.util.GlUtil;
 import com.google.android.exoplayer2.video.spherical.Projection;
+
 import java.nio.Buffer;
 import java.nio.FloatBuffer;
 

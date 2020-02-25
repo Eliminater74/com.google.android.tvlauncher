@@ -17,29 +17,27 @@ import android.view.ViewOutlineProvider;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.google.android.tvlauncher.C1188R;
 
 public class NotificationsPanelButtonView extends LinearLayout {
+    /* access modifiers changed from: private */
+    public final int mIndicatorFocusedColor;
     private final int mAllNotifsSeenUnfocusedColor;
+    private final int mAnimationDuration;
+    private final String mGreaterThanNineText;
+    private final int mNotifsFocusedBackgroundColor;
+    private final String mNumberFormat;
     /* access modifiers changed from: private */
     public AnimatorSet mAnimateIn;
     /* access modifiers changed from: private */
     public AnimatorSet mAnimateOut;
-    private final int mAnimationDuration;
-    private ImageView mCircle;
-    private float mDefaultTextSize;
     /* access modifiers changed from: private */
     public View mFocusIndicator;
-    private final String mGreaterThanNineText;
-    private float mGreaterThanNineTextSize;
-    /* access modifiers changed from: private */
-    public final int mIndicatorFocusedColor;
     /* access modifiers changed from: private */
     public TextView mNotifCountTextView;
     /* access modifiers changed from: private */
     public TextView mNotificationButtonTitle;
-    private final int mNotifsFocusedBackgroundColor;
-    private final String mNumberFormat;
     /* access modifiers changed from: private */
     public boolean mSeen;
     /* access modifiers changed from: private */
@@ -50,16 +48,19 @@ public class NotificationsPanelButtonView extends LinearLayout {
     public ValueAnimator mSeenIconColorUnfocusedAnimator;
     /* access modifiers changed from: private */
     public ObjectAnimator mTextFadeInAnimator;
-    private Drawable mUnseenBackground;
     /* access modifiers changed from: private */
     public ObjectAnimator mUnseenIconColorFocusedAnimator;
     /* access modifiers changed from: private */
     public ObjectAnimator mUnseenIconColorUnfocusedAnimator;
-    private int mUnseenNotifsUnfocusedBackgroundColor;
     /* access modifiers changed from: private */
     public ObjectAnimator mUnseenTextColorFocusedAnimator;
     /* access modifiers changed from: private */
     public ObjectAnimator mUnseenTextColorUnfocusedAnimator;
+    private ImageView mCircle;
+    private float mDefaultTextSize;
+    private float mGreaterThanNineTextSize;
+    private Drawable mUnseenBackground;
+    private int mUnseenNotifsUnfocusedBackgroundColor;
     private int mUnseenTextUnfocusedColor;
 
     public NotificationsPanelButtonView(Context context, AttributeSet attrs) {

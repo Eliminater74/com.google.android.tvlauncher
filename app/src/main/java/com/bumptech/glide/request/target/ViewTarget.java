@@ -13,8 +13,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
+
 import com.bumptech.glide.request.Request;
 import com.bumptech.glide.util.Preconditions;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -26,12 +28,12 @@ public abstract class ViewTarget<T extends View, Z> extends BaseTarget<Z> {
     private static boolean isTagUsedAtLeastOnce;
     @Nullable
     private static Integer tagId;
+    protected final T view;
+    private final SizeDeterminer sizeDeterminer;
     @Nullable
     private View.OnAttachStateChangeListener attachStateListener;
     private boolean isAttachStateListenerAdded;
     private boolean isClearedByUs;
-    private final SizeDeterminer sizeDeterminer;
-    protected final T view;
 
     public ViewTarget(@NonNull T view2) {
         this.view = (View) Preconditions.checkNotNull(view2);
@@ -44,6 +46,13 @@ public abstract class ViewTarget<T extends View, Z> extends BaseTarget<Z> {
         if (waitForLayout) {
             waitForLayout();
         }
+    }
+
+    public static void setTagId(int tagId2) {
+        if (tagId != null || isTagUsedAtLeastOnce) {
+            throw new IllegalArgumentException("You cannot set the tag id more than once or change the tag id after the first request has been made");
+        }
+        tagId = Integer.valueOf(tagId2);
     }
 
     @NonNull
@@ -184,10 +193,6 @@ public abstract class ViewTarget<T extends View, Z> extends BaseTarget<Z> {
         }
     }
 
-    public void setRequest(@Nullable Request request) {
-        setTag(request);
-    }
-
     @Nullable
     public Request getRequest() {
         Object tag = getTag();
@@ -200,12 +205,48 @@ public abstract class ViewTarget<T extends View, Z> extends BaseTarget<Z> {
         throw new IllegalArgumentException("You must not call setTag() on a view Glide is targeting");
     }
 
+    public void setRequest(@Nullable Request request) {
+        setTag(request);
+    }
+
     public String toString() {
         String valueOf = String.valueOf(this.view);
         StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 12);
         sb.append("Target for: ");
         sb.append(valueOf);
         return sb.toString();
+    }
+
+    /*  JADX ERROR: JadxRuntimeException in pass: MethodInvokeVisitor
+        jadx.core.utils.exceptions.JadxRuntimeException: Not class type: T
+        	at jadx.core.dex.info.ClassInfo.checkClassType(ClassInfo.java:60)
+        	at jadx.core.dex.info.ClassInfo.fromType(ClassInfo.java:31)
+        	at jadx.core.dex.nodes.DexNode.resolveClass(DexNode.java:143)
+        	at jadx.core.dex.nodes.RootNode.resolveClass(RootNode.java:183)
+        	at jadx.core.dex.nodes.utils.MethodUtils.processMethodArgsOverloaded(MethodUtils.java:75)
+        	at jadx.core.dex.nodes.utils.MethodUtils.collectOverloadedMethods(MethodUtils.java:54)
+        	at jadx.core.dex.visitors.MethodInvokeVisitor.processOverloaded(MethodInvokeVisitor.java:106)
+        	at jadx.core.dex.visitors.MethodInvokeVisitor.processInvoke(MethodInvokeVisitor.java:99)
+        	at jadx.core.dex.visitors.MethodInvokeVisitor.processInsn(MethodInvokeVisitor.java:70)
+        	at jadx.core.dex.visitors.MethodInvokeVisitor.processInsn(MethodInvokeVisitor.java:75)
+        	at jadx.core.dex.visitors.MethodInvokeVisitor.visit(MethodInvokeVisitor.java:63)
+        */
+    @android.support.annotation.Nullable
+    private java.lang.Object getTag() {
+        /*
+            r2 = this;
+            java.lang.Integer r0 = com.bumptech.glide.request.target.ViewTarget.tagId
+            if (r0 != 0) goto L_0x000b
+            T r0 = r2.view
+            java.lang.Object r0 = r0.getTag()
+            return r0
+        L_0x000b:
+            T r1 = r2.view
+            int r0 = r0.intValue()
+            java.lang.Object r0 = r1.getTag(r0)
+            return r0
+        */
+        throw new UnsupportedOperationException("Method not decompiled: com.bumptech.glide.request.target.ViewTarget.getTag():java.lang.Object");
     }
 
     /*  JADX ERROR: JadxRuntimeException in pass: MethodInvokeVisitor
@@ -241,45 +282,6 @@ public abstract class ViewTarget<T extends View, Z> extends BaseTarget<Z> {
         throw new UnsupportedOperationException("Method not decompiled: com.bumptech.glide.request.target.ViewTarget.setTag(java.lang.Object):void");
     }
 
-    /*  JADX ERROR: JadxRuntimeException in pass: MethodInvokeVisitor
-        jadx.core.utils.exceptions.JadxRuntimeException: Not class type: T
-        	at jadx.core.dex.info.ClassInfo.checkClassType(ClassInfo.java:60)
-        	at jadx.core.dex.info.ClassInfo.fromType(ClassInfo.java:31)
-        	at jadx.core.dex.nodes.DexNode.resolveClass(DexNode.java:143)
-        	at jadx.core.dex.nodes.RootNode.resolveClass(RootNode.java:183)
-        	at jadx.core.dex.nodes.utils.MethodUtils.processMethodArgsOverloaded(MethodUtils.java:75)
-        	at jadx.core.dex.nodes.utils.MethodUtils.collectOverloadedMethods(MethodUtils.java:54)
-        	at jadx.core.dex.visitors.MethodInvokeVisitor.processOverloaded(MethodInvokeVisitor.java:106)
-        	at jadx.core.dex.visitors.MethodInvokeVisitor.processInvoke(MethodInvokeVisitor.java:99)
-        	at jadx.core.dex.visitors.MethodInvokeVisitor.processInsn(MethodInvokeVisitor.java:70)
-        	at jadx.core.dex.visitors.MethodInvokeVisitor.processInsn(MethodInvokeVisitor.java:75)
-        	at jadx.core.dex.visitors.MethodInvokeVisitor.visit(MethodInvokeVisitor.java:63)
-        */
-    @android.support.annotation.Nullable
-    private java.lang.Object getTag() {
-        /*
-            r2 = this;
-            java.lang.Integer r0 = com.bumptech.glide.request.target.ViewTarget.tagId
-            if (r0 != 0) goto L_0x000b
-            T r0 = r2.view
-            java.lang.Object r0 = r0.getTag()
-            return r0
-        L_0x000b:
-            T r1 = r2.view
-            int r0 = r0.intValue()
-            java.lang.Object r0 = r1.getTag(r0)
-            return r0
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.bumptech.glide.request.target.ViewTarget.getTag():java.lang.Object");
-    }
-
-    public static void setTagId(int tagId2) {
-        if (tagId != null || isTagUsedAtLeastOnce) {
-            throw new IllegalArgumentException("You cannot set the tag id more than once or change the tag id after the first request has been made");
-        }
-        tagId = Integer.valueOf(tagId2);
-    }
-
     @VisibleForTesting
     static final class SizeDeterminer {
         private static final int PENDING_SIZE = 0;
@@ -287,10 +289,10 @@ public abstract class ViewTarget<T extends View, Z> extends BaseTarget<Z> {
         @VisibleForTesting
         static Integer maxDisplayLength;
         private final List<SizeReadyCallback> cbs = new ArrayList();
-        @Nullable
-        private SizeDeterminerLayoutListener layoutListener;
         private final View view;
         boolean waitForLayout;
+        @Nullable
+        private SizeDeterminerLayoutListener layoutListener;
 
         SizeDeterminer(@NonNull View view2) {
             this.view = view2;

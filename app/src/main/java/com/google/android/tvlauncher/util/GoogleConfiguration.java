@@ -1,6 +1,7 @@
 package com.google.android.tvlauncher.util;
 
 import android.support.annotation.NonNull;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,8 +9,8 @@ import java.util.Set;
 
 public class GoogleConfiguration {
     private final List<ChannelConfigurationInfo> mChannelConfigs;
-    private Map<String, ChannelConfigurationInfo> mChannelInfoMap = new HashMap();
     private final Set<String> mSponsoredChannels;
+    private Map<String, ChannelConfigurationInfo> mChannelInfoMap = new HashMap();
 
     public GoogleConfiguration(List<ChannelConfigurationInfo> channelConfigs, Set<String> sponsoredChannels) {
         this.mChannelConfigs = channelConfigs;

@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
+
 import androidx.leanback.C0364R;
 import androidx.leanback.widget.Parallax;
 

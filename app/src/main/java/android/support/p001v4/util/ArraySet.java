@@ -2,6 +2,7 @@ package android.support.p001v4.util;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Iterator;
@@ -23,9 +24,65 @@ public final class ArraySet<E> implements Collection<E>, Set<E> {
     private static Object[] sTwiceBaseCache;
     private static int sTwiceBaseCacheSize;
     Object[] mArray;
+    int mSize;
     private MapCollections<E, E> mCollections;
     private int[] mHashes;
-    int mSize;
+
+    public ArraySet() {
+        this(0);
+    }
+
+    public ArraySet(int capacity) {
+        if (capacity == 0) {
+            this.mHashes = INT;
+            this.mArray = OBJECT;
+        } else {
+            allocArrays(capacity);
+        }
+        this.mSize = 0;
+    }
+
+    public ArraySet(@Nullable ArraySet<E> set) {
+        this();
+        if (set != null) {
+            addAll((ArraySet) set);
+        }
+    }
+
+    public ArraySet(@Nullable Collection<E> set) {
+        this();
+        if (set != null) {
+            addAll(set);
+        }
+    }
+
+    private static void freeArrays(int[] hashes, Object[] array, int size) {
+        if (hashes.length == 8) {
+            synchronized (ArraySet.class) {
+                if (sTwiceBaseCacheSize < 10) {
+                    array[0] = sTwiceBaseCache;
+                    array[1] = hashes;
+                    for (int i = size - 1; i >= 2; i--) {
+                        array[i] = null;
+                    }
+                    sTwiceBaseCache = array;
+                    sTwiceBaseCacheSize++;
+                }
+            }
+        } else if (hashes.length == 4) {
+            synchronized (ArraySet.class) {
+                if (sBaseCacheSize < 10) {
+                    array[0] = sBaseCache;
+                    array[1] = hashes;
+                    for (int i2 = size - 1; i2 >= 2; i2--) {
+                        array[i2] = null;
+                    }
+                    sBaseCache = array;
+                    sBaseCacheSize++;
+                }
+            }
+        }
+    }
 
     private int indexOf(Object key, int hash) {
         int N = this.mSize;
@@ -109,62 +166,6 @@ public final class ArraySet<E> implements Collection<E>, Set<E> {
         }
         this.mHashes = new int[size];
         this.mArray = new Object[size];
-    }
-
-    private static void freeArrays(int[] hashes, Object[] array, int size) {
-        if (hashes.length == 8) {
-            synchronized (ArraySet.class) {
-                if (sTwiceBaseCacheSize < 10) {
-                    array[0] = sTwiceBaseCache;
-                    array[1] = hashes;
-                    for (int i = size - 1; i >= 2; i--) {
-                        array[i] = null;
-                    }
-                    sTwiceBaseCache = array;
-                    sTwiceBaseCacheSize++;
-                }
-            }
-        } else if (hashes.length == 4) {
-            synchronized (ArraySet.class) {
-                if (sBaseCacheSize < 10) {
-                    array[0] = sBaseCache;
-                    array[1] = hashes;
-                    for (int i2 = size - 1; i2 >= 2; i2--) {
-                        array[i2] = null;
-                    }
-                    sBaseCache = array;
-                    sBaseCacheSize++;
-                }
-            }
-        }
-    }
-
-    public ArraySet() {
-        this(0);
-    }
-
-    public ArraySet(int capacity) {
-        if (capacity == 0) {
-            this.mHashes = INT;
-            this.mArray = OBJECT;
-        } else {
-            allocArrays(capacity);
-        }
-        this.mSize = 0;
-    }
-
-    public ArraySet(@Nullable ArraySet<E> set) {
-        this();
-        if (set != null) {
-            addAll((ArraySet) set);
-        }
-    }
-
-    public ArraySet(@Nullable Collection<E> set) {
-        this();
-        if (set != null) {
-            addAll(set);
-        }
     }
 
     public void clear() {

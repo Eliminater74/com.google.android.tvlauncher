@@ -11,6 +11,7 @@ import android.support.annotation.RestrictTo;
 import android.util.SparseIntArray;
 import android.view.FrameMetrics;
 import android.view.Window;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.ref.WeakReference;
@@ -30,7 +31,6 @@ public class FrameMetricsAggregator {
     public static final int EVERY_DURATION = 511;
     public static final int INPUT_DURATION = 2;
     public static final int INPUT_INDEX = 1;
-    private static final int LAST_INDEX = 8;
     public static final int LAYOUT_MEASURE_DURATION = 4;
     public static final int LAYOUT_MEASURE_INDEX = 2;
     public static final int SWAP_DURATION = 64;
@@ -39,13 +39,8 @@ public class FrameMetricsAggregator {
     public static final int SYNC_INDEX = 4;
     public static final int TOTAL_DURATION = 1;
     public static final int TOTAL_INDEX = 0;
+    private static final int LAST_INDEX = 8;
     private FrameMetricsBaseImpl mInstance;
-
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    @Retention(RetentionPolicy.SOURCE)
-    /* renamed from: android.support.v4.app.FrameMetricsAggregator$MetricType */
-    public @interface MetricType {
-    }
 
     public FrameMetricsAggregator() {
         this(1);
@@ -83,6 +78,12 @@ public class FrameMetricsAggregator {
         return this.mInstance.getMetrics();
     }
 
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    @Retention(RetentionPolicy.SOURCE)
+    /* renamed from: android.support.v4.app.FrameMetricsAggregator$MetricType */
+    public @interface MetricType {
+    }
+
     /* renamed from: android.support.v4.app.FrameMetricsAggregator$FrameMetricsBaseImpl */
     private static class FrameMetricsBaseImpl {
         FrameMetricsBaseImpl() {
@@ -115,7 +116,8 @@ public class FrameMetricsAggregator {
         private static final int NANOS_ROUNDING_VALUE = 500000;
         private static Handler sHandler = null;
         private static HandlerThread sHandlerThread = null;
-        private ArrayList<WeakReference<Activity>> mActivities = new ArrayList<>();
+        SparseIntArray[] mMetrics = new SparseIntArray[9];
+        int mTrackingFlags;
         Window.OnFrameMetricsAvailableListener mListener = new Window.OnFrameMetricsAvailableListener() {
             public void onFrameMetricsAvailable(Window window, FrameMetrics frameMetrics, int dropCountSinceLastInvocation) {
                 if ((FrameMetricsApi24Impl.this.mTrackingFlags & 1) != 0) {
@@ -156,8 +158,7 @@ public class FrameMetricsAggregator {
                 }
             }
         };
-        SparseIntArray[] mMetrics = new SparseIntArray[9];
-        int mTrackingFlags;
+        private ArrayList<WeakReference<Activity>> mActivities = new ArrayList<>();
 
         FrameMetricsApi24Impl(int trackingFlags) {
             this.mTrackingFlags = trackingFlags;

@@ -6,11 +6,13 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
+
 import com.google.android.gms.base.C0946R;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.internal.zzbb;
 import com.google.android.gms.common.internal.zzbc;
 import com.google.android.gms.dynamic.zzq;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -25,14 +27,6 @@ public final class SignInButton extends FrameLayout implements View.OnClickListe
     private int zzb;
     private View zzc;
     private View.OnClickListener zzd;
-
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface ButtonSize {
-    }
-
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface ColorScheme {
-    }
 
     public SignInButton(Context context) {
         this(context, null);
@@ -117,5 +111,13 @@ public final class SignInButton extends FrameLayout implements View.OnClickListe
         if (onClickListener != null && view == this.zzc) {
             onClickListener.onClick(this);
         }
+    }
+
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface ButtonSize {
+    }
+
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface ColorScheme {
     }
 }

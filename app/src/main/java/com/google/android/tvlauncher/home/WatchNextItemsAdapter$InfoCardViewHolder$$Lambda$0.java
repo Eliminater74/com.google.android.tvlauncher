@@ -1,7 +1,5 @@
 package com.google.android.tvlauncher.home;
 
-import com.google.android.tvlauncher.home.WatchNextItemsAdapter;
-
 final /* synthetic */ class WatchNextItemsAdapter$InfoCardViewHolder$$Lambda$0 implements Runnable {
     private final WatchNextItemsAdapter.InfoCardViewHolder arg$1;
 

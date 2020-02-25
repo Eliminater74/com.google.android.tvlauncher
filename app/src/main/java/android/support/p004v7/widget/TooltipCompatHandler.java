@@ -11,7 +11,7 @@ import android.view.ViewConfiguration;
 import android.view.accessibility.AccessibilityManager;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-/* renamed from: android.support.v7.widget.TooltipCompatHandler */
+        /* renamed from: android.support.v7.widget.TooltipCompatHandler */
 class TooltipCompatHandler implements View.OnLongClickListener, View.OnHoverListener, View.OnAttachStateChangeListener {
     private static final long HOVER_HIDE_TIMEOUT_MS = 15000;
     private static final long HOVER_HIDE_TIMEOUT_SHORT_MS = 3000;
@@ -20,22 +20,31 @@ class TooltipCompatHandler implements View.OnLongClickListener, View.OnHoverList
     private static TooltipCompatHandler sActiveHandler;
     private static TooltipCompatHandler sPendingHandler;
     private final View mAnchor;
+    private final int mHoverSlop;
+    private final CharSequence mTooltipText;
     private int mAnchorX;
     private int mAnchorY;
     private boolean mFromTouch;
-    private final Runnable mHideRunnable = new Runnable() {
-        public void run() {
-            TooltipCompatHandler.this.hide();
-        }
-    };
-    private final int mHoverSlop;
     private TooltipPopup mPopup;
     private final Runnable mShowRunnable = new Runnable() {
         public void run() {
             TooltipCompatHandler.this.show(false);
         }
     };
-    private final CharSequence mTooltipText;
+    private final Runnable mHideRunnable = new Runnable() {
+        public void run() {
+            TooltipCompatHandler.this.hide();
+        }
+    };
+
+    private TooltipCompatHandler(View anchor, CharSequence tooltipText) {
+        this.mAnchor = anchor;
+        this.mTooltipText = tooltipText;
+        this.mHoverSlop = ViewConfigurationCompat.getScaledHoverSlop(ViewConfiguration.get(this.mAnchor.getContext()));
+        clearAnchorPos();
+        this.mAnchor.setOnLongClickListener(this);
+        this.mAnchor.setOnHoverListener(this);
+    }
 
     public static void setTooltipText(View view, CharSequence tooltipText) {
         TooltipCompatHandler tooltipCompatHandler = sPendingHandler;
@@ -55,13 +64,16 @@ class TooltipCompatHandler implements View.OnLongClickListener, View.OnHoverList
         new TooltipCompatHandler(view, tooltipText);
     }
 
-    private TooltipCompatHandler(View anchor, CharSequence tooltipText) {
-        this.mAnchor = anchor;
-        this.mTooltipText = tooltipText;
-        this.mHoverSlop = ViewConfigurationCompat.getScaledHoverSlop(ViewConfiguration.get(this.mAnchor.getContext()));
-        clearAnchorPos();
-        this.mAnchor.setOnLongClickListener(this);
-        this.mAnchor.setOnHoverListener(this);
+    private static void setPendingHandler(TooltipCompatHandler handler) {
+        TooltipCompatHandler tooltipCompatHandler = sPendingHandler;
+        if (tooltipCompatHandler != null) {
+            tooltipCompatHandler.cancelPendingShow();
+        }
+        sPendingHandler = handler;
+        TooltipCompatHandler tooltipCompatHandler2 = sPendingHandler;
+        if (tooltipCompatHandler2 != null) {
+            tooltipCompatHandler2.scheduleShow();
+        }
     }
 
     public boolean onLongClick(View v) {
@@ -142,18 +154,6 @@ class TooltipCompatHandler implements View.OnLongClickListener, View.OnHoverList
             setPendingHandler(null);
         }
         this.mAnchor.removeCallbacks(this.mHideRunnable);
-    }
-
-    private static void setPendingHandler(TooltipCompatHandler handler) {
-        TooltipCompatHandler tooltipCompatHandler = sPendingHandler;
-        if (tooltipCompatHandler != null) {
-            tooltipCompatHandler.cancelPendingShow();
-        }
-        sPendingHandler = handler;
-        TooltipCompatHandler tooltipCompatHandler2 = sPendingHandler;
-        if (tooltipCompatHandler2 != null) {
-            tooltipCompatHandler2.scheduleShow();
-        }
     }
 
     private void scheduleShow() {

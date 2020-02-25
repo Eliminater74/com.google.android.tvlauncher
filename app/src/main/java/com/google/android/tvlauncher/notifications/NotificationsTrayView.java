@@ -3,7 +3,9 @@ package com.google.android.tvlauncher.notifications;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
+
 import androidx.leanback.widget.HorizontalGridView;
+
 import com.google.android.tvlauncher.C1188R;
 
 public class NotificationsTrayView extends FrameLayout {
@@ -31,16 +33,16 @@ public class NotificationsTrayView extends FrameLayout {
         setVisibility((this.mNotificationsRow.getAdapter() == null || this.mNotificationsRow.getAdapter().getItemCount() <= 0) ? 8 : 0);
     }
 
-    public void setTrayAdapter(NotificationsTrayAdapter adapter) {
-        this.mNotificationsRow.setAdapter(adapter);
-        updateVisibility();
-    }
-
     public NotificationsTrayAdapter getTrayAdapter() {
         HorizontalGridView horizontalGridView = this.mNotificationsRow;
         if (horizontalGridView != null) {
             return (NotificationsTrayAdapter) horizontalGridView.getAdapter();
         }
         return null;
+    }
+
+    public void setTrayAdapter(NotificationsTrayAdapter adapter) {
+        this.mNotificationsRow.setAdapter(adapter);
+        updateVisibility();
     }
 }

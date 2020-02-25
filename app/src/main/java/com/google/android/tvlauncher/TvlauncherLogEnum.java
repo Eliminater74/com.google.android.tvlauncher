@@ -60,7 +60,7 @@ public final class TvlauncherLogEnum {
         USER_ACTION(47),
         START_VOICE_SEARCH(48),
         START_KEYBOARD_SEARCH(49);
-        
+
         public static final int ADD_CHANNEL_VALUE = 23;
         public static final int ADD_PROGRAM_TO_WATCH_NEXT_VALUE = 29;
         public static final int APPROVE_ADD_APP_LINK_VALUE = 39;
@@ -117,8 +117,8 @@ public final class TvlauncherLogEnum {
         };
         private final int value;
 
-        public final int getNumber() {
-            return this.value;
+        private TvLauncherEventCode(int value2) {
+            this.value = value2;
         }
 
         public static TvLauncherEventCode forNumber(int value2) {
@@ -234,6 +234,10 @@ public final class TvlauncherLogEnum {
             return TvLauncherEventCodeVerifier.INSTANCE;
         }
 
+        public final int getNumber() {
+            return this.value;
+        }
+
         private static final class TvLauncherEventCodeVerifier implements Internal.EnumVerifier {
             static final Internal.EnumVerifier INSTANCE = new TvLauncherEventCodeVerifier();
 
@@ -243,10 +247,6 @@ public final class TvlauncherLogEnum {
             public boolean isInRange(int number) {
                 return TvLauncherEventCode.forNumber(number) != null;
             }
-        }
-
-        private TvLauncherEventCode(int value2) {
-            this.value = value2;
         }
     }
 }

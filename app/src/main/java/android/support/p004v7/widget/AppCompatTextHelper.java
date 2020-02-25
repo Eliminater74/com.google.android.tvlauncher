@@ -19,6 +19,7 @@ import android.support.p004v7.appcompat.C0233R;
 import android.text.method.PasswordTransformationMethod;
 import android.util.AttributeSet;
 import android.widget.TextView;
+
 import java.lang.ref.WeakReference;
 import java.util.Locale;
 
@@ -28,9 +29,10 @@ class AppCompatTextHelper {
     private static final int SANS = 1;
     private static final int SERIF = 2;
     private static final int TEXT_FONT_WEIGHT_UNSPECIFIED = -1;
-    private boolean mAsyncFontPending;
     @NonNull
     private final AppCompatTextViewAutoSizeHelper mAutoSizeTextHelper;
+    private final TextView mView;
+    private boolean mAsyncFontPending;
     private TintInfo mDrawableBottomTint;
     private TintInfo mDrawableEndTint;
     private TintInfo mDrawableLeftTint;
@@ -41,11 +43,21 @@ class AppCompatTextHelper {
     private Typeface mFontTypeface;
     private int mFontWeight = -1;
     private int mStyle = 0;
-    private final TextView mView;
 
     AppCompatTextHelper(TextView view) {
         this.mView = view;
         this.mAutoSizeTextHelper = new AppCompatTextViewAutoSizeHelper(this.mView);
+    }
+
+    private static TintInfo createTintInfo(Context context, AppCompatDrawableManager drawableManager, int drawableId) {
+        ColorStateList tintList = drawableManager.getTintList(context, drawableId);
+        if (tintList == null) {
+            return null;
+        }
+        TintInfo tintInfo = new TintInfo();
+        tintInfo.mHasTintList = true;
+        tintInfo.mTintList = tintList;
+        return tintInfo;
     }
 
     /* access modifiers changed from: package-private */
@@ -405,17 +417,6 @@ class AppCompatTextHelper {
         if (drawable != null && info != null) {
             AppCompatDrawableManager.tintDrawable(drawable, info, this.mView.getDrawableState());
         }
-    }
-
-    private static TintInfo createTintInfo(Context context, AppCompatDrawableManager drawableManager, int drawableId) {
-        ColorStateList tintList = drawableManager.getTintList(context, drawableId);
-        if (tintList == null) {
-            return null;
-        }
-        TintInfo tintInfo = new TintInfo();
-        tintInfo.mHasTintList = true;
-        tintInfo.mTintList = tintList;
-        return tintInfo;
     }
 
     /* access modifiers changed from: package-private */

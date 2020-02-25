@@ -5,6 +5,7 @@ import android.os.Parcelable;
 import android.support.p001v4.util.LruCache;
 import android.util.SparseArray;
 import android.view.View;
+
 import java.util.Map;
 
 class ViewsStateBundle {
@@ -13,6 +14,10 @@ class ViewsStateBundle {
     private LruCache<String, SparseArray<Parcelable>> mChildStates;
     private int mLimitNumber = 100;
     private int mSavePolicy = 0;
+
+    static String getSaveStatesKey(int id) {
+        return Integer.toString(id);
+    }
 
     public void clear() {
         LruCache<String, SparseArray<Parcelable>> lruCache = this.mChildStates;
@@ -55,13 +60,13 @@ class ViewsStateBundle {
         return this.mSavePolicy;
     }
 
-    public final int getLimitNumber() {
-        return this.mLimitNumber;
-    }
-
     public final void setSavePolicy(int savePolicy) {
         this.mSavePolicy = savePolicy;
         applyPolicyChanges();
+    }
+
+    public final int getLimitNumber() {
+        return this.mLimitNumber;
     }
 
     public final void setLimitNumber(int limitNumber) {
@@ -129,9 +134,5 @@ class ViewsStateBundle {
         } else if (i == 2 || i == 3) {
             saveViewUnchecked(view, id);
         }
-    }
-
-    static String getSaveStatesKey(int id) {
-        return Integer.toString(id);
     }
 }

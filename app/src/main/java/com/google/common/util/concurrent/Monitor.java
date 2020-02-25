@@ -5,38 +5,21 @@ import com.google.common.annotations.GwtIncompatible;
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.concurrent.GuardedBy;
 import com.google.j2objc.annotations.Weak;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtIncompatible
 @Beta
 public final class Monitor {
-    @GuardedBy("lock")
-    private Guard activeGuards;
-    private final boolean fair;
     /* access modifiers changed from: private */
     public final ReentrantLock lock;
-
-    @Beta
-    public static abstract class Guard {
-        final Condition condition;
-        @Weak
-        final Monitor monitor;
-        @NullableDecl
-        @GuardedBy("monitor.lock")
-        Guard next;
-        @GuardedBy("monitor.lock")
-        int waiterCount = 0;
-
-        public abstract boolean isSatisfied();
-
-        protected Guard(Monitor monitor2) {
-            this.monitor = (Monitor) Preconditions.checkNotNull(monitor2, "monitor");
-            this.condition = monitor2.lock.newCondition();
-        }
-    }
+    private final boolean fair;
+    @GuardedBy("lock")
+    private Guard activeGuards;
 
     public Monitor() {
         this(false);
@@ -46,6 +29,35 @@ public final class Monitor {
         this.activeGuards = null;
         this.fair = fair2;
         this.lock = new ReentrantLock(fair2);
+    }
+
+    private static long toSafeNanos(long time, TimeUnit unit) {
+        long timeoutNanos = unit.toNanos(time);
+        if (timeoutNanos <= 0) {
+            return 0;
+        }
+        if (timeoutNanos > 6917529027641081853L) {
+            return 6917529027641081853L;
+        }
+        return timeoutNanos;
+    }
+
+    private static long initNanoTime(long timeoutNanos) {
+        if (timeoutNanos <= 0) {
+            return 0;
+        }
+        long startTime = System.nanoTime();
+        if (startTime == 0) {
+            return 1;
+        }
+        return startTime;
+    }
+
+    private static long remainingNanos(long startTime, long timeoutNanos) {
+        if (timeoutNanos <= 0) {
+            return 0;
+        }
+        return timeoutNanos - (System.nanoTime() - startTime);
     }
 
     public void enter() {
@@ -522,35 +534,6 @@ public final class Monitor {
         }
     }
 
-    private static long toSafeNanos(long time, TimeUnit unit) {
-        long timeoutNanos = unit.toNanos(time);
-        if (timeoutNanos <= 0) {
-            return 0;
-        }
-        if (timeoutNanos > 6917529027641081853L) {
-            return 6917529027641081853L;
-        }
-        return timeoutNanos;
-    }
-
-    private static long initNanoTime(long timeoutNanos) {
-        if (timeoutNanos <= 0) {
-            return 0;
-        }
-        long startTime = System.nanoTime();
-        if (startTime == 0) {
-            return 1;
-        }
-        return startTime;
-    }
-
-    private static long remainingNanos(long startTime, long timeoutNanos) {
-        if (timeoutNanos <= 0) {
-            return 0;
-        }
-        return timeoutNanos - (System.nanoTime() - startTime);
-    }
-
     @GuardedBy("lock")
     private void signalNextWaiter() {
         for (Guard guard = this.activeGuards; guard != null; guard = guard.next) {
@@ -668,5 +651,24 @@ public final class Monitor {
             endWaitingFor(guard);
         }
         return false;
+    }
+
+    @Beta
+    public static abstract class Guard {
+        final Condition condition;
+        @Weak
+        final Monitor monitor;
+        @NullableDecl
+        @GuardedBy("monitor.lock")
+        Guard next;
+        @GuardedBy("monitor.lock")
+        int waiterCount = 0;
+
+        protected Guard(Monitor monitor2) {
+            this.monitor = (Monitor) Preconditions.checkNotNull(monitor2, "monitor");
+            this.condition = monitor2.lock.newCondition();
+        }
+
+        public abstract boolean isSatisfied();
     }
 }

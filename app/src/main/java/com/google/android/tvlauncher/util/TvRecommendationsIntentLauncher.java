@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.util.Log;
+
 import com.google.android.tvrecommendations.shared.util.Constants;
+
 import java.util.List;
 
 public class TvRecommendationsIntentLauncher implements IntentLauncher {

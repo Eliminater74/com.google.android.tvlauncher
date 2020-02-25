@@ -16,13 +16,16 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.webkit.MimeTypeMap;
+
 import com.google.android.exoplayer2.C0841C;
+
+import org.xmlpull.v1.XmlPullParserException;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import org.xmlpull.v1.XmlPullParserException;
 
 /* renamed from: android.support.v4.content.FileProvider */
 public class FileProvider extends ContentProvider {
@@ -42,82 +45,8 @@ public class FileProvider extends ContentProvider {
     private static HashMap<String, PathStrategy> sCache = new HashMap<>();
     private PathStrategy mStrategy;
 
-    /* renamed from: android.support.v4.content.FileProvider$PathStrategy */
-    interface PathStrategy {
-        File getFileForUri(Uri uri);
-
-        Uri getUriForFile(File file);
-    }
-
-    public boolean onCreate() {
-        return true;
-    }
-
-    public void attachInfo(@NonNull Context context, @NonNull ProviderInfo info) {
-        super.attachInfo(context, info);
-        if (info.exported) {
-            throw new SecurityException("Provider must not be exported");
-        } else if (info.grantUriPermissions) {
-            this.mStrategy = getPathStrategy(context, info.authority);
-        } else {
-            throw new SecurityException("Provider must grant uri permissions");
-        }
-    }
-
     public static Uri getUriForFile(@NonNull Context context, @NonNull String authority, @NonNull File file) {
         return getPathStrategy(context, authority).getUriForFile(file);
-    }
-
-    public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
-        File file = this.mStrategy.getFileForUri(uri);
-        if (projection == null) {
-            projection = COLUMNS;
-        }
-        String[] cols = new String[projection.length];
-        Object[] values = new Object[projection.length];
-        int i = 0;
-        for (String col : projection) {
-            if ("_display_name".equals(col)) {
-                cols[i] = "_display_name";
-                values[i] = file.getName();
-                i++;
-            } else if ("_size".equals(col)) {
-                cols[i] = "_size";
-                values[i] = Long.valueOf(file.length());
-                i++;
-            }
-        }
-        String[] cols2 = copyOf(cols, i);
-        Object[] values2 = copyOf(values, i);
-        MatrixCursor cursor = new MatrixCursor(cols2, 1);
-        cursor.addRow(values2);
-        return cursor;
-    }
-
-    public String getType(@NonNull Uri uri) {
-        String mime;
-        File file = this.mStrategy.getFileForUri(uri);
-        int lastDot = file.getName().lastIndexOf(46);
-        if (lastDot < 0 || (mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(file.getName().substring(lastDot + 1))) == null) {
-            return "application/octet-stream";
-        }
-        return mime;
-    }
-
-    public Uri insert(@NonNull Uri uri, ContentValues values) {
-        throw new UnsupportedOperationException("No external inserts");
-    }
-
-    public int update(@NonNull Uri uri, ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
-        throw new UnsupportedOperationException("No external updates");
-    }
-
-    public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
-        return this.mStrategy.getFileForUri(uri).delete() ? 1 : 0;
-    }
-
-    public ParcelFileDescriptor openFile(@NonNull Uri uri, @NonNull String mode) throws FileNotFoundException {
-        return ParcelFileDescriptor.open(this.mStrategy.getFileForUri(uri), modeToMode(mode));
     }
 
     private static PathStrategy getPathStrategy(Context context, String authority) {
@@ -192,6 +121,121 @@ public class FileProvider extends ContentProvider {
         }
     }
 
+    private static int modeToMode(String mode) {
+        if ("r".equals(mode)) {
+            return C0841C.ENCODING_PCM_MU_LAW;
+        }
+        if ("w".equals(mode) || "wt".equals(mode)) {
+            return 738197504;
+        }
+        if ("wa".equals(mode)) {
+            return 704643072;
+        }
+        if ("rw".equals(mode)) {
+            return 939524096;
+        }
+        if ("rwt".equals(mode)) {
+            return 1006632960;
+        }
+        throw new IllegalArgumentException("Invalid mode: " + mode);
+    }
+
+    private static File buildPath(File base, String... segments) {
+        File cur = base;
+        for (String segment : segments) {
+            if (segment != null) {
+                cur = new File(cur, segment);
+            }
+        }
+        return cur;
+    }
+
+    private static String[] copyOf(String[] original, int newLength) {
+        String[] result = new String[newLength];
+        System.arraycopy(original, 0, result, 0, newLength);
+        return result;
+    }
+
+    private static Object[] copyOf(Object[] original, int newLength) {
+        Object[] result = new Object[newLength];
+        System.arraycopy(original, 0, result, 0, newLength);
+        return result;
+    }
+
+    public boolean onCreate() {
+        return true;
+    }
+
+    public void attachInfo(@NonNull Context context, @NonNull ProviderInfo info) {
+        super.attachInfo(context, info);
+        if (info.exported) {
+            throw new SecurityException("Provider must not be exported");
+        } else if (info.grantUriPermissions) {
+            this.mStrategy = getPathStrategy(context, info.authority);
+        } else {
+            throw new SecurityException("Provider must grant uri permissions");
+        }
+    }
+
+    public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
+        File file = this.mStrategy.getFileForUri(uri);
+        if (projection == null) {
+            projection = COLUMNS;
+        }
+        String[] cols = new String[projection.length];
+        Object[] values = new Object[projection.length];
+        int i = 0;
+        for (String col : projection) {
+            if ("_display_name".equals(col)) {
+                cols[i] = "_display_name";
+                values[i] = file.getName();
+                i++;
+            } else if ("_size".equals(col)) {
+                cols[i] = "_size";
+                values[i] = Long.valueOf(file.length());
+                i++;
+            }
+        }
+        String[] cols2 = copyOf(cols, i);
+        Object[] values2 = copyOf(values, i);
+        MatrixCursor cursor = new MatrixCursor(cols2, 1);
+        cursor.addRow(values2);
+        return cursor;
+    }
+
+    public String getType(@NonNull Uri uri) {
+        String mime;
+        File file = this.mStrategy.getFileForUri(uri);
+        int lastDot = file.getName().lastIndexOf(46);
+        if (lastDot < 0 || (mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(file.getName().substring(lastDot + 1))) == null) {
+            return "application/octet-stream";
+        }
+        return mime;
+    }
+
+    public Uri insert(@NonNull Uri uri, ContentValues values) {
+        throw new UnsupportedOperationException("No external inserts");
+    }
+
+    public int update(@NonNull Uri uri, ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
+        throw new UnsupportedOperationException("No external updates");
+    }
+
+    public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
+        return this.mStrategy.getFileForUri(uri).delete() ? 1 : 0;
+    }
+
+    public ParcelFileDescriptor openFile(@NonNull Uri uri, @NonNull String mode) throws FileNotFoundException {
+        return ParcelFileDescriptor.open(this.mStrategy.getFileForUri(uri), modeToMode(mode));
+    }
+
+    /* renamed from: android.support.v4.content.FileProvider$PathStrategy */
+    interface PathStrategy {
+        File getFileForUri(Uri uri);
+
+        Uri getUriForFile(File file);
+    }
+
     /* renamed from: android.support.v4.content.FileProvider$SimplePathStrategy */
     static class SimplePathStrategy implements PathStrategy {
         private final String mAuthority;
@@ -261,46 +305,5 @@ public class FileProvider extends ContentProvider {
                 throw new IllegalArgumentException("Unable to find configured root for " + uri);
             }
         }
-    }
-
-    private static int modeToMode(String mode) {
-        if ("r".equals(mode)) {
-            return C0841C.ENCODING_PCM_MU_LAW;
-        }
-        if ("w".equals(mode) || "wt".equals(mode)) {
-            return 738197504;
-        }
-        if ("wa".equals(mode)) {
-            return 704643072;
-        }
-        if ("rw".equals(mode)) {
-            return 939524096;
-        }
-        if ("rwt".equals(mode)) {
-            return 1006632960;
-        }
-        throw new IllegalArgumentException("Invalid mode: " + mode);
-    }
-
-    private static File buildPath(File base, String... segments) {
-        File cur = base;
-        for (String segment : segments) {
-            if (segment != null) {
-                cur = new File(cur, segment);
-            }
-        }
-        return cur;
-    }
-
-    private static String[] copyOf(String[] original, int newLength) {
-        String[] result = new String[newLength];
-        System.arraycopy(original, 0, result, 0, newLength);
-        return result;
-    }
-
-    private static Object[] copyOf(Object[] original, int newLength) {
-        Object[] result = new Object[newLength];
-        System.arraycopy(original, 0, result, 0, newLength);
-        return result;
     }
 }

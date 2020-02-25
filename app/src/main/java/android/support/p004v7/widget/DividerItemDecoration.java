@@ -7,16 +7,15 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.p004v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 
 /* renamed from: android.support.v7.widget.DividerItemDecoration */
 public class DividerItemDecoration extends RecyclerView.ItemDecoration {
-    private static final int[] ATTRS = {16843284};
     public static final int HORIZONTAL = 0;
-    private static final String TAG = "DividerItem";
     public static final int VERTICAL = 1;
+    private static final int[] ATTRS = {16843284};
+    private static final String TAG = "DividerItem";
     private final Rect mBounds = new Rect();
     private Drawable mDivider;
     private int mOrientation;
@@ -39,17 +38,17 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
         throw new IllegalArgumentException("Invalid orientation. It should be either HORIZONTAL or VERTICAL");
     }
 
+    @Nullable
+    public Drawable getDrawable() {
+        return this.mDivider;
+    }
+
     public void setDrawable(@NonNull Drawable drawable) {
         if (drawable != null) {
             this.mDivider = drawable;
             return;
         }
         throw new IllegalArgumentException("Drawable cannot be null.");
-    }
-
-    @Nullable
-    public Drawable getDrawable() {
-        return this.mDivider;
     }
 
     public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state) {

@@ -1,16 +1,11 @@
 package com.google.android.exoplayer2;
 
 import android.support.annotation.Nullable;
-import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.Timeline;
+
 import com.google.android.exoplayer2.util.Util;
 
 public abstract class BasePlayer implements Player {
     protected final Timeline.Window window = new Timeline.Window();
-
-    protected interface ListenerInvocation {
-        void invokeListener(Player.EventListener eventListener);
-    }
 
     public final void seekToDefaultPosition() {
         seekToDefaultPosition(getCurrentWindowIndex());
@@ -112,6 +107,10 @@ public abstract class BasePlayer implements Player {
             return 0;
         }
         return repeatMode;
+    }
+
+    protected interface ListenerInvocation {
+        void invokeListener(Player.EventListener eventListener);
     }
 
     protected static final class ListenerHolder {

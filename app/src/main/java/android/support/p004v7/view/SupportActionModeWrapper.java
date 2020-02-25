@@ -5,14 +5,13 @@ import android.support.annotation.RestrictTo;
 import android.support.p001v4.internal.view.SupportMenu;
 import android.support.p001v4.internal.view.SupportMenuItem;
 import android.support.p001v4.util.SimpleArrayMap;
-import android.support.p004v7.view.ActionMode;
 import android.support.p004v7.view.menu.MenuItemWrapperICS;
 import android.support.p004v7.view.menu.MenuWrapperICS;
-import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+
 import java.util.ArrayList;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
@@ -34,14 +33,6 @@ public class SupportActionModeWrapper extends ActionMode {
         this.mWrappedObject.setTag(tag);
     }
 
-    public void setTitle(CharSequence title) {
-        this.mWrappedObject.setTitle(title);
-    }
-
-    public void setSubtitle(CharSequence subtitle) {
-        this.mWrappedObject.setSubtitle(subtitle);
-    }
-
     public void invalidate() {
         this.mWrappedObject.invalidate();
     }
@@ -58,12 +49,20 @@ public class SupportActionModeWrapper extends ActionMode {
         return this.mWrappedObject.getTitle();
     }
 
+    public void setTitle(CharSequence title) {
+        this.mWrappedObject.setTitle(title);
+    }
+
     public void setTitle(int resId) {
         this.mWrappedObject.setTitle(resId);
     }
 
     public CharSequence getSubtitle() {
         return this.mWrappedObject.getSubtitle();
+    }
+
+    public void setSubtitle(CharSequence subtitle) {
+        this.mWrappedObject.setSubtitle(subtitle);
     }
 
     public void setSubtitle(int resId) {

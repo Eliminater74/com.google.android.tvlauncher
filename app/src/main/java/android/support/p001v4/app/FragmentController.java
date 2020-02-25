@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -23,13 +24,13 @@ import java.util.List;
 public class FragmentController {
     private final FragmentHostCallback<?> mHost;
 
+    private FragmentController(FragmentHostCallback<?> callbacks) {
+        this.mHost = callbacks;
+    }
+
     @NonNull
     public static FragmentController createController(@NonNull FragmentHostCallback<?> callbacks) {
         return new FragmentController((FragmentHostCallback) Preconditions.checkNotNull(callbacks, "callbacks == null"));
-    }
-
-    private FragmentController(FragmentHostCallback<?> callbacks) {
-        this.mHost = callbacks;
     }
 
     @NonNull

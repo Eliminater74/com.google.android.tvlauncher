@@ -4,17 +4,16 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.source.MediaSourceEventListener;
 import com.google.android.exoplayer2.source.hls.HlsDataSourceFactory;
-import com.google.android.exoplayer2.source.hls.playlist.HlsMasterPlaylist;
-import com.google.android.exoplayer2.source.hls.playlist.HlsMediaPlaylist;
-import com.google.android.exoplayer2.source.hls.playlist.HlsPlaylistTracker;
 import com.google.android.exoplayer2.upstream.LoadErrorHandlingPolicy;
 import com.google.android.exoplayer2.upstream.Loader;
 import com.google.android.exoplayer2.upstream.ParsingLoadable;
 import com.google.android.exoplayer2.util.Assertions;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,46 +25,34 @@ public final class DefaultHlsPlaylistTracker implements HlsPlaylistTracker, Load
     /* access modifiers changed from: private */
     public final HlsDataSourceFactory dataSourceFactory;
     /* access modifiers changed from: private */
-    @Nullable
-    public MediaSourceEventListener.EventDispatcher eventDispatcher;
-    @Nullable
-    private Loader initialPlaylistLoader;
-    private long initialStartTimeUs;
-    private boolean isLive;
-    private final List<HlsPlaylistTracker.PlaylistEventListener> listeners;
-    /* access modifiers changed from: private */
     public final LoadErrorHandlingPolicy loadErrorHandlingPolicy;
-    @Nullable
-    private HlsMasterPlaylist masterPlaylist;
     /* access modifiers changed from: private */
-    @Nullable
-    public ParsingLoadable.Parser<HlsPlaylist> mediaPlaylistParser;
+    public final double playlistStuckTargetDurationCoefficient;
+    private final List<HlsPlaylistTracker.PlaylistEventListener> listeners;
     private final HashMap<Uri, MediaPlaylistBundle> playlistBundles;
     private final HlsPlaylistParserFactory playlistParserFactory;
     /* access modifiers changed from: private */
     @Nullable
-    public Handler playlistRefreshHandler;
+    public MediaSourceEventListener.EventDispatcher eventDispatcher;
     /* access modifiers changed from: private */
-    public final double playlistStuckTargetDurationCoefficient;
     @Nullable
-    private HlsMediaPlaylist primaryMediaPlaylistSnapshot;
+    public ParsingLoadable.Parser<HlsPlaylist> mediaPlaylistParser;
+    /* access modifiers changed from: private */
+    @Nullable
+    public Handler playlistRefreshHandler;
     /* access modifiers changed from: private */
     @Nullable
     public Uri primaryMediaPlaylistUrl;
     @Nullable
+    private Loader initialPlaylistLoader;
+    private long initialStartTimeUs;
+    private boolean isLive;
+    @Nullable
+    private HlsMasterPlaylist masterPlaylist;
+    @Nullable
+    private HlsMediaPlaylist primaryMediaPlaylistSnapshot;
+    @Nullable
     private HlsPlaylistTracker.PrimaryPlaylistListener primaryPlaylistListener;
-
-    public /* bridge */ /* synthetic */ void onLoadCanceled(Loader.Loadable loadable, long j, long j2, boolean z) {
-        onLoadCanceled((ParsingLoadable<HlsPlaylist>) ((ParsingLoadable) loadable), j, j2, z);
-    }
-
-    public /* bridge */ /* synthetic */ void onLoadCompleted(Loader.Loadable loadable, long j, long j2) {
-        onLoadCompleted((ParsingLoadable<HlsPlaylist>) ((ParsingLoadable) loadable), j, j2);
-    }
-
-    public /* bridge */ /* synthetic */ Loader.LoadErrorAction onLoadError(Loader.Loadable loadable, long j, long j2, IOException iOException, int i) {
-        return onLoadError((ParsingLoadable<HlsPlaylist>) ((ParsingLoadable) loadable), j, j2, iOException, i);
-    }
 
     public DefaultHlsPlaylistTracker(HlsDataSourceFactory dataSourceFactory2, LoadErrorHandlingPolicy loadErrorHandlingPolicy2, HlsPlaylistParserFactory playlistParserFactory2) {
         this(dataSourceFactory2, loadErrorHandlingPolicy2, playlistParserFactory2, 3.5d);
@@ -79,6 +66,27 @@ public final class DefaultHlsPlaylistTracker implements HlsPlaylistTracker, Load
         this.listeners = new ArrayList();
         this.playlistBundles = new HashMap<>();
         this.initialStartTimeUs = C0841C.TIME_UNSET;
+    }
+
+    private static HlsMediaPlaylist.Segment getFirstOldOverlappingSegment(HlsMediaPlaylist oldPlaylist, HlsMediaPlaylist loadedPlaylist) {
+        int mediaSequenceOffset = (int) (loadedPlaylist.mediaSequence - oldPlaylist.mediaSequence);
+        List<HlsMediaPlaylist.Segment> oldSegments = oldPlaylist.segments;
+        if (mediaSequenceOffset < oldSegments.size()) {
+            return oldSegments.get(mediaSequenceOffset);
+        }
+        return null;
+    }
+
+    public /* bridge */ /* synthetic */ void onLoadCanceled(Loader.Loadable loadable, long j, long j2, boolean z) {
+        onLoadCanceled((ParsingLoadable<HlsPlaylist>) ((ParsingLoadable) loadable), j, j2, z);
+    }
+
+    public /* bridge */ /* synthetic */ void onLoadCompleted(Loader.Loadable loadable, long j, long j2) {
+        onLoadCompleted((ParsingLoadable<HlsPlaylist>) ((ParsingLoadable) loadable), j, j2);
+    }
+
+    public /* bridge */ /* synthetic */ Loader.LoadErrorAction onLoadError(Loader.Loadable loadable, long j, long j2, IOException iOException, int i) {
+        return onLoadError((ParsingLoadable<HlsPlaylist>) ((ParsingLoadable) loadable), j, j2, iOException, i);
     }
 
     public void start(Uri initialPlaylistUri, MediaSourceEventListener.EventDispatcher eventDispatcher2, HlsPlaylistTracker.PrimaryPlaylistListener primaryPlaylistListener2) {
@@ -314,28 +322,24 @@ public final class DefaultHlsPlaylistTracker implements HlsPlaylistTracker, Load
         return (oldPlaylist.discontinuitySequence + firstOldOverlappingSegment.relativeDiscontinuitySequence) - loadedPlaylist.segments.get(0).relativeDiscontinuitySequence;
     }
 
-    private static HlsMediaPlaylist.Segment getFirstOldOverlappingSegment(HlsMediaPlaylist oldPlaylist, HlsMediaPlaylist loadedPlaylist) {
-        int mediaSequenceOffset = (int) (loadedPlaylist.mediaSequence - oldPlaylist.mediaSequence);
-        List<HlsMediaPlaylist.Segment> oldSegments = oldPlaylist.segments;
-        if (mediaSequenceOffset < oldSegments.size()) {
-            return oldSegments.get(mediaSequenceOffset);
-        }
-        return null;
-    }
-
     private final class MediaPlaylistBundle implements Loader.Callback<ParsingLoadable<HlsPlaylist>>, Runnable {
+        /* access modifiers changed from: private */
+        public final Uri playlistUrl;
+        private final ParsingLoadable<HlsPlaylist> mediaPlaylistLoadable;
+        private final Loader mediaPlaylistLoader = new Loader("DefaultHlsPlaylistTracker:MediaPlaylist");
         /* access modifiers changed from: private */
         public long blacklistUntilMs;
         private long earliestNextLoadTimeMs;
         private long lastSnapshotChangeMs;
         private long lastSnapshotLoadMs;
         private boolean loadPending;
-        private final ParsingLoadable<HlsPlaylist> mediaPlaylistLoadable;
-        private final Loader mediaPlaylistLoader = new Loader("DefaultHlsPlaylistTracker:MediaPlaylist");
         private IOException playlistError;
         private HlsMediaPlaylist playlistSnapshot;
-        /* access modifiers changed from: private */
-        public final Uri playlistUrl;
+
+        public MediaPlaylistBundle(Uri playlistUrl2) {
+            this.playlistUrl = playlistUrl2;
+            this.mediaPlaylistLoadable = new ParsingLoadable<>(DefaultHlsPlaylistTracker.this.dataSourceFactory.createDataSource(4), playlistUrl2, 4, DefaultHlsPlaylistTracker.this.mediaPlaylistParser);
+        }
 
         public /* bridge */ /* synthetic */ void onLoadCanceled(Loader.Loadable loadable, long j, long j2, boolean z) {
             onLoadCanceled((ParsingLoadable<HlsPlaylist>) ((ParsingLoadable) loadable), j, j2, z);
@@ -347,11 +351,6 @@ public final class DefaultHlsPlaylistTracker implements HlsPlaylistTracker, Load
 
         public /* bridge */ /* synthetic */ Loader.LoadErrorAction onLoadError(Loader.Loadable loadable, long j, long j2, IOException iOException, int i) {
             return onLoadError((ParsingLoadable<HlsPlaylist>) ((ParsingLoadable) loadable), j, j2, iOException, i);
-        }
-
-        public MediaPlaylistBundle(Uri playlistUrl2) {
-            this.playlistUrl = playlistUrl2;
-            this.mediaPlaylistLoadable = new ParsingLoadable<>(DefaultHlsPlaylistTracker.this.dataSourceFactory.createDataSource(4), playlistUrl2, 4, DefaultHlsPlaylistTracker.this.mediaPlaylistParser);
         }
 
         public HlsMediaPlaylist getPlaylistSnapshot() {

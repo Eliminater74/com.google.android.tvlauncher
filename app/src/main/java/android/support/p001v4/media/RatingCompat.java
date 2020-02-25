@@ -7,6 +7,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.RestrictTo;
 import android.util.Log;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -27,54 +28,17 @@ public final class RatingCompat implements Parcelable {
     public static final int RATING_5_STARS = 5;
     public static final int RATING_HEART = 1;
     public static final int RATING_NONE = 0;
-    private static final float RATING_NOT_RATED = -1.0f;
     public static final int RATING_PERCENTAGE = 6;
     public static final int RATING_THUMB_UP_DOWN = 2;
+    private static final float RATING_NOT_RATED = -1.0f;
     private static final String TAG = "Rating";
-    private Object mRatingObj;
     private final int mRatingStyle;
     private final float mRatingValue;
-
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    @Retention(RetentionPolicy.SOURCE)
-    /* renamed from: android.support.v4.media.RatingCompat$StarStyle */
-    public @interface StarStyle {
-    }
-
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    @Retention(RetentionPolicy.SOURCE)
-    /* renamed from: android.support.v4.media.RatingCompat$Style */
-    public @interface Style {
-    }
+    private Object mRatingObj;
 
     RatingCompat(int ratingStyle, float rating) {
         this.mRatingStyle = ratingStyle;
         this.mRatingValue = rating;
-    }
-
-    public String toString() {
-        String str;
-        StringBuilder sb = new StringBuilder();
-        sb.append("Rating:style=");
-        sb.append(this.mRatingStyle);
-        sb.append(" rating=");
-        float f = this.mRatingValue;
-        if (f < 0.0f) {
-            str = "unrated";
-        } else {
-            str = String.valueOf(f);
-        }
-        sb.append(str);
-        return sb.toString();
-    }
-
-    public int describeContents() {
-        return this.mRatingStyle;
-    }
-
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(this.mRatingStyle);
-        dest.writeFloat(this.mRatingValue);
     }
 
     public static RatingCompat newUnratedRating(int ratingStyle) {
@@ -126,6 +90,63 @@ public final class RatingCompat implements Parcelable {
         return null;
     }
 
+    public static RatingCompat fromRating(Object ratingObj) {
+        RatingCompat rating;
+        if (ratingObj == null || Build.VERSION.SDK_INT < 19) {
+            return null;
+        }
+        int ratingStyle = ((Rating) ratingObj).getRatingStyle();
+        if (((Rating) ratingObj).isRated()) {
+            switch (ratingStyle) {
+                case 1:
+                    rating = newHeartRating(((Rating) ratingObj).hasHeart());
+                    break;
+                case 2:
+                    rating = newThumbRating(((Rating) ratingObj).isThumbUp());
+                    break;
+                case 3:
+                case 4:
+                case 5:
+                    rating = newStarRating(ratingStyle, ((Rating) ratingObj).getStarRating());
+                    break;
+                case 6:
+                    rating = newPercentageRating(((Rating) ratingObj).getPercentRating());
+                    break;
+                default:
+                    return null;
+            }
+        } else {
+            rating = newUnratedRating(ratingStyle);
+        }
+        rating.mRatingObj = ratingObj;
+        return rating;
+    }
+
+    public String toString() {
+        String str;
+        StringBuilder sb = new StringBuilder();
+        sb.append("Rating:style=");
+        sb.append(this.mRatingStyle);
+        sb.append(" rating=");
+        float f = this.mRatingValue;
+        if (f < 0.0f) {
+            str = "unrated";
+        } else {
+            str = String.valueOf(f);
+        }
+        sb.append(str);
+        return sb.toString();
+    }
+
+    public int describeContents() {
+        return this.mRatingStyle;
+    }
+
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.mRatingStyle);
+        dest.writeFloat(this.mRatingValue);
+    }
+
     public boolean isRated() {
         return this.mRatingValue >= 0.0f;
     }
@@ -163,38 +184,6 @@ public final class RatingCompat implements Parcelable {
         return this.mRatingValue;
     }
 
-    public static RatingCompat fromRating(Object ratingObj) {
-        RatingCompat rating;
-        if (ratingObj == null || Build.VERSION.SDK_INT < 19) {
-            return null;
-        }
-        int ratingStyle = ((Rating) ratingObj).getRatingStyle();
-        if (((Rating) ratingObj).isRated()) {
-            switch (ratingStyle) {
-                case 1:
-                    rating = newHeartRating(((Rating) ratingObj).hasHeart());
-                    break;
-                case 2:
-                    rating = newThumbRating(((Rating) ratingObj).isThumbUp());
-                    break;
-                case 3:
-                case 4:
-                case 5:
-                    rating = newStarRating(ratingStyle, ((Rating) ratingObj).getStarRating());
-                    break;
-                case 6:
-                    rating = newPercentageRating(((Rating) ratingObj).getPercentRating());
-                    break;
-                default:
-                    return null;
-            }
-        } else {
-            rating = newUnratedRating(ratingStyle);
-        }
-        rating.mRatingObj = ratingObj;
-        return rating;
-    }
-
     public Object getRating() {
         if (this.mRatingObj == null && Build.VERSION.SDK_INT >= 19) {
             if (isRated()) {
@@ -222,5 +211,17 @@ public final class RatingCompat implements Parcelable {
             }
         }
         return this.mRatingObj;
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    @Retention(RetentionPolicy.SOURCE)
+    /* renamed from: android.support.v4.media.RatingCompat$StarStyle */
+    public @interface StarStyle {
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    @Retention(RetentionPolicy.SOURCE)
+    /* renamed from: android.support.v4.media.RatingCompat$Style */
+    public @interface Style {
     }
 }

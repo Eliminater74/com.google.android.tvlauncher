@@ -6,13 +6,16 @@ import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.Util;
 
 public final class CeaUtil {
+    public static final int USER_DATA_IDENTIFIER_GA94 = Util.getIntegerCodeForString("GA94");
+    public static final int USER_DATA_TYPE_CODE_MPEG_CC = 3;
     private static final int COUNTRY_CODE = 181;
     private static final int PAYLOAD_TYPE_CC = 4;
     private static final int PROVIDER_CODE_ATSC = 49;
     private static final int PROVIDER_CODE_DIRECTV = 47;
     private static final String TAG = "CeaUtil";
-    public static final int USER_DATA_IDENTIFIER_GA94 = Util.getIntegerCodeForString("GA94");
-    public static final int USER_DATA_TYPE_CODE_MPEG_CC = 3;
+
+    private CeaUtil() {
+    }
 
     public static void consume(long presentationTimeUs, ParsableByteArray seiBuffer, TrackOutput[] outputs) {
         while (true) {
@@ -79,8 +82,5 @@ public final class CeaUtil {
             }
         }
         return -1;
-    }
-
-    private CeaUtil() {
     }
 }

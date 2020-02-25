@@ -1,6 +1,7 @@
 package com.google.android.libraries.performance.primes.hprof;
 
 import com.android.ahat.dominators.DominatorsComputation;
+
 import java.util.List;
 
 public final class SuperRoot extends HprofObject {

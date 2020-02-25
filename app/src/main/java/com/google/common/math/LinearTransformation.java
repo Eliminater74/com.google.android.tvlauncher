@@ -8,6 +8,25 @@ import com.google.errorprone.annotations.concurrent.LazyInit;
 @GwtIncompatible
 @Beta
 public abstract class LinearTransformation {
+    public static LinearTransformationBuilder mapping(double x1, double y1) {
+        Preconditions.checkArgument(DoubleUtils.isFinite(x1) && DoubleUtils.isFinite(y1));
+        return new LinearTransformationBuilder(x1, y1);
+    }
+
+    public static LinearTransformation vertical(double x) {
+        Preconditions.checkArgument(DoubleUtils.isFinite(x));
+        return new VerticalLinearTransformation(x);
+    }
+
+    public static LinearTransformation horizontal(double y) {
+        Preconditions.checkArgument(DoubleUtils.isFinite(y));
+        return new RegularLinearTransformation(0.0d, y);
+    }
+
+    public static LinearTransformation forNaN() {
+        return NaNLinearTransformation.INSTANCE;
+    }
+
     public abstract LinearTransformation inverse();
 
     public abstract boolean isHorizontal();
@@ -17,11 +36,6 @@ public abstract class LinearTransformation {
     public abstract double slope();
 
     public abstract double transform(double d);
-
-    public static LinearTransformationBuilder mapping(double x1, double y1) {
-        Preconditions.checkArgument(DoubleUtils.isFinite(x1) && DoubleUtils.isFinite(y1));
-        return new LinearTransformationBuilder(x1, y1);
-    }
 
     public static final class LinearTransformationBuilder {
 
@@ -59,25 +73,11 @@ public abstract class LinearTransformation {
         }
     }
 
-    public static LinearTransformation vertical(double x) {
-        Preconditions.checkArgument(DoubleUtils.isFinite(x));
-        return new VerticalLinearTransformation(x);
-    }
-
-    public static LinearTransformation horizontal(double y) {
-        Preconditions.checkArgument(DoubleUtils.isFinite(y));
-        return new RegularLinearTransformation(0.0d, y);
-    }
-
-    public static LinearTransformation forNaN() {
-        return NaNLinearTransformation.INSTANCE;
-    }
-
     private static final class RegularLinearTransformation extends LinearTransformation {
-        @LazyInit
-        LinearTransformation inverse;
         final double slope;
         final double yIntercept;
+        @LazyInit
+        LinearTransformation inverse;
 
         RegularLinearTransformation(double slope2, double yIntercept2) {
             this.slope = slope2;
@@ -131,11 +131,10 @@ public abstract class LinearTransformation {
     }
 
     private static final class VerticalLinearTransformation extends LinearTransformation {
-        @LazyInit
-        LinearTransformation inverse;
-
         /* renamed from: x */
         final double f182x;
+        @LazyInit
+        LinearTransformation inverse;
 
         VerticalLinearTransformation(double x) {
             this.f182x = x;

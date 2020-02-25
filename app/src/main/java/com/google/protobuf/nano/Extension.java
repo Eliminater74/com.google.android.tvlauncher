@@ -4,7 +4,7 @@ import com.google.protobuf.CodedOutputStream;
 import com.google.protobuf.GeneratedMessageLite;
 import com.google.protobuf.Internal;
 import com.google.protobuf.MessageLite;
-import com.google.protobuf.nano.ExtendableMessageNano;
+
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -29,11 +29,23 @@ public class Extension<M extends ExtendableMessageNano<M>, T> {
     public static final int TYPE_STRING = 9;
     public static final int TYPE_UINT32 = 13;
     public static final int TYPE_UINT64 = 4;
+    public final int tag;
     protected final Class<T> clazz;
     protected final GeneratedMessageLite<?, ?> defaultInstance;
     protected final boolean repeated;
-    public final int tag;
     protected final int type;
+
+    private Extension(int type2, Class<T> clazz2, int tag2, boolean repeated2) {
+        this(type2, clazz2, (GeneratedMessageLite<?, ?>) null, tag2, repeated2);
+    }
+
+    private Extension(int type2, Class<T> clazz2, GeneratedMessageLite<?, ?> defaultInstance2, int tag2, boolean repeated2) {
+        this.type = type2;
+        this.clazz = clazz2;
+        this.tag = tag2;
+        this.repeated = repeated2;
+        this.defaultInstance = defaultInstance2;
+    }
 
     @Deprecated
     public static <M extends ExtendableMessageNano<M>, T extends MessageNano> Extension<M, T> createMessageTyped(int type2, Class<T> clazz2, int tag2) {
@@ -82,18 +94,6 @@ public class Extension<M extends ExtendableMessageNano<M>, T> {
 
     public static <M extends ExtendableMessageNano<M>, T> Extension<M, T> createRepeatedPrimitiveTyped(int type2, Class<T> clazz2, long tag2, long nonPackedTag, long packedTag) {
         return new PrimitiveExtension(type2, clazz2, (int) tag2, true, (int) nonPackedTag, (int) packedTag);
-    }
-
-    private Extension(int type2, Class<T> clazz2, int tag2, boolean repeated2) {
-        this(type2, clazz2, (GeneratedMessageLite<?, ?>) null, tag2, repeated2);
-    }
-
-    private Extension(int type2, Class<T> clazz2, GeneratedMessageLite<?, ?> defaultInstance2, int tag2, boolean repeated2) {
-        this.type = type2;
-        this.clazz = clazz2;
-        this.tag = tag2;
-        this.repeated = repeated2;
-        this.defaultInstance = defaultInstance2;
     }
 
     public boolean equals(Object other) {

@@ -1,67 +1,21 @@
 package android.support.p004v7.widget;
 
 import android.graphics.Rect;
-import android.support.p004v7.widget.RecyclerView;
 import android.view.View;
 
 /* renamed from: android.support.v7.widget.OrientationHelper */
 public abstract class OrientationHelper {
     public static final int HORIZONTAL = 0;
-    private static final int INVALID_SIZE = Integer.MIN_VALUE;
     public static final int VERTICAL = 1;
-    private int mLastTotalSpace;
+    private static final int INVALID_SIZE = Integer.MIN_VALUE;
     protected final RecyclerView.LayoutManager mLayoutManager;
     final Rect mTmpRect;
-
-    public abstract int getDecoratedEnd(View view);
-
-    public abstract int getDecoratedMeasurement(View view);
-
-    public abstract int getDecoratedMeasurementInOther(View view);
-
-    public abstract int getDecoratedStart(View view);
-
-    public abstract int getEnd();
-
-    public abstract int getEndAfterPadding();
-
-    public abstract int getEndPadding();
-
-    public abstract int getMode();
-
-    public abstract int getModeInOther();
-
-    public abstract int getStartAfterPadding();
-
-    public abstract int getTotalSpace();
-
-    public abstract int getTransformedEndWithDecoration(View view);
-
-    public abstract int getTransformedStartWithDecoration(View view);
-
-    public abstract void offsetChild(View view, int i);
-
-    public abstract void offsetChildren(int i);
+    private int mLastTotalSpace;
 
     private OrientationHelper(RecyclerView.LayoutManager layoutManager) {
         this.mLastTotalSpace = Integer.MIN_VALUE;
         this.mTmpRect = new Rect();
         this.mLayoutManager = layoutManager;
-    }
-
-    public RecyclerView.LayoutManager getLayoutManager() {
-        return this.mLayoutManager;
-    }
-
-    public void onLayoutComplete() {
-        this.mLastTotalSpace = getTotalSpace();
-    }
-
-    public int getTotalSpaceChange() {
-        if (Integer.MIN_VALUE == this.mLastTotalSpace) {
-            return 0;
-        }
-        return getTotalSpace() - this.mLastTotalSpace;
     }
 
     public static OrientationHelper createOrientationHelper(RecyclerView.LayoutManager layoutManager, int orientation) {
@@ -208,5 +162,50 @@ public abstract class OrientationHelper {
                 return this.mLayoutManager.getWidthMode();
             }
         };
+    }
+
+    public abstract int getDecoratedEnd(View view);
+
+    public abstract int getDecoratedMeasurement(View view);
+
+    public abstract int getDecoratedMeasurementInOther(View view);
+
+    public abstract int getDecoratedStart(View view);
+
+    public abstract int getEnd();
+
+    public abstract int getEndAfterPadding();
+
+    public abstract int getEndPadding();
+
+    public abstract int getMode();
+
+    public abstract int getModeInOther();
+
+    public abstract int getStartAfterPadding();
+
+    public abstract int getTotalSpace();
+
+    public abstract int getTransformedEndWithDecoration(View view);
+
+    public abstract int getTransformedStartWithDecoration(View view);
+
+    public abstract void offsetChild(View view, int i);
+
+    public abstract void offsetChildren(int i);
+
+    public RecyclerView.LayoutManager getLayoutManager() {
+        return this.mLayoutManager;
+    }
+
+    public void onLayoutComplete() {
+        this.mLastTotalSpace = getTotalSpace();
+    }
+
+    public int getTotalSpaceChange() {
+        if (Integer.MIN_VALUE == this.mLastTotalSpace) {
+            return 0;
+        }
+        return getTotalSpace() - this.mLastTotalSpace;
     }
 }

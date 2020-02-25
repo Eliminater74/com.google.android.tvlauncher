@@ -3,6 +3,7 @@ package com.google.android.tvlauncher.settings;
 import android.content.Context;
 import android.support.annotation.VisibleForTesting;
 import android.widget.TextView;
+
 import androidx.preference.PreferenceViewHolder;
 import androidx.preference.SwitchPreference;
 

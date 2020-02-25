@@ -1,8 +1,5 @@
 package com.google.android.exoplayer2.source;
 
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.MediaSourceEventListener;
-
 final /* synthetic */ class MediaSourceEventListener$EventDispatcher$$Lambda$7 implements Runnable {
     private final MediaSourceEventListener.EventDispatcher arg$1;
     private final MediaSourceEventListener arg$2;

@@ -2,12 +2,15 @@ package com.google.common.util.concurrent;
 
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.GwtCompatible;
-import com.google.common.util.concurrent.AbstractFuture;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible
 public final class SettableFuture<V> extends AbstractFuture.TrustedFuture<V> {
+    private SettableFuture() {
+    }
+
     public static <V> SettableFuture<V> create() {
         return new SettableFuture<>();
     }
@@ -26,8 +29,5 @@ public final class SettableFuture<V> extends AbstractFuture.TrustedFuture<V> {
     @Beta
     public boolean setFuture(ListenableFuture<? extends V> future) {
         return super.setFuture(future);
-    }
-
-    private SettableFuture() {
     }
 }

@@ -5,12 +5,13 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import com.google.android.exoplayer2.offline.Downloader;
+
 import com.google.android.exoplayer2.scheduler.Requirements;
 import com.google.android.exoplayer2.scheduler.RequirementsWatcher;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -22,10 +23,10 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 public final class DownloadManager {
-    private static final boolean DEBUG = false;
     public static final int DEFAULT_MAX_PARALLEL_DOWNLOADS = 3;
     public static final int DEFAULT_MIN_RETRY_COUNT = 5;
     public static final Requirements DEFAULT_REQUIREMENTS = new Requirements(1);
+    private static final boolean DEBUG = false;
     private static final int MSG_ADD_DOWNLOAD = 4;
     private static final int MSG_CONTENT_LENGTH_CHANGED = 7;
     private static final int MSG_DOWNLOAD_CHANGED = 2;
@@ -44,44 +45,28 @@ public final class DownloadManager {
     private static final int START_THREAD_WAIT_DOWNLOAD_CANCELLATION = 2;
     private static final int START_THREAD_WAIT_REMOVAL_TO_FINISH = 1;
     private static final String TAG = "DownloadManager";
-    private int activeDownloadCount;
     private final Context context;
     private final WritableDownloadIndex downloadIndex;
     private final ArrayList<DownloadInternal> downloadInternals = new ArrayList<>();
     private final HashMap<String, DownloadThread> downloadThreads = new HashMap<>();
     private final DownloaderFactory downloaderFactory;
     private final ArrayList<Download> downloads = new ArrayList<>();
-    private boolean downloadsResumed;
-    private boolean initialized;
     private final Handler internalHandler;
     private final HandlerThread internalThread = new HandlerThread("DownloadManager file i/o");
     private final CopyOnWriteArraySet<Listener> listeners = new CopyOnWriteArraySet<>();
     private final Handler mainHandler = new Handler(Util.getLooper(), new DownloadManager$$Lambda$1(this));
+    private final Object releaseLock = new Object();
+    private final RequirementsWatcher.Listener requirementsListener = new DownloadManager$$Lambda$0(this);
+    private int activeDownloadCount;
+    private boolean downloadsResumed;
+    private boolean initialized;
     private volatile int maxParallelDownloads = 3;
     private volatile int minRetryCount = 5;
     private int notMetRequirements;
     private int parallelDownloads;
     private int pendingMessages;
-    private final Object releaseLock = new Object();
     private boolean released;
-    private final RequirementsWatcher.Listener requirementsListener = new DownloadManager$$Lambda$0(this);
     private RequirementsWatcher requirementsWatcher;
-
-    public interface Listener {
-        void onDownloadChanged(DownloadManager downloadManager, Download download);
-
-        void onDownloadRemoved(DownloadManager downloadManager, Download download);
-
-        void onIdle(DownloadManager downloadManager);
-
-        void onInitialized(DownloadManager downloadManager);
-
-        void onRequirementsStateChanged(DownloadManager downloadManager, Requirements requirements, int i);
-    }
-
-    @Retention(RetentionPolicy.SOURCE)
-    private @interface StartThreadResults {
-    }
 
     public DownloadManager(Context context2, WritableDownloadIndex downloadIndex2, DownloaderFactory downloaderFactory2) {
         this.context = context2.getApplicationContext();
@@ -93,6 +78,39 @@ public final class DownloadManager {
         int notMetRequirements2 = this.requirementsWatcher.start();
         this.pendingMessages = 1;
         this.internalHandler.obtainMessage(0, notMetRequirements2, 0).sendToTarget();
+    }
+
+    static Download mergeRequest(Download download, DownloadRequest request, int stopReason) {
+        int state;
+        Download download2 = download;
+        int state2 = download2.state;
+        if (state2 == 5 || state2 == 7) {
+            state = 7;
+        } else if (stopReason != 0) {
+            state = 1;
+        } else {
+            state = 0;
+        }
+        long nowMs = System.currentTimeMillis();
+        return new Download(download2.request.copyWithMergedRequest(request), state, download.isTerminalState() ? nowMs : download2.startTimeMs, nowMs, -1, stopReason, 0);
+    }
+
+    private static Download copyWithState(Download download, int state) {
+        return new Download(download.request, state, download.startTimeMs, System.currentTimeMillis(), download.contentLength, download.stopReason, 0, download.progress);
+    }
+
+    private static void logd(String message) {
+    }
+
+    private static void logd(String message, DownloadInternal downloadInternal) {
+        logd(message, downloadInternal.download.request);
+    }
+
+    /* access modifiers changed from: private */
+    public static void logd(String message, DownloadRequest request) {
+    }
+
+    private static void logdFlags(String message, int flags) {
     }
 
     public boolean isInitialized() {
@@ -639,47 +657,30 @@ public final class DownloadManager {
         return this.downloadsResumed && this.notMetRequirements == 0;
     }
 
-    static Download mergeRequest(Download download, DownloadRequest request, int stopReason) {
-        int state;
-        Download download2 = download;
-        int state2 = download2.state;
-        if (state2 == 5 || state2 == 7) {
-            state = 7;
-        } else if (stopReason != 0) {
-            state = 1;
-        } else {
-            state = 0;
-        }
-        long nowMs = System.currentTimeMillis();
-        return new Download(download2.request.copyWithMergedRequest(request), state, download.isTerminalState() ? nowMs : download2.startTimeMs, nowMs, -1, stopReason, 0);
+    public interface Listener {
+        void onDownloadChanged(DownloadManager downloadManager, Download download);
+
+        void onDownloadRemoved(DownloadManager downloadManager, Download download);
+
+        void onIdle(DownloadManager downloadManager);
+
+        void onInitialized(DownloadManager downloadManager);
+
+        void onRequirementsStateChanged(DownloadManager downloadManager, Requirements requirements, int i);
     }
 
-    private static Download copyWithState(Download download, int state) {
-        return new Download(download.request, state, download.startTimeMs, System.currentTimeMillis(), download.contentLength, download.stopReason, 0, download.progress);
-    }
-
-    private static void logd(String message) {
-    }
-
-    private static void logd(String message, DownloadInternal downloadInternal) {
-        logd(message, downloadInternal.download.request);
-    }
-
-    /* access modifiers changed from: private */
-    public static void logd(String message, DownloadRequest request) {
-    }
-
-    private static void logdFlags(String message, int flags) {
+    @Retention(RetentionPolicy.SOURCE)
+    private @interface StartThreadResults {
     }
 
     private static final class DownloadInternal {
-        private long contentLength;
+        private final DownloadManager downloadManager;
         /* access modifiers changed from: private */
         public Download download;
-        private final DownloadManager downloadManager;
-        private int failureReason;
         /* access modifiers changed from: private */
         public int state;
+        private long contentLength;
+        private int failureReason;
         private int stopReason;
 
         private DownloadInternal(DownloadManager downloadManager2, Download download2) {
@@ -834,18 +835,18 @@ public final class DownloadManager {
 
     private static class DownloadThread extends Thread implements Downloader.ProgressListener {
         /* access modifiers changed from: private */
-        public long contentLength;
+        public final boolean isRemove;
+        /* access modifiers changed from: private */
+        public final DownloadRequest request;
         private final DownloadProgress downloadProgress;
         private final Downloader downloader;
+        private final int minRetryCount;
+        /* access modifiers changed from: private */
+        public long contentLength;
         /* access modifiers changed from: private */
         public Throwable finalError;
         /* access modifiers changed from: private */
         public volatile boolean isCanceled;
-        /* access modifiers changed from: private */
-        public final boolean isRemove;
-        private final int minRetryCount;
-        /* access modifiers changed from: private */
-        public final DownloadRequest request;
         private volatile Handler updateHandler;
 
         private DownloadThread(DownloadRequest request2, Downloader downloader2, DownloadProgress downloadProgress2, boolean isRemove2, int minRetryCount2, Handler updateHandler2) {
@@ -856,6 +857,10 @@ public final class DownloadManager {
             this.minRetryCount = minRetryCount2;
             this.updateHandler = updateHandler2;
             this.contentLength = -1;
+        }
+
+        private static int getRetryDelayMillis(int errorCount) {
+            return Math.min((errorCount - 1) * 1000, 5000);
         }
 
         public void cancel(boolean released) {
@@ -924,10 +929,6 @@ public final class DownloadManager {
                     updateHandler2.obtainMessage(7, this).sendToTarget();
                 }
             }
-        }
-
-        private static int getRetryDelayMillis(int errorCount) {
-            return Math.min((errorCount - 1) * 1000, 5000);
         }
     }
 }

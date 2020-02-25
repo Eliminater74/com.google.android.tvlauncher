@@ -4,16 +4,12 @@ package com.google.android.gms.internal;
 final class zzgol<V> {
     private static final Object zza = new Object();
     private static final zzgol<Object> zzb = new zzgol<>(true);
-    private int zzc;
     private final float zzd;
+    private int zzc;
     private int[] zze;
     private V[] zzf;
     private int zzg;
     private int zzh;
-
-    static <V> zzgol<V> zza() {
-        return zzb;
-    }
 
     public zzgol() {
         this(8, 0.5f);
@@ -32,6 +28,10 @@ final class zzgol<V> {
         this.zzd = 0.5f;
         this.zze = null;
         this.zzf = null;
+    }
+
+    static <V> zzgol<V> zza() {
+        return zzb;
     }
 
     private static <T> T zza(T t) {

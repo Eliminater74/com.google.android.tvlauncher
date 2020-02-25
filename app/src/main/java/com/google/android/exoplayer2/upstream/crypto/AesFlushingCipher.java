@@ -2,10 +2,12 @@ package com.google.android.exoplayer2.upstream.crypto;
 
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Util;
+
 import java.nio.ByteBuffer;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.ShortBufferException;
@@ -16,8 +18,8 @@ public final class AesFlushingCipher {
     private final int blockSize;
     private final Cipher cipher;
     private final byte[] flushedBlock;
-    private int pendingXorBytes;
     private final byte[] zerosBlock;
+    private int pendingXorBytes;
 
     public AesFlushingCipher(int mode, byte[] secretKey, long nonce, long offset) {
         try {

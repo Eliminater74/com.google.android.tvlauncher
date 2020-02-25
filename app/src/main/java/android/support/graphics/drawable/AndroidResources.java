@@ -6,13 +6,6 @@ class AndroidResources {
     public static final int FAST_OUT_LINEAR_IN = 17563663;
     public static final int FAST_OUT_SLOW_IN = 17563661;
     public static final int LINEAR_OUT_SLOW_IN = 17563662;
-    static final int[] STYLEABLE_ANIMATED_VECTOR_DRAWABLE = {16843161};
-    static final int STYLEABLE_ANIMATED_VECTOR_DRAWABLE_DRAWABLE = 0;
-    static final int[] STYLEABLE_ANIMATED_VECTOR_DRAWABLE_TARGET = {16842755, 16843213};
-    @StyleableRes
-    static final int STYLEABLE_ANIMATED_VECTOR_DRAWABLE_TARGET_ANIMATION = 1;
-    @StyleableRes
-    static final int STYLEABLE_ANIMATED_VECTOR_DRAWABLE_TARGET_NAME = 0;
     public static final int[] STYLEABLE_ANIMATOR = {16843073, 16843160, 16843198, 16843199, 16843200, 16843486, 16843487, 16843488};
     public static final int STYLEABLE_ANIMATOR_DURATION = 1;
     public static final int STYLEABLE_ANIMATOR_INTERPOLATOR = 0;
@@ -45,6 +38,13 @@ class AndroidResources {
     public static final int STYLEABLE_PROPERTY_VALUES_HOLDER_VALUE_FROM = 0;
     public static final int STYLEABLE_PROPERTY_VALUES_HOLDER_VALUE_TO = 1;
     public static final int STYLEABLE_PROPERTY_VALUES_HOLDER_VALUE_TYPE = 2;
+    static final int[] STYLEABLE_ANIMATED_VECTOR_DRAWABLE = {16843161};
+    static final int STYLEABLE_ANIMATED_VECTOR_DRAWABLE_DRAWABLE = 0;
+    static final int[] STYLEABLE_ANIMATED_VECTOR_DRAWABLE_TARGET = {16842755, 16843213};
+    @StyleableRes
+    static final int STYLEABLE_ANIMATED_VECTOR_DRAWABLE_TARGET_ANIMATION = 1;
+    @StyleableRes
+    static final int STYLEABLE_ANIMATED_VECTOR_DRAWABLE_TARGET_NAME = 0;
     static final int STYLEABLE_VECTOR_DRAWABLE_ALPHA = 4;
     static final int STYLEABLE_VECTOR_DRAWABLE_AUTO_MIRRORED = 5;
     static final int[] STYLEABLE_VECTOR_DRAWABLE_CLIP_PATH = {16842755, 16843781, 16844062};

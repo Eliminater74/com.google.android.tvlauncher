@@ -1,7 +1,5 @@
 package com.google.android.gms.internal;
 
-import com.google.android.gms.internal.zzgoj;
-
 /* compiled from: ClientAnalytics */
 final /* synthetic */ class zzgta {
     static final /* synthetic */ int[] zza = new int[zzgoj.zzg.m43x126d66cb().length];

@@ -1,6 +1,7 @@
 package com.google.android.gms.phenotype;
 
 import android.content.SharedPreferences;
+
 import com.google.android.gms.common.api.GoogleApiClient;
 
 public class PhenotypeFlagSharedPrefsCommitter extends PhenotypeFlagCommitter {

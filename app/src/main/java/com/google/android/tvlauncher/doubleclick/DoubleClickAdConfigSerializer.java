@@ -3,9 +3,11 @@ package com.google.android.tvlauncher.doubleclick;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
+
 import com.google.android.tvlauncher.doubleclick.proto.nano.AdConfig;
 import com.google.protobuf.nano.InvalidProtocolBufferNanoException;
 import com.google.protobuf.nano.MessageNano;
+
 import java.util.Arrays;
 
 public class DoubleClickAdConfigSerializer implements AdConfigSerializer {

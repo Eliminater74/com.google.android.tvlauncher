@@ -5,7 +5,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.util.Log;
+
 import com.bumptech.glide.load.DecodeFormat;
+
 import java.io.File;
 
 final class HardwareConfigState {
@@ -17,6 +19,9 @@ final class HardwareConfigState {
     private volatile int decodesSinceLastFdCheck;
     private volatile boolean isHardwareConfigAllowed = true;
 
+    private HardwareConfigState() {
+    }
+
     static HardwareConfigState getInstance() {
         if (instance == null) {
             synchronized (HardwareConfigState.class) {
@@ -26,9 +31,6 @@ final class HardwareConfigState {
             }
         }
         return instance;
-    }
-
-    private HardwareConfigState() {
     }
 
     /* access modifiers changed from: package-private */

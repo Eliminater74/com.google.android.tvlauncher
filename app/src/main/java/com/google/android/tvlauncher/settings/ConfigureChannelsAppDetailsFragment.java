@@ -4,9 +4,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.VisibleForTesting;
+
 import androidx.leanback.preference.LeanbackPreferenceFragment;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceScreen;
+
 import com.google.android.tvlauncher.C1188R;
 import com.google.android.tvlauncher.TvlauncherLogEnum;
 import com.google.android.tvlauncher.analytics.ClickEvent;
@@ -18,6 +20,7 @@ import com.google.android.tvlauncher.home.WatchNextPrefs;
 import com.google.android.tvlauncher.model.Channel;
 import com.google.android.tvrecommendations.shared.util.Constants;
 import com.google.logs.tvlauncher.config.TvLauncherConstants;
+
 import java.util.Comparator;
 import java.util.List;
 
@@ -25,17 +28,17 @@ public class ConfigureChannelsAppDetailsFragment extends LeanbackPreferenceFragm
     static final String APP_NAME_KEY = "app_name";
     static final String CHANNEL_APP_KEY = "channel_app";
     private static final Comparator<Channel> CHANNEL_COMPARATOR = ConfigureChannelsAppDetailsFragment$$Lambda$0.$instance;
+    private final FragmentEventLogger mEventLogger = new FragmentEventLogger(this);
     private String mAppName;
     private String mChannelAppKey;
+    private boolean mLoggedOpenEvent;
+    private boolean mStarted;
+    private TvDataManager mTvDataManager;
     private final PackageChannelsObserver mChannelsObserver = new PackageChannelsObserver() {
         public void onChannelsChange() {
             ConfigureChannelsAppDetailsFragment.this.onChannelsLoaded();
         }
     };
-    private final FragmentEventLogger mEventLogger = new FragmentEventLogger(this);
-    private boolean mLoggedOpenEvent;
-    private boolean mStarted;
-    private TvDataManager mTvDataManager;
     private TvDataManager.Provider mTvDataManagerProvider = TvDataManager.PROVIDER;
 
     static final /* synthetic */ int lambda$static$0$ConfigureChannelsAppDetailsFragment(Channel o1, Channel o2) {

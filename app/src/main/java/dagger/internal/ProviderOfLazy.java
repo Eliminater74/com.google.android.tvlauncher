@@ -1,7 +1,8 @@
 package dagger.internal;
 
-import dagger.Lazy;
 import javax.inject.Provider;
+
+import dagger.Lazy;
 
 public final class ProviderOfLazy<T> implements Provider<Lazy<T>> {
     static final /* synthetic */ boolean $assertionsDisabled = false;
@@ -11,11 +12,11 @@ public final class ProviderOfLazy<T> implements Provider<Lazy<T>> {
         this.provider = provider2;
     }
 
-    public Lazy<T> get() {
-        return DoubleCheck.lazy(this.provider);
-    }
-
     public static <T> Provider<Lazy<T>> create(Provider<T> provider2) {
         return new ProviderOfLazy((Provider) Preconditions.checkNotNull(provider2));
+    }
+
+    public Lazy<T> get() {
+        return DoubleCheck.lazy(this.provider);
     }
 }

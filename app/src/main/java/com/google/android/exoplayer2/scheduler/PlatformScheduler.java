@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.PersistableBundle;
 import android.support.annotation.RequiresPermission;
+
 import com.google.android.exoplayer2.util.Util;
 
 @TargetApi(21)
@@ -27,28 +28,6 @@ public final class PlatformScheduler implements Scheduler {
         this.jobId = jobId2;
         this.jobServiceComponentName = new ComponentName(context, PlatformSchedulerService.class);
         this.jobScheduler = (JobScheduler) context.getSystemService("jobscheduler");
-    }
-
-    public boolean schedule(Requirements requirements, String servicePackage, String serviceAction) {
-        int result = this.jobScheduler.schedule(buildJobInfo(this.jobId, this.jobServiceComponentName, requirements, serviceAction, servicePackage));
-        int i = this.jobId;
-        StringBuilder sb = new StringBuilder(47);
-        sb.append("Scheduling job: ");
-        sb.append(i);
-        sb.append(" result: ");
-        sb.append(result);
-        logd(sb.toString());
-        return result == 1;
-    }
-
-    public boolean cancel() {
-        int i = this.jobId;
-        StringBuilder sb = new StringBuilder(26);
-        sb.append("Canceling job: ");
-        sb.append(i);
-        logd(sb.toString());
-        this.jobScheduler.cancel(this.jobId);
-        return true;
     }
 
     private static JobInfo buildJobInfo(int jobId2, ComponentName jobServiceComponentName2, Requirements requirements, String serviceAction, String servicePackage) {
@@ -71,6 +50,28 @@ public final class PlatformScheduler implements Scheduler {
 
     /* access modifiers changed from: private */
     public static void logd(String message) {
+    }
+
+    public boolean schedule(Requirements requirements, String servicePackage, String serviceAction) {
+        int result = this.jobScheduler.schedule(buildJobInfo(this.jobId, this.jobServiceComponentName, requirements, serviceAction, servicePackage));
+        int i = this.jobId;
+        StringBuilder sb = new StringBuilder(47);
+        sb.append("Scheduling job: ");
+        sb.append(i);
+        sb.append(" result: ");
+        sb.append(result);
+        logd(sb.toString());
+        return result == 1;
+    }
+
+    public boolean cancel() {
+        int i = this.jobId;
+        StringBuilder sb = new StringBuilder(26);
+        sb.append("Canceling job: ");
+        sb.append(i);
+        logd(sb.toString());
+        this.jobScheduler.cancel(this.jobId);
+        return true;
     }
 
     public static final class PlatformSchedulerService extends JobService {

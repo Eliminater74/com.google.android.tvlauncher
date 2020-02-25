@@ -1,17 +1,19 @@
 package com.google.android.exoplayer2.upstream;
 
 import android.support.annotation.NonNull;
+
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.common.primitives.UnsignedBytes;
+
 import java.io.IOException;
 import java.io.InputStream;
 
 public final class DataSourceInputStream extends InputStream {
-    private boolean closed = false;
     private final DataSource dataSource;
     private final DataSpec dataSpec;
-    private boolean opened = false;
     private final byte[] singleByteArray;
+    private boolean closed = false;
+    private boolean opened = false;
     private long totalBytesRead;
 
     public DataSourceInputStream(DataSource dataSource2, DataSpec dataSpec2) {

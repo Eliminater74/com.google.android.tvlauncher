@@ -1,8 +1,8 @@
 package com.google.protobuf;
 
 import com.google.common.primitives.UnsignedBytes;
-import com.google.protobuf.ByteString;
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InvalidObjectException;
@@ -22,9 +22,9 @@ final class RopeByteString extends ByteString {
     private static final long serialVersionUID = 1;
     /* access modifiers changed from: private */
     public final ByteString left;
-    private final int leftLength;
     /* access modifiers changed from: private */
     public final ByteString right;
+    private final int leftLength;
     private final int totalLength;
     private final int treeDepth;
 
@@ -94,8 +94,8 @@ final class RopeByteString extends ByteString {
 
     public ByteString.ByteIterator iterator() {
         return new ByteString.AbstractByteIterator() {
-            ByteString.ByteIterator current = nextPiece();
             final PieceIterator pieces = new PieceIterator(RopeByteString.this);
+            ByteString.ByteIterator current = nextPiece();
 
             private ByteString.ByteIterator nextPiece() {
                 if (this.pieces.hasNext()) {
@@ -359,6 +359,15 @@ final class RopeByteString extends ByteString {
         return new RopeInputStream();
     }
 
+    /* access modifiers changed from: package-private */
+    public Object writeReplace() {
+        return ByteString.wrap(toByteArray());
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException {
+        throw new InvalidObjectException("RopeByteStream instances are not to be serialized directly");
+    }
+
     private static class Balancer {
         private final ArrayDeque<ByteString> prefixesStack;
 
@@ -478,15 +487,6 @@ final class RopeByteString extends ByteString {
         public void remove() {
             throw new UnsupportedOperationException();
         }
-    }
-
-    /* access modifiers changed from: package-private */
-    public Object writeReplace() {
-        return ByteString.wrap(toByteArray());
-    }
-
-    private void readObject(ObjectInputStream in) throws IOException {
-        throw new InvalidObjectException("RopeByteStream instances are not to be serialized directly");
     }
 
     private class RopeInputStream extends InputStream {

@@ -1,7 +1,9 @@
 package com.google.android.gms.common.data;
 
 import android.os.Bundle;
+
 import com.google.android.gms.common.internal.Hide;
+
 import java.util.Iterator;
 
 public abstract class AbstractDataBuffer<T> implements DataBuffer<T> {

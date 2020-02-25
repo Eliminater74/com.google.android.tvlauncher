@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+
 import com.google.android.tvlauncher.C1188R;
 import com.google.android.tvlauncher.analytics.LoggingActivity;
 import com.google.android.tvlauncher.util.Util;
@@ -30,12 +31,12 @@ public class NotificationsSidePanelActivity extends LoggingActivity implements L
     /* access modifiers changed from: private */
     public NotificationsPanelAdapter mPanelAdapter;
 
-    public /* bridge */ /* synthetic */ void onLoadFinished(Loader loader, Object obj) {
-        onLoadFinished((Loader<Cursor>) loader, (Cursor) obj);
-    }
-
     public NotificationsSidePanelActivity() {
         super("NotificationSidePanel", TvLauncherConstants.NOTIFICATIONS_PAGE);
+    }
+
+    public /* bridge */ /* synthetic */ void onLoadFinished(Loader loader, Object obj) {
+        onLoadFinished((Loader<Cursor>) loader, (Cursor) obj);
     }
 
     /* access modifiers changed from: protected */

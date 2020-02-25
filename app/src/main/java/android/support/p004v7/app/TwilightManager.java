@@ -9,7 +9,9 @@ import android.support.annotation.RequiresPermission;
 import android.support.annotation.VisibleForTesting;
 import android.support.p001v4.content.PermissionChecker;
 import android.util.Log;
+
 import com.google.android.exoplayer2.upstream.DefaultLoadErrorHandlingPolicy;
+
 import java.util.Calendar;
 
 /* renamed from: android.support.v7.app.TwilightManager */
@@ -22,6 +24,12 @@ class TwilightManager {
     private final LocationManager mLocationManager;
     private final TwilightState mTwilightState = new TwilightState();
 
+    @VisibleForTesting
+    TwilightManager(@NonNull Context context, @NonNull LocationManager locationManager) {
+        this.mContext = context;
+        this.mLocationManager = locationManager;
+    }
+
     static TwilightManager getInstance(@NonNull Context context) {
         if (sInstance == null) {
             Context context2 = context.getApplicationContext();
@@ -33,12 +41,6 @@ class TwilightManager {
     @VisibleForTesting
     static void setInstance(TwilightManager twilightManager) {
         sInstance = twilightManager;
-    }
-
-    @VisibleForTesting
-    TwilightManager(@NonNull Context context, @NonNull LocationManager locationManager) {
-        this.mContext = context;
-        this.mLocationManager = locationManager;
     }
 
     /* access modifiers changed from: package-private */

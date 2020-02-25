@@ -9,6 +9,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.leanback.C0364R;
 import androidx.leanback.widget.SearchOrbView;
 import androidx.leanback.widget.TitleHelper;
@@ -47,6 +48,10 @@ public class BrandedSupportFragment extends Fragment {
         setTitleView(null);
     }
 
+    public View getTitleView() {
+        return this.mTitleView;
+    }
+
     public void setTitleView(View titleView) {
         this.mTitleView = titleView;
         View view = this.mTitleView;
@@ -68,10 +73,6 @@ public class BrandedSupportFragment extends Fragment {
         if (getView() instanceof ViewGroup) {
             this.mTitleHelper = new TitleHelper((ViewGroup) getView(), this.mTitleView);
         }
-    }
-
-    public View getTitleView() {
-        return this.mTitleView;
     }
 
     public TitleViewAdapter getTitleViewAdapter() {
@@ -123,6 +124,10 @@ public class BrandedSupportFragment extends Fragment {
         showTitle(true);
     }
 
+    public Drawable getBadgeDrawable() {
+        return this.mBadgeDrawable;
+    }
+
     public void setBadgeDrawable(Drawable drawable) {
         if (this.mBadgeDrawable != drawable) {
             this.mBadgeDrawable = drawable;
@@ -133,8 +138,8 @@ public class BrandedSupportFragment extends Fragment {
         }
     }
 
-    public Drawable getBadgeDrawable() {
-        return this.mBadgeDrawable;
+    public CharSequence getTitle() {
+        return this.mTitle;
     }
 
     public void setTitle(CharSequence title) {
@@ -145,24 +150,11 @@ public class BrandedSupportFragment extends Fragment {
         }
     }
 
-    public CharSequence getTitle() {
-        return this.mTitle;
-    }
-
     public void setOnSearchClickedListener(View.OnClickListener listener) {
         this.mExternalOnSearchClickedListener = listener;
         TitleViewAdapter titleViewAdapter = this.mTitleViewAdapter;
         if (titleViewAdapter != null) {
             titleViewAdapter.setOnSearchClickedListener(listener);
-        }
-    }
-
-    public void setSearchAffordanceColors(SearchOrbView.Colors colors) {
-        this.mSearchAffordanceColors = colors;
-        this.mSearchAffordanceColorSet = true;
-        TitleViewAdapter titleViewAdapter = this.mTitleViewAdapter;
-        if (titleViewAdapter != null) {
-            titleViewAdapter.setSearchAffordanceColors(this.mSearchAffordanceColors);
         }
     }
 
@@ -177,12 +169,21 @@ public class BrandedSupportFragment extends Fragment {
         throw new IllegalStateException("Fragment views not yet created");
     }
 
-    public void setSearchAffordanceColor(int color) {
-        setSearchAffordanceColors(new SearchOrbView.Colors(color));
+    public void setSearchAffordanceColors(SearchOrbView.Colors colors) {
+        this.mSearchAffordanceColors = colors;
+        this.mSearchAffordanceColorSet = true;
+        TitleViewAdapter titleViewAdapter = this.mTitleViewAdapter;
+        if (titleViewAdapter != null) {
+            titleViewAdapter.setSearchAffordanceColors(this.mSearchAffordanceColors);
+        }
     }
 
     public int getSearchAffordanceColor() {
         return getSearchAffordanceColors().color;
+    }
+
+    public void setSearchAffordanceColor(int color) {
+        setSearchAffordanceColors(new SearchOrbView.Colors(color));
     }
 
     public void onStart() {

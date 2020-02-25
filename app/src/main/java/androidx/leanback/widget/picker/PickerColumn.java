@@ -7,20 +7,20 @@ public class PickerColumn {
     private int mMinValue;
     private CharSequence[] mStaticLabels;
 
-    public void setLabelFormat(String labelFormat) {
-        this.mLabelFormat = labelFormat;
-    }
-
     public String getLabelFormat() {
         return this.mLabelFormat;
     }
 
-    public void setStaticLabels(CharSequence[] labels) {
-        this.mStaticLabels = labels;
+    public void setLabelFormat(String labelFormat) {
+        this.mLabelFormat = labelFormat;
     }
 
     public CharSequence[] getStaticLabels() {
         return this.mStaticLabels;
+    }
+
+    public void setStaticLabels(CharSequence[] labels) {
+        this.mStaticLabels = labels;
     }
 
     public CharSequence getLabelFor(int value) {
@@ -47,12 +47,12 @@ public class PickerColumn {
         return this.mMinValue;
     }
 
-    public int getMaxValue() {
-        return this.mMaxValue;
-    }
-
     public void setMinValue(int minValue) {
         this.mMinValue = minValue;
+    }
+
+    public int getMaxValue() {
+        return this.mMaxValue;
     }
 
     public void setMaxValue(int maxValue) {

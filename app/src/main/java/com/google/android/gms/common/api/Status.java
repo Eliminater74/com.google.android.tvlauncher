@@ -6,11 +6,13 @@ import android.content.IntentSender;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
+
 import com.google.android.gms.common.internal.Hide;
 import com.google.android.gms.common.internal.ReflectedParcelable;
 import com.google.android.gms.common.internal.zzak;
 import com.google.android.gms.internal.zzbkv;
 import com.google.android.gms.internal.zzbky;
+
 import java.util.Arrays;
 
 public final class Status extends zzbkv implements Result, ReflectedParcelable {

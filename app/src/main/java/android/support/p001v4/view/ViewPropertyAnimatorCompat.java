@@ -6,6 +6,7 @@ import android.animation.ValueAnimator;
 import android.os.Build;
 import android.view.View;
 import android.view.animation.Interpolator;
+
 import java.lang.ref.WeakReference;
 
 /* renamed from: android.support.v4.view.ViewPropertyAnimatorCompat */
@@ -18,79 +19,6 @@ public final class ViewPropertyAnimatorCompat {
 
     ViewPropertyAnimatorCompat(View view) {
         this.mView = new WeakReference<>(view);
-    }
-
-    /* renamed from: android.support.v4.view.ViewPropertyAnimatorCompat$ViewPropertyAnimatorListenerApi14 */
-    static class ViewPropertyAnimatorListenerApi14 implements ViewPropertyAnimatorListener {
-        boolean mAnimEndCalled;
-        ViewPropertyAnimatorCompat mVpa;
-
-        ViewPropertyAnimatorListenerApi14(ViewPropertyAnimatorCompat vpa) {
-            this.mVpa = vpa;
-        }
-
-        public void onAnimationStart(View view) {
-            this.mAnimEndCalled = false;
-            if (this.mVpa.mOldLayerType > -1) {
-                view.setLayerType(2, null);
-            }
-            if (this.mVpa.mStartAction != null) {
-                Runnable startAction = this.mVpa.mStartAction;
-                this.mVpa.mStartAction = null;
-                startAction.run();
-            }
-            Object listenerTag = view.getTag(ViewPropertyAnimatorCompat.LISTENER_TAG_ID);
-            ViewPropertyAnimatorListener listener = null;
-            if (listenerTag instanceof ViewPropertyAnimatorListener) {
-                listener = (ViewPropertyAnimatorListener) listenerTag;
-            }
-            if (listener != null) {
-                listener.onAnimationStart(view);
-            }
-        }
-
-        public void onAnimationEnd(View view) {
-            if (this.mVpa.mOldLayerType > -1) {
-                view.setLayerType(this.mVpa.mOldLayerType, null);
-                this.mVpa.mOldLayerType = -1;
-            }
-            if (Build.VERSION.SDK_INT >= 16 || !this.mAnimEndCalled) {
-                if (this.mVpa.mEndAction != null) {
-                    Runnable endAction = this.mVpa.mEndAction;
-                    this.mVpa.mEndAction = null;
-                    endAction.run();
-                }
-                Object listenerTag = view.getTag(ViewPropertyAnimatorCompat.LISTENER_TAG_ID);
-                ViewPropertyAnimatorListener listener = null;
-                if (listenerTag instanceof ViewPropertyAnimatorListener) {
-                    listener = (ViewPropertyAnimatorListener) listenerTag;
-                }
-                if (listener != null) {
-                    listener.onAnimationEnd(view);
-                }
-                this.mAnimEndCalled = true;
-            }
-        }
-
-        public void onAnimationCancel(View view) {
-            Object listenerTag = view.getTag(ViewPropertyAnimatorCompat.LISTENER_TAG_ID);
-            ViewPropertyAnimatorListener listener = null;
-            if (listenerTag instanceof ViewPropertyAnimatorListener) {
-                listener = (ViewPropertyAnimatorListener) listenerTag;
-            }
-            if (listener != null) {
-                listener.onAnimationCancel(view);
-            }
-        }
-    }
-
-    public ViewPropertyAnimatorCompat setDuration(long value) {
-        View view = this.mView.get();
-        View view2 = view;
-        if (view != null) {
-            view2.animate().setDuration(value);
-        }
-        return this;
     }
 
     public ViewPropertyAnimatorCompat alpha(float value) {
@@ -152,11 +80,11 @@ public final class ViewPropertyAnimatorCompat {
         return 0;
     }
 
-    public ViewPropertyAnimatorCompat setInterpolator(Interpolator value) {
+    public ViewPropertyAnimatorCompat setDuration(long value) {
         View view = this.mView.get();
         View view2 = view;
         if (view != null) {
-            view2.animate().setInterpolator(value);
+            view2.animate().setDuration(value);
         }
         return this;
     }
@@ -170,11 +98,11 @@ public final class ViewPropertyAnimatorCompat {
         return (Interpolator) view2.animate().getInterpolator();
     }
 
-    public ViewPropertyAnimatorCompat setStartDelay(long value) {
+    public ViewPropertyAnimatorCompat setInterpolator(Interpolator value) {
         View view = this.mView.get();
         View view2 = view;
         if (view != null) {
-            view2.animate().setStartDelay(value);
+            view2.animate().setInterpolator(value);
         }
         return this;
     }
@@ -186,6 +114,15 @@ public final class ViewPropertyAnimatorCompat {
             return view2.animate().getStartDelay();
         }
         return 0;
+    }
+
+    public ViewPropertyAnimatorCompat setStartDelay(long value) {
+        View view = this.mView.get();
+        View view2 = view;
+        if (view != null) {
+            view2.animate().setStartDelay(value);
+        }
+        return this;
     }
 
     public ViewPropertyAnimatorCompat rotation(float value) {
@@ -464,5 +401,69 @@ public final class ViewPropertyAnimatorCompat {
             view2.animate().setUpdateListener(wrapped);
         }
         return this;
+    }
+
+    /* renamed from: android.support.v4.view.ViewPropertyAnimatorCompat$ViewPropertyAnimatorListenerApi14 */
+    static class ViewPropertyAnimatorListenerApi14 implements ViewPropertyAnimatorListener {
+        boolean mAnimEndCalled;
+        ViewPropertyAnimatorCompat mVpa;
+
+        ViewPropertyAnimatorListenerApi14(ViewPropertyAnimatorCompat vpa) {
+            this.mVpa = vpa;
+        }
+
+        public void onAnimationStart(View view) {
+            this.mAnimEndCalled = false;
+            if (this.mVpa.mOldLayerType > -1) {
+                view.setLayerType(2, null);
+            }
+            if (this.mVpa.mStartAction != null) {
+                Runnable startAction = this.mVpa.mStartAction;
+                this.mVpa.mStartAction = null;
+                startAction.run();
+            }
+            Object listenerTag = view.getTag(ViewPropertyAnimatorCompat.LISTENER_TAG_ID);
+            ViewPropertyAnimatorListener listener = null;
+            if (listenerTag instanceof ViewPropertyAnimatorListener) {
+                listener = (ViewPropertyAnimatorListener) listenerTag;
+            }
+            if (listener != null) {
+                listener.onAnimationStart(view);
+            }
+        }
+
+        public void onAnimationEnd(View view) {
+            if (this.mVpa.mOldLayerType > -1) {
+                view.setLayerType(this.mVpa.mOldLayerType, null);
+                this.mVpa.mOldLayerType = -1;
+            }
+            if (Build.VERSION.SDK_INT >= 16 || !this.mAnimEndCalled) {
+                if (this.mVpa.mEndAction != null) {
+                    Runnable endAction = this.mVpa.mEndAction;
+                    this.mVpa.mEndAction = null;
+                    endAction.run();
+                }
+                Object listenerTag = view.getTag(ViewPropertyAnimatorCompat.LISTENER_TAG_ID);
+                ViewPropertyAnimatorListener listener = null;
+                if (listenerTag instanceof ViewPropertyAnimatorListener) {
+                    listener = (ViewPropertyAnimatorListener) listenerTag;
+                }
+                if (listener != null) {
+                    listener.onAnimationEnd(view);
+                }
+                this.mAnimEndCalled = true;
+            }
+        }
+
+        public void onAnimationCancel(View view) {
+            Object listenerTag = view.getTag(ViewPropertyAnimatorCompat.LISTENER_TAG_ID);
+            ViewPropertyAnimatorListener listener = null;
+            if (listenerTag instanceof ViewPropertyAnimatorListener) {
+                listener = (ViewPropertyAnimatorListener) listenerTag;
+            }
+            if (listener != null) {
+                listener.onAnimationCancel(view);
+            }
+        }
     }
 }

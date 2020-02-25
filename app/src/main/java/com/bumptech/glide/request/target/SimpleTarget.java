@@ -1,6 +1,7 @@
 package com.bumptech.glide.request.target;
 
 import android.support.annotation.NonNull;
+
 import com.bumptech.glide.util.Util;
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
 

@@ -3,17 +3,19 @@ package com.google.common.collect;
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.base.Objects;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.util.Collection;
 import java.util.Iterator;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible
 public abstract class ForwardingCollection<E> extends ForwardingObject implements Collection<E> {
-    /* access modifiers changed from: protected */
-    public abstract Collection<E> delegate();
-
     protected ForwardingCollection() {
     }
+
+    /* access modifiers changed from: protected */
+    public abstract Collection<E> delegate();
 
     public Iterator<E> iterator() {
         return delegate().iterator();

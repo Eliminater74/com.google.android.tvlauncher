@@ -3,6 +3,7 @@ package com.google.android.libraries.performance.primes.persistent;
 import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
 import android.util.Base64;
+
 import com.google.android.libraries.performance.primes.PrimesLog;
 import com.google.android.libraries.stitch.util.Preconditions;
 import com.google.protobuf.InvalidProtocolBufferException;

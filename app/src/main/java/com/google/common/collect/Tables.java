@@ -6,7 +6,9 @@ import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Supplier;
-import com.google.common.collect.Table;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
@@ -15,7 +17,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible
 public final class Tables {
@@ -34,6 +35,53 @@ public final class Tables {
 
     public static <R, C, V> Table.Cell<R, C, V> immutableCell(@NullableDecl R rowKey, @NullableDecl C columnKey, @NullableDecl V value) {
         return new ImmutableCell(rowKey, columnKey, value);
+    }
+
+    public static <R, C, V> Table<C, R, V> transpose(Table<R, C, V> table) {
+        if (table instanceof TransposeTable) {
+            return ((TransposeTable) table).original;
+        }
+        return new TransposeTable(table);
+    }
+
+    @Beta
+    public static <R, C, V> Table<R, C, V> newCustomTable(Map<R, Map<C, V>> backingMap, Supplier<? extends Map<C, V>> factory) {
+        Preconditions.checkArgument(backingMap.isEmpty());
+        Preconditions.checkNotNull(factory);
+        return new StandardTable(backingMap, factory);
+    }
+
+    @Beta
+    public static <R, C, V1, V2> Table<R, C, V2> transformValues(Table<R, C, V1> fromTable, Function<? super V1, V2> function) {
+        return new TransformedTable(fromTable, function);
+    }
+
+    public static <R, C, V> Table<R, C, V> unmodifiableTable(Table<? extends R, ? extends C, ? extends V> table) {
+        return new UnmodifiableTable(table);
+    }
+
+    @Beta
+    public static <R, C, V> RowSortedTable<R, C, V> unmodifiableRowSortedTable(RowSortedTable<R, ? extends C, ? extends V> table) {
+        return new UnmodifiableRowSortedMap(table);
+    }
+
+    /* access modifiers changed from: private */
+    public static <K, V> Function<Map<K, V>, Map<K, V>> unmodifiableWrapper() {
+        return UNMODIFIABLE_WRAPPER;
+    }
+
+    public static <R, C, V> Table<R, C, V> synchronizedTable(Table<R, C, V> table) {
+        return Synchronized.table(table, null);
+    }
+
+    static boolean equalsImpl(Table<?, ?, ?> table, @NullableDecl Object obj) {
+        if (obj == table) {
+            return true;
+        }
+        if (obj instanceof Table) {
+            return table.cellSet().equals(((Table) obj).cellSet());
+        }
+        return false;
     }
 
     static final class ImmutableCell<R, C, V> extends AbstractCell<R, C, V> implements Serializable {
@@ -99,13 +147,6 @@ public final class Tables {
             sb.append(valueOf3);
             return sb.toString();
         }
-    }
-
-    public static <R, C, V> Table<C, R, V> transpose(Table<R, C, V> table) {
-        if (table instanceof TransposeTable) {
-            return ((TransposeTable) table).original;
-        }
-        return new TransposeTable(table);
     }
 
     private static class TransposeTable<C, R, V> extends AbstractTable<C, R, V> {
@@ -196,18 +237,6 @@ public final class Tables {
         public Iterator<Table.Cell<C, R, V>> cellIterator() {
             return Iterators.transform(this.original.cellSet().iterator(), TRANSPOSE_CELL);
         }
-    }
-
-    @Beta
-    public static <R, C, V> Table<R, C, V> newCustomTable(Map<R, Map<C, V>> backingMap, Supplier<? extends Map<C, V>> factory) {
-        Preconditions.checkArgument(backingMap.isEmpty());
-        Preconditions.checkNotNull(factory);
-        return new StandardTable(backingMap, factory);
-    }
-
-    @Beta
-    public static <R, C, V1, V2> Table<R, C, V2> transformValues(Table<R, C, V1> fromTable, Function<? super V1, V2> function) {
-        return new TransformedTable(fromTable, function);
     }
 
     private static class TransformedTable<R, C, V1, V2> extends AbstractTable<R, C, V2> {
@@ -305,10 +334,6 @@ public final class Tables {
         }
     }
 
-    public static <R, C, V> Table<R, C, V> unmodifiableTable(Table<? extends R, ? extends C, ? extends V> table) {
-        return new UnmodifiableTable(table);
-    }
-
     private static class UnmodifiableTable<R, C, V> extends ForwardingTable<R, C, V> implements Serializable {
         private static final long serialVersionUID = 0;
         final Table<? extends R, ? extends C, ? extends V> delegate;
@@ -371,11 +396,6 @@ public final class Tables {
         }
     }
 
-    @Beta
-    public static <R, C, V> RowSortedTable<R, C, V> unmodifiableRowSortedTable(RowSortedTable<R, ? extends C, ? extends V> table) {
-        return new UnmodifiableRowSortedMap(table);
-    }
-
     static final class UnmodifiableRowSortedMap<R, C, V> extends UnmodifiableTable<R, C, V> implements RowSortedTable<R, C, V> {
         private static final long serialVersionUID = 0;
 
@@ -395,24 +415,5 @@ public final class Tables {
         public SortedSet<R> rowKeySet() {
             return Collections.unmodifiableSortedSet(delegate().rowKeySet());
         }
-    }
-
-    /* access modifiers changed from: private */
-    public static <K, V> Function<Map<K, V>, Map<K, V>> unmodifiableWrapper() {
-        return UNMODIFIABLE_WRAPPER;
-    }
-
-    public static <R, C, V> Table<R, C, V> synchronizedTable(Table<R, C, V> table) {
-        return Synchronized.table(table, null);
-    }
-
-    static boolean equalsImpl(Table<?, ?, ?> table, @NullableDecl Object obj) {
-        if (obj == table) {
-            return true;
-        }
-        if (obj instanceof Table) {
-            return table.cellSet().equals(((Table) obj).cellSet());
-        }
-        return false;
     }
 }

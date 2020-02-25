@@ -3,25 +3,24 @@ package android.support.p004v7.widget;
 import android.content.Context;
 import android.graphics.Rect;
 import android.support.p001v4.view.accessibility.AccessibilityNodeInfoCompat;
-import android.support.p004v7.widget.LinearLayoutManager;
-import android.support.p004v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.SparseIntArray;
 import android.view.View;
 import android.view.ViewGroup;
+
 import java.util.Arrays;
 
 /* renamed from: android.support.v7.widget.GridLayoutManager */
 public class GridLayoutManager extends LinearLayoutManager {
-    private static final boolean DEBUG = false;
     public static final int DEFAULT_SPAN_COUNT = -1;
+    private static final boolean DEBUG = false;
     private static final String TAG = "GridLayoutManager";
-    int[] mCachedBorders;
     final Rect mDecorInsets = new Rect();
-    boolean mPendingSpanCountChange = false;
     final SparseIntArray mPreLayoutSpanIndexCache = new SparseIntArray();
     final SparseIntArray mPreLayoutSpanSizeCache = new SparseIntArray();
+    int[] mCachedBorders;
+    boolean mPendingSpanCountChange = false;
     View[] mSet;
     int mSpanCount = -1;
     SpanSizeLookup mSpanSizeLookup = new DefaultSpanSizeLookup();
@@ -40,6 +39,28 @@ public class GridLayoutManager extends LinearLayoutManager {
     public GridLayoutManager(Context context, int spanCount, int orientation, boolean reverseLayout) {
         super(context, orientation, reverseLayout);
         setSpanCount(spanCount);
+    }
+
+    static int[] calculateItemBorders(int[] cachedBorders, int spanCount, int totalSpace) {
+        if (!(cachedBorders != null && cachedBorders.length == spanCount + 1 && cachedBorders[cachedBorders.length - 1] == totalSpace)) {
+            cachedBorders = new int[(spanCount + 1)];
+        }
+        cachedBorders[0] = 0;
+        int sizePerSpan = totalSpace / spanCount;
+        int sizePerSpanRemainder = totalSpace % spanCount;
+        int consumedPixels = 0;
+        int additionalSize = 0;
+        for (int i = 1; i <= spanCount; i++) {
+            int itemSize = sizePerSpan;
+            additionalSize += sizePerSpanRemainder;
+            if (additionalSize > 0 && spanCount - additionalSize < sizePerSpanRemainder) {
+                itemSize++;
+                additionalSize -= spanCount;
+            }
+            consumedPixels += itemSize;
+            cachedBorders[i] = consumedPixels;
+        }
+        return cachedBorders;
     }
 
     public void setStackFromEnd(boolean stackFromEnd) {
@@ -160,12 +181,12 @@ public class GridLayoutManager extends LinearLayoutManager {
         return lp instanceof LayoutParams;
     }
 
-    public void setSpanSizeLookup(SpanSizeLookup spanSizeLookup) {
-        this.mSpanSizeLookup = spanSizeLookup;
-    }
-
     public SpanSizeLookup getSpanSizeLookup() {
         return this.mSpanSizeLookup;
+    }
+
+    public void setSpanSizeLookup(SpanSizeLookup spanSizeLookup) {
+        this.mSpanSizeLookup = spanSizeLookup;
     }
 
     private void updateMeasurements() {
@@ -202,28 +223,6 @@ public class GridLayoutManager extends LinearLayoutManager {
 
     private void calculateItemBorders(int totalSpace) {
         this.mCachedBorders = calculateItemBorders(this.mCachedBorders, this.mSpanCount, totalSpace);
-    }
-
-    static int[] calculateItemBorders(int[] cachedBorders, int spanCount, int totalSpace) {
-        if (!(cachedBorders != null && cachedBorders.length == spanCount + 1 && cachedBorders[cachedBorders.length - 1] == totalSpace)) {
-            cachedBorders = new int[(spanCount + 1)];
-        }
-        cachedBorders[0] = 0;
-        int sizePerSpan = totalSpace / spanCount;
-        int sizePerSpanRemainder = totalSpace % spanCount;
-        int consumedPixels = 0;
-        int additionalSize = 0;
-        for (int i = 1; i <= spanCount; i++) {
-            int itemSize = sizePerSpan;
-            additionalSize += sizePerSpanRemainder;
-            if (additionalSize > 0 && spanCount - additionalSize < sizePerSpanRemainder) {
-                itemSize++;
-                additionalSize -= spanCount;
-            }
-            consumedPixels += itemSize;
-            cachedBorders[i] = consumedPixels;
-        }
-        return cachedBorders;
     }
 
     /* access modifiers changed from: package-private */
@@ -648,154 +647,6 @@ public class GridLayoutManager extends LinearLayoutManager {
         }
     }
 
-    /* renamed from: android.support.v7.widget.GridLayoutManager$SpanSizeLookup */
-    public static abstract class SpanSizeLookup {
-        private boolean mCacheSpanGroupIndices = false;
-        private boolean mCacheSpanIndices = false;
-        final SparseIntArray mSpanGroupIndexCache = new SparseIntArray();
-        final SparseIntArray mSpanIndexCache = new SparseIntArray();
-
-        public abstract int getSpanSize(int i);
-
-        public void setSpanIndexCacheEnabled(boolean cacheSpanIndices) {
-            if (!cacheSpanIndices) {
-                this.mSpanGroupIndexCache.clear();
-            }
-            this.mCacheSpanIndices = cacheSpanIndices;
-        }
-
-        public void setSpanGroupIndexCacheEnabled(boolean cacheSpanGroupIndices) {
-            if (!cacheSpanGroupIndices) {
-                this.mSpanGroupIndexCache.clear();
-            }
-            this.mCacheSpanGroupIndices = cacheSpanGroupIndices;
-        }
-
-        public void invalidateSpanIndexCache() {
-            this.mSpanIndexCache.clear();
-        }
-
-        public void invalidateSpanGroupIndexCache() {
-            this.mSpanGroupIndexCache.clear();
-        }
-
-        public boolean isSpanIndexCacheEnabled() {
-            return this.mCacheSpanIndices;
-        }
-
-        public boolean isSpanGroupIndexCacheEnabled() {
-            return this.mCacheSpanGroupIndices;
-        }
-
-        /* access modifiers changed from: package-private */
-        public int getCachedSpanIndex(int position, int spanCount) {
-            if (!this.mCacheSpanIndices) {
-                return getSpanIndex(position, spanCount);
-            }
-            int existing = this.mSpanIndexCache.get(position, -1);
-            if (existing != -1) {
-                return existing;
-            }
-            int value = getSpanIndex(position, spanCount);
-            this.mSpanIndexCache.put(position, value);
-            return value;
-        }
-
-        /* access modifiers changed from: package-private */
-        public int getCachedSpanGroupIndex(int position, int spanCount) {
-            if (!this.mCacheSpanGroupIndices) {
-                return getSpanGroupIndex(position, spanCount);
-            }
-            int existing = this.mSpanGroupIndexCache.get(position, -1);
-            if (existing != -1) {
-                return existing;
-            }
-            int value = getSpanGroupIndex(position, spanCount);
-            this.mSpanGroupIndexCache.put(position, value);
-            return value;
-        }
-
-        public int getSpanIndex(int position, int spanCount) {
-            int span;
-            int prevKey;
-            int positionSpanSize = getSpanSize(position);
-            if (positionSpanSize == spanCount) {
-                return 0;
-            }
-            int span2 = 0;
-            int startPos = 0;
-            if (this.mCacheSpanIndices && (prevKey = findFirstKeyLessThan(this.mSpanIndexCache, position)) >= 0) {
-                span2 = this.mSpanIndexCache.get(prevKey) + getSpanSize(prevKey);
-                startPos = prevKey + 1;
-            }
-            for (int i = startPos; i < position; i++) {
-                int size = getSpanSize(i);
-                span += size;
-                if (span == spanCount) {
-                    span = 0;
-                } else if (span > spanCount) {
-                    span = size;
-                }
-            }
-            if (span + positionSpanSize <= spanCount) {
-                return span;
-            }
-            return 0;
-        }
-
-        static int findFirstKeyLessThan(SparseIntArray cache, int position) {
-            int lo = 0;
-            int hi = cache.size() - 1;
-            while (lo <= hi) {
-                int mid = (lo + hi) >>> 1;
-                if (cache.keyAt(mid) < position) {
-                    lo = mid + 1;
-                } else {
-                    hi = mid - 1;
-                }
-            }
-            int index = lo - 1;
-            if (index < 0 || index >= cache.size()) {
-                return -1;
-            }
-            return cache.keyAt(index);
-        }
-
-        /* JADX INFO: Multiple debug info for r3v1 int: [D('prevKey' int), D('positionSpanSize' int)] */
-        public int getSpanGroupIndex(int adapterPosition, int spanCount) {
-            int span;
-            int prevKey;
-            int span2 = 0;
-            int group = 0;
-            int start = 0;
-            if (this.mCacheSpanGroupIndices && (prevKey = findFirstKeyLessThan(this.mSpanGroupIndexCache, adapterPosition)) != -1) {
-                group = this.mSpanGroupIndexCache.get(prevKey);
-                start = prevKey + 1;
-                span2 = getCachedSpanIndex(prevKey, spanCount) + getSpanSize(prevKey);
-                if (span2 == spanCount) {
-                    span2 = 0;
-                    group++;
-                }
-            }
-            int positionSpanSize = getSpanSize(adapterPosition);
-            for (int i = start; i < adapterPosition; i++) {
-                int size = getSpanSize(i);
-                span += size;
-                if (span == spanCount) {
-                    span = 0;
-                    group++;
-                } else if (span > spanCount) {
-                    span = size;
-                    group++;
-                }
-            }
-            if (span + positionSpanSize > spanCount) {
-                return group + 1;
-            }
-            return group;
-        }
-    }
-
     /* JADX INFO: Multiple debug info for r13v3 int: [D('start' int), D('spanGroupIndex' int)] */
     /* JADX INFO: Multiple debug info for r3v3 int: [D('candidateStart' int), D('prevFocusedChild' android.view.View)] */
     /* JADX INFO: Multiple debug info for r5v7 android.view.View: [D('focusableWeakCandidate' android.view.View), D('unfocusableWeakCandidate' android.view.View)] */
@@ -974,12 +825,12 @@ public class GridLayoutManager extends LinearLayoutManager {
         return super.computeVerticalScrollOffset(state);
     }
 
-    public void setUsingSpansToEstimateScrollbarDimensions(boolean useSpansToEstimateScrollBarDimensions) {
-        this.mUsingSpansToEstimateScrollBarDimensions = useSpansToEstimateScrollBarDimensions;
-    }
-
     public boolean isUsingSpansToEstimateScrollbarDimensions() {
         return this.mUsingSpansToEstimateScrollBarDimensions;
+    }
+
+    public void setUsingSpansToEstimateScrollbarDimensions(boolean useSpansToEstimateScrollBarDimensions) {
+        this.mUsingSpansToEstimateScrollBarDimensions = useSpansToEstimateScrollBarDimensions;
     }
 
     private int computeScrollRangeWithSpanInfo(RecyclerView.State state) {
@@ -1028,6 +879,154 @@ public class GridLayoutManager extends LinearLayoutManager {
             }
         }
         return 0;
+    }
+
+    /* renamed from: android.support.v7.widget.GridLayoutManager$SpanSizeLookup */
+    public static abstract class SpanSizeLookup {
+        final SparseIntArray mSpanGroupIndexCache = new SparseIntArray();
+        final SparseIntArray mSpanIndexCache = new SparseIntArray();
+        private boolean mCacheSpanGroupIndices = false;
+        private boolean mCacheSpanIndices = false;
+
+        static int findFirstKeyLessThan(SparseIntArray cache, int position) {
+            int lo = 0;
+            int hi = cache.size() - 1;
+            while (lo <= hi) {
+                int mid = (lo + hi) >>> 1;
+                if (cache.keyAt(mid) < position) {
+                    lo = mid + 1;
+                } else {
+                    hi = mid - 1;
+                }
+            }
+            int index = lo - 1;
+            if (index < 0 || index >= cache.size()) {
+                return -1;
+            }
+            return cache.keyAt(index);
+        }
+
+        public abstract int getSpanSize(int i);
+
+        public void invalidateSpanIndexCache() {
+            this.mSpanIndexCache.clear();
+        }
+
+        public void invalidateSpanGroupIndexCache() {
+            this.mSpanGroupIndexCache.clear();
+        }
+
+        public boolean isSpanIndexCacheEnabled() {
+            return this.mCacheSpanIndices;
+        }
+
+        public void setSpanIndexCacheEnabled(boolean cacheSpanIndices) {
+            if (!cacheSpanIndices) {
+                this.mSpanGroupIndexCache.clear();
+            }
+            this.mCacheSpanIndices = cacheSpanIndices;
+        }
+
+        public boolean isSpanGroupIndexCacheEnabled() {
+            return this.mCacheSpanGroupIndices;
+        }
+
+        public void setSpanGroupIndexCacheEnabled(boolean cacheSpanGroupIndices) {
+            if (!cacheSpanGroupIndices) {
+                this.mSpanGroupIndexCache.clear();
+            }
+            this.mCacheSpanGroupIndices = cacheSpanGroupIndices;
+        }
+
+        /* access modifiers changed from: package-private */
+        public int getCachedSpanIndex(int position, int spanCount) {
+            if (!this.mCacheSpanIndices) {
+                return getSpanIndex(position, spanCount);
+            }
+            int existing = this.mSpanIndexCache.get(position, -1);
+            if (existing != -1) {
+                return existing;
+            }
+            int value = getSpanIndex(position, spanCount);
+            this.mSpanIndexCache.put(position, value);
+            return value;
+        }
+
+        /* access modifiers changed from: package-private */
+        public int getCachedSpanGroupIndex(int position, int spanCount) {
+            if (!this.mCacheSpanGroupIndices) {
+                return getSpanGroupIndex(position, spanCount);
+            }
+            int existing = this.mSpanGroupIndexCache.get(position, -1);
+            if (existing != -1) {
+                return existing;
+            }
+            int value = getSpanGroupIndex(position, spanCount);
+            this.mSpanGroupIndexCache.put(position, value);
+            return value;
+        }
+
+        public int getSpanIndex(int position, int spanCount) {
+            int span;
+            int prevKey;
+            int positionSpanSize = getSpanSize(position);
+            if (positionSpanSize == spanCount) {
+                return 0;
+            }
+            int span2 = 0;
+            int startPos = 0;
+            if (this.mCacheSpanIndices && (prevKey = findFirstKeyLessThan(this.mSpanIndexCache, position)) >= 0) {
+                span2 = this.mSpanIndexCache.get(prevKey) + getSpanSize(prevKey);
+                startPos = prevKey + 1;
+            }
+            for (int i = startPos; i < position; i++) {
+                int size = getSpanSize(i);
+                span += size;
+                if (span == spanCount) {
+                    span = 0;
+                } else if (span > spanCount) {
+                    span = size;
+                }
+            }
+            if (span + positionSpanSize <= spanCount) {
+                return span;
+            }
+            return 0;
+        }
+
+        /* JADX INFO: Multiple debug info for r3v1 int: [D('prevKey' int), D('positionSpanSize' int)] */
+        public int getSpanGroupIndex(int adapterPosition, int spanCount) {
+            int span;
+            int prevKey;
+            int span2 = 0;
+            int group = 0;
+            int start = 0;
+            if (this.mCacheSpanGroupIndices && (prevKey = findFirstKeyLessThan(this.mSpanGroupIndexCache, adapterPosition)) != -1) {
+                group = this.mSpanGroupIndexCache.get(prevKey);
+                start = prevKey + 1;
+                span2 = getCachedSpanIndex(prevKey, spanCount) + getSpanSize(prevKey);
+                if (span2 == spanCount) {
+                    span2 = 0;
+                    group++;
+                }
+            }
+            int positionSpanSize = getSpanSize(adapterPosition);
+            for (int i = start; i < adapterPosition; i++) {
+                int size = getSpanSize(i);
+                span += size;
+                if (span == spanCount) {
+                    span = 0;
+                    group++;
+                } else if (span > spanCount) {
+                    span = size;
+                    group++;
+                }
+            }
+            if (span + positionSpanSize > spanCount) {
+                return group + 1;
+            }
+            return group;
+        }
     }
 
     /* renamed from: android.support.v7.widget.GridLayoutManager$DefaultSpanSizeLookup */

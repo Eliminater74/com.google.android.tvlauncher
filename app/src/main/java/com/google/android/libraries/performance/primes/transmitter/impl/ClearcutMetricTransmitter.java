@@ -3,6 +3,7 @@ package com.google.android.libraries.performance.primes.transmitter.impl;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
+
 import com.google.android.libraries.gcoreclient.clearcut.GcoreClearcutApi;
 import com.google.android.libraries.gcoreclient.clearcut.GcoreClearcutLogger;
 import com.google.android.libraries.gcoreclient.clearcut.GcoreClearcutLoggerFactory;
@@ -12,15 +13,19 @@ import com.google.android.libraries.gcoreclient.common.api.GcoreStatus;
 import com.google.android.libraries.performance.primes.PrimesLog;
 import com.google.android.libraries.performance.primes.transmitter.AccountProvider;
 import com.google.android.libraries.stitch.util.Preconditions;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
 import logs.proto.wireless.performance.mobile.SystemHealthProto;
 
 public final class ClearcutMetricTransmitter extends HashedNamesTransmitter {
     private static final String DEV_DISABLE_CLEARCUT = "primes.dev.disable_clearcut";
     private static final String DUMP_TAG = "PrimesClearcutBinaryLog";
     private static final String TAG = "ClearcutTransmitter";
+    @VisibleForTesting
+    final GcoreResultCallback<GcoreStatus> resultCallback;
     private final AccountProvider accountProvider;
     private final boolean anonymous;
     private final GcoreClearcutLoggerFactory clearcutLoggerFactory;
@@ -28,8 +33,6 @@ public final class ClearcutMetricTransmitter extends HashedNamesTransmitter {
     private final Context context;
     private final Object lock;
     private final String logSource;
-    @VisibleForTesting
-    final GcoreResultCallback<GcoreStatus> resultCallback;
 
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
      method: com.google.android.libraries.performance.primes.transmitter.impl.ClearcutMetricTransmitter.<init>(android.content.Context, com.google.android.libraries.gcoreclient.clearcut.GcoreClearcutLoggerFactory, java.lang.String, com.google.android.libraries.performance.primes.transmitter.AccountProvider, boolean):void
@@ -129,6 +132,10 @@ public final class ClearcutMetricTransmitter extends HashedNamesTransmitter {
             }
             PrimesLog.m46d(TAG, "Sending Primes %s", metricString);
         }
+    }
+
+    public static Builder newBuilder() {
+        return new Builder();
     }
 
     /* access modifiers changed from: protected */
@@ -253,10 +260,6 @@ public final class ClearcutMetricTransmitter extends HashedNamesTransmitter {
     @VisibleForTesting
     public Map<String, GcoreClearcutLogger> getLoggers() {
         return this.clearcutLoggers;
-    }
-
-    public static Builder newBuilder() {
-        return new Builder();
     }
 
     public static final class Builder {

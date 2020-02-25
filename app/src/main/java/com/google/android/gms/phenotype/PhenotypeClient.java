@@ -2,6 +2,7 @@ package com.google.android.gms.phenotype;
 
 import android.app.Activity;
 import android.content.Context;
+
 import com.google.android.gms.common.api.Api;
 import com.google.android.gms.common.api.GoogleApi;
 import com.google.android.gms.common.api.Status;
@@ -24,77 +25,6 @@ public class PhenotypeClient extends GoogleApi<Api.ApiOptions.NoOptions> {
       com.google.android.gms.common.api.GoogleApi.<init>(android.app.Activity, com.google.android.gms.common.api.Api, com.google.android.gms.common.api.Api$ApiOptions, com.google.android.gms.common.api.GoogleApi$zza):void */
     PhenotypeClient(Activity activity) {
         super(activity, (Api) Phenotype.API, (Api.ApiOptions) null, GoogleApi.zza.zza);
-    }
-
-    static class zza extends zzdyq {
-        private final TaskCompletionSource zza;
-
-        private zza(TaskCompletionSource taskCompletionSource) {
-            this.zza = taskCompletionSource;
-        }
-
-        public final void zzb(Status status) {
-            zzdm.zza(status, null, this.zza);
-        }
-
-        public final void zzc(Status status) {
-            zzdm.zza(status, null, this.zza);
-        }
-
-        public final void zzd(Status status) {
-            zzdm.zza(status, null, this.zza);
-        }
-
-        public final void zze(Status status) {
-            zzdm.zza(status, null, this.zza);
-        }
-
-        public final void zza(Status status, Configurations configurations) {
-            zzdm.zza(status, configurations, this.zza);
-        }
-
-        public final void zzf(Status status) {
-            if (status.isSuccess()) {
-                ConfigurationContentLoader.invalidateAllCaches();
-            }
-            zzdm.zza(status, null, this.zza);
-        }
-
-        public final void zza(Status status, ExperimentTokens experimentTokens) {
-            zzdm.zza(status, experimentTokens, this.zza);
-        }
-
-        public final void zza(Status status, DogfoodsToken dogfoodsToken) {
-            zzdm.zza(status, dogfoodsToken, this.zza);
-        }
-
-        public final void zzg(Status status) {
-            zzdm.zza(status, null, this.zza);
-        }
-
-        public final void zza(Status status, Flag flag) {
-            zzdm.zza(status, flag, this.zza);
-        }
-
-        public final void zzb(Status status, Configurations configurations) {
-            zzdm.zza(status, configurations, this.zza);
-        }
-
-        public void zza(Status status) {
-            zzdm.zza(status, null, this.zza);
-        }
-
-        public final void zzh(Status status) {
-            zzdm.zza(status, null, this.zza);
-        }
-
-        public final void zza(Status status, FlagOverrides flagOverrides) {
-            zzdm.zza(status, flagOverrides, this.zza);
-        }
-
-        /* synthetic */ zza(TaskCompletionSource taskCompletionSource, zzo zzo) {
-            this(taskCompletionSource);
-        }
     }
 
     PhenotypeClient(Context context) {
@@ -225,5 +155,76 @@ public class PhenotypeClient extends GoogleApi<Api.ApiOptions.NoOptions> {
 
     public Task<Configurations> getAlternateConfigurationSnapshot(String str, String str2, String str3, String str4) {
         return zza(new zzab(this, str, str2, str3, str4));
+    }
+
+    static class zza extends zzdyq {
+        private final TaskCompletionSource zza;
+
+        private zza(TaskCompletionSource taskCompletionSource) {
+            this.zza = taskCompletionSource;
+        }
+
+        /* synthetic */ zza(TaskCompletionSource taskCompletionSource, zzo zzo) {
+            this(taskCompletionSource);
+        }
+
+        public final void zzb(Status status) {
+            zzdm.zza(status, null, this.zza);
+        }
+
+        public final void zzc(Status status) {
+            zzdm.zza(status, null, this.zza);
+        }
+
+        public final void zzd(Status status) {
+            zzdm.zza(status, null, this.zza);
+        }
+
+        public final void zze(Status status) {
+            zzdm.zza(status, null, this.zza);
+        }
+
+        public final void zza(Status status, Configurations configurations) {
+            zzdm.zza(status, configurations, this.zza);
+        }
+
+        public final void zzf(Status status) {
+            if (status.isSuccess()) {
+                ConfigurationContentLoader.invalidateAllCaches();
+            }
+            zzdm.zza(status, null, this.zza);
+        }
+
+        public final void zza(Status status, ExperimentTokens experimentTokens) {
+            zzdm.zza(status, experimentTokens, this.zza);
+        }
+
+        public final void zza(Status status, DogfoodsToken dogfoodsToken) {
+            zzdm.zza(status, dogfoodsToken, this.zza);
+        }
+
+        public final void zzg(Status status) {
+            zzdm.zza(status, null, this.zza);
+        }
+
+        public final void zza(Status status, Flag flag) {
+            zzdm.zza(status, flag, this.zza);
+        }
+
+        public final void zzb(Status status, Configurations configurations) {
+            zzdm.zza(status, configurations, this.zza);
+        }
+
+        public void zza(Status status) {
+            zzdm.zza(status, null, this.zza);
+        }
+
+        public final void zzh(Status status) {
+            zzdm.zza(status, null, this.zza);
+        }
+
+        public final void zza(Status status, FlagOverrides flagOverrides) {
+            zzdm.zza(status, flagOverrides, this.zza);
+        }
     }
 }

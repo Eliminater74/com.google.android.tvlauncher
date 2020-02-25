@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailabilityLight;
 import com.google.android.gms.common.api.Api;
@@ -15,6 +16,7 @@ import com.google.android.gms.common.internal.zzax;
 import com.google.android.gms.internal.zzemf;
 import com.google.android.gms.signin.SignInOptions;
 import com.google.android.gms.signin.zzd;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -34,25 +36,25 @@ public final class zzap implements zzbi {
     public final Context zzc;
     /* access modifiers changed from: private */
     public final GoogleApiAvailabilityLight zzd;
+    private final Bundle zzi = new Bundle();
+    private final Set<Api.zzc> zzj = new HashSet();
+    private final ClientSettings zzr;
+    private final Map<Api<?>, Boolean> zzs;
+    private final Api.zza<? extends zzd, SignInOptions> zzt;
+    /* access modifiers changed from: private */
+    public zzd zzk;
+    /* access modifiers changed from: private */
+    public boolean zzm;
+    /* access modifiers changed from: private */
+    public IAccountAccessor zzo;
     private ConnectionResult zze;
     private int zzf;
     private int zzg = 0;
     private int zzh;
-    private final Bundle zzi = new Bundle();
-    private final Set<Api.zzc> zzj = new HashSet();
-    /* access modifiers changed from: private */
-    public zzd zzk;
     private boolean zzl;
-    /* access modifiers changed from: private */
-    public boolean zzm;
     private boolean zzn;
-    /* access modifiers changed from: private */
-    public IAccountAccessor zzo;
     private boolean zzp;
     private boolean zzq;
-    private final ClientSettings zzr;
-    private final Map<Api<?>, Boolean> zzs;
-    private final Api.zza<? extends zzd, SignInOptions> zzt;
     private ArrayList<Future<?>> zzu = new ArrayList<>();
 
     public zzap(zzbj zzbj, ClientSettings clientSettings, Map<Api<?>, Boolean> map, GoogleApiAvailabilityLight googleApiAvailabilityLight, Api.zza<? extends zzd, SignInOptions> zza2, Lock lock, Context context) {
@@ -63,6 +65,16 @@ public final class zzap implements zzbi {
         this.zzt = zza2;
         this.zzb = lock;
         this.zzc = context;
+    }
+
+    private static String zzc(int i) {
+        if (i == 0) {
+            return "STEP_SERVICE_BINDINGS_AND_SIGN_IN";
+        }
+        if (i != 1) {
+            return "UNKNOWN";
+        }
+        return "STEP_GETTING_REMOTE_SERVICE";
     }
 
     public final void zza() {
@@ -378,15 +390,5 @@ public final class zzap implements zzbi {
         Log.wtf("GoogleApiClientConnecting", sb3.toString(), new Exception());
         zzb(new ConnectionResult(8, null));
         return false;
-    }
-
-    private static String zzc(int i) {
-        if (i == 0) {
-            return "STEP_SERVICE_BINDINGS_AND_SIGN_IN";
-        }
-        if (i != 1) {
-            return "UNKNOWN";
-        }
-        return "STEP_GETTING_REMOTE_SERVICE";
     }
 }

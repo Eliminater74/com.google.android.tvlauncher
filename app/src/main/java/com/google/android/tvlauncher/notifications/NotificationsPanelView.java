@@ -5,18 +5,10 @@ import android.support.p004v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewTreeObserver;
+
 import androidx.leanback.widget.VerticalGridView;
 
 public class NotificationsPanelView extends VerticalGridView {
-    private ViewTreeObserver.OnGlobalFocusChangeListener mFocusChangeListener = new ViewTreeObserver.OnGlobalFocusChangeListener() {
-        public void onGlobalFocusChanged(View oldFocus, View newFocus) {
-            if (NotificationsPanelView.this.mListener != null) {
-                NotificationsPanelView.this.mListener.onFocusChanged();
-            }
-        }
-    };
-    /* access modifiers changed from: private */
-    public OnFocusChangedListener mListener;
     private final RecyclerView.ItemAnimator.ItemAnimatorFinishedListener mOnAnimationsFinishedListener = new RecyclerView.ItemAnimator.ItemAnimatorFinishedListener() {
         public void onAnimationsFinished() {
             if (!NotificationsPanelView.this.isComputingLayout() && NotificationsPanelView.this.isLayoutFrozen()) {
@@ -25,10 +17,15 @@ public class NotificationsPanelView extends VerticalGridView {
             }
         }
     };
-
-    public interface OnFocusChangedListener {
-        void onFocusChanged();
-    }
+    /* access modifiers changed from: private */
+    public OnFocusChangedListener mListener;
+    private ViewTreeObserver.OnGlobalFocusChangeListener mFocusChangeListener = new ViewTreeObserver.OnGlobalFocusChangeListener() {
+        public void onGlobalFocusChanged(View oldFocus, View newFocus) {
+            if (NotificationsPanelView.this.mListener != null) {
+                NotificationsPanelView.this.mListener.onFocusChanged();
+            }
+        }
+    };
 
     public NotificationsPanelView(Context context) {
         super(context);
@@ -75,5 +72,9 @@ public class NotificationsPanelView extends VerticalGridView {
 
     public void setOnFocusChangedListener(OnFocusChangedListener listener) {
         this.mListener = listener;
+    }
+
+    public interface OnFocusChangedListener {
+        void onFocusChanged();
     }
 }

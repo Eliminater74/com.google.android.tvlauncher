@@ -6,11 +6,12 @@ import com.google.common.annotations.GwtIncompatible;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.math.IntMath;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.Serializable;
 import java.util.AbstractSet;
 import java.util.Arrays;
@@ -31,25 +32,10 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
-import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible(emulated = true)
 public final class Sets {
     private Sets() {
-    }
-
-    static abstract class ImprovedAbstractSet<E> extends AbstractSet<E> {
-        ImprovedAbstractSet() {
-        }
-
-        public boolean removeAll(Collection<?> c) {
-            return Sets.removeAllImpl(this, c);
-        }
-
-        public boolean retainAll(Collection<?> c) {
-            return super.retainAll((Collection) Preconditions.checkNotNull(c));
-        }
     }
 
     @GwtCompatible(serializable = true)
@@ -207,75 +193,6 @@ public final class Sets {
     @Deprecated
     public static <E> Set<E> newSetFromMap(Map<E, Boolean> map) {
         return Collections.newSetFromMap(map);
-    }
-
-    public static abstract class SetView<E> extends AbstractSet<E> {
-        public abstract UnmodifiableIterator<E> iterator();
-
-        private SetView() {
-        }
-
-        public ImmutableSet<E> immutableCopy() {
-            return ImmutableSet.copyOf((Collection) this);
-        }
-
-        /*  JADX ERROR: JadxRuntimeException in pass: MethodInvokeVisitor
-            jadx.core.utils.exceptions.JadxRuntimeException: Not class type: S
-            	at jadx.core.dex.info.ClassInfo.checkClassType(ClassInfo.java:60)
-            	at jadx.core.dex.info.ClassInfo.fromType(ClassInfo.java:31)
-            	at jadx.core.dex.nodes.DexNode.resolveClass(DexNode.java:143)
-            	at jadx.core.dex.nodes.RootNode.resolveClass(RootNode.java:183)
-            	at jadx.core.dex.nodes.utils.MethodUtils.processMethodArgsOverloaded(MethodUtils.java:75)
-            	at jadx.core.dex.nodes.utils.MethodUtils.collectOverloadedMethods(MethodUtils.java:54)
-            	at jadx.core.dex.visitors.MethodInvokeVisitor.processOverloaded(MethodInvokeVisitor.java:106)
-            	at jadx.core.dex.visitors.MethodInvokeVisitor.processInvoke(MethodInvokeVisitor.java:99)
-            	at jadx.core.dex.visitors.MethodInvokeVisitor.processInsn(MethodInvokeVisitor.java:70)
-            	at jadx.core.dex.visitors.MethodInvokeVisitor.visit(MethodInvokeVisitor.java:63)
-            */
-        @com.google.errorprone.annotations.CanIgnoreReturnValue
-        public <S extends java.util.Set<E>> S copyInto(S r1) {
-            /*
-                r0 = this;
-                r1.addAll(r0)
-                return r1
-            */
-            throw new UnsupportedOperationException("Method not decompiled: com.google.common.collect.Sets.SetView.copyInto(java.util.Set):java.util.Set");
-        }
-
-        @CanIgnoreReturnValue
-        @Deprecated
-        public final boolean add(E e) {
-            throw new UnsupportedOperationException();
-        }
-
-        @CanIgnoreReturnValue
-        @Deprecated
-        public final boolean remove(Object object) {
-            throw new UnsupportedOperationException();
-        }
-
-        @CanIgnoreReturnValue
-        @Deprecated
-        public final boolean addAll(Collection<? extends E> collection) {
-            throw new UnsupportedOperationException();
-        }
-
-        @CanIgnoreReturnValue
-        @Deprecated
-        public final boolean removeAll(Collection<?> collection) {
-            throw new UnsupportedOperationException();
-        }
-
-        @CanIgnoreReturnValue
-        @Deprecated
-        public final boolean retainAll(Collection<?> collection) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Deprecated
-        public final void clear() {
-            throw new UnsupportedOperationException();
-        }
     }
 
     public static <E> SetView<E> union(final Set<? extends E> set1, final Set<? extends E> set2) {
@@ -524,119 +441,6 @@ public final class Sets {
         return new FilteredNavigableSet((NavigableSet) filtered.unfiltered, Predicates.and(filtered.predicate, predicate));
     }
 
-    private static class FilteredSet<E> extends Collections2.FilteredCollection<E> implements Set<E> {
-        FilteredSet(Set<E> unfiltered, Predicate<? super E> predicate) {
-            super(unfiltered, predicate);
-        }
-
-        public boolean equals(@NullableDecl Object object) {
-            return Sets.equalsImpl(this, object);
-        }
-
-        public int hashCode() {
-            return Sets.hashCodeImpl(this);
-        }
-    }
-
-    private static class FilteredSortedSet<E> extends FilteredSet<E> implements SortedSet<E> {
-        FilteredSortedSet(SortedSet<E> unfiltered, Predicate<? super E> predicate) {
-            super(unfiltered, predicate);
-        }
-
-        public Comparator<? super E> comparator() {
-            return ((SortedSet) this.unfiltered).comparator();
-        }
-
-        public SortedSet<E> subSet(E fromElement, E toElement) {
-            return new FilteredSortedSet(((SortedSet) this.unfiltered).subSet(fromElement, toElement), this.predicate);
-        }
-
-        public SortedSet<E> headSet(E toElement) {
-            return new FilteredSortedSet(((SortedSet) this.unfiltered).headSet(toElement), this.predicate);
-        }
-
-        public SortedSet<E> tailSet(E fromElement) {
-            return new FilteredSortedSet(((SortedSet) this.unfiltered).tailSet(fromElement), this.predicate);
-        }
-
-        public E first() {
-            return Iterators.find(this.unfiltered.iterator(), this.predicate);
-        }
-
-        public E last() {
-            SortedSet<E> sortedUnfiltered = (SortedSet) this.unfiltered;
-            while (true) {
-                E element = sortedUnfiltered.last();
-                if (this.predicate.apply(element)) {
-                    return element;
-                }
-                sortedUnfiltered = sortedUnfiltered.headSet(element);
-            }
-        }
-    }
-
-    @GwtIncompatible
-    private static class FilteredNavigableSet<E> extends FilteredSortedSet<E> implements NavigableSet<E> {
-        FilteredNavigableSet(NavigableSet<E> unfiltered, Predicate<? super E> predicate) {
-            super(unfiltered, predicate);
-        }
-
-        /* access modifiers changed from: package-private */
-        public NavigableSet<E> unfiltered() {
-            return (NavigableSet) this.unfiltered;
-        }
-
-        @NullableDecl
-        public E lower(E e) {
-            return Iterators.find(unfiltered().headSet(e, false).descendingIterator(), this.predicate, null);
-        }
-
-        @NullableDecl
-        public E floor(E e) {
-            return Iterators.find(unfiltered().headSet(e, true).descendingIterator(), this.predicate, null);
-        }
-
-        public E ceiling(E e) {
-            return Iterables.find(unfiltered().tailSet(e, true), this.predicate, null);
-        }
-
-        public E higher(E e) {
-            return Iterables.find(unfiltered().tailSet(e, false), this.predicate, null);
-        }
-
-        public E pollFirst() {
-            return Iterables.removeFirstMatching(unfiltered(), this.predicate);
-        }
-
-        public E pollLast() {
-            return Iterables.removeFirstMatching(unfiltered().descendingSet(), this.predicate);
-        }
-
-        public NavigableSet<E> descendingSet() {
-            return Sets.filter(unfiltered().descendingSet(), this.predicate);
-        }
-
-        public Iterator<E> descendingIterator() {
-            return Iterators.filter(unfiltered().descendingIterator(), this.predicate);
-        }
-
-        public E last() {
-            return Iterators.find(unfiltered().descendingIterator(), this.predicate);
-        }
-
-        public NavigableSet<E> subSet(E fromElement, boolean fromInclusive, E toElement, boolean toInclusive) {
-            return Sets.filter(unfiltered().subSet(fromElement, fromInclusive, toElement, toInclusive), this.predicate);
-        }
-
-        public NavigableSet<E> headSet(E toElement, boolean inclusive) {
-            return Sets.filter(unfiltered().headSet(toElement, inclusive), this.predicate);
-        }
-
-        public NavigableSet<E> tailSet(E fromElement, boolean inclusive) {
-            return Sets.filter(unfiltered().tailSet(fromElement, inclusive), this.predicate);
-        }
-    }
-
     public static <B> Set<List<B>> cartesianProduct(List<? extends Set<? extends B>> sets) {
         return CartesianSet.create(sets);
     }
@@ -646,165 +450,9 @@ public final class Sets {
         return cartesianProduct(Arrays.asList(sets));
     }
 
-    private static final class CartesianSet<E> extends ForwardingCollection<List<E>> implements Set<List<E>> {
-        private final transient ImmutableList<ImmutableSet<E>> axes;
-        private final transient CartesianList<E> delegate;
-
-        static <E> Set<List<E>> create(List<? extends Set<? extends E>> sets) {
-            ImmutableList.Builder<ImmutableSet<E>> axesBuilder = new ImmutableList.Builder<>(sets.size());
-            for (Set<? extends E> set : sets) {
-                ImmutableSet<E> copy = ImmutableSet.copyOf((Collection) set);
-                if (copy.isEmpty()) {
-                    return ImmutableSet.m149of();
-                }
-                axesBuilder.add((Object) copy);
-            }
-            final ImmutableList<ImmutableSet<E>> axes2 = axesBuilder.build();
-            return new CartesianSet(axes2, new CartesianList(new ImmutableList<List<E>>() {
-                public int size() {
-                    return ImmutableList.this.size();
-                }
-
-                public List<E> get(int index) {
-                    return ((ImmutableSet) ImmutableList.this.get(index)).asList();
-                }
-
-                /* access modifiers changed from: package-private */
-                public boolean isPartialView() {
-                    return true;
-                }
-            }));
-        }
-
-        private CartesianSet(ImmutableList<ImmutableSet<E>> axes2, CartesianList<E> delegate2) {
-            this.axes = axes2;
-            this.delegate = delegate2;
-        }
-
-        /* access modifiers changed from: protected */
-        public Collection<List<E>> delegate() {
-            return this.delegate;
-        }
-
-        public boolean equals(@NullableDecl Object object) {
-            if (object instanceof CartesianSet) {
-                return this.axes.equals(((CartesianSet) object).axes);
-            }
-            return super.equals(object);
-        }
-
-        public int hashCode() {
-            int adjust = size() - 1;
-            for (int i = 0; i < this.axes.size(); i++) {
-                adjust = ((adjust * 31) ^ -1) ^ -1;
-            }
-            int hash = 1;
-            UnmodifiableIterator<ImmutableSet<E>> it = this.axes.iterator();
-            while (it.hasNext()) {
-                Set<E> axis = it.next();
-                hash = (((hash * 31) + ((size() / axis.size()) * axis.hashCode())) ^ -1) ^ -1;
-            }
-            return ((hash + adjust) ^ -1) ^ -1;
-        }
-    }
-
     @GwtCompatible(serializable = false)
     public static <E> Set<Set<E>> powerSet(Set<E> set) {
         return new PowerSet(set);
-    }
-
-    private static final class SubSet<E> extends AbstractSet<E> {
-        /* access modifiers changed from: private */
-        public final ImmutableMap<E, Integer> inputSet;
-        /* access modifiers changed from: private */
-        public final int mask;
-
-        SubSet(ImmutableMap<E, Integer> inputSet2, int mask2) {
-            this.inputSet = inputSet2;
-            this.mask = mask2;
-        }
-
-        public Iterator<E> iterator() {
-            return new UnmodifiableIterator<E>() {
-                final ImmutableList<E> elements = SubSet.this.inputSet.keySet().asList();
-                int remainingSetBits = SubSet.this.mask;
-
-                public boolean hasNext() {
-                    return this.remainingSetBits != 0;
-                }
-
-                public E next() {
-                    int index = Integer.numberOfTrailingZeros(this.remainingSetBits);
-                    if (index != 32) {
-                        this.remainingSetBits &= (1 << index) ^ -1;
-                        return this.elements.get(index);
-                    }
-                    throw new NoSuchElementException();
-                }
-            };
-        }
-
-        public int size() {
-            return Integer.bitCount(this.mask);
-        }
-
-        public boolean contains(@NullableDecl Object o) {
-            Integer index = this.inputSet.get(o);
-            return (index == null || (this.mask & (1 << index.intValue())) == 0) ? false : true;
-        }
-    }
-
-    private static final class PowerSet<E> extends AbstractSet<Set<E>> {
-        final ImmutableMap<E, Integer> inputSet;
-
-        PowerSet(Set<E> input) {
-            Preconditions.checkArgument(input.size() <= 30, "Too many elements to create power set: %s > 30", input.size());
-            this.inputSet = Maps.indexMap(input);
-        }
-
-        public int size() {
-            return 1 << this.inputSet.size();
-        }
-
-        public boolean isEmpty() {
-            return false;
-        }
-
-        public Iterator<Set<E>> iterator() {
-            return new AbstractIndexedListIterator<Set<E>>(size()) {
-                /* access modifiers changed from: protected */
-                public Set<E> get(int setBits) {
-                    return new SubSet(PowerSet.this.inputSet, setBits);
-                }
-            };
-        }
-
-        public boolean contains(@NullableDecl Object obj) {
-            if (!(obj instanceof Set)) {
-                return false;
-            }
-            return this.inputSet.keySet().containsAll((Set) obj);
-        }
-
-        public boolean equals(@NullableDecl Object obj) {
-            if (obj instanceof PowerSet) {
-                return this.inputSet.equals(((PowerSet) obj).inputSet);
-            }
-            return super.equals(obj);
-        }
-
-        public int hashCode() {
-            return this.inputSet.keySet().hashCode() << (this.inputSet.size() - 1);
-        }
-
-        public String toString() {
-            String valueOf = String.valueOf(this.inputSet);
-            StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 10);
-            sb.append("powerSet(");
-            sb.append(valueOf);
-            sb.append(")");
-            return sb.toString();
-        }
     }
 
     @Beta
@@ -933,12 +581,419 @@ public final class Sets {
         return new UnmodifiableNavigableSet(set);
     }
 
+    @GwtIncompatible
+    public static <E> NavigableSet<E> synchronizedNavigableSet(NavigableSet<E> navigableSet) {
+        return Synchronized.navigableSet(navigableSet);
+    }
+
+    static boolean removeAllImpl(Set<?> set, Iterator<?> iterator) {
+        boolean changed = false;
+        while (iterator.hasNext()) {
+            changed |= set.remove(iterator.next());
+        }
+        return changed;
+    }
+
+    static boolean removeAllImpl(Set<?> set, Collection<?> collection) {
+        Preconditions.checkNotNull(collection);
+        if (collection instanceof Multiset) {
+            collection = ((Multiset) collection).elementSet();
+        }
+        if (!(collection instanceof Set) || collection.size() <= set.size()) {
+            return removeAllImpl(set, collection.iterator());
+        }
+        return Iterators.removeAll(set.iterator(), collection);
+    }
+
+    @GwtIncompatible
+    @Beta
+    public static <K extends Comparable<? super K>> NavigableSet<K> subSet(NavigableSet<K> set, Range<K> range) {
+        boolean z = true;
+        if (set.comparator() != null && set.comparator() != Ordering.natural() && range.hasLowerBound() && range.hasUpperBound()) {
+            Preconditions.checkArgument(set.comparator().compare(range.lowerEndpoint(), range.upperEndpoint()) <= 0, "set is using a custom comparator which is inconsistent with the natural ordering.");
+        }
+        if (range.hasLowerBound() && range.hasUpperBound()) {
+            K lowerEndpoint = range.lowerEndpoint();
+            boolean z2 = range.lowerBoundType() == BoundType.CLOSED;
+            K upperEndpoint = range.upperEndpoint();
+            if (range.upperBoundType() != BoundType.CLOSED) {
+                z = false;
+            }
+            return set.subSet(lowerEndpoint, z2, upperEndpoint, z);
+        } else if (range.hasLowerBound()) {
+            K lowerEndpoint2 = range.lowerEndpoint();
+            if (range.lowerBoundType() != BoundType.CLOSED) {
+                z = false;
+            }
+            return set.tailSet(lowerEndpoint2, z);
+        } else if (!range.hasUpperBound()) {
+            return (NavigableSet) Preconditions.checkNotNull(set);
+        } else {
+            K upperEndpoint2 = range.upperEndpoint();
+            if (range.upperBoundType() != BoundType.CLOSED) {
+                z = false;
+            }
+            return set.headSet(upperEndpoint2, z);
+        }
+    }
+
+    static abstract class ImprovedAbstractSet<E> extends AbstractSet<E> {
+        ImprovedAbstractSet() {
+        }
+
+        public boolean removeAll(Collection<?> c) {
+            return Sets.removeAllImpl(this, c);
+        }
+
+        public boolean retainAll(Collection<?> c) {
+            return super.retainAll((Collection) Preconditions.checkNotNull(c));
+        }
+    }
+
+    public static abstract class SetView<E> extends AbstractSet<E> {
+        private SetView() {
+        }
+
+        public abstract UnmodifiableIterator<E> iterator();
+
+        public ImmutableSet<E> immutableCopy() {
+            return ImmutableSet.copyOf((Collection) this);
+        }
+
+        /*  JADX ERROR: JadxRuntimeException in pass: MethodInvokeVisitor
+            jadx.core.utils.exceptions.JadxRuntimeException: Not class type: S
+            	at jadx.core.dex.info.ClassInfo.checkClassType(ClassInfo.java:60)
+            	at jadx.core.dex.info.ClassInfo.fromType(ClassInfo.java:31)
+            	at jadx.core.dex.nodes.DexNode.resolveClass(DexNode.java:143)
+            	at jadx.core.dex.nodes.RootNode.resolveClass(RootNode.java:183)
+            	at jadx.core.dex.nodes.utils.MethodUtils.processMethodArgsOverloaded(MethodUtils.java:75)
+            	at jadx.core.dex.nodes.utils.MethodUtils.collectOverloadedMethods(MethodUtils.java:54)
+            	at jadx.core.dex.visitors.MethodInvokeVisitor.processOverloaded(MethodInvokeVisitor.java:106)
+            	at jadx.core.dex.visitors.MethodInvokeVisitor.processInvoke(MethodInvokeVisitor.java:99)
+            	at jadx.core.dex.visitors.MethodInvokeVisitor.processInsn(MethodInvokeVisitor.java:70)
+            	at jadx.core.dex.visitors.MethodInvokeVisitor.visit(MethodInvokeVisitor.java:63)
+            */
+        @com.google.errorprone.annotations.CanIgnoreReturnValue
+        public <S extends java.util.Set<E>> S copyInto(S r1) {
+            /*
+                r0 = this;
+                r1.addAll(r0)
+                return r1
+            */
+            throw new UnsupportedOperationException("Method not decompiled: com.google.common.collect.Sets.SetView.copyInto(java.util.Set):java.util.Set");
+        }
+
+        @CanIgnoreReturnValue
+        @Deprecated
+        public final boolean add(E e) {
+            throw new UnsupportedOperationException();
+        }
+
+        @CanIgnoreReturnValue
+        @Deprecated
+        public final boolean remove(Object object) {
+            throw new UnsupportedOperationException();
+        }
+
+        @CanIgnoreReturnValue
+        @Deprecated
+        public final boolean addAll(Collection<? extends E> collection) {
+            throw new UnsupportedOperationException();
+        }
+
+        @CanIgnoreReturnValue
+        @Deprecated
+        public final boolean removeAll(Collection<?> collection) {
+            throw new UnsupportedOperationException();
+        }
+
+        @CanIgnoreReturnValue
+        @Deprecated
+        public final boolean retainAll(Collection<?> collection) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Deprecated
+        public final void clear() {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    private static class FilteredSet<E> extends Collections2.FilteredCollection<E> implements Set<E> {
+        FilteredSet(Set<E> unfiltered, Predicate<? super E> predicate) {
+            super(unfiltered, predicate);
+        }
+
+        public boolean equals(@NullableDecl Object object) {
+            return Sets.equalsImpl(this, object);
+        }
+
+        public int hashCode() {
+            return Sets.hashCodeImpl(this);
+        }
+    }
+
+    private static class FilteredSortedSet<E> extends FilteredSet<E> implements SortedSet<E> {
+        FilteredSortedSet(SortedSet<E> unfiltered, Predicate<? super E> predicate) {
+            super(unfiltered, predicate);
+        }
+
+        public Comparator<? super E> comparator() {
+            return ((SortedSet) this.unfiltered).comparator();
+        }
+
+        public SortedSet<E> subSet(E fromElement, E toElement) {
+            return new FilteredSortedSet(((SortedSet) this.unfiltered).subSet(fromElement, toElement), this.predicate);
+        }
+
+        public SortedSet<E> headSet(E toElement) {
+            return new FilteredSortedSet(((SortedSet) this.unfiltered).headSet(toElement), this.predicate);
+        }
+
+        public SortedSet<E> tailSet(E fromElement) {
+            return new FilteredSortedSet(((SortedSet) this.unfiltered).tailSet(fromElement), this.predicate);
+        }
+
+        public E first() {
+            return Iterators.find(this.unfiltered.iterator(), this.predicate);
+        }
+
+        public E last() {
+            SortedSet<E> sortedUnfiltered = (SortedSet) this.unfiltered;
+            while (true) {
+                E element = sortedUnfiltered.last();
+                if (this.predicate.apply(element)) {
+                    return element;
+                }
+                sortedUnfiltered = sortedUnfiltered.headSet(element);
+            }
+        }
+    }
+
+    @GwtIncompatible
+    private static class FilteredNavigableSet<E> extends FilteredSortedSet<E> implements NavigableSet<E> {
+        FilteredNavigableSet(NavigableSet<E> unfiltered, Predicate<? super E> predicate) {
+            super(unfiltered, predicate);
+        }
+
+        /* access modifiers changed from: package-private */
+        public NavigableSet<E> unfiltered() {
+            return (NavigableSet) this.unfiltered;
+        }
+
+        @NullableDecl
+        public E lower(E e) {
+            return Iterators.find(unfiltered().headSet(e, false).descendingIterator(), this.predicate, null);
+        }
+
+        @NullableDecl
+        public E floor(E e) {
+            return Iterators.find(unfiltered().headSet(e, true).descendingIterator(), this.predicate, null);
+        }
+
+        public E ceiling(E e) {
+            return Iterables.find(unfiltered().tailSet(e, true), this.predicate, null);
+        }
+
+        public E higher(E e) {
+            return Iterables.find(unfiltered().tailSet(e, false), this.predicate, null);
+        }
+
+        public E pollFirst() {
+            return Iterables.removeFirstMatching(unfiltered(), this.predicate);
+        }
+
+        public E pollLast() {
+            return Iterables.removeFirstMatching(unfiltered().descendingSet(), this.predicate);
+        }
+
+        public NavigableSet<E> descendingSet() {
+            return Sets.filter(unfiltered().descendingSet(), this.predicate);
+        }
+
+        public Iterator<E> descendingIterator() {
+            return Iterators.filter(unfiltered().descendingIterator(), this.predicate);
+        }
+
+        public E last() {
+            return Iterators.find(unfiltered().descendingIterator(), this.predicate);
+        }
+
+        public NavigableSet<E> subSet(E fromElement, boolean fromInclusive, E toElement, boolean toInclusive) {
+            return Sets.filter(unfiltered().subSet(fromElement, fromInclusive, toElement, toInclusive), this.predicate);
+        }
+
+        public NavigableSet<E> headSet(E toElement, boolean inclusive) {
+            return Sets.filter(unfiltered().headSet(toElement, inclusive), this.predicate);
+        }
+
+        public NavigableSet<E> tailSet(E fromElement, boolean inclusive) {
+            return Sets.filter(unfiltered().tailSet(fromElement, inclusive), this.predicate);
+        }
+    }
+
+    private static final class CartesianSet<E> extends ForwardingCollection<List<E>> implements Set<List<E>> {
+        private final transient ImmutableList<ImmutableSet<E>> axes;
+        private final transient CartesianList<E> delegate;
+
+        private CartesianSet(ImmutableList<ImmutableSet<E>> axes2, CartesianList<E> delegate2) {
+            this.axes = axes2;
+            this.delegate = delegate2;
+        }
+
+        static <E> Set<List<E>> create(List<? extends Set<? extends E>> sets) {
+            ImmutableList.Builder<ImmutableSet<E>> axesBuilder = new ImmutableList.Builder<>(sets.size());
+            for (Set<? extends E> set : sets) {
+                ImmutableSet<E> copy = ImmutableSet.copyOf((Collection) set);
+                if (copy.isEmpty()) {
+                    return ImmutableSet.m149of();
+                }
+                axesBuilder.add((Object) copy);
+            }
+            final ImmutableList<ImmutableSet<E>> axes2 = axesBuilder.build();
+            return new CartesianSet(axes2, new CartesianList(new ImmutableList<List<E>>() {
+                public int size() {
+                    return ImmutableList.this.size();
+                }
+
+                public List<E> get(int index) {
+                    return ((ImmutableSet) ImmutableList.this.get(index)).asList();
+                }
+
+                /* access modifiers changed from: package-private */
+                public boolean isPartialView() {
+                    return true;
+                }
+            }));
+        }
+
+        /* access modifiers changed from: protected */
+        public Collection<List<E>> delegate() {
+            return this.delegate;
+        }
+
+        public boolean equals(@NullableDecl Object object) {
+            if (object instanceof CartesianSet) {
+                return this.axes.equals(((CartesianSet) object).axes);
+            }
+            return super.equals(object);
+        }
+
+        public int hashCode() {
+            int adjust = size() - 1;
+            for (int i = 0; i < this.axes.size(); i++) {
+                adjust = ((adjust * 31) ^ -1) ^ -1;
+            }
+            int hash = 1;
+            UnmodifiableIterator<ImmutableSet<E>> it = this.axes.iterator();
+            while (it.hasNext()) {
+                Set<E> axis = it.next();
+                hash = (((hash * 31) + ((size() / axis.size()) * axis.hashCode())) ^ -1) ^ -1;
+            }
+            return ((hash + adjust) ^ -1) ^ -1;
+        }
+    }
+
+    private static final class SubSet<E> extends AbstractSet<E> {
+        /* access modifiers changed from: private */
+        public final ImmutableMap<E, Integer> inputSet;
+        /* access modifiers changed from: private */
+        public final int mask;
+
+        SubSet(ImmutableMap<E, Integer> inputSet2, int mask2) {
+            this.inputSet = inputSet2;
+            this.mask = mask2;
+        }
+
+        public Iterator<E> iterator() {
+            return new UnmodifiableIterator<E>() {
+                final ImmutableList<E> elements = SubSet.this.inputSet.keySet().asList();
+                int remainingSetBits = SubSet.this.mask;
+
+                public boolean hasNext() {
+                    return this.remainingSetBits != 0;
+                }
+
+                public E next() {
+                    int index = Integer.numberOfTrailingZeros(this.remainingSetBits);
+                    if (index != 32) {
+                        this.remainingSetBits &= (1 << index) ^ -1;
+                        return this.elements.get(index);
+                    }
+                    throw new NoSuchElementException();
+                }
+            };
+        }
+
+        public int size() {
+            return Integer.bitCount(this.mask);
+        }
+
+        public boolean contains(@NullableDecl Object o) {
+            Integer index = this.inputSet.get(o);
+            return (index == null || (this.mask & (1 << index.intValue())) == 0) ? false : true;
+        }
+    }
+
+    private static final class PowerSet<E> extends AbstractSet<Set<E>> {
+        final ImmutableMap<E, Integer> inputSet;
+
+        PowerSet(Set<E> input) {
+            Preconditions.checkArgument(input.size() <= 30, "Too many elements to create power set: %s > 30", input.size());
+            this.inputSet = Maps.indexMap(input);
+        }
+
+        public int size() {
+            return 1 << this.inputSet.size();
+        }
+
+        public boolean isEmpty() {
+            return false;
+        }
+
+        public Iterator<Set<E>> iterator() {
+            return new AbstractIndexedListIterator<Set<E>>(size()) {
+                /* access modifiers changed from: protected */
+                public Set<E> get(int setBits) {
+                    return new SubSet(PowerSet.this.inputSet, setBits);
+                }
+            };
+        }
+
+        public boolean contains(@NullableDecl Object obj) {
+            if (!(obj instanceof Set)) {
+                return false;
+            }
+            return this.inputSet.keySet().containsAll((Set) obj);
+        }
+
+        public boolean equals(@NullableDecl Object obj) {
+            if (obj instanceof PowerSet) {
+                return this.inputSet.equals(((PowerSet) obj).inputSet);
+            }
+            return super.equals(obj);
+        }
+
+        public int hashCode() {
+            return this.inputSet.keySet().hashCode() << (this.inputSet.size() - 1);
+        }
+
+        public String toString() {
+            String valueOf = String.valueOf(this.inputSet);
+            StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 10);
+            sb.append("powerSet(");
+            sb.append(valueOf);
+            sb.append(")");
+            return sb.toString();
+        }
+    }
+
     static final class UnmodifiableNavigableSet<E> extends ForwardingSortedSet<E> implements NavigableSet<E>, Serializable {
         private static final long serialVersionUID = 0;
         private final NavigableSet<E> delegate;
+        private final SortedSet<E> unmodifiableDelegate;
         @MonotonicNonNullDecl
         private transient UnmodifiableNavigableSet<E> descendingSet;
-        private final SortedSet<E> unmodifiableDelegate;
 
         /* JADX WARN: Type inference failed for: r2v0, types: [java.util.SortedSet, java.lang.Object, java.util.NavigableSet<E>] */
         /* JADX WARNING: Unknown variable types count: 1 */
@@ -1016,35 +1071,23 @@ public final class Sets {
     }
 
     @GwtIncompatible
-    public static <E> NavigableSet<E> synchronizedNavigableSet(NavigableSet<E> navigableSet) {
-        return Synchronized.navigableSet(navigableSet);
-    }
-
-    static boolean removeAllImpl(Set<?> set, Iterator<?> iterator) {
-        boolean changed = false;
-        while (iterator.hasNext()) {
-            changed |= set.remove(iterator.next());
-        }
-        return changed;
-    }
-
-    static boolean removeAllImpl(Set<?> set, Collection<?> collection) {
-        Preconditions.checkNotNull(collection);
-        if (collection instanceof Multiset) {
-            collection = ((Multiset) collection).elementSet();
-        }
-        if (!(collection instanceof Set) || collection.size() <= set.size()) {
-            return removeAllImpl(set, collection.iterator());
-        }
-        return Iterators.removeAll(set.iterator(), collection);
-    }
-
-    @GwtIncompatible
     static class DescendingSet<E> extends ForwardingNavigableSet<E> {
         private final NavigableSet<E> forward;
 
         DescendingSet(NavigableSet<E> forward2) {
             this.forward = forward2;
+        }
+
+        /* JADX WARN: Type inference failed for: r1v0, types: [java.util.Comparator<T>, java.util.Comparator] */
+        /* JADX WARNING: Unknown variable types count: 1 */
+        /* Code decompiled incorrectly, please refer to instructions dump. */
+        private static <T> com.google.common.collect.Ordering<T> reverse(java.util.Comparator<T> r1) {
+            /*
+                com.google.common.collect.Ordering r0 = com.google.common.collect.Ordering.from(r1)
+                com.google.common.collect.Ordering r0 = r0.reverse()
+                return r0
+            */
+            throw new UnsupportedOperationException("Method not decompiled: com.google.common.collect.Sets.DescendingSet.reverse(java.util.Comparator):com.google.common.collect.Ordering");
         }
 
         /* access modifiers changed from: protected */
@@ -1116,18 +1159,6 @@ public final class Sets {
             return reverse(forwardComparator);
         }
 
-        /* JADX WARN: Type inference failed for: r1v0, types: [java.util.Comparator<T>, java.util.Comparator] */
-        /* JADX WARNING: Unknown variable types count: 1 */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
-        private static <T> com.google.common.collect.Ordering<T> reverse(java.util.Comparator<T> r1) {
-            /*
-                com.google.common.collect.Ordering r0 = com.google.common.collect.Ordering.from(r1)
-                com.google.common.collect.Ordering r0 = r0.reverse()
-                return r0
-            */
-            throw new UnsupportedOperationException("Method not decompiled: com.google.common.collect.Sets.DescendingSet.reverse(java.util.Comparator):com.google.common.collect.Ordering");
-        }
-
         public E first() {
             return this.forward.last();
         }
@@ -1150,38 +1181,6 @@ public final class Sets {
 
         public String toString() {
             return standardToString();
-        }
-    }
-
-    @GwtIncompatible
-    @Beta
-    public static <K extends Comparable<? super K>> NavigableSet<K> subSet(NavigableSet<K> set, Range<K> range) {
-        boolean z = true;
-        if (set.comparator() != null && set.comparator() != Ordering.natural() && range.hasLowerBound() && range.hasUpperBound()) {
-            Preconditions.checkArgument(set.comparator().compare(range.lowerEndpoint(), range.upperEndpoint()) <= 0, "set is using a custom comparator which is inconsistent with the natural ordering.");
-        }
-        if (range.hasLowerBound() && range.hasUpperBound()) {
-            K lowerEndpoint = range.lowerEndpoint();
-            boolean z2 = range.lowerBoundType() == BoundType.CLOSED;
-            K upperEndpoint = range.upperEndpoint();
-            if (range.upperBoundType() != BoundType.CLOSED) {
-                z = false;
-            }
-            return set.subSet(lowerEndpoint, z2, upperEndpoint, z);
-        } else if (range.hasLowerBound()) {
-            K lowerEndpoint2 = range.lowerEndpoint();
-            if (range.lowerBoundType() != BoundType.CLOSED) {
-                z = false;
-            }
-            return set.tailSet(lowerEndpoint2, z);
-        } else if (!range.hasUpperBound()) {
-            return (NavigableSet) Preconditions.checkNotNull(set);
-        } else {
-            K upperEndpoint2 = range.upperEndpoint();
-            if (range.upperBoundType() != BoundType.CLOSED) {
-                z = false;
-            }
-            return set.headSet(upperEndpoint2, z);
         }
     }
 }

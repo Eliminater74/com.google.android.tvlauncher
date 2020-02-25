@@ -2,11 +2,15 @@ package com.google.android.exoplayer2.extractor.mp4;
 
 import com.google.android.exoplayer2.extractor.ExtractorInput;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.IOException;
 
 final class Sniffer {
     private static final int[] COMPATIBLE_BRANDS = {Util.getIntegerCodeForString("isom"), Util.getIntegerCodeForString("iso2"), Util.getIntegerCodeForString("iso3"), Util.getIntegerCodeForString("iso4"), Util.getIntegerCodeForString("iso5"), Util.getIntegerCodeForString("iso6"), Util.getIntegerCodeForString("avc1"), Util.getIntegerCodeForString("hvc1"), Util.getIntegerCodeForString("hev1"), Util.getIntegerCodeForString("av01"), Util.getIntegerCodeForString("mp41"), Util.getIntegerCodeForString("mp42"), Util.getIntegerCodeForString("3g2a"), Util.getIntegerCodeForString("3g2b"), Util.getIntegerCodeForString("3gr6"), Util.getIntegerCodeForString("3gs6"), Util.getIntegerCodeForString("3ge6"), Util.getIntegerCodeForString("3gg6"), Util.getIntegerCodeForString("M4V "), Util.getIntegerCodeForString("M4A "), Util.getIntegerCodeForString("f4v "), Util.getIntegerCodeForString("kddi"), Util.getIntegerCodeForString("M4VP"), Util.getIntegerCodeForString("qt  "), Util.getIntegerCodeForString("MSNV"), Util.getIntegerCodeForString("dby1")};
     private static final int SEARCH_LENGTH = 4096;
+
+    private Sniffer() {
+    }
 
     public static boolean sniffFragmented(ExtractorInput input) throws IOException, InterruptedException {
         return sniffInternal(input, true);
@@ -200,8 +204,5 @@ final class Sniffer {
             }
         }
         return false;
-    }
-
-    private Sniffer() {
     }
 }

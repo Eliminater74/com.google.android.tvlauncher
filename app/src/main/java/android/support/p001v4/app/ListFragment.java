@@ -22,24 +22,24 @@ public class ListFragment extends Fragment {
     static final int INTERNAL_EMPTY_ID = 16711681;
     static final int INTERNAL_LIST_CONTAINER_ID = 16711683;
     static final int INTERNAL_PROGRESS_CONTAINER_ID = 16711682;
-    ListAdapter mAdapter;
-    CharSequence mEmptyText;
-    View mEmptyView;
     private final Handler mHandler = new Handler();
-    ListView mList;
-    View mListContainer;
-    boolean mListShown;
     private final AdapterView.OnItemClickListener mOnClickListener = new AdapterView.OnItemClickListener() {
         public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
             ListFragment.this.onListItemClick((ListView) parent, v, position, id);
         }
     };
-    View mProgressContainer;
+    ListAdapter mAdapter;
+    CharSequence mEmptyText;
+    View mEmptyView;
+    ListView mList;
     private final Runnable mRequestFocus = new Runnable() {
         public void run() {
             ListFragment.this.mList.focusableViewAvailable(ListFragment.this.mList);
         }
     };
+    View mListContainer;
+    boolean mListShown;
+    View mProgressContainer;
     TextView mStandardEmptyView;
 
     @Nullable
@@ -85,22 +85,6 @@ public class ListFragment extends Fragment {
     }
 
     public void onListItemClick(@NonNull ListView l, @NonNull View v, int position, long id) {
-    }
-
-    public void setListAdapter(@Nullable ListAdapter adapter) {
-        boolean z = false;
-        boolean hadAdapter = this.mAdapter != null;
-        this.mAdapter = adapter;
-        ListView listView = this.mList;
-        if (listView != null) {
-            listView.setAdapter(adapter);
-            if (!this.mListShown && !hadAdapter) {
-                if (requireView().getWindowToken() != null) {
-                    z = true;
-                }
-                setListShown(true, z);
-            }
-        }
     }
 
     public void setSelection(int position) {
@@ -180,6 +164,22 @@ public class ListFragment extends Fragment {
     @Nullable
     public ListAdapter getListAdapter() {
         return this.mAdapter;
+    }
+
+    public void setListAdapter(@Nullable ListAdapter adapter) {
+        boolean z = false;
+        boolean hadAdapter = this.mAdapter != null;
+        this.mAdapter = adapter;
+        ListView listView = this.mList;
+        if (listView != null) {
+            listView.setAdapter(adapter);
+            if (!this.mListShown && !hadAdapter) {
+                if (requireView().getWindowToken() != null) {
+                    z = true;
+                }
+                setListShown(true, z);
+            }
+        }
     }
 
     @NonNull

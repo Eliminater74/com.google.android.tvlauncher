@@ -8,6 +8,7 @@ import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.RequestManager;
@@ -23,17 +24,19 @@ import com.bumptech.glide.request.transition.Transition;
 import com.bumptech.glide.signature.ObjectKey;
 import com.bumptech.glide.util.Preconditions;
 import com.bumptech.glide.util.Util;
+
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
 class GifFrameLoader {
+    final RequestManager requestManager;
     private final BitmapPool bitmapPool;
     private final List<FrameCallback> callbacks;
-    private DelayTarget current;
-    private Bitmap firstFrame;
     private final GifDecoder gifDecoder;
     private final Handler handler;
+    private DelayTarget current;
+    private Bitmap firstFrame;
     private boolean isCleared;
     private boolean isLoadPending;
     private boolean isRunning;
@@ -42,18 +45,8 @@ class GifFrameLoader {
     private OnEveryFrameListener onEveryFrameListener;
     private DelayTarget pendingTarget;
     private RequestBuilder<Bitmap> requestBuilder;
-    final RequestManager requestManager;
     private boolean startFromFirstFrame;
     private Transformation<Bitmap> transformation;
-
-    public interface FrameCallback {
-        void onFrameReady();
-    }
-
-    @VisibleForTesting
-    interface OnEveryFrameListener {
-        void onFrameReady();
-    }
 
     GifFrameLoader(Glide glide, GifDecoder gifDecoder2, int width, int height, Transformation<Bitmap> transformation2, Bitmap firstFrame2) {
         this(glide.getBitmapPool(), Glide.with(glide.getContext()), gifDecoder2, null, getRequestBuilder(Glide.with(glide.getContext()), width, height), transformation2, firstFrame2);
@@ -68,6 +61,14 @@ class GifFrameLoader {
         this.requestBuilder = requestBuilder2;
         this.gifDecoder = gifDecoder2;
         setFrameTransformation(transformation2, firstFrame2);
+    }
+
+    private static RequestBuilder<Bitmap> getRequestBuilder(RequestManager requestManager2, int width, int height) {
+        return requestManager2.asBitmap().apply((BaseRequestOptions<?>) ((RequestOptions) ((RequestOptions) RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE).useAnimationPool(true)).skipMemoryCache(true)).override(width, height));
+    }
+
+    private static Key getFrameSignature() {
+        return new ObjectKey(Double.valueOf(Math.random()));
     }
 
     /* access modifiers changed from: package-private */
@@ -269,6 +270,43 @@ class GifFrameLoader {
         }
     }
 
+    public interface FrameCallback {
+        void onFrameReady();
+    }
+
+    @VisibleForTesting
+    interface OnEveryFrameListener {
+        void onFrameReady();
+    }
+
+    @VisibleForTesting
+    static class DelayTarget extends SimpleTarget<Bitmap> {
+        final int index;
+        private final Handler handler;
+        private final long targetTime;
+        private Bitmap resource;
+
+        DelayTarget(Handler handler2, int index2, long targetTime2) {
+            this.handler = handler2;
+            this.index = index2;
+            this.targetTime = targetTime2;
+        }
+
+        public /* bridge */ /* synthetic */ void onResourceReady(@NonNull Object obj, @Nullable Transition transition) {
+            onResourceReady((Bitmap) obj, (Transition<? super Bitmap>) transition);
+        }
+
+        /* access modifiers changed from: package-private */
+        public Bitmap getResource() {
+            return this.resource;
+        }
+
+        public void onResourceReady(@NonNull Bitmap resource2, @Nullable Transition<? super Bitmap> transition) {
+            this.resource = resource2;
+            this.handler.sendMessageAtTime(this.handler.obtainMessage(1, this), this.targetTime);
+        }
+    }
+
     private class FrameLoaderCallback implements Handler.Callback {
         static final int MSG_CLEAR = 2;
         static final int MSG_DELAY = 1;
@@ -287,41 +325,5 @@ class GifFrameLoader {
                 return false;
             }
         }
-    }
-
-    @VisibleForTesting
-    static class DelayTarget extends SimpleTarget<Bitmap> {
-        private final Handler handler;
-        final int index;
-        private Bitmap resource;
-        private final long targetTime;
-
-        public /* bridge */ /* synthetic */ void onResourceReady(@NonNull Object obj, @Nullable Transition transition) {
-            onResourceReady((Bitmap) obj, (Transition<? super Bitmap>) transition);
-        }
-
-        DelayTarget(Handler handler2, int index2, long targetTime2) {
-            this.handler = handler2;
-            this.index = index2;
-            this.targetTime = targetTime2;
-        }
-
-        /* access modifiers changed from: package-private */
-        public Bitmap getResource() {
-            return this.resource;
-        }
-
-        public void onResourceReady(@NonNull Bitmap resource2, @Nullable Transition<? super Bitmap> transition) {
-            this.resource = resource2;
-            this.handler.sendMessageAtTime(this.handler.obtainMessage(1, this), this.targetTime);
-        }
-    }
-
-    private static RequestBuilder<Bitmap> getRequestBuilder(RequestManager requestManager2, int width, int height) {
-        return requestManager2.asBitmap().apply((BaseRequestOptions<?>) ((RequestOptions) ((RequestOptions) RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE).useAnimationPool(true)).skipMemoryCache(true)).override(width, height));
-    }
-
-    private static Key getFrameSignature() {
-        return new ObjectKey(Double.valueOf(Math.random()));
     }
 }

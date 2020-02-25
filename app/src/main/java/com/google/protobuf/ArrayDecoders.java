@@ -2,33 +2,12 @@ package com.google.protobuf;
 
 import com.google.common.base.Ascii;
 import com.google.common.primitives.UnsignedBytes;
-import com.google.protobuf.GeneratedMessageLite;
-import com.google.protobuf.Internal;
-import com.google.protobuf.WireFormat;
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.io.IOException;
 
 final class ArrayDecoders {
     ArrayDecoders() {
-    }
-
-    static final class Registers {
-        public final ExtensionRegistryLite extensionRegistry;
-        public int int1;
-        public long long1;
-        public Object object1;
-
-        Registers() {
-            this.extensionRegistry = ExtensionRegistryLite.getEmptyRegistry();
-        }
-
-        Registers(ExtensionRegistryLite extensionRegistry2) {
-            if (extensionRegistry2 != null) {
-                this.extensionRegistry = extensionRegistry2;
-                return;
-            }
-            throw new NullPointerException();
-        }
     }
 
     /* JADX INFO: Multiple debug info for r3v1 byte: [D('value' int), D('position' int)] */
@@ -903,6 +882,25 @@ final class ArrayDecoders {
             }
         } else {
             throw InvalidProtocolBufferException.invalidTag();
+        }
+    }
+
+    static final class Registers {
+        public final ExtensionRegistryLite extensionRegistry;
+        public int int1;
+        public long long1;
+        public Object object1;
+
+        Registers() {
+            this.extensionRegistry = ExtensionRegistryLite.getEmptyRegistry();
+        }
+
+        Registers(ExtensionRegistryLite extensionRegistry2) {
+            if (extensionRegistry2 != null) {
+                this.extensionRegistry = extensionRegistry2;
+                return;
+            }
+            throw new NullPointerException();
         }
     }
 }

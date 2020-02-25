@@ -8,16 +8,17 @@ import android.os.Build;
 import android.os.Process;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
+
 import com.google.android.libraries.performance.primes.PrimesLog;
 import com.google.android.libraries.performance.primes.trace.PrimesTrace;
 import com.google.android.libraries.stitch.util.ThreadUtil;
+
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 public final class PackageStatsCapture {
-    private static final long CALLBACK_TIMEOUT_MS = 15000;
     @VisibleForTesting
     static final PackageStatsInvocation[] GETTER_INVOCATIONS = {new PackageStatsInvocation("getPackageSizeInfo", new Class[]{String.class, IPackageStatsObserver.class}) {
         /* access modifiers changed from: package-private */
@@ -35,76 +36,11 @@ public final class PackageStatsCapture {
             return new Object[]{packageName, Integer.valueOf(uid), callback};
         }
     }};
+    private static final long CALLBACK_TIMEOUT_MS = 15000;
     private static final String GET_PACKAGE_PERMISSION = "android.permission.GET_PACKAGE_SIZE";
     private static final String TAG = "PackageStatsCapture";
 
     private PackageStatsCapture() {
-    }
-
-    private static final class PackageStatsCallback extends IPackageStatsObserver.Stub {
-        private volatile PackageStats packageStats;
-        private final Semaphore semaphore;
-
-        private PackageStatsCallback() {
-            this.semaphore = new Semaphore(1);
-        }
-
-        /* access modifiers changed from: private */
-        public void acquireLock() throws InterruptedException {
-            this.semaphore.acquire();
-        }
-
-        public void onGetStatsCompleted(PackageStats stats, boolean success) {
-            if (success) {
-                String valueOf = String.valueOf(stats);
-                StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 30);
-                sb.append("Success getting PackageStats: ");
-                sb.append(valueOf);
-                PrimesLog.m46d(PackageStatsCapture.TAG, sb.toString(), new Object[0]);
-                this.packageStats = stats;
-            } else {
-                PrimesLog.m54w(PackageStatsCapture.TAG, "Failure getting PackageStats", new Object[0]);
-            }
-            this.semaphore.release();
-        }
-
-        /* access modifiers changed from: private */
-        @Nullable
-        public PackageStats waitForStats(long timeoutMs) throws InterruptedException {
-            if (this.semaphore.tryAcquire(timeoutMs, TimeUnit.MILLISECONDS)) {
-                return this.packageStats;
-            }
-            PrimesLog.m54w(PackageStatsCapture.TAG, "Timeout while waiting for PackageStats callback", new Object[0]);
-            return null;
-        }
-    }
-
-    @VisibleForTesting
-    static abstract class PackageStatsInvocation {
-        private final String methodName;
-        private final Class<?>[] paramTypes;
-
-        /* access modifiers changed from: package-private */
-        public abstract Object[] params(String str, int i, IPackageStatsObserver iPackageStatsObserver);
-
-        PackageStatsInvocation(String methodName2, Class<?>[] paramTypes2) {
-            this.methodName = methodName2;
-            this.paramTypes = paramTypes2;
-        }
-
-        /* access modifiers changed from: package-private */
-        public boolean invoke(PackageManager packageManager, String packageName, int uid, IPackageStatsObserver callback) {
-            try {
-                packageManager.getClass().getMethod(this.methodName, this.paramTypes).invoke(packageManager, params(packageName, uid, callback));
-                return true;
-            } catch (NoSuchMethodException me) {
-                PrimesLog.m45d(PackageStatsCapture.TAG, "PackageStats getter not found", me, new Object[0]);
-                return false;
-            } catch (Error | Exception e) {
-                PrimesLog.m50i(PackageStatsCapture.TAG, e.getClass().getSimpleName() + " for " + this.methodName + '(' + Arrays.asList(this.paramTypes) + ") invocation", new Object[0]);
-                return false;
-            }
-        }
     }
 
     private static boolean isCallbackPresent() {
@@ -164,6 +100,72 @@ public final class PackageStatsCapture {
             return null;
         } finally {
             PrimesTrace.endSection();
+        }
+    }
+
+    private static final class PackageStatsCallback extends IPackageStatsObserver.Stub {
+        private final Semaphore semaphore;
+        private volatile PackageStats packageStats;
+
+        private PackageStatsCallback() {
+            this.semaphore = new Semaphore(1);
+        }
+
+        /* access modifiers changed from: private */
+        public void acquireLock() throws InterruptedException {
+            this.semaphore.acquire();
+        }
+
+        public void onGetStatsCompleted(PackageStats stats, boolean success) {
+            if (success) {
+                String valueOf = String.valueOf(stats);
+                StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 30);
+                sb.append("Success getting PackageStats: ");
+                sb.append(valueOf);
+                PrimesLog.m46d(PackageStatsCapture.TAG, sb.toString(), new Object[0]);
+                this.packageStats = stats;
+            } else {
+                PrimesLog.m54w(PackageStatsCapture.TAG, "Failure getting PackageStats", new Object[0]);
+            }
+            this.semaphore.release();
+        }
+
+        /* access modifiers changed from: private */
+        @Nullable
+        public PackageStats waitForStats(long timeoutMs) throws InterruptedException {
+            if (this.semaphore.tryAcquire(timeoutMs, TimeUnit.MILLISECONDS)) {
+                return this.packageStats;
+            }
+            PrimesLog.m54w(PackageStatsCapture.TAG, "Timeout while waiting for PackageStats callback", new Object[0]);
+            return null;
+        }
+    }
+
+    @VisibleForTesting
+    static abstract class PackageStatsInvocation {
+        private final String methodName;
+        private final Class<?>[] paramTypes;
+
+        PackageStatsInvocation(String methodName2, Class<?>[] paramTypes2) {
+            this.methodName = methodName2;
+            this.paramTypes = paramTypes2;
+        }
+
+        /* access modifiers changed from: package-private */
+        public abstract Object[] params(String str, int i, IPackageStatsObserver iPackageStatsObserver);
+
+        /* access modifiers changed from: package-private */
+        public boolean invoke(PackageManager packageManager, String packageName, int uid, IPackageStatsObserver callback) {
+            try {
+                packageManager.getClass().getMethod(this.methodName, this.paramTypes).invoke(packageManager, params(packageName, uid, callback));
+                return true;
+            } catch (NoSuchMethodException me) {
+                PrimesLog.m45d(PackageStatsCapture.TAG, "PackageStats getter not found", me, new Object[0]);
+                return false;
+            } catch (Error | Exception e) {
+                PrimesLog.m50i(PackageStatsCapture.TAG, e.getClass().getSimpleName() + " for " + this.methodName + '(' + Arrays.asList(this.paramTypes) + ") invocation", new Object[0]);
+                return false;
+            }
         }
     }
 }

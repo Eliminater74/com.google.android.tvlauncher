@@ -6,6 +6,26 @@ import java.io.OutputStream;
 
 public interface MessageLite extends MessageLiteOrBuilder {
 
+    Parser<? extends MessageLite> getParserForType();
+
+    int getSerializedSize();
+
+    MutableMessageLite mutableCopy();
+
+    Builder newBuilderForType();
+
+    Builder toBuilder();
+
+    byte[] toByteArray();
+
+    ByteString toByteString();
+
+    void writeDelimitedTo(OutputStream outputStream) throws IOException;
+
+    void writeTo(CodedOutputStream codedOutputStream) throws IOException;
+
+    void writeTo(OutputStream outputStream) throws IOException;
+
     public interface Builder extends MessageLiteOrBuilder, Cloneable {
         MessageLite build();
 
@@ -41,24 +61,4 @@ public interface MessageLite extends MessageLiteOrBuilder {
 
         Builder mergeFrom(byte[] bArr, ExtensionRegistryLite extensionRegistryLite) throws InvalidProtocolBufferException;
     }
-
-    Parser<? extends MessageLite> getParserForType();
-
-    int getSerializedSize();
-
-    MutableMessageLite mutableCopy();
-
-    Builder newBuilderForType();
-
-    Builder toBuilder();
-
-    byte[] toByteArray();
-
-    ByteString toByteString();
-
-    void writeDelimitedTo(OutputStream outputStream) throws IOException;
-
-    void writeTo(CodedOutputStream codedOutputStream) throws IOException;
-
-    void writeTo(OutputStream outputStream) throws IOException;
 }

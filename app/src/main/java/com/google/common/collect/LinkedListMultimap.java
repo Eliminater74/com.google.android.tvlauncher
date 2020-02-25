@@ -3,9 +3,10 @@ package com.google.common.collect;
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Multimaps;
-import com.google.common.collect.Sets;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -20,7 +21,6 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible(emulated = true, serializable = true)
 public class LinkedListMultimap<K, V> extends AbstractMultimap<K, V> implements ListMultimap<K, V>, Serializable {
@@ -38,6 +38,38 @@ public class LinkedListMultimap<K, V> extends AbstractMultimap<K, V> implements 
     /* access modifiers changed from: private */
     @NullableDecl
     public transient Node<K, V> tail;
+
+    LinkedListMultimap() {
+        this(12);
+    }
+
+    private LinkedListMultimap(int expectedKeys) {
+        this.keyToKeyList = Platform.newHashMapWithExpectedSize(expectedKeys);
+    }
+
+    private LinkedListMultimap(Multimap<? extends K, ? extends V> multimap) {
+        this(multimap.keySet().size());
+        putAll(multimap);
+    }
+
+    public static <K, V> LinkedListMultimap<K, V> create() {
+        return new LinkedListMultimap<>();
+    }
+
+    public static <K, V> LinkedListMultimap<K, V> create(int expectedKeys) {
+        return new LinkedListMultimap<>(expectedKeys);
+    }
+
+    public static <K, V> LinkedListMultimap<K, V> create(Multimap<? extends K, ? extends V> multimap) {
+        return new LinkedListMultimap<>(multimap);
+    }
+
+    /* access modifiers changed from: private */
+    public static void checkElement(@NullableDecl Object node) {
+        if (node == null) {
+            throw new NoSuchElementException();
+        }
+    }
 
     public /* bridge */ /* synthetic */ Map asMap() {
         return super.asMap();
@@ -80,78 +112,6 @@ public class LinkedListMultimap<K, V> extends AbstractMultimap<K, V> implements 
 
     public /* bridge */ /* synthetic */ String toString() {
         return super.toString();
-    }
-
-    private static final class Node<K, V> extends AbstractMapEntry<K, V> {
-        @NullableDecl
-        final K key;
-        @NullableDecl
-        Node<K, V> next;
-        @NullableDecl
-        Node<K, V> nextSibling;
-        @NullableDecl
-        Node<K, V> previous;
-        @NullableDecl
-        Node<K, V> previousSibling;
-        @NullableDecl
-        V value;
-
-        Node(@NullableDecl K key2, @NullableDecl V value2) {
-            this.key = key2;
-            this.value = value2;
-        }
-
-        public K getKey() {
-            return this.key;
-        }
-
-        public V getValue() {
-            return this.value;
-        }
-
-        public V setValue(@NullableDecl V newValue) {
-            V result = this.value;
-            this.value = newValue;
-            return result;
-        }
-    }
-
-    private static class KeyList<K, V> {
-        int count = 1;
-        Node<K, V> head;
-        Node<K, V> tail;
-
-        KeyList(Node<K, V> firstNode) {
-            this.head = firstNode;
-            this.tail = firstNode;
-            firstNode.previousSibling = null;
-            firstNode.nextSibling = null;
-        }
-    }
-
-    public static <K, V> LinkedListMultimap<K, V> create() {
-        return new LinkedListMultimap<>();
-    }
-
-    public static <K, V> LinkedListMultimap<K, V> create(int expectedKeys) {
-        return new LinkedListMultimap<>(expectedKeys);
-    }
-
-    public static <K, V> LinkedListMultimap<K, V> create(Multimap<? extends K, ? extends V> multimap) {
-        return new LinkedListMultimap<>(multimap);
-    }
-
-    LinkedListMultimap() {
-        this(12);
-    }
-
-    private LinkedListMultimap(int expectedKeys) {
-        this.keyToKeyList = Platform.newHashMapWithExpectedSize(expectedKeys);
-    }
-
-    private LinkedListMultimap(Multimap<? extends K, ? extends V> multimap) {
-        this(multimap.keySet().size());
-        putAll(multimap);
     }
 
     /* access modifiers changed from: private */
@@ -237,288 +197,6 @@ public class LinkedListMultimap<K, V> extends AbstractMultimap<K, V> implements 
     /* access modifiers changed from: private */
     public void removeAllNodes(@NullableDecl Object key) {
         Iterators.clear(new ValueForKeyIterator(key));
-    }
-
-    /* access modifiers changed from: private */
-    public static void checkElement(@NullableDecl Object node) {
-        if (node == null) {
-            throw new NoSuchElementException();
-        }
-    }
-
-    private class NodeIterator implements ListIterator<Map.Entry<K, V>> {
-        @NullableDecl
-        Node<K, V> current;
-        int expectedModCount = LinkedListMultimap.this.modCount;
-        @NullableDecl
-        Node<K, V> next;
-        int nextIndex;
-        @NullableDecl
-        Node<K, V> previous;
-
-        NodeIterator(int index) {
-            int size = LinkedListMultimap.this.size();
-            Preconditions.checkPositionIndex(index, size);
-            if (index < size / 2) {
-                this.next = LinkedListMultimap.this.head;
-                while (true) {
-                    int index2 = index - 1;
-                    if (index <= 0) {
-                        break;
-                    }
-                    next();
-                    index = index2;
-                }
-            } else {
-                this.previous = LinkedListMultimap.this.tail;
-                this.nextIndex = size;
-                while (true) {
-                    int index3 = index + 1;
-                    if (index >= size) {
-                        break;
-                    }
-                    previous();
-                    index = index3;
-                }
-            }
-            this.current = null;
-        }
-
-        private void checkForConcurrentModification() {
-            if (LinkedListMultimap.this.modCount != this.expectedModCount) {
-                throw new ConcurrentModificationException();
-            }
-        }
-
-        public boolean hasNext() {
-            checkForConcurrentModification();
-            return this.next != null;
-        }
-
-        @CanIgnoreReturnValue
-        public Node<K, V> next() {
-            checkForConcurrentModification();
-            LinkedListMultimap.checkElement(this.next);
-            Node<K, V> node = this.next;
-            this.current = node;
-            this.previous = node;
-            this.next = node.next;
-            this.nextIndex++;
-            return this.current;
-        }
-
-        public void remove() {
-            checkForConcurrentModification();
-            CollectPreconditions.checkRemove(this.current != null);
-            Node<K, V> node = this.current;
-            if (node != this.next) {
-                this.previous = node.previous;
-                this.nextIndex--;
-            } else {
-                this.next = node.next;
-            }
-            LinkedListMultimap.this.removeNode(this.current);
-            this.current = null;
-            this.expectedModCount = LinkedListMultimap.this.modCount;
-        }
-
-        public boolean hasPrevious() {
-            checkForConcurrentModification();
-            return this.previous != null;
-        }
-
-        @CanIgnoreReturnValue
-        public Node<K, V> previous() {
-            checkForConcurrentModification();
-            LinkedListMultimap.checkElement(this.previous);
-            Node<K, V> node = this.previous;
-            this.current = node;
-            this.next = node;
-            this.previous = node.previous;
-            this.nextIndex--;
-            return this.current;
-        }
-
-        public int nextIndex() {
-            return this.nextIndex;
-        }
-
-        public int previousIndex() {
-            return this.nextIndex - 1;
-        }
-
-        public void set(Map.Entry<K, V> entry) {
-            throw new UnsupportedOperationException();
-        }
-
-        public void add(Map.Entry<K, V> entry) {
-            throw new UnsupportedOperationException();
-        }
-
-        /* access modifiers changed from: package-private */
-        public void setValue(V value) {
-            Preconditions.checkState(this.current != null);
-            this.current.value = value;
-        }
-    }
-
-    private class DistinctKeyIterator implements Iterator<K> {
-        @NullableDecl
-        Node<K, V> current;
-        int expectedModCount;
-        Node<K, V> next;
-        final Set<K> seenKeys;
-
-        private DistinctKeyIterator() {
-            this.seenKeys = Sets.newHashSetWithExpectedSize(LinkedListMultimap.this.keySet().size());
-            this.next = LinkedListMultimap.this.head;
-            this.expectedModCount = LinkedListMultimap.this.modCount;
-        }
-
-        private void checkForConcurrentModification() {
-            if (LinkedListMultimap.this.modCount != this.expectedModCount) {
-                throw new ConcurrentModificationException();
-            }
-        }
-
-        public boolean hasNext() {
-            checkForConcurrentModification();
-            return this.next != null;
-        }
-
-        public K next() {
-            Node<K, V> node;
-            checkForConcurrentModification();
-            LinkedListMultimap.checkElement(this.next);
-            this.current = this.next;
-            this.seenKeys.add(this.current.key);
-            do {
-                this.next = this.next.next;
-                node = this.next;
-                if (node == null) {
-                    break;
-                }
-            } while (!this.seenKeys.add(node.key));
-            return this.current.key;
-        }
-
-        public void remove() {
-            checkForConcurrentModification();
-            CollectPreconditions.checkRemove(this.current != null);
-            LinkedListMultimap.this.removeAllNodes(this.current.key);
-            this.current = null;
-            this.expectedModCount = LinkedListMultimap.this.modCount;
-        }
-    }
-
-    private class ValueForKeyIterator implements ListIterator<V> {
-        @NullableDecl
-        Node<K, V> current;
-        @NullableDecl
-        final Object key;
-        @NullableDecl
-        Node<K, V> next;
-        int nextIndex;
-        @NullableDecl
-        Node<K, V> previous;
-
-        ValueForKeyIterator(@NullableDecl Object key2) {
-            this.key = key2;
-            KeyList<K, V> keyList = (KeyList) LinkedListMultimap.this.keyToKeyList.get(key2);
-            this.next = keyList == null ? null : keyList.head;
-        }
-
-        public ValueForKeyIterator(@NullableDecl Object key2, int index) {
-            KeyList<K, V> keyList = (KeyList) LinkedListMultimap.this.keyToKeyList.get(key2);
-            int size = keyList == null ? 0 : keyList.count;
-            Preconditions.checkPositionIndex(index, size);
-            if (index < size / 2) {
-                this.next = keyList == null ? null : keyList.head;
-                while (true) {
-                    int index2 = index - 1;
-                    if (index <= 0) {
-                        break;
-                    }
-                    next();
-                    index = index2;
-                }
-            } else {
-                this.previous = keyList == null ? null : keyList.tail;
-                this.nextIndex = size;
-                while (true) {
-                    int index3 = index + 1;
-                    if (index >= size) {
-                        break;
-                    }
-                    previous();
-                    index = index3;
-                }
-            }
-            this.key = key2;
-            this.current = null;
-        }
-
-        public boolean hasNext() {
-            return this.next != null;
-        }
-
-        @CanIgnoreReturnValue
-        public V next() {
-            LinkedListMultimap.checkElement(this.next);
-            Node<K, V> node = this.next;
-            this.current = node;
-            this.previous = node;
-            this.next = node.nextSibling;
-            this.nextIndex++;
-            return this.current.value;
-        }
-
-        public boolean hasPrevious() {
-            return this.previous != null;
-        }
-
-        @CanIgnoreReturnValue
-        public V previous() {
-            LinkedListMultimap.checkElement(this.previous);
-            Node<K, V> node = this.previous;
-            this.current = node;
-            this.next = node;
-            this.previous = node.previousSibling;
-            this.nextIndex--;
-            return this.current.value;
-        }
-
-        public int nextIndex() {
-            return this.nextIndex;
-        }
-
-        public int previousIndex() {
-            return this.nextIndex - 1;
-        }
-
-        public void remove() {
-            CollectPreconditions.checkRemove(this.current != null);
-            Node<K, V> node = this.current;
-            if (node != this.next) {
-                this.previous = node.previousSibling;
-                this.nextIndex--;
-            } else {
-                this.next = node.nextSibling;
-            }
-            LinkedListMultimap.this.removeNode(this.current);
-            this.current = null;
-        }
-
-        public void set(V value) {
-            Preconditions.checkState(this.current != null);
-            this.current.value = value;
-        }
-
-        public void add(V value) {
-            this.previous = LinkedListMultimap.this.addNode(this.key, value, this.next);
-            this.nextIndex++;
-            this.current = null;
-        }
     }
 
     public int size() {
@@ -694,6 +372,328 @@ public class LinkedListMultimap<K, V> extends AbstractMultimap<K, V> implements 
         int size2 = stream.readInt();
         for (int i = 0; i < size2; i++) {
             put(stream.readObject(), stream.readObject());
+        }
+    }
+
+    private static final class Node<K, V> extends AbstractMapEntry<K, V> {
+        @NullableDecl
+        final K key;
+        @NullableDecl
+        Node<K, V> next;
+        @NullableDecl
+        Node<K, V> nextSibling;
+        @NullableDecl
+        Node<K, V> previous;
+        @NullableDecl
+        Node<K, V> previousSibling;
+        @NullableDecl
+        V value;
+
+        Node(@NullableDecl K key2, @NullableDecl V value2) {
+            this.key = key2;
+            this.value = value2;
+        }
+
+        public K getKey() {
+            return this.key;
+        }
+
+        public V getValue() {
+            return this.value;
+        }
+
+        public V setValue(@NullableDecl V newValue) {
+            V result = this.value;
+            this.value = newValue;
+            return result;
+        }
+    }
+
+    private static class KeyList<K, V> {
+        int count = 1;
+        Node<K, V> head;
+        Node<K, V> tail;
+
+        KeyList(Node<K, V> firstNode) {
+            this.head = firstNode;
+            this.tail = firstNode;
+            firstNode.previousSibling = null;
+            firstNode.nextSibling = null;
+        }
+    }
+
+    private class NodeIterator implements ListIterator<Map.Entry<K, V>> {
+        @NullableDecl
+        Node<K, V> current;
+        int expectedModCount = LinkedListMultimap.this.modCount;
+        @NullableDecl
+        Node<K, V> next;
+        int nextIndex;
+        @NullableDecl
+        Node<K, V> previous;
+
+        NodeIterator(int index) {
+            int size = LinkedListMultimap.this.size();
+            Preconditions.checkPositionIndex(index, size);
+            if (index < size / 2) {
+                this.next = LinkedListMultimap.this.head;
+                while (true) {
+                    int index2 = index - 1;
+                    if (index <= 0) {
+                        break;
+                    }
+                    next();
+                    index = index2;
+                }
+            } else {
+                this.previous = LinkedListMultimap.this.tail;
+                this.nextIndex = size;
+                while (true) {
+                    int index3 = index + 1;
+                    if (index >= size) {
+                        break;
+                    }
+                    previous();
+                    index = index3;
+                }
+            }
+            this.current = null;
+        }
+
+        private void checkForConcurrentModification() {
+            if (LinkedListMultimap.this.modCount != this.expectedModCount) {
+                throw new ConcurrentModificationException();
+            }
+        }
+
+        public boolean hasNext() {
+            checkForConcurrentModification();
+            return this.next != null;
+        }
+
+        @CanIgnoreReturnValue
+        public Node<K, V> next() {
+            checkForConcurrentModification();
+            LinkedListMultimap.checkElement(this.next);
+            Node<K, V> node = this.next;
+            this.current = node;
+            this.previous = node;
+            this.next = node.next;
+            this.nextIndex++;
+            return this.current;
+        }
+
+        public void remove() {
+            checkForConcurrentModification();
+            CollectPreconditions.checkRemove(this.current != null);
+            Node<K, V> node = this.current;
+            if (node != this.next) {
+                this.previous = node.previous;
+                this.nextIndex--;
+            } else {
+                this.next = node.next;
+            }
+            LinkedListMultimap.this.removeNode(this.current);
+            this.current = null;
+            this.expectedModCount = LinkedListMultimap.this.modCount;
+        }
+
+        public boolean hasPrevious() {
+            checkForConcurrentModification();
+            return this.previous != null;
+        }
+
+        @CanIgnoreReturnValue
+        public Node<K, V> previous() {
+            checkForConcurrentModification();
+            LinkedListMultimap.checkElement(this.previous);
+            Node<K, V> node = this.previous;
+            this.current = node;
+            this.next = node;
+            this.previous = node.previous;
+            this.nextIndex--;
+            return this.current;
+        }
+
+        public int nextIndex() {
+            return this.nextIndex;
+        }
+
+        public int previousIndex() {
+            return this.nextIndex - 1;
+        }
+
+        public void set(Map.Entry<K, V> entry) {
+            throw new UnsupportedOperationException();
+        }
+
+        public void add(Map.Entry<K, V> entry) {
+            throw new UnsupportedOperationException();
+        }
+
+        /* access modifiers changed from: package-private */
+        public void setValue(V value) {
+            Preconditions.checkState(this.current != null);
+            this.current.value = value;
+        }
+    }
+
+    private class DistinctKeyIterator implements Iterator<K> {
+        final Set<K> seenKeys;
+        @NullableDecl
+        Node<K, V> current;
+        int expectedModCount;
+        Node<K, V> next;
+
+        private DistinctKeyIterator() {
+            this.seenKeys = Sets.newHashSetWithExpectedSize(LinkedListMultimap.this.keySet().size());
+            this.next = LinkedListMultimap.this.head;
+            this.expectedModCount = LinkedListMultimap.this.modCount;
+        }
+
+        private void checkForConcurrentModification() {
+            if (LinkedListMultimap.this.modCount != this.expectedModCount) {
+                throw new ConcurrentModificationException();
+            }
+        }
+
+        public boolean hasNext() {
+            checkForConcurrentModification();
+            return this.next != null;
+        }
+
+        public K next() {
+            Node<K, V> node;
+            checkForConcurrentModification();
+            LinkedListMultimap.checkElement(this.next);
+            this.current = this.next;
+            this.seenKeys.add(this.current.key);
+            do {
+                this.next = this.next.next;
+                node = this.next;
+                if (node == null) {
+                    break;
+                }
+            } while (!this.seenKeys.add(node.key));
+            return this.current.key;
+        }
+
+        public void remove() {
+            checkForConcurrentModification();
+            CollectPreconditions.checkRemove(this.current != null);
+            LinkedListMultimap.this.removeAllNodes(this.current.key);
+            this.current = null;
+            this.expectedModCount = LinkedListMultimap.this.modCount;
+        }
+    }
+
+    private class ValueForKeyIterator implements ListIterator<V> {
+        @NullableDecl
+        final Object key;
+        @NullableDecl
+        Node<K, V> current;
+        @NullableDecl
+        Node<K, V> next;
+        int nextIndex;
+        @NullableDecl
+        Node<K, V> previous;
+
+        ValueForKeyIterator(@NullableDecl Object key2) {
+            this.key = key2;
+            KeyList<K, V> keyList = (KeyList) LinkedListMultimap.this.keyToKeyList.get(key2);
+            this.next = keyList == null ? null : keyList.head;
+        }
+
+        public ValueForKeyIterator(@NullableDecl Object key2, int index) {
+            KeyList<K, V> keyList = (KeyList) LinkedListMultimap.this.keyToKeyList.get(key2);
+            int size = keyList == null ? 0 : keyList.count;
+            Preconditions.checkPositionIndex(index, size);
+            if (index < size / 2) {
+                this.next = keyList == null ? null : keyList.head;
+                while (true) {
+                    int index2 = index - 1;
+                    if (index <= 0) {
+                        break;
+                    }
+                    next();
+                    index = index2;
+                }
+            } else {
+                this.previous = keyList == null ? null : keyList.tail;
+                this.nextIndex = size;
+                while (true) {
+                    int index3 = index + 1;
+                    if (index >= size) {
+                        break;
+                    }
+                    previous();
+                    index = index3;
+                }
+            }
+            this.key = key2;
+            this.current = null;
+        }
+
+        public boolean hasNext() {
+            return this.next != null;
+        }
+
+        @CanIgnoreReturnValue
+        public V next() {
+            LinkedListMultimap.checkElement(this.next);
+            Node<K, V> node = this.next;
+            this.current = node;
+            this.previous = node;
+            this.next = node.nextSibling;
+            this.nextIndex++;
+            return this.current.value;
+        }
+
+        public boolean hasPrevious() {
+            return this.previous != null;
+        }
+
+        @CanIgnoreReturnValue
+        public V previous() {
+            LinkedListMultimap.checkElement(this.previous);
+            Node<K, V> node = this.previous;
+            this.current = node;
+            this.next = node;
+            this.previous = node.previousSibling;
+            this.nextIndex--;
+            return this.current.value;
+        }
+
+        public int nextIndex() {
+            return this.nextIndex;
+        }
+
+        public int previousIndex() {
+            return this.nextIndex - 1;
+        }
+
+        public void remove() {
+            CollectPreconditions.checkRemove(this.current != null);
+            Node<K, V> node = this.current;
+            if (node != this.next) {
+                this.previous = node.previousSibling;
+                this.nextIndex--;
+            } else {
+                this.next = node.nextSibling;
+            }
+            LinkedListMultimap.this.removeNode(this.current);
+            this.current = null;
+        }
+
+        public void set(V value) {
+            Preconditions.checkState(this.current != null);
+            this.current.value = value;
+        }
+
+        public void add(V value) {
+            this.previous = LinkedListMultimap.this.addNode(this.key, value, this.next);
+            this.nextIndex++;
+            this.current = null;
         }
     }
 }

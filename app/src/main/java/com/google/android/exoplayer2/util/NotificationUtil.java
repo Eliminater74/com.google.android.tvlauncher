@@ -7,6 +7,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -20,9 +21,7 @@ public final class NotificationUtil {
     public static final int IMPORTANCE_NONE = 0;
     public static final int IMPORTANCE_UNSPECIFIED = -1000;
 
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface Importance {
+    private NotificationUtil() {
     }
 
     public static void createNotificationChannel(Context context, String id, @StringRes int nameResourceId, int importance) {
@@ -40,6 +39,8 @@ public final class NotificationUtil {
         }
     }
 
-    private NotificationUtil() {
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface Importance {
     }
 }

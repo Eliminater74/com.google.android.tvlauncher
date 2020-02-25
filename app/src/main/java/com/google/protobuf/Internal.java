@@ -16,109 +16,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.RandomAccess;
 import java.util.Set;
+
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import javax.annotation.meta.TypeQualifierDefault;
 import javax.annotation.meta.TypeQualifierNickname;
 
 public final class Internal {
-    private static final int DEFAULT_BUFFER_SIZE = 4096;
     public static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
     public static final ByteBuffer EMPTY_BYTE_BUFFER = ByteBuffer.wrap(EMPTY_BYTE_ARRAY);
     public static final CodedInputStream EMPTY_CODED_INPUT_STREAM = CodedInputStream.newInstance(EMPTY_BYTE_ARRAY);
     static final Charset ISO_8859_1 = Charset.forName("ISO-8859-1");
     static final Charset UTF_8 = Charset.forName("UTF-8");
-
-    public interface BooleanList extends ProtobufList<Boolean> {
-        void addBoolean(boolean z);
-
-        boolean getBoolean(int i);
-
-        BooleanList mutableCopyWithCapacity(int i);
-
-        boolean setBoolean(int i, boolean z);
-    }
-
-    public interface DoubleList extends ProtobufList<Double> {
-        void addDouble(double d);
-
-        double getDouble(int i);
-
-        DoubleList mutableCopyWithCapacity(int i);
-
-        double setDouble(int i, double d);
-    }
-
-    public interface EnumLite {
-        int getNumber();
-    }
-
-    public interface EnumLiteMap<T extends EnumLite> {
-        T findValueByNumber(int i);
-    }
-
-    public interface EnumVerifier {
-        boolean isInRange(int i);
-    }
-
-    public interface FloatList extends ProtobufList<Float> {
-        void addFloat(float f);
-
-        float getFloat(int i);
-
-        FloatList mutableCopyWithCapacity(int i);
-
-        float setFloat(int i, float f);
-    }
-
-    public interface IntList extends ProtobufList<Integer> {
-        void addInt(int i);
-
-        int getInt(int i);
-
-        IntList mutableCopyWithCapacity(int i);
-
-        int setInt(int i, int i2);
-    }
-
-    public interface LongList extends ProtobufList<Long> {
-        void addLong(long j);
-
-        long getLong(int i);
-
-        LongList mutableCopyWithCapacity(int i);
-
-        long setLong(int i, long j);
-    }
-
-    @Target({ElementType.PARAMETER})
-    @CheckForNull
-    @TypeQualifierNickname
-    @Retention(RetentionPolicy.CLASS)
-    @interface ProtoMethodAcceptsNullParameter {
-    }
-
-    @Target({ElementType.METHOD})
-    @CheckForNull
-    @TypeQualifierNickname
-    @Retention(RetentionPolicy.CLASS)
-    @interface ProtoMethodMayReturnNull {
-    }
-
-    @Target({ElementType.TYPE})
-    @TypeQualifierDefault({ElementType.METHOD, ElementType.PARAMETER})
-    @Nonnull
-    @Retention(RetentionPolicy.CLASS)
-    @interface ProtoNonnullApi {
-    }
-
-    public interface ProtobufList<E> extends List<E>, RandomAccess {
-        boolean isModifiable();
-
-        void makeImmutable();
-
-        ProtobufList<E> mutableCopyWithCapacity(int i);
-    }
+    private static final int DEFAULT_BUFFER_SIZE = 4096;
 
     private Internal() {
     }
@@ -399,13 +309,100 @@ public final class Internal {
         return ((MessageLite) destination).toBuilder().mergeFrom((MessageLite) source).buildPartial();
     }
 
+    public interface BooleanList extends ProtobufList<Boolean> {
+        void addBoolean(boolean z);
+
+        boolean getBoolean(int i);
+
+        BooleanList mutableCopyWithCapacity(int i);
+
+        boolean setBoolean(int i, boolean z);
+    }
+
+    public interface DoubleList extends ProtobufList<Double> {
+        void addDouble(double d);
+
+        double getDouble(int i);
+
+        DoubleList mutableCopyWithCapacity(int i);
+
+        double setDouble(int i, double d);
+    }
+
+    public interface EnumLite {
+        int getNumber();
+    }
+
+    public interface EnumLiteMap<T extends EnumLite> {
+        T findValueByNumber(int i);
+    }
+
+    public interface EnumVerifier {
+        boolean isInRange(int i);
+    }
+
+    public interface FloatList extends ProtobufList<Float> {
+        void addFloat(float f);
+
+        float getFloat(int i);
+
+        FloatList mutableCopyWithCapacity(int i);
+
+        float setFloat(int i, float f);
+    }
+
+    public interface IntList extends ProtobufList<Integer> {
+        void addInt(int i);
+
+        int getInt(int i);
+
+        IntList mutableCopyWithCapacity(int i);
+
+        int setInt(int i, int i2);
+    }
+
+    public interface LongList extends ProtobufList<Long> {
+        void addLong(long j);
+
+        long getLong(int i);
+
+        LongList mutableCopyWithCapacity(int i);
+
+        long setLong(int i, long j);
+    }
+
+    @Target({ElementType.PARAMETER})
+    @CheckForNull
+    @TypeQualifierNickname
+    @Retention(RetentionPolicy.CLASS)
+    @interface ProtoMethodAcceptsNullParameter {
+    }
+
+    @Target({ElementType.METHOD})
+    @CheckForNull
+    @TypeQualifierNickname
+    @Retention(RetentionPolicy.CLASS)
+    @interface ProtoMethodMayReturnNull {
+    }
+
+    @Target({ElementType.TYPE})
+    @TypeQualifierDefault({ElementType.METHOD, ElementType.PARAMETER})
+    @Nonnull
+    @Retention(RetentionPolicy.CLASS)
+    @interface ProtoNonnullApi {
+    }
+
+    public interface ProtobufList<E> extends List<E>, RandomAccess {
+        boolean isModifiable();
+
+        void makeImmutable();
+
+        ProtobufList<E> mutableCopyWithCapacity(int i);
+    }
+
     public static class ListAdapter<F, T> extends AbstractList<T> {
         private final Converter<F, T> converter;
         private final List<F> fromList;
-
-        public interface Converter<F, T> {
-            T convert(F f);
-        }
 
         public ListAdapter(List<F> fromList2, Converter<F, T> converter2) {
             this.fromList = fromList2;
@@ -419,17 +416,20 @@ public final class Internal {
         public int size() {
             return this.fromList.size();
         }
+
+        public interface Converter<F, T> {
+            T convert(F f);
+        }
     }
 
     public static class MapAdapter<K, V, RealValue> extends AbstractMap<K, V> {
-        private final Map<K, RealValue> realMap;
         /* access modifiers changed from: private */
         public final Converter<RealValue, V> valueConverter;
+        private final Map<K, RealValue> realMap;
 
-        public interface Converter<A, B> {
-            A doBackward(B b);
-
-            B doForward(A a);
+        public MapAdapter(Map<K, RealValue> realMap2, Converter<RealValue, V> valueConverter2) {
+            this.realMap = realMap2;
+            this.valueConverter = valueConverter2;
         }
 
         public static <T extends EnumLite> Converter<Integer, T> newEnumConverter(final EnumLiteMap<T> enumMap, final T unrecognizedValue) {
@@ -443,11 +443,6 @@ public final class Internal {
                     return Integer.valueOf(value.getNumber());
                 }
             };
-        }
-
-        public MapAdapter(Map<K, RealValue> realMap2, Converter<RealValue, V> valueConverter2) {
-            this.realMap = realMap2;
-            this.valueConverter = valueConverter2;
         }
 
         public V get(Object key) {
@@ -468,6 +463,12 @@ public final class Internal {
 
         public Set<Map.Entry<K, V>> entrySet() {
             return new SetAdapter(this.realMap.entrySet());
+        }
+
+        public interface Converter<A, B> {
+            A doBackward(B b);
+
+            B doForward(A a);
         }
 
         private class SetAdapter extends AbstractSet<Map.Entry<K, V>> {

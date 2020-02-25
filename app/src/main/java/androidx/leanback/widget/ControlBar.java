@@ -5,17 +5,14 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
+
 import java.util.ArrayList;
 
 class ControlBar extends LinearLayout {
-    private int mChildMarginFromCenter;
     boolean mDefaultFocusToMiddle = true;
     int mLastFocusIndex = -1;
+    private int mChildMarginFromCenter;
     private OnChildFocusedListener mOnChildFocusedListener;
-
-    public interface OnChildFocusedListener {
-        void onChildFocusedListener(View view, View view2);
-    }
 
     public ControlBar(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -101,5 +98,9 @@ class ControlBar extends LinearLayout {
             }
             setMeasuredDimension(getMeasuredWidth() + totalExtraMargin, getMeasuredHeight());
         }
+    }
+
+    public interface OnChildFocusedListener {
+        void onChildFocusedListener(View view, View view2);
     }
 }

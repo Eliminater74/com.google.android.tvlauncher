@@ -4,19 +4,21 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+
 import com.google.android.exoplayer2.database.DatabaseIOException;
 import com.google.android.exoplayer2.database.DatabaseProvider;
 import com.google.android.exoplayer2.database.VersionTable;
 import com.google.android.exoplayer2.util.Assertions;
+
 import java.util.Set;
 
 final class CacheFileMetadataIndex {
-    private static final String[] COLUMNS = {"name", COLUMN_LENGTH, COLUMN_LAST_TOUCH_TIMESTAMP};
     private static final int COLUMN_INDEX_LAST_TOUCH_TIMESTAMP = 2;
     private static final int COLUMN_INDEX_LENGTH = 1;
     private static final int COLUMN_INDEX_NAME = 0;
     private static final String COLUMN_LAST_TOUCH_TIMESTAMP = "last_touch_timestamp";
     private static final String COLUMN_LENGTH = "length";
+    private static final String[] COLUMNS = {"name", COLUMN_LENGTH, COLUMN_LAST_TOUCH_TIMESTAMP};
     private static final String COLUMN_NAME = "name";
     private static final String TABLE_PREFIX = "ExoPlayerCacheFileMetadata";
     private static final String TABLE_SCHEMA = "(name TEXT PRIMARY KEY NOT NULL,length INTEGER NOT NULL,last_touch_timestamp INTEGER NOT NULL)";
@@ -24,6 +26,10 @@ final class CacheFileMetadataIndex {
     private static final String WHERE_NAME_EQUALS = "0 = ?";
     private final DatabaseProvider databaseProvider;
     private String tableName;
+
+    public CacheFileMetadataIndex(DatabaseProvider databaseProvider2) {
+        this.databaseProvider = databaseProvider2;
+    }
 
     public static void delete(DatabaseProvider databaseProvider2, long uid) throws DatabaseIOException {
         SQLiteDatabase writableDatabase;
@@ -44,8 +50,15 @@ final class CacheFileMetadataIndex {
         }
     }
 
-    public CacheFileMetadataIndex(DatabaseProvider databaseProvider2) {
-        this.databaseProvider = databaseProvider2;
+    private static void dropTable(SQLiteDatabase writableDatabase, String tableName2) {
+        String valueOf = String.valueOf(tableName2);
+        writableDatabase.execSQL(valueOf.length() != 0 ? "DROP TABLE IF EXISTS ".concat(valueOf) : new String("DROP TABLE IF EXISTS "));
+    }
+
+    private static String getTableName(String hexUid) {
+        String valueOf = String.valueOf(TABLE_PREFIX);
+        String valueOf2 = String.valueOf(hexUid);
+        return valueOf2.length() != 0 ? valueOf.concat(valueOf2) : new String(valueOf);
     }
 
     public void initialize(long uid) throws DatabaseIOException {
@@ -180,16 +193,5 @@ final class CacheFileMetadataIndex {
     private Cursor getCursor() {
         Assertions.checkNotNull(this.tableName);
         return this.databaseProvider.getReadableDatabase().query(this.tableName, COLUMNS, null, null, null, null, null);
-    }
-
-    private static void dropTable(SQLiteDatabase writableDatabase, String tableName2) {
-        String valueOf = String.valueOf(tableName2);
-        writableDatabase.execSQL(valueOf.length() != 0 ? "DROP TABLE IF EXISTS ".concat(valueOf) : new String("DROP TABLE IF EXISTS "));
-    }
-
-    private static String getTableName(String hexUid) {
-        String valueOf = String.valueOf(TABLE_PREFIX);
-        String valueOf2 = String.valueOf(hexUid);
-        return valueOf2.length() != 0 ? valueOf.concat(valueOf2) : new String(valueOf);
     }
 }

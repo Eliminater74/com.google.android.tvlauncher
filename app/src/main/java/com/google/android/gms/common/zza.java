@@ -3,8 +3,10 @@ package com.google.android.gms.common;
 import android.content.ComponentName;
 import android.content.ServiceConnection;
 import android.os.IBinder;
+
 import com.google.android.gms.common.internal.Hide;
 import com.google.android.gms.common.internal.zzau;
+
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -13,8 +15,8 @@ import java.util.concurrent.TimeoutException;
 @Hide
 /* compiled from: BlockingServiceConnection */
 public final class zza implements ServiceConnection {
-    private boolean zza = false;
     private final BlockingQueue<IBinder> zzb = new LinkedBlockingQueue();
+    private boolean zza = false;
 
     public final void onServiceConnected(ComponentName componentName, IBinder iBinder) {
         this.zzb.add(iBinder);

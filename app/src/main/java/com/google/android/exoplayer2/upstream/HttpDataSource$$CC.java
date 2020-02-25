@@ -1,6 +1,7 @@
 package com.google.android.exoplayer2.upstream;
 
 import android.text.TextUtils;
+
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.Predicate;
 import com.google.android.exoplayer2.util.Util;

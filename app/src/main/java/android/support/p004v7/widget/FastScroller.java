@@ -10,12 +10,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.support.p001v4.view.ViewCompat;
-import android.support.p004v7.widget.RecyclerView;
 import android.view.MotionEvent;
+
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
 
 @VisibleForTesting
-/* renamed from: android.support.v7.widget.FastScroller */
+        /* renamed from: android.support.v7.widget.FastScroller */
 class FastScroller extends RecyclerView.ItemDecoration implements RecyclerView.OnItemTouchListener {
     private static final int ANIMATION_STATE_FADING_IN = 1;
     private static final int ANIMATION_STATE_FADING_OUT = 3;
@@ -34,8 +34,20 @@ class FastScroller extends RecyclerView.ItemDecoration implements RecyclerView.O
     private static final int STATE_DRAGGING = 2;
     private static final int STATE_HIDDEN = 0;
     private static final int STATE_VISIBLE = 1;
+    final ValueAnimator mShowHideAnimator = ValueAnimator.ofFloat(0.0f, 1.0f);
+    final StateListDrawable mVerticalThumbDrawable;
+    final Drawable mVerticalTrackDrawable;
+    private final int[] mHorizontalRange = new int[2];
+    private final StateListDrawable mHorizontalThumbDrawable;
+    private final int mHorizontalThumbHeight;
+    private final Drawable mHorizontalTrackDrawable;
+    private final int mHorizontalTrackHeight;
+    private final int mMargin;
+    private final int mScrollbarMinimumRange;
+    private final int[] mVerticalRange = new int[2];
+    private final int mVerticalThumbWidth;
+    private final int mVerticalTrackWidth;
     int mAnimationState = 0;
-    private int mDragState = 0;
     private final Runnable mHideRunnable = new Runnable() {
         public void run() {
             FastScroller.this.hide(ClientAnalytics.LogRequest.LogSource.GOR_ANDROID_PRIMES_VALUE);
@@ -43,40 +55,28 @@ class FastScroller extends RecyclerView.ItemDecoration implements RecyclerView.O
     };
     @VisibleForTesting
     float mHorizontalDragX;
-    private final int[] mHorizontalRange = new int[2];
     @VisibleForTesting
     int mHorizontalThumbCenterX;
-    private final StateListDrawable mHorizontalThumbDrawable;
-    private final int mHorizontalThumbHeight;
     @VisibleForTesting
     int mHorizontalThumbWidth;
-    private final Drawable mHorizontalTrackDrawable;
-    private final int mHorizontalTrackHeight;
-    private final int mMargin;
+    @VisibleForTesting
+    float mVerticalDragY;
+    @VisibleForTesting
+    int mVerticalThumbCenterY;
+    @VisibleForTesting
+    int mVerticalThumbHeight;
+    private int mDragState = 0;
     private boolean mNeedHorizontalScrollbar = false;
     private boolean mNeedVerticalScrollbar = false;
+    private RecyclerView mRecyclerView;
+    private int mRecyclerViewHeight = 0;
+    private int mRecyclerViewWidth = 0;
+    private int mState = 0;
     private final RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             FastScroller.this.updateScrollPosition(recyclerView.computeHorizontalScrollOffset(), recyclerView.computeVerticalScrollOffset());
         }
     };
-    private RecyclerView mRecyclerView;
-    private int mRecyclerViewHeight = 0;
-    private int mRecyclerViewWidth = 0;
-    private final int mScrollbarMinimumRange;
-    final ValueAnimator mShowHideAnimator = ValueAnimator.ofFloat(0.0f, 1.0f);
-    private int mState = 0;
-    @VisibleForTesting
-    float mVerticalDragY;
-    private final int[] mVerticalRange = new int[2];
-    @VisibleForTesting
-    int mVerticalThumbCenterY;
-    final StateListDrawable mVerticalThumbDrawable;
-    @VisibleForTesting
-    int mVerticalThumbHeight;
-    private final int mVerticalThumbWidth;
-    final Drawable mVerticalTrackDrawable;
-    private final int mVerticalTrackWidth;
 
     FastScroller(RecyclerView recyclerView, StateListDrawable verticalThumbDrawable, Drawable verticalTrackDrawable, StateListDrawable horizontalThumbDrawable, Drawable horizontalTrackDrawable, int defaultWidth, int scrollbarMinimumRange, int margin) {
         this.mVerticalThumbDrawable = verticalThumbDrawable;

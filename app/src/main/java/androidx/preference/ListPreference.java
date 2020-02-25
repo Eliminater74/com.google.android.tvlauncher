@@ -10,7 +10,6 @@ import android.support.p001v4.content.res.TypedArrayUtils;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
-import androidx.preference.Preference;
 
 public class ListPreference extends DialogPreference {
     private static final String TAG = "ListPreference";
@@ -46,6 +45,10 @@ public class ListPreference extends DialogPreference {
         this(context, null);
     }
 
+    public CharSequence[] getEntries() {
+        return this.mEntries;
+    }
+
     public void setEntries(CharSequence[] entries) {
         this.mEntries = entries;
     }
@@ -54,8 +57,8 @@ public class ListPreference extends DialogPreference {
         setEntries(getContext().getResources().getTextArray(entriesResId));
     }
 
-    public CharSequence[] getEntries() {
-        return this.mEntries;
+    public CharSequence[] getEntryValues() {
+        return this.mEntryValues;
     }
 
     public void setEntryValues(CharSequence[] entryValues) {
@@ -64,19 +67,6 @@ public class ListPreference extends DialogPreference {
 
     public void setEntryValues(@ArrayRes int entryValuesResId) {
         setEntryValues(getContext().getResources().getTextArray(entryValuesResId));
-    }
-
-    public CharSequence[] getEntryValues() {
-        return this.mEntryValues;
-    }
-
-    public void setSummary(CharSequence summary) {
-        super.setSummary(summary);
-        if (summary == null && this.mSummary != null) {
-            this.mSummary = null;
-        } else if (summary != null && !summary.equals(this.mSummary)) {
-            this.mSummary = summary.toString();
-        }
     }
 
     public CharSequence getSummary() {
@@ -99,6 +89,19 @@ public class ListPreference extends DialogPreference {
         return formattedString;
     }
 
+    public void setSummary(CharSequence summary) {
+        super.setSummary(summary);
+        if (summary == null && this.mSummary != null) {
+            this.mSummary = null;
+        } else if (summary != null && !summary.equals(this.mSummary)) {
+            this.mSummary = summary.toString();
+        }
+    }
+
+    public String getValue() {
+        return this.mValue;
+    }
+
     public void setValue(String value) {
         boolean changed = !TextUtils.equals(this.mValue, value);
         if (changed || !this.mValueSet) {
@@ -109,10 +112,6 @@ public class ListPreference extends DialogPreference {
                 notifyChanged();
             }
         }
-    }
-
-    public String getValue() {
-        return this.mValue;
     }
 
     public CharSequence getEntry() {
@@ -137,15 +136,15 @@ public class ListPreference extends DialogPreference {
         return -1;
     }
 
+    private int getValueIndex() {
+        return findIndexOfValue(this.mValue);
+    }
+
     public void setValueIndex(int index) {
         CharSequence[] charSequenceArr = this.mEntryValues;
         if (charSequenceArr != null) {
             setValue(charSequenceArr[index].toString());
         }
-    }
-
-    private int getValueIndex() {
-        return findIndexOfValue(this.mValue);
     }
 
     /* access modifiers changed from: protected */

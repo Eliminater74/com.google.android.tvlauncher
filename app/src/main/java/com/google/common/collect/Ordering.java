@@ -5,6 +5,9 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -14,15 +17,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible
 public abstract class Ordering<T> implements Comparator<T> {
     static final int LEFT_IS_GREATER = 1;
     static final int RIGHT_IS_GREATER = -1;
 
-    @CanIgnoreReturnValue
-    public abstract int compare(@NullableDecl Object obj, @NullableDecl Object obj2);
+    protected Ordering() {
+    }
 
     @GwtCompatible(serializable = true)
     public static <C extends Comparable> Ordering<C> natural() {
@@ -67,71 +69,13 @@ public abstract class Ordering<T> implements Comparator<T> {
         return ArbitraryOrderingHolder.ARBITRARY_ORDERING;
     }
 
-    private static class ArbitraryOrderingHolder {
-        static final Ordering<Object> ARBITRARY_ORDERING = new ArbitraryOrdering();
-
-        private ArbitraryOrderingHolder() {
-        }
+    @GwtCompatible(serializable = true)
+    public static <T> Ordering<T> compound(Iterable<? extends Comparator<? super T>> comparators) {
+        return new CompoundOrdering(comparators);
     }
 
-    @VisibleForTesting
-    static class ArbitraryOrdering extends Ordering<Object> {
-        private final AtomicInteger counter = new AtomicInteger(0);
-        private final ConcurrentMap<Object, Integer> uids = Platform.tryWeakKeys(new MapMaker()).makeMap();
-
-        ArbitraryOrdering() {
-        }
-
-        private Integer getUid(Object obj) {
-            Integer uid = this.uids.get(obj);
-            if (uid != null) {
-                return uid;
-            }
-            Integer uid2 = Integer.valueOf(this.counter.getAndIncrement());
-            Integer alreadySet = this.uids.putIfAbsent(obj, uid2);
-            if (alreadySet != null) {
-                return alreadySet;
-            }
-            return uid2;
-        }
-
-        public int compare(Object left, Object right) {
-            if (left == right) {
-                return 0;
-            }
-            if (left == null) {
-                return -1;
-            }
-            if (right == null) {
-                return 1;
-            }
-            int leftCode = identityHashCode(left);
-            int rightCode = identityHashCode(right);
-            if (leftCode == rightCode) {
-                int result = getUid(left).compareTo(getUid(right));
-                if (result != 0) {
-                    return result;
-                }
-                throw new AssertionError();
-            } else if (leftCode < rightCode) {
-                return -1;
-            } else {
-                return 1;
-            }
-        }
-
-        public String toString() {
-            return "Ordering.arbitrary()";
-        }
-
-        /* access modifiers changed from: package-private */
-        public int identityHashCode(Object object) {
-            return System.identityHashCode(object);
-        }
-    }
-
-    protected Ordering() {
-    }
+    @CanIgnoreReturnValue
+    public abstract int compare(@NullableDecl Object obj, @NullableDecl Object obj2);
 
     @GwtCompatible(serializable = true)
     public <S extends T> Ordering<S> reverse() {
@@ -161,11 +105,6 @@ public abstract class Ordering<T> implements Comparator<T> {
     @GwtCompatible(serializable = true)
     public <U extends T> Ordering<U> compound(Comparator<? super U> secondaryComparator) {
         return new CompoundOrdering(this, (Comparator) Preconditions.checkNotNull(secondaryComparator));
-    }
-
-    @GwtCompatible(serializable = true)
-    public static <T> Ordering<T> compound(Iterable<? extends Comparator<? super T>> comparators) {
-        return new CompoundOrdering(comparators);
     }
 
     @GwtCompatible(serializable = true)
@@ -329,6 +268,69 @@ public abstract class Ordering<T> implements Comparator<T> {
     @Deprecated
     public int binarySearch(List<? extends T> sortedList, @NullableDecl T key) {
         return Collections.binarySearch(sortedList, key, this);
+    }
+
+    private static class ArbitraryOrderingHolder {
+        static final Ordering<Object> ARBITRARY_ORDERING = new ArbitraryOrdering();
+
+        private ArbitraryOrderingHolder() {
+        }
+    }
+
+    @VisibleForTesting
+    static class ArbitraryOrdering extends Ordering<Object> {
+        private final AtomicInteger counter = new AtomicInteger(0);
+        private final ConcurrentMap<Object, Integer> uids = Platform.tryWeakKeys(new MapMaker()).makeMap();
+
+        ArbitraryOrdering() {
+        }
+
+        private Integer getUid(Object obj) {
+            Integer uid = this.uids.get(obj);
+            if (uid != null) {
+                return uid;
+            }
+            Integer uid2 = Integer.valueOf(this.counter.getAndIncrement());
+            Integer alreadySet = this.uids.putIfAbsent(obj, uid2);
+            if (alreadySet != null) {
+                return alreadySet;
+            }
+            return uid2;
+        }
+
+        public int compare(Object left, Object right) {
+            if (left == right) {
+                return 0;
+            }
+            if (left == null) {
+                return -1;
+            }
+            if (right == null) {
+                return 1;
+            }
+            int leftCode = identityHashCode(left);
+            int rightCode = identityHashCode(right);
+            if (leftCode == rightCode) {
+                int result = getUid(left).compareTo(getUid(right));
+                if (result != 0) {
+                    return result;
+                }
+                throw new AssertionError();
+            } else if (leftCode < rightCode) {
+                return -1;
+            } else {
+                return 1;
+            }
+        }
+
+        public String toString() {
+            return "Ordering.arbitrary()";
+        }
+
+        /* access modifiers changed from: package-private */
+        public int identityHashCode(Object object) {
+            return System.identityHashCode(object);
+        }
     }
 
     @VisibleForTesting

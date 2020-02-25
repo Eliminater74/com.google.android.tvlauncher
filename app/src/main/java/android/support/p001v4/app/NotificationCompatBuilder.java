@@ -5,23 +5,23 @@ import android.app.RemoteInput;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RestrictTo;
-import android.support.p001v4.app.NotificationCompat;
 import android.text.TextUtils;
 import android.util.SparseArray;
 import android.widget.RemoteViews;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-/* renamed from: android.support.v4.app.NotificationCompatBuilder */
+        /* renamed from: android.support.v4.app.NotificationCompatBuilder */
 class NotificationCompatBuilder implements NotificationBuilderWithBuilderAccessor {
     private final List<Bundle> mActionExtrasList = new ArrayList();
-    private RemoteViews mBigContentView;
     private final Notification.Builder mBuilder;
     private final NotificationCompat.Builder mBuilderCompat;
-    private RemoteViews mContentView;
     private final Bundle mExtras = new Bundle();
+    private RemoteViews mBigContentView;
+    private RemoteViews mContentView;
     private int mGroupAlertBehavior;
     private RemoteViews mHeadsUpContentView;
 

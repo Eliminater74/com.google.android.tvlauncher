@@ -11,15 +11,17 @@ import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+
 import androidx.leanback.C0364R;
+
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
 public class MediaNowPlayingView extends LinearLayout {
+    protected final LinearInterpolator mLinearInterpolator = new LinearInterpolator();
     private final ImageView mImage1;
     private final ImageView mImage2;
     private final ImageView mImage3;
-    protected final LinearInterpolator mLinearInterpolator = new LinearInterpolator();
     private final ObjectAnimator mObjectAnimator1;
     private final ObjectAnimator mObjectAnimator2;
     private final ObjectAnimator mObjectAnimator3;

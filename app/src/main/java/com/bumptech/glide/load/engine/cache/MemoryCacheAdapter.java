@@ -2,9 +2,9 @@ package com.bumptech.glide.load.engine.cache;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import com.bumptech.glide.load.Key;
 import com.bumptech.glide.load.engine.Resource;
-import com.bumptech.glide.load.engine.cache.MemoryCache;
 
 public class MemoryCacheAdapter implements MemoryCache {
     private MemoryCache.ResourceRemovedListener listener;

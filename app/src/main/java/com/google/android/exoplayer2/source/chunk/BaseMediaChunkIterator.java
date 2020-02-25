@@ -3,9 +3,9 @@ package com.google.android.exoplayer2.source.chunk;
 import java.util.NoSuchElementException;
 
 public abstract class BaseMediaChunkIterator implements MediaChunkIterator {
-    private long currentIndex;
     private final long fromIndex;
     private final long toIndex;
+    private long currentIndex;
 
     public BaseMediaChunkIterator(long fromIndex2, long toIndex2) {
         this.fromIndex = fromIndex2;

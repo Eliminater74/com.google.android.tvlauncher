@@ -3,18 +3,19 @@ package com.google.common.collect;
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Multiset;
 import com.google.common.primitives.Ints;
-import java.util.Comparator;
+
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
+import java.util.Comparator;
 
 @GwtIncompatible
 final class RegularImmutableSortedMultiset<E> extends ImmutableSortedMultiset<E> {
     static final ImmutableSortedMultiset<Comparable> NATURAL_EMPTY_MULTISET = new RegularImmutableSortedMultiset(Ordering.natural());
     private static final long[] ZERO_CUMULATIVE_COUNTS = {0};
-    private final transient long[] cumulativeCounts;
     @VisibleForTesting
     final transient RegularImmutableSortedSet<E> elementSet;
+    private final transient long[] cumulativeCounts;
     private final transient int length;
     private final transient int offset;
 

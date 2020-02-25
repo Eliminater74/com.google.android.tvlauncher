@@ -2,19 +2,21 @@ package com.google.common.collect;
 
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.GwtCompatible;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.SortedSet;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible
 public abstract class ForwardingSortedSet<E> extends ForwardingSet<E> implements SortedSet<E> {
-    /* access modifiers changed from: protected */
-    public abstract SortedSet<E> delegate();
-
     protected ForwardingSortedSet() {
     }
+
+    /* access modifiers changed from: protected */
+    public abstract SortedSet<E> delegate();
 
     public Comparator<? super E> comparator() {
         return delegate().comparator();

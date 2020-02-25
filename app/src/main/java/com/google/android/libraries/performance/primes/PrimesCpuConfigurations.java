@@ -1,10 +1,10 @@
 package com.google.android.libraries.performance.primes;
 
 public final class PrimesCpuConfigurations {
+    static final int MIN_TIME_IN_MS_BETWEEN_SAMPLES = 100;
     private static final int DEFAULT_INITIAL_DELAY = 15000;
     private static final int DEFAULT_NUMBER_SAMPLES_TO_COLLECT = 5;
     private static final int DEFAULT_TIME_BETWEEN_SAMPLES = 2000;
-    static final int MIN_TIME_IN_MS_BETWEEN_SAMPLES = 100;
     private final boolean enabled;
     private final int initialDelay;
     private final int numSamples;

@@ -4,12 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
-import com.google.android.libraries.performance.primes.TimerEvent;
+
 import com.google.android.libraries.performance.primes.debug.Intents;
 import com.google.android.libraries.performance.primes.trace.PrimesTrace;
 import com.google.android.libraries.performance.primes.transmitter.MetricTransmitter;
 import com.google.android.libraries.stitch.util.Preconditions;
-import java.lang.Thread;
+
 import logs.proto.wireless.performance.mobile.ExtensionMetric;
 import logs.proto.wireless.performance.mobile.PrimesTraceOuterClass;
 
@@ -51,6 +51,43 @@ public class Primes {
             PrimesLog.warning("Primes not initialized, returning default (no-op) Primes instance which will ignore all calls. Please call Primes.initialize(...) before using any Primes API.", new Object[0]);
         }
         return primes;
+    }
+
+    public static boolean startEventDebugActivity(Context context) {
+        if (!primes.isInitialized()) {
+            return false;
+        }
+        Intent intent = Intents.createPrimesEventDebugActivityIntent(context);
+        if (context.getPackageManager().queryIntentActivities(intent, 65536).isEmpty()) {
+            PrimesLog.m54w(TAG, "PrimesEventActivity not found: primes/debug is not included in the app.", new Object[0]);
+            return false;
+        }
+        context.startActivity(intent);
+        return true;
+    }
+
+    private static String toString(NoPiiString string) {
+        if (string != null) {
+            return string.toString();
+        }
+        return null;
+    }
+
+    public static synchronized void reset(ShutdownWhitelistToken token) {
+        synchronized (Primes.class) {
+            if (token == null) {
+                PrimesLog.m54w(TAG, "Primes Shutdown token null, ignoring reset.", new Object[0]);
+                return;
+            }
+            primes.primesApi.shutdown();
+            primes = DEFAULT_PRIMES;
+        }
+    }
+
+    static synchronized void reset() {
+        synchronized (Primes.class) {
+            primes = DEFAULT_PRIMES;
+        }
     }
 
     /* access modifiers changed from: package-private */
@@ -231,19 +268,6 @@ public class Primes {
         return startEventDebugActivity(context);
     }
 
-    public static boolean startEventDebugActivity(Context context) {
-        if (!primes.isInitialized()) {
-            return false;
-        }
-        Intent intent = Intents.createPrimesEventDebugActivityIntent(context);
-        if (context.getPackageManager().queryIntentActivities(intent, 65536).isEmpty()) {
-            PrimesLog.m54w(TAG, "PrimesEventActivity not found: primes/debug is not included in the app.", new Object[0]);
-            return false;
-        }
-        context.startActivity(intent);
-        return true;
-    }
-
     public void recordPackageStats() {
         this.primesApi.recordPackageStats();
     }
@@ -261,30 +285,6 @@ public class Primes {
     /* access modifiers changed from: package-private */
     public boolean isNetworkEnabled() {
         return this.primesApi.isNetworkEnabled();
-    }
-
-    private static String toString(NoPiiString string) {
-        if (string != null) {
-            return string.toString();
-        }
-        return null;
-    }
-
-    public static synchronized void reset(ShutdownWhitelistToken token) {
-        synchronized (Primes.class) {
-            if (token == null) {
-                PrimesLog.m54w(TAG, "Primes Shutdown token null, ignoring reset.", new Object[0]);
-                return;
-            }
-            primes.primesApi.shutdown();
-            primes = DEFAULT_PRIMES;
-        }
-    }
-
-    static synchronized void reset() {
-        synchronized (Primes.class) {
-            primes = DEFAULT_PRIMES;
-        }
     }
 
     public void recordBatterySnapshot(NoPiiString eventName) {

@@ -4,16 +4,18 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.VisibleForTesting;
 import android.util.Log;
+
 import com.google.android.tvlauncher.instantvideo.widget.InstantVideoView;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class VideoProgressPoller implements Handler.Callback {
+    @VisibleForTesting
+    static final int VIDEO_UPDATE_MSG = 1;
     private static final int STOP_POLLER = 3;
     private static final String TAG = "VideoProgressPoller";
     private static final int VIDEO_ENDED_MSG = 2;
-    @VisibleForTesting
-    static final int VIDEO_UPDATE_MSG = 1;
     @VisibleForTesting
     final Handler mHandler;
     private final InstantVideoView mInstantVideoView;
@@ -21,10 +23,6 @@ public class VideoProgressPoller implements Handler.Callback {
     private List<OnVideoProgressUpdateListener> mOnVideoProgressUpdateListeners = new ArrayList(2);
     private long mRefreshIntervalMillis;
     private long mVideoDurationMillis;
-
-    public interface OnVideoProgressUpdateListener {
-        void onVideoProgressUpdate(long j);
-    }
 
     public VideoProgressPoller(InstantVideoView videoView) {
         this.mInstantVideoView = videoView;
@@ -111,5 +109,9 @@ public class VideoProgressPoller implements Handler.Callback {
         for (OnVideoProgressUpdateListener listener : this.mOnVideoProgressUpdateListeners) {
             listener.onVideoProgressUpdate(currentProgressMillis);
         }
+    }
+
+    public interface OnVideoProgressUpdateListener {
+        void onVideoProgressUpdate(long j);
     }
 }

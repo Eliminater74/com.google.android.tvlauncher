@@ -4,12 +4,22 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+
 import java.util.Arrays;
 
 public abstract class GmsClientSupervisor {
     public static final int DEFAULT_BIND_FLAGS = 129;
     private static final Object zza = new Object();
     private static GmsClientSupervisor zzb;
+
+    public static GmsClientSupervisor getInstance(Context context) {
+        synchronized (zza) {
+            if (zzb == null) {
+                zzb = new zzq(context.getApplicationContext());
+            }
+        }
+        return zzb;
+    }
 
     /* access modifiers changed from: protected */
     public abstract boolean bindService(ConnectionStatusConfig connectionStatusConfig, ServiceConnection serviceConnection, String str);
@@ -19,13 +29,36 @@ public abstract class GmsClientSupervisor {
     /* access modifiers changed from: protected */
     public abstract void unbindService(ConnectionStatusConfig connectionStatusConfig, ServiceConnection serviceConnection, String str);
 
-    public static GmsClientSupervisor getInstance(Context context) {
-        synchronized (zza) {
-            if (zzb == null) {
-                zzb = new zzq(context.getApplicationContext());
-            }
-        }
-        return zzb;
+    public boolean bindService(String str, ServiceConnection serviceConnection, String str2) {
+        return bindService(new ConnectionStatusConfig(str, 129), serviceConnection, str2);
+    }
+
+    public boolean bindService(String str, String str2, ServiceConnection serviceConnection, String str3) {
+        return bindService(str, str2, 129, serviceConnection, str3);
+    }
+
+    public boolean bindService(String str, String str2, int i, ServiceConnection serviceConnection, String str3) {
+        return bindService(new ConnectionStatusConfig(str, str2, i), serviceConnection, str3);
+    }
+
+    public boolean bindService(ComponentName componentName, ServiceConnection serviceConnection, String str) {
+        return bindService(new ConnectionStatusConfig(componentName, 129), serviceConnection, str);
+    }
+
+    public void unbindService(String str, ServiceConnection serviceConnection, String str2) {
+        unbindService(new ConnectionStatusConfig(str, 129), serviceConnection, str2);
+    }
+
+    public void unbindService(String str, String str2, ServiceConnection serviceConnection, String str3) {
+        unbindService(str, str2, 129, serviceConnection, str3);
+    }
+
+    public void unbindService(String str, String str2, int i, ServiceConnection serviceConnection, String str3) {
+        unbindService(new ConnectionStatusConfig(str, str2, i), serviceConnection, str3);
+    }
+
+    public void unbindService(ComponentName componentName, ServiceConnection serviceConnection, String str) {
+        unbindService(new ConnectionStatusConfig(componentName, 129), serviceConnection, str);
     }
 
     public static final class ConnectionStatusConfig {
@@ -101,37 +134,5 @@ public abstract class GmsClientSupervisor {
             }
             return true;
         }
-    }
-
-    public boolean bindService(String str, ServiceConnection serviceConnection, String str2) {
-        return bindService(new ConnectionStatusConfig(str, 129), serviceConnection, str2);
-    }
-
-    public boolean bindService(String str, String str2, ServiceConnection serviceConnection, String str3) {
-        return bindService(str, str2, 129, serviceConnection, str3);
-    }
-
-    public boolean bindService(String str, String str2, int i, ServiceConnection serviceConnection, String str3) {
-        return bindService(new ConnectionStatusConfig(str, str2, i), serviceConnection, str3);
-    }
-
-    public boolean bindService(ComponentName componentName, ServiceConnection serviceConnection, String str) {
-        return bindService(new ConnectionStatusConfig(componentName, 129), serviceConnection, str);
-    }
-
-    public void unbindService(String str, ServiceConnection serviceConnection, String str2) {
-        unbindService(new ConnectionStatusConfig(str, 129), serviceConnection, str2);
-    }
-
-    public void unbindService(String str, String str2, ServiceConnection serviceConnection, String str3) {
-        unbindService(str, str2, 129, serviceConnection, str3);
-    }
-
-    public void unbindService(String str, String str2, int i, ServiceConnection serviceConnection, String str3) {
-        unbindService(new ConnectionStatusConfig(str, str2, i), serviceConnection, str3);
-    }
-
-    public void unbindService(ComponentName componentName, ServiceConnection serviceConnection, String str) {
-        unbindService(new ConnectionStatusConfig(componentName, 129), serviceConnection, str);
     }
 }

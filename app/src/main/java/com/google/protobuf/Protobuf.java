@@ -9,6 +9,9 @@ final class Protobuf {
     private final ConcurrentMap<Class<?>, Schema<?>> schemaCache = new ConcurrentHashMap();
     private final SchemaFactory schemaFactory = new ManifestSchemaFactory();
 
+    private Protobuf() {
+    }
+
     public static Protobuf getInstance() {
         return INSTANCE;
     }
@@ -61,9 +64,6 @@ final class Protobuf {
         Internal.checkNotNull(messageType, "messageType");
         Internal.checkNotNull(schema, "schema");
         return this.schemaCache.put(messageType, schema);
-    }
-
-    private Protobuf() {
     }
 
     /* access modifiers changed from: package-private */

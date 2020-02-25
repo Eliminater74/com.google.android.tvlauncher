@@ -7,68 +7,22 @@ import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
 @Deprecated
 public final class LocalBroadcastManager {
-    private static final boolean DEBUG = false;
     static final int MSG_EXEC_PENDING_BROADCASTS = 1;
+    private static final boolean DEBUG = false;
     private static final String TAG = "LocalBroadcastManager";
-    private static LocalBroadcastManager mInstance;
     private static final Object mLock = new Object();
+    private static LocalBroadcastManager mInstance;
     private final HashMap<String, ArrayList<ReceiverRecord>> mActions = new HashMap<>();
     private final Context mAppContext;
     private final Handler mHandler;
     private final ArrayList<BroadcastRecord> mPendingBroadcasts = new ArrayList<>();
     private final HashMap<BroadcastReceiver, ArrayList<ReceiverRecord>> mReceivers = new HashMap<>();
-
-    private static final class ReceiverRecord {
-        boolean broadcasting;
-        boolean dead;
-        final IntentFilter filter;
-        final BroadcastReceiver receiver;
-
-        ReceiverRecord(IntentFilter _filter, BroadcastReceiver _receiver) {
-            this.filter = _filter;
-            this.receiver = _receiver;
-        }
-
-        public String toString() {
-            StringBuilder builder = new StringBuilder(128);
-            builder.append("Receiver{");
-            builder.append(this.receiver);
-            builder.append(" filter=");
-            builder.append(this.filter);
-            if (this.dead) {
-                builder.append(" DEAD");
-            }
-            builder.append("}");
-            return builder.toString();
-        }
-    }
-
-    private static final class BroadcastRecord {
-        final Intent intent;
-        final ArrayList<ReceiverRecord> receivers;
-
-        BroadcastRecord(Intent _intent, ArrayList<ReceiverRecord> _receivers) {
-            this.intent = _intent;
-            this.receivers = _receivers;
-        }
-    }
-
-    @NonNull
-    public static LocalBroadcastManager getInstance(@NonNull Context context) {
-        LocalBroadcastManager localBroadcastManager;
-        synchronized (mLock) {
-            if (mInstance == null) {
-                mInstance = new LocalBroadcastManager(context.getApplicationContext());
-            }
-            localBroadcastManager = mInstance;
-        }
-        return localBroadcastManager;
-    }
 
     private LocalBroadcastManager(Context context) {
         this.mAppContext = context;
@@ -81,6 +35,18 @@ public final class LocalBroadcastManager {
                 }
             }
         };
+    }
+
+    @NonNull
+    public static LocalBroadcastManager getInstance(@NonNull Context context) {
+        LocalBroadcastManager localBroadcastManager;
+        synchronized (mLock) {
+            if (mInstance == null) {
+                mInstance = new LocalBroadcastManager(context.getApplicationContext());
+            }
+            localBroadcastManager = mInstance;
+        }
+        return localBroadcastManager;
     }
 
     public void registerReceiver(@NonNull BroadcastReceiver receiver, @NonNull IntentFilter filter) {
@@ -442,5 +408,40 @@ public final class LocalBroadcastManager {
             return
         */
         throw new UnsupportedOperationException("Method not decompiled: androidx.localbroadcastmanager.content.LocalBroadcastManager.executePendingBroadcasts():void");
+    }
+
+    private static final class ReceiverRecord {
+        final IntentFilter filter;
+        final BroadcastReceiver receiver;
+        boolean broadcasting;
+        boolean dead;
+
+        ReceiverRecord(IntentFilter _filter, BroadcastReceiver _receiver) {
+            this.filter = _filter;
+            this.receiver = _receiver;
+        }
+
+        public String toString() {
+            StringBuilder builder = new StringBuilder(128);
+            builder.append("Receiver{");
+            builder.append(this.receiver);
+            builder.append(" filter=");
+            builder.append(this.filter);
+            if (this.dead) {
+                builder.append(" DEAD");
+            }
+            builder.append("}");
+            return builder.toString();
+        }
+    }
+
+    private static final class BroadcastRecord {
+        final Intent intent;
+        final ArrayList<ReceiverRecord> receivers;
+
+        BroadcastRecord(Intent _intent, ArrayList<ReceiverRecord> _receivers) {
+            this.intent = _intent;
+            this.receivers = _receivers;
+        }
     }
 }

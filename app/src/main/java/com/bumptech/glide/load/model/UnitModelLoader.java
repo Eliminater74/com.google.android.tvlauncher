@@ -1,11 +1,11 @@
 package com.bumptech.glide.load.model;
 
 import android.support.annotation.NonNull;
+
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.Options;
 import com.bumptech.glide.load.data.DataFetcher;
-import com.bumptech.glide.load.model.ModelLoader;
 import com.bumptech.glide.signature.ObjectKey;
 
 public class UnitModelLoader<Model> implements ModelLoader<Model, Model> {

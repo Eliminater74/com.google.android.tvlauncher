@@ -4,7 +4,6 @@ import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.extractor.ExtractorInput;
 import com.google.android.exoplayer2.extractor.SeekMap;
 import com.google.android.exoplayer2.extractor.SeekPoint;
-import com.google.android.exoplayer2.extractor.ogg.StreamReader;
 import com.google.android.exoplayer2.util.FlacStreamInfo;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.ParsableByteArray;
@@ -12,6 +11,7 @@ import com.google.android.exoplayer2.util.Util;
 import com.google.common.base.Ascii;
 import com.google.common.primitives.UnsignedBytes;
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -20,15 +20,19 @@ final class FlacReader extends StreamReader {
     private static final byte AUDIO_PACKET_TYPE = -1;
     private static final int FRAME_HEADER_SAMPLE_NUMBER_OFFSET = 4;
     private static final byte SEEKTABLE_PACKET_TYPE = 3;
-    private FlacOggSeeker flacOggSeeker;
     /* access modifiers changed from: private */
     public FlacStreamInfo streamInfo;
+    private FlacOggSeeker flacOggSeeker;
 
     FlacReader() {
     }
 
     public static boolean verifyBitstreamType(ParsableByteArray data) {
         return data.bytesLeft() >= 5 && data.readUnsignedByte() == 127 && data.readUnsignedInt() == 1179402563;
+    }
+
+    private static boolean isAudioPacket(byte[] data) {
+        return data[0] == -1;
     }
 
     /* access modifiers changed from: protected */
@@ -38,10 +42,6 @@ final class FlacReader extends StreamReader {
             this.streamInfo = null;
             this.flacOggSeeker = null;
         }
-    }
-
-    private static boolean isAudioPacket(byte[] data) {
-        return data[0] == -1;
     }
 
     /* access modifiers changed from: protected */

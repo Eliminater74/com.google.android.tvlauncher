@@ -3,9 +3,10 @@ package com.bumptech.glide.load.data;
 import android.content.res.AssetManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
+
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.data.DataFetcher;
+
 import java.io.IOException;
 
 public abstract class AssetPathFetcher<T> implements DataFetcher<T> {
@@ -14,16 +15,16 @@ public abstract class AssetPathFetcher<T> implements DataFetcher<T> {
     private final String assetPath;
     private T data;
 
+    public AssetPathFetcher(AssetManager assetManager2, String assetPath2) {
+        this.assetManager = assetManager2;
+        this.assetPath = assetPath2;
+    }
+
     /* access modifiers changed from: protected */
     public abstract void close(T t) throws IOException;
 
     /* access modifiers changed from: protected */
     public abstract T loadResource(AssetManager assetManager2, String str) throws IOException;
-
-    public AssetPathFetcher(AssetManager assetManager2, String assetPath2) {
-        this.assetManager = assetManager2;
-        this.assetPath = assetPath2;
-    }
 
     public void loadData(@NonNull Priority priority, @NonNull DataFetcher.DataCallback<? super T> callback) {
         try {

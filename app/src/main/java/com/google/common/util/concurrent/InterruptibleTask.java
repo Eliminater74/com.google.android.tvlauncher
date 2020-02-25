@@ -2,9 +2,11 @@ package com.google.common.util.concurrent;
 
 import com.google.common.annotations.GwtCompatible;
 import com.google.j2objc.annotations.ReflectionSupport;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.LockSupport;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible(emulated = true)
 @ReflectionSupport(ReflectionSupport.Level.FULL)
@@ -13,6 +15,13 @@ abstract class InterruptibleTask<T> extends AtomicReference<Runnable> implements
     private static final Runnable INTERRUPTING = new DoNothingRunnable();
     private static final int MAX_BUSY_WAIT_SPINS = 1000;
     private static final Runnable PARKED = new DoNothingRunnable();
+
+    static {
+        Class<LockSupport> cls = LockSupport.class;
+    }
+
+    InterruptibleTask() {
+    }
 
     /* access modifiers changed from: package-private */
     public abstract void afterRanInterruptibly(@NullableDecl Object obj, @NullableDecl Throwable th);
@@ -25,21 +34,6 @@ abstract class InterruptibleTask<T> extends AtomicReference<Runnable> implements
 
     /* access modifiers changed from: package-private */
     public abstract String toPendingString();
-
-    InterruptibleTask() {
-    }
-
-    static {
-        Class<LockSupport> cls = LockSupport.class;
-    }
-
-    private static final class DoNothingRunnable implements Runnable {
-        private DoNothingRunnable() {
-        }
-
-        public void run() {
-        }
-    }
 
     public final void run() {
         Thread currentThread = Thread.currentThread();
@@ -151,5 +145,13 @@ abstract class InterruptibleTask<T> extends AtomicReference<Runnable> implements
         sb2.append(", ");
         sb2.append(pendingString);
         return sb2.toString();
+    }
+
+    private static final class DoNothingRunnable implements Runnable {
+        private DoNothingRunnable() {
+        }
+
+        public void run() {
+        }
     }
 }

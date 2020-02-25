@@ -8,6 +8,7 @@ import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
+
 import com.google.android.exoplayer2.text.Cue;
 import com.google.android.exoplayer2.text.Subtitle;
 import com.google.android.exoplayer2.text.SubtitleDecoderException;
@@ -18,11 +19,14 @@ import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.common.base.Ascii;
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public final class Cea608Decoder extends CeaDecoder {
+    /* access modifiers changed from: private */
+    public static final int[] STYLE_COLORS = {-1, -16711936, -16776961, -16711681, SupportMenu.CATEGORY_MASK, InputDeviceCompat.SOURCE_ANY, -65281};
     private static final int[] BASIC_CHARACTER_SET = {32, 33, 34, 35, 36, 37, 38, 39, 40, 41, ClientAnalytics.LogRequest.LogSource.CLEARCUT_PROBER_VALUE, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, ClientAnalytics.LogRequest.LogSource.WALLET_APP_IOS_PRIMES_VALUE, 93, ClientAnalytics.LogRequest.LogSource.LB_CB_VALUE, ClientAnalytics.LogRequest.LogSource.CW_COUNTERS_VALUE, 250, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, ClientAnalytics.LogRequest.LogSource.SPECTRUM_COUNTERS_VALUE, ClientAnalytics.LogRequest.LogSource.GOOGLE_NOW_LAUNCHER_VALUE, ClientAnalytics.LogRequest.LogSource.WIFI_VALUE, ClientAnalytics.LogRequest.LogSource.BOQ_WEB_VALUE, 9632};
     private static final int CC_FIELD_FLAG = 1;
     private static final byte CC_IMPLICIT_DATA_HEADER = -4;
@@ -54,42 +58,24 @@ public final class Cea608Decoder extends CeaDecoder {
     private static final int[] SPECIAL_CHARACTER_SET = {ClientAnalytics.LogRequest.LogSource.NQLOOKUP_VALUE, ClientAnalytics.LogRequest.LogSource.ANDROID_DIALER_VALUE, 189, ClientAnalytics.LogRequest.LogSource.BIGTOP_VALUE, 8482, ClientAnalytics.LogRequest.LogSource.JAM_IMPRESSIONS_VALUE, ClientAnalytics.LogRequest.LogSource.JAM_KIOSK_IMPRESSIONS_VALUE, 9834, 224, 32, ClientAnalytics.LogRequest.LogSource.WALLET_APP_ANDROID_PRIMES_VALUE, ClientAnalytics.LogRequest.LogSource.PLAY_CONSOLE_APP_VALUE, ClientAnalytics.LogRequest.LogSource.IOS_SPOTLIGHT_SEARCH_LIBRARY_VALUE, ClientAnalytics.LogRequest.LogSource.SOCIETY_ANDROID_PRIMES_VALUE, ClientAnalytics.LogRequest.LogSource.FAMILYLINK_ANDROID_PRIMES_VALUE, ClientAnalytics.LogRequest.LogSource.IOS_GROWTH_VALUE};
     private static final int[] SPECIAL_ES_FR_CHARACTER_SET = {ClientAnalytics.LogRequest.LogSource.GMSCORE_ANDROID_PRIMES_VALUE, 201, ClientAnalytics.LogRequest.LogSource.TELEPHONY_VALUE, ClientAnalytics.LogRequest.LogSource.MADDEN_VALUE, ClientAnalytics.LogRequest.LogSource.ANDROID_CONTACTS_VALUE, ClientAnalytics.LogRequest.LogSource.APPS_NOTIFY_VALUE, 8216, ClientAnalytics.LogRequest.LogSource.ANDROID_GSA_COUNTERS_VALUE, 42, 39, 8212, ClientAnalytics.LogRequest.LogSource.FITNESS_ANDROID_VALUE, 8480, 8226, 8220, 8221, 192, ClientAnalytics.LogRequest.LogSource.MYFIBER_VALUE, ClientAnalytics.LogRequest.LogSource.GBOARD_VALUE, 200, 202, 203, ClientAnalytics.LogRequest.LogSource.ANALYTICS_ANDROID_PRIMES_VALUE, 206, 207, ClientAnalytics.LogRequest.LogSource.GMM_BRIIM_PRIMES_VALUE, ClientAnalytics.LogRequest.LogSource.IDENTITY_FRONTEND_VALUE, ClientAnalytics.LogRequest.LogSource.GOOGLE_KEYBOARD_CONTENT_VALUE, ClientAnalytics.LogRequest.LogSource.NOVA_ANDROID_PRIMES_VALUE, ClientAnalytics.LogRequest.LogSource.INK_VALUE, ClientAnalytics.LogRequest.LogSource.YT_CREATOR_ANDROID_PRIMES_VALUE, ClientAnalytics.LogRequest.LogSource.PIXEL_PERFECT_CLIENT_STATE_LOGGER_VALUE};
     private static final int[] SPECIAL_PT_DE_CHARACTER_SET = {ClientAnalytics.LogRequest.LogSource.RECORDED_PAGES_VALUE, ClientAnalytics.LogRequest.LogSource.TAP_AND_PAY_ANDROID_PRIMES_VALUE, 205, 204, ClientAnalytics.LogRequest.LogSource.SPACES_ANDROID_PRIMES_VALUE, ClientAnalytics.LogRequest.LogSource.TELECOM_VALUE, ClientAnalytics.LogRequest.LogSource.CW_PRIMES_VALUE, ClientAnalytics.LogRequest.LogSource.CPANEL_ANDROID_PRIMES_VALUE, ClientAnalytics.LogRequest.LogSource.ORCHESTRATION_CLIENT_VALUE, 123, ClientAnalytics.LogRequest.LogSource.CONTEXT_MANAGER_VALUE, 92, 94, 95, 124, ClientAnalytics.LogRequest.LogSource.CLASSROOM_VALUE, ClientAnalytics.LogRequest.LogSource.CRONET_ANDROID_YT_VALUE, ClientAnalytics.LogRequest.LogSource.GOOGLE_EXPRESS_COURIER_ANDROID_PRIMES_VALUE, ClientAnalytics.LogRequest.LogSource.HUDDLE_ANDROID_PRIMES_VALUE, ClientAnalytics.LogRequest.LogSource.ORCHESTRATION_CLIENT_DEV_VALUE, ClientAnalytics.LogRequest.LogSource.GHS_ANDROID_PRIMES_VALUE, ClientAnalytics.LogRequest.LogSource.PHOTOS_ANDROID_PRIMES_VALUE, ClientAnalytics.LogRequest.LogSource.PAYMENTS_OCR_VALUE, 9474, ClientAnalytics.LogRequest.LogSource.MOB_DOG_VALUE, ClientAnalytics.LogRequest.LogSource.GOOGLE_EXPRESS_ANDROID_PRIMES_VALUE, ClientAnalytics.LogRequest.LogSource.SESAME_VALUE, ClientAnalytics.LogRequest.LogSource.WH_PRIMES_VALUE, 9484, 9488, 9492, 9496};
-    /* access modifiers changed from: private */
-    public static final int[] STYLE_COLORS = {-1, -16711936, -16776961, -16711681, SupportMenu.CATEGORY_MASK, InputDeviceCompat.SOURCE_ANY, -65281};
     private static final int STYLE_ITALICS = 7;
     private static final int STYLE_UNCHANGED = 8;
     private static final String TAG = "Cea608Decoder";
+    private final ParsableByteArray ccData = new ParsableByteArray();
+    private final ArrayList<CueBuilder> cueBuilders = new ArrayList<>();
+    private final int packetLength;
+    private final int selectedChannel;
+    private final int selectedField;
     private int captionMode;
     private int captionRowCount;
     private boolean captionValid;
-    private final ParsableByteArray ccData = new ParsableByteArray();
-    private final ArrayList<CueBuilder> cueBuilders = new ArrayList<>();
     private List<Cue> cues;
     private int currentChannel = 0;
     private CueBuilder currentCueBuilder = new CueBuilder(0, 4);
     private List<Cue> lastCues;
-    private final int packetLength;
     private byte repeatableControlCc1;
     private byte repeatableControlCc2;
     private boolean repeatableControlSet;
-    private final int selectedChannel;
-    private final int selectedField;
-
-    public /* bridge */ /* synthetic */ SubtitleInputBuffer dequeueInputBuffer() throws SubtitleDecoderException {
-        return super.dequeueInputBuffer();
-    }
-
-    public /* bridge */ /* synthetic */ SubtitleOutputBuffer dequeueOutputBuffer() throws SubtitleDecoderException {
-        return super.dequeueOutputBuffer();
-    }
-
-    public /* bridge */ /* synthetic */ void queueInputBuffer(SubtitleInputBuffer subtitleInputBuffer) throws SubtitleDecoderException {
-        super.queueInputBuffer(subtitleInputBuffer);
-    }
-
-    public /* bridge */ /* synthetic */ void setPositionUs(long j) {
-        super.setPositionUs(j);
-    }
 
     public Cea608Decoder(String mimeType, int accessibilityChannel) {
         this.packetLength = MimeTypes.APPLICATION_MP4CEA608.equals(mimeType) ? 2 : 3;
@@ -112,6 +98,62 @@ public final class Cea608Decoder extends CeaDecoder {
         }
         setCaptionMode(0);
         resetCueBuilders();
+    }
+
+    private static char getChar(byte ccData2) {
+        return (char) BASIC_CHARACTER_SET[(ccData2 & Ascii.DEL) - 32];
+    }
+
+    private static char getSpecialChar(byte ccData2) {
+        return (char) SPECIAL_CHARACTER_SET[ccData2 & 15];
+    }
+
+    private static char getExtendedEsFrChar(byte ccData2) {
+        return (char) SPECIAL_ES_FR_CHARACTER_SET[ccData2 & 31];
+    }
+
+    private static char getExtendedPtDeChar(byte ccData2) {
+        return (char) SPECIAL_PT_DE_CHARACTER_SET[ccData2 & 31];
+    }
+
+    private static int getChannel(byte cc1) {
+        return (cc1 >> 3) & 1;
+    }
+
+    private static boolean isMidrowCtrlCode(byte cc1, byte cc2) {
+        return (cc1 & 247) == 17 && (cc2 & 240) == 32;
+    }
+
+    private static boolean isPreambleAddressCode(byte cc1, byte cc2) {
+        return (cc1 & 240) == 16 && (cc2 & 192) == 64;
+    }
+
+    private static boolean isTabCtrlCode(byte cc1, byte cc2) {
+        return (cc1 & 247) == 23 && cc2 >= 33 && cc2 <= 35;
+    }
+
+    private static boolean isMiscCode(byte cc1, byte cc2) {
+        return (cc1 & 246) == 20 && (cc2 & 240) == 32;
+    }
+
+    private static boolean isRepeatable(byte cc1) {
+        return (cc1 & 240) == 16;
+    }
+
+    public /* bridge */ /* synthetic */ SubtitleInputBuffer dequeueInputBuffer() throws SubtitleDecoderException {
+        return super.dequeueInputBuffer();
+    }
+
+    public /* bridge */ /* synthetic */ SubtitleOutputBuffer dequeueOutputBuffer() throws SubtitleDecoderException {
+        return super.dequeueOutputBuffer();
+    }
+
+    public /* bridge */ /* synthetic */ void queueInputBuffer(SubtitleInputBuffer subtitleInputBuffer) throws SubtitleDecoderException {
+        super.queueInputBuffer(subtitleInputBuffer);
+    }
+
+    public /* bridge */ /* synthetic */ void setPositionUs(long j) {
+        super.setPositionUs(j);
     }
 
     public String getName() {
@@ -389,64 +431,38 @@ public final class Cea608Decoder extends CeaDecoder {
         this.cueBuilders.add(this.currentCueBuilder);
     }
 
-    private static char getChar(byte ccData2) {
-        return (char) BASIC_CHARACTER_SET[(ccData2 & Ascii.DEL) - 32];
-    }
-
-    private static char getSpecialChar(byte ccData2) {
-        return (char) SPECIAL_CHARACTER_SET[ccData2 & 15];
-    }
-
-    private static char getExtendedEsFrChar(byte ccData2) {
-        return (char) SPECIAL_ES_FR_CHARACTER_SET[ccData2 & 31];
-    }
-
-    private static char getExtendedPtDeChar(byte ccData2) {
-        return (char) SPECIAL_PT_DE_CHARACTER_SET[ccData2 & 31];
-    }
-
-    private static int getChannel(byte cc1) {
-        return (cc1 >> 3) & 1;
-    }
-
-    private static boolean isMidrowCtrlCode(byte cc1, byte cc2) {
-        return (cc1 & 247) == 17 && (cc2 & 240) == 32;
-    }
-
-    private static boolean isPreambleAddressCode(byte cc1, byte cc2) {
-        return (cc1 & 240) == 16 && (cc2 & 192) == 64;
-    }
-
-    private static boolean isTabCtrlCode(byte cc1, byte cc2) {
-        return (cc1 & 247) == 23 && cc2 >= 33 && cc2 <= 35;
-    }
-
-    private static boolean isMiscCode(byte cc1, byte cc2) {
-        return (cc1 & 246) == 20 && (cc2 & 240) == 32;
-    }
-
-    private static boolean isRepeatable(byte cc1) {
-        return (cc1 & 240) == 16;
-    }
-
     private static class CueBuilder {
         private static final int BASE_ROW = 15;
         private static final int SCREEN_CHARWIDTH = 32;
-        private int captionMode;
-        private int captionRowCount;
         private final StringBuilder captionStringBuilder = new StringBuilder();
         private final List<CueStyle> cueStyles = new ArrayList();
+        private final List<SpannableString> rolledUpCaptions = new ArrayList();
         /* access modifiers changed from: private */
         public int indent;
-        private final List<SpannableString> rolledUpCaptions = new ArrayList();
         /* access modifiers changed from: private */
         public int row;
         /* access modifiers changed from: private */
         public int tabOffset;
+        private int captionMode;
+        private int captionRowCount;
 
         public CueBuilder(int captionMode2, int captionRowCount2) {
             reset(captionMode2);
             setCaptionRowCount(captionRowCount2);
+        }
+
+        private static void setUnderlineSpan(SpannableStringBuilder builder, int start, int end) {
+            builder.setSpan(new UnderlineSpan(), start, end, 33);
+        }
+
+        private static void setItalicSpan(SpannableStringBuilder builder, int start, int end) {
+            builder.setSpan(new StyleSpan(2), start, end, 33);
+        }
+
+        private static void setColorSpan(SpannableStringBuilder builder, int start, int end, int color) {
+            if (color != -1) {
+                builder.setSpan(new ForegroundColorSpan(color), start, end, 33);
+            }
         }
 
         public void reset(int captionMode2) {
@@ -599,24 +615,10 @@ public final class Cea608Decoder extends CeaDecoder {
             return new SpannableString(builder);
         }
 
-        private static void setUnderlineSpan(SpannableStringBuilder builder, int start, int end) {
-            builder.setSpan(new UnderlineSpan(), start, end, 33);
-        }
-
-        private static void setItalicSpan(SpannableStringBuilder builder, int start, int end) {
-            builder.setSpan(new StyleSpan(2), start, end, 33);
-        }
-
-        private static void setColorSpan(SpannableStringBuilder builder, int start, int end, int color) {
-            if (color != -1) {
-                builder.setSpan(new ForegroundColorSpan(color), start, end, 33);
-            }
-        }
-
         private static class CueStyle {
-            public int start;
             public final int style;
             public final boolean underline;
+            public int start;
 
             public CueStyle(int style2, boolean underline2, int start2) {
                 this.style = style2;

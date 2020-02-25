@@ -10,8 +10,10 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.tvlauncher.C1188R;
+
 import java.net.URISyntaxException;
 import java.util.List;
 

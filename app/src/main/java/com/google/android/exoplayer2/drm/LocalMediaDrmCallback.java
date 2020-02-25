@@ -1,7 +1,7 @@
 package com.google.android.exoplayer2.drm;
 
-import com.google.android.exoplayer2.drm.ExoMediaDrm;
 import com.google.android.exoplayer2.util.Assertions;
+
 import java.io.IOException;
 import java.util.UUID;
 

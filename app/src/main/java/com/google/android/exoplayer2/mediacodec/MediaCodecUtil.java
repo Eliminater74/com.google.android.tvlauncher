@@ -9,12 +9,14 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Pair;
 import android.util.SparseIntArray;
+
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.metadata.icy.IcyHeaders;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.Util;
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -42,28 +44,6 @@ public final class MediaCodecUtil {
     private static final String TAG = "MediaCodecUtil";
     private static final HashMap<CodecKey, List<MediaCodecInfo>> decoderInfosCache = new HashMap<>();
     private static int maxH264DecodableFrameSize = -1;
-
-    private interface MediaCodecListCompat {
-        int getCodecCount();
-
-        MediaCodecInfo getCodecInfoAt(int i);
-
-        boolean isFeatureRequired(String str, String str2, MediaCodecInfo.CodecCapabilities codecCapabilities);
-
-        boolean isFeatureSupported(String str, String str2, MediaCodecInfo.CodecCapabilities codecCapabilities);
-
-        boolean secureDecodersExplicit();
-    }
-
-    private interface ScoreProvider<T> {
-        int getScore(T t);
-    }
-
-    public static class DecoderQueryException extends Exception {
-        private DecoderQueryException(Throwable cause) {
-            super("Failed to query underlying media codecs", cause);
-        }
-    }
 
     static {
         AVC_PROFILE_NUMBER_TO_CONST.put(66, 1);
@@ -756,6 +736,28 @@ public final class MediaCodecUtil {
 
     private static <T> void sortByScore(List<T> list, ScoreProvider<T> scoreProvider) {
         Collections.sort(list, new MediaCodecUtil$$Lambda$3(scoreProvider));
+    }
+
+    private interface MediaCodecListCompat {
+        int getCodecCount();
+
+        MediaCodecInfo getCodecInfoAt(int i);
+
+        boolean isFeatureRequired(String str, String str2, MediaCodecInfo.CodecCapabilities codecCapabilities);
+
+        boolean isFeatureSupported(String str, String str2, MediaCodecInfo.CodecCapabilities codecCapabilities);
+
+        boolean secureDecodersExplicit();
+    }
+
+    private interface ScoreProvider<T> {
+        int getScore(T t);
+    }
+
+    public static class DecoderQueryException extends Exception {
+        private DecoderQueryException(Throwable cause) {
+            super("Failed to query underlying media codecs", cause);
+        }
     }
 
     @TargetApi(21)

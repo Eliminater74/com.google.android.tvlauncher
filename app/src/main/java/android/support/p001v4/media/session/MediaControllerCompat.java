@@ -28,15 +28,13 @@ import android.support.p001v4.media.AudioAttributesCompat;
 import android.support.p001v4.media.MediaDescriptionCompat;
 import android.support.p001v4.media.MediaMetadataCompat;
 import android.support.p001v4.media.RatingCompat;
-import android.support.p001v4.media.session.IMediaControllerCallback;
-import android.support.p001v4.media.session.IMediaSession;
-import android.support.p001v4.media.session.MediaSessionCompat;
-import android.support.p001v4.media.session.PlaybackStateCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
+
 import androidx.versionedparcelable.ParcelUtils;
 import androidx.versionedparcelable.VersionedParcelable;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,72 +62,35 @@ public final class MediaControllerCompat {
     private final ConcurrentHashMap<Callback, Boolean> mRegisteredCallbacks = new ConcurrentHashMap<>();
     private final MediaSessionCompat.Token mToken;
 
-    /* renamed from: android.support.v4.media.session.MediaControllerCompat$MediaControllerImpl */
-    interface MediaControllerImpl {
-        void addQueueItem(MediaDescriptionCompat mediaDescriptionCompat);
-
-        void addQueueItem(MediaDescriptionCompat mediaDescriptionCompat, int i);
-
-        void adjustVolume(int i, int i2);
-
-        boolean dispatchMediaButtonEvent(KeyEvent keyEvent);
-
-        Bundle getExtras();
-
-        long getFlags();
-
-        Object getMediaController();
-
-        MediaMetadataCompat getMetadata();
-
-        String getPackageName();
-
-        PlaybackInfo getPlaybackInfo();
-
-        PlaybackStateCompat getPlaybackState();
-
-        List<MediaSessionCompat.QueueItem> getQueue();
-
-        CharSequence getQueueTitle();
-
-        int getRatingType();
-
-        int getRepeatMode();
-
-        PendingIntent getSessionActivity();
-
-        Bundle getSessionInfo();
-
-        int getShuffleMode();
-
-        TransportControls getTransportControls();
-
-        boolean isCaptioningEnabled();
-
-        boolean isSessionReady();
-
-        void registerCallback(Callback callback, Handler handler);
-
-        void removeQueueItem(MediaDescriptionCompat mediaDescriptionCompat);
-
-        void sendCommand(String str, Bundle bundle, ResultReceiver resultReceiver);
-
-        void setVolumeTo(int i, int i2);
-
-        void unregisterCallback(Callback callback);
+    public MediaControllerCompat(Context context, @NonNull MediaSessionCompat session) {
+        if (session != null) {
+            this.mToken = session.getSessionToken();
+            MediaControllerImpl impl = null;
+            try {
+                if (Build.VERSION.SDK_INT >= 21) {
+                    impl = new MediaControllerImplApi21(context, this.mToken);
+                } else {
+                    impl = new MediaControllerImplBase(this.mToken);
+                }
+            } catch (RemoteException e) {
+                Log.w(TAG, "Failed to create MediaControllerImpl.", e);
+            }
+            this.mImpl = impl;
+            return;
+        }
+        throw new IllegalArgumentException("session must not be null");
     }
 
-    /* renamed from: android.support.v4.media.session.MediaControllerCompat$MediaControllerExtraData */
-    private static class MediaControllerExtraData extends SupportActivity.ExtraData {
-        private final MediaControllerCompat mMediaController;
-
-        MediaControllerExtraData(MediaControllerCompat mediaController) {
-            this.mMediaController = mediaController;
-        }
-
-        /* access modifiers changed from: package-private */
-        public MediaControllerCompat getMediaController() {
-            return this.mMediaController;
+    public MediaControllerCompat(Context context, @NonNull MediaSessionCompat.Token sessionToken) throws RemoteException {
+        if (sessionToken != null) {
+            this.mToken = sessionToken;
+            if (Build.VERSION.SDK_INT >= 21) {
+                this.mImpl = new MediaControllerImplApi21(context, sessionToken);
+            } else {
+                this.mImpl = new MediaControllerImplBase(sessionToken);
+            }
+        } else {
+            throw new IllegalArgumentException("sessionToken must not be null");
         }
     }
 
@@ -183,38 +144,6 @@ public final class MediaControllerCompat {
             if (args == null || !args.containsKey(MediaSessionCompat.ARGUMENT_MEDIA_ATTRIBUTE)) {
                 throw new IllegalArgumentException("An extra field android.support.v4.media.session.ARGUMENT_MEDIA_ATTRIBUTE is required for this action " + action + ".");
             }
-        }
-    }
-
-    public MediaControllerCompat(Context context, @NonNull MediaSessionCompat session) {
-        if (session != null) {
-            this.mToken = session.getSessionToken();
-            MediaControllerImpl impl = null;
-            try {
-                if (Build.VERSION.SDK_INT >= 21) {
-                    impl = new MediaControllerImplApi21(context, this.mToken);
-                } else {
-                    impl = new MediaControllerImplBase(this.mToken);
-                }
-            } catch (RemoteException e) {
-                Log.w(TAG, "Failed to create MediaControllerImpl.", e);
-            }
-            this.mImpl = impl;
-            return;
-        }
-        throw new IllegalArgumentException("session must not be null");
-    }
-
-    public MediaControllerCompat(Context context, @NonNull MediaSessionCompat.Token sessionToken) throws RemoteException {
-        if (sessionToken != null) {
-            this.mToken = sessionToken;
-            if (Build.VERSION.SDK_INT >= 21) {
-                this.mImpl = new MediaControllerImplApi21(context, sessionToken);
-            } else {
-                this.mImpl = new MediaControllerImplBase(sessionToken);
-            }
-        } else {
-            throw new IllegalArgumentException("sessionToken must not be null");
         }
     }
 
@@ -372,6 +301,75 @@ public final class MediaControllerCompat {
 
     public Object getMediaController() {
         return this.mImpl.getMediaController();
+    }
+
+    /* renamed from: android.support.v4.media.session.MediaControllerCompat$MediaControllerImpl */
+    interface MediaControllerImpl {
+        void addQueueItem(MediaDescriptionCompat mediaDescriptionCompat);
+
+        void addQueueItem(MediaDescriptionCompat mediaDescriptionCompat, int i);
+
+        void adjustVolume(int i, int i2);
+
+        boolean dispatchMediaButtonEvent(KeyEvent keyEvent);
+
+        Bundle getExtras();
+
+        long getFlags();
+
+        Object getMediaController();
+
+        MediaMetadataCompat getMetadata();
+
+        String getPackageName();
+
+        PlaybackInfo getPlaybackInfo();
+
+        PlaybackStateCompat getPlaybackState();
+
+        List<MediaSessionCompat.QueueItem> getQueue();
+
+        CharSequence getQueueTitle();
+
+        int getRatingType();
+
+        int getRepeatMode();
+
+        PendingIntent getSessionActivity();
+
+        Bundle getSessionInfo();
+
+        int getShuffleMode();
+
+        TransportControls getTransportControls();
+
+        boolean isCaptioningEnabled();
+
+        boolean isSessionReady();
+
+        void registerCallback(Callback callback, Handler handler);
+
+        void removeQueueItem(MediaDescriptionCompat mediaDescriptionCompat);
+
+        void sendCommand(String str, Bundle bundle, ResultReceiver resultReceiver);
+
+        void setVolumeTo(int i, int i2);
+
+        void unregisterCallback(Callback callback);
+    }
+
+    /* renamed from: android.support.v4.media.session.MediaControllerCompat$MediaControllerExtraData */
+    private static class MediaControllerExtraData extends SupportActivity.ExtraData {
+        private final MediaControllerCompat mMediaController;
+
+        MediaControllerExtraData(MediaControllerCompat mediaController) {
+            this.mMediaController = mediaController;
+        }
+
+        /* access modifiers changed from: package-private */
+        public MediaControllerCompat getMediaController() {
+            return this.mMediaController;
+        }
     }
 
     /* renamed from: android.support.v4.media.session.MediaControllerCompat$Callback */
@@ -707,6 +705,9 @@ public final class MediaControllerCompat {
     public static abstract class TransportControls {
         public static final String EXTRA_LEGACY_STREAM_TYPE = "android.media.session.extra.LEGACY_STREAM_TYPE";
 
+        TransportControls() {
+        }
+
         public abstract void fastForward();
 
         public abstract void pause();
@@ -752,9 +753,6 @@ public final class MediaControllerCompat {
         public abstract void skipToQueueItem(long j);
 
         public abstract void stop();
-
-        TransportControls() {
-        }
 
         @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
         public void setPlaybackSpeed(float speed) {
@@ -1267,13 +1265,13 @@ public final class MediaControllerCompat {
     @RequiresApi(21)
     /* renamed from: android.support.v4.media.session.MediaControllerCompat$MediaControllerImplApi21 */
     static class MediaControllerImplApi21 implements MediaControllerImpl {
-        private HashMap<Callback, ExtraCallback> mCallbackMap = new HashMap<>();
         protected final MediaController mControllerFwk;
         final Object mLock = new Object();
+        final MediaSessionCompat.Token mSessionToken;
         @GuardedBy("mLock")
         private final List<Callback> mPendingCallbacks = new ArrayList();
+        private HashMap<Callback, ExtraCallback> mCallbackMap = new HashMap<>();
         private Bundle mSessionInfo;
-        final MediaSessionCompat.Token mSessionToken;
 
         public MediaControllerImplApi21(Context context, MediaSessionCompat.Token sessionToken) throws RemoteException {
             this.mSessionToken = sessionToken;

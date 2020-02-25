@@ -2,48 +2,43 @@ package com.google.android.libraries.performance.primes;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
+
 import com.google.android.libraries.performance.primes.metriccapture.NetworkCapture;
 import com.google.android.libraries.performance.primes.metriccapture.ProcessStatsCapture;
 import com.google.android.libraries.performance.primes.metriccapture.TimeCapture;
 import com.google.android.libraries.stitch.util.Preconditions;
+
 import java.util.Arrays;
+
 import logs.proto.wireless.performance.mobile.ExtensionMetric;
 import logs.proto.wireless.performance.mobile.NetworkMetric;
 import logs.proto.wireless.performance.mobile.ProcessProto;
 
 public final class NetworkEvent {
+    final String domainPath;
+    final boolean isConstantRpcPath;
+    final String requestPath;
+    final long startTimeMs;
     int bytesDownloaded;
     int bytesUploaded;
     int cacheHitCount;
     int cacheLookupCount;
     String contentType;
-    final String domainPath;
     int httpStatusCode;
-    final boolean isConstantRpcPath;
     ExtensionMetric.MetricExtension metricExtension;
     String negotiationProtocol;
     NetworkMetric.NetworkConnectionInfo.NetworkType networkType;
-    private int networkingStackType;
     ProcessProto.AndroidProcessStats processStats;
     int quicDetailedErrorCode;
     int requestFailedReason;
-    final String requestPath;
     NetworkMetric.RequestStatus requestStatus;
     int retryCount;
     int rpcStatusCode;
-    private String[] scenarios;
-    final long startTimeMs;
     String[] subRequests;
     long timeToResponseDataFinishMs;
     long timeToResponseHeaderMs;
-
-    public static NetworkEvent forConstantRpcPath(@Nullable String domainPath2, NoPiiString rpcPath) {
-        return new NetworkEvent(domainPath2, NoPiiString.safeToString(rpcPath), true);
-    }
-
-    public static NetworkEvent forConstantRpcPath(NoPiiString rpcPath) {
-        return forConstantRpcPath(null, rpcPath);
-    }
+    private int networkingStackType;
+    private String[] scenarios;
 
     private NetworkEvent(@Nullable String domainPath2, @Nullable String requestPath2, boolean isConstantRpcPath2) {
         this.requestStatus = NetworkMetric.RequestStatus.REQUEST_STATUS_UNSPECIFIED;
@@ -59,6 +54,14 @@ public final class NetworkEvent {
 
     public NetworkEvent(String requestPath2) {
         this(null, requestPath2, false);
+    }
+
+    public static NetworkEvent forConstantRpcPath(@Nullable String domainPath2, NoPiiString rpcPath) {
+        return new NetworkEvent(domainPath2, NoPiiString.safeToString(rpcPath), true);
+    }
+
+    public static NetworkEvent forConstantRpcPath(NoPiiString rpcPath) {
+        return forConstantRpcPath(null, rpcPath);
     }
 
     public NetworkEvent setTimeToResponseHeader(WhitelistNetworkToken token, long timeToResponseHeaderMs2) {
@@ -154,20 +157,6 @@ public final class NetworkEvent {
     }
 
     /* access modifiers changed from: package-private */
-    public NetworkEvent setScenarios(@Nullable String[] scenarios2) {
-        if (scenarios2 != null) {
-            this.scenarios = (String[]) Arrays.copyOf(scenarios2, scenarios2.length);
-        }
-        return this;
-    }
-
-    /* access modifiers changed from: package-private */
-    public NetworkEvent setNetworkingStackType(int networkingStack) {
-        this.networkingStackType = networkingStack;
-        return this;
-    }
-
-    /* access modifiers changed from: package-private */
     public void onRecord(Context appContext) {
         this.processStats = ProcessStatsCapture.getAndroidProcessStats(appContext);
         this.networkType = NetworkCapture.getNetworkType(appContext);
@@ -184,7 +173,21 @@ public final class NetworkEvent {
     }
 
     /* access modifiers changed from: package-private */
+    public NetworkEvent setScenarios(@Nullable String[] scenarios2) {
+        if (scenarios2 != null) {
+            this.scenarios = (String[]) Arrays.copyOf(scenarios2, scenarios2.length);
+        }
+        return this;
+    }
+
+    /* access modifiers changed from: package-private */
     public int getNetworkingStackType() {
         return this.networkingStackType;
+    }
+
+    /* access modifiers changed from: package-private */
+    public NetworkEvent setNetworkingStackType(int networkingStack) {
+        this.networkingStackType = networkingStack;
+        return this;
     }
 }

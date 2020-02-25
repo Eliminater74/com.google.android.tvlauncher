@@ -1,7 +1,6 @@
 package com.google.android.exoplayer2.extractor.p007ts;
 
 import com.google.android.exoplayer2.extractor.ExtractorOutput;
-import com.google.android.exoplayer2.extractor.p007ts.TsPayloadReader;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.TimestampAdjuster;
 import com.google.android.exoplayer2.util.Util;
@@ -11,9 +10,9 @@ public final class SectionReader implements TsPayloadReader {
     private static final int DEFAULT_SECTION_BUFFER_LENGTH = 32;
     private static final int MAX_SECTION_LENGTH = 4098;
     private static final int SECTION_HEADER_LENGTH = 3;
-    private int bytesRead;
     private final SectionPayloadReader reader;
     private final ParsableByteArray sectionData = new ParsableByteArray(32);
+    private int bytesRead;
     private boolean sectionSyntaxIndicator;
     private int totalSectionLength;
     private boolean waitingForPayloadStart;

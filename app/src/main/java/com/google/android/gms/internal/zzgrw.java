@@ -11,7 +11,7 @@ public enum zzgrw {
     BYTE_STRING(zzgnb.zza),
     ENUM(null),
     MESSAGE(null);
-    
+
     private final Object zzj;
 
     private zzgrw(Object obj) {

@@ -3,6 +3,7 @@ package com.google.android.exoplayer2.source;
 import android.net.Uri;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.FormatHolder;
@@ -18,10 +19,6 @@ import com.google.android.exoplayer2.extractor.SeekMap;
 import com.google.android.exoplayer2.extractor.TrackOutput;
 import com.google.android.exoplayer2.metadata.Metadata;
 import com.google.android.exoplayer2.metadata.icy.IcyHeaders;
-import com.google.android.exoplayer2.source.IcyDataSource;
-import com.google.android.exoplayer2.source.MediaPeriod;
-import com.google.android.exoplayer2.source.MediaSourceEventListener;
-import com.google.android.exoplayer2.source.SampleQueue;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.upstream.Allocator;
 import com.google.android.exoplayer2.upstream.DataSource;
@@ -34,48 +31,50 @@ import com.google.android.exoplayer2.util.ConditionVariable;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.EOFException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
 final class ProgressiveMediaPeriod implements MediaPeriod, ExtractorOutput, Loader.Callback<ExtractingLoadable>, Loader.ReleaseCallback, SampleQueue.UpstreamFormatChangedListener {
-    private static final long DEFAULT_LAST_SAMPLE_DURATION_US = 10000;
     /* access modifiers changed from: private */
     public static final Format ICY_FORMAT = Format.createSampleFormat("icy", MimeTypes.APPLICATION_ICY, Long.MAX_VALUE);
-    private final Allocator allocator;
-    @Nullable
-    private MediaPeriod.Callback callback;
+    private static final long DEFAULT_LAST_SAMPLE_DURATION_US = 10000;
     /* access modifiers changed from: private */
     public final long continueLoadingCheckIntervalBytes;
     /* access modifiers changed from: private */
     @Nullable
     public final String customCacheKey;
-    private final DataSource dataSource;
-    private int dataType;
-    private long durationUs;
-    private int enabledTrackCount;
-    private final MediaSourceEventListener.EventDispatcher eventDispatcher;
-    private int extractedSamplesCountAtStartOfLoad;
-    private final ExtractorHolder extractorHolder;
     /* access modifiers changed from: private */
     public final Handler handler;
-    private boolean haveAudioVideoTracks;
     /* access modifiers changed from: private */
-    @Nullable
-    public IcyHeaders icyHeaders;
-    private long lastSeekPositionUs;
-    private long length;
+    public final Runnable onContinueLoadingRequestedRunnable;
+    private final Allocator allocator;
+    private final DataSource dataSource;
+    private final MediaSourceEventListener.EventDispatcher eventDispatcher;
+    private final ExtractorHolder extractorHolder;
     private final Listener listener;
     private final ConditionVariable loadCondition;
     private final LoadErrorHandlingPolicy loadErrorHandlingPolicy;
     private final Loader loader = new Loader("Loader:ProgressiveMediaPeriod");
-    private boolean loadingFinished;
     private final Runnable maybeFinishPrepareRunnable;
+    private final Uri uri;
+    /* access modifiers changed from: private */
+    @Nullable
+    public IcyHeaders icyHeaders;
+    @Nullable
+    private MediaPeriod.Callback callback;
+    private int dataType;
+    private long durationUs;
+    private int enabledTrackCount;
+    private int extractedSamplesCountAtStartOfLoad;
+    private boolean haveAudioVideoTracks;
+    private long lastSeekPositionUs;
+    private long length;
+    private boolean loadingFinished;
     private boolean notifiedReadingStarted;
     private boolean notifyDiscontinuity;
-    /* access modifiers changed from: private */
-    public final Runnable onContinueLoadingRequestedRunnable;
     private boolean pendingDeferredRetry;
     private long pendingResetPositionUs;
     private boolean prepared;
@@ -88,15 +87,6 @@ final class ProgressiveMediaPeriod implements MediaPeriod, ExtractorOutput, Load
     @Nullable
     private SeekMap seekMap;
     private boolean seenFirstTrackSelection;
-    private final Uri uri;
-
-    interface Listener {
-        void onSourceInfoRefreshed(long j, boolean z);
-    }
-
-    public List getStreamKeys(List list) {
-        return MediaPeriod$$CC.getStreamKeys$$dflt$$(this, list);
-    }
 
     public ProgressiveMediaPeriod(Uri uri2, DataSource dataSource2, Extractor[] extractors, LoadErrorHandlingPolicy loadErrorHandlingPolicy2, MediaSourceEventListener.EventDispatcher eventDispatcher2, Listener listener2, Allocator allocator2, @Nullable String customCacheKey2, int continueLoadingCheckIntervalBytes2) {
         this.uri = uri2;
@@ -119,6 +109,10 @@ final class ProgressiveMediaPeriod implements MediaPeriod, ExtractorOutput, Load
         this.durationUs = C0841C.TIME_UNSET;
         this.dataType = 1;
         eventDispatcher2.mediaPeriodCreated();
+    }
+
+    public List getStreamKeys(List list) {
+        return MediaPeriod$$CC.getStreamKeys$$dflt$$(this, list);
     }
 
     /* access modifiers changed from: package-private */
@@ -677,145 +671,14 @@ final class ProgressiveMediaPeriod implements MediaPeriod, ExtractorOutput, Load
         return this.pendingResetPositionUs != C0841C.TIME_UNSET;
     }
 
-    private final class SampleStreamImpl implements SampleStream {
-        /* access modifiers changed from: private */
-        public final int track;
-
-        public SampleStreamImpl(int track2) {
-            this.track = track2;
-        }
-
-        public boolean isReady() {
-            return ProgressiveMediaPeriod.this.isReady(this.track);
-        }
-
-        public void maybeThrowError() throws IOException {
-            ProgressiveMediaPeriod.this.maybeThrowError();
-        }
-
-        public int readData(FormatHolder formatHolder, DecoderInputBuffer buffer, boolean formatRequired) {
-            return ProgressiveMediaPeriod.this.readData(this.track, formatHolder, buffer, formatRequired);
-        }
-
-        public int skipData(long positionUs) {
-            return ProgressiveMediaPeriod.this.skipData(this.track, positionUs);
-        }
-    }
-
-    final class ExtractingLoadable implements Loader.Loadable, IcyDataSource.Listener {
-        /* access modifiers changed from: private */
-        public final StatsDataSource dataSource;
-        /* access modifiers changed from: private */
-        public DataSpec dataSpec = buildDataSpec(0);
-        private final ExtractorHolder extractorHolder;
-        private final ExtractorOutput extractorOutput;
-        @Nullable
-        private TrackOutput icyTrackOutput;
-        /* access modifiers changed from: private */
-        public long length = -1;
-        private volatile boolean loadCanceled;
-        private final ConditionVariable loadCondition;
-        private boolean pendingExtractorSeek = true;
-        private final PositionHolder positionHolder = new PositionHolder();
-        /* access modifiers changed from: private */
-        public long seekTimeUs;
-        private boolean seenIcyMetadata;
-        private final Uri uri;
-
-        public ExtractingLoadable(Uri uri2, DataSource dataSource2, ExtractorHolder extractorHolder2, ExtractorOutput extractorOutput2, ConditionVariable loadCondition2) {
-            this.uri = uri2;
-            this.dataSource = new StatsDataSource(dataSource2);
-            this.extractorHolder = extractorHolder2;
-            this.extractorOutput = extractorOutput2;
-            this.loadCondition = loadCondition2;
-        }
-
-        public void cancelLoad() {
-            this.loadCanceled = true;
-        }
-
-        public void load() throws IOException, InterruptedException {
-            DataSource extractorDataSource;
-            int result = 0;
-            while (result == 0 && !this.loadCanceled) {
-                ExtractorInput input = null;
-                try {
-                    long position = this.positionHolder.position;
-                    this.dataSpec = buildDataSpec(position);
-                    this.length = this.dataSource.open(this.dataSpec);
-                    if (this.length != -1) {
-                        this.length += position;
-                    }
-                    Uri uri2 = (Uri) Assertions.checkNotNull(this.dataSource.getUri());
-                    IcyHeaders unused = ProgressiveMediaPeriod.this.icyHeaders = IcyHeaders.parse(this.dataSource.getResponseHeaders());
-                    DataSource extractorDataSource2 = this.dataSource;
-                    if (ProgressiveMediaPeriod.this.icyHeaders == null || ProgressiveMediaPeriod.this.icyHeaders.metadataInterval == -1) {
-                        extractorDataSource = extractorDataSource2;
-                    } else {
-                        DataSource extractorDataSource3 = new IcyDataSource(this.dataSource, ProgressiveMediaPeriod.this.icyHeaders.metadataInterval, this);
-                        this.icyTrackOutput = ProgressiveMediaPeriod.this.icyTrack();
-                        this.icyTrackOutput.format(ProgressiveMediaPeriod.ICY_FORMAT);
-                        extractorDataSource = extractorDataSource3;
-                    }
-                    ExtractorInput input2 = new DefaultExtractorInput(extractorDataSource, position, this.length);
-                    Extractor extractor = this.extractorHolder.selectExtractor(input2, this.extractorOutput, uri2);
-                    if (this.pendingExtractorSeek) {
-                        extractor.seek(position, this.seekTimeUs);
-                        this.pendingExtractorSeek = false;
-                    }
-                    while (result == 0 && !this.loadCanceled) {
-                        this.loadCondition.block();
-                        result = extractor.read(input2, this.positionHolder);
-                        if (input2.getPosition() > ProgressiveMediaPeriod.this.continueLoadingCheckIntervalBytes + position) {
-                            position = input2.getPosition();
-                            this.loadCondition.close();
-                            ProgressiveMediaPeriod.this.handler.post(ProgressiveMediaPeriod.this.onContinueLoadingRequestedRunnable);
-                        }
-                    }
-                    if (result == 1) {
-                        result = 0;
-                    } else {
-                        this.positionHolder.position = input2.getPosition();
-                    }
-                    Util.closeQuietly(this.dataSource);
-                } catch (Throwable th) {
-                    if (result != 1) {
-                        if (input != null) {
-                            this.positionHolder.position = input.getPosition();
-                        }
-                    }
-                    Util.closeQuietly(this.dataSource);
-                    throw th;
-                }
-            }
-        }
-
-        public void onIcyMetadata(ParsableByteArray metadata) {
-            long timeUs = !this.seenIcyMetadata ? this.seekTimeUs : Math.max(ProgressiveMediaPeriod.this.getLargestQueuedTimestampUs(), this.seekTimeUs);
-            int length2 = metadata.bytesLeft();
-            TrackOutput icyTrackOutput2 = (TrackOutput) Assertions.checkNotNull(this.icyTrackOutput);
-            icyTrackOutput2.sampleData(metadata, length2);
-            icyTrackOutput2.sampleMetadata(timeUs, 1, length2, 0, null);
-            this.seenIcyMetadata = true;
-        }
-
-        private DataSpec buildDataSpec(long position) {
-            return new DataSpec(this.uri, position, -1, ProgressiveMediaPeriod.this.customCacheKey, 22);
-        }
-
-        /* access modifiers changed from: private */
-        public void setLoadPosition(long position, long timeUs) {
-            this.positionHolder.position = position;
-            this.seekTimeUs = timeUs;
-            this.pendingExtractorSeek = true;
-            this.seenIcyMetadata = false;
-        }
+    interface Listener {
+        void onSourceInfoRefreshed(long j, boolean z);
     }
 
     private static final class ExtractorHolder {
+        private final Extractor[] extractors;
         @Nullable
         private Extractor extractor;
-        private final Extractor[] extractors;
 
         public ExtractorHolder(Extractor[] extractors2) {
             this.extractors = extractors2;
@@ -913,6 +776,141 @@ final class ProgressiveMediaPeriod implements MediaPeriod, ExtractorOutput, Load
 
         public int hashCode() {
             return (this.f92id * 31) + (this.isIcyTrack ? 1 : 0);
+        }
+    }
+
+    private final class SampleStreamImpl implements SampleStream {
+        /* access modifiers changed from: private */
+        public final int track;
+
+        public SampleStreamImpl(int track2) {
+            this.track = track2;
+        }
+
+        public boolean isReady() {
+            return ProgressiveMediaPeriod.this.isReady(this.track);
+        }
+
+        public void maybeThrowError() throws IOException {
+            ProgressiveMediaPeriod.this.maybeThrowError();
+        }
+
+        public int readData(FormatHolder formatHolder, DecoderInputBuffer buffer, boolean formatRequired) {
+            return ProgressiveMediaPeriod.this.readData(this.track, formatHolder, buffer, formatRequired);
+        }
+
+        public int skipData(long positionUs) {
+            return ProgressiveMediaPeriod.this.skipData(this.track, positionUs);
+        }
+    }
+
+    final class ExtractingLoadable implements Loader.Loadable, IcyDataSource.Listener {
+        /* access modifiers changed from: private */
+        public final StatsDataSource dataSource;
+        private final ExtractorHolder extractorHolder;
+        private final ExtractorOutput extractorOutput;
+        private final ConditionVariable loadCondition;
+        private final PositionHolder positionHolder = new PositionHolder();
+        private final Uri uri;
+        /* access modifiers changed from: private */
+        public DataSpec dataSpec = buildDataSpec(0);
+        /* access modifiers changed from: private */
+        public long length = -1;
+        /* access modifiers changed from: private */
+        public long seekTimeUs;
+        @Nullable
+        private TrackOutput icyTrackOutput;
+        private volatile boolean loadCanceled;
+        private boolean pendingExtractorSeek = true;
+        private boolean seenIcyMetadata;
+
+        public ExtractingLoadable(Uri uri2, DataSource dataSource2, ExtractorHolder extractorHolder2, ExtractorOutput extractorOutput2, ConditionVariable loadCondition2) {
+            this.uri = uri2;
+            this.dataSource = new StatsDataSource(dataSource2);
+            this.extractorHolder = extractorHolder2;
+            this.extractorOutput = extractorOutput2;
+            this.loadCondition = loadCondition2;
+        }
+
+        public void cancelLoad() {
+            this.loadCanceled = true;
+        }
+
+        public void load() throws IOException, InterruptedException {
+            DataSource extractorDataSource;
+            int result = 0;
+            while (result == 0 && !this.loadCanceled) {
+                ExtractorInput input = null;
+                try {
+                    long position = this.positionHolder.position;
+                    this.dataSpec = buildDataSpec(position);
+                    this.length = this.dataSource.open(this.dataSpec);
+                    if (this.length != -1) {
+                        this.length += position;
+                    }
+                    Uri uri2 = (Uri) Assertions.checkNotNull(this.dataSource.getUri());
+                    IcyHeaders unused = ProgressiveMediaPeriod.this.icyHeaders = IcyHeaders.parse(this.dataSource.getResponseHeaders());
+                    DataSource extractorDataSource2 = this.dataSource;
+                    if (ProgressiveMediaPeriod.this.icyHeaders == null || ProgressiveMediaPeriod.this.icyHeaders.metadataInterval == -1) {
+                        extractorDataSource = extractorDataSource2;
+                    } else {
+                        DataSource extractorDataSource3 = new IcyDataSource(this.dataSource, ProgressiveMediaPeriod.this.icyHeaders.metadataInterval, this);
+                        this.icyTrackOutput = ProgressiveMediaPeriod.this.icyTrack();
+                        this.icyTrackOutput.format(ProgressiveMediaPeriod.ICY_FORMAT);
+                        extractorDataSource = extractorDataSource3;
+                    }
+                    ExtractorInput input2 = new DefaultExtractorInput(extractorDataSource, position, this.length);
+                    Extractor extractor = this.extractorHolder.selectExtractor(input2, this.extractorOutput, uri2);
+                    if (this.pendingExtractorSeek) {
+                        extractor.seek(position, this.seekTimeUs);
+                        this.pendingExtractorSeek = false;
+                    }
+                    while (result == 0 && !this.loadCanceled) {
+                        this.loadCondition.block();
+                        result = extractor.read(input2, this.positionHolder);
+                        if (input2.getPosition() > ProgressiveMediaPeriod.this.continueLoadingCheckIntervalBytes + position) {
+                            position = input2.getPosition();
+                            this.loadCondition.close();
+                            ProgressiveMediaPeriod.this.handler.post(ProgressiveMediaPeriod.this.onContinueLoadingRequestedRunnable);
+                        }
+                    }
+                    if (result == 1) {
+                        result = 0;
+                    } else {
+                        this.positionHolder.position = input2.getPosition();
+                    }
+                    Util.closeQuietly(this.dataSource);
+                } catch (Throwable th) {
+                    if (result != 1) {
+                        if (input != null) {
+                            this.positionHolder.position = input.getPosition();
+                        }
+                    }
+                    Util.closeQuietly(this.dataSource);
+                    throw th;
+                }
+            }
+        }
+
+        public void onIcyMetadata(ParsableByteArray metadata) {
+            long timeUs = !this.seenIcyMetadata ? this.seekTimeUs : Math.max(ProgressiveMediaPeriod.this.getLargestQueuedTimestampUs(), this.seekTimeUs);
+            int length2 = metadata.bytesLeft();
+            TrackOutput icyTrackOutput2 = (TrackOutput) Assertions.checkNotNull(this.icyTrackOutput);
+            icyTrackOutput2.sampleData(metadata, length2);
+            icyTrackOutput2.sampleMetadata(timeUs, 1, length2, 0, null);
+            this.seenIcyMetadata = true;
+        }
+
+        private DataSpec buildDataSpec(long position) {
+            return new DataSpec(this.uri, position, -1, ProgressiveMediaPeriod.this.customCacheKey, 22);
+        }
+
+        /* access modifiers changed from: private */
+        public void setLoadPosition(long position, long timeUs) {
+            this.positionHolder.position = position;
+            this.seekTimeUs = timeUs;
+            this.pendingExtractorSeek = true;
+            this.seenIcyMetadata = false;
         }
     }
 }

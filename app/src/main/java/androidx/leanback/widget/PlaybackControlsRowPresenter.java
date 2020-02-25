@@ -10,145 +10,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+
 import androidx.leanback.C0364R;
-import androidx.leanback.widget.ControlBarPresenter;
-import androidx.leanback.widget.PlaybackControlsPresenter;
-import androidx.leanback.widget.PlaybackControlsRow;
-import androidx.leanback.widget.PlaybackControlsRowView;
-import androidx.leanback.widget.PlaybackRowPresenter;
-import androidx.leanback.widget.Presenter;
-import androidx.leanback.widget.RowPresenter;
 
 public class PlaybackControlsRowPresenter extends PlaybackRowPresenter {
     static float sShadowZ;
+    private final ControlBarPresenter.OnControlClickedListener mOnControlClickedListener;
+    private final ControlBarPresenter.OnControlSelectedListener mOnControlSelectedListener;
+    OnActionClickedListener mOnActionClickedListener;
+    PlaybackControlsPresenter mPlaybackControlsPresenter;
     private int mBackgroundColor;
     private boolean mBackgroundColorSet;
     private Presenter mDescriptionPresenter;
-    OnActionClickedListener mOnActionClickedListener;
-    private final ControlBarPresenter.OnControlClickedListener mOnControlClickedListener;
-    private final ControlBarPresenter.OnControlSelectedListener mOnControlSelectedListener;
-    PlaybackControlsPresenter mPlaybackControlsPresenter;
     private int mProgressColor;
     private boolean mProgressColorSet;
     private boolean mSecondaryActionsHidden;
     private ControlBarPresenter mSecondaryControlsPresenter;
-
-    static class BoundData extends PlaybackControlsPresenter.BoundData {
-        ViewHolder mRowViewHolder;
-
-        BoundData() {
-        }
-    }
-
-    public class ViewHolder extends PlaybackRowPresenter.ViewHolder {
-        View mBgView;
-        final View mBottomSpacer;
-        final ViewGroup mCard;
-        final ViewGroup mCardRightPanel;
-        BoundData mControlsBoundData = new BoundData();
-        final ViewGroup mControlsDock;
-        int mControlsDockMarginEnd;
-        int mControlsDockMarginStart;
-        PlaybackControlsPresenter.ViewHolder mControlsVh;
-        final ViewGroup mDescriptionDock;
-        public final Presenter.ViewHolder mDescriptionViewHolder;
-        final ImageView mImageView;
-        final PlaybackControlsRow.OnPlaybackProgressCallback mListener = new PlaybackControlsRow.OnPlaybackProgressCallback() {
-            public void onCurrentPositionChanged(PlaybackControlsRow row, long ms) {
-                PlaybackControlsRowPresenter.this.mPlaybackControlsPresenter.setCurrentTimeLong(ViewHolder.this.mControlsVh, ms);
-            }
-
-            public void onDurationChanged(PlaybackControlsRow row, long ms) {
-                PlaybackControlsRowPresenter.this.mPlaybackControlsPresenter.setTotalTimeLong(ViewHolder.this.mControlsVh, ms);
-            }
-
-            public void onBufferedPositionChanged(PlaybackControlsRow row, long ms) {
-                PlaybackControlsRowPresenter.this.mPlaybackControlsPresenter.setSecondaryProgressLong(ViewHolder.this.mControlsVh, ms);
-            }
-        };
-        BoundData mSecondaryBoundData = new BoundData();
-        final ViewGroup mSecondaryControlsDock;
-        Presenter.ViewHolder mSecondaryControlsVh;
-        Object mSelectedItem;
-        Presenter.ViewHolder mSelectedViewHolder;
-        final View mSpacer;
-
-        ViewHolder(View rootView, Presenter descriptionPresenter) {
-            super(rootView);
-            Presenter.ViewHolder viewHolder;
-            this.mCard = (ViewGroup) rootView.findViewById(C0364R.C0366id.controls_card);
-            this.mCardRightPanel = (ViewGroup) rootView.findViewById(C0364R.C0366id.controls_card_right_panel);
-            this.mImageView = (ImageView) rootView.findViewById(C0364R.C0366id.image);
-            this.mDescriptionDock = (ViewGroup) rootView.findViewById(C0364R.C0366id.description_dock);
-            this.mControlsDock = (ViewGroup) rootView.findViewById(C0364R.C0366id.controls_dock);
-            this.mSecondaryControlsDock = (ViewGroup) rootView.findViewById(C0364R.C0366id.secondary_controls_dock);
-            this.mSpacer = rootView.findViewById(C0364R.C0366id.spacer);
-            this.mBottomSpacer = rootView.findViewById(C0364R.C0366id.bottom_spacer);
-            if (descriptionPresenter == null) {
-                viewHolder = null;
-            } else {
-                viewHolder = descriptionPresenter.onCreateViewHolder(this.mDescriptionDock);
-            }
-            this.mDescriptionViewHolder = viewHolder;
-            Presenter.ViewHolder viewHolder2 = this.mDescriptionViewHolder;
-            if (viewHolder2 != null) {
-                this.mDescriptionDock.addView(viewHolder2.view);
-            }
-        }
-
-        /* access modifiers changed from: package-private */
-        public void dispatchItemSelection() {
-            if (isSelected()) {
-                if (this.mSelectedViewHolder == null) {
-                    if (getOnItemViewSelectedListener() != null) {
-                        getOnItemViewSelectedListener().onItemSelected(null, null, this, getRow());
-                    }
-                } else if (getOnItemViewSelectedListener() != null) {
-                    getOnItemViewSelectedListener().onItemSelected(this.mSelectedViewHolder, this.mSelectedItem, this, getRow());
-                }
-            }
-        }
-
-        /* access modifiers changed from: package-private */
-        public Presenter getPresenter(boolean primary) {
-            ObjectAdapter adapter;
-            if (primary) {
-                adapter = ((PlaybackControlsRow) getRow()).getPrimaryActionsAdapter();
-            } else {
-                adapter = ((PlaybackControlsRow) getRow()).getSecondaryActionsAdapter();
-            }
-            Object obj = null;
-            if (adapter == null) {
-                return null;
-            }
-            if (adapter.getPresenterSelector() instanceof ControlButtonPresenterSelector) {
-                ControlButtonPresenterSelector selector = (ControlButtonPresenterSelector) adapter.getPresenterSelector();
-                if (primary) {
-                    return selector.getPrimaryPresenter();
-                }
-                return selector.getSecondaryPresenter();
-            }
-            if (adapter.size() > 0) {
-                obj = adapter.get(0);
-            }
-            return adapter.getPresenter(obj);
-        }
-
-        /* access modifiers changed from: package-private */
-        public void setOutline(View view) {
-            View view2 = this.mBgView;
-            if (view2 != null) {
-                RoundedRectHelper.setClipToRoundedOutline(view2, false);
-                ViewCompat.setZ(this.mBgView, 0.0f);
-            }
-            this.mBgView = view;
-            RoundedRectHelper.setClipToRoundedOutline(view, true);
-            if (PlaybackControlsRowPresenter.sShadowZ == 0.0f) {
-                PlaybackControlsRowPresenter.sShadowZ = (float) view.getResources().getDimensionPixelSize(C0364R.dimen.lb_playback_controls_z);
-            }
-            ViewCompat.setZ(view, PlaybackControlsRowPresenter.sShadowZ);
-        }
-    }
 
     public PlaybackControlsRowPresenter(Presenter descriptionPresenter) {
         this.mBackgroundColor = 0;
@@ -189,12 +66,17 @@ public class PlaybackControlsRowPresenter extends PlaybackRowPresenter {
         this(null);
     }
 
+    public OnActionClickedListener getOnActionClickedListener() {
+        return this.mOnActionClickedListener;
+    }
+
     public void setOnActionClickedListener(OnActionClickedListener listener) {
         this.mOnActionClickedListener = listener;
     }
 
-    public OnActionClickedListener getOnActionClickedListener() {
-        return this.mOnActionClickedListener;
+    @ColorInt
+    public int getBackgroundColor() {
+        return this.mBackgroundColor;
     }
 
     public void setBackgroundColor(@ColorInt int color) {
@@ -203,18 +85,13 @@ public class PlaybackControlsRowPresenter extends PlaybackRowPresenter {
     }
 
     @ColorInt
-    public int getBackgroundColor() {
-        return this.mBackgroundColor;
+    public int getProgressColor() {
+        return this.mProgressColor;
     }
 
     public void setProgressColor(@ColorInt int color) {
         this.mProgressColor = color;
         this.mProgressColorSet = true;
-    }
-
-    @ColorInt
-    public int getProgressColor() {
-        return this.mProgressColor;
     }
 
     public void setSecondaryActionsHidden(boolean hidden) {
@@ -414,6 +291,123 @@ public class PlaybackControlsRowPresenter extends PlaybackRowPresenter {
         Presenter presenter = this.mDescriptionPresenter;
         if (presenter != null) {
             presenter.onViewDetachedFromWindow(((ViewHolder) vh).mDescriptionViewHolder);
+        }
+    }
+
+    static class BoundData extends PlaybackControlsPresenter.BoundData {
+        ViewHolder mRowViewHolder;
+
+        BoundData() {
+        }
+    }
+
+    public class ViewHolder extends PlaybackRowPresenter.ViewHolder {
+        public final Presenter.ViewHolder mDescriptionViewHolder;
+        final View mBottomSpacer;
+        final ViewGroup mCard;
+        final ViewGroup mCardRightPanel;
+        final ViewGroup mControlsDock;
+        final ViewGroup mDescriptionDock;
+        final ImageView mImageView;
+        final ViewGroup mSecondaryControlsDock;
+        final View mSpacer;
+        View mBgView;
+        BoundData mControlsBoundData = new BoundData();
+        int mControlsDockMarginEnd;
+        int mControlsDockMarginStart;
+        PlaybackControlsPresenter.ViewHolder mControlsVh;
+        final PlaybackControlsRow.OnPlaybackProgressCallback mListener = new PlaybackControlsRow.OnPlaybackProgressCallback() {
+            public void onCurrentPositionChanged(PlaybackControlsRow row, long ms) {
+                PlaybackControlsRowPresenter.this.mPlaybackControlsPresenter.setCurrentTimeLong(ViewHolder.this.mControlsVh, ms);
+            }
+
+            public void onDurationChanged(PlaybackControlsRow row, long ms) {
+                PlaybackControlsRowPresenter.this.mPlaybackControlsPresenter.setTotalTimeLong(ViewHolder.this.mControlsVh, ms);
+            }
+
+            public void onBufferedPositionChanged(PlaybackControlsRow row, long ms) {
+                PlaybackControlsRowPresenter.this.mPlaybackControlsPresenter.setSecondaryProgressLong(ViewHolder.this.mControlsVh, ms);
+            }
+        };
+        BoundData mSecondaryBoundData = new BoundData();
+        Presenter.ViewHolder mSecondaryControlsVh;
+        Object mSelectedItem;
+        Presenter.ViewHolder mSelectedViewHolder;
+
+        ViewHolder(View rootView, Presenter descriptionPresenter) {
+            super(rootView);
+            Presenter.ViewHolder viewHolder;
+            this.mCard = (ViewGroup) rootView.findViewById(C0364R.C0366id.controls_card);
+            this.mCardRightPanel = (ViewGroup) rootView.findViewById(C0364R.C0366id.controls_card_right_panel);
+            this.mImageView = (ImageView) rootView.findViewById(C0364R.C0366id.image);
+            this.mDescriptionDock = (ViewGroup) rootView.findViewById(C0364R.C0366id.description_dock);
+            this.mControlsDock = (ViewGroup) rootView.findViewById(C0364R.C0366id.controls_dock);
+            this.mSecondaryControlsDock = (ViewGroup) rootView.findViewById(C0364R.C0366id.secondary_controls_dock);
+            this.mSpacer = rootView.findViewById(C0364R.C0366id.spacer);
+            this.mBottomSpacer = rootView.findViewById(C0364R.C0366id.bottom_spacer);
+            if (descriptionPresenter == null) {
+                viewHolder = null;
+            } else {
+                viewHolder = descriptionPresenter.onCreateViewHolder(this.mDescriptionDock);
+            }
+            this.mDescriptionViewHolder = viewHolder;
+            Presenter.ViewHolder viewHolder2 = this.mDescriptionViewHolder;
+            if (viewHolder2 != null) {
+                this.mDescriptionDock.addView(viewHolder2.view);
+            }
+        }
+
+        /* access modifiers changed from: package-private */
+        public void dispatchItemSelection() {
+            if (isSelected()) {
+                if (this.mSelectedViewHolder == null) {
+                    if (getOnItemViewSelectedListener() != null) {
+                        getOnItemViewSelectedListener().onItemSelected(null, null, this, getRow());
+                    }
+                } else if (getOnItemViewSelectedListener() != null) {
+                    getOnItemViewSelectedListener().onItemSelected(this.mSelectedViewHolder, this.mSelectedItem, this, getRow());
+                }
+            }
+        }
+
+        /* access modifiers changed from: package-private */
+        public Presenter getPresenter(boolean primary) {
+            ObjectAdapter adapter;
+            if (primary) {
+                adapter = ((PlaybackControlsRow) getRow()).getPrimaryActionsAdapter();
+            } else {
+                adapter = ((PlaybackControlsRow) getRow()).getSecondaryActionsAdapter();
+            }
+            Object obj = null;
+            if (adapter == null) {
+                return null;
+            }
+            if (adapter.getPresenterSelector() instanceof ControlButtonPresenterSelector) {
+                ControlButtonPresenterSelector selector = (ControlButtonPresenterSelector) adapter.getPresenterSelector();
+                if (primary) {
+                    return selector.getPrimaryPresenter();
+                }
+                return selector.getSecondaryPresenter();
+            }
+            if (adapter.size() > 0) {
+                obj = adapter.get(0);
+            }
+            return adapter.getPresenter(obj);
+        }
+
+        /* access modifiers changed from: package-private */
+        public void setOutline(View view) {
+            View view2 = this.mBgView;
+            if (view2 != null) {
+                RoundedRectHelper.setClipToRoundedOutline(view2, false);
+                ViewCompat.setZ(this.mBgView, 0.0f);
+            }
+            this.mBgView = view;
+            RoundedRectHelper.setClipToRoundedOutline(view, true);
+            if (PlaybackControlsRowPresenter.sShadowZ == 0.0f) {
+                PlaybackControlsRowPresenter.sShadowZ = (float) view.getResources().getDimensionPixelSize(C0364R.dimen.lb_playback_controls_z);
+            }
+            ViewCompat.setZ(view, PlaybackControlsRowPresenter.sShadowZ);
         }
     }
 }

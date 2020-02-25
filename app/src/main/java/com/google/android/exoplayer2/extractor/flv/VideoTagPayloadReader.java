@@ -3,7 +3,6 @@ package com.google.android.exoplayer2.extractor.flv;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.extractor.TrackOutput;
-import com.google.android.exoplayer2.extractor.flv.TagPayloadReader;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.NalUnitUtil;
 import com.google.android.exoplayer2.util.ParsableByteArray;
@@ -15,10 +14,10 @@ final class VideoTagPayloadReader extends TagPayloadReader {
     private static final int VIDEO_CODEC_AVC = 7;
     private static final int VIDEO_FRAME_KEYFRAME = 1;
     private static final int VIDEO_FRAME_VIDEO_INFO = 5;
-    private int frameType;
-    private boolean hasOutputFormat;
     private final ParsableByteArray nalLength = new ParsableByteArray(4);
     private final ParsableByteArray nalStartCode = new ParsableByteArray(NalUnitUtil.NAL_START_CODE);
+    private int frameType;
+    private boolean hasOutputFormat;
     private int nalUnitLengthFieldLength;
 
     public VideoTagPayloadReader(TrackOutput output) {

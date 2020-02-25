@@ -3,6 +3,7 @@ package com.google.common.util.concurrent;
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.collect.ForwardingObject;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -15,11 +16,11 @@ import java.util.concurrent.TimeoutException;
 @GwtIncompatible
 @CanIgnoreReturnValue
 public abstract class ForwardingExecutorService extends ForwardingObject implements ExecutorService {
-    /* access modifiers changed from: protected */
-    public abstract ExecutorService delegate();
-
     protected ForwardingExecutorService() {
     }
+
+    /* access modifiers changed from: protected */
+    public abstract ExecutorService delegate();
 
     public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
         return delegate().awaitTermination(timeout, unit);

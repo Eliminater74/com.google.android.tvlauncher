@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Space;
+
 import androidx.preference.ListPreference;
 import androidx.preference.MultiSelectListPreference;
 import androidx.preference.Preference;
@@ -97,6 +98,16 @@ public abstract class LeanbackSettingsFragment extends Fragment implements Prefe
         transaction.add(C0572R.C0574id.settings_dialog_container, fragment).addToBackStack(null).commit();
     }
 
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    public static class DummyFragment extends Fragment {
+        @Nullable
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            View v = new Space(inflater.getContext());
+            v.setVisibility(8);
+            return v;
+        }
+    }
+
     private class RootViewOnKeyListener implements View.OnKeyListener {
         RootViewOnKeyListener() {
         }
@@ -106,16 +117,6 @@ public abstract class LeanbackSettingsFragment extends Fragment implements Prefe
                 return LeanbackSettingsFragment.this.getChildFragmentManager().popBackStackImmediate();
             }
             return false;
-        }
-    }
-
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    public static class DummyFragment extends Fragment {
-        @Nullable
-        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            View v = new Space(inflater.getContext());
-            v.setVisibility(8);
-            return v;
         }
     }
 }

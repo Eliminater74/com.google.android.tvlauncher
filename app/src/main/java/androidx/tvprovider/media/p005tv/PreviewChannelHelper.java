@@ -10,8 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.RestrictTo;
 import android.support.annotation.WorkerThread;
 import android.util.Log;
-import androidx.tvprovider.media.p005tv.PreviewChannel;
-import androidx.tvprovider.media.p005tv.TvContractCompat;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;

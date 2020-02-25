@@ -10,6 +10,9 @@ public final class MessageCompat {
     private static boolean sTryIsAsynchronous = true;
     private static boolean sTrySetAsynchronous = true;
 
+    private MessageCompat() {
+    }
+
     @SuppressLint({"NewApi"})
     public static void setAsynchronous(@NonNull Message message, boolean async) {
         if (Build.VERSION.SDK_INT >= 22) {
@@ -36,8 +39,5 @@ public final class MessageCompat {
             }
         }
         return false;
-    }
-
-    private MessageCompat() {
     }
 }

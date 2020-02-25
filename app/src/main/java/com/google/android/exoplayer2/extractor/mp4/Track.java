@@ -1,7 +1,9 @@
 package com.google.android.exoplayer2.extractor.mp4;
 
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.Format;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -20,16 +22,11 @@ public final class Track {
     public final int f77id;
     public final long movieTimescale;
     public final int nalUnitLengthFieldLength;
-    @Nullable
-    private final TrackEncryptionBox[] sampleDescriptionEncryptionBoxes;
     public final int sampleTransformation;
     public final long timescale;
     public final int type;
-
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface Transformation {
-    }
+    @Nullable
+    private final TrackEncryptionBox[] sampleDescriptionEncryptionBoxes;
 
     public Track(int id, int type2, long timescale2, long movieTimescale2, long durationUs2, Format format2, int sampleTransformation2, @Nullable TrackEncryptionBox[] sampleDescriptionEncryptionBoxes2, int nalUnitLengthFieldLength2, @Nullable long[] editListDurations2, @Nullable long[] editListMediaTimes2) {
         this.f77id = id;
@@ -55,5 +52,10 @@ public final class Track {
 
     public Track copyWithFormat(Format format2) {
         return new Track(this.f77id, this.type, this.timescale, this.movieTimescale, this.durationUs, format2, this.sampleTransformation, this.sampleDescriptionEncryptionBoxes, this.nalUnitLengthFieldLength, this.editListDurations, this.editListMediaTimes);
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface Transformation {
     }
 }

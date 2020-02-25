@@ -10,6 +10,9 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.primitives.Ints;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Collection;
@@ -23,7 +26,6 @@ import java.util.ListIterator;
 import java.util.NoSuchElementException;
 import java.util.PriorityQueue;
 import java.util.Queue;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible(emulated = true)
 public final class Iterators {
@@ -36,22 +38,6 @@ public final class Iterators {
 
     static <T> UnmodifiableListIterator<T> emptyListIterator() {
         return ArrayItr.EMPTY;
-    }
-
-    private enum EmptyModifiableIterator implements Iterator<Object> {
-        INSTANCE;
-
-        public boolean hasNext() {
-            return false;
-        }
-
-        public Object next() {
-            throw new NoSuchElementException();
-        }
-
-        public void remove() {
-            CollectPreconditions.checkRemove(false);
-        }
     }
 
     static <T> Iterator<T> emptyModifiableIterator() {
@@ -589,23 +575,6 @@ public final class Iterators {
         return new ArrayItr(array, offset, length, index);
     }
 
-    private static final class ArrayItr<T> extends AbstractIndexedListIterator<T> {
-        static final UnmodifiableListIterator<Object> EMPTY = new ArrayItr(new Object[0], 0, 0, 0);
-        private final T[] array;
-        private final int offset;
-
-        ArrayItr(T[] array2, int offset2, int length, int index) {
-            super(length, index);
-            this.array = array2;
-            this.offset = offset2;
-        }
-
-        /* access modifiers changed from: protected */
-        public T get(int index) {
-            return this.array[this.offset + index];
-        }
-    }
-
     public static <T> UnmodifiableIterator<T> singletonIterator(@NullableDecl final T value) {
         return new UnmodifiableIterator<T>() {
             boolean done;
@@ -650,9 +619,65 @@ public final class Iterators {
         };
     }
 
+    public static <T> PeekingIterator<T> peekingIterator(Iterator<? extends T> iterator) {
+        if (iterator instanceof PeekingImpl) {
+            return (PeekingImpl) iterator;
+        }
+        return new PeekingImpl(iterator);
+    }
+
+    @Deprecated
+    public static <T> PeekingIterator<T> peekingIterator(PeekingIterator<T> iterator) {
+        return (PeekingIterator) Preconditions.checkNotNull(iterator);
+    }
+
+    @Beta
+    public static <T> UnmodifiableIterator<T> mergeSorted(Iterable<? extends Iterator<? extends T>> iterators, Comparator<? super T> comparator) {
+        Preconditions.checkNotNull(iterators, "iterators");
+        Preconditions.checkNotNull(comparator, "comparator");
+        return new MergingIterator(iterators, comparator);
+    }
+
+    static <T> ListIterator<T> cast(Iterator<T> iterator) {
+        return (ListIterator) iterator;
+    }
+
+    private enum EmptyModifiableIterator implements Iterator<Object> {
+        INSTANCE;
+
+        public boolean hasNext() {
+            return false;
+        }
+
+        public Object next() {
+            throw new NoSuchElementException();
+        }
+
+        public void remove() {
+            CollectPreconditions.checkRemove(false);
+        }
+    }
+
+    private static final class ArrayItr<T> extends AbstractIndexedListIterator<T> {
+        static final UnmodifiableListIterator<Object> EMPTY = new ArrayItr(new Object[0], 0, 0, 0);
+        private final T[] array;
+        private final int offset;
+
+        ArrayItr(T[] array2, int offset2, int length, int index) {
+            super(length, index);
+            this.array = array2;
+            this.offset = offset2;
+        }
+
+        /* access modifiers changed from: protected */
+        public T get(int index) {
+            return this.array[this.offset + index];
+        }
+    }
+
     private static class PeekingImpl<E> implements PeekingIterator<E> {
-        private boolean hasPeeked;
         private final Iterator<? extends E> iterator;
+        private boolean hasPeeked;
         @NullableDecl
         private E peekedElement;
 
@@ -686,25 +711,6 @@ public final class Iterators {
             }
             return this.peekedElement;
         }
-    }
-
-    public static <T> PeekingIterator<T> peekingIterator(Iterator<? extends T> iterator) {
-        if (iterator instanceof PeekingImpl) {
-            return (PeekingImpl) iterator;
-        }
-        return new PeekingImpl(iterator);
-    }
-
-    @Deprecated
-    public static <T> PeekingIterator<T> peekingIterator(PeekingIterator<T> iterator) {
-        return (PeekingIterator) Preconditions.checkNotNull(iterator);
-    }
-
-    @Beta
-    public static <T> UnmodifiableIterator<T> mergeSorted(Iterable<? extends Iterator<? extends T>> iterators, Comparator<? super T> comparator) {
-        Preconditions.checkNotNull(iterators, "iterators");
-        Preconditions.checkNotNull(comparator, "comparator");
-        return new MergingIterator(iterators, comparator);
     }
 
     private static class MergingIterator<T> extends UnmodifiableIterator<T> {
@@ -805,9 +811,5 @@ public final class Iterators {
             this.toRemove.remove();
             this.toRemove = null;
         }
-    }
-
-    static <T> ListIterator<T> cast(Iterator<T> iterator) {
-        return (ListIterator) iterator;
     }
 }

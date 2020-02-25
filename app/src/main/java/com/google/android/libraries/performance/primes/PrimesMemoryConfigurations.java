@@ -1,6 +1,7 @@
 package com.google.android.libraries.performance.primes;
 
 import android.support.annotation.VisibleForTesting;
+
 import com.google.common.base.Optional;
 
 public class PrimesMemoryConfigurations {
@@ -44,6 +45,10 @@ public class PrimesMemoryConfigurations {
         this.forceGcBeforeRecordMemory = forceGcBeforeRecordMemory2;
     }
 
+    public static Builder newBuilder() {
+        return new Builder();
+    }
+
     public boolean isEnabled() {
         return this.enabled;
     }
@@ -72,10 +77,6 @@ public class PrimesMemoryConfigurations {
         Optional unused4 = builder.metricExtensionProvider = this.metricExtensionProvider;
         boolean unused5 = builder.forceGcBeforeRecordMemory = this.forceGcBeforeRecordMemory;
         return builder;
-    }
-
-    public static Builder newBuilder() {
-        return new Builder();
     }
 
     public static final class Builder {

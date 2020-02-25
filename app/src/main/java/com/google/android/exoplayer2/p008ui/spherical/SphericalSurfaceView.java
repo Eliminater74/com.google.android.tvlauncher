@@ -18,19 +18,19 @@ import android.support.annotation.VisibleForTesting;
 import android.util.AttributeSet;
 import android.view.Surface;
 import android.view.WindowManager;
+
 import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.p008ui.spherical.OrientationListener;
-import com.google.android.exoplayer2.p008ui.spherical.TouchTracker;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Util;
+
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 /* renamed from: com.google.android.exoplayer2.ui.spherical.SphericalSurfaceView */
 public final class SphericalSurfaceView extends GLSurfaceView {
+    static final float UPRIGHT_ROLL = 3.1415927f;
     private static final int FIELD_OF_VIEW_DEGREES = 90;
     private static final float PX_PER_DEGREES = 25.0f;
-    static final float UPRIGHT_ROLL = 3.1415927f;
     private static final float Z_FAR = 100.0f;
     private static final float Z_NEAR = 0.1f;
     private final Handler mainHandler;
@@ -40,20 +40,15 @@ public final class SphericalSurfaceView extends GLSurfaceView {
     private final Renderer renderer;
     private final SceneRenderer scene;
     private final SensorManager sensorManager;
+    private final TouchTracker touchTracker;
     @Nullable
     private Surface surface;
     @Nullable
     private SurfaceListener surfaceListener;
     @Nullable
     private SurfaceTexture surfaceTexture;
-    private final TouchTracker touchTracker;
     @Nullable
     private Player.VideoComponent videoComponent;
-
-    /* renamed from: com.google.android.exoplayer2.ui.spherical.SphericalSurfaceView$SurfaceListener */
-    public interface SurfaceListener {
-        void surfaceChanged(@Nullable Surface surface);
-    }
 
     public SphericalSurfaceView(Context context) {
         this(context, null);
@@ -72,6 +67,15 @@ public final class SphericalSurfaceView extends GLSurfaceView {
         setEGLContextClientVersion(2);
         setRenderer(this.renderer);
         setOnTouchListener(this.touchTracker);
+    }
+
+    private static void releaseSurface(@Nullable SurfaceTexture oldSurfaceTexture, @Nullable Surface oldSurface) {
+        if (oldSurfaceTexture != null) {
+            oldSurfaceTexture.release();
+        }
+        if (oldSurface != null) {
+            oldSurface.release();
+        }
     }
 
     public void setDefaultStereoMode(int stereoMode) {
@@ -159,28 +163,24 @@ public final class SphericalSurfaceView extends GLSurfaceView {
         releaseSurface(oldSurfaceTexture, oldSurface);
     }
 
-    private static void releaseSurface(@Nullable SurfaceTexture oldSurfaceTexture, @Nullable Surface oldSurface) {
-        if (oldSurfaceTexture != null) {
-            oldSurfaceTexture.release();
-        }
-        if (oldSurface != null) {
-            oldSurface.release();
-        }
+    /* renamed from: com.google.android.exoplayer2.ui.spherical.SphericalSurfaceView$SurfaceListener */
+    public interface SurfaceListener {
+        void surfaceChanged(@Nullable Surface surface);
     }
 
     @VisibleForTesting
-    /* renamed from: com.google.android.exoplayer2.ui.spherical.SphericalSurfaceView$Renderer */
+            /* renamed from: com.google.android.exoplayer2.ui.spherical.SphericalSurfaceView$Renderer */
     class Renderer implements GLSurfaceView.Renderer, TouchTracker.Listener, OrientationListener.Listener {
         private final float[] deviceOrientationMatrix = new float[16];
-        private float deviceRoll;
         private final float[] projectionMatrix = new float[16];
         private final SceneRenderer scene;
         private final float[] tempMatrix = new float[16];
-        private float touchPitch;
         private final float[] touchPitchMatrix = new float[16];
         private final float[] touchYawMatrix = new float[16];
         private final float[] viewMatrix = new float[16];
         private final float[] viewProjectionMatrix = new float[16];
+        private float deviceRoll;
+        private float touchPitch;
 
         public Renderer(SceneRenderer scene2) {
             this.scene = scene2;

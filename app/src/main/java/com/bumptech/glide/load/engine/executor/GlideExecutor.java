@@ -5,6 +5,7 @@ import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 import android.util.Log;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -30,28 +31,9 @@ public final class GlideExecutor implements ExecutorService {
     private static volatile int bestThreadCount;
     private final ExecutorService delegate;
 
-    public interface UncaughtThrowableStrategy {
-        public static final UncaughtThrowableStrategy DEFAULT = LOG;
-        public static final UncaughtThrowableStrategy IGNORE = new UncaughtThrowableStrategy() {
-            public void handle(Throwable t) {
-            }
-        };
-        public static final UncaughtThrowableStrategy LOG = new UncaughtThrowableStrategy() {
-            public void handle(Throwable t) {
-                if (t != null && Log.isLoggable(GlideExecutor.TAG, 6)) {
-                    Log.e(GlideExecutor.TAG, "Request threw uncaught throwable", t);
-                }
-            }
-        };
-        public static final UncaughtThrowableStrategy THROW = new UncaughtThrowableStrategy() {
-            public void handle(Throwable t) {
-                if (t != null) {
-                    throw new RuntimeException("Request threw uncaught throwable", t);
-                }
-            }
-        };
-
-        void handle(Throwable th);
+    @VisibleForTesting
+    GlideExecutor(ExecutorService delegate2) {
+        this.delegate = delegate2;
     }
 
     public static GlideExecutor newDiskCacheExecutor() {
@@ -90,9 +72,11 @@ public final class GlideExecutor implements ExecutorService {
         return new GlideExecutor(new ThreadPoolExecutor(0, threadCount, KEEP_ALIVE_TIME_MS, TimeUnit.MILLISECONDS, new PriorityBlockingQueue(), new DefaultThreadFactory(ANIMATION_EXECUTOR_NAME, uncaughtThrowableStrategy, true)));
     }
 
-    @VisibleForTesting
-    GlideExecutor(ExecutorService delegate2) {
-        this.delegate = delegate2;
+    public static int calculateBestThreadCount() {
+        if (bestThreadCount == 0) {
+            bestThreadCount = Math.min(4, RuntimeCompat.availableProcessors());
+        }
+        return bestThreadCount;
     }
 
     public void execute(@NonNull Runnable command) {
@@ -157,19 +141,36 @@ public final class GlideExecutor implements ExecutorService {
         return this.delegate.toString();
     }
 
-    public static int calculateBestThreadCount() {
-        if (bestThreadCount == 0) {
-            bestThreadCount = Math.min(4, RuntimeCompat.availableProcessors());
-        }
-        return bestThreadCount;
+    public interface UncaughtThrowableStrategy {
+        public static final UncaughtThrowableStrategy IGNORE = new UncaughtThrowableStrategy() {
+            public void handle(Throwable t) {
+            }
+        };
+        public static final UncaughtThrowableStrategy LOG = new UncaughtThrowableStrategy() {
+            public void handle(Throwable t) {
+                if (t != null && Log.isLoggable(GlideExecutor.TAG, 6)) {
+                    Log.e(GlideExecutor.TAG, "Request threw uncaught throwable", t);
+                }
+            }
+        };
+        public static final UncaughtThrowableStrategy DEFAULT = LOG;
+        public static final UncaughtThrowableStrategy THROW = new UncaughtThrowableStrategy() {
+            public void handle(Throwable t) {
+                if (t != null) {
+                    throw new RuntimeException("Request threw uncaught throwable", t);
+                }
+            }
+        };
+
+        void handle(Throwable th);
     }
 
     private static final class DefaultThreadFactory implements ThreadFactory {
         private static final int DEFAULT_PRIORITY = 9;
-        private final String name;
         final boolean preventNetworkOperations;
-        private int threadNum;
         final UncaughtThrowableStrategy uncaughtThrowableStrategy;
+        private final String name;
+        private int threadNum;
 
         DefaultThreadFactory(String name2, UncaughtThrowableStrategy uncaughtThrowableStrategy2, boolean preventNetworkOperations2) {
             this.name = name2;

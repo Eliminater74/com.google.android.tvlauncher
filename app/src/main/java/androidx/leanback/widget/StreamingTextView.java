@@ -18,15 +18,17 @@ import android.view.ActionMode;
 import android.view.View;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.EditText;
+
 import androidx.leanback.C0364R;
+
 import java.util.List;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 class StreamingTextView extends EditText {
-    private static final String ACCESSIBILITY_CLASS_NAME = "androidx.leanback.widget.StreamingTextView";
     static final boolean ANIMATE_DOTS_FOR_PENDING = true;
+    private static final String ACCESSIBILITY_CLASS_NAME = "androidx.leanback.widget.StreamingTextView";
     private static final boolean DEBUG = false;
     private static final boolean DOTS_FOR_PENDING = true;
     private static final boolean DOTS_FOR_STABLE = false;
@@ -43,11 +45,11 @@ class StreamingTextView extends EditText {
     private static final long STREAM_UPDATE_DELAY_MILLIS = 50;
     private static final String TAG = "StreamingTextView";
     private static final float TEXT_DOT_SCALE = 1.3f;
-    Bitmap mOneDot;
     final Random mRandom = new Random();
+    Bitmap mOneDot;
     int mStreamPosition;
-    private ObjectAnimator mStreamingAnimation;
     Bitmap mTwoDot;
+    private ObjectAnimator mStreamingAnimation;
 
     public StreamingTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -55,6 +57,13 @@ class StreamingTextView extends EditText {
 
     public StreamingTextView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+    }
+
+    public static boolean isLayoutRtl(View view) {
+        if (Build.VERSION.SDK_INT < 17 || 1 != view.getLayoutDirection()) {
+            return false;
+        }
+        return true;
     }
 
     /* access modifiers changed from: protected */
@@ -152,6 +161,13 @@ class StreamingTextView extends EditText {
         info.setClassName(ACCESSIBILITY_CLASS_NAME);
     }
 
+    public void updateRecognizedText(String stableText, List<Float> list) {
+    }
+
+    public void setCustomSelectionActionModeCallback(ActionMode.Callback actionModeCallback) {
+        super.setCustomSelectionActionModeCallback(TextViewCompat.wrapCustomSelectionActionModeCallback(this, actionModeCallback));
+    }
+
     private class DottySpan extends ReplacementSpan {
         private final int mPosition;
         private final int mSeed;
@@ -190,19 +206,5 @@ class StreamingTextView extends EditText {
         public int getSize(Paint paint, CharSequence text, int start, int end, Paint.FontMetricsInt fontMetricsInt) {
             return (int) paint.measureText(text, start, end);
         }
-    }
-
-    public static boolean isLayoutRtl(View view) {
-        if (Build.VERSION.SDK_INT < 17 || 1 != view.getLayoutDirection()) {
-            return false;
-        }
-        return true;
-    }
-
-    public void updateRecognizedText(String stableText, List<Float> list) {
-    }
-
-    public void setCustomSelectionActionModeCallback(ActionMode.Callback actionModeCallback) {
-        super.setCustomSelectionActionModeCallback(TextViewCompat.wrapCustomSelectionActionModeCallback(this, actionModeCallback));
     }
 }

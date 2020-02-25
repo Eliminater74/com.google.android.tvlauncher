@@ -1,15 +1,16 @@
 package com.google.android.gms.tasks;
 
 import android.support.annotation.NonNull;
+
 import java.util.concurrent.Executor;
 
 /* compiled from: ContinueWithTaskCompletionListener */
 final class zze<TResult, TContinuationResult> implements OnCanceledListener, OnFailureListener, OnSuccessListener<TContinuationResult>, zzq<TResult> {
-    private final Executor zza;
     /* access modifiers changed from: private */
     public final Continuation<TResult, Task<TContinuationResult>> zzb;
     /* access modifiers changed from: private */
     public final zzu<TContinuationResult> zzc;
+    private final Executor zza;
 
     public zze(@NonNull Executor executor, @NonNull Continuation<TResult, Task<TContinuationResult>> continuation, @NonNull zzu<TContinuationResult> zzu) {
         this.zza = executor;

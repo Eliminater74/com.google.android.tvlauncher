@@ -10,8 +10,8 @@ public interface IConnectionStateListener extends IInterface {
     void connectionStateChanged(ConnectionState connectionState, ConnectionError connectionError, long j, String str) throws RemoteException;
 
     public static abstract class Stub extends Binder implements IConnectionStateListener {
-        private static final String DESCRIPTOR = "com.google.android.gtalkservice.IConnectionStateListener";
         static final int TRANSACTION_connectionStateChanged = 1;
+        private static final String DESCRIPTOR = "com.google.android.gtalkservice.IConnectionStateListener";
 
         public Stub() {
             attachInterface(this, DESCRIPTOR);

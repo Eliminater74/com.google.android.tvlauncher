@@ -20,11 +20,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.annotation.RestrictTo;
-import android.support.p001v4.app.SharedElementCallback;
 import android.support.p001v4.content.ContextCompat;
 import android.support.p001v4.view.DragAndDropPermissionsCompat;
 import android.view.DragEvent;
 import android.view.View;
+
 import java.util.List;
 import java.util.Map;
 
@@ -32,34 +32,16 @@ import java.util.Map;
 public class ActivityCompat extends ContextCompat {
     private static PermissionCompatDelegate sDelegate;
 
-    /* renamed from: android.support.v4.app.ActivityCompat$OnRequestPermissionsResultCallback */
-    public interface OnRequestPermissionsResultCallback {
-        void onRequestPermissionsResult(int i, @NonNull String[] strArr, @NonNull int[] iArr);
-    }
-
-    /* renamed from: android.support.v4.app.ActivityCompat$PermissionCompatDelegate */
-    public interface PermissionCompatDelegate {
-        boolean onActivityResult(@NonNull Activity activity, @IntRange(from = 0) int i, int i2, @Nullable Intent intent);
-
-        boolean requestPermissions(@NonNull Activity activity, @NonNull String[] strArr, @IntRange(from = 0) int i);
-    }
-
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    /* renamed from: android.support.v4.app.ActivityCompat$RequestPermissionsRequestCodeValidator */
-    public interface RequestPermissionsRequestCodeValidator {
-        void validateRequestPermissionsRequestCode(int i);
-    }
-
     protected ActivityCompat() {
-    }
-
-    public static void setPermissionCompatDelegate(@Nullable PermissionCompatDelegate delegate) {
-        sDelegate = delegate;
     }
 
     @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
     public static PermissionCompatDelegate getPermissionCompatDelegate() {
         return sDelegate;
+    }
+
+    public static void setPermissionCompatDelegate(@Nullable PermissionCompatDelegate delegate) {
+        sDelegate = delegate;
     }
 
     @Deprecated
@@ -197,6 +179,24 @@ public class ActivityCompat extends ContextCompat {
         } else if (!ActivityRecreator.recreate(activity)) {
             activity.recreate();
         }
+    }
+
+    /* renamed from: android.support.v4.app.ActivityCompat$OnRequestPermissionsResultCallback */
+    public interface OnRequestPermissionsResultCallback {
+        void onRequestPermissionsResult(int i, @NonNull String[] strArr, @NonNull int[] iArr);
+    }
+
+    /* renamed from: android.support.v4.app.ActivityCompat$PermissionCompatDelegate */
+    public interface PermissionCompatDelegate {
+        boolean onActivityResult(@NonNull Activity activity, @IntRange(from = 0) int i, int i2, @Nullable Intent intent);
+
+        boolean requestPermissions(@NonNull Activity activity, @NonNull String[] strArr, @IntRange(from = 0) int i);
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    /* renamed from: android.support.v4.app.ActivityCompat$RequestPermissionsRequestCodeValidator */
+    public interface RequestPermissionsRequestCodeValidator {
+        void validateRequestPermissionsRequestCode(int i);
     }
 
     @RequiresApi(21)

@@ -17,7 +17,9 @@ import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.WorkerThread;
 import android.view.View;
+
 import androidx.palette.graphics.Palette;
+
 import com.google.android.tvlauncher.C1188R;
 import com.google.android.tvlauncher.util.TestsBuildCompat;
 import com.google.android.tvlauncher.view.BackgroundTransitionDrawable;
@@ -35,22 +37,22 @@ class HomeBackgroundController {
     private static final String TAG = "HomeBackground";
     private static final float TOP_GRADIENT_COLOR_MIX_AMOUNT = 0.2f;
     private static final int TRANSITION_DURATION_MILLIS = 600;
+    private final Context mContext;
+    /* access modifiers changed from: private */
+    public GenerateBitmapTask mGenerateBitmapTask;
+    /* access modifiers changed from: private */
+    public BackgroundTransitionDrawable mTransitionDrawable;
     @ColorInt
     private int mColor1;
     @ColorInt
     private int mColor2;
     @ColorInt
     private int mColor3;
-    private final Context mContext;
     private boolean mDarkMode = false;
-    /* access modifiers changed from: private */
-    public GenerateBitmapTask mGenerateBitmapTask;
     private Paint mLinearGradientPaint;
     private Bitmap mOverlayBitmap;
     private Paint mOverlayPaint;
     private Paint mRadialGradientPaint;
-    /* access modifiers changed from: private */
-    public BackgroundTransitionDrawable mTransitionDrawable;
 
     HomeBackgroundController(View backgroundView) {
         this.mContext = backgroundView.getContext();

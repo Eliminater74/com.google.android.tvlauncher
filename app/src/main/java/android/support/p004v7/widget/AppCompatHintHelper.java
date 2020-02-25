@@ -7,6 +7,9 @@ import android.view.inputmethod.InputConnection;
 
 /* renamed from: android.support.v7.widget.AppCompatHintHelper */
 class AppCompatHintHelper {
+    private AppCompatHintHelper() {
+    }
+
     static InputConnection onCreateInputConnection(InputConnection ic, EditorInfo outAttrs, View view) {
         if (ic != null && outAttrs.hintText == null) {
             ViewParent parent = view.getParent();
@@ -22,8 +25,5 @@ class AppCompatHintHelper {
             }
         }
         return ic;
-    }
-
-    private AppCompatHintHelper() {
     }
 }

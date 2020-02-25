@@ -3,12 +3,12 @@ package com.google.android.exoplayer2.source;
 import android.os.Handler;
 import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.Timeline;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.MediaSourceEventListener;
 import com.google.android.exoplayer2.upstream.TransferListener;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -19,12 +19,12 @@ public abstract class CompositeMediaSource<T> extends BaseMediaSource {
     @Nullable
     private TransferListener mediaTransferListener;
 
+    protected CompositeMediaSource() {
+    }
+
     /* access modifiers changed from: protected */
     /* renamed from: onChildSourceInfoRefreshed */
     public abstract void lambda$prepareChildSource$0$CompositeMediaSource(T t, MediaSource mediaSource, Timeline timeline, @Nullable Object obj);
-
-    protected CompositeMediaSource() {
-    }
 
     @CallSuper
     public void prepareSourceInternal(@Nullable TransferListener mediaTransferListener2) {
@@ -94,10 +94,9 @@ public abstract class CompositeMediaSource<T> extends BaseMediaSource {
     }
 
     private final class ForwardingEventListener implements MediaSourceEventListener {
-        private MediaSourceEventListener.EventDispatcher eventDispatcher;
-
         /* renamed from: id */
         private final T f90id;
+        private MediaSourceEventListener.EventDispatcher eventDispatcher;
 
         public ForwardingEventListener(T id) {
             this.eventDispatcher = CompositeMediaSource.this.createEventDispatcher(null);

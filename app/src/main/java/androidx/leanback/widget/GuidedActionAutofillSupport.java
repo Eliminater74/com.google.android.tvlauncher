@@ -4,9 +4,9 @@ import android.view.View;
 
 public interface GuidedActionAutofillSupport {
 
+    void setOnAutofillListener(OnAutofillListener onAutofillListener);
+
     public interface OnAutofillListener {
         void onAutofill(View view);
     }
-
-    void setOnAutofillListener(OnAutofillListener onAutofillListener);
 }

@@ -2,50 +2,17 @@ package com.google.common.collect;
 
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.GwtIncompatible;
+
 import java.io.Serializable;
 import java.util.Map;
 
 @GwtCompatible(emulated = true)
 abstract class ImmutableMapEntrySet<K, V> extends ImmutableSet<Map.Entry<K, V>> {
-    /* access modifiers changed from: package-private */
-    public abstract ImmutableMap<K, V> map();
-
-    static final class RegularEntrySet<K, V> extends ImmutableMapEntrySet<K, V> {
-        private final transient ImmutableList<Map.Entry<K, V>> entries;
-        private final transient ImmutableMap<K, V> map;
-
-        RegularEntrySet(ImmutableMap<K, V> map2, Map.Entry<K, V>[] entries2) {
-            this(map2, ImmutableList.asImmutableList(entries2));
-        }
-
-        RegularEntrySet(ImmutableMap<K, V> map2, ImmutableList<Map.Entry<K, V>> entries2) {
-            this.map = map2;
-            this.entries = entries2;
-        }
-
-        /* access modifiers changed from: package-private */
-        public ImmutableMap<K, V> map() {
-            return this.map;
-        }
-
-        /* access modifiers changed from: package-private */
-        @GwtIncompatible("not used in GWT")
-        public int copyIntoArray(Object[] dst, int offset) {
-            return this.entries.copyIntoArray(dst, offset);
-        }
-
-        public UnmodifiableIterator<Map.Entry<K, V>> iterator() {
-            return this.entries.iterator();
-        }
-
-        /* access modifiers changed from: package-private */
-        public ImmutableList<Map.Entry<K, V>> createAsList() {
-            return this.entries;
-        }
-    }
-
     ImmutableMapEntrySet() {
     }
+
+    /* access modifiers changed from: package-private */
+    public abstract ImmutableMap<K, V> map();
 
     public int size() {
         return map().size();
@@ -108,6 +75,40 @@ abstract class ImmutableMapEntrySet<K, V> extends ImmutableSet<Map.Entry<K, V>> 
     @GwtIncompatible
     public Object writeReplace() {
         return new EntrySetSerializedForm(map());
+    }
+
+    static final class RegularEntrySet<K, V> extends ImmutableMapEntrySet<K, V> {
+        private final transient ImmutableList<Map.Entry<K, V>> entries;
+        private final transient ImmutableMap<K, V> map;
+
+        RegularEntrySet(ImmutableMap<K, V> map2, Map.Entry<K, V>[] entries2) {
+            this(map2, ImmutableList.asImmutableList(entries2));
+        }
+
+        RegularEntrySet(ImmutableMap<K, V> map2, ImmutableList<Map.Entry<K, V>> entries2) {
+            this.map = map2;
+            this.entries = entries2;
+        }
+
+        /* access modifiers changed from: package-private */
+        public ImmutableMap<K, V> map() {
+            return this.map;
+        }
+
+        /* access modifiers changed from: package-private */
+        @GwtIncompatible("not used in GWT")
+        public int copyIntoArray(Object[] dst, int offset) {
+            return this.entries.copyIntoArray(dst, offset);
+        }
+
+        public UnmodifiableIterator<Map.Entry<K, V>> iterator() {
+            return this.entries.iterator();
+        }
+
+        /* access modifiers changed from: package-private */
+        public ImmutableList<Map.Entry<K, V>> createAsList() {
+            return this.entries;
+        }
     }
 
     @GwtIncompatible

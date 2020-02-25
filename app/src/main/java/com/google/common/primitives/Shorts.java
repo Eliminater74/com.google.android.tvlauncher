@@ -5,6 +5,9 @@ import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.base.Converter;
 import com.google.common.base.Preconditions;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.Serializable;
 import java.util.AbstractList;
 import java.util.Arrays;
@@ -13,7 +16,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.RandomAccess;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible(emulated = true)
 public final class Shorts {
@@ -186,32 +188,6 @@ public final class Shorts {
         return (short) ((b1 << 8) | (b2 & UnsignedBytes.MAX_VALUE));
     }
 
-    private static final class ShortConverter extends Converter<String, Short> implements Serializable {
-        static final ShortConverter INSTANCE = new ShortConverter();
-        private static final long serialVersionUID = 1;
-
-        private ShortConverter() {
-        }
-
-        /* access modifiers changed from: protected */
-        public Short doForward(String value) {
-            return Short.decode(value);
-        }
-
-        /* access modifiers changed from: protected */
-        public String doBackward(Short value) {
-            return value.toString();
-        }
-
-        public String toString() {
-            return "Shorts.stringConverter()";
-        }
-
-        private Object readResolve() {
-            return INSTANCE;
-        }
-    }
-
     @Beta
     public static Converter<String, Short> stringConverter() {
         return ShortConverter.INSTANCE;
@@ -243,25 +219,6 @@ public final class Shorts {
 
     public static Comparator<short[]> lexicographicalComparator() {
         return LexicographicalComparator.INSTANCE;
-    }
-
-    private enum LexicographicalComparator implements Comparator<short[]> {
-        INSTANCE;
-
-        public int compare(short[] left, short[] right) {
-            int minLength = Math.min(left.length, right.length);
-            for (int i = 0; i < minLength; i++) {
-                int result = Shorts.compare(left[i], right[i]);
-                if (result != 0) {
-                    return result;
-                }
-            }
-            return left.length - right.length;
-        }
-
-        public String toString() {
-            return "Shorts.lexicographicalComparator()";
-        }
     }
 
     public static void sortDescending(short[] array) {
@@ -311,6 +268,51 @@ public final class Shorts {
             return Collections.emptyList();
         }
         return new ShortArrayAsList(backingArray);
+    }
+
+    private enum LexicographicalComparator implements Comparator<short[]> {
+        INSTANCE;
+
+        public int compare(short[] left, short[] right) {
+            int minLength = Math.min(left.length, right.length);
+            for (int i = 0; i < minLength; i++) {
+                int result = Shorts.compare(left[i], right[i]);
+                if (result != 0) {
+                    return result;
+                }
+            }
+            return left.length - right.length;
+        }
+
+        public String toString() {
+            return "Shorts.lexicographicalComparator()";
+        }
+    }
+
+    private static final class ShortConverter extends Converter<String, Short> implements Serializable {
+        static final ShortConverter INSTANCE = new ShortConverter();
+        private static final long serialVersionUID = 1;
+
+        private ShortConverter() {
+        }
+
+        /* access modifiers changed from: protected */
+        public Short doForward(String value) {
+            return Short.decode(value);
+        }
+
+        /* access modifiers changed from: protected */
+        public String doBackward(Short value) {
+            return value.toString();
+        }
+
+        public String toString() {
+            return "Shorts.stringConverter()";
+        }
+
+        private Object readResolve() {
+            return INSTANCE;
+        }
     }
 
     @GwtCompatible

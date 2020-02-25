@@ -1,6 +1,5 @@
 package com.google.protobuf;
 
-import com.google.protobuf.Internal;
 import java.lang.reflect.Field;
 
 final class FieldInfo implements Comparable<FieldInfo> {
@@ -17,6 +16,22 @@ final class FieldInfo implements Comparable<FieldInfo> {
     private final int presenceMask;
     private final boolean required;
     private final FieldType type;
+
+    private FieldInfo(Field field2, int fieldNumber2, FieldType type2, Class<?> messageClass2, Field presenceField2, int presenceMask2, boolean required2, boolean enforceUtf82, OneofInfo oneof2, Class<?> oneofStoredType2, Object mapDefaultEntry2, Internal.EnumVerifier enumVerifier2, Field cachedSizeField2) {
+        this.field = field2;
+        this.type = type2;
+        this.messageClass = messageClass2;
+        this.fieldNumber = fieldNumber2;
+        this.presenceField = presenceField2;
+        this.presenceMask = presenceMask2;
+        this.required = required2;
+        this.enforceUtf8 = enforceUtf82;
+        this.oneof = oneof2;
+        this.oneofStoredType = oneofStoredType2;
+        this.mapDefaultEntry = mapDefaultEntry2;
+        this.enumVerifier = enumVerifier2;
+        this.cachedSizeField = cachedSizeField2;
+    }
 
     public static FieldInfo forField(Field field2, int fieldNumber2, FieldType fieldType, boolean enforceUtf82) {
         FieldType fieldType2 = fieldType;
@@ -127,20 +142,12 @@ final class FieldInfo implements Comparable<FieldInfo> {
         return new FieldInfo(field2, fieldNumber2, FieldType.MAP, null, null, 0, false, true, null, null, mapDefaultEntry2, enumVerifier2, null);
     }
 
-    private FieldInfo(Field field2, int fieldNumber2, FieldType type2, Class<?> messageClass2, Field presenceField2, int presenceMask2, boolean required2, boolean enforceUtf82, OneofInfo oneof2, Class<?> oneofStoredType2, Object mapDefaultEntry2, Internal.EnumVerifier enumVerifier2, Field cachedSizeField2) {
-        this.field = field2;
-        this.type = type2;
-        this.messageClass = messageClass2;
-        this.fieldNumber = fieldNumber2;
-        this.presenceField = presenceField2;
-        this.presenceMask = presenceMask2;
-        this.required = required2;
-        this.enforceUtf8 = enforceUtf82;
-        this.oneof = oneof2;
-        this.oneofStoredType = oneofStoredType2;
-        this.mapDefaultEntry = mapDefaultEntry2;
-        this.enumVerifier = enumVerifier2;
-        this.cachedSizeField = cachedSizeField2;
+    public static Builder newBuilder() {
+        return new Builder(null);
+    }
+
+    private static boolean isExactlyOneBitSet(int value) {
+        return value != 0 && ((value + -1) & value) == 0;
     }
 
     public int getFieldNumber() {
@@ -199,6 +206,18 @@ final class FieldInfo implements Comparable<FieldInfo> {
         return this.cachedSizeField;
     }
 
+    public Class<?> getMessageFieldClass() {
+        int i = C18571.$SwitchMap$com$google$protobuf$FieldType[this.type.ordinal()];
+        if (i == 1 || i == 2) {
+            Field field2 = this.field;
+            return field2 != null ? field2.getType() : this.oneofStoredType;
+        } else if (i == 3 || i == 4) {
+            return this.messageClass;
+        } else {
+            return null;
+        }
+    }
+
     /* renamed from: com.google.protobuf.FieldInfo$1 */
     static /* synthetic */ class C18571 {
         static final /* synthetic */ int[] $SwitchMap$com$google$protobuf$FieldType = new int[FieldType.values().length];
@@ -221,22 +240,6 @@ final class FieldInfo implements Comparable<FieldInfo> {
             } catch (NoSuchFieldError e4) {
             }
         }
-    }
-
-    public Class<?> getMessageFieldClass() {
-        int i = C18571.$SwitchMap$com$google$protobuf$FieldType[this.type.ordinal()];
-        if (i == 1 || i == 2) {
-            Field field2 = this.field;
-            return field2 != null ? field2.getType() : this.oneofStoredType;
-        } else if (i == 3 || i == 4) {
-            return this.messageClass;
-        } else {
-            return null;
-        }
-    }
-
-    public static Builder newBuilder() {
-        return new Builder(null);
     }
 
     public static final class Builder {
@@ -348,9 +351,5 @@ final class FieldInfo implements Comparable<FieldInfo> {
                 return FieldInfo.forProto2OptionalField(this.field, this.fieldNumber, this.type, field2, this.presenceMask, this.enforceUtf8, this.enumVerifier);
             }
         }
-    }
-
-    private static boolean isExactlyOneBitSet(int value) {
-        return value != 0 && ((value + -1) & value) == 0;
     }
 }

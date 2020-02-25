@@ -11,13 +11,14 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
+
 import com.bumptech.glide.load.Options;
 import com.bumptech.glide.load.ResourceDecoder;
 import com.bumptech.glide.load.engine.Resource;
 import com.bumptech.glide.load.resource.drawable.DrawableResource;
 import com.bumptech.glide.util.Util;
 import com.google.android.tvlauncher.C1188R;
-import com.google.android.tvlauncher.appsview.data.PackageImageDataSource;
+
 import java.io.IOException;
 
 public class PackageImageDecoder implements ResourceDecoder<PackageImageDataSource, Drawable> {
@@ -25,6 +26,43 @@ public class PackageImageDecoder implements ResourceDecoder<PackageImageDataSour
 
     public PackageImageDecoder(Context context) {
         this.mContext = context;
+    }
+
+    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+     method: ClspMth{java.lang.Math.min(float, float):float}
+     arg types: [int, float]
+     candidates:
+      ClspMth{java.lang.Math.min(double, double):double}
+      ClspMth{java.lang.Math.min(long, long):long}
+      ClspMth{java.lang.Math.min(int, int):int}
+      ClspMth{java.lang.Math.min(float, float):float} */
+    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+     method: ClspMth{android.graphics.Bitmap.createBitmap(android.graphics.Bitmap, int, int, int, int, android.graphics.Matrix, boolean):android.graphics.Bitmap}
+     arg types: [android.graphics.Bitmap, int, int, int, int, android.graphics.Matrix, int]
+     candidates:
+      ClspMth{android.graphics.Bitmap.createBitmap(android.util.DisplayMetrics, int[], int, int, int, int, android.graphics.Bitmap$Config):android.graphics.Bitmap}
+      ClspMth{android.graphics.Bitmap.createBitmap(android.graphics.Bitmap, int, int, int, int, android.graphics.Matrix, boolean):android.graphics.Bitmap} */
+    private static Bitmap getSizeCappedBitmap(Bitmap image, int maxWidth, int maxHeight) {
+        if (image == null) {
+            return null;
+        }
+        int imgWidth = image.getWidth();
+        int imgHeight = image.getHeight();
+        if ((imgWidth <= maxWidth && imgHeight <= maxHeight) || imgWidth <= 0 || imgHeight <= 0) {
+            return image;
+        }
+        float scale = Math.min(1.0f, ((float) maxHeight) / ((float) imgHeight));
+        if (((double) scale) >= 1.0d && imgWidth <= maxWidth) {
+            return image;
+        }
+        float deltaW = ((float) Math.max(Math.round(((float) imgWidth) * scale) - maxWidth, 0)) / scale;
+        Matrix matrix = new Matrix();
+        matrix.postScale(scale, scale);
+        Bitmap newImage = Bitmap.createBitmap(image, (int) (deltaW / 2.0f), 0, (int) (((float) imgWidth) - deltaW), imgHeight, matrix, true);
+        if (newImage != null) {
+            return newImage;
+        }
+        return image;
     }
 
     public boolean handles(PackageImageDataSource source, Options options) throws IOException {
@@ -58,24 +96,6 @@ public class PackageImageDecoder implements ResourceDecoder<PackageImageDataSour
             public void recycle() {
             }
         };
-    }
-
-    /* renamed from: com.google.android.tvlauncher.appsview.data.PackageImageDecoder$2 */
-    static /* synthetic */ class C12372 {
-
-        /* renamed from: $SwitchMap$com$google$android$tvlauncher$appsview$data$PackageImageDataSource$ImageType */
-        static final /* synthetic */ int[] f134x982bd2bd = new int[PackageImageDataSource.ImageType.values().length];
-
-        static {
-            try {
-                f134x982bd2bd[PackageImageDataSource.ImageType.ICON.ordinal()] = 1;
-            } catch (NoSuchFieldError e) {
-            }
-            try {
-                f134x982bd2bd[PackageImageDataSource.ImageType.BANNER.ordinal()] = 2;
-            } catch (NoSuchFieldError e2) {
-            }
-        }
     }
 
     private Drawable getIcon(ResolveInfo info, PackageManager pm, int width, int height) {
@@ -155,40 +175,21 @@ public class PackageImageDecoder implements ResourceDecoder<PackageImageDataSour
         return bmp;
     }
 
-    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-     method: ClspMth{java.lang.Math.min(float, float):float}
-     arg types: [int, float]
-     candidates:
-      ClspMth{java.lang.Math.min(double, double):double}
-      ClspMth{java.lang.Math.min(long, long):long}
-      ClspMth{java.lang.Math.min(int, int):int}
-      ClspMth{java.lang.Math.min(float, float):float} */
-    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-     method: ClspMth{android.graphics.Bitmap.createBitmap(android.graphics.Bitmap, int, int, int, int, android.graphics.Matrix, boolean):android.graphics.Bitmap}
-     arg types: [android.graphics.Bitmap, int, int, int, int, android.graphics.Matrix, int]
-     candidates:
-      ClspMth{android.graphics.Bitmap.createBitmap(android.util.DisplayMetrics, int[], int, int, int, int, android.graphics.Bitmap$Config):android.graphics.Bitmap}
-      ClspMth{android.graphics.Bitmap.createBitmap(android.graphics.Bitmap, int, int, int, int, android.graphics.Matrix, boolean):android.graphics.Bitmap} */
-    private static Bitmap getSizeCappedBitmap(Bitmap image, int maxWidth, int maxHeight) {
-        if (image == null) {
-            return null;
+    /* renamed from: com.google.android.tvlauncher.appsview.data.PackageImageDecoder$2 */
+    static /* synthetic */ class C12372 {
+
+        /* renamed from: $SwitchMap$com$google$android$tvlauncher$appsview$data$PackageImageDataSource$ImageType */
+        static final /* synthetic */ int[] f134x982bd2bd = new int[PackageImageDataSource.ImageType.values().length];
+
+        static {
+            try {
+                f134x982bd2bd[PackageImageDataSource.ImageType.ICON.ordinal()] = 1;
+            } catch (NoSuchFieldError e) {
+            }
+            try {
+                f134x982bd2bd[PackageImageDataSource.ImageType.BANNER.ordinal()] = 2;
+            } catch (NoSuchFieldError e2) {
+            }
         }
-        int imgWidth = image.getWidth();
-        int imgHeight = image.getHeight();
-        if ((imgWidth <= maxWidth && imgHeight <= maxHeight) || imgWidth <= 0 || imgHeight <= 0) {
-            return image;
-        }
-        float scale = Math.min(1.0f, ((float) maxHeight) / ((float) imgHeight));
-        if (((double) scale) >= 1.0d && imgWidth <= maxWidth) {
-            return image;
-        }
-        float deltaW = ((float) Math.max(Math.round(((float) imgWidth) * scale) - maxWidth, 0)) / scale;
-        Matrix matrix = new Matrix();
-        matrix.postScale(scale, scale);
-        Bitmap newImage = Bitmap.createBitmap(image, (int) (deltaW / 2.0f), 0, (int) (((float) imgWidth) - deltaW), imgHeight, matrix, true);
-        if (newImage != null) {
-            return newImage;
-        }
-        return image;
     }
 }

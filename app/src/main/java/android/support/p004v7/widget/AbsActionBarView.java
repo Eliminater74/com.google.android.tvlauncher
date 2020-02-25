@@ -17,14 +17,14 @@ import android.view.ViewGroup;
 /* renamed from: android.support.v7.widget.AbsActionBarView */
 abstract class AbsActionBarView extends ViewGroup {
     private static final int FADE_DURATION = 200;
-    protected ActionMenuPresenter mActionMenuPresenter;
-    protected int mContentHeight;
-    private boolean mEatingHover;
-    private boolean mEatingTouch;
-    protected ActionMenuView mMenuView;
     protected final Context mPopupContext;
     protected final VisibilityAnimListener mVisAnimListener;
+    protected ActionMenuPresenter mActionMenuPresenter;
+    protected int mContentHeight;
+    protected ActionMenuView mMenuView;
     protected ViewPropertyAnimatorCompat mVisibilityAnim;
+    private boolean mEatingHover;
+    private boolean mEatingTouch;
 
     AbsActionBarView(Context context) {
         this(context, null);
@@ -43,6 +43,10 @@ abstract class AbsActionBarView extends ViewGroup {
         } else {
             this.mPopupContext = new ContextThemeWrapper(context, tv.resourceId);
         }
+    }
+
+    protected static int next(int x, int val, boolean isRtl) {
+        return isRtl ? x - val : x + val;
     }
 
     /* access modifiers changed from: protected */
@@ -91,13 +95,13 @@ abstract class AbsActionBarView extends ViewGroup {
         return true;
     }
 
+    public int getContentHeight() {
+        return this.mContentHeight;
+    }
+
     public void setContentHeight(int height) {
         this.mContentHeight = height;
         requestLayout();
-    }
-
-    public int getContentHeight() {
-        return this.mContentHeight;
     }
 
     public int getAnimatedVisibility() {
@@ -203,10 +207,6 @@ abstract class AbsActionBarView extends ViewGroup {
         return Math.max(0, (availableWidth - child.getMeasuredWidth()) - spacing);
     }
 
-    protected static int next(int x, int val, boolean isRtl) {
-        return isRtl ? x - val : x + val;
-    }
-
     /* access modifiers changed from: protected */
     public int positionChild(View child, int x, int y, int contentHeight, boolean reverse) {
         int childWidth = child.getMeasuredWidth();
@@ -222,8 +222,8 @@ abstract class AbsActionBarView extends ViewGroup {
 
     /* renamed from: android.support.v7.widget.AbsActionBarView$VisibilityAnimListener */
     protected class VisibilityAnimListener implements ViewPropertyAnimatorListener {
-        private boolean mCanceled = false;
         int mFinalVisibility;
+        private boolean mCanceled = false;
 
         protected VisibilityAnimListener() {
         }

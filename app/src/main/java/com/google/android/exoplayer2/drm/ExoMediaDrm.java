@@ -5,8 +5,7 @@ import android.media.MediaCryptoException;
 import android.media.MediaDrmException;
 import android.media.NotProvisionedException;
 import android.support.annotation.Nullable;
-import com.google.android.exoplayer2.drm.DrmInitData;
-import com.google.android.exoplayer2.drm.ExoMediaCrypto;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,14 +17,6 @@ public interface ExoMediaDrm<T extends ExoMediaCrypto> {
     public static final int KEY_TYPE_OFFLINE = 2;
     public static final int KEY_TYPE_RELEASE = 3;
     public static final int KEY_TYPE_STREAMING = 1;
-
-    public interface OnEventListener<T extends ExoMediaCrypto> {
-        void onEvent(ExoMediaDrm<? extends T> exoMediaDrm, byte[] bArr, int i, int i2, @Nullable byte[] bArr2);
-    }
-
-    public interface OnKeyStatusChangeListener<T extends ExoMediaCrypto> {
-        void onKeyStatusChange(ExoMediaDrm<? extends T> exoMediaDrm, byte[] bArr, List<KeyStatus> list, boolean z);
-    }
 
     void closeSession(byte[] bArr);
 
@@ -58,6 +49,14 @@ public interface ExoMediaDrm<T extends ExoMediaCrypto> {
     void setPropertyByteArray(String str, byte[] bArr);
 
     void setPropertyString(String str, String str2);
+
+    public interface OnEventListener<T extends ExoMediaCrypto> {
+        void onEvent(ExoMediaDrm<? extends T> exoMediaDrm, byte[] bArr, int i, int i2, @Nullable byte[] bArr2);
+    }
+
+    public interface OnKeyStatusChangeListener<T extends ExoMediaCrypto> {
+        void onKeyStatusChange(ExoMediaDrm<? extends T> exoMediaDrm, byte[] bArr, List<KeyStatus> list, boolean z);
+    }
 
     public static final class KeyStatus {
         private final byte[] keyId;

@@ -31,6 +31,10 @@ public class ScaleFrameLayout extends FrameLayout {
         this.mChildScale = 1.0f;
     }
 
+    private static int getScaledMeasureSpec(int measureSpec, float scale) {
+        return scale == 1.0f ? measureSpec : View.MeasureSpec.makeMeasureSpec((int) ((((float) View.MeasureSpec.getSize(measureSpec)) / scale) + 0.5f), View.MeasureSpec.getMode(measureSpec));
+    }
+
     public void setLayoutScaleX(float scaleX) {
         if (scaleX != this.mLayoutScaleX) {
             this.mLayoutScaleX = scaleX;
@@ -152,10 +156,6 @@ public class ScaleFrameLayout extends FrameLayout {
             count2 = count;
             layoutDirection2 = layoutDirection;
         }
-    }
-
-    private static int getScaledMeasureSpec(int measureSpec, float scale) {
-        return scale == 1.0f ? measureSpec : View.MeasureSpec.makeMeasureSpec((int) ((((float) View.MeasureSpec.getSize(measureSpec)) / scale) + 0.5f), View.MeasureSpec.getMode(measureSpec));
     }
 
     /* access modifiers changed from: protected */

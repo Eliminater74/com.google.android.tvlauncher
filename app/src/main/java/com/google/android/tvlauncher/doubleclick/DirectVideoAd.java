@@ -3,7 +3,7 @@ package com.google.android.tvlauncher.doubleclick;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import com.google.android.tvlauncher.doubleclick.OutstreamVideoAd;
+
 import com.google.android.tvlauncher.doubleclick.proto.nano.AdConfig;
 
 public class DirectVideoAd extends OutstreamVideoAd {
@@ -11,10 +11,6 @@ public class DirectVideoAd extends OutstreamVideoAd {
 
     private DirectVideoAd(Builder builder) {
         super(builder);
-    }
-
-    public boolean supportsVideoTracking() {
-        return false;
     }
 
     @Nullable
@@ -29,6 +25,10 @@ public class DirectVideoAd extends OutstreamVideoAd {
         }
         AdConfig.DirectAdConfig directAdConfig = adAsset.getDirectAdConfig();
         return ((Builder) ((Builder) ((Builder) ((Builder) new Builder().setPackageName(directAdConfig.packageName)).setMarketUrl(directAdConfig.dataUrl)).setDeeplinkUrl(directAdConfig.dataUrl)).setAdAsset(adAsset)).build();
+    }
+
+    public boolean supportsVideoTracking() {
+        return false;
     }
 
     static final class Builder extends OutstreamVideoAd.Builder<Builder> {

@@ -2,6 +2,7 @@ package com.google.android.exoplayer2.metadata.scte35;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
 import com.google.android.exoplayer2.util.ParsableByteArray;
 
 public final class PrivateCommand extends SpliceCommand {

@@ -7,8 +7,8 @@ import com.google.android.libraries.gcoreclient.common.api.GcoreResult;
 import com.google.android.libraries.gcoreclient.common.api.GcoreStatus;
 
 public class GcoreResultImpl implements GcoreResult, GcoreReleasable {
-    private GcoreStatusImpl gcoreStatus;
     private final Result result;
+    private GcoreStatusImpl gcoreStatus;
 
     public GcoreResultImpl(Result result2) {
         this.result = result2;

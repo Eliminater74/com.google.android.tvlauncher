@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.leanback.C0364R;
 
 public class ErrorSupportFragment extends BrandedSupportFragment {
@@ -24,6 +25,19 @@ public class ErrorSupportFragment extends BrandedSupportFragment {
     private CharSequence mMessage;
     private TextView mTextView;
 
+    private static Paint.FontMetricsInt getFontMetricsInt(TextView textView) {
+        Paint paint = new Paint(1);
+        paint.setTextSize(textView.getTextSize());
+        paint.setTypeface(textView.getTypeface());
+        return paint.getFontMetricsInt();
+    }
+
+    private static void setTopMargin(TextView textView, int topMargin) {
+        ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) textView.getLayoutParams();
+        lp.topMargin = topMargin;
+        textView.setLayoutParams(lp);
+    }
+
     public void setDefaultBackground(boolean translucent) {
         this.mBackgroundDrawable = null;
         this.mIsBackgroundTranslucent = translucent;
@@ -33,6 +47,10 @@ public class ErrorSupportFragment extends BrandedSupportFragment {
 
     public boolean isBackgroundTranslucent() {
         return this.mIsBackgroundTranslucent;
+    }
+
+    public Drawable getBackgroundDrawable() {
+        return this.mBackgroundDrawable;
     }
 
     public void setBackgroundDrawable(Drawable drawable) {
@@ -45,8 +63,8 @@ public class ErrorSupportFragment extends BrandedSupportFragment {
         updateMessage();
     }
 
-    public Drawable getBackgroundDrawable() {
-        return this.mBackgroundDrawable;
+    public Drawable getImageDrawable() {
+        return this.mDrawable;
     }
 
     public void setImageDrawable(Drawable drawable) {
@@ -54,8 +72,8 @@ public class ErrorSupportFragment extends BrandedSupportFragment {
         updateImageDrawable();
     }
 
-    public Drawable getImageDrawable() {
-        return this.mDrawable;
+    public CharSequence getMessage() {
+        return this.mMessage;
     }
 
     public void setMessage(CharSequence message) {
@@ -63,8 +81,8 @@ public class ErrorSupportFragment extends BrandedSupportFragment {
         updateMessage();
     }
 
-    public CharSequence getMessage() {
-        return this.mMessage;
+    public String getButtonText() {
+        return this.mButtonText;
     }
 
     public void setButtonText(String text) {
@@ -72,17 +90,13 @@ public class ErrorSupportFragment extends BrandedSupportFragment {
         updateButton();
     }
 
-    public String getButtonText() {
-        return this.mButtonText;
+    public View.OnClickListener getButtonClickListener() {
+        return this.mButtonClickListener;
     }
 
     public void setButtonClickListener(View.OnClickListener clickListener) {
         this.mButtonClickListener = clickListener;
         updateButton();
-    }
-
-    public View.OnClickListener getButtonClickListener() {
-        return this.mButtonClickListener;
     }
 
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
@@ -149,18 +163,5 @@ public class ErrorSupportFragment extends BrandedSupportFragment {
     public void onStart() {
         super.onStart();
         this.mErrorFrame.requestFocus();
-    }
-
-    private static Paint.FontMetricsInt getFontMetricsInt(TextView textView) {
-        Paint paint = new Paint(1);
-        paint.setTextSize(textView.getTextSize());
-        paint.setTypeface(textView.getTypeface());
-        return paint.getFontMetricsInt();
-    }
-
-    private static void setTopMargin(TextView textView, int topMargin) {
-        ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) textView.getLayoutParams();
-        lp.topMargin = topMargin;
-        textView.setLayoutParams(lp);
     }
 }

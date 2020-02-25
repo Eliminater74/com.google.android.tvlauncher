@@ -50,6 +50,16 @@ public interface ShuffleOrder {
             }
         }
 
+        private static int[] createShuffledList(int length, Random random2) {
+            int[] shuffled2 = new int[length];
+            for (int i = 0; i < length; i++) {
+                int swapIndex = random2.nextInt(i + 1);
+                shuffled2[i] = shuffled2[swapIndex];
+                shuffled2[swapIndex] = i;
+            }
+            return shuffled2;
+        }
+
         public int getLength() {
             return this.shuffled.length;
         }
@@ -139,16 +149,6 @@ public interface ShuffleOrder {
 
         public ShuffleOrder cloneAndClear() {
             return new DefaultShuffleOrder(0, new Random(this.random.nextLong()));
-        }
-
-        private static int[] createShuffledList(int length, Random random2) {
-            int[] shuffled2 = new int[length];
-            for (int i = 0; i < length; i++) {
-                int swapIndex = random2.nextInt(i + 1);
-                shuffled2[i] = shuffled2[swapIndex];
-                shuffled2[swapIndex] = i;
-            }
-            return shuffled2;
         }
     }
 

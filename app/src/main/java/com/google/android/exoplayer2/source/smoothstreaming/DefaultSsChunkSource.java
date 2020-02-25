@@ -2,6 +2,7 @@ package com.google.android.exoplayer2.source.smoothstreaming;
 
 import android.net.Uri;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.SeekParameters;
@@ -15,7 +16,6 @@ import com.google.android.exoplayer2.source.chunk.ChunkHolder;
 import com.google.android.exoplayer2.source.chunk.ContainerMediaChunk;
 import com.google.android.exoplayer2.source.chunk.MediaChunk;
 import com.google.android.exoplayer2.source.chunk.MediaChunkIterator;
-import com.google.android.exoplayer2.source.smoothstreaming.SsChunkSource;
 import com.google.android.exoplayer2.source.smoothstreaming.manifest.SsManifest;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.upstream.DataSource;
@@ -23,34 +23,19 @@ import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.LoaderErrorThrower;
 import com.google.android.exoplayer2.upstream.TransferListener;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.IOException;
 import java.util.List;
 
 public class DefaultSsChunkSource implements SsChunkSource {
-    private int currentManifestChunkOffset;
     private final DataSource dataSource;
     private final ChunkExtractorWrapper[] extractorWrappers;
-    private IOException fatalError;
-    private SsManifest manifest;
     private final LoaderErrorThrower manifestLoaderErrorThrower;
     private final int streamElementIndex;
     private final TrackSelection trackSelection;
-
-    public static final class Factory implements SsChunkSource.Factory {
-        private final DataSource.Factory dataSourceFactory;
-
-        public Factory(DataSource.Factory dataSourceFactory2) {
-            this.dataSourceFactory = dataSourceFactory2;
-        }
-
-        public SsChunkSource createChunkSource(LoaderErrorThrower manifestLoaderErrorThrower, SsManifest manifest, int elementIndex, TrackSelection trackSelection, @Nullable TransferListener transferListener) {
-            DataSource dataSource = this.dataSourceFactory.createDataSource();
-            if (transferListener != null) {
-                dataSource.addTransferListener(transferListener);
-            }
-            return new DefaultSsChunkSource(manifestLoaderErrorThrower, manifest, elementIndex, trackSelection, dataSource);
-        }
-    }
+    private int currentManifestChunkOffset;
+    private IOException fatalError;
+    private SsManifest manifest;
 
     public DefaultSsChunkSource(LoaderErrorThrower manifestLoaderErrorThrower2, SsManifest manifest2, int streamElementIndex2, TrackSelection trackSelection2, DataSource dataSource2) {
         SsManifest ssManifest = manifest2;
@@ -72,6 +57,12 @@ public class DefaultSsChunkSource implements SsChunkSource {
             i2++;
             ssManifest = manifest2;
         }
+    }
+
+    private static MediaChunk newMediaChunk(Format format, DataSource dataSource2, Uri uri, String cacheKey, int chunkIndex, long chunkStartTimeUs, long chunkEndTimeUs, long chunkSeekTimeUs, int trackSelectionReason, Object trackSelectionData, ChunkExtractorWrapper extractorWrapper) {
+        int i = trackSelectionReason;
+        Object obj = trackSelectionData;
+        return new ContainerMediaChunk(dataSource2, new DataSpec(uri, 0, -1, cacheKey), format, i, obj, chunkStartTimeUs, chunkEndTimeUs, chunkSeekTimeUs, C0841C.TIME_UNSET, (long) chunkIndex, 1, chunkStartTimeUs, extractorWrapper);
     }
 
     public long getAdjustedSeekPositionUs(long positionUs, SeekParameters seekParameters) {
@@ -173,12 +164,6 @@ public class DefaultSsChunkSource implements SsChunkSource {
         return false;
     }
 
-    private static MediaChunk newMediaChunk(Format format, DataSource dataSource2, Uri uri, String cacheKey, int chunkIndex, long chunkStartTimeUs, long chunkEndTimeUs, long chunkSeekTimeUs, int trackSelectionReason, Object trackSelectionData, ChunkExtractorWrapper extractorWrapper) {
-        int i = trackSelectionReason;
-        Object obj = trackSelectionData;
-        return new ContainerMediaChunk(dataSource2, new DataSpec(uri, 0, -1, cacheKey), format, i, obj, chunkStartTimeUs, chunkEndTimeUs, chunkSeekTimeUs, C0841C.TIME_UNSET, (long) chunkIndex, 1, chunkStartTimeUs, extractorWrapper);
-    }
-
     private long resolveTimeToLiveEdgeUs(long playbackPositionUs) {
         if (!this.manifest.isLive) {
             return C0841C.TIME_UNSET;
@@ -186,6 +171,22 @@ public class DefaultSsChunkSource implements SsChunkSource {
         SsManifest.StreamElement currentElement = this.manifest.streamElements[this.streamElementIndex];
         int lastChunkIndex = currentElement.chunkCount - 1;
         return (currentElement.getStartTimeUs(lastChunkIndex) + currentElement.getChunkDurationUs(lastChunkIndex)) - playbackPositionUs;
+    }
+
+    public static final class Factory implements SsChunkSource.Factory {
+        private final DataSource.Factory dataSourceFactory;
+
+        public Factory(DataSource.Factory dataSourceFactory2) {
+            this.dataSourceFactory = dataSourceFactory2;
+        }
+
+        public SsChunkSource createChunkSource(LoaderErrorThrower manifestLoaderErrorThrower, SsManifest manifest, int elementIndex, TrackSelection trackSelection, @Nullable TransferListener transferListener) {
+            DataSource dataSource = this.dataSourceFactory.createDataSource();
+            if (transferListener != null) {
+                dataSource.addTransferListener(transferListener);
+            }
+            return new DefaultSsChunkSource(manifestLoaderErrorThrower, manifest, elementIndex, trackSelection, dataSource);
+        }
     }
 
     private static final class StreamElementIterator extends BaseMediaChunkIterator {

@@ -13,6 +13,7 @@ import android.text.style.URLSpan;
 import android.text.util.Linkify;
 import android.webkit.WebView;
 import android.widget.TextView;
+
 import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -43,10 +44,7 @@ public final class LinkifyCompat {
     };
     private static final String[] EMPTY_STRING = new String[0];
 
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    @Retention(RetentionPolicy.SOURCE)
-    /* renamed from: android.support.v4.text.util.LinkifyCompat$LinkifyMask */
-    public @interface LinkifyMask {
+    private LinkifyCompat() {
     }
 
     public static boolean addLinks(@NonNull Spannable text, int mask) {
@@ -320,7 +318,10 @@ public final class LinkifyCompat {
         }
     }
 
-    private LinkifyCompat() {
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    @Retention(RetentionPolicy.SOURCE)
+    /* renamed from: android.support.v4.text.util.LinkifyCompat$LinkifyMask */
+    public @interface LinkifyMask {
     }
 
     /* renamed from: android.support.v4.text.util.LinkifyCompat$LinkSpec */

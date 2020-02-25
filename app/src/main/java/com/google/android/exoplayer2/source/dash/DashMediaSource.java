@@ -6,6 +6,7 @@ import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.SparseArray;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerLibraryInfo;
@@ -20,9 +21,6 @@ import com.google.android.exoplayer2.source.MediaPeriod;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.MediaSourceEventListener;
 import com.google.android.exoplayer2.source.ads.AdsMediaSource;
-import com.google.android.exoplayer2.source.dash.DashChunkSource;
-import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
-import com.google.android.exoplayer2.source.dash.PlayerEmsgHandler;
 import com.google.android.exoplayer2.source.dash.manifest.AdaptationSet;
 import com.google.android.exoplayer2.source.dash.manifest.DashManifest;
 import com.google.android.exoplayer2.source.dash.manifest.DashManifestParser;
@@ -39,6 +37,7 @@ import com.google.android.exoplayer2.upstream.TransferListener;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -61,169 +60,47 @@ public final class DashMediaSource extends BaseMediaSource {
     private static final long MIN_LIVE_DEFAULT_START_POSITION_US = 5000000;
     private static final int NOTIFY_MANIFEST_INTERVAL_MS = 5000;
     private static final String TAG = "DashMediaSource";
+
+    static {
+        ExoPlayerLibraryInfo.registerModule("goog.exo.dash");
+    }
+
     private final DashChunkSource.Factory chunkSourceFactory;
     private final CompositeSequenceableLoaderFactory compositeSequenceableLoaderFactory;
+    private final long livePresentationDelayMs;
+    private final boolean livePresentationDelayOverridesManifest;
+    private final LoadErrorHandlingPolicy loadErrorHandlingPolicy;
+    private final ManifestCallback manifestCallback;
+    private final DataSource.Factory manifestDataSourceFactory;
+    private final MediaSourceEventListener.EventDispatcher manifestEventDispatcher;
+    private final LoaderErrorThrower manifestLoadErrorThrower;
+    private final ParsingLoadable.Parser<? extends DashManifest> manifestParser;
+    private final Object manifestUriLock;
+    private final SparseArray<DashMediaPeriod> periodsById;
+    private final PlayerEmsgHandler.PlayerEmsgCallback playerEmsgCallback;
+    private final Runnable refreshManifestRunnable;
+    private final boolean sideloadedManifest;
+    private final Runnable simulateManifestRefreshRunnable;
+    @Nullable
+    private final Object tag;
+    /* access modifiers changed from: private */
+    public Loader loader;
+    /* access modifiers changed from: private */
+    public IOException manifestFatalError;
     private DataSource dataSource;
     private long elapsedRealtimeOffsetMs;
     private long expiredManifestPublishTimeUs;
     private int firstPeriodId;
     private Handler handler;
     private Uri initialManifestUri;
-    private final long livePresentationDelayMs;
-    private final boolean livePresentationDelayOverridesManifest;
-    private final LoadErrorHandlingPolicy loadErrorHandlingPolicy;
-    /* access modifiers changed from: private */
-    public Loader loader;
     private DashManifest manifest;
-    private final ManifestCallback manifestCallback;
-    private final DataSource.Factory manifestDataSourceFactory;
-    private final MediaSourceEventListener.EventDispatcher manifestEventDispatcher;
-    /* access modifiers changed from: private */
-    public IOException manifestFatalError;
     private long manifestLoadEndTimestampMs;
-    private final LoaderErrorThrower manifestLoadErrorThrower;
     private boolean manifestLoadPending;
     private long manifestLoadStartTimestampMs;
-    private final ParsingLoadable.Parser<? extends DashManifest> manifestParser;
     private Uri manifestUri;
-    private final Object manifestUriLock;
     @Nullable
     private TransferListener mediaTransferListener;
-    private final SparseArray<DashMediaPeriod> periodsById;
-    private final PlayerEmsgHandler.PlayerEmsgCallback playerEmsgCallback;
-    private final Runnable refreshManifestRunnable;
-    private final boolean sideloadedManifest;
-    private final Runnable simulateManifestRefreshRunnable;
     private int staleManifestReloadAttempt;
-    @Nullable
-    private final Object tag;
-
-    static {
-        ExoPlayerLibraryInfo.registerModule("goog.exo.dash");
-    }
-
-    public static final class Factory implements AdsMediaSource.MediaSourceFactory {
-        private final DashChunkSource.Factory chunkSourceFactory;
-        private CompositeSequenceableLoaderFactory compositeSequenceableLoaderFactory;
-        private boolean isCreateCalled;
-        private long livePresentationDelayMs;
-        private boolean livePresentationDelayOverridesManifest;
-        private LoadErrorHandlingPolicy loadErrorHandlingPolicy;
-        @Nullable
-        private final DataSource.Factory manifestDataSourceFactory;
-        @Nullable
-        private ParsingLoadable.Parser<? extends DashManifest> manifestParser;
-        @Nullable
-        private List<StreamKey> streamKeys;
-        @Nullable
-        private Object tag;
-
-        public Factory(DataSource.Factory dataSourceFactory) {
-            this(new DefaultDashChunkSource.Factory(dataSourceFactory), dataSourceFactory);
-        }
-
-        public Factory(DashChunkSource.Factory chunkSourceFactory2, @Nullable DataSource.Factory manifestDataSourceFactory2) {
-            this.chunkSourceFactory = (DashChunkSource.Factory) Assertions.checkNotNull(chunkSourceFactory2);
-            this.manifestDataSourceFactory = manifestDataSourceFactory2;
-            this.loadErrorHandlingPolicy = new DefaultLoadErrorHandlingPolicy();
-            this.livePresentationDelayMs = 30000;
-            this.compositeSequenceableLoaderFactory = new DefaultCompositeSequenceableLoaderFactory();
-        }
-
-        public Factory setTag(Object tag2) {
-            Assertions.checkState(!this.isCreateCalled);
-            this.tag = tag2;
-            return this;
-        }
-
-        @Deprecated
-        public Factory setMinLoadableRetryCount(int minLoadableRetryCount) {
-            return setLoadErrorHandlingPolicy(new DefaultLoadErrorHandlingPolicy(minLoadableRetryCount));
-        }
-
-        public Factory setLoadErrorHandlingPolicy(LoadErrorHandlingPolicy loadErrorHandlingPolicy2) {
-            Assertions.checkState(!this.isCreateCalled);
-            this.loadErrorHandlingPolicy = loadErrorHandlingPolicy2;
-            return this;
-        }
-
-        @Deprecated
-        public Factory setLivePresentationDelayMs(long livePresentationDelayMs2) {
-            if (livePresentationDelayMs2 == -1) {
-                return setLivePresentationDelayMs(30000, false);
-            }
-            return setLivePresentationDelayMs(livePresentationDelayMs2, true);
-        }
-
-        public Factory setLivePresentationDelayMs(long livePresentationDelayMs2, boolean overridesManifest) {
-            Assertions.checkState(!this.isCreateCalled);
-            this.livePresentationDelayMs = livePresentationDelayMs2;
-            this.livePresentationDelayOverridesManifest = overridesManifest;
-            return this;
-        }
-
-        public Factory setManifestParser(ParsingLoadable.Parser<? extends DashManifest> manifestParser2) {
-            Assertions.checkState(!this.isCreateCalled);
-            this.manifestParser = (ParsingLoadable.Parser) Assertions.checkNotNull(manifestParser2);
-            return this;
-        }
-
-        public Factory setStreamKeys(List<StreamKey> streamKeys2) {
-            Assertions.checkState(!this.isCreateCalled);
-            this.streamKeys = streamKeys2;
-            return this;
-        }
-
-        public Factory setCompositeSequenceableLoaderFactory(CompositeSequenceableLoaderFactory compositeSequenceableLoaderFactory2) {
-            Assertions.checkState(!this.isCreateCalled);
-            this.compositeSequenceableLoaderFactory = (CompositeSequenceableLoaderFactory) Assertions.checkNotNull(compositeSequenceableLoaderFactory2);
-            return this;
-        }
-
-        public DashMediaSource createMediaSource(DashManifest manifest) {
-            Assertions.checkArgument(!manifest.dynamic);
-            this.isCreateCalled = true;
-            List<StreamKey> list = this.streamKeys;
-            if (list != null && !list.isEmpty()) {
-                manifest = manifest.copy(this.streamKeys);
-            }
-            return new DashMediaSource(manifest, null, null, null, this.chunkSourceFactory, this.compositeSequenceableLoaderFactory, this.loadErrorHandlingPolicy, this.livePresentationDelayMs, this.livePresentationDelayOverridesManifest, this.tag);
-        }
-
-        @Deprecated
-        public DashMediaSource createMediaSource(DashManifest manifest, @Nullable Handler eventHandler, @Nullable MediaSourceEventListener eventListener) {
-            DashMediaSource mediaSource = createMediaSource(manifest);
-            if (!(eventHandler == null || eventListener == null)) {
-                mediaSource.addEventListener(eventHandler, eventListener);
-            }
-            return mediaSource;
-        }
-
-        public DashMediaSource createMediaSource(Uri manifestUri) {
-            this.isCreateCalled = true;
-            if (this.manifestParser == null) {
-                this.manifestParser = new DashManifestParser();
-            }
-            List<StreamKey> list = this.streamKeys;
-            if (list != null) {
-                this.manifestParser = new FilteringManifestParser(this.manifestParser, list);
-            }
-            return new DashMediaSource(null, (Uri) Assertions.checkNotNull(manifestUri), this.manifestDataSourceFactory, this.manifestParser, this.chunkSourceFactory, this.compositeSequenceableLoaderFactory, this.loadErrorHandlingPolicy, this.livePresentationDelayMs, this.livePresentationDelayOverridesManifest, this.tag);
-        }
-
-        @Deprecated
-        public DashMediaSource createMediaSource(Uri manifestUri, @Nullable Handler eventHandler, @Nullable MediaSourceEventListener eventListener) {
-            DashMediaSource mediaSource = createMediaSource(manifestUri);
-            if (!(eventHandler == null || eventListener == null)) {
-                mediaSource.addEventListener(eventHandler, eventListener);
-            }
-            return mediaSource;
-        }
-
-        public int[] getSupportedTypes() {
-            return new int[]{0};
-        }
-    }
 
     @Deprecated
     public DashMediaSource(DashManifest manifest2, DashChunkSource.Factory chunkSourceFactory2, Handler eventHandler, MediaSourceEventListener eventListener) {
@@ -679,10 +556,139 @@ public final class DashMediaSource extends BaseMediaSource {
         return C0841C.msToUs(System.currentTimeMillis());
     }
 
+    public static final class Factory implements AdsMediaSource.MediaSourceFactory {
+        private final DashChunkSource.Factory chunkSourceFactory;
+        @Nullable
+        private final DataSource.Factory manifestDataSourceFactory;
+        private CompositeSequenceableLoaderFactory compositeSequenceableLoaderFactory;
+        private boolean isCreateCalled;
+        private long livePresentationDelayMs;
+        private boolean livePresentationDelayOverridesManifest;
+        private LoadErrorHandlingPolicy loadErrorHandlingPolicy;
+        @Nullable
+        private ParsingLoadable.Parser<? extends DashManifest> manifestParser;
+        @Nullable
+        private List<StreamKey> streamKeys;
+        @Nullable
+        private Object tag;
+
+        public Factory(DataSource.Factory dataSourceFactory) {
+            this(new DefaultDashChunkSource.Factory(dataSourceFactory), dataSourceFactory);
+        }
+
+        public Factory(DashChunkSource.Factory chunkSourceFactory2, @Nullable DataSource.Factory manifestDataSourceFactory2) {
+            this.chunkSourceFactory = (DashChunkSource.Factory) Assertions.checkNotNull(chunkSourceFactory2);
+            this.manifestDataSourceFactory = manifestDataSourceFactory2;
+            this.loadErrorHandlingPolicy = new DefaultLoadErrorHandlingPolicy();
+            this.livePresentationDelayMs = 30000;
+            this.compositeSequenceableLoaderFactory = new DefaultCompositeSequenceableLoaderFactory();
+        }
+
+        public Factory setTag(Object tag2) {
+            Assertions.checkState(!this.isCreateCalled);
+            this.tag = tag2;
+            return this;
+        }
+
+        @Deprecated
+        public Factory setMinLoadableRetryCount(int minLoadableRetryCount) {
+            return setLoadErrorHandlingPolicy(new DefaultLoadErrorHandlingPolicy(minLoadableRetryCount));
+        }
+
+        public Factory setLoadErrorHandlingPolicy(LoadErrorHandlingPolicy loadErrorHandlingPolicy2) {
+            Assertions.checkState(!this.isCreateCalled);
+            this.loadErrorHandlingPolicy = loadErrorHandlingPolicy2;
+            return this;
+        }
+
+        @Deprecated
+        public Factory setLivePresentationDelayMs(long livePresentationDelayMs2) {
+            if (livePresentationDelayMs2 == -1) {
+                return setLivePresentationDelayMs(30000, false);
+            }
+            return setLivePresentationDelayMs(livePresentationDelayMs2, true);
+        }
+
+        public Factory setLivePresentationDelayMs(long livePresentationDelayMs2, boolean overridesManifest) {
+            Assertions.checkState(!this.isCreateCalled);
+            this.livePresentationDelayMs = livePresentationDelayMs2;
+            this.livePresentationDelayOverridesManifest = overridesManifest;
+            return this;
+        }
+
+        public Factory setManifestParser(ParsingLoadable.Parser<? extends DashManifest> manifestParser2) {
+            Assertions.checkState(!this.isCreateCalled);
+            this.manifestParser = (ParsingLoadable.Parser) Assertions.checkNotNull(manifestParser2);
+            return this;
+        }
+
+        public Factory setStreamKeys(List<StreamKey> streamKeys2) {
+            Assertions.checkState(!this.isCreateCalled);
+            this.streamKeys = streamKeys2;
+            return this;
+        }
+
+        public Factory setCompositeSequenceableLoaderFactory(CompositeSequenceableLoaderFactory compositeSequenceableLoaderFactory2) {
+            Assertions.checkState(!this.isCreateCalled);
+            this.compositeSequenceableLoaderFactory = (CompositeSequenceableLoaderFactory) Assertions.checkNotNull(compositeSequenceableLoaderFactory2);
+            return this;
+        }
+
+        public DashMediaSource createMediaSource(DashManifest manifest) {
+            Assertions.checkArgument(!manifest.dynamic);
+            this.isCreateCalled = true;
+            List<StreamKey> list = this.streamKeys;
+            if (list != null && !list.isEmpty()) {
+                manifest = manifest.copy(this.streamKeys);
+            }
+            return new DashMediaSource(manifest, null, null, null, this.chunkSourceFactory, this.compositeSequenceableLoaderFactory, this.loadErrorHandlingPolicy, this.livePresentationDelayMs, this.livePresentationDelayOverridesManifest, this.tag);
+        }
+
+        @Deprecated
+        public DashMediaSource createMediaSource(DashManifest manifest, @Nullable Handler eventHandler, @Nullable MediaSourceEventListener eventListener) {
+            DashMediaSource mediaSource = createMediaSource(manifest);
+            if (!(eventHandler == null || eventListener == null)) {
+                mediaSource.addEventListener(eventHandler, eventListener);
+            }
+            return mediaSource;
+        }
+
+        public DashMediaSource createMediaSource(Uri manifestUri) {
+            this.isCreateCalled = true;
+            if (this.manifestParser == null) {
+                this.manifestParser = new DashManifestParser();
+            }
+            List<StreamKey> list = this.streamKeys;
+            if (list != null) {
+                this.manifestParser = new FilteringManifestParser(this.manifestParser, list);
+            }
+            return new DashMediaSource(null, (Uri) Assertions.checkNotNull(manifestUri), this.manifestDataSourceFactory, this.manifestParser, this.chunkSourceFactory, this.compositeSequenceableLoaderFactory, this.loadErrorHandlingPolicy, this.livePresentationDelayMs, this.livePresentationDelayOverridesManifest, this.tag);
+        }
+
+        @Deprecated
+        public DashMediaSource createMediaSource(Uri manifestUri, @Nullable Handler eventHandler, @Nullable MediaSourceEventListener eventListener) {
+            DashMediaSource mediaSource = createMediaSource(manifestUri);
+            if (!(eventHandler == null || eventListener == null)) {
+                mediaSource.addEventListener(eventHandler, eventListener);
+            }
+            return mediaSource;
+        }
+
+        public int[] getSupportedTypes() {
+            return new int[]{0};
+        }
+    }
+
     private static final class PeriodSeekInfo {
         public final long availableEndTimeUs;
         public final long availableStartTimeUs;
         public final boolean isIndexExplicit;
+
+        private PeriodSeekInfo(boolean isIndexExplicit2, long availableStartTimeUs2, long availableEndTimeUs2) {
+            this.isIndexExplicit = isIndexExplicit2;
+            this.availableStartTimeUs = availableStartTimeUs2;
+            this.availableEndTimeUs = availableEndTimeUs2;
+        }
 
         /* JADX INFO: Multiple debug info for r9v4 long: [D('availableEndTimeUs' long), D('adaptationSetCount' int)] */
         /* JADX INFO: Multiple debug info for r0v8 long: [D('adaptationSetAvailableEndTimeUs' long), D('lastSegmentNum' long)] */
@@ -758,12 +764,6 @@ public final class DashMediaSource extends BaseMediaSource {
                 haveAudioVideoAdaptationSets2 = haveAudioVideoAdaptationSets;
             }
             return new PeriodSeekInfo(isIndexExplicit2, availableStartTimeUs2, availableStartTimeUs3);
-        }
-
-        private PeriodSeekInfo(boolean isIndexExplicit2, long availableStartTimeUs2, long availableEndTimeUs2) {
-            this.isIndexExplicit = isIndexExplicit2;
-            this.availableStartTimeUs = availableStartTimeUs2;
-            this.availableEndTimeUs = availableEndTimeUs2;
         }
     }
 
@@ -854,6 +854,46 @@ public final class DashMediaSource extends BaseMediaSource {
         }
     }
 
+    private static final class XsDateTimeParser implements ParsingLoadable.Parser<Long> {
+        private XsDateTimeParser() {
+        }
+
+        public Long parse(Uri uri, InputStream inputStream) throws IOException {
+            return Long.valueOf(Util.parseXsDateTime(new BufferedReader(new InputStreamReader(inputStream)).readLine()));
+        }
+    }
+
+    static final class Iso8601Parser implements ParsingLoadable.Parser<Long> {
+        private static final Pattern TIMESTAMP_WITH_TIMEZONE_PATTERN = Pattern.compile("(.+?)(Z|((\\+|-|−)(\\d\\d)(:?(\\d\\d))?))");
+
+        Iso8601Parser() {
+        }
+
+        public Long parse(Uri uri, InputStream inputStream) throws IOException {
+            String firstLine = new BufferedReader(new InputStreamReader(inputStream, Charset.forName("UTF-8"))).readLine();
+            try {
+                Matcher matcher = TIMESTAMP_WITH_TIMEZONE_PATTERN.matcher(firstLine);
+                if (!matcher.matches()) {
+                    String valueOf = String.valueOf(firstLine);
+                    throw new ParserException(valueOf.length() != 0 ? "Couldn't parse timestamp: ".concat(valueOf) : new String("Couldn't parse timestamp: "));
+                }
+                String timestampWithoutTimezone = matcher.group(1);
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
+                format.setTimeZone(TimeZone.getTimeZone("UTC"));
+                long timestampMs = format.parse(timestampWithoutTimezone).getTime();
+                if (!"Z".equals(matcher.group(2))) {
+                    long sign = "+".equals(matcher.group(4)) ? 1 : -1;
+                    long hours = Long.parseLong(matcher.group(5));
+                    String minutesString = matcher.group(7);
+                    timestampMs -= ((((hours * 60) + (TextUtils.isEmpty(minutesString) ? 0 : Long.parseLong(minutesString))) * 60) * 1000) * sign;
+                }
+                return Long.valueOf(timestampMs);
+            } catch (ParseException e) {
+                throw new ParserException(e);
+            }
+        }
+    }
+
     private final class DefaultPlayerEmsgCallback implements PlayerEmsgHandler.PlayerEmsgCallback {
         private DefaultPlayerEmsgCallback() {
         }
@@ -922,46 +962,6 @@ public final class DashMediaSource extends BaseMediaSource {
 
         public Loader.LoadErrorAction onLoadError(ParsingLoadable<Long> loadable, long elapsedRealtimeMs, long loadDurationMs, IOException error, int errorCount) {
             return DashMediaSource.this.onUtcTimestampLoadError(loadable, elapsedRealtimeMs, loadDurationMs, error);
-        }
-    }
-
-    private static final class XsDateTimeParser implements ParsingLoadable.Parser<Long> {
-        private XsDateTimeParser() {
-        }
-
-        public Long parse(Uri uri, InputStream inputStream) throws IOException {
-            return Long.valueOf(Util.parseXsDateTime(new BufferedReader(new InputStreamReader(inputStream)).readLine()));
-        }
-    }
-
-    static final class Iso8601Parser implements ParsingLoadable.Parser<Long> {
-        private static final Pattern TIMESTAMP_WITH_TIMEZONE_PATTERN = Pattern.compile("(.+?)(Z|((\\+|-|−)(\\d\\d)(:?(\\d\\d))?))");
-
-        Iso8601Parser() {
-        }
-
-        public Long parse(Uri uri, InputStream inputStream) throws IOException {
-            String firstLine = new BufferedReader(new InputStreamReader(inputStream, Charset.forName("UTF-8"))).readLine();
-            try {
-                Matcher matcher = TIMESTAMP_WITH_TIMEZONE_PATTERN.matcher(firstLine);
-                if (!matcher.matches()) {
-                    String valueOf = String.valueOf(firstLine);
-                    throw new ParserException(valueOf.length() != 0 ? "Couldn't parse timestamp: ".concat(valueOf) : new String("Couldn't parse timestamp: "));
-                }
-                String timestampWithoutTimezone = matcher.group(1);
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
-                format.setTimeZone(TimeZone.getTimeZone("UTC"));
-                long timestampMs = format.parse(timestampWithoutTimezone).getTime();
-                if (!"Z".equals(matcher.group(2))) {
-                    long sign = "+".equals(matcher.group(4)) ? 1 : -1;
-                    long hours = Long.parseLong(matcher.group(5));
-                    String minutesString = matcher.group(7);
-                    timestampMs -= ((((hours * 60) + (TextUtils.isEmpty(minutesString) ? 0 : Long.parseLong(minutesString))) * 60) * 1000) * sign;
-                }
-                return Long.valueOf(timestampMs);
-            } catch (ParseException e) {
-                throw new ParserException(e);
-            }
         }
     }
 

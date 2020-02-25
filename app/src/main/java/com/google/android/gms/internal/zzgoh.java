@@ -1,6 +1,5 @@
 package com.google.android.gms.internal;
 
-import com.google.android.gms.internal.zzgnv;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,9 +16,6 @@ abstract class zzgoh<T extends zzgnv> {
 
     zzgoh() {
     }
-
-    /* access modifiers changed from: protected */
-    public abstract T zza();
 
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
      method: ClspMth{java.util.logging.Logger.logp(java.util.logging.Level, java.lang.String, java.lang.String, java.lang.String, java.lang.Throwable):void}
@@ -80,4 +76,7 @@ abstract class zzgoh<T extends zzgnv> {
             }
         }
     }
+
+    /* access modifiers changed from: protected */
+    public abstract T zza();
 }

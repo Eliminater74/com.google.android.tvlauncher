@@ -1,7 +1,5 @@
 package com.google.android.exoplayer2.source.hls;
 
-import com.google.android.exoplayer2.source.hls.HlsSampleStreamWrapper;
-
 final /* synthetic */ class HlsSampleStreamWrapper$$Lambda$2 implements Runnable {
     private final HlsSampleStreamWrapper.Callback arg$1;
 

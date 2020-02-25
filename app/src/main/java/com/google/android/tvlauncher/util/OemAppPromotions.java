@@ -14,11 +14,12 @@ import android.support.annotation.VisibleForTesting;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
+
 import com.google.android.tvlauncher.appsview.LaunchItem;
 import com.google.android.tvlauncher.appsview.data.LaunchItemsManager;
 import com.google.android.tvlauncher.appsview.data.LaunchItemsManagerProvider;
 import com.google.android.tvlauncher.settings.ProfilesManager;
-import com.google.android.tvlauncher.util.OemAppPromotionsXmlParser;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -38,7 +39,15 @@ public class OemAppPromotions implements LaunchItemsManager.AppsViewChangeListen
     /* access modifiers changed from: private */
     public final List<OemPromotionApp> mAllPromotions = new ArrayList();
     /* access modifiers changed from: private */
+    public final Context mContext;
+    /* access modifiers changed from: private */
+    public final List<OemPromotionApp> mVisiblePromotions = new ArrayList();
+    private final String mPackageName;
+    /* access modifiers changed from: private */
     public List<OnAppPromotionsLoadedListener> mAppPromotionsLoadedListeners;
+    /* access modifiers changed from: private */
+    public String mPromotionsRowTitle;
+    private long mPromotionsLastLoadedTime = -1;
     private ContentObserver mAppPromotionsObserver = new ContentObserver(new Handler()) {
         public void onChange(boolean selfChange, Uri uri) {
             if (PartnerCustomizationContract.OEM_APP_RECS_URI.equals(uri)) {
@@ -46,18 +55,6 @@ public class OemAppPromotions implements LaunchItemsManager.AppsViewChangeListen
             }
         }
     };
-    /* access modifiers changed from: private */
-    public final Context mContext;
-    private final String mPackageName;
-    private long mPromotionsLastLoadedTime = -1;
-    /* access modifiers changed from: private */
-    public String mPromotionsRowTitle;
-    /* access modifiers changed from: private */
-    public final List<OemPromotionApp> mVisiblePromotions = new ArrayList();
-
-    public interface OnAppPromotionsLoadedListener {
-        void onAppPromotionsLoaded(List<OemPromotionApp> list);
-    }
 
     private OemAppPromotions(Context context, String packageName) {
         this.mPackageName = packageName;
@@ -209,6 +206,10 @@ public class OemAppPromotions implements LaunchItemsManager.AppsViewChangeListen
     }
 
     public void onEditModeItemOrderChange(ArrayList<LaunchItem> arrayList, boolean isGameItems, Pair<Integer, Integer> pair) {
+    }
+
+    public interface OnAppPromotionsLoadedListener {
+        void onAppPromotionsLoaded(List<OemPromotionApp> list);
     }
 
     private class AppPromotionsLoadingTask extends AsyncTask<Void, Void, Boolean> {

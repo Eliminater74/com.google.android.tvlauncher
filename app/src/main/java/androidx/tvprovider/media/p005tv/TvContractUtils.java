@@ -4,16 +4,20 @@ import android.media.tv.TvContentRating;
 import android.support.annotation.RestrictTo;
 import android.text.TextUtils;
 import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
 /* renamed from: androidx.tvprovider.media.tv.TvContractUtils */
 public class TvContractUtils {
+    static final TvContentRating[] EMPTY = new TvContentRating[0];
     private static final boolean DEBUG = false;
     private static final String DELIMITER = ",";
-    static final TvContentRating[] EMPTY = new TvContentRating[0];
     private static final String TAG = "TvContractUtils";
+
+    private TvContractUtils() {
+    }
 
     public static TvContentRating[] stringToContentRatings(String commaSeparatedRatings) {
         if (TextUtils.isEmpty(commaSeparatedRatings)) {
@@ -63,8 +67,5 @@ public class TvContractUtils {
             ratings.append(audioLanguages[i]);
         }
         return ratings.toString();
-    }
-
-    private TvContractUtils() {
     }
 }

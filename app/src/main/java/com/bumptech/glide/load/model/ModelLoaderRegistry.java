@@ -3,6 +3,7 @@ package com.bumptech.glide.load.model;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.p001v4.util.Pools;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -20,6 +21,11 @@ public class ModelLoaderRegistry {
     private ModelLoaderRegistry(@NonNull MultiModelLoaderFactory multiModelLoaderFactory2) {
         this.cache = new ModelLoaderCache();
         this.multiModelLoaderFactory = multiModelLoaderFactory2;
+    }
+
+    @NonNull
+    private static <A> Class<A> getClass(@NonNull A model) {
+        return model.getClass();
     }
 
     public synchronized <Model, Data> void append(@NonNull Class<Model> modelClass, @NonNull Class<Data> dataClass, @NonNull ModelLoaderFactory<? extends Model, ? extends Data> factory) {
@@ -102,11 +108,6 @@ public class ModelLoaderRegistry {
             throw r3
         */
         throw new UnsupportedOperationException("Method not decompiled: com.bumptech.glide.load.model.ModelLoaderRegistry.getModelLoadersForClass(java.lang.Class):java.util.List");
-    }
-
-    @NonNull
-    private static <A> Class<A> getClass(@NonNull A model) {
-        return model.getClass();
     }
 
     private static class ModelLoaderCache {

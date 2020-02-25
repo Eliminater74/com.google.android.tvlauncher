@@ -1,7 +1,7 @@
 package android.arch.lifecycle;
 
-import android.arch.lifecycle.Lifecycle;
 import android.support.annotation.Nullable;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -136,18 +136,18 @@ class ClassesInfoCache {
             }
         }
 
-        /* access modifiers changed from: package-private */
-        public void invokeCallbacks(LifecycleOwner source, Lifecycle.Event event, Object target) {
-            invokeMethodsForEvent(this.mEventToHandlers.get(event), source, event, target);
-            invokeMethodsForEvent(this.mEventToHandlers.get(Lifecycle.Event.ON_ANY), source, event, target);
-        }
-
         private static void invokeMethodsForEvent(List<MethodReference> handlers, LifecycleOwner source, Lifecycle.Event event, Object mWrapped) {
             if (handlers != null) {
                 for (int i = handlers.size() - 1; i >= 0; i--) {
                     handlers.get(i).invokeCallback(source, event, mWrapped);
                 }
             }
+        }
+
+        /* access modifiers changed from: package-private */
+        public void invokeCallbacks(LifecycleOwner source, Lifecycle.Event event, Object target) {
+            invokeMethodsForEvent(this.mEventToHandlers.get(event), source, event, target);
+            invokeMethodsForEvent(this.mEventToHandlers.get(Lifecycle.Event.ON_ANY), source, event, target);
         }
     }
 

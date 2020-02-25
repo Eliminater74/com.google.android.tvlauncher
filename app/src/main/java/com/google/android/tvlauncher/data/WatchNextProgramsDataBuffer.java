@@ -5,6 +5,11 @@ import android.database.Cursor;
 public class WatchNextProgramsDataBuffer extends AbstractDataBuffer<ProgramRef> {
     private int mStartIndex = 0;
 
+    public WatchNextProgramsDataBuffer(Cursor cursor) {
+        super(cursor);
+        calculateStartIndex();
+    }
+
     public /* bridge */ /* synthetic */ byte[] getBlob(int i, int i2) {
         return super.getBlob(i, i2);
     }
@@ -15,11 +20,6 @@ public class WatchNextProgramsDataBuffer extends AbstractDataBuffer<ProgramRef> 
 
     public /* bridge */ /* synthetic */ void release() {
         super.release();
-    }
-
-    public WatchNextProgramsDataBuffer(Cursor cursor) {
-        super(cursor);
-        calculateStartIndex();
     }
 
     public ProgramRef get(int position) {

@@ -4,15 +4,16 @@ import com.google.common.annotations.GwtCompatible;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.UnmodifiableIterator;
-import com.google.common.util.concurrent.AbstractFuture;
 import com.google.errorprone.annotations.ForOverride;
 import com.google.errorprone.annotations.OverridingMethodsMustInvokeSuper;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible
 abstract class AggregateFuture<InputT, OutputT> extends AbstractFuture.TrustedFuture<OutputT> {
@@ -23,6 +24,17 @@ abstract class AggregateFuture<InputT, OutputT> extends AbstractFuture.TrustedFu
     public AggregateFuture<InputT, OutputT>.RunningState runningState;
 
     AggregateFuture() {
+    }
+
+    /* access modifiers changed from: private */
+    public static boolean addCausalChain(Set<Throwable> seen, Throwable t) {
+        while (t != null) {
+            if (!seen.add(t)) {
+                return false;
+            }
+            t = t.getCause();
+        }
+        return true;
     }
 
     /* access modifiers changed from: protected */
@@ -72,18 +84,18 @@ abstract class AggregateFuture<InputT, OutputT> extends AbstractFuture.TrustedFu
         /* access modifiers changed from: private */
         public ImmutableCollection<? extends ListenableFuture<? extends InputT>> futures;
 
-        /* access modifiers changed from: package-private */
-        public abstract void collectOneValue(boolean z, int i, @NullableDecl InputT inputt);
-
-        /* access modifiers changed from: package-private */
-        public abstract void handleAllCompleted();
-
         RunningState(ImmutableCollection<? extends ListenableFuture<? extends InputT>> futures2, boolean allMustSucceed2, boolean collectsValues2) {
             super(futures2.size());
             this.futures = (ImmutableCollection) Preconditions.checkNotNull(futures2);
             this.allMustSucceed = allMustSucceed2;
             this.collectsValues = collectsValues2;
         }
+
+        /* access modifiers changed from: package-private */
+        public abstract void collectOneValue(boolean z, int i, @NullableDecl InputT inputt);
+
+        /* access modifiers changed from: package-private */
+        public abstract void handleAllCompleted();
 
         public final void run() {
             decrementCountAndMaybeComplete();
@@ -204,16 +216,5 @@ abstract class AggregateFuture<InputT, OutputT> extends AbstractFuture.TrustedFu
         /* access modifiers changed from: package-private */
         public void interruptTask() {
         }
-    }
-
-    /* access modifiers changed from: private */
-    public static boolean addCausalChain(Set<Throwable> seen, Throwable t) {
-        while (t != null) {
-            if (!seen.add(t)) {
-                return false;
-            }
-            t = t.getCause();
-        }
-        return true;
     }
 }

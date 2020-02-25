@@ -8,6 +8,7 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.p001v4.app.Fragment;
+
 import androidx.leanback.C0364R;
 import androidx.leanback.graphics.FitWidthBitmapDrawable;
 import androidx.leanback.media.PlaybackGlue;
@@ -16,16 +17,16 @@ import androidx.leanback.widget.DetailsParallaxDrawable;
 import androidx.leanback.widget.ParallaxTarget;
 
 public class DetailsSupportFragmentBackgroundController {
+    final DetailsSupportFragment mFragment;
     boolean mCanUseHost = false;
     Bitmap mCoverBitmap;
-    final DetailsSupportFragment mFragment;
     boolean mInitialControlVisible = false;
-    private Fragment mLastVideoSupportFragmentForGlueHost;
     DetailsParallaxDrawable mParallaxDrawable;
     int mParallaxDrawableMaxOffset;
     PlaybackGlue mPlaybackGlue;
     int mSolidColor;
     DetailsBackgroundVideoHelper mVideoHelper;
+    private Fragment mLastVideoSupportFragmentForGlueHost;
 
     public DetailsSupportFragmentBackgroundController(DetailsSupportFragment fragment) {
         if (fragment.mDetailsBackgroundController == null) {
@@ -181,16 +182,16 @@ public class DetailsSupportFragmentBackgroundController {
         return this.mFragment.findOrCreateVideoSupportFragment();
     }
 
+    public final Bitmap getCoverBitmap() {
+        return this.mCoverBitmap;
+    }
+
     public final void setCoverBitmap(Bitmap bitmap) {
         this.mCoverBitmap = bitmap;
         Drawable drawable = getCoverDrawable();
         if (drawable instanceof FitWidthBitmapDrawable) {
             ((FitWidthBitmapDrawable) drawable).setBitmap(this.mCoverBitmap);
         }
-    }
-
-    public final Bitmap getCoverBitmap() {
-        return this.mCoverBitmap;
     }
 
     @ColorInt
@@ -206,15 +207,15 @@ public class DetailsSupportFragmentBackgroundController {
         }
     }
 
+    public final int getParallaxDrawableMaxOffset() {
+        return this.mParallaxDrawableMaxOffset;
+    }
+
     public final void setParallaxDrawableMaxOffset(int offset) {
         if (this.mParallaxDrawable == null) {
             this.mParallaxDrawableMaxOffset = offset;
             return;
         }
         throw new IllegalStateException("enableParallax already called");
-    }
-
-    public final int getParallaxDrawableMaxOffset() {
-        return this.mParallaxDrawableMaxOffset;
     }
 }

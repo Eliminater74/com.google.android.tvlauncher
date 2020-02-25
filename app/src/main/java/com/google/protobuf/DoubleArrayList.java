@@ -1,22 +1,18 @@
 package com.google.protobuf;
 
-import com.google.protobuf.Internal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.RandomAccess;
 
 final class DoubleArrayList extends AbstractProtobufList<Double> implements Internal.DoubleList, RandomAccess, PrimitiveNonBoxingCollection {
     private static final DoubleArrayList EMPTY_LIST = new DoubleArrayList(new double[0], 0);
-    private double[] array;
-    private int size;
 
     static {
         EMPTY_LIST.makeImmutable();
     }
 
-    public static DoubleArrayList emptyList() {
-        return EMPTY_LIST;
-    }
+    private double[] array;
+    private int size;
 
     DoubleArrayList() {
         this(new double[10], 0);
@@ -25,6 +21,10 @@ final class DoubleArrayList extends AbstractProtobufList<Double> implements Inte
     private DoubleArrayList(double[] other, int size2) {
         this.array = other;
         this.size = size2;
+    }
+
+    public static DoubleArrayList emptyList() {
+        return EMPTY_LIST;
     }
 
     /* access modifiers changed from: protected */

@@ -1,11 +1,12 @@
 package com.google.protobuf;
 
-import com.google.protobuf.FieldSet;
-import com.google.protobuf.FieldSet.FieldDescriptorLite;
 import java.io.IOException;
 import java.util.Map;
 
 abstract class ExtensionSchema<T extends FieldSet.FieldDescriptorLite<T>> {
+    ExtensionSchema() {
+    }
+
     /* access modifiers changed from: package-private */
     public abstract int extensionNumber(Map.Entry<?, ?> entry);
 
@@ -38,7 +39,4 @@ abstract class ExtensionSchema<T extends FieldSet.FieldDescriptorLite<T>> {
 
     /* access modifiers changed from: package-private */
     public abstract void setExtensions(Object obj, FieldSet<T> fieldSet);
-
-    ExtensionSchema() {
-    }
 }

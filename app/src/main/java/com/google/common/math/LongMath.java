@@ -9,6 +9,7 @@ import com.google.common.base.Ascii;
 import com.google.common.base.Preconditions;
 import com.google.common.primitives.UnsignedLongs;
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.math.RoundingMode;
 
 @GwtCompatible(emulated = true)
@@ -19,7 +20,6 @@ public final class LongMath {
     static final long MAX_POWER_OF_SQRT2_UNSIGNED = -5402926248376769404L;
     @VisibleForTesting
     static final long MAX_SIGNED_POWER_OF_TWO = 4611686018427387904L;
-    private static final int SIEVE_30 = -545925251;
     static final int[] biggestBinomials = {Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, 3810779, 121977, 16175, 4337, 1733, ClientAnalytics.LogRequest.LogSource.FAMILYLINK_HELPER_ANDROID_PRIMES_VALUE, ClientAnalytics.LogRequest.LogSource.DAYDREAM_HOME_VALUE, ClientAnalytics.LogRequest.LogSource.WALLET_SDK_GCORE_VALUE, ClientAnalytics.LogRequest.LogSource.TAP_AND_PAY_APP_COUNTERS_VALUE, 206, ClientAnalytics.LogRequest.LogSource.FITNESS_ANDROID_VALUE, ClientAnalytics.LogRequest.LogSource.MAPS_API_COUNTERS_VALUE, ClientAnalytics.LogRequest.LogSource.CONTEXT_MANAGER_VALUE, 111, 101, 94, 88, 83, 79, 76, 74, 72, 70, 69, 68, 67, 67, 66, 66, 66, 66};
     @VisibleForTesting
     static final int[] biggestSimpleBinomials = {Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, 2642246, 86251, 11724, 3218, 1313, ClientAnalytics.LogRequest.LogSource.CAMERAKIT_VALUE, ClientAnalytics.LogRequest.LogSource.PLAY_MUSIC_ANDROID_WEAR_STANDALONE_PRIMES_VALUE, ClientAnalytics.LogRequest.LogSource.SDP_IOS_PRIMES_VALUE, ClientAnalytics.LogRequest.LogSource.HUDDLE_ANDROID_PRIMES_VALUE, ClientAnalytics.LogRequest.LogSource.FITNESS_ANDROID_VALUE, 139, 119, 105, 95, 87, 81, 76, 73, 70, 68, 66, 64, 63, 62, 62, 61, 61, 61};
@@ -29,10 +29,14 @@ public final class LongMath {
     static final long[] halfPowersOf10 = {3, 31, 316, 3162, 31622, 316227, 3162277, 31622776, 316227766, 3162277660L, 31622776601L, 316227766016L, 3162277660168L, 31622776601683L, 316227766016837L, 3162277660168379L, 31622776601683793L, 316227766016837933L, 3162277660168379331L};
     @VisibleForTesting
     static final byte[] maxLog10ForLeadingZeros = {19, Ascii.DC2, Ascii.DC2, Ascii.DC2, Ascii.DC2, 17, 17, 17, Ascii.DLE, Ascii.DLE, Ascii.DLE, Ascii.f156SI, Ascii.f156SI, Ascii.f156SI, Ascii.f156SI, Ascii.f157SO, Ascii.f157SO, Ascii.f157SO, Ascii.f147CR, Ascii.f147CR, Ascii.f147CR, Ascii.f149FF, Ascii.f149FF, Ascii.f149FF, Ascii.f149FF, Ascii.f160VT, Ascii.f160VT, Ascii.f160VT, 10, 10, 10, 9, 9, 9, 9, 8, 8, 8, 7, 7, 7, 6, 6, 6, 6, 5, 5, 5, 4, 4, 4, 3, 3, 3, 3, 2, 2, 2, 1, 1, 1, 0, 0, 0};
-    private static final long[][] millerRabinBaseSets = {new long[]{291830, 126401071349994536L}, new long[]{885594168, 725270293939359937L, 3569819667048198375L}, new long[]{273919523040L, 15, 7363882082L, 992620450144556L}, new long[]{47636622961200L, 2, 2570940, 211991001, 3749873356L}, new long[]{7999252175582850L, 2, 4130806001517L, 149795463772692060L, 186635894390467037L, 3967304179347715805L}, new long[]{585226005592931976L, 2, 123635709730000L, 9233062284813009L, 43835965440333360L, 761179012939631437L, 1263739024124850375L}, new long[]{Long.MAX_VALUE, 2, 325, 9375, 28178, 450775, 9780504, 1795265022}};
     @GwtIncompatible
     @VisibleForTesting
     static final long[] powersOf10 = {1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, C0841C.NANOS_PER_SECOND, 10000000000L, 100000000000L, 1000000000000L, 10000000000000L, 100000000000000L, 1000000000000000L, 10000000000000000L, 100000000000000000L, 1000000000000000000L};
+    private static final int SIEVE_30 = -545925251;
+    private static final long[][] millerRabinBaseSets = {new long[]{291830, 126401071349994536L}, new long[]{885594168, 725270293939359937L, 3569819667048198375L}, new long[]{273919523040L, 15, 7363882082L, 992620450144556L}, new long[]{47636622961200L, 2, 2570940, 211991001, 3749873356L}, new long[]{7999252175582850L, 2, 4130806001517L, 149795463772692060L, 186635894390467037L, 3967304179347715805L}, new long[]{585226005592931976L, 2, 123635709730000L, 9233062284813009L, 43835965440333360L, 761179012939631437L, 1263739024124850375L}, new long[]{Long.MAX_VALUE, 2, 325, 9375, 28178, 450775, 9780504, 1795265022}};
+
+    private LongMath() {
+    }
 
     @Beta
     public static long ceilingPowerOfTwo(long x) {
@@ -65,46 +69,6 @@ public final class LongMath {
     @VisibleForTesting
     static int lessThanBranchFree(long x, long y) {
         return (int) ((((x - y) ^ -1) ^ -1) >>> 63);
-    }
-
-    /* renamed from: com.google.common.math.LongMath$1 */
-    static /* synthetic */ class C17441 {
-        static final /* synthetic */ int[] $SwitchMap$java$math$RoundingMode = new int[RoundingMode.values().length];
-
-        static {
-            try {
-                $SwitchMap$java$math$RoundingMode[RoundingMode.UNNECESSARY.ordinal()] = 1;
-            } catch (NoSuchFieldError e) {
-            }
-            try {
-                $SwitchMap$java$math$RoundingMode[RoundingMode.DOWN.ordinal()] = 2;
-            } catch (NoSuchFieldError e2) {
-            }
-            try {
-                $SwitchMap$java$math$RoundingMode[RoundingMode.FLOOR.ordinal()] = 3;
-            } catch (NoSuchFieldError e3) {
-            }
-            try {
-                $SwitchMap$java$math$RoundingMode[RoundingMode.UP.ordinal()] = 4;
-            } catch (NoSuchFieldError e4) {
-            }
-            try {
-                $SwitchMap$java$math$RoundingMode[RoundingMode.CEILING.ordinal()] = 5;
-            } catch (NoSuchFieldError e5) {
-            }
-            try {
-                $SwitchMap$java$math$RoundingMode[RoundingMode.HALF_DOWN.ordinal()] = 6;
-            } catch (NoSuchFieldError e6) {
-            }
-            try {
-                $SwitchMap$java$math$RoundingMode[RoundingMode.HALF_UP.ordinal()] = 7;
-            } catch (NoSuchFieldError e7) {
-            }
-            try {
-                $SwitchMap$java$math$RoundingMode[RoundingMode.HALF_EVEN.ordinal()] = 8;
-            } catch (NoSuchFieldError e8) {
-            }
-        }
     }
 
     /* JADX INFO: Can't fix incorrect switch cases order, some code will duplicate */
@@ -719,15 +683,15 @@ public final class LongMath {
             }
         };
 
+        static boolean test(long base, long n) {
+            return (n <= LongMath.FLOOR_SQRT_MAX_LONG ? SMALL : LARGE).testWitness(base, n);
+        }
+
         /* access modifiers changed from: package-private */
         public abstract long mulMod(long j, long j2, long j3);
 
         /* access modifiers changed from: package-private */
         public abstract long squareMod(long j, long j2);
-
-        static boolean test(long base, long n) {
-            return (n <= LongMath.FLOOR_SQRT_MAX_LONG ? SMALL : LARGE).testWitness(base, n);
-        }
 
         private long powMod(long a, long p, long m) {
             long a2 = a;
@@ -766,6 +730,43 @@ public final class LongMath {
         }
     }
 
-    private LongMath() {
+    /* renamed from: com.google.common.math.LongMath$1 */
+    static /* synthetic */ class C17441 {
+        static final /* synthetic */ int[] $SwitchMap$java$math$RoundingMode = new int[RoundingMode.values().length];
+
+        static {
+            try {
+                $SwitchMap$java$math$RoundingMode[RoundingMode.UNNECESSARY.ordinal()] = 1;
+            } catch (NoSuchFieldError e) {
+            }
+            try {
+                $SwitchMap$java$math$RoundingMode[RoundingMode.DOWN.ordinal()] = 2;
+            } catch (NoSuchFieldError e2) {
+            }
+            try {
+                $SwitchMap$java$math$RoundingMode[RoundingMode.FLOOR.ordinal()] = 3;
+            } catch (NoSuchFieldError e3) {
+            }
+            try {
+                $SwitchMap$java$math$RoundingMode[RoundingMode.UP.ordinal()] = 4;
+            } catch (NoSuchFieldError e4) {
+            }
+            try {
+                $SwitchMap$java$math$RoundingMode[RoundingMode.CEILING.ordinal()] = 5;
+            } catch (NoSuchFieldError e5) {
+            }
+            try {
+                $SwitchMap$java$math$RoundingMode[RoundingMode.HALF_DOWN.ordinal()] = 6;
+            } catch (NoSuchFieldError e6) {
+            }
+            try {
+                $SwitchMap$java$math$RoundingMode[RoundingMode.HALF_UP.ordinal()] = 7;
+            } catch (NoSuchFieldError e7) {
+            }
+            try {
+                $SwitchMap$java$math$RoundingMode[RoundingMode.HALF_EVEN.ordinal()] = 8;
+            } catch (NoSuchFieldError e8) {
+            }
+        }
     }
 }

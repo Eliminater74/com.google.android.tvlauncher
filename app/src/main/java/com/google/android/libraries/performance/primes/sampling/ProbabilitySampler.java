@@ -2,7 +2,9 @@ package com.google.android.libraries.performance.primes.sampling;
 
 import android.os.SystemClock;
 import android.support.annotation.VisibleForTesting;
+
 import com.google.android.libraries.stitch.util.Preconditions;
+
 import java.util.Random;
 
 public final class ProbabilitySampler {

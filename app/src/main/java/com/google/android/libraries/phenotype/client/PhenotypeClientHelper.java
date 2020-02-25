@@ -4,12 +4,13 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.pm.ProviderInfo;
 import android.net.Uri;
+
 import com.google.common.base.Optional;
 
 public final class PhenotypeClientHelper {
     private static final String GOOGLE_PLAY_SERVICES_PACKAGE = "com.google.android.gms";
-    static volatile Optional<Boolean> isValidContentProvider = Optional.absent();
     private static final Object isValidContentProviderLock = new Object();
+    static volatile Optional<Boolean> isValidContentProvider = Optional.absent();
 
     private static boolean isGmsCorePreinstalled(Context context) {
         try {

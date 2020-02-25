@@ -12,6 +12,7 @@ import android.view.View;
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
 public class PreferenceRecyclerViewAccessibilityDelegate extends RecyclerViewAccessibilityDelegate {
     final AccessibilityDelegateCompat mDefaultItemDelegate = super.getItemDelegate();
+    final RecyclerView mRecyclerView;
     final AccessibilityDelegateCompat mItemDelegate = new AccessibilityDelegateCompat() {
         public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfoCompat info) {
             Preference preference;
@@ -27,7 +28,6 @@ public class PreferenceRecyclerViewAccessibilityDelegate extends RecyclerViewAcc
             return PreferenceRecyclerViewAccessibilityDelegate.this.mDefaultItemDelegate.performAccessibilityAction(host, action, args);
         }
     };
-    final RecyclerView mRecyclerView;
 
     public PreferenceRecyclerViewAccessibilityDelegate(RecyclerView recyclerView) {
         super(recyclerView);

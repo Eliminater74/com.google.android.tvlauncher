@@ -8,10 +8,12 @@ import android.transition.Slide;
 import android.transition.Transition;
 import android.transition.TransitionManager;
 import android.view.ViewGroup;
+
 import androidx.leanback.preference.LeanbackSettingsFragment;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragment;
 import androidx.preference.PreferenceScreen;
+
 import com.google.android.tvlauncher.analytics.LoggingActivity;
 import com.google.android.tvlauncher.util.Util;
 
@@ -34,27 +36,6 @@ public class FavoriteLaunchItemsActivity extends LoggingActivity {
     public void onResume() {
         super.onResume();
         Util.forceLandscapeOrientation(this);
-    }
-
-    public static class FavoriteLaunchItemsFragment extends LeanbackSettingsFragment {
-        public static FavoriteLaunchItemsFragment newInstance() {
-            return new FavoriteLaunchItemsFragment();
-        }
-
-        public void onPreferenceStartInitialScreen() {
-            startPreferenceFragment(FavoriteLaunchItemsSelectionFragment.newInstance());
-        }
-
-        public boolean onPreferenceStartFragment(PreferenceFragment caller, Preference pref) {
-            Fragment f = Fragment.instantiate(getActivity(), pref.getFragment(), pref.getExtras());
-            f.setTargetFragment(caller, 0);
-            startPreferenceFragment(f);
-            return true;
-        }
-
-        public boolean onPreferenceStartScreen(PreferenceFragment preferenceFragment, PreferenceScreen preferenceScreen) {
-            return false;
-        }
     }
 
     public void finish() {
@@ -90,5 +71,26 @@ public class FavoriteLaunchItemsActivity extends LoggingActivity {
             }
         });
         TransitionManager.go(scene, slide);
+    }
+
+    public static class FavoriteLaunchItemsFragment extends LeanbackSettingsFragment {
+        public static FavoriteLaunchItemsFragment newInstance() {
+            return new FavoriteLaunchItemsFragment();
+        }
+
+        public void onPreferenceStartInitialScreen() {
+            startPreferenceFragment(FavoriteLaunchItemsSelectionFragment.newInstance());
+        }
+
+        public boolean onPreferenceStartFragment(PreferenceFragment caller, Preference pref) {
+            Fragment f = Fragment.instantiate(getActivity(), pref.getFragment(), pref.getExtras());
+            f.setTargetFragment(caller, 0);
+            startPreferenceFragment(f);
+            return true;
+        }
+
+        public boolean onPreferenceStartScreen(PreferenceFragment preferenceFragment, PreferenceScreen preferenceScreen) {
+            return false;
+        }
     }
 }

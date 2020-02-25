@@ -1,7 +1,5 @@
 package com.google.android.tvlauncher.appsview;
 
-import com.google.android.tvlauncher.appsview.EditModeGridAdapter;
-
 final /* synthetic */ class EditModeFragment$$Lambda$1 implements EditModeGridAdapter.OnEditItemRemovedListener {
     private final EditModeFragment arg$1;
 

@@ -2,6 +2,7 @@ package com.google.android.gms.common.api.internal;
 
 import android.app.Activity;
 import android.support.p001v4.util.ArraySet;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.internal.zzau;
 
@@ -9,6 +10,11 @@ import com.google.android.gms.common.internal.zzau;
 public class zzai extends zzp {
     private final ArraySet<zzi<?>> zze = new ArraySet<>();
     private zzbn zzf;
+
+    private zzai(zzcf zzcf) {
+        super(zzcf);
+        this.zzd.zza("ConnectionlessLifecycleHelper", this);
+    }
 
     public static void zza(Activity activity, zzbn zzbn, zzi<?> zzi) {
         zzcf zzb = zzb(activity);
@@ -20,11 +26,6 @@ public class zzai extends zzp {
         zzau.zza(zzi, "ApiKey cannot be null");
         zzai.zze.add(zzi);
         zzbn.zza(zzai);
-    }
-
-    private zzai(zzcf zzcf) {
-        super(zzcf);
-        this.zzd.zza("ConnectionlessLifecycleHelper", this);
     }
 
     public final void zzb() {

@@ -2,22 +2,15 @@ package com.google.android.libraries.gcoreclient.common.api.support;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+
 import javax.annotation.Nullable;
 
 public final class GcoreExceptionMapper {
     private static final Map<Class<? extends Throwable>, SystemExceptionSupplier<?>> systemMap = new HashMap();
-    private final Map<Class<? extends Throwable>, ExceptionSupplier<?>> map;
-
-    public interface ExceptionSupplier<I extends Throwable> {
-        Throwable newException(I i, @Nullable Throwable th);
-    }
-
-    interface SystemExceptionSupplier<O extends Throwable> {
-        O newException(@Nullable String str, Throwable th);
-    }
 
     static {
         systemMap.put(RuntimeException.class, GcoreExceptionMapper$$Lambda$1.$instance);
@@ -29,56 +22,10 @@ public final class GcoreExceptionMapper {
         systemMap.put(IllegalArgumentException.class, GcoreExceptionMapper$$Lambda$7.$instance);
     }
 
-    private static final class UnrecognizedThrowable extends Throwable {
-        UnrecognizedThrowable(String message, Throwable cause) {
-            super(message, cause);
-        }
-    }
-
-    private static final class UnrecognizedException extends Exception {
-        UnrecognizedException(String message, Throwable cause) {
-            super(message, cause);
-        }
-    }
-
-    private static final class UnrecognizedRuntimeException extends RuntimeException {
-        UnrecognizedRuntimeException(String message, Throwable cause) {
-            super(message, cause);
-        }
-    }
-
-    private static final class UnrecognizedError extends Error {
-        UnrecognizedError(String message, Throwable cause) {
-            super(message, cause);
-        }
-    }
+    private final Map<Class<? extends Throwable>, ExceptionSupplier<?>> map;
 
     public GcoreExceptionMapper(Map<Class<? extends Throwable>, ExceptionSupplier<?>> map2) {
         this.map = map2;
-    }
-
-    public Exception mapExceptions(Exception t) {
-        return (Exception) mapThrowables(t);
-    }
-
-    public Throwable mapThrowables(Throwable t) {
-        Throwable cause = t.getCause();
-        ExceptionSupplier<?> supplier = findSupplier(t);
-        boolean needsWrap = supplier != null;
-        if (cause != null) {
-            Throwable newCause = mapThrowables(cause);
-            if (needsWrap) {
-                return wrapException(t, newCause, supplier);
-            }
-            if (newCause == cause) {
-                return t;
-            }
-            return wrapUnrecongizedException(t, newCause);
-        } else if (!needsWrap) {
-            return t;
-        } else {
-            return wrapException(t, null, supplier);
-        }
     }
 
     private static Throwable wrapUnrecongizedException(Throwable t, Throwable newCause) {
@@ -144,6 +91,30 @@ public final class GcoreExceptionMapper {
         return Throwable.class;
     }
 
+    public Exception mapExceptions(Exception t) {
+        return (Exception) mapThrowables(t);
+    }
+
+    public Throwable mapThrowables(Throwable t) {
+        Throwable cause = t.getCause();
+        ExceptionSupplier<?> supplier = findSupplier(t);
+        boolean needsWrap = supplier != null;
+        if (cause != null) {
+            Throwable newCause = mapThrowables(cause);
+            if (needsWrap) {
+                return wrapException(t, newCause, supplier);
+            }
+            if (newCause == cause) {
+                return t;
+            }
+            return wrapUnrecongizedException(t, newCause);
+        } else if (!needsWrap) {
+            return t;
+        } else {
+            return wrapException(t, null, supplier);
+        }
+    }
+
     @Nullable
     private <I extends Throwable> ExceptionSupplier<I> findSupplier(Throwable t) {
         for (Class<?> clazz = t.getClass(); clazz != null; clazz = clazz.getSuperclass()) {
@@ -153,5 +124,37 @@ public final class GcoreExceptionMapper {
             }
         }
         return null;
+    }
+
+    public interface ExceptionSupplier<I extends Throwable> {
+        Throwable newException(I i, @Nullable Throwable th);
+    }
+
+    interface SystemExceptionSupplier<O extends Throwable> {
+        O newException(@Nullable String str, Throwable th);
+    }
+
+    private static final class UnrecognizedThrowable extends Throwable {
+        UnrecognizedThrowable(String message, Throwable cause) {
+            super(message, cause);
+        }
+    }
+
+    private static final class UnrecognizedException extends Exception {
+        UnrecognizedException(String message, Throwable cause) {
+            super(message, cause);
+        }
+    }
+
+    private static final class UnrecognizedRuntimeException extends RuntimeException {
+        UnrecognizedRuntimeException(String message, Throwable cause) {
+            super(message, cause);
+        }
+    }
+
+    private static final class UnrecognizedError extends Error {
+        UnrecognizedError(String message, Throwable cause) {
+            super(message, cause);
+        }
     }
 }

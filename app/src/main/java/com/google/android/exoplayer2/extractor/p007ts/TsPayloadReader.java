@@ -1,10 +1,12 @@
 package com.google.android.exoplayer2.extractor.p007ts;
 
 import android.util.SparseArray;
+
 import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.extractor.ExtractorOutput;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.TimestampAdjuster;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -16,6 +18,12 @@ public interface TsPayloadReader {
     public static final int FLAG_DATA_ALIGNMENT_INDICATOR = 4;
     public static final int FLAG_PAYLOAD_UNIT_START_INDICATOR = 1;
     public static final int FLAG_RANDOM_ACCESS_INDICATOR = 2;
+
+    void consume(ParsableByteArray parsableByteArray, int i) throws ParserException;
+
+    void init(TimestampAdjuster timestampAdjuster, ExtractorOutput extractorOutput, TrackIdGenerator trackIdGenerator);
+
+    void seek();
 
     /* renamed from: com.google.android.exoplayer2.extractor.ts.TsPayloadReader$Factory */
     public interface Factory {
@@ -29,12 +37,6 @@ public interface TsPayloadReader {
     /* renamed from: com.google.android.exoplayer2.extractor.ts.TsPayloadReader$Flags */
     public @interface Flags {
     }
-
-    void consume(ParsableByteArray parsableByteArray, int i) throws ParserException;
-
-    void init(TimestampAdjuster timestampAdjuster, ExtractorOutput extractorOutput, TrackIdGenerator trackIdGenerator);
-
-    void seek();
 
     /* renamed from: com.google.android.exoplayer2.extractor.ts.TsPayloadReader$EsInfo */
     public static final class EsInfo {
@@ -74,10 +76,10 @@ public interface TsPayloadReader {
     public static final class TrackIdGenerator {
         private static final int ID_UNSET = Integer.MIN_VALUE;
         private final int firstTrackId;
-        private String formatId;
         private final String formatIdPrefix;
-        private int trackId;
         private final int trackIdIncrement;
+        private String formatId;
+        private int trackId;
 
         public TrackIdGenerator(int firstTrackId2, int trackIdIncrement2) {
             this(Integer.MIN_VALUE, firstTrackId2, trackIdIncrement2);

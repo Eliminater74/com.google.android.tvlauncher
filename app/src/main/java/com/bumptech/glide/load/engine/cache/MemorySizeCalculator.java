@@ -8,6 +8,7 @@ import android.support.annotation.VisibleForTesting;
 import android.text.format.Formatter;
 import android.util.DisplayMetrics;
 import android.util.Log;
+
 import com.bumptech.glide.util.Preconditions;
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
 
@@ -20,12 +21,6 @@ public final class MemorySizeCalculator {
     private final int bitmapPoolSize;
     private final Context context;
     private final int memoryCacheSize;
-
-    interface ScreenDimensions {
-        int getHeightPixels();
-
-        int getWidthPixels();
-    }
 
     MemorySizeCalculator(Builder builder) {
         int i;
@@ -77,18 +72,6 @@ public final class MemorySizeCalculator {
         }
     }
 
-    public int getMemoryCacheSize() {
-        return this.memoryCacheSize;
-    }
-
-    public int getBitmapPoolSize() {
-        return this.bitmapPoolSize;
-    }
-
-    public int getArrayPoolSizeInBytes() {
-        return this.arrayPoolSize;
-    }
-
     private static int getMaxSize(ActivityManager activityManager, float maxSizeMultiplier, float lowMemoryMaxSizeMultiplier) {
         float f;
         boolean isLowMemoryDevice = isLowMemoryDevice(activityManager);
@@ -101,16 +84,34 @@ public final class MemorySizeCalculator {
         return Math.round(memoryClass * f);
     }
 
-    private String toMb(int bytes) {
-        return Formatter.formatFileSize(this.context, (long) bytes);
-    }
-
     @TargetApi(19)
     static boolean isLowMemoryDevice(ActivityManager activityManager) {
         if (Build.VERSION.SDK_INT >= 19) {
             return activityManager.isLowRamDevice();
         }
         return true;
+    }
+
+    public int getMemoryCacheSize() {
+        return this.memoryCacheSize;
+    }
+
+    public int getBitmapPoolSize() {
+        return this.bitmapPoolSize;
+    }
+
+    public int getArrayPoolSizeInBytes() {
+        return this.arrayPoolSize;
+    }
+
+    private String toMb(int bytes) {
+        return Formatter.formatFileSize(this.context, (long) bytes);
+    }
+
+    interface ScreenDimensions {
+        int getHeightPixels();
+
+        int getWidthPixels();
     }
 
     public static final class Builder {
@@ -120,10 +121,10 @@ public final class MemorySizeCalculator {
         static final float MAX_SIZE_MULTIPLIER = 0.4f;
         @VisibleForTesting
         static final int MEMORY_CACHE_TARGET_SCREENS = 2;
+        final Context context;
         ActivityManager activityManager;
         int arrayPoolSizeBytes = 4194304;
         float bitmapPoolScreens = ((float) BITMAP_POOL_TARGET_SCREENS);
-        final Context context;
         float lowMemoryMaxSizeMultiplier = LOW_MEMORY_MAX_SIZE_MULTIPLIER;
         float maxSizeMultiplier = MAX_SIZE_MULTIPLIER;
         float memoryCacheScreens = 2.0f;

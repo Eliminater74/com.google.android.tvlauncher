@@ -5,11 +5,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Keep;
 import android.support.annotation.MainThread;
+
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 
 public class LifecycleCallback {
     protected final zzcf zzd;
+
+    protected LifecycleCallback(zzcf zzcf) {
+        this.zzd = zzcf;
+    }
 
     protected static zzcf zzb(zzce zzce) {
         if (zzce.zza()) {
@@ -28,10 +33,6 @@ public class LifecycleCallback {
 
     public static zzcf zzb(Activity activity) {
         return zzb(new zzce(activity));
-    }
-
-    protected LifecycleCallback(zzcf zzcf) {
-        this.zzd = zzcf;
     }
 
     public final Activity zzg() {

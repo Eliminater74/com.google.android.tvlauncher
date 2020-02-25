@@ -14,7 +14,6 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RestrictTo;
 import android.support.annotation.StringRes;
 import android.support.annotation.StyleRes;
-import android.support.p004v7.app.AlertController;
 import android.support.p004v7.appcompat.C0233R;
 import android.util.TypedValue;
 import android.view.ContextThemeWrapper;

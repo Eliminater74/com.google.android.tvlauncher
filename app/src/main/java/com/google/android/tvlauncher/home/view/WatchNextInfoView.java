@@ -9,6 +9,7 @@ import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.google.android.tvlauncher.C1188R;
 
 public class WatchNextInfoView extends FrameLayout {

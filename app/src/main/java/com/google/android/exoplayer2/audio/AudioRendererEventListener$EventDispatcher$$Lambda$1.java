@@ -1,7 +1,5 @@
 package com.google.android.exoplayer2.audio;
 
-import com.google.android.exoplayer2.audio.AudioRendererEventListener;
-
 final /* synthetic */ class AudioRendererEventListener$EventDispatcher$$Lambda$1 implements Runnable {
     private final AudioRendererEventListener.EventDispatcher arg$1;
     private final String arg$2;

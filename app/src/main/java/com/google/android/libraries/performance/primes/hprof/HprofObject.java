@@ -2,6 +2,7 @@ package com.google.android.libraries.performance.primes.hprof;
 
 import com.android.ahat.dominators.DominatorsComputation;
 import com.google.android.libraries.stitch.util.Preconditions;
+
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,35 +10,28 @@ import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import javax.annotation.Nullable;
 
 public abstract class HprofObject implements DominatorsComputation.Node {
     public static final int FLAG_IS_REF = 2;
     public static final int FLAG_IS_ROOT = 1;
     public static final int NULL_OBJECT_ID = 0;
+    final List<HprofObject> immediatelyDominated = new ArrayList();
+    protected int position;
     int flags;
     String heapName;
     HprofObject immediateDominator;
-    final List<HprofObject> immediatelyDominated = new ArrayList();
     Object intermediateDominatorsComputationState;
     HprofObject parent;
     Set<HprofObject> parents = new HashSet();
-    protected int position;
     int retainedHeapSize = -1;
     int rootTag;
     boolean visited = false;
 
-    @Nullable
-    public abstract String buildLeakSegment(ParseContext parseContext, int i);
-
-    public abstract int computeShallowSize(ParseContext parseContext);
-
-    public abstract int getChildCount(ParseContext parseContext);
-
-    @Nullable
-    public abstract String getChildName(ParseContext parseContext, int i);
-
-    public abstract int getChildValue(ParseContext parseContext, int i);
+    protected HprofObject(int position2) {
+        this.position = position2;
+    }
 
     public static boolean isRef(HprofObject object) {
         return (object instanceof HprofClassInstance) && (((HprofClassInstance) object).clazz.flags & 2) != 0;
@@ -66,9 +60,17 @@ public abstract class HprofObject implements DominatorsComputation.Node {
         }
     }
 
-    protected HprofObject(int position2) {
-        this.position = position2;
-    }
+    @Nullable
+    public abstract String buildLeakSegment(ParseContext parseContext, int i);
+
+    public abstract int computeShallowSize(ParseContext parseContext);
+
+    public abstract int getChildCount(ParseContext parseContext);
+
+    @Nullable
+    public abstract String getChildName(ParseContext parseContext, int i);
+
+    public abstract int getChildValue(ParseContext parseContext, int i);
 
     public int getId(ParseContext parseContext) {
         return parseContext.readId(this.position);
@@ -95,12 +97,12 @@ public abstract class HprofObject implements DominatorsComputation.Node {
         return -1;
     }
 
-    public void setDominatorsComputationState(Object state) {
-        this.intermediateDominatorsComputationState = state;
-    }
-
     public Object getDominatorsComputationState() {
         return this.intermediateDominatorsComputationState;
+    }
+
+    public void setDominatorsComputationState(Object state) {
+        this.intermediateDominatorsComputationState = state;
     }
 
     public void setDominator(DominatorsComputation.Node dominator) {

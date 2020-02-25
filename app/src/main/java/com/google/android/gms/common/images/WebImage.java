@@ -3,14 +3,17 @@ package com.google.android.gms.common.images;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
+
 import com.google.android.gms.common.internal.Hide;
 import com.google.android.gms.common.internal.zzak;
 import com.google.android.gms.internal.zzbkv;
 import com.google.android.gms.internal.zzbky;
-import java.util.Arrays;
-import java.util.Locale;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.Arrays;
+import java.util.Locale;
 
 public final class WebImage extends zzbkv {
     public static final Parcelable.Creator<WebImage> CREATOR = new zze();

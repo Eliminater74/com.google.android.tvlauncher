@@ -6,6 +6,10 @@ import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Ordering;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+import org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement;
+
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -17,8 +21,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
-import org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement;
 
 @GwtIncompatible
 final class FuturesGetChecked {
@@ -32,9 +34,7 @@ final class FuturesGetChecked {
         }
     }).reverse();
 
-    @VisibleForTesting
-    interface GetCheckedTypeValidator {
-        void validateClass(Class<? extends Exception> cls);
+    private FuturesGetChecked() {
     }
 
     @CanIgnoreReturnValue
@@ -85,59 +85,6 @@ final class FuturesGetChecked {
     @VisibleForTesting
     static GetCheckedTypeValidator classValueValidator() {
         return GetCheckedTypeValidatorHolder.ClassValueValidator.INSTANCE;
-    }
-
-    @VisibleForTesting
-    static class GetCheckedTypeValidatorHolder {
-        static final GetCheckedTypeValidator BEST_VALIDATOR = getBestValidator();
-        static final String CLASS_VALUE_VALIDATOR_NAME = String.valueOf(GetCheckedTypeValidatorHolder.class.getName()).concat("$ClassValueValidator");
-
-        GetCheckedTypeValidatorHolder() {
-        }
-
-        @IgnoreJRERequirement
-        enum ClassValueValidator implements GetCheckedTypeValidator {
-            INSTANCE;
-            
-            private static final ClassValue<Boolean> isValidClass = new ClassValue<Boolean>() {
-                /* access modifiers changed from: protected */
-                public Boolean computeValue(Class<?> type) {
-                    FuturesGetChecked.checkExceptionClassValidity(type.asSubclass(Exception.class));
-                    return true;
-                }
-            };
-
-            public void validateClass(Class<? extends Exception> exceptionClass) {
-                isValidClass.get(exceptionClass);
-            }
-        }
-
-        enum WeakSetValidator implements GetCheckedTypeValidator {
-            INSTANCE;
-            
-            private static final Set<WeakReference<Class<? extends Exception>>> validClasses = new CopyOnWriteArraySet();
-
-            public void validateClass(Class<? extends Exception> exceptionClass) {
-                for (WeakReference<Class<? extends Exception>> knownGood : validClasses) {
-                    if (exceptionClass.equals(knownGood.get())) {
-                        return;
-                    }
-                }
-                FuturesGetChecked.checkExceptionClassValidity(exceptionClass);
-                if (validClasses.size() > 1000) {
-                    validClasses.clear();
-                }
-                validClasses.add(new WeakReference(exceptionClass));
-            }
-        }
-
-        static GetCheckedTypeValidator getBestValidator() {
-            try {
-                return (GetCheckedTypeValidator) Class.forName(CLASS_VALUE_VALIDATOR_NAME).getEnumConstants()[0];
-            } catch (Throwable th) {
-                return FuturesGetChecked.weakSetValidator();
-            }
-        }
     }
 
     private static <X extends Exception> void wrapAndThrowExceptionOrError(Throwable cause, Class<X> exceptionClass) throws Exception {
@@ -250,6 +197,61 @@ final class FuturesGetChecked {
         Preconditions.checkArgument(hasConstructorUsableByGetChecked(exceptionClass), "Futures.getChecked exception type (%s) must be an accessible class with an accessible constructor whose parameters (if any) must be of type String and/or Throwable", exceptionClass);
     }
 
-    private FuturesGetChecked() {
+    @VisibleForTesting
+    interface GetCheckedTypeValidator {
+        void validateClass(Class<? extends Exception> cls);
+    }
+
+    @VisibleForTesting
+    static class GetCheckedTypeValidatorHolder {
+        static final String CLASS_VALUE_VALIDATOR_NAME = String.valueOf(GetCheckedTypeValidatorHolder.class.getName()).concat("$ClassValueValidator");
+        static final GetCheckedTypeValidator BEST_VALIDATOR = getBestValidator();
+
+        GetCheckedTypeValidatorHolder() {
+        }
+
+        static GetCheckedTypeValidator getBestValidator() {
+            try {
+                return (GetCheckedTypeValidator) Class.forName(CLASS_VALUE_VALIDATOR_NAME).getEnumConstants()[0];
+            } catch (Throwable th) {
+                return FuturesGetChecked.weakSetValidator();
+            }
+        }
+
+        @IgnoreJRERequirement
+        enum ClassValueValidator implements GetCheckedTypeValidator {
+            INSTANCE;
+
+            private static final ClassValue<Boolean> isValidClass = new ClassValue<Boolean>() {
+                /* access modifiers changed from: protected */
+                public Boolean computeValue(Class<?> type) {
+                    FuturesGetChecked.checkExceptionClassValidity(type.asSubclass(Exception.class));
+                    return true;
+                }
+            };
+
+            public void validateClass(Class<? extends Exception> exceptionClass) {
+                isValidClass.get(exceptionClass);
+            }
+        }
+
+        enum WeakSetValidator implements GetCheckedTypeValidator {
+            INSTANCE;
+
+            private static final Set<WeakReference<Class<? extends Exception>>> validClasses = new CopyOnWriteArraySet();
+
+            public void validateClass(Class<? extends Exception> exceptionClass) {
+                for (WeakReference<Class<? extends Exception>> knownGood : validClasses) {
+                    if (exceptionClass.equals(knownGood.get())) {
+                        return;
+                    }
+                }
+                FuturesGetChecked.checkExceptionClassValidity(exceptionClass);
+                if (validClasses.size() > 1000) {
+                    validClasses.clear();
+                }
+                validClasses.add(new WeakReference(exceptionClass));
+            }
+        }
     }
 }

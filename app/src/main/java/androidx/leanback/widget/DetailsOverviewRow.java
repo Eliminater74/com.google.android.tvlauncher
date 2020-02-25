@@ -4,28 +4,18 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DetailsOverviewRow extends Row {
-    private ObjectAdapter mActionsAdapter = new ArrayObjectAdapter(this.mDefaultActionPresenter);
     private PresenterSelector mDefaultActionPresenter = new ActionPresenterSelector();
+    private ObjectAdapter mActionsAdapter = new ArrayObjectAdapter(this.mDefaultActionPresenter);
     private Drawable mImageDrawable;
     private boolean mImageScaleUpAllowed = true;
     private Object mItem;
     private ArrayList<WeakReference<Listener>> mListeners;
-
-    public static class Listener {
-        public void onImageDrawableChanged(DetailsOverviewRow row) {
-        }
-
-        public void onItemChanged(DetailsOverviewRow row) {
-        }
-
-        public void onActionsAdapterChanged(DetailsOverviewRow row) {
-        }
-    }
 
     public DetailsOverviewRow(Object item) {
         super(null);
@@ -130,13 +120,6 @@ public class DetailsOverviewRow extends Row {
         }
     }
 
-    public final void setImageDrawable(Drawable drawable) {
-        if (this.mImageDrawable != drawable) {
-            this.mImageDrawable = drawable;
-            notifyImageDrawableChanged();
-        }
-    }
-
     public final void setImageBitmap(Context context, Bitmap bm) {
         this.mImageDrawable = new BitmapDrawable(context.getResources(), bm);
         notifyImageDrawableChanged();
@@ -146,15 +129,22 @@ public class DetailsOverviewRow extends Row {
         return this.mImageDrawable;
     }
 
-    public void setImageScaleUpAllowed(boolean allowed) {
-        if (allowed != this.mImageScaleUpAllowed) {
-            this.mImageScaleUpAllowed = allowed;
+    public final void setImageDrawable(Drawable drawable) {
+        if (this.mImageDrawable != drawable) {
+            this.mImageDrawable = drawable;
             notifyImageDrawableChanged();
         }
     }
 
     public boolean isImageScaleUpAllowed() {
         return this.mImageScaleUpAllowed;
+    }
+
+    public void setImageScaleUpAllowed(boolean allowed) {
+        if (allowed != this.mImageScaleUpAllowed) {
+            this.mImageScaleUpAllowed = allowed;
+            notifyImageDrawableChanged();
+        }
     }
 
     private ArrayObjectAdapter getArrayObjectAdapter() {
@@ -212,6 +202,17 @@ public class DetailsOverviewRow extends Row {
     private void verify() {
         if (this.mItem == null) {
             throw new IllegalArgumentException("Object cannot be null");
+        }
+    }
+
+    public static class Listener {
+        public void onImageDrawableChanged(DetailsOverviewRow row) {
+        }
+
+        public void onItemChanged(DetailsOverviewRow row) {
+        }
+
+        public void onActionsAdapterChanged(DetailsOverviewRow row) {
         }
     }
 }

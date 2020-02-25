@@ -6,29 +6,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import androidx.leanback.C0364R;
-import androidx.leanback.widget.RowPresenter;
 
 public abstract class AbstractMediaListHeaderPresenter extends RowPresenter {
+    private final Context mContext;
     private int mBackgroundColor;
     private boolean mBackgroundColorSet;
-    private final Context mContext;
-
-    /* access modifiers changed from: protected */
-    public abstract void onBindMediaListHeaderViewHolder(ViewHolder viewHolder, Object obj);
-
-    public static class ViewHolder extends RowPresenter.ViewHolder {
-        private final TextView mHeaderView;
-
-        public ViewHolder(View view) {
-            super(view);
-            this.mHeaderView = (TextView) view.findViewById(C0364R.C0366id.mediaListHeader);
-        }
-
-        public TextView getHeaderView() {
-            return this.mHeaderView;
-        }
-    }
 
     public AbstractMediaListHeaderPresenter(Context context, int mThemeResId) {
         this.mBackgroundColor = 0;
@@ -41,6 +25,9 @@ public abstract class AbstractMediaListHeaderPresenter extends RowPresenter {
         this.mContext = null;
         setHeaderPresenter(null);
     }
+
+    /* access modifiers changed from: protected */
+    public abstract void onBindMediaListHeaderViewHolder(ViewHolder viewHolder, Object obj);
 
     public boolean isUsingDefaultSelectEffect() {
         return false;
@@ -77,5 +64,18 @@ public abstract class AbstractMediaListHeaderPresenter extends RowPresenter {
     public void setBackgroundColor(int color) {
         this.mBackgroundColorSet = true;
         this.mBackgroundColor = color;
+    }
+
+    public static class ViewHolder extends RowPresenter.ViewHolder {
+        private final TextView mHeaderView;
+
+        public ViewHolder(View view) {
+            super(view);
+            this.mHeaderView = (TextView) view.findViewById(C0364R.C0366id.mediaListHeader);
+        }
+
+        public TextView getHeaderView() {
+            return this.mHeaderView;
+        }
     }
 }

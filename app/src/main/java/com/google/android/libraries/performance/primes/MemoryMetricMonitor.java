@@ -3,33 +3,30 @@ package com.google.android.libraries.performance.primes;
 import android.app.Activity;
 import android.app.Application;
 import android.support.annotation.VisibleForTesting;
-import com.google.android.libraries.performance.primes.AppLifecycleListener;
+
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+
 import logs.proto.wireless.performance.mobile.MemoryMetric;
 
 final class MemoryMetricMonitor {
     @VisibleForTesting
     static final int MEMORY_LOG_DELAY_IN_SECONDS = 10;
     private static final String TAG = "MemoryMetricMonitor";
-    private final AppLifecycleMonitor appLifecycleMonitor;
     /* access modifiers changed from: private */
     public final Callback callback;
     /* access modifiers changed from: private */
     public final Supplier<ScheduledExecutorService> executorServiceSupplier;
+    private final AppLifecycleMonitor appLifecycleMonitor;
+    private final AtomicBoolean hasMemoryMonitorStarted;
+    private final AppLifecycleListener.OnAppToBackground onAppToBackground;
+    private final AppLifecycleListener.OnAppToForeground onAppToForeground;
     /* access modifiers changed from: private */
     public ScheduledFuture<?> futureMemoryBackgroundTask;
     /* access modifiers changed from: private */
     public ScheduledFuture<?> futureMemoryForegroundTask;
-    private final AtomicBoolean hasMemoryMonitorStarted;
-    private final AppLifecycleListener.OnAppToBackground onAppToBackground;
-    private final AppLifecycleListener.OnAppToForeground onAppToForeground;
-
-    interface Callback {
-        void onEvent(MemoryMetric.MemoryUsageMetric.MemoryEventCode memoryEventCode, String str);
-    }
 
     MemoryMetricMonitor(Callback callback2, Application appToMonitor, Supplier<ScheduledExecutorService> executorServiceSupplier2) {
         this(callback2, appToMonitor, executorServiceSupplier2, AppLifecycleMonitor.getInstance(appToMonitor));
@@ -97,5 +94,9 @@ final class MemoryMetricMonitor {
     public void stop() {
         this.appLifecycleMonitor.unregister(this.onAppToBackground);
         this.appLifecycleMonitor.unregister(this.onAppToForeground);
+    }
+
+    interface Callback {
+        void onEvent(MemoryMetric.MemoryUsageMetric.MemoryEventCode memoryEventCode, String str);
     }
 }

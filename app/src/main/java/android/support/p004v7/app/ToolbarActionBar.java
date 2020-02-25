@@ -6,7 +6,6 @@ import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.support.p001v4.view.ViewCompat;
-import android.support.p004v7.app.ActionBar;
 import android.support.p004v7.view.WindowCallbackWrapper;
 import android.support.p004v7.view.menu.MenuBuilder;
 import android.support.p004v7.view.menu.MenuPresenter;
@@ -22,26 +21,27 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.SpinnerAdapter;
+
 import java.util.ArrayList;
 
 /* renamed from: android.support.v7.app.ToolbarActionBar */
 class ToolbarActionBar extends ActionBar {
     DecorToolbar mDecorToolbar;
-    private boolean mLastMenuVisibility;
-    private boolean mMenuCallbackSet;
+    boolean mToolbarMenuPrepared;
+    Window.Callback mWindowCallback;
     private final Toolbar.OnMenuItemClickListener mMenuClicker = new Toolbar.OnMenuItemClickListener() {
         public boolean onMenuItemClick(MenuItem item) {
             return ToolbarActionBar.this.mWindowCallback.onMenuItemSelected(0, item);
         }
     };
+    private boolean mLastMenuVisibility;
+    private boolean mMenuCallbackSet;
     private final Runnable mMenuInvalidator = new Runnable() {
         public void run() {
             ToolbarActionBar.this.populateOptionsMenu();
         }
     };
     private ArrayList<ActionBar.OnMenuVisibilityListener> mMenuVisibilityListeners = new ArrayList<>();
-    boolean mToolbarMenuPrepared;
-    Window.Callback mWindowCallback;
 
     ToolbarActionBar(Toolbar toolbar, CharSequence title, Window.Callback windowCallback) {
         this.mDecorToolbar = new ToolbarWidgetWrapper(toolbar, false);
@@ -55,25 +55,11 @@ class ToolbarActionBar extends ActionBar {
         return this.mWindowCallback;
     }
 
-    public void setCustomView(View view) {
-        setCustomView(view, new ActionBar.LayoutParams(-2, -2));
-    }
-
     public void setCustomView(View view, ActionBar.LayoutParams layoutParams) {
         if (view != null) {
             view.setLayoutParams(layoutParams);
         }
         this.mDecorToolbar.setCustomView(view);
-    }
-
-    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-     method: ClspMth{android.view.LayoutInflater.inflate(int, android.view.ViewGroup, boolean):android.view.View}
-     arg types: [int, android.view.ViewGroup, int]
-     candidates:
-      ClspMth{android.view.LayoutInflater.inflate(org.xmlpull.v1.XmlPullParser, android.view.ViewGroup, boolean):android.view.View}
-      ClspMth{android.view.LayoutInflater.inflate(int, android.view.ViewGroup, boolean):android.view.View} */
-    public void setCustomView(int resId) {
-        setCustomView(LayoutInflater.from(this.mDecorToolbar.getContext()).inflate(resId, this.mDecorToolbar.getViewGroup(), false));
     }
 
     public void setIcon(int resId) {
@@ -101,12 +87,12 @@ class ToolbarActionBar extends ActionBar {
     public void setHomeButtonEnabled(boolean enabled) {
     }
 
-    public void setElevation(float elevation) {
-        ViewCompat.setElevation(this.mDecorToolbar.getViewGroup(), elevation);
-    }
-
     public float getElevation() {
         return ViewCompat.getElevation(this.mDecorToolbar.getViewGroup());
+    }
+
+    public void setElevation(float elevation) {
+        ViewCompat.setElevation(this.mDecorToolbar.getViewGroup(), elevation);
     }
 
     public Context getThemedContext() {
@@ -163,15 +149,6 @@ class ToolbarActionBar extends ActionBar {
         return 0;
     }
 
-    public void setTitle(CharSequence title) {
-        this.mDecorToolbar.setTitle(title);
-    }
-
-    public void setTitle(int resId) {
-        DecorToolbar decorToolbar = this.mDecorToolbar;
-        decorToolbar.setTitle(resId != 0 ? decorToolbar.getContext().getText(resId) : null);
-    }
-
     public void setWindowTitle(CharSequence title) {
         this.mDecorToolbar.setWindowTitle(title);
     }
@@ -183,20 +160,6 @@ class ToolbarActionBar extends ActionBar {
         }
         viewGroup.requestFocus();
         return true;
-    }
-
-    public void setSubtitle(CharSequence subtitle) {
-        this.mDecorToolbar.setSubtitle(subtitle);
-    }
-
-    public void setSubtitle(int resId) {
-        DecorToolbar decorToolbar = this.mDecorToolbar;
-        decorToolbar.setSubtitle(resId != 0 ? decorToolbar.getContext().getText(resId) : null);
-    }
-
-    @SuppressLint({"WrongConstant"})
-    public void setDisplayOptions(int options) {
-        setDisplayOptions(options, -1);
     }
 
     public void setDisplayOptions(int options, int mask) {
@@ -231,12 +194,44 @@ class ToolbarActionBar extends ActionBar {
         return this.mDecorToolbar.getCustomView();
     }
 
+    public void setCustomView(View view) {
+        setCustomView(view, new ActionBar.LayoutParams(-2, -2));
+    }
+
+    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+     method: ClspMth{android.view.LayoutInflater.inflate(int, android.view.ViewGroup, boolean):android.view.View}
+     arg types: [int, android.view.ViewGroup, int]
+     candidates:
+      ClspMth{android.view.LayoutInflater.inflate(org.xmlpull.v1.XmlPullParser, android.view.ViewGroup, boolean):android.view.View}
+      ClspMth{android.view.LayoutInflater.inflate(int, android.view.ViewGroup, boolean):android.view.View} */
+    public void setCustomView(int resId) {
+        setCustomView(LayoutInflater.from(this.mDecorToolbar.getContext()).inflate(resId, this.mDecorToolbar.getViewGroup(), false));
+    }
+
     public CharSequence getTitle() {
         return this.mDecorToolbar.getTitle();
     }
 
+    public void setTitle(CharSequence title) {
+        this.mDecorToolbar.setTitle(title);
+    }
+
+    public void setTitle(int resId) {
+        DecorToolbar decorToolbar = this.mDecorToolbar;
+        decorToolbar.setTitle(resId != 0 ? decorToolbar.getContext().getText(resId) : null);
+    }
+
     public CharSequence getSubtitle() {
         return this.mDecorToolbar.getSubtitle();
+    }
+
+    public void setSubtitle(CharSequence subtitle) {
+        this.mDecorToolbar.setSubtitle(subtitle);
+    }
+
+    public void setSubtitle(int resId) {
+        DecorToolbar decorToolbar = this.mDecorToolbar;
+        decorToolbar.setSubtitle(resId != 0 ? decorToolbar.getContext().getText(resId) : null);
     }
 
     public int getNavigationMode() {
@@ -253,6 +248,11 @@ class ToolbarActionBar extends ActionBar {
 
     public int getDisplayOptions() {
         return this.mDecorToolbar.getDisplayOptions();
+    }
+
+    @SuppressLint({"WrongConstant"})
+    public void setDisplayOptions(int options) {
+        setDisplayOptions(options, -1);
     }
 
     public ActionBar.Tab newTab() {
@@ -403,6 +403,14 @@ class ToolbarActionBar extends ActionBar {
         }
     }
 
+    private Menu getMenu() {
+        if (!this.mMenuCallbackSet) {
+            this.mDecorToolbar.setMenuCallbacks(new ActionMenuPresenterCallback(), new MenuBuilderCallback());
+            this.mMenuCallbackSet = true;
+        }
+        return this.mDecorToolbar.getMenu();
+    }
+
     /* renamed from: android.support.v7.app.ToolbarActionBar$ToolbarCallbackWrapper */
     private class ToolbarCallbackWrapper extends WindowCallbackWrapper {
         public ToolbarCallbackWrapper(Window.Callback wrapped) {
@@ -424,14 +432,6 @@ class ToolbarActionBar extends ActionBar {
             }
             return super.onCreatePanelView(featureId);
         }
-    }
-
-    private Menu getMenu() {
-        if (!this.mMenuCallbackSet) {
-            this.mDecorToolbar.setMenuCallbacks(new ActionMenuPresenterCallback(), new MenuBuilderCallback());
-            this.mMenuCallbackSet = true;
-        }
-        return this.mDecorToolbar.getMenu();
     }
 
     /* renamed from: android.support.v7.app.ToolbarActionBar$ActionMenuPresenterCallback */

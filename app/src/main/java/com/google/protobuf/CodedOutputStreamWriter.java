@@ -1,7 +1,5 @@
 package com.google.protobuf;
 
-import com.google.protobuf.MapEntryLite;
-import com.google.protobuf.Writer;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -10,16 +8,16 @@ import java.util.Map;
 final class CodedOutputStreamWriter implements Writer {
     private final CodedOutputStream output;
 
+    private CodedOutputStreamWriter(CodedOutputStream output2) {
+        this.output = (CodedOutputStream) Internal.checkNotNull(output2, "output");
+        this.output.wrapper = this;
+    }
+
     public static CodedOutputStreamWriter forCodedOutput(CodedOutputStream output2) {
         if (output2.wrapper != null) {
             return output2.wrapper;
         }
         return new CodedOutputStreamWriter(output2);
-    }
-
-    private CodedOutputStreamWriter(CodedOutputStream output2) {
-        this.output = (CodedOutputStream) Internal.checkNotNull(output2, "output");
-        this.output.wrapper = this;
     }
 
     public Writer.FieldOrder fieldOrder() {

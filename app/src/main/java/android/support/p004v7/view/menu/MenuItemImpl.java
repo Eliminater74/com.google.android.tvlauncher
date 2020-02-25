@@ -15,7 +15,6 @@ import android.support.p001v4.internal.view.SupportMenuItem;
 import android.support.p001v4.view.ActionProvider;
 import android.support.p004v7.appcompat.C0233R;
 import android.support.p004v7.content.res.AppCompatResources;
-import android.support.p004v7.view.menu.MenuView;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
@@ -31,37 +30,37 @@ import android.widget.LinearLayout;
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
 /* renamed from: android.support.v7.view.menu.MenuItemImpl */
 public final class MenuItemImpl implements SupportMenuItem {
+    static final int NO_ICON = 0;
     private static final int CHECKABLE = 1;
     private static final int CHECKED = 2;
     private static final int ENABLED = 16;
     private static final int EXCLUSIVE = 4;
     private static final int HIDDEN = 8;
     private static final int IS_ACTION = 32;
-    static final int NO_ICON = 0;
     private static final int SHOW_AS_ACTION_MASK = 3;
     private static final String TAG = "MenuItemImpl";
+    private final int mCategoryOrder;
+    private final int mGroup;
+    private final int mId;
+    private final int mOrdering;
+    MenuBuilder mMenu;
     private ActionProvider mActionProvider;
     private View mActionView;
-    private final int mCategoryOrder;
     private MenuItem.OnMenuItemClickListener mClickListener;
     private CharSequence mContentDescription;
     private int mFlags = 16;
-    private final int mGroup;
     private boolean mHasIconTint = false;
     private boolean mHasIconTintMode = false;
     private Drawable mIconDrawable;
     private int mIconResId = 0;
     private ColorStateList mIconTintList = null;
     private PorterDuff.Mode mIconTintMode = null;
-    private final int mId;
     private Intent mIntent;
     private boolean mIsActionViewExpanded = false;
     private Runnable mItemCallback;
-    MenuBuilder mMenu;
     private ContextMenu.ContextMenuInfo mMenuInfo;
     private boolean mNeedToApplyIconTint = false;
     private MenuItem.OnActionExpandListener mOnActionExpandListener;
-    private final int mOrdering;
     private char mShortcutAlphabeticChar;
     private int mShortcutAlphabeticModifiers = 4096;
     private char mShortcutNumericChar;
@@ -80,6 +79,12 @@ public final class MenuItemImpl implements SupportMenuItem {
         this.mOrdering = ordering;
         this.mTitle = title;
         this.mShowAsAction = showAsAction;
+    }
+
+    private static void appendModifier(StringBuilder sb, int modifiers, int flag, String label) {
+        if ((modifiers & flag) == flag) {
+            sb.append(label);
+        }
     }
 
     public boolean invoke() {
@@ -266,12 +271,6 @@ public final class MenuItemImpl implements SupportMenuItem {
         return sb.toString();
     }
 
-    private static void appendModifier(StringBuilder sb, int modifiers, int flag, String label) {
-        if ((modifiers & flag) == flag) {
-            sb.append(label);
-        }
-    }
-
     /* access modifiers changed from: package-private */
     public boolean shouldShowShortcut() {
         return this.mMenu.isShortcutsVisible() && getShortcut() != 0;
@@ -281,13 +280,13 @@ public final class MenuItemImpl implements SupportMenuItem {
         return this.mSubMenu;
     }
 
-    public boolean hasSubMenu() {
-        return this.mSubMenu != null;
-    }
-
     public void setSubMenu(SubMenuBuilder subMenu) {
         this.mSubMenu = subMenu;
         subMenu.setHeaderTitle(getTitle());
+    }
+
+    public boolean hasSubMenu() {
+        return this.mSubMenu != null;
     }
 
     @ViewDebug.CapturedViewProperty
@@ -418,12 +417,12 @@ public final class MenuItemImpl implements SupportMenuItem {
         return this;
     }
 
-    public void setExclusiveCheckable(boolean exclusive) {
-        this.mFlags = (this.mFlags & -5) | (exclusive ? 4 : 0);
-    }
-
     public boolean isExclusiveCheckable() {
         return (this.mFlags & 4) != 0;
+    }
+
+    public void setExclusiveCheckable(boolean exclusive) {
+        this.mFlags = (this.mFlags & -5) | (exclusive ? 4 : 0);
     }
 
     public boolean isChecked() {
@@ -492,13 +491,13 @@ public final class MenuItemImpl implements SupportMenuItem {
         return null;
     }
 
+    public ContextMenu.ContextMenuInfo getMenuInfo() {
+        return this.mMenuInfo;
+    }
+
     /* access modifiers changed from: package-private */
     public void setMenuInfo(ContextMenu.ContextMenuInfo menuInfo) {
         this.mMenuInfo = menuInfo;
-    }
-
-    public ContextMenu.ContextMenuInfo getMenuInfo() {
-        return this.mMenuInfo;
     }
 
     public void actionFormatChanged() {
@@ -658,13 +657,13 @@ public final class MenuItemImpl implements SupportMenuItem {
         return false;
     }
 
+    public boolean isActionViewExpanded() {
+        return this.mIsActionViewExpanded;
+    }
+
     public void setActionViewExpanded(boolean isExpanded) {
         this.mIsActionViewExpanded = isExpanded;
         this.mMenu.onItemsChanged(false);
-    }
-
-    public boolean isActionViewExpanded() {
-        return this.mIsActionViewExpanded;
     }
 
     public MenuItem setOnActionExpandListener(MenuItem.OnActionExpandListener listener) {

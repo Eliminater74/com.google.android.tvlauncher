@@ -3,18 +3,18 @@ package com.google.android.gms.common.server.response;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
+
 import com.google.android.gms.common.internal.zzak;
 import com.google.android.gms.common.internal.zzam;
 import com.google.android.gms.common.internal.zzau;
-import com.google.android.gms.common.server.response.FastParser;
 import com.google.android.gms.common.util.IOUtils;
-import com.google.android.gms.common.util.zzc;
 import com.google.android.gms.common.util.zzn;
 import com.google.android.gms.common.util.zzo;
 import com.google.android.gms.internal.zzbkv;
 import com.google.android.gms.internal.zzbky;
 import com.google.android.gms.internal.zzbly;
 import com.google.android.gms.people.PeopleConstants;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,14 +31,42 @@ public abstract class FastJsonResponse {
     private byte[] zzb;
     private boolean zzc;
 
-    public interface FieldConverter<I, O> {
-        O convert(I i);
+    public static InputStream getUnzippedStream(byte[] bArr) {
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bArr);
+        if (IOUtils.isGzipByteBuffer(bArr)) {
+            try {
+                return new GZIPInputStream(byteArrayInputStream);
+            } catch (IOException e) {
+            }
+        }
+        return byteArrayInputStream;
+    }
 
-        I convertBack(O o);
+    private static <O> boolean zza(String str, O o) {
+        if (o != null) {
+            return true;
+        }
+        if (!Log.isLoggable("FastJsonResponse", 6)) {
+            return false;
+        }
+        StringBuilder sb = new StringBuilder(String.valueOf(str).length() + 58);
+        sb.append("Output field (");
+        sb.append(str);
+        sb.append(") has a null value, but expected a primitive");
+        Log.e("FastJsonResponse", sb.toString());
+        return false;
+    }
 
-        int getTypeIn();
-
-        int getTypeOut();
+    private static void zza(StringBuilder sb, Field field, Object obj) {
+        if (field.getTypeIn() == 11) {
+            sb.append(((FastJsonResponse) field.getConcreteType().cast(obj)).toString());
+        } else if (field.getTypeIn() == 7) {
+            sb.append(QUOTE);
+            sb.append(zzn.zzb((String) obj));
+            sb.append(QUOTE);
+        } else {
+            sb.append(obj);
+        }
     }
 
     public abstract Map<String, Field<?, ?>> getFieldMappings();
@@ -66,409 +94,6 @@ public abstract class FastJsonResponse {
             } catch (IOException e2) {
             }
             throw th;
-        }
-    }
-
-    public static InputStream getUnzippedStream(byte[] bArr) {
-        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bArr);
-        if (IOUtils.isGzipByteBuffer(bArr)) {
-            try {
-                return new GZIPInputStream(byteArrayInputStream);
-            } catch (IOException e) {
-            }
-        }
-        return byteArrayInputStream;
-    }
-
-    public static class Field<I, O> extends zzbkv {
-        public static final FieldCreator CREATOR = new FieldCreator();
-        protected final Class<? extends FastJsonResponse> mConcreteType;
-        protected final String mConcreteTypeName;
-        protected final String mOutputFieldName;
-        protected final int mSafeParcelableFieldId;
-        protected final int mTypeIn;
-        protected final boolean mTypeInArray;
-        protected final int mTypeOut;
-        protected final boolean mTypeOutArray;
-        private final int zza;
-        private FieldMappingDictionary zzb;
-        /* access modifiers changed from: private */
-        public FieldConverter<I, O> zzc;
-
-        Field(int i, int i2, boolean z, int i3, boolean z2, String str, int i4, String str2, zzbly zzbly) {
-            this.zza = i;
-            this.mTypeIn = i2;
-            this.mTypeInArray = z;
-            this.mTypeOut = i3;
-            this.mTypeOutArray = z2;
-            this.mOutputFieldName = str;
-            this.mSafeParcelableFieldId = i4;
-            if (str2 == null) {
-                this.mConcreteType = null;
-                this.mConcreteTypeName = null;
-            } else {
-                this.mConcreteType = zzl.class;
-                this.mConcreteTypeName = str2;
-            }
-            if (zzbly == null) {
-                this.zzc = null;
-            } else {
-                this.zzc = zzbly.zza();
-            }
-        }
-
-        protected Field(int i, boolean z, int i2, boolean z2, String str, int i3, Class<? extends FastJsonResponse> cls, FieldConverter<I, O> fieldConverter) {
-            this.zza = 1;
-            this.mTypeIn = i;
-            this.mTypeInArray = z;
-            this.mTypeOut = i2;
-            this.mTypeOutArray = z2;
-            this.mOutputFieldName = str;
-            this.mSafeParcelableFieldId = i3;
-            this.mConcreteType = cls;
-            if (cls == null) {
-                this.mConcreteTypeName = null;
-            } else {
-                this.mConcreteTypeName = cls.getCanonicalName();
-            }
-            this.zzc = fieldConverter;
-        }
-
-        public Field<I, O> copyForDictionary() {
-            return new Field(this.zza, this.mTypeIn, this.mTypeInArray, this.mTypeOut, this.mTypeOutArray, this.mOutputFieldName, this.mSafeParcelableFieldId, this.mConcreteTypeName, zzb());
-        }
-
-        public int getVersionCode() {
-            return this.zza;
-        }
-
-        public int getTypeIn() {
-            return this.mTypeIn;
-        }
-
-        public boolean isTypeInArray() {
-            return this.mTypeInArray;
-        }
-
-        public int getTypeOut() {
-            return this.mTypeOut;
-        }
-
-        public boolean isTypeOutArray() {
-            return this.mTypeOutArray;
-        }
-
-        public String getOutputFieldName() {
-            return this.mOutputFieldName;
-        }
-
-        public int getSafeParcelableFieldId() {
-            return this.mSafeParcelableFieldId;
-        }
-
-        public boolean isValidSafeParcelableFieldId() {
-            return this.mSafeParcelableFieldId != -1;
-        }
-
-        public Class<? extends FastJsonResponse> getConcreteType() {
-            return this.mConcreteType;
-        }
-
-        private final String zza() {
-            String str = this.mConcreteTypeName;
-            if (str == null) {
-                return null;
-            }
-            return str;
-        }
-
-        public boolean hasConverter() {
-            return this.zzc != null;
-        }
-
-        public void setFieldMappingDictionary(FieldMappingDictionary fieldMappingDictionary) {
-            this.zzb = fieldMappingDictionary;
-        }
-
-        private final zzbly zzb() {
-            FieldConverter<I, O> fieldConverter = this.zzc;
-            if (fieldConverter == null) {
-                return null;
-            }
-            return zzbly.zza(fieldConverter);
-        }
-
-        public FastJsonResponse newConcreteTypeInstance() throws InstantiationException, IllegalAccessException {
-            Class<? extends FastJsonResponse> cls = this.mConcreteType;
-            if (cls != zzl.class) {
-                return (FastJsonResponse) cls.newInstance();
-            }
-            zzau.zza(this.zzb, "The field mapping dictionary must be set if the concrete type is a SafeParcelResponse object.");
-            return new zzl(this.zzb, this.mConcreteTypeName);
-        }
-
-        public Map<String, Field<?, ?>> getConcreteTypeFieldMappingFromDictionary() {
-            zzau.zza((Object) this.mConcreteTypeName);
-            zzau.zza(this.zzb);
-            return this.zzb.getFieldMapping(this.mConcreteTypeName);
-        }
-
-        public O convert(I i) {
-            return this.zzc.convert(i);
-        }
-
-        public I convertBack(O o) {
-            return this.zzc.convertBack(o);
-        }
-
-        public static Field<Integer, Integer> forInteger(String str, int i) {
-            return new Field(0, false, 0, false, str, i, null, null);
-        }
-
-        public static Field<ArrayList<Integer>, ArrayList<Integer>> forIntegers(String str, int i) {
-            return new Field(0, true, 0, true, str, i, null, null);
-        }
-
-        public static Field<BigInteger, BigInteger> forBigInteger(String str, int i) {
-            return new Field(1, false, 1, false, str, i, null, null);
-        }
-
-        public static Field<ArrayList<BigInteger>, ArrayList<BigInteger>> forBigIntegers(String str, int i) {
-            return new Field(0, true, 1, true, str, i, null, null);
-        }
-
-        public static Field<Long, Long> forLong(String str, int i) {
-            return new Field(2, false, 2, false, str, i, null, null);
-        }
-
-        public static Field<ArrayList<Long>, ArrayList<Long>> forLongs(String str, int i) {
-            return new Field(2, true, 2, true, str, i, null, null);
-        }
-
-        public static Field<Float, Float> forFloat(String str, int i) {
-            return new Field(3, false, 3, false, str, i, null, null);
-        }
-
-        public static Field<ArrayList<Float>, ArrayList<Float>> forFloats(String str, int i) {
-            return new Field(3, true, 3, true, str, i, null, null);
-        }
-
-        public static Field<Double, Double> forDouble(String str, int i) {
-            return new Field(4, false, 4, false, str, i, null, null);
-        }
-
-        public static Field<ArrayList<Double>, ArrayList<Double>> forDoubles(String str, int i) {
-            return new Field(4, true, 4, true, str, i, null, null);
-        }
-
-        public static Field<BigDecimal, BigDecimal> forBigDecimal(String str, int i) {
-            return new Field(5, false, 5, false, str, i, null, null);
-        }
-
-        public static Field<ArrayList<BigDecimal>, ArrayList<BigDecimal>> forBigDecimals(String str, int i) {
-            return new Field(5, true, 5, true, str, i, null, null);
-        }
-
-        public static Field<Boolean, Boolean> forBoolean(String str, int i) {
-            return new Field(6, false, 6, false, str, i, null, null);
-        }
-
-        public static Field<ArrayList<Boolean>, ArrayList<Boolean>> forBooleans(String str, int i) {
-            return new Field(6, true, 6, true, str, i, null, null);
-        }
-
-        public static Field<String, String> forString(String str, int i) {
-            return new Field(7, false, 7, false, str, i, null, null);
-        }
-
-        public static Field<ArrayList<String>, ArrayList<String>> forStrings(String str, int i) {
-            return new Field(7, true, 7, true, str, i, null, null);
-        }
-
-        public static Field<byte[], byte[]> forBase64(String str, int i) {
-            return new Field(8, false, 8, false, str, i, null, null);
-        }
-
-        public static Field<byte[], byte[]> forBase64UrlSafe(String str, int i) {
-            return new Field(9, false, 9, false, str, i, null, null);
-        }
-
-        public static Field<HashMap<String, String>, HashMap<String, String>> forStringMap(String str, int i) {
-            return new Field(10, false, 10, false, str, i, null, null);
-        }
-
-        public static <T extends FastJsonResponse> Field<T, T> forConcreteType(String str, int i, Class<T> cls) {
-            return new Field(11, false, 11, false, str, i, cls, null);
-        }
-
-        public static <T extends FastJsonResponse> Field<ArrayList<T>, ArrayList<T>> forConcreteTypeArray(String str, int i, Class<T> cls) {
-            return new Field(11, true, 11, true, str, i, cls, null);
-        }
-
-        public static <T extends FieldConverter> Field withConverter(String str, int i, Class<T> cls, boolean z) {
-            try {
-                return withConverter(str, i, (FieldConverter) cls.newInstance(), z);
-            } catch (InstantiationException e) {
-                throw new RuntimeException(e);
-            } catch (IllegalAccessException e2) {
-                throw new RuntimeException(e2);
-            }
-        }
-
-        public static Field withConverter(String str, FieldConverter<?, ?> fieldConverter, boolean z) {
-            return withConverter(str, -1, fieldConverter, z);
-        }
-
-        public static Field withConverter(String str, int i, FieldConverter<?, ?> fieldConverter, boolean z) {
-            return new Field(fieldConverter.getTypeIn(), z, fieldConverter.getTypeOut(), false, str, i, null, fieldConverter);
-        }
-
-        public static Field<Integer, Integer> forInteger(String str) {
-            return new Field(0, false, 0, false, str, -1, null, null);
-        }
-
-        public static Field<ArrayList<Integer>, ArrayList<Integer>> forIntegers(String str) {
-            return new Field(0, true, 0, true, str, -1, null, null);
-        }
-
-        public static Field<BigInteger, BigInteger> forBigInteger(String str) {
-            return new Field(1, false, 1, false, str, -1, null, null);
-        }
-
-        public static Field<ArrayList<BigInteger>, ArrayList<BigInteger>> forBigIntegers(String str) {
-            return new Field(0, true, 1, true, str, -1, null, null);
-        }
-
-        public static Field<Long, Long> forLong(String str) {
-            return new Field(2, false, 2, false, str, -1, null, null);
-        }
-
-        public static Field<ArrayList<Long>, ArrayList<Long>> forLongs(String str) {
-            return new Field(2, true, 2, true, str, -1, null, null);
-        }
-
-        public static Field<Float, Float> forFloat(String str) {
-            return new Field(3, false, 3, false, str, -1, null, null);
-        }
-
-        public static Field<ArrayList<Float>, ArrayList<Float>> forFloats(String str) {
-            return new Field(3, true, 3, true, str, -1, null, null);
-        }
-
-        public static Field<Double, Double> forDouble(String str) {
-            return new Field(4, false, 4, false, str, -1, null, null);
-        }
-
-        public static Field<ArrayList<Double>, ArrayList<Double>> forDoubles(String str) {
-            return new Field(4, true, 4, true, str, -1, null, null);
-        }
-
-        public static Field<BigDecimal, BigDecimal> forBigDecimal(String str) {
-            return new Field(5, false, 5, false, str, -1, null, null);
-        }
-
-        public static Field<ArrayList<BigDecimal>, ArrayList<BigDecimal>> forBigDecimals(String str) {
-            return new Field(5, true, 5, true, str, -1, null, null);
-        }
-
-        public static Field<Boolean, Boolean> forBoolean(String str) {
-            return new Field(6, false, 6, false, str, -1, null, null);
-        }
-
-        public static Field<ArrayList<Boolean>, ArrayList<Boolean>> forBooleans(String str) {
-            return new Field(6, true, 6, true, str, -1, null, null);
-        }
-
-        public static Field<String, String> forString(String str) {
-            return new Field(7, false, 7, false, str, -1, null, null);
-        }
-
-        public static Field<ArrayList<String>, ArrayList<String>> forStrings(String str) {
-            return new Field(7, true, 7, true, str, -1, null, null);
-        }
-
-        public static Field<byte[], byte[]> forBase64(String str) {
-            return new Field(8, false, 8, false, str, -1, null, null);
-        }
-
-        public static Field<byte[], byte[]> forBase64UrlSafe(String str) {
-            return new Field(9, false, 9, false, str, -1, null, null);
-        }
-
-        public static Field<HashMap<String, String>, HashMap<String, String>> forStringMap(String str) {
-            return new Field(10, false, 10, false, str, -1, null, null);
-        }
-
-        public static <T extends FastJsonResponse> Field<T, T> forConcreteType(String str, Class<T> cls) {
-            return new Field(11, false, 11, false, str, -1, cls, null);
-        }
-
-        public static <T extends FastJsonResponse> Field<ArrayList<T>, ArrayList<T>> forConcreteTypeArray(String str, Class<T> cls) {
-            return new Field(11, true, 11, true, str, -1, cls, null);
-        }
-
-        public static <T extends FieldConverter> Field withConverter(String str, Class<T> cls, boolean z) {
-            return withConverter(str, -1, cls, z);
-        }
-
-        /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-         method: com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, java.lang.String, boolean):void
-         arg types: [android.os.Parcel, int, java.lang.String, int]
-         candidates:
-          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, android.os.Bundle, boolean):void
-          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, android.os.IBinder, boolean):void
-          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, android.os.Parcel, boolean):void
-          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, android.util.SparseArray<java.lang.String>, boolean):void
-          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, java.lang.Boolean, boolean):void
-          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, java.lang.Double, boolean):void
-          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, java.lang.Float, boolean):void
-          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, java.lang.Integer, boolean):void
-          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, java.lang.Long, boolean):void
-          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, java.math.BigDecimal, boolean):void
-          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, java.math.BigInteger, boolean):void
-          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, java.util.List<java.lang.Integer>, boolean):void
-          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, byte[], boolean):void
-          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, double[], boolean):void
-          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, float[], boolean):void
-          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, int[], boolean):void
-          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, long[], boolean):void
-          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, java.lang.String[], boolean):void
-          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, java.math.BigDecimal[], boolean):void
-          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, java.math.BigInteger[], boolean):void
-          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, boolean[], boolean):void
-          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, byte[][], boolean):void
-          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, java.lang.String, boolean):void */
-        /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-         method: com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, android.os.Parcelable, int, boolean):void
-         arg types: [android.os.Parcel, int, com.google.android.gms.internal.zzbly, int, int]
-         candidates:
-          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, android.os.Parcelable[], int, boolean):void
-          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, android.os.Parcelable, int, boolean):void */
-        public void writeToParcel(Parcel parcel, int i) {
-            int zza2 = zzbky.zza(parcel);
-            zzbky.zza(parcel, 1, getVersionCode());
-            zzbky.zza(parcel, 2, getTypeIn());
-            zzbky.zza(parcel, 3, isTypeInArray());
-            zzbky.zza(parcel, 4, getTypeOut());
-            zzbky.zza(parcel, 5, isTypeOutArray());
-            zzbky.zza(parcel, 6, getOutputFieldName(), false);
-            zzbky.zza(parcel, 7, getSafeParcelableFieldId());
-            zzbky.zza(parcel, 8, zza(), false);
-            zzbky.zza(parcel, 9, (Parcelable) zzb(), i, false);
-            zzbky.zza(parcel, zza2);
-        }
-
-        public String toString() {
-            zzam zza2 = zzak.zza(this).zza("versionCode", Integer.valueOf(this.zza)).zza("typeIn", Integer.valueOf(this.mTypeIn)).zza("typeInArray", Boolean.valueOf(this.mTypeInArray)).zza("typeOut", Integer.valueOf(this.mTypeOut)).zza("typeOutArray", Boolean.valueOf(this.mTypeOutArray)).zza("outputFieldName", this.mOutputFieldName).zza("safeParcelFieldId", Integer.valueOf(this.mSafeParcelableFieldId)).zza("concreteTypeName", zza());
-            Class<? extends FastJsonResponse> concreteType = getConcreteType();
-            if (concreteType != null) {
-                zza2.zza("concreteType.class", concreteType.getCanonicalName());
-            }
-            FieldConverter<I, O> fieldConverter = this.zzc;
-            if (fieldConverter != null) {
-                zza2.zza("converterName", fieldConverter.getClass().getCanonicalName());
-            }
-            return zza2.toString();
         }
     }
 
@@ -865,21 +490,6 @@ public abstract class FastJsonResponse {
         setStringMap(str, map);
     }
 
-    private static <O> boolean zza(String str, O o) {
-        if (o != null) {
-            return true;
-        }
-        if (!Log.isLoggable("FastJsonResponse", 6)) {
-            return false;
-        }
-        StringBuilder sb = new StringBuilder(String.valueOf(str).length() + 58);
-        sb.append("Output field (");
-        sb.append(str);
-        sb.append(") has a null value, but expected a primitive");
-        Log.e("FastJsonResponse", sb.toString());
-        return false;
-    }
-
     public <T extends FastJsonResponse> void addConcreteTypeInternal(Field<?, ?> field, String str, T t) {
         addConcreteType(str, t);
     }
@@ -1082,15 +692,405 @@ public abstract class FastJsonResponse {
         }
     }
 
-    private static void zza(StringBuilder sb, Field field, Object obj) {
-        if (field.getTypeIn() == 11) {
-            sb.append(((FastJsonResponse) field.getConcreteType().cast(obj)).toString());
-        } else if (field.getTypeIn() == 7) {
-            sb.append(QUOTE);
-            sb.append(zzn.zzb((String) obj));
-            sb.append(QUOTE);
-        } else {
-            sb.append(obj);
+    public interface FieldConverter<I, O> {
+        O convert(I i);
+
+        I convertBack(O o);
+
+        int getTypeIn();
+
+        int getTypeOut();
+    }
+
+    public static class Field<I, O> extends zzbkv {
+        public static final FieldCreator CREATOR = new FieldCreator();
+        protected final Class<? extends FastJsonResponse> mConcreteType;
+        protected final String mConcreteTypeName;
+        protected final String mOutputFieldName;
+        protected final int mSafeParcelableFieldId;
+        protected final int mTypeIn;
+        protected final boolean mTypeInArray;
+        protected final int mTypeOut;
+        protected final boolean mTypeOutArray;
+        private final int zza;
+        /* access modifiers changed from: private */
+        public FieldConverter<I, O> zzc;
+        private FieldMappingDictionary zzb;
+
+        Field(int i, int i2, boolean z, int i3, boolean z2, String str, int i4, String str2, zzbly zzbly) {
+            this.zza = i;
+            this.mTypeIn = i2;
+            this.mTypeInArray = z;
+            this.mTypeOut = i3;
+            this.mTypeOutArray = z2;
+            this.mOutputFieldName = str;
+            this.mSafeParcelableFieldId = i4;
+            if (str2 == null) {
+                this.mConcreteType = null;
+                this.mConcreteTypeName = null;
+            } else {
+                this.mConcreteType = zzl.class;
+                this.mConcreteTypeName = str2;
+            }
+            if (zzbly == null) {
+                this.zzc = null;
+            } else {
+                this.zzc = zzbly.zza();
+            }
+        }
+
+        protected Field(int i, boolean z, int i2, boolean z2, String str, int i3, Class<? extends FastJsonResponse> cls, FieldConverter<I, O> fieldConverter) {
+            this.zza = 1;
+            this.mTypeIn = i;
+            this.mTypeInArray = z;
+            this.mTypeOut = i2;
+            this.mTypeOutArray = z2;
+            this.mOutputFieldName = str;
+            this.mSafeParcelableFieldId = i3;
+            this.mConcreteType = cls;
+            if (cls == null) {
+                this.mConcreteTypeName = null;
+            } else {
+                this.mConcreteTypeName = cls.getCanonicalName();
+            }
+            this.zzc = fieldConverter;
+        }
+
+        public static Field<Integer, Integer> forInteger(String str, int i) {
+            return new Field(0, false, 0, false, str, i, null, null);
+        }
+
+        public static Field<ArrayList<Integer>, ArrayList<Integer>> forIntegers(String str, int i) {
+            return new Field(0, true, 0, true, str, i, null, null);
+        }
+
+        public static Field<BigInteger, BigInteger> forBigInteger(String str, int i) {
+            return new Field(1, false, 1, false, str, i, null, null);
+        }
+
+        public static Field<ArrayList<BigInteger>, ArrayList<BigInteger>> forBigIntegers(String str, int i) {
+            return new Field(0, true, 1, true, str, i, null, null);
+        }
+
+        public static Field<Long, Long> forLong(String str, int i) {
+            return new Field(2, false, 2, false, str, i, null, null);
+        }
+
+        public static Field<ArrayList<Long>, ArrayList<Long>> forLongs(String str, int i) {
+            return new Field(2, true, 2, true, str, i, null, null);
+        }
+
+        public static Field<Float, Float> forFloat(String str, int i) {
+            return new Field(3, false, 3, false, str, i, null, null);
+        }
+
+        public static Field<ArrayList<Float>, ArrayList<Float>> forFloats(String str, int i) {
+            return new Field(3, true, 3, true, str, i, null, null);
+        }
+
+        public static Field<Double, Double> forDouble(String str, int i) {
+            return new Field(4, false, 4, false, str, i, null, null);
+        }
+
+        public static Field<ArrayList<Double>, ArrayList<Double>> forDoubles(String str, int i) {
+            return new Field(4, true, 4, true, str, i, null, null);
+        }
+
+        public static Field<BigDecimal, BigDecimal> forBigDecimal(String str, int i) {
+            return new Field(5, false, 5, false, str, i, null, null);
+        }
+
+        public static Field<ArrayList<BigDecimal>, ArrayList<BigDecimal>> forBigDecimals(String str, int i) {
+            return new Field(5, true, 5, true, str, i, null, null);
+        }
+
+        public static Field<Boolean, Boolean> forBoolean(String str, int i) {
+            return new Field(6, false, 6, false, str, i, null, null);
+        }
+
+        public static Field<ArrayList<Boolean>, ArrayList<Boolean>> forBooleans(String str, int i) {
+            return new Field(6, true, 6, true, str, i, null, null);
+        }
+
+        public static Field<String, String> forString(String str, int i) {
+            return new Field(7, false, 7, false, str, i, null, null);
+        }
+
+        public static Field<ArrayList<String>, ArrayList<String>> forStrings(String str, int i) {
+            return new Field(7, true, 7, true, str, i, null, null);
+        }
+
+        public static Field<byte[], byte[]> forBase64(String str, int i) {
+            return new Field(8, false, 8, false, str, i, null, null);
+        }
+
+        public static Field<byte[], byte[]> forBase64UrlSafe(String str, int i) {
+            return new Field(9, false, 9, false, str, i, null, null);
+        }
+
+        public static Field<HashMap<String, String>, HashMap<String, String>> forStringMap(String str, int i) {
+            return new Field(10, false, 10, false, str, i, null, null);
+        }
+
+        public static <T extends FastJsonResponse> Field<T, T> forConcreteType(String str, int i, Class<T> cls) {
+            return new Field(11, false, 11, false, str, i, cls, null);
+        }
+
+        public static <T extends FastJsonResponse> Field<ArrayList<T>, ArrayList<T>> forConcreteTypeArray(String str, int i, Class<T> cls) {
+            return new Field(11, true, 11, true, str, i, cls, null);
+        }
+
+        public static <T extends FieldConverter> Field withConverter(String str, int i, Class<T> cls, boolean z) {
+            try {
+                return withConverter(str, i, (FieldConverter) cls.newInstance(), z);
+            } catch (InstantiationException e) {
+                throw new RuntimeException(e);
+            } catch (IllegalAccessException e2) {
+                throw new RuntimeException(e2);
+            }
+        }
+
+        public static Field withConverter(String str, FieldConverter<?, ?> fieldConverter, boolean z) {
+            return withConverter(str, -1, fieldConverter, z);
+        }
+
+        public static Field withConverter(String str, int i, FieldConverter<?, ?> fieldConverter, boolean z) {
+            return new Field(fieldConverter.getTypeIn(), z, fieldConverter.getTypeOut(), false, str, i, null, fieldConverter);
+        }
+
+        public static Field<Integer, Integer> forInteger(String str) {
+            return new Field(0, false, 0, false, str, -1, null, null);
+        }
+
+        public static Field<ArrayList<Integer>, ArrayList<Integer>> forIntegers(String str) {
+            return new Field(0, true, 0, true, str, -1, null, null);
+        }
+
+        public static Field<BigInteger, BigInteger> forBigInteger(String str) {
+            return new Field(1, false, 1, false, str, -1, null, null);
+        }
+
+        public static Field<ArrayList<BigInteger>, ArrayList<BigInteger>> forBigIntegers(String str) {
+            return new Field(0, true, 1, true, str, -1, null, null);
+        }
+
+        public static Field<Long, Long> forLong(String str) {
+            return new Field(2, false, 2, false, str, -1, null, null);
+        }
+
+        public static Field<ArrayList<Long>, ArrayList<Long>> forLongs(String str) {
+            return new Field(2, true, 2, true, str, -1, null, null);
+        }
+
+        public static Field<Float, Float> forFloat(String str) {
+            return new Field(3, false, 3, false, str, -1, null, null);
+        }
+
+        public static Field<ArrayList<Float>, ArrayList<Float>> forFloats(String str) {
+            return new Field(3, true, 3, true, str, -1, null, null);
+        }
+
+        public static Field<Double, Double> forDouble(String str) {
+            return new Field(4, false, 4, false, str, -1, null, null);
+        }
+
+        public static Field<ArrayList<Double>, ArrayList<Double>> forDoubles(String str) {
+            return new Field(4, true, 4, true, str, -1, null, null);
+        }
+
+        public static Field<BigDecimal, BigDecimal> forBigDecimal(String str) {
+            return new Field(5, false, 5, false, str, -1, null, null);
+        }
+
+        public static Field<ArrayList<BigDecimal>, ArrayList<BigDecimal>> forBigDecimals(String str) {
+            return new Field(5, true, 5, true, str, -1, null, null);
+        }
+
+        public static Field<Boolean, Boolean> forBoolean(String str) {
+            return new Field(6, false, 6, false, str, -1, null, null);
+        }
+
+        public static Field<ArrayList<Boolean>, ArrayList<Boolean>> forBooleans(String str) {
+            return new Field(6, true, 6, true, str, -1, null, null);
+        }
+
+        public static Field<String, String> forString(String str) {
+            return new Field(7, false, 7, false, str, -1, null, null);
+        }
+
+        public static Field<ArrayList<String>, ArrayList<String>> forStrings(String str) {
+            return new Field(7, true, 7, true, str, -1, null, null);
+        }
+
+        public static Field<byte[], byte[]> forBase64(String str) {
+            return new Field(8, false, 8, false, str, -1, null, null);
+        }
+
+        public static Field<byte[], byte[]> forBase64UrlSafe(String str) {
+            return new Field(9, false, 9, false, str, -1, null, null);
+        }
+
+        public static Field<HashMap<String, String>, HashMap<String, String>> forStringMap(String str) {
+            return new Field(10, false, 10, false, str, -1, null, null);
+        }
+
+        public static <T extends FastJsonResponse> Field<T, T> forConcreteType(String str, Class<T> cls) {
+            return new Field(11, false, 11, false, str, -1, cls, null);
+        }
+
+        public static <T extends FastJsonResponse> Field<ArrayList<T>, ArrayList<T>> forConcreteTypeArray(String str, Class<T> cls) {
+            return new Field(11, true, 11, true, str, -1, cls, null);
+        }
+
+        public static <T extends FieldConverter> Field withConverter(String str, Class<T> cls, boolean z) {
+            return withConverter(str, -1, cls, z);
+        }
+
+        public Field<I, O> copyForDictionary() {
+            return new Field(this.zza, this.mTypeIn, this.mTypeInArray, this.mTypeOut, this.mTypeOutArray, this.mOutputFieldName, this.mSafeParcelableFieldId, this.mConcreteTypeName, zzb());
+        }
+
+        public int getVersionCode() {
+            return this.zza;
+        }
+
+        public int getTypeIn() {
+            return this.mTypeIn;
+        }
+
+        public boolean isTypeInArray() {
+            return this.mTypeInArray;
+        }
+
+        public int getTypeOut() {
+            return this.mTypeOut;
+        }
+
+        public boolean isTypeOutArray() {
+            return this.mTypeOutArray;
+        }
+
+        public String getOutputFieldName() {
+            return this.mOutputFieldName;
+        }
+
+        public int getSafeParcelableFieldId() {
+            return this.mSafeParcelableFieldId;
+        }
+
+        public boolean isValidSafeParcelableFieldId() {
+            return this.mSafeParcelableFieldId != -1;
+        }
+
+        public Class<? extends FastJsonResponse> getConcreteType() {
+            return this.mConcreteType;
+        }
+
+        private final String zza() {
+            String str = this.mConcreteTypeName;
+            if (str == null) {
+                return null;
+            }
+            return str;
+        }
+
+        public boolean hasConverter() {
+            return this.zzc != null;
+        }
+
+        public void setFieldMappingDictionary(FieldMappingDictionary fieldMappingDictionary) {
+            this.zzb = fieldMappingDictionary;
+        }
+
+        private final zzbly zzb() {
+            FieldConverter<I, O> fieldConverter = this.zzc;
+            if (fieldConverter == null) {
+                return null;
+            }
+            return zzbly.zza(fieldConverter);
+        }
+
+        public FastJsonResponse newConcreteTypeInstance() throws InstantiationException, IllegalAccessException {
+            Class<? extends FastJsonResponse> cls = this.mConcreteType;
+            if (cls != zzl.class) {
+                return (FastJsonResponse) cls.newInstance();
+            }
+            zzau.zza(this.zzb, "The field mapping dictionary must be set if the concrete type is a SafeParcelResponse object.");
+            return new zzl(this.zzb, this.mConcreteTypeName);
+        }
+
+        public Map<String, Field<?, ?>> getConcreteTypeFieldMappingFromDictionary() {
+            zzau.zza((Object) this.mConcreteTypeName);
+            zzau.zza(this.zzb);
+            return this.zzb.getFieldMapping(this.mConcreteTypeName);
+        }
+
+        public O convert(I i) {
+            return this.zzc.convert(i);
+        }
+
+        public I convertBack(O o) {
+            return this.zzc.convertBack(o);
+        }
+
+        /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+         method: com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, java.lang.String, boolean):void
+         arg types: [android.os.Parcel, int, java.lang.String, int]
+         candidates:
+          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, android.os.Bundle, boolean):void
+          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, android.os.IBinder, boolean):void
+          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, android.os.Parcel, boolean):void
+          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, android.util.SparseArray<java.lang.String>, boolean):void
+          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, java.lang.Boolean, boolean):void
+          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, java.lang.Double, boolean):void
+          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, java.lang.Float, boolean):void
+          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, java.lang.Integer, boolean):void
+          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, java.lang.Long, boolean):void
+          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, java.math.BigDecimal, boolean):void
+          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, java.math.BigInteger, boolean):void
+          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, java.util.List<java.lang.Integer>, boolean):void
+          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, byte[], boolean):void
+          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, double[], boolean):void
+          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, float[], boolean):void
+          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, int[], boolean):void
+          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, long[], boolean):void
+          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, java.lang.String[], boolean):void
+          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, java.math.BigDecimal[], boolean):void
+          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, java.math.BigInteger[], boolean):void
+          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, boolean[], boolean):void
+          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, byte[][], boolean):void
+          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, java.lang.String, boolean):void */
+        /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+         method: com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, android.os.Parcelable, int, boolean):void
+         arg types: [android.os.Parcel, int, com.google.android.gms.internal.zzbly, int, int]
+         candidates:
+          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, android.os.Parcelable[], int, boolean):void
+          com.google.android.gms.internal.zzbky.zza(android.os.Parcel, int, android.os.Parcelable, int, boolean):void */
+        public void writeToParcel(Parcel parcel, int i) {
+            int zza2 = zzbky.zza(parcel);
+            zzbky.zza(parcel, 1, getVersionCode());
+            zzbky.zza(parcel, 2, getTypeIn());
+            zzbky.zza(parcel, 3, isTypeInArray());
+            zzbky.zza(parcel, 4, getTypeOut());
+            zzbky.zza(parcel, 5, isTypeOutArray());
+            zzbky.zza(parcel, 6, getOutputFieldName(), false);
+            zzbky.zza(parcel, 7, getSafeParcelableFieldId());
+            zzbky.zza(parcel, 8, zza(), false);
+            zzbky.zza(parcel, 9, (Parcelable) zzb(), i, false);
+            zzbky.zza(parcel, zza2);
+        }
+
+        public String toString() {
+            zzam zza2 = zzak.zza(this).zza("versionCode", Integer.valueOf(this.zza)).zza("typeIn", Integer.valueOf(this.mTypeIn)).zza("typeInArray", Boolean.valueOf(this.mTypeInArray)).zza("typeOut", Integer.valueOf(this.mTypeOut)).zza("typeOutArray", Boolean.valueOf(this.mTypeOutArray)).zza("outputFieldName", this.mOutputFieldName).zza("safeParcelFieldId", Integer.valueOf(this.mSafeParcelableFieldId)).zza("concreteTypeName", zza());
+            Class<? extends FastJsonResponse> concreteType = getConcreteType();
+            if (concreteType != null) {
+                zza2.zza("concreteType.class", concreteType.getCanonicalName());
+            }
+            FieldConverter<I, O> fieldConverter = this.zzc;
+            if (fieldConverter != null) {
+                zza2.zza("converterName", fieldConverter.getClass().getCanonicalName());
+            }
+            return zza2.toString();
         }
     }
 }

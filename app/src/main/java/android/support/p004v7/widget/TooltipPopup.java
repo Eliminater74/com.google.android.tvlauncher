@@ -16,7 +16,7 @@ import android.view.WindowManager;
 import android.widget.TextView;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-/* renamed from: android.support.v7.widget.TooltipPopup */
+        /* renamed from: android.support.v7.widget.TooltipPopup */
 class TooltipPopup {
     private static final String TAG = "TooltipPopup";
     private final View mContentView;
@@ -40,6 +40,20 @@ class TooltipPopup {
         layoutParams.format = -3;
         layoutParams.windowAnimations = C0233R.style.Animation_AppCompat_Tooltip;
         this.mLayoutParams.flags = 24;
+    }
+
+    private static View getAppRootView(View anchorView) {
+        View rootView = anchorView.getRootView();
+        ViewGroup.LayoutParams lp = rootView.getLayoutParams();
+        if ((lp instanceof WindowManager.LayoutParams) && ((WindowManager.LayoutParams) lp).type == 2) {
+            return rootView;
+        }
+        for (Context context = anchorView.getContext(); context instanceof ContextWrapper; context = ((ContextWrapper) context).getBaseContext()) {
+            if (context instanceof Activity) {
+                return ((Activity) context).getWindow().getDecorView();
+            }
+        }
+        return rootView;
     }
 
     /* access modifiers changed from: package-private */
@@ -129,19 +143,5 @@ class TooltipPopup {
         } else {
             layoutParams.y = yAbove;
         }
-    }
-
-    private static View getAppRootView(View anchorView) {
-        View rootView = anchorView.getRootView();
-        ViewGroup.LayoutParams lp = rootView.getLayoutParams();
-        if ((lp instanceof WindowManager.LayoutParams) && ((WindowManager.LayoutParams) lp).type == 2) {
-            return rootView;
-        }
-        for (Context context = anchorView.getContext(); context instanceof ContextWrapper; context = ((ContextWrapper) context).getBaseContext()) {
-            if (context instanceof Activity) {
-                return ((Activity) context).getWindow().getDecorView();
-            }
-        }
-        return rootView;
     }
 }

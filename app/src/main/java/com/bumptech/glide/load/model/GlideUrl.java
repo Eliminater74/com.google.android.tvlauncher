@@ -4,8 +4,10 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+
 import com.bumptech.glide.load.Key;
 import com.bumptech.glide.util.Preconditions;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.MessageDigest;
@@ -13,18 +15,18 @@ import java.util.Map;
 
 public class GlideUrl implements Key {
     private static final String ALLOWED_URI_CHARS = "@#&=*+-_.,:!?()/~'%;$";
-    @Nullable
-    private volatile byte[] cacheKeyBytes;
-    private int hashCode;
     private final Headers headers;
-    @Nullable
-    private String safeStringUrl;
-    @Nullable
-    private URL safeUrl;
     @Nullable
     private final String stringUrl;
     @Nullable
     private final URL url;
+    @Nullable
+    private volatile byte[] cacheKeyBytes;
+    private int hashCode;
+    @Nullable
+    private String safeStringUrl;
+    @Nullable
+    private URL safeUrl;
 
     public GlideUrl(URL url2) {
         this(url2, Headers.DEFAULT);

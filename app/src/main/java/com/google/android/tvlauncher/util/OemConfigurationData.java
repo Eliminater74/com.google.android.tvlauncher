@@ -10,9 +10,9 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.ArraySet;
 import android.util.Log;
-import com.google.android.tvlauncher.util.ChannelConfigurationInfo;
-import com.google.android.tvlauncher.util.OemConfiguration;
+
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 class OemConfigurationData {
+    protected static final String OEM_CONFIG_SHARED_PREFS = "oem_config";
     private static final String ALL_APPS_OUT_OF_BOX_ORDERING_PREFS_TAG = "all_apps_out_of_box_ordering";
     private static final String APPLY_STANDARD_STYLE_TO_INPUT_STATE_ICONS_PREFS_TAG = "apply_standard_style_to_input_state_icons";
     private static final String APPNAME_PACKAGE_MAP_TAG = "appname_package_map";
@@ -54,7 +55,6 @@ class OemConfigurationData {
     private static final int LIVE_TV_OOB_PACKAGE_NO_POSITION = -1;
     private static final long LOAD_TASK_TIMEOUT = TimeUnit.SECONDS.toMillis(20);
     private static final String OEM_CONFIGURATION_PACKAGE_VERSION_TAG = "oem_config_package_ver";
-    protected static final String OEM_CONFIG_SHARED_PREFS = "oem_config";
     private static final String OEM_INPUTS_ICON_PREFS_TAG = "inputs_icon";
     private static final String PACKAGE_NAME_LAUNCH_AFTER_BOOT_TAG = "package_name_launch_after_boot";
     private static final String PACKAGE_NOTIFICATION_WHITELIST_PREFS_TAG = "package_notification_whitelist";
@@ -73,6 +73,8 @@ class OemConfigurationData {
     private static final String USE_CUSTOM_INPUT_LIST_PREFS_TAG = "use_custom_input_list";
     private static final String WATCH_NEXT_CHANNEL_AUTO_HIDE_ENABLED = "watch_next_channel_auto_hide_enabled_2";
     private static final String WATCH_NEXT_CHANNEL_ENABLED_BY_DEFAULT = "watch_next_channel_enabled_by_default";
+    private final ArraySet<OemConfiguration.OnDataLoadedListener> mOnDataLoadedListeners = new ArraySet<>(1);
+    protected Context mContext;
     private List<String> mAllAppsOutOfBoxOrdering;
     private HashMap<String, Integer> mAppChannelQuota;
     private HashMap<String, String> mAppNames;
@@ -84,7 +86,6 @@ class OemConfigurationData {
     private List<ChannelConfigurationInfo> mChannelsOutOfBoxOrdering;
     private int mConfigurationPackageVersion;
     private List<String> mConfigureChannelsAppOrdering;
-    protected Context mContext;
     private boolean mDisableDisconnectedInputs;
     private String mDisconnectedInputText;
     private boolean mEnableInputStateIcon;
@@ -109,7 +110,6 @@ class OemConfigurationData {
     private int mLiveTvChannelOobPosition;
     private ChannelConfigurationInfo mLiveTvOobPackageInfo;
     private Uri mOemInputsIconUri;
-    private final ArraySet<OemConfiguration.OnDataLoadedListener> mOnDataLoadedListeners = new ArraySet<>(1);
     private List<OemOutOfBoxApp> mOutOfBoxApps;
     private String mPackageNameLaunchAfterBoot;
     private List<String> mPackageNotificationWhitelist;
@@ -764,11 +764,6 @@ class OemConfigurationData {
         return this.mLiveTvOobPackageInfo;
     }
 
-    /* access modifiers changed from: package-private */
-    public void setLiveTvChannelOobPosition(int position) {
-        setLiveTvChannelOobPosition(position, true);
-    }
-
     private void setLiveTvChannelOobPosition(int position, boolean readFromConfigFile) {
         if (!readFromConfigFile || !this.mIsDataCachedInPrefs) {
             this.mLiveTvChannelOobPosition = position;
@@ -778,6 +773,11 @@ class OemConfigurationData {
     /* access modifiers changed from: package-private */
     public int getLiveTvChannelOobPosition() {
         return this.mLiveTvChannelOobPosition;
+    }
+
+    /* access modifiers changed from: package-private */
+    public void setLiveTvChannelOobPosition(int position) {
+        setLiveTvChannelOobPosition(position, true);
     }
 
     /* access modifiers changed from: package-private */

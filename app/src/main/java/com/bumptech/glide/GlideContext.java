@@ -6,12 +6,13 @@ import android.support.annotation.GuardedBy;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
-import com.bumptech.glide.Glide;
+
 import com.bumptech.glide.load.engine.Engine;
 import com.bumptech.glide.load.engine.bitmap_recycle.ArrayPool;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.ImageViewTargetFactory;
+
 import java.util.List;
 import java.util.Map;
 
@@ -20,9 +21,6 @@ public class GlideContext extends ContextWrapper {
     static final TransitionOptions<?, ?> DEFAULT_TRANSITION_OPTIONS = new GenericTransitionOptions();
     private final ArrayPool arrayPool;
     private final List<RequestListener<Object>> defaultRequestListeners;
-    @Nullable
-    @GuardedBy("this")
-    private RequestOptions defaultRequestOptions;
     private final Glide.RequestOptionsFactory defaultRequestOptionsFactory;
     private final Map<Class<?>, TransitionOptions<?, ?>> defaultTransitionOptions;
     private final Engine engine;
@@ -30,6 +28,9 @@ public class GlideContext extends ContextWrapper {
     private final boolean isLoggingRequestOriginsEnabled;
     private final int logLevel;
     private final Registry registry;
+    @Nullable
+    @GuardedBy("this")
+    private RequestOptions defaultRequestOptions;
 
     public GlideContext(@NonNull Context context, @NonNull ArrayPool arrayPool2, @NonNull Registry registry2, @NonNull ImageViewTargetFactory imageViewTargetFactory2, @NonNull Glide.RequestOptionsFactory defaultRequestOptionsFactory2, @NonNull Map<Class<?>, TransitionOptions<?, ?>> defaultTransitionOptions2, @NonNull List<RequestListener<Object>> defaultRequestListeners2, @NonNull Engine engine2, boolean isLoggingRequestOriginsEnabled2, int logLevel2) {
         super(context.getApplicationContext());

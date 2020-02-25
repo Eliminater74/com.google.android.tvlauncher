@@ -1,8 +1,5 @@
 package com.google.android.gms.internal;
 
-import com.google.android.gms.internal.zzgmp;
-import com.google.android.gms.internal.zzgmq;
-
 /* compiled from: AbstractMessageLite */
 public abstract class zzgmq<MessageType extends zzgmp<MessageType, BuilderType>, BuilderType extends zzgmq<MessageType, BuilderType>> implements zzgpu {
     /* renamed from: zza */

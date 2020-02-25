@@ -4,15 +4,22 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.SparseArray;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.internal.zzau;
+
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 
 /* compiled from: AutoManageLifecycleHelper */
 public class zzj extends zzp {
     private final SparseArray<zza> zze = new SparseArray<>();
+
+    private zzj(zzcf zzcf) {
+        super(zzcf);
+        this.zzd.zza("AutoManageHelper", this);
+    }
 
     public static zzj zza(zzce zzce) {
         zzcf zzb = zzb(zzce);
@@ -21,34 +28,6 @@ public class zzj extends zzp {
             return zzj;
         }
         return new zzj(zzb);
-    }
-
-    /* compiled from: AutoManageLifecycleHelper */
-    class zza implements GoogleApiClient.OnConnectionFailedListener {
-        public final int zza;
-        public final GoogleApiClient zzb;
-        public final GoogleApiClient.OnConnectionFailedListener zzc;
-
-        public zza(int i, GoogleApiClient googleApiClient, GoogleApiClient.OnConnectionFailedListener onConnectionFailedListener) {
-            this.zza = i;
-            this.zzb = googleApiClient;
-            this.zzc = onConnectionFailedListener;
-            googleApiClient.registerConnectionFailedListener(this);
-        }
-
-        public final void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-            String valueOf = String.valueOf(connectionResult);
-            StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 27);
-            sb.append("beginFailureResolution for ");
-            sb.append(valueOf);
-            Log.d("AutoManageHelper", sb.toString());
-            zzj.this.zzb(connectionResult, this.zza);
-        }
-    }
-
-    private zzj(zzcf zzcf) {
-        super(zzcf);
-        this.zzd.zza("AutoManageHelper", this);
     }
 
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
@@ -173,5 +152,28 @@ public class zzj extends zzp {
         }
         SparseArray<zza> sparseArray = this.zze;
         return sparseArray.get(sparseArray.keyAt(i));
+    }
+
+    /* compiled from: AutoManageLifecycleHelper */
+    class zza implements GoogleApiClient.OnConnectionFailedListener {
+        public final int zza;
+        public final GoogleApiClient zzb;
+        public final GoogleApiClient.OnConnectionFailedListener zzc;
+
+        public zza(int i, GoogleApiClient googleApiClient, GoogleApiClient.OnConnectionFailedListener onConnectionFailedListener) {
+            this.zza = i;
+            this.zzb = googleApiClient;
+            this.zzc = onConnectionFailedListener;
+            googleApiClient.registerConnectionFailedListener(this);
+        }
+
+        public final void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+            String valueOf = String.valueOf(connectionResult);
+            StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 27);
+            sb.append("beginFailureResolution for ");
+            sb.append(valueOf);
+            Log.d("AutoManageHelper", sb.toString());
+            zzj.this.zzb(connectionResult, this.zza);
+        }
     }
 }

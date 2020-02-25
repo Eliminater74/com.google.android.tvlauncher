@@ -2,15 +2,16 @@ package com.google.common.collect;
 
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Multimaps;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.util.AbstractCollection;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible
 abstract class AbstractMultimap<K, V> implements Multimap<K, V> {
@@ -24,6 +25,9 @@ abstract class AbstractMultimap<K, V> implements Multimap<K, V> {
     private transient Multiset<K> keys;
     @MonotonicNonNullDecl
     private transient Collection<V> values;
+
+    AbstractMultimap() {
+    }
 
     /* access modifiers changed from: package-private */
     public abstract Map<K, Collection<V>> createAsMap();
@@ -42,9 +46,6 @@ abstract class AbstractMultimap<K, V> implements Multimap<K, V> {
 
     /* access modifiers changed from: package-private */
     public abstract Iterator<Map.Entry<K, V>> entryIterator();
-
-    AbstractMultimap() {
-    }
 
     public boolean isEmpty() {
         return size() == 0;
@@ -120,34 +121,6 @@ abstract class AbstractMultimap<K, V> implements Multimap<K, V> {
         return createEntries;
     }
 
-    class Entries extends Multimaps.Entries<K, V> {
-        Entries() {
-        }
-
-        /* access modifiers changed from: package-private */
-        public Multimap<K, V> multimap() {
-            return AbstractMultimap.this;
-        }
-
-        public Iterator<Map.Entry<K, V>> iterator() {
-            return AbstractMultimap.this.entryIterator();
-        }
-    }
-
-    class EntrySet extends AbstractMultimap<K, V>.Entries implements Set<Map.Entry<K, V>> {
-        EntrySet(AbstractMultimap this$0) {
-            super();
-        }
-
-        public int hashCode() {
-            return Sets.hashCodeImpl(this);
-        }
-
-        public boolean equals(@NullableDecl Object obj) {
-            return Sets.equalsImpl(this, obj);
-        }
-    }
-
     public Set<K> keySet() {
         Set<K> result = this.keySet;
         if (result != null) {
@@ -178,27 +151,6 @@ abstract class AbstractMultimap<K, V> implements Multimap<K, V> {
         return createValues;
     }
 
-    class Values extends AbstractCollection<V> {
-        Values() {
-        }
-
-        public Iterator<V> iterator() {
-            return AbstractMultimap.this.valueIterator();
-        }
-
-        public int size() {
-            return AbstractMultimap.this.size();
-        }
-
-        public boolean contains(@NullableDecl Object o) {
-            return AbstractMultimap.this.containsValue(o);
-        }
-
-        public void clear() {
-            AbstractMultimap.this.clear();
-        }
-    }
-
     /* access modifiers changed from: package-private */
     public Iterator<V> valueIterator() {
         return Maps.valueIterator(entries().iterator());
@@ -224,5 +176,54 @@ abstract class AbstractMultimap<K, V> implements Multimap<K, V> {
 
     public String toString() {
         return asMap().toString();
+    }
+
+    class Entries extends Multimaps.Entries<K, V> {
+        Entries() {
+        }
+
+        /* access modifiers changed from: package-private */
+        public Multimap<K, V> multimap() {
+            return AbstractMultimap.this;
+        }
+
+        public Iterator<Map.Entry<K, V>> iterator() {
+            return AbstractMultimap.this.entryIterator();
+        }
+    }
+
+    class EntrySet extends AbstractMultimap<K, V>.Entries implements Set<Map.Entry<K, V>> {
+        EntrySet(AbstractMultimap this$0) {
+            super();
+        }
+
+        public int hashCode() {
+            return Sets.hashCodeImpl(this);
+        }
+
+        public boolean equals(@NullableDecl Object obj) {
+            return Sets.equalsImpl(this, obj);
+        }
+    }
+
+    class Values extends AbstractCollection<V> {
+        Values() {
+        }
+
+        public Iterator<V> iterator() {
+            return AbstractMultimap.this.valueIterator();
+        }
+
+        public int size() {
+            return AbstractMultimap.this.size();
+        }
+
+        public boolean contains(@NullableDecl Object o) {
+            return AbstractMultimap.this.containsValue(o);
+        }
+
+        public void clear() {
+            AbstractMultimap.this.clear();
+        }
     }
 }

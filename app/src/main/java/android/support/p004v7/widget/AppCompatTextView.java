@@ -26,16 +26,17 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.view.textclassifier.TextClassifier;
 import android.widget.TextView;
+
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 /* renamed from: android.support.v7.widget.AppCompatTextView */
 public class AppCompatTextView extends TextView implements TintableBackgroundView, TintableCompoundDrawablesView, AutoSizeableTextView {
     private final AppCompatBackgroundHelper mBackgroundTintHelper;
-    @Nullable
-    private Future<PrecomputedTextCompat> mPrecomputedTextFuture;
     private final AppCompatTextClassifierHelper mTextClassifierHelper;
     private final AppCompatTextHelper mTextHelper;
+    @Nullable
+    private Future<PrecomputedTextCompat> mPrecomputedTextFuture;
 
     public AppCompatTextView(Context context) {
         this(context, null);
@@ -71,14 +72,6 @@ public class AppCompatTextView extends TextView implements TintableBackgroundVie
         }
     }
 
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    public void setSupportBackgroundTintList(@Nullable ColorStateList tint) {
-        AppCompatBackgroundHelper appCompatBackgroundHelper = this.mBackgroundTintHelper;
-        if (appCompatBackgroundHelper != null) {
-            appCompatBackgroundHelper.setSupportBackgroundTintList(tint);
-        }
-    }
-
     @Nullable
     @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
     public ColorStateList getSupportBackgroundTintList() {
@@ -90,10 +83,10 @@ public class AppCompatTextView extends TextView implements TintableBackgroundVie
     }
 
     @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    public void setSupportBackgroundTintMode(@Nullable PorterDuff.Mode tintMode) {
+    public void setSupportBackgroundTintList(@Nullable ColorStateList tint) {
         AppCompatBackgroundHelper appCompatBackgroundHelper = this.mBackgroundTintHelper;
         if (appCompatBackgroundHelper != null) {
-            appCompatBackgroundHelper.setSupportBackgroundTintMode(tintMode);
+            appCompatBackgroundHelper.setSupportBackgroundTintList(tint);
         }
     }
 
@@ -105,6 +98,14 @@ public class AppCompatTextView extends TextView implements TintableBackgroundVie
             return appCompatBackgroundHelper.getSupportBackgroundTintMode();
         }
         return null;
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    public void setSupportBackgroundTintMode(@Nullable PorterDuff.Mode tintMode) {
+        AppCompatBackgroundHelper appCompatBackgroundHelper = this.mBackgroundTintHelper;
+        if (appCompatBackgroundHelper != null) {
+            appCompatBackgroundHelper.setSupportBackgroundTintMode(tintMode);
+        }
     }
 
     public void setTextAppearance(Context context, int resId) {
@@ -259,6 +260,10 @@ public class AppCompatTextView extends TextView implements TintableBackgroundVie
         return AppCompatHintHelper.onCreateInputConnection(super.onCreateInputConnection(outAttrs), outAttrs, this);
     }
 
+    public int getFirstBaselineToTopHeight() {
+        return TextViewCompat.getFirstBaselineToTopHeight(this);
+    }
+
     public void setFirstBaselineToTopHeight(@C0013Px @IntRange(from = 0) int firstBaselineToTopHeight) {
         if (Build.VERSION.SDK_INT >= 28) {
             super.setFirstBaselineToTopHeight(firstBaselineToTopHeight);
@@ -267,20 +272,16 @@ public class AppCompatTextView extends TextView implements TintableBackgroundVie
         }
     }
 
+    public int getLastBaselineToBottomHeight() {
+        return TextViewCompat.getLastBaselineToBottomHeight(this);
+    }
+
     public void setLastBaselineToBottomHeight(@C0013Px @IntRange(from = 0) int lastBaselineToBottomHeight) {
         if (Build.VERSION.SDK_INT >= 28) {
             super.setLastBaselineToBottomHeight(lastBaselineToBottomHeight);
         } else {
             TextViewCompat.setLastBaselineToBottomHeight(this, lastBaselineToBottomHeight);
         }
-    }
-
-    public int getFirstBaselineToTopHeight() {
-        return TextViewCompat.getFirstBaselineToTopHeight(this);
-    }
-
-    public int getLastBaselineToBottomHeight() {
-        return TextViewCompat.getLastBaselineToBottomHeight(this);
     }
 
     public void setLineHeight(@C0013Px @IntRange(from = 0) int lineHeight) {
@@ -321,16 +322,6 @@ public class AppCompatTextView extends TextView implements TintableBackgroundVie
     }
 
     @RequiresApi(api = 26)
-    public void setTextClassifier(@Nullable TextClassifier textClassifier) {
-        AppCompatTextClassifierHelper appCompatTextClassifierHelper;
-        if (Build.VERSION.SDK_INT >= 28 || (appCompatTextClassifierHelper = this.mTextClassifierHelper) == null) {
-            super.setTextClassifier(textClassifier);
-        } else {
-            appCompatTextClassifierHelper.setTextClassifier(textClassifier);
-        }
-    }
-
-    @RequiresApi(api = 26)
     @NonNull
     public TextClassifier getTextClassifier() {
         AppCompatTextClassifierHelper appCompatTextClassifierHelper;
@@ -338,6 +329,16 @@ public class AppCompatTextView extends TextView implements TintableBackgroundVie
             return super.getTextClassifier();
         }
         return appCompatTextClassifierHelper.getTextClassifier();
+    }
+
+    @RequiresApi(api = 26)
+    public void setTextClassifier(@Nullable TextClassifier textClassifier) {
+        AppCompatTextClassifierHelper appCompatTextClassifierHelper;
+        if (Build.VERSION.SDK_INT >= 28 || (appCompatTextClassifierHelper = this.mTextClassifierHelper) == null) {
+            super.setTextClassifier(textClassifier);
+        } else {
+            appCompatTextClassifierHelper.setTextClassifier(textClassifier);
+        }
     }
 
     public void setTextFuture(@Nullable Future<PrecomputedTextCompat> future) {

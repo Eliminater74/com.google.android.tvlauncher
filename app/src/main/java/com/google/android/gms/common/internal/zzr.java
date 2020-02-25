@@ -4,21 +4,22 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.ServiceConnection;
 import android.os.IBinder;
-import com.google.android.gms.common.internal.GmsClientSupervisor;
+
 import com.google.android.gms.common.stats.zza;
+
 import java.util.HashSet;
 import java.util.Set;
 
 /* compiled from: GmsClientSupervisorImpl */
 final class zzr implements ServiceConnection {
+    /* access modifiers changed from: private */
+    public final GmsClientSupervisor.ConnectionStatusConfig zze;
     private final Set<ServiceConnection> zza = new HashSet();
+    private final /* synthetic */ zzq zzg;
     private int zzb = 2;
     private boolean zzc;
     private IBinder zzd;
-    /* access modifiers changed from: private */
-    public final GmsClientSupervisor.ConnectionStatusConfig zze;
     private ComponentName zzf;
-    private final /* synthetic */ zzq zzg;
 
     public zzr(zzq zzq, GmsClientSupervisor.ConnectionStatusConfig connectionStatusConfig) {
         this.zzg = zzq;

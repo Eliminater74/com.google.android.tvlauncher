@@ -10,16 +10,16 @@ import android.util.Log;
 
 public abstract class DataLoader<T> extends AsyncTaskLoader<T> {
     private static final String TAG = "DataLoader";
-    private ContentObserver mContentObserver;
     T mData;
+    private ContentObserver mContentObserver;
     private Uri mUri;
-
-    public abstract T loadData();
 
     DataLoader(Context context, @NonNull Uri contentUri) {
         super(context);
         this.mUri = contentUri;
     }
+
+    public abstract T loadData();
 
     public T loadInBackground() {
         return loadData();

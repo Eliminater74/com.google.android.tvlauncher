@@ -2,132 +2,24 @@ package androidx.leanback.widget;
 
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.leanback.graphics.ColorOverlayDimmer;
-import androidx.leanback.widget.Presenter;
-import androidx.leanback.widget.RowHeaderPresenter;
 
 public abstract class RowPresenter extends Presenter {
     public static final int SYNC_ACTIVATED_CUSTOM = 0;
     public static final int SYNC_ACTIVATED_TO_EXPANDED = 1;
     public static final int SYNC_ACTIVATED_TO_EXPANDED_AND_SELECTED = 3;
     public static final int SYNC_ACTIVATED_TO_SELECTED = 2;
-    private RowHeaderPresenter mHeaderPresenter = new RowHeaderPresenter();
     boolean mSelectEffectEnabled = true;
     int mSyncActivatePolicy = 1;
-
-    /* access modifiers changed from: protected */
-    public abstract ViewHolder createRowViewHolder(ViewGroup viewGroup);
-
-    static class ContainerViewHolder extends Presenter.ViewHolder {
-        final ViewHolder mRowViewHolder;
-
-        public ContainerViewHolder(RowContainerView containerView, ViewHolder rowViewHolder) {
-            super(containerView);
-            containerView.addRowView(rowViewHolder.view);
-            if (rowViewHolder.mHeaderViewHolder != null) {
-                containerView.addHeaderView(rowViewHolder.mHeaderViewHolder.view);
-            }
-            this.mRowViewHolder = rowViewHolder;
-            this.mRowViewHolder.mContainerViewHolder = this;
-        }
-    }
-
-    public static class ViewHolder extends Presenter.ViewHolder {
-        private static final int ACTIVATED = 1;
-        private static final int ACTIVATED_NOT_ASSIGNED = 0;
-        private static final int NOT_ACTIVATED = 2;
-        int mActivated = 0;
-        protected final ColorOverlayDimmer mColorDimmer;
-        ContainerViewHolder mContainerViewHolder;
-        boolean mExpanded;
-        RowHeaderPresenter.ViewHolder mHeaderViewHolder;
-        boolean mInitialzed;
-        private BaseOnItemViewClickedListener mOnItemViewClickedListener;
-        BaseOnItemViewSelectedListener mOnItemViewSelectedListener;
-        private View.OnKeyListener mOnKeyListener;
-        Row mRow;
-        Object mRowObject;
-        float mSelectLevel = 0.0f;
-        boolean mSelected;
-
-        public ViewHolder(View view) {
-            super(view);
-            this.mColorDimmer = ColorOverlayDimmer.createDefault(view.getContext());
-        }
-
-        public final Row getRow() {
-            return this.mRow;
-        }
-
-        public final Object getRowObject() {
-            return this.mRowObject;
-        }
-
-        public final boolean isExpanded() {
-            return this.mExpanded;
-        }
-
-        public final boolean isSelected() {
-            return this.mSelected;
-        }
-
-        public final float getSelectLevel() {
-            return this.mSelectLevel;
-        }
-
-        public final RowHeaderPresenter.ViewHolder getHeaderViewHolder() {
-            return this.mHeaderViewHolder;
-        }
-
-        public final void setActivated(boolean activated) {
-            this.mActivated = activated ? 1 : 2;
-        }
-
-        public final void syncActivatedStatus(View view) {
-            int i = this.mActivated;
-            if (i == 1) {
-                view.setActivated(true);
-            } else if (i == 2) {
-                view.setActivated(false);
-            }
-        }
-
-        public void setOnKeyListener(View.OnKeyListener keyListener) {
-            this.mOnKeyListener = keyListener;
-        }
-
-        public View.OnKeyListener getOnKeyListener() {
-            return this.mOnKeyListener;
-        }
-
-        public final void setOnItemViewSelectedListener(BaseOnItemViewSelectedListener listener) {
-            this.mOnItemViewSelectedListener = listener;
-        }
-
-        public final BaseOnItemViewSelectedListener getOnItemViewSelectedListener() {
-            return this.mOnItemViewSelectedListener;
-        }
-
-        public final void setOnItemViewClickedListener(BaseOnItemViewClickedListener listener) {
-            this.mOnItemViewClickedListener = listener;
-        }
-
-        public final BaseOnItemViewClickedListener getOnItemViewClickedListener() {
-            return this.mOnItemViewClickedListener;
-        }
-
-        public Presenter.ViewHolder getSelectedItemViewHolder() {
-            return null;
-        }
-
-        public Object getSelectedItem() {
-            return null;
-        }
-    }
+    private RowHeaderPresenter mHeaderPresenter = new RowHeaderPresenter();
 
     public RowPresenter() {
         this.mHeaderPresenter.setNullItemVisibilityGone(true);
     }
+
+    /* access modifiers changed from: protected */
+    public abstract ViewHolder createRowViewHolder(ViewGroup viewGroup);
 
     public final Presenter.ViewHolder onCreateViewHolder(ViewGroup parent) {
         Presenter.ViewHolder result;
@@ -168,12 +60,12 @@ public abstract class RowPresenter extends Presenter {
         }
     }
 
-    public final void setHeaderPresenter(RowHeaderPresenter headerPresenter) {
-        this.mHeaderPresenter = headerPresenter;
-    }
-
     public final RowHeaderPresenter getHeaderPresenter() {
         return this.mHeaderPresenter;
+    }
+
+    public final void setHeaderPresenter(RowHeaderPresenter headerPresenter) {
+        this.mHeaderPresenter = headerPresenter;
     }
 
     public final ViewHolder getRowViewHolder(Presenter.ViewHolder holder) {
@@ -217,12 +109,12 @@ public abstract class RowPresenter extends Presenter {
         vh.syncActivatedStatus(view);
     }
 
-    public final void setSyncActivatePolicy(int syncActivatePolicy) {
-        this.mSyncActivatePolicy = syncActivatePolicy;
-    }
-
     public final int getSyncActivatePolicy() {
         return this.mSyncActivatePolicy;
+    }
+
+    public final void setSyncActivatePolicy(int syncActivatePolicy) {
+        this.mSyncActivatePolicy = syncActivatePolicy;
     }
 
     /* access modifiers changed from: protected */
@@ -268,12 +160,12 @@ public abstract class RowPresenter extends Presenter {
         }
     }
 
-    public final void setSelectEffectEnabled(boolean applyDimOnSelect) {
-        this.mSelectEffectEnabled = applyDimOnSelect;
-    }
-
     public final boolean getSelectEffectEnabled() {
         return this.mSelectEffectEnabled;
+    }
+
+    public final void setSelectEffectEnabled(boolean applyDimOnSelect) {
+        this.mSelectEffectEnabled = applyDimOnSelect;
     }
 
     public boolean isUsingDefaultSelectEffect() {
@@ -345,6 +237,113 @@ public abstract class RowPresenter extends Presenter {
     public void setEntranceTransitionState(ViewHolder holder, boolean afterEntrance) {
         if (holder.mHeaderViewHolder != null && holder.mHeaderViewHolder.view.getVisibility() != 8) {
             holder.mHeaderViewHolder.view.setVisibility(afterEntrance ? 0 : 4);
+        }
+    }
+
+    static class ContainerViewHolder extends Presenter.ViewHolder {
+        final ViewHolder mRowViewHolder;
+
+        public ContainerViewHolder(RowContainerView containerView, ViewHolder rowViewHolder) {
+            super(containerView);
+            containerView.addRowView(rowViewHolder.view);
+            if (rowViewHolder.mHeaderViewHolder != null) {
+                containerView.addHeaderView(rowViewHolder.mHeaderViewHolder.view);
+            }
+            this.mRowViewHolder = rowViewHolder;
+            this.mRowViewHolder.mContainerViewHolder = this;
+        }
+    }
+
+    public static class ViewHolder extends Presenter.ViewHolder {
+        private static final int ACTIVATED = 1;
+        private static final int ACTIVATED_NOT_ASSIGNED = 0;
+        private static final int NOT_ACTIVATED = 2;
+        protected final ColorOverlayDimmer mColorDimmer;
+        int mActivated = 0;
+        ContainerViewHolder mContainerViewHolder;
+        boolean mExpanded;
+        RowHeaderPresenter.ViewHolder mHeaderViewHolder;
+        boolean mInitialzed;
+        BaseOnItemViewSelectedListener mOnItemViewSelectedListener;
+        Row mRow;
+        Object mRowObject;
+        float mSelectLevel = 0.0f;
+        boolean mSelected;
+        private BaseOnItemViewClickedListener mOnItemViewClickedListener;
+        private View.OnKeyListener mOnKeyListener;
+
+        public ViewHolder(View view) {
+            super(view);
+            this.mColorDimmer = ColorOverlayDimmer.createDefault(view.getContext());
+        }
+
+        public final Row getRow() {
+            return this.mRow;
+        }
+
+        public final Object getRowObject() {
+            return this.mRowObject;
+        }
+
+        public final boolean isExpanded() {
+            return this.mExpanded;
+        }
+
+        public final boolean isSelected() {
+            return this.mSelected;
+        }
+
+        public final float getSelectLevel() {
+            return this.mSelectLevel;
+        }
+
+        public final RowHeaderPresenter.ViewHolder getHeaderViewHolder() {
+            return this.mHeaderViewHolder;
+        }
+
+        public final void setActivated(boolean activated) {
+            this.mActivated = activated ? 1 : 2;
+        }
+
+        public final void syncActivatedStatus(View view) {
+            int i = this.mActivated;
+            if (i == 1) {
+                view.setActivated(true);
+            } else if (i == 2) {
+                view.setActivated(false);
+            }
+        }
+
+        public View.OnKeyListener getOnKeyListener() {
+            return this.mOnKeyListener;
+        }
+
+        public void setOnKeyListener(View.OnKeyListener keyListener) {
+            this.mOnKeyListener = keyListener;
+        }
+
+        public final BaseOnItemViewSelectedListener getOnItemViewSelectedListener() {
+            return this.mOnItemViewSelectedListener;
+        }
+
+        public final void setOnItemViewSelectedListener(BaseOnItemViewSelectedListener listener) {
+            this.mOnItemViewSelectedListener = listener;
+        }
+
+        public final BaseOnItemViewClickedListener getOnItemViewClickedListener() {
+            return this.mOnItemViewClickedListener;
+        }
+
+        public final void setOnItemViewClickedListener(BaseOnItemViewClickedListener listener) {
+            this.mOnItemViewClickedListener = listener;
+        }
+
+        public Presenter.ViewHolder getSelectedItemViewHolder() {
+            return null;
+        }
+
+        public Object getSelectedItem() {
+            return null;
         }
     }
 }

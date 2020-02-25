@@ -8,21 +8,22 @@ import android.net.Uri;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.preference.Preference;
 import androidx.preference.PreferenceViewHolder;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.BaseRequestOptions;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.tvlauncher.C1188R;
 import com.google.android.tvlauncher.util.Util;
+
 import java.util.Locale;
 
 class InputPreference extends Preference {
     private final ColorStateList mActiveIconBackgroundColorStateList;
     private final int mActiveIconSelectedTint;
     private final int mActiveIconTint;
-    private Uri mActiveIconUri;
-    private boolean mApplyStandardStyleToInputStateIcons;
     private final String mConnectedContentDescription;
     private final ColorStateList mConnectedIconBackgroundColorStateList;
     private final int mConnectedIconSelectedTint;
@@ -36,25 +37,23 @@ class InputPreference extends Preference {
     private final int mDisconnectedLabelColor;
     private final ColorStateList mDisconnectedSelectedIconBackgroundColorStateList;
     private final Drawable mIconBackground;
-    private Uri mIconUri;
-    private ImageView mIconView;
     private final RequestOptions mImageRequestOptions;
     private final String mInputNameAndStatusFormat;
-    private boolean mIsActive;
-    private TextView mLabelView;
     private final int mModifiedIconPadding;
     private final OnPreferenceFocusedListener mOnPreferenceFocusedListener;
     private final View.OnFocusChangeListener mOnViewFocusChangeListener = new InputPreference$$Lambda$0(this);
+    private final Drawable mSelectedIconBackground;
+    private final String mStandbyContentDescription;
+    private Uri mActiveIconUri;
+    private boolean mApplyStandardStyleToInputStateIcons;
+    private Uri mIconUri;
+    private ImageView mIconView;
+    private boolean mIsActive;
+    private TextView mLabelView;
     private TextView mParentLabelView;
     private Uri mSelectedActiveIconUri;
-    private final Drawable mSelectedIconBackground;
     private Uri mSelectedIconUri;
-    private final String mStandbyContentDescription;
     private int mState;
-
-    interface OnPreferenceFocusedListener {
-        void onPreferenceFocused(String str);
-    }
 
     InputPreference(Context context, OnPreferenceFocusedListener onPreferenceFocusedListener) {
         super(context);
@@ -218,5 +217,9 @@ class InputPreference extends Preference {
         if (hasFocus && (onPreferenceFocusedListener = this.mOnPreferenceFocusedListener) != null) {
             onPreferenceFocusedListener.onPreferenceFocused(getKey());
         }
+    }
+
+    interface OnPreferenceFocusedListener {
+        void onPreferenceFocused(String str);
     }
 }

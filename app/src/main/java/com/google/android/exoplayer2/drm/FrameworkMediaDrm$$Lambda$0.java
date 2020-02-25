@@ -1,7 +1,6 @@
 package com.google.android.exoplayer2.drm;
 
 import android.media.MediaDrm;
-import com.google.android.exoplayer2.drm.ExoMediaDrm;
 
 final /* synthetic */ class FrameworkMediaDrm$$Lambda$0 implements MediaDrm.OnEventListener {
     private final FrameworkMediaDrm arg$1;

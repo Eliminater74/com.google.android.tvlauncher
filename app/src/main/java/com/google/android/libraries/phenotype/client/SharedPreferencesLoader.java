@@ -3,7 +3,9 @@ package com.google.android.libraries.phenotype.client;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.GuardedBy;
+
 import com.google.android.libraries.directboot.DirectBootUtils;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,15 +15,15 @@ public final class SharedPreferencesLoader implements FlagLoader {
     @GuardedBy("SharedPreferencesLoader.class")
     static final Map<String, SharedPreferencesLoader> LOADERS_BY_NAME = new HashMap();
     private final Object cacheLock = new Object();
-    private volatile Map<String, ?> cachedFlags;
     private final SharedPreferences.OnSharedPreferenceChangeListener changeListener = new SharedPreferencesLoader$$Lambda$0(this);
     @GuardedBy("this")
     private final List<ConfigurationUpdatedListener> listeners = new ArrayList();
     private final SharedPreferences sharedPreferences;
+    private volatile Map<String, ?> cachedFlags;
 
-    /* access modifiers changed from: package-private */
-    public final /* synthetic */ void lambda$new$0$SharedPreferencesLoader(SharedPreferences prefs, String key) {
-        invalidateCache();
+    private SharedPreferencesLoader(SharedPreferences sharedPreferences2) {
+        this.sharedPreferences = sharedPreferences2;
+        this.sharedPreferences.registerOnSharedPreferenceChangeListener(this.changeListener);
     }
 
     static SharedPreferencesLoader getLoader(Context context, String sharedPrefsName) {
@@ -57,9 +59,17 @@ public final class SharedPreferencesLoader implements FlagLoader {
         return storageContext.getSharedPreferences(sharedPrefsName.substring(PhenotypeFlag.DIRECT_BOOT_PREFIX.length()), 0);
     }
 
-    private SharedPreferencesLoader(SharedPreferences sharedPreferences2) {
-        this.sharedPreferences = sharedPreferences2;
-        this.sharedPreferences.registerOnSharedPreferenceChangeListener(this.changeListener);
+    public static void invalidateAllCaches() {
+        synchronized (SharedPreferencesLoader.class) {
+            for (SharedPreferencesLoader loader : LOADERS_BY_NAME.values()) {
+                loader.invalidateCache();
+            }
+        }
+    }
+
+    /* access modifiers changed from: package-private */
+    public final /* synthetic */ void lambda$new$0$SharedPreferencesLoader(SharedPreferences prefs, String key) {
+        invalidateCache();
     }
 
     public Object getFlag(String flagName) {
@@ -85,14 +95,6 @@ public final class SharedPreferencesLoader implements FlagLoader {
             PhenotypeFlag.invalidateProcessCache();
         }
         notifyConfigurationUpdatedListeners();
-    }
-
-    public static void invalidateAllCaches() {
-        synchronized (SharedPreferencesLoader.class) {
-            for (SharedPreferencesLoader loader : LOADERS_BY_NAME.values()) {
-                loader.invalidateCache();
-            }
-        }
     }
 
     public void addConfigurationUpdatedListener(ConfigurationUpdatedListener listener) {

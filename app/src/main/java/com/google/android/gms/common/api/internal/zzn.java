@@ -3,8 +3,8 @@ package com.google.android.gms.common.api.internal;
 import android.os.DeadObjectException;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
+
 import com.google.android.gms.common.api.Api;
-import com.google.android.gms.common.api.Api.zzb;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Result;
 import com.google.android.gms.common.api.Status;
@@ -24,16 +24,16 @@ public abstract class zzn<R extends Result, A extends Api.zzb> extends BasePendi
         this.zzb = null;
     }
 
-    /* access modifiers changed from: protected */
-    @Hide
-    public abstract void zza(@NonNull Api.zzb zzb2) throws RemoteException;
-
     protected zzn(@NonNull Api<?> api, @NonNull GoogleApiClient googleApiClient) {
         super((GoogleApiClient) zzau.zza(googleApiClient, "GoogleApiClient must not be null"));
         zzau.zza(api, "Api must not be null");
         this.zza = api.zzc();
         this.zzb = api;
     }
+
+    /* access modifiers changed from: protected */
+    @Hide
+    public abstract void zza(@NonNull Api.zzb zzb2) throws RemoteException;
 
     @Hide
     public final Api.zzc<A> zzc() {

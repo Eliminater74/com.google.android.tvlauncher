@@ -4,6 +4,7 @@ import android.os.IBinder;
 import android.os.IInterface;
 import android.os.Parcel;
 import android.os.RemoteException;
+
 import com.google.android.aidl.BaseProxy;
 import com.google.android.aidl.BaseStub;
 
@@ -17,11 +18,11 @@ public interface IRemoteYoutubePlayerClient extends IInterface {
     void onVideoError() throws RemoteException;
 
     public static abstract class Stub extends BaseStub implements IRemoteYoutubePlayerClient {
-        private static final String DESCRIPTOR = "com.google.android.tvlauncher.instantvideo.media.impl.IRemoteYoutubePlayerClient";
         static final int TRANSACTION_onSessionCreated = 1;
         static final int TRANSACTION_onVideoAvailable = 2;
         static final int TRANSACTION_onVideoEnded = 4;
         static final int TRANSACTION_onVideoError = 3;
+        private static final String DESCRIPTOR = "com.google.android.tvlauncher.instantvideo.media.impl.IRemoteYoutubePlayerClient";
 
         public Stub() {
             super(DESCRIPTOR);

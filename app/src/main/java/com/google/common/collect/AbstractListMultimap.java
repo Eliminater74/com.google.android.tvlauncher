@@ -2,22 +2,24 @@ package com.google.common.collect;
 
 import com.google.common.annotations.GwtCompatible;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible
 abstract class AbstractListMultimap<K, V> extends AbstractMapBasedMultimap<K, V> implements ListMultimap<K, V> {
     private static final long serialVersionUID = 6588350623831699109L;
 
-    /* access modifiers changed from: package-private */
-    public abstract List<V> createCollection();
-
     protected AbstractListMultimap(Map<K, Collection<V>> map) {
         super(map);
     }
+
+    /* access modifiers changed from: package-private */
+    public abstract List<V> createCollection();
 
     /* access modifiers changed from: package-private */
     public List<V> createUnmodifiableEmptyCollection() {

@@ -1,8 +1,9 @@
 package com.google.android.gms.dynamic;
 
 import android.os.IBinder;
+
 import com.google.android.gms.common.internal.Hide;
-import com.google.android.gms.dynamic.IObjectWrapper;
+
 import java.lang.reflect.Field;
 
 @Hide

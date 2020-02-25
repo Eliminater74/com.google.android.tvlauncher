@@ -9,12 +9,12 @@ import android.widget.ProgressBar;
 public final class ProgressBarManager {
     private static final long DEFAULT_PROGRESS_BAR_DELAY = 1000;
     boolean mEnableProgressBar = true;
-    private Handler mHandler = new Handler();
-    private long mInitialDelay = 1000;
     boolean mIsShowing;
     View mProgressBarView;
     boolean mUserProvidedProgressBar;
     ViewGroup rootView;
+    private Handler mHandler = new Handler();
+    private long mInitialDelay = 1000;
     private Runnable runnable = new Runnable() {
         public void run() {
             if (!ProgressBarManager.this.mEnableProgressBar) {

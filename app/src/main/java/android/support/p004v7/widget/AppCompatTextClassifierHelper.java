@@ -20,11 +20,6 @@ final class AppCompatTextClassifierHelper {
     }
 
     @RequiresApi(api = 26)
-    public void setTextClassifier(@Nullable TextClassifier textClassifier) {
-        this.mTextClassifier = textClassifier;
-    }
-
-    @RequiresApi(api = 26)
     @NonNull
     public TextClassifier getTextClassifier() {
         TextClassifier textClassifier = this.mTextClassifier;
@@ -36,5 +31,10 @@ final class AppCompatTextClassifierHelper {
             return tcm.getTextClassifier();
         }
         return TextClassifier.NO_OP;
+    }
+
+    @RequiresApi(api = 26)
+    public void setTextClassifier(@Nullable TextClassifier textClassifier) {
+        this.mTextClassifier = textClassifier;
     }
 }

@@ -1,7 +1,7 @@
 package com.bumptech.glide;
 
 import android.support.annotation.NonNull;
-import com.bumptech.glide.TransitionOptions;
+
 import com.bumptech.glide.request.transition.NoTransition;
 import com.bumptech.glide.request.transition.TransitionFactory;
 import com.bumptech.glide.request.transition.ViewAnimationFactory;

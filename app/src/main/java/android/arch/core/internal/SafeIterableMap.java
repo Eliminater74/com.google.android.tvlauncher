@@ -2,20 +2,17 @@ package android.arch.core.internal;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.RestrictTo;
+
 import java.util.Iterator;
 import java.util.Map;
 import java.util.WeakHashMap;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
 public class SafeIterableMap<K, V> implements Iterable<Map.Entry<K, V>> {
+    Entry<K, V> mStart;
     private Entry<K, V> mEnd;
     private WeakHashMap<SupportRemove<K, V>, Boolean> mIterators = new WeakHashMap<>();
     private int mSize = 0;
-    Entry<K, V> mStart;
-
-    interface SupportRemove<K, V> {
-        void supportRemove(@NonNull Entry<K, V> entry);
-    }
 
     /*  JADX ERROR: JadxRuntimeException in pass: MethodInvokeVisitor
         jadx.core.utils.exceptions.JadxRuntimeException: Not class type: K
@@ -181,20 +178,24 @@ public class SafeIterableMap<K, V> implements Iterable<Map.Entry<K, V>> {
         return builder.toString();
     }
 
+    interface SupportRemove<K, V> {
+        void supportRemove(@NonNull Entry<K, V> entry);
+    }
+
     private static abstract class ListIterator<K, V> implements Iterator<Map.Entry<K, V>>, SupportRemove<K, V> {
         Entry<K, V> mExpectedEnd;
         Entry<K, V> mNext;
+
+        ListIterator(Entry<K, V> start, Entry<K, V> expectedEnd) {
+            this.mExpectedEnd = expectedEnd;
+            this.mNext = start;
+        }
 
         /* access modifiers changed from: package-private */
         public abstract Entry<K, V> backward(Entry<K, V> entry);
 
         /* access modifiers changed from: package-private */
         public abstract Entry<K, V> forward(Entry<K, V> entry);
-
-        ListIterator(Entry<K, V> start, Entry<K, V> expectedEnd) {
-            this.mExpectedEnd = expectedEnd;
-            this.mNext = start;
-        }
 
         public boolean hasNext() {
             return this.mNext != null;
@@ -262,54 +263,13 @@ public class SafeIterableMap<K, V> implements Iterable<Map.Entry<K, V>> {
         }
     }
 
-    private class IteratorWithAdditions implements Iterator<Map.Entry<K, V>>, SupportRemove<K, V> {
-        private boolean mBeforeStart = true;
-        private Entry<K, V> mCurrent;
-
-        IteratorWithAdditions() {
-        }
-
-        public void supportRemove(@NonNull Entry<K, V> entry) {
-            Entry<K, V> entry2 = this.mCurrent;
-            if (entry == entry2) {
-                this.mCurrent = entry2.mPrevious;
-                this.mBeforeStart = this.mCurrent == null;
-            }
-        }
-
-        public boolean hasNext() {
-            if (!this.mBeforeStart) {
-                Entry<K, V> entry = this.mCurrent;
-                if (entry == null || entry.mNext == null) {
-                    return false;
-                }
-                return true;
-            } else if (SafeIterableMap.this.mStart != null) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        public Map.Entry<K, V> next() {
-            if (this.mBeforeStart) {
-                this.mBeforeStart = false;
-                this.mCurrent = SafeIterableMap.this.mStart;
-            } else {
-                Entry<K, V> entry = this.mCurrent;
-                this.mCurrent = entry != null ? entry.mNext : null;
-            }
-            return this.mCurrent;
-        }
-    }
-
     static class Entry<K, V> implements Map.Entry<K, V> {
         @NonNull
         final K mKey;
-        Entry<K, V> mNext;
-        Entry<K, V> mPrevious;
         @NonNull
         final V mValue;
+        Entry<K, V> mNext;
+        Entry<K, V> mPrevious;
 
         Entry(@NonNull K key, @NonNull V value) {
             this.mKey = key;
@@ -381,6 +341,47 @@ public class SafeIterableMap<K, V> implements Iterable<Map.Entry<K, V>> {
 
         public int hashCode() {
             return this.mKey.hashCode() ^ this.mValue.hashCode();
+        }
+    }
+
+    private class IteratorWithAdditions implements Iterator<Map.Entry<K, V>>, SupportRemove<K, V> {
+        private boolean mBeforeStart = true;
+        private Entry<K, V> mCurrent;
+
+        IteratorWithAdditions() {
+        }
+
+        public void supportRemove(@NonNull Entry<K, V> entry) {
+            Entry<K, V> entry2 = this.mCurrent;
+            if (entry == entry2) {
+                this.mCurrent = entry2.mPrevious;
+                this.mBeforeStart = this.mCurrent == null;
+            }
+        }
+
+        public boolean hasNext() {
+            if (!this.mBeforeStart) {
+                Entry<K, V> entry = this.mCurrent;
+                if (entry == null || entry.mNext == null) {
+                    return false;
+                }
+                return true;
+            } else if (SafeIterableMap.this.mStart != null) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        public Map.Entry<K, V> next() {
+            if (this.mBeforeStart) {
+                this.mBeforeStart = false;
+                this.mCurrent = SafeIterableMap.this.mStart;
+            } else {
+                Entry<K, V> entry = this.mCurrent;
+                this.mCurrent = entry != null ? entry.mNext : null;
+            }
+            return this.mCurrent;
         }
     }
 }

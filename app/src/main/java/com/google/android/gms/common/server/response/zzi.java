@@ -2,9 +2,8 @@ package com.google.android.gms.common.server.response;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
 import com.google.android.gms.common.internal.Hide;
-import com.google.android.gms.common.server.response.FastJsonResponse;
-import com.google.android.gms.common.server.response.FieldMappingDictionary;
 import com.google.android.gms.internal.zzbkw;
 
 @Hide

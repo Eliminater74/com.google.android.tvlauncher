@@ -9,13 +9,12 @@ import android.os.Handler;
 import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
 import android.view.Surface;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.FormatHolder;
 import com.google.android.exoplayer2.PlaybackParameters;
-import com.google.android.exoplayer2.audio.AudioRendererEventListener;
-import com.google.android.exoplayer2.audio.AudioSink;
 import com.google.android.exoplayer2.decoder.DecoderInputBuffer;
 import com.google.android.exoplayer2.drm.DrmInitData;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
@@ -30,6 +29,7 @@ import com.google.android.exoplayer2.util.MediaClock;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.gsf.TalkContract;
+
 import java.nio.ByteBuffer;
 import java.util.Collections;
 import java.util.List;
@@ -37,26 +37,26 @@ import java.util.List;
 public class MediaCodecAudioRenderer extends MediaCodecRenderer implements MediaClock {
     private static final int MAX_PENDING_STREAM_CHANGE_COUNT = 10;
     private static final String TAG = "MediaCodecAudioRenderer";
-    private boolean allowFirstBufferPositionDiscontinuity;
+    /* access modifiers changed from: private */
+    public final AudioRendererEventListener.EventDispatcher eventDispatcher;
+    private final AudioSink audioSink;
+    private final Context context;
+    private final long[] pendingStreamChangeTimesUs;
     /* access modifiers changed from: private */
     public boolean allowPositionDiscontinuity;
-    private final AudioSink audioSink;
+    private boolean allowFirstBufferPositionDiscontinuity;
     private int channelCount;
     private int codecMaxInputSize;
     private boolean codecNeedsDiscardChannelsWorkaround;
     private boolean codecNeedsEosBufferTimestampWorkaround;
-    private final Context context;
     private long currentPositionUs;
     private int encoderDelay;
     private int encoderPadding;
-    /* access modifiers changed from: private */
-    public final AudioRendererEventListener.EventDispatcher eventDispatcher;
     private long lastInputTimeUs;
     private boolean passthroughEnabled;
     private MediaFormat passthroughMediaFormat;
     private int pcmEncoding;
     private int pendingStreamChangeCount;
-    private final long[] pendingStreamChangeTimesUs;
 
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
      method: com.google.android.exoplayer2.audio.MediaCodecAudioRenderer.<init>(android.content.Context, com.google.android.exoplayer2.mediacodec.MediaCodecSelector, com.google.android.exoplayer2.drm.DrmSessionManager<com.google.android.exoplayer2.drm.FrameworkMediaCrypto>, boolean):void
@@ -92,6 +92,14 @@ public class MediaCodecAudioRenderer extends MediaCodecRenderer implements Media
         this.pendingStreamChangeTimesUs = new long[10];
         this.eventDispatcher = new AudioRendererEventListener.EventDispatcher(eventHandler, eventListener);
         audioSink2.setListener(new AudioSinkListener());
+    }
+
+    private static boolean codecNeedsDiscardChannelsWorkaround(String codecName) {
+        return Util.SDK_INT < 24 && "OMX.SEC.aac.dec".equals(codecName) && "samsung".equals(Util.MANUFACTURER) && (Util.DEVICE.startsWith("zeroflte") || Util.DEVICE.startsWith("herolte") || Util.DEVICE.startsWith("heroqlte"));
+    }
+
+    private static boolean codecNeedsEosBufferTimestampWorkaround(String codecName) {
+        return Util.SDK_INT < 21 && "OMX.SEC.mp3.dec".equals(codecName) && "samsung".equals(Util.MANUFACTURER) && (Util.DEVICE.startsWith("baffin") || Util.DEVICE.startsWith("grand") || Util.DEVICE.startsWith("fortuna") || Util.DEVICE.startsWith("gprimelte") || Util.DEVICE.startsWith("j2y18lte") || Util.DEVICE.startsWith("ms01"));
     }
 
     /* access modifiers changed from: protected */
@@ -525,14 +533,6 @@ public class MediaCodecAudioRenderer extends MediaCodecRenderer implements Media
             this.currentPositionUs = j;
             this.allowPositionDiscontinuity = false;
         }
-    }
-
-    private static boolean codecNeedsDiscardChannelsWorkaround(String codecName) {
-        return Util.SDK_INT < 24 && "OMX.SEC.aac.dec".equals(codecName) && "samsung".equals(Util.MANUFACTURER) && (Util.DEVICE.startsWith("zeroflte") || Util.DEVICE.startsWith("herolte") || Util.DEVICE.startsWith("heroqlte"));
-    }
-
-    private static boolean codecNeedsEosBufferTimestampWorkaround(String codecName) {
-        return Util.SDK_INT < 21 && "OMX.SEC.mp3.dec".equals(codecName) && "samsung".equals(Util.MANUFACTURER) && (Util.DEVICE.startsWith("baffin") || Util.DEVICE.startsWith("grand") || Util.DEVICE.startsWith("fortuna") || Util.DEVICE.startsWith("gprimelte") || Util.DEVICE.startsWith("j2y18lte") || Util.DEVICE.startsWith("ms01"));
     }
 
     private final class AudioSinkListener implements AudioSink.Listener {

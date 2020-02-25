@@ -2,15 +2,16 @@ package com.google.common.collect;
 
 import com.google.common.annotations.GwtCompatible;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
 import java.util.ListIterator;
 
 @GwtCompatible
 public abstract class ForwardingListIterator<E> extends ForwardingIterator<E> implements ListIterator<E> {
-    /* access modifiers changed from: protected */
-    public abstract ListIterator<E> delegate();
-
     protected ForwardingListIterator() {
     }
+
+    /* access modifiers changed from: protected */
+    public abstract ListIterator<E> delegate();
 
     public void add(E element) {
         delegate().add(element);

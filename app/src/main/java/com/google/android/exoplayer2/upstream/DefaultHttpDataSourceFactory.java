@@ -1,7 +1,7 @@
 package com.google.android.exoplayer2.upstream;
 
 import android.support.annotation.Nullable;
-import com.google.android.exoplayer2.upstream.HttpDataSource;
+
 import com.google.android.exoplayer2.util.Assertions;
 
 public final class DefaultHttpDataSourceFactory extends HttpDataSource.BaseFactory {

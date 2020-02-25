@@ -1,12 +1,12 @@
 package com.google.android.libraries.performance.primes;
 
 import android.app.Activity;
-import com.google.android.libraries.performance.primes.PrimesThreadsConfigurations;
+
 import java.util.concurrent.atomic.AtomicReference;
 
 public final class PrimesInitTrigger implements PrimesThreadsConfigurations.ActivityResumedCallback {
-    private boolean initTriggered;
     private final AtomicReference<Runnable> primesInitTaskRef = new AtomicReference<>();
+    private boolean initTriggered;
 
     public void onActivityResumed(Activity activity, Runnable initTask) {
         synchronized (this.primesInitTaskRef) {

@@ -1,16 +1,17 @@
 package com.google.android.libraries.performance.primes.leak;
 
 import android.support.annotation.VisibleForTesting;
+
 import com.google.android.libraries.performance.primes.PrimesLog;
-import com.google.android.libraries.performance.primes.leak.LeakWatcherThread;
 import com.google.android.libraries.stitch.util.Preconditions;
+
 import java.io.File;
 
 public class LeakWatcher {
     private static final String TAG = "LeakWatcher";
+    private final LeakWatcherThread.LeakWatcherThreadFactory leakWatcherThreadFactory;
     private LeakListener leakListener;
     private LeakWatcherThread leakWatcherThread;
-    private final LeakWatcherThread.LeakWatcherThreadFactory leakWatcherThreadFactory;
     private boolean started;
 
     public LeakWatcher(boolean quantifyLeakSizeEnabled) {

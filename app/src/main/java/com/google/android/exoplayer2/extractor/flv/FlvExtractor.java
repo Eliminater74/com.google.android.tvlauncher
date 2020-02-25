@@ -9,6 +9,7 @@ import com.google.android.exoplayer2.extractor.PositionHolder;
 import com.google.android.exoplayer2.extractor.SeekMap;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.IOException;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -26,26 +27,21 @@ public final class FlvExtractor implements Extractor {
     private static final int TAG_TYPE_AUDIO = 8;
     private static final int TAG_TYPE_SCRIPT_DATA = 18;
     private static final int TAG_TYPE_VIDEO = 9;
+    private final ParsableByteArray headerBuffer = new ParsableByteArray(9);
+    private final ScriptTagPayloadReader metadataReader = new ScriptTagPayloadReader();
+    private final ParsableByteArray scratch = new ParsableByteArray(4);
+    private final ParsableByteArray tagData = new ParsableByteArray();
+    private final ParsableByteArray tagHeaderBuffer = new ParsableByteArray(11);
     private AudioTagPayloadReader audioReader;
     private int bytesToNextTagHeader;
     private ExtractorOutput extractorOutput;
-    private final ParsableByteArray headerBuffer = new ParsableByteArray(9);
     private long mediaTagTimestampOffsetUs = C0841C.TIME_UNSET;
-    private final ScriptTagPayloadReader metadataReader = new ScriptTagPayloadReader();
     private boolean outputSeekMap;
-    private final ParsableByteArray scratch = new ParsableByteArray(4);
     private int state = 1;
-    private final ParsableByteArray tagData = new ParsableByteArray();
     private int tagDataSize;
-    private final ParsableByteArray tagHeaderBuffer = new ParsableByteArray(11);
     private long tagTimestampUs;
     private int tagType;
     private VideoTagPayloadReader videoReader;
-
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    private @interface States {
-    }
 
     static final /* synthetic */ Extractor[] lambda$static$0$FlvExtractor() {
         return new Extractor[]{new FlvExtractor()};
@@ -197,5 +193,10 @@ public final class FlvExtractor implements Extractor {
         if (this.mediaTagTimestampOffsetUs == C0841C.TIME_UNSET) {
             this.mediaTagTimestampOffsetUs = this.metadataReader.getDurationUs() == C0841C.TIME_UNSET ? -this.tagTimestampUs : 0;
         }
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    private @interface States {
     }
 }

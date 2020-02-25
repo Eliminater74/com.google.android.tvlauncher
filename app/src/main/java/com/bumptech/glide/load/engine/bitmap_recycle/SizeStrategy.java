@@ -4,7 +4,9 @@ import android.graphics.Bitmap;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.annotation.VisibleForTesting;
+
 import com.bumptech.glide.util.Util;
+
 import java.util.NavigableMap;
 
 @RequiresApi(19)
@@ -15,6 +17,18 @@ final class SizeStrategy implements LruPoolStrategy {
     private final NavigableMap<Integer, Integer> sortedSizes = new PrettyPrintTreeMap();
 
     SizeStrategy() {
+    }
+
+    private static String getBitmapString(Bitmap bitmap) {
+        return getBitmapString(Util.getBitmapByteSize(bitmap));
+    }
+
+    static String getBitmapString(int size) {
+        StringBuilder sb = new StringBuilder(13);
+        sb.append("[");
+        sb.append(size);
+        sb.append("]");
+        return sb.toString();
     }
 
     public void put(Bitmap bitmap) {
@@ -85,18 +99,6 @@ final class SizeStrategy implements LruPoolStrategy {
         sb.append(valueOf);
         sb.append("\n  SortedSizes");
         sb.append(valueOf2);
-        return sb.toString();
-    }
-
-    private static String getBitmapString(Bitmap bitmap) {
-        return getBitmapString(Util.getBitmapByteSize(bitmap));
-    }
-
-    static String getBitmapString(int size) {
-        StringBuilder sb = new StringBuilder(13);
-        sb.append("[");
-        sb.append(size);
-        sb.append("]");
         return sb.toString();
     }
 

@@ -10,7 +10,9 @@ import android.support.annotation.RestrictTo;
 import android.support.p001v4.content.res.FontResourcesParserCompat;
 import android.support.p001v4.provider.FontsContractCompat;
 import android.util.Log;
+
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,18 +20,11 @@ import java.lang.reflect.Field;
 import java.util.concurrent.ConcurrentHashMap;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-/* renamed from: android.support.v4.graphics.TypefaceCompatBaseImpl */
+        /* renamed from: android.support.v4.graphics.TypefaceCompatBaseImpl */
 class TypefaceCompatBaseImpl {
     private static final int INVALID_KEY = 0;
     private static final String TAG = "TypefaceCompatBaseImpl";
     private ConcurrentHashMap<Long, FontResourcesParserCompat.FontFamilyFilesResourceEntry> mFontFamilies = new ConcurrentHashMap<>();
-
-    /* renamed from: android.support.v4.graphics.TypefaceCompatBaseImpl$StyleExtractor */
-    private interface StyleExtractor<T> {
-        int getWeight(T t);
-
-        boolean isItalic(T t);
-    }
 
     TypefaceCompatBaseImpl() {
     }
@@ -173,5 +168,12 @@ class TypefaceCompatBaseImpl {
         if (key != 0) {
             this.mFontFamilies.put(Long.valueOf(key), entry);
         }
+    }
+
+    /* renamed from: android.support.v4.graphics.TypefaceCompatBaseImpl$StyleExtractor */
+    private interface StyleExtractor<T> {
+        int getWeight(T t);
+
+        boolean isItalic(T t);
     }
 }

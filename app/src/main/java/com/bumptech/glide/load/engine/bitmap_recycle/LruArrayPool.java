@@ -3,23 +3,25 @@ package com.bumptech.glide.load.engine.bitmap_recycle;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.util.Log;
+
 import com.bumptech.glide.util.Preconditions;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 
 public final class LruArrayPool implements ArrayPool {
-    private static final int DEFAULT_SIZE = 4194304;
     @VisibleForTesting
     static final int MAX_OVER_SIZE_MULTIPLE = 8;
+    private static final int DEFAULT_SIZE = 4194304;
     private static final int SINGLE_ARRAY_MAX_SIZE_DIVISOR = 2;
     private final Map<Class<?>, ArrayAdapterInterface<?>> adapters;
-    private int currentSize;
     private final GroupedLinkedMap<Key, Object> groupedMap;
     private final KeyPool keyPool;
     private final int maxSize;
     private final Map<Class<?>, NavigableMap<Integer, Integer>> sortedSizes;
+    private int currentSize;
 
     @VisibleForTesting
     public LruArrayPool() {
@@ -234,9 +236,9 @@ public final class LruArrayPool implements ArrayPool {
     }
 
     private static final class Key implements Poolable {
-        private Class<?> arrayClass;
         private final KeyPool pool;
         int size;
+        private Class<?> arrayClass;
 
         Key(KeyPool pool2) {
             this.pool = pool2;

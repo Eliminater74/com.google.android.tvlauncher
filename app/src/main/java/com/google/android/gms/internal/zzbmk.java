@@ -7,6 +7,10 @@ public final class zzbmk {
     private static zzbmk zzb = new zzbmk();
     private zzbmj zza = null;
 
+    public static zzbmj zza(Context context) {
+        return zzb.zzb(context);
+    }
+
     private final synchronized zzbmj zzb(Context context) {
         if (this.zza == null) {
             if (context.getApplicationContext() != null) {
@@ -15,9 +19,5 @@ public final class zzbmk {
             this.zza = new zzbmj(context);
         }
         return this.zza;
-    }
-
-    public static zzbmj zza(Context context) {
-        return zzb.zzb(context);
     }
 }

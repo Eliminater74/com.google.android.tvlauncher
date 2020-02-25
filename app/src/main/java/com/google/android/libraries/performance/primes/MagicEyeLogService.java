@@ -2,23 +2,24 @@ package com.google.android.libraries.performance.primes;
 
 import android.app.Activity;
 import android.app.Application;
-import com.google.android.libraries.performance.primes.AppLifecycleListener;
-import com.google.android.libraries.performance.primes.MetricRecorder;
+
 import com.google.android.libraries.performance.primes.transmitter.MetricTransmitter;
+
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
+
 import logs.proto.wireless.performance.mobile.SystemHealthProto;
 
 final class MagicEyeLogService extends AbstractMetricService implements PrimesStartupListener, AppLifecycleListener.OnAppToForeground, AppLifecycleListener.OnAppToBackground {
     private static final String TAG = "MagicEyeLogService";
     private boolean monitoring;
 
-    static MagicEyeLogService createService(MetricTransmitter transmitter, Application application, Supplier<MetricStamper> metricStamperSupplier, Supplier<ScheduledExecutorService> executorServiceSupplier) {
-        return new MagicEyeLogService(transmitter, application, metricStamperSupplier, executorServiceSupplier);
-    }
-
     MagicEyeLogService(MetricTransmitter transmitter, Application application, Supplier<MetricStamper> metricStamperSupplier, Supplier<ScheduledExecutorService> executorServiceSupplier) {
         super(transmitter, application, metricStamperSupplier, executorServiceSupplier, MetricRecorder.RunIn.SAME_THREAD);
+    }
+
+    static MagicEyeLogService createService(MetricTransmitter transmitter, Application application, Supplier<MetricStamper> metricStamperSupplier, Supplier<ScheduledExecutorService> executorServiceSupplier) {
+        return new MagicEyeLogService(transmitter, application, metricStamperSupplier, executorServiceSupplier);
     }
 
     public void onPrimesInitialize() {

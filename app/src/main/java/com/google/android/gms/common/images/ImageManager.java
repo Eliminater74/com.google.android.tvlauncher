@@ -15,9 +15,12 @@ import android.os.SystemClock;
 import android.support.p001v4.util.LruCache;
 import android.util.Log;
 import android.widget.ImageView;
+
 import com.google.android.gms.common.annotation.KeepName;
+import com.google.android.gms.common.images.ImageManager.zza;
 import com.google.android.gms.common.internal.Hide;
 import com.google.android.gms.internal.zzbku;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,8 +53,8 @@ public final class ImageManager {
     /* access modifiers changed from: private */
     public final Map<Uri, Long> zzk = new HashMap();
 
-    public interface OnImageLoadedListener {
-        void onImageLoaded(Uri uri, Drawable drawable, boolean z);
+    private ImageManager(Context context, boolean z) {
+        this.zzd = context.getApplicationContext();
     }
 
     public static ImageManager create(Context context) {
@@ -59,6 +62,49 @@ public final class ImageManager {
             zzc = new ImageManager(context, false);
         }
         return zzc;
+    }
+
+    public final void loadImage(ImageView imageView, Uri uri) {
+        zza(new zzc(imageView, uri));
+    }
+
+    public final void loadImage(ImageView imageView, int i) {
+        zza(new zzc(imageView, i));
+    }
+
+    public final void loadImage(ImageView imageView, Uri uri, int i) {
+        zzc zzc2 = new zzc(imageView, uri);
+        zzc2.zzb = i;
+        zza(zzc2);
+    }
+
+    public final void loadImage(OnImageLoadedListener onImageLoadedListener, Uri uri) {
+        zza(new zzd(onImageLoadedListener, uri));
+    }
+
+    public final void loadImage(OnImageLoadedListener onImageLoadedListener, Uri uri, int i) {
+        zzd zzd2 = new zzd(onImageLoadedListener, uri);
+        zzd2.zzb = i;
+        zza(zzd2);
+    }
+
+    @Hide
+    private final void zza(zza zza2) {
+        com.google.android.gms.common.internal.zzc.zza("ImageManager.loadImage() must be called in the main thread");
+        new zzc(zza2).run();
+    }
+
+    /* access modifiers changed from: private */
+    public final Bitmap zza(zzb zzb2) {
+        zza zza2 = this.zzg;
+        if (zza2 == null) {
+            return null;
+        }
+        return (Bitmap) zza2.get(zzb2);
+    }
+
+    public interface OnImageLoadedListener {
+        void onImageLoaded(Uri uri, Drawable drawable, boolean z);
     }
 
     static final class zza extends LruCache<zzb, Bitmap> {
@@ -203,9 +249,9 @@ public final class ImageManager {
 
     @KeepName
     final class ImageReceiver extends ResultReceiver {
-        private final Uri zza;
         /* access modifiers changed from: private */
         public final ArrayList<zza> zzb = new ArrayList<>();
+        private final Uri zza;
 
         ImageReceiver(Uri uri) {
             super(new Handler(Looper.getMainLooper()));
@@ -296,48 +342,5 @@ public final class ImageManager {
                 ImageManager.zzb.remove(this.zza);
             }
         }
-    }
-
-    private ImageManager(Context context, boolean z) {
-        this.zzd = context.getApplicationContext();
-    }
-
-    public final void loadImage(ImageView imageView, Uri uri) {
-        zza(new zzc(imageView, uri));
-    }
-
-    public final void loadImage(ImageView imageView, int i) {
-        zza(new zzc(imageView, i));
-    }
-
-    public final void loadImage(ImageView imageView, Uri uri, int i) {
-        zzc zzc2 = new zzc(imageView, uri);
-        zzc2.zzb = i;
-        zza(zzc2);
-    }
-
-    public final void loadImage(OnImageLoadedListener onImageLoadedListener, Uri uri) {
-        zza(new zzd(onImageLoadedListener, uri));
-    }
-
-    public final void loadImage(OnImageLoadedListener onImageLoadedListener, Uri uri, int i) {
-        zzd zzd2 = new zzd(onImageLoadedListener, uri);
-        zzd2.zzb = i;
-        zza(zzd2);
-    }
-
-    @Hide
-    private final void zza(zza zza2) {
-        com.google.android.gms.common.internal.zzc.zza("ImageManager.loadImage() must be called in the main thread");
-        new zzc(zza2).run();
-    }
-
-    /* access modifiers changed from: private */
-    public final Bitmap zza(zzb zzb2) {
-        zza zza2 = this.zzg;
-        if (zza2 == null) {
-            return null;
-        }
-        return (Bitmap) zza2.get(zzb2);
     }
 }

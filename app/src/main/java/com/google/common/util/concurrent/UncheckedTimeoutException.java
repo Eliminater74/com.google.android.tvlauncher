@@ -1,6 +1,7 @@
 package com.google.common.util.concurrent;
 
 import com.google.common.annotations.GwtIncompatible;
+
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtIncompatible

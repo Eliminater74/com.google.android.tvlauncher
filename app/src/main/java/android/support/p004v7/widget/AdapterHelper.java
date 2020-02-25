@@ -1,45 +1,25 @@
 package android.support.p004v7.widget;
 
 import android.support.p001v4.util.Pools;
-import android.support.p004v7.widget.OpReorderer;
-import android.support.p004v7.widget.RecyclerView;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 /* renamed from: android.support.v7.widget.AdapterHelper */
 class AdapterHelper implements OpReorderer.Callback {
-    private static final boolean DEBUG = false;
     static final int POSITION_TYPE_INVISIBLE = 0;
     static final int POSITION_TYPE_NEW_OR_LAID_OUT = 1;
+    private static final boolean DEBUG = false;
     private static final String TAG = "AHT";
     final Callback mCallback;
     final boolean mDisableRecycler;
-    private int mExistingUpdateTypes;
-    Runnable mOnItemProcessedCallback;
     final OpReorderer mOpReorderer;
     final ArrayList<UpdateOp> mPendingUpdates;
     final ArrayList<UpdateOp> mPostponedList;
+    Runnable mOnItemProcessedCallback;
+    private int mExistingUpdateTypes;
     private Pools.Pool<UpdateOp> mUpdateOpPool;
-
-    /* renamed from: android.support.v7.widget.AdapterHelper$Callback */
-    interface Callback {
-        RecyclerView.ViewHolder findViewHolder(int i);
-
-        void markViewHoldersUpdated(int i, int i2, Object obj);
-
-        void offsetPositionsForAdd(int i, int i2);
-
-        void offsetPositionsForMove(int i, int i2);
-
-        void offsetPositionsForRemovingInvisible(int i, int i2);
-
-        void offsetPositionsForRemovingLaidOutOrNewView(int i, int i2);
-
-        void onDispatchFirstPass(UpdateOp updateOp);
-
-        void onDispatchSecondPass(UpdateOp updateOp);
-    }
 
     AdapterHelper(Callback callback) {
         this(callback, false);
@@ -524,6 +504,53 @@ class AdapterHelper implements OpReorderer.Callback {
         return !this.mPostponedList.isEmpty() && !this.mPendingUpdates.isEmpty();
     }
 
+    public UpdateOp obtainUpdateOp(int cmd, int positionStart, int itemCount, Object payload) {
+        UpdateOp op = this.mUpdateOpPool.acquire();
+        if (op == null) {
+            return new UpdateOp(cmd, positionStart, itemCount, payload);
+        }
+        op.cmd = cmd;
+        op.positionStart = positionStart;
+        op.itemCount = itemCount;
+        op.payload = payload;
+        return op;
+    }
+
+    public void recycleUpdateOp(UpdateOp op) {
+        if (!this.mDisableRecycler) {
+            op.payload = null;
+            this.mUpdateOpPool.release(op);
+        }
+    }
+
+    /* access modifiers changed from: package-private */
+    public void recycleUpdateOpsAndClearList(List<UpdateOp> ops) {
+        int count = ops.size();
+        for (int i = 0; i < count; i++) {
+            recycleUpdateOp(ops.get(i));
+        }
+        ops.clear();
+    }
+
+    /* renamed from: android.support.v7.widget.AdapterHelper$Callback */
+    interface Callback {
+        RecyclerView.ViewHolder findViewHolder(int i);
+
+        void markViewHoldersUpdated(int i, int i2, Object obj);
+
+        void offsetPositionsForAdd(int i, int i2);
+
+        void offsetPositionsForMove(int i, int i2);
+
+        void offsetPositionsForRemovingInvisible(int i, int i2);
+
+        void offsetPositionsForRemovingLaidOutOrNewView(int i, int i2);
+
+        void onDispatchFirstPass(UpdateOp updateOp);
+
+        void onDispatchSecondPass(UpdateOp updateOp);
+    }
+
     /* renamed from: android.support.v7.widget.AdapterHelper$UpdateOp */
     static class UpdateOp {
         static final int ADD = 1;
@@ -597,33 +624,5 @@ class AdapterHelper implements OpReorderer.Callback {
         public int hashCode() {
             return (((this.cmd * 31) + this.positionStart) * 31) + this.itemCount;
         }
-    }
-
-    public UpdateOp obtainUpdateOp(int cmd, int positionStart, int itemCount, Object payload) {
-        UpdateOp op = this.mUpdateOpPool.acquire();
-        if (op == null) {
-            return new UpdateOp(cmd, positionStart, itemCount, payload);
-        }
-        op.cmd = cmd;
-        op.positionStart = positionStart;
-        op.itemCount = itemCount;
-        op.payload = payload;
-        return op;
-    }
-
-    public void recycleUpdateOp(UpdateOp op) {
-        if (!this.mDisableRecycler) {
-            op.payload = null;
-            this.mUpdateOpPool.release(op);
-        }
-    }
-
-    /* access modifiers changed from: package-private */
-    public void recycleUpdateOpsAndClearList(List<UpdateOp> ops) {
-        int count = ops.size();
-        for (int i = 0; i < count; i++) {
-            recycleUpdateOp(ops.get(i));
-        }
-        ops.clear();
     }
 }

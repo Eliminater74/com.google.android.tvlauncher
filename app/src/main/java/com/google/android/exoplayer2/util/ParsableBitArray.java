@@ -1,13 +1,14 @@
 package com.google.android.exoplayer2.util;
 
 import android.support.p001v4.view.MotionEventCompat;
+
 import com.google.common.primitives.UnsignedBytes;
 
 public final class ParsableBitArray {
+    public byte[] data;
     private int bitOffset;
     private int byteLimit;
     private int byteOffset;
-    public byte[] data;
 
     public ParsableBitArray() {
         this.data = Util.EMPTY_BYTE_ARRAY;
@@ -46,15 +47,15 @@ public final class ParsableBitArray {
         return (this.byteOffset * 8) + this.bitOffset;
     }
 
-    public int getBytePosition() {
-        Assertions.checkState(this.bitOffset == 0);
-        return this.byteOffset;
-    }
-
     public void setPosition(int position) {
         this.byteOffset = position / 8;
         this.bitOffset = position - (this.byteOffset * 8);
         assertValidOffset();
+    }
+
+    public int getBytePosition() {
+        Assertions.checkState(this.bitOffset == 0);
+        return this.byteOffset;
     }
 
     public void skipBit() {

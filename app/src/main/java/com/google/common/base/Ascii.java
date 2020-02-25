@@ -10,8 +10,6 @@ public final class Ascii {
     /* renamed from: BS */
     public static final byte f146BS = 8;
     public static final byte CAN = 24;
-    private static final char CASE_MASK = ' ';
-
     /* renamed from: CR */
     public static final byte f147CR = 13;
     public static final byte DC1 = 17;
@@ -20,7 +18,6 @@ public final class Ascii {
     public static final byte DC4 = 20;
     public static final byte DEL = Byte.MAX_VALUE;
     public static final byte DLE = 16;
-
     /* renamed from: EM */
     public static final byte f148EM = 25;
     public static final byte ENQ = 5;
@@ -28,53 +25,42 @@ public final class Ascii {
     public static final byte ESC = 27;
     public static final byte ETB = 23;
     public static final byte ETX = 3;
-
     /* renamed from: FF */
     public static final byte f149FF = 12;
-
     /* renamed from: FS */
     public static final byte f150FS = 28;
-
     /* renamed from: GS */
     public static final byte f151GS = 29;
-
     /* renamed from: HT */
     public static final byte f152HT = 9;
-
     /* renamed from: LF */
     public static final byte f153LF = 10;
     public static final char MAX = '';
     public static final char MIN = '\u0000';
     public static final byte NAK = 21;
-
     /* renamed from: NL */
     public static final byte f154NL = 10;
     public static final byte NUL = 0;
-
     /* renamed from: RS */
     public static final byte f155RS = 30;
-
     /* renamed from: SI */
     public static final byte f156SI = 15;
-
     /* renamed from: SO */
     public static final byte f157SO = 14;
     public static final byte SOH = 1;
-
     /* renamed from: SP */
     public static final byte f158SP = 32;
     public static final byte SPACE = 32;
     public static final byte STX = 2;
     public static final byte SUB = 26;
     public static final byte SYN = 22;
-
     /* renamed from: US */
     public static final byte f159US = 31;
-
     /* renamed from: VT */
     public static final byte f160VT = 11;
     public static final byte XOFF = 19;
     public static final byte XON = 17;
+    private static final char CASE_MASK = ' ';
 
     private Ascii() {
     }

@@ -11,11 +11,11 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Provides {
 
+    Type type() default Type.UNIQUE;
+
     public enum Type {
         UNIQUE,
         SET,
         SET_VALUES
     }
-
-    Type type() default Type.UNIQUE;
 }

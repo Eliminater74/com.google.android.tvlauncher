@@ -1,9 +1,9 @@
 package com.google.android.exoplayer2.audio;
 
-import com.google.android.exoplayer2.audio.AudioProcessor;
 import com.google.android.exoplayer2.util.Util;
 import com.google.common.base.Ascii;
 import com.google.common.primitives.UnsignedBytes;
+
 import java.nio.ByteBuffer;
 
 final class FloatResamplingAudioProcessor extends BaseAudioProcessor {
@@ -11,6 +11,16 @@ final class FloatResamplingAudioProcessor extends BaseAudioProcessor {
     private static final double PCM_32_BIT_INT_TO_PCM_32_BIT_FLOAT_FACTOR = 4.656612875245797E-10d;
 
     FloatResamplingAudioProcessor() {
+    }
+
+    private static void writePcm32BitFloat(int pcm32BitInt, ByteBuffer buffer) {
+        double d = (double) pcm32BitInt;
+        Double.isNaN(d);
+        int floatBits = Float.floatToIntBits((float) (d * PCM_32_BIT_INT_TO_PCM_32_BIT_FLOAT_FACTOR));
+        if (floatBits == FLOAT_NAN_AS_INT) {
+            floatBits = Float.floatToIntBits(0.0f);
+        }
+        buffer.putInt(floatBits);
     }
 
     public boolean configure(int sampleRateHz, int channelCount, int encoding) throws AudioProcessor.UnhandledFormatException {
@@ -45,15 +55,5 @@ final class FloatResamplingAudioProcessor extends BaseAudioProcessor {
         }
         inputBuffer.position(inputBuffer.limit());
         buffer.flip();
-    }
-
-    private static void writePcm32BitFloat(int pcm32BitInt, ByteBuffer buffer) {
-        double d = (double) pcm32BitInt;
-        Double.isNaN(d);
-        int floatBits = Float.floatToIntBits((float) (d * PCM_32_BIT_INT_TO_PCM_32_BIT_FLOAT_FACTOR));
-        if (floatBits == FLOAT_NAN_AS_INT) {
-            floatBits = Float.floatToIntBits(0.0f);
-        }
-        buffer.putInt(floatBits);
     }
 }

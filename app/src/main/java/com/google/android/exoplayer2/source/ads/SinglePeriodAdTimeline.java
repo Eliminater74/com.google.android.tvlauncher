@@ -1,6 +1,7 @@
 package com.google.android.exoplayer2.source.ads;
 
 import android.support.annotation.VisibleForTesting;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.source.ForwardingTimeline;

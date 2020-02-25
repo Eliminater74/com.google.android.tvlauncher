@@ -25,7 +25,6 @@ import android.support.p001v4.view.AccessibilityDelegateCompat;
 import android.support.p001v4.view.GravityCompat;
 import android.support.p001v4.view.ViewCompat;
 import android.support.p001v4.view.accessibility.AccessibilityNodeInfoCompat;
-import android.support.p001v4.widget.ViewDragHelper;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -34,34 +33,50 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.WindowInsets;
 import android.view.accessibility.AccessibilityEvent;
+
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /* renamed from: android.support.v4.widget.DrawerLayout */
 public class DrawerLayout extends ViewGroup {
-    private static final String ACCESSIBILITY_CLASS_NAME = "android.support.v4.widget.DrawerLayout";
-    private static final boolean ALLOW_EDGE_LOCK = false;
-    static final boolean CAN_HIDE_DESCENDANTS = (Build.VERSION.SDK_INT >= 19);
-    private static final boolean CHILDREN_DISALLOW_INTERCEPT = true;
-    private static final int DEFAULT_SCRIM_COLOR = -1728053248;
-    private static final int DRAWER_ELEVATION = 10;
-    static final int[] LAYOUT_ATTRS = {16842931};
     public static final int LOCK_MODE_LOCKED_CLOSED = 1;
     public static final int LOCK_MODE_LOCKED_OPEN = 2;
     public static final int LOCK_MODE_UNDEFINED = 3;
     public static final int LOCK_MODE_UNLOCKED = 0;
+    public static final int STATE_DRAGGING = 1;
+    public static final int STATE_IDLE = 0;
+    public static final int STATE_SETTLING = 2;
+    static final boolean CAN_HIDE_DESCENDANTS = (Build.VERSION.SDK_INT >= 19);
+    static final int[] LAYOUT_ATTRS = {16842931};
+    private static final String ACCESSIBILITY_CLASS_NAME = "android.support.v4.widget.DrawerLayout";
+    private static final boolean ALLOW_EDGE_LOCK = false;
+    private static final boolean CHILDREN_DISALLOW_INTERCEPT = true;
+    private static final int DEFAULT_SCRIM_COLOR = -1728053248;
+    private static final int DRAWER_ELEVATION = 10;
     private static final int MIN_DRAWER_MARGIN = 64;
     private static final int MIN_FLING_VELOCITY = 400;
     private static final int PEEK_DELAY = 160;
     private static final boolean SET_DRAWER_SHADOW_FROM_ELEVATION;
-    public static final int STATE_DRAGGING = 1;
-    public static final int STATE_IDLE = 0;
-    public static final int STATE_SETTLING = 2;
     private static final String TAG = "DrawerLayout";
     private static final int[] THEME_ATTRS = {16843828};
     private static final float TOUCH_SLOP_SENSITIVITY = 1.0f;
+
+    static {
+        boolean z = true;
+        if (Build.VERSION.SDK_INT < 21) {
+            z = false;
+        }
+        SET_DRAWER_SHADOW_FROM_ELEVATION = z;
+    }
+
     private final ChildAccessibilityDelegate mChildAccessibilityDelegate;
+    private final ViewDragCallback mLeftCallback;
+    private final ViewDragHelper mLeftDragger;
+    private final ArrayList<View> mNonDrawerViews;
+    private final ViewDragCallback mRightCallback;
+    private final ViewDragHelper mRightDragger;
     private Rect mChildHitRect;
     private Matrix mChildInvertedMatrix;
     private boolean mChildrenCanceledTouch;
@@ -73,8 +88,6 @@ public class DrawerLayout extends ViewGroup {
     private float mInitialMotionX;
     private float mInitialMotionY;
     private Object mLastInsets;
-    private final ViewDragCallback mLeftCallback;
-    private final ViewDragHelper mLeftDragger;
     @Nullable
     private DrawerListener mListener;
     private List<DrawerListener> mListeners;
@@ -83,9 +96,6 @@ public class DrawerLayout extends ViewGroup {
     private int mLockModeRight;
     private int mLockModeStart;
     private int mMinDrawerMargin;
-    private final ArrayList<View> mNonDrawerViews;
-    private final ViewDragCallback mRightCallback;
-    private final ViewDragHelper mRightDragger;
     private int mScrimColor;
     private float mScrimOpacity;
     private Paint mScrimPaint;
@@ -98,40 +108,6 @@ public class DrawerLayout extends ViewGroup {
     private Drawable mStatusBarBackground;
     private CharSequence mTitleLeft;
     private CharSequence mTitleRight;
-
-    /* renamed from: android.support.v4.widget.DrawerLayout$DrawerListener */
-    public interface DrawerListener {
-        void onDrawerClosed(@NonNull View view);
-
-        void onDrawerOpened(@NonNull View view);
-
-        void onDrawerSlide(@NonNull View view, float f);
-
-        void onDrawerStateChanged(int i);
-    }
-
-    static {
-        boolean z = true;
-        if (Build.VERSION.SDK_INT < 21) {
-            z = false;
-        }
-        SET_DRAWER_SHADOW_FROM_ELEVATION = z;
-    }
-
-    /* renamed from: android.support.v4.widget.DrawerLayout$SimpleDrawerListener */
-    public static abstract class SimpleDrawerListener implements DrawerListener {
-        public void onDrawerSlide(View drawerView, float slideOffset) {
-        }
-
-        public void onDrawerOpened(View drawerView) {
-        }
-
-        public void onDrawerClosed(View drawerView) {
-        }
-
-        public void onDrawerStateChanged(int newState) {
-        }
-    }
 
     public DrawerLayout(@NonNull Context context) {
         this(context, null);
@@ -196,6 +172,35 @@ public class DrawerLayout extends ViewGroup {
         this.mNonDrawerViews = new ArrayList<>();
     }
 
+    static String gravityToString(int gravity) {
+        if ((gravity & 3) == 3) {
+            return "LEFT";
+        }
+        if ((gravity & 5) == 5) {
+            return "RIGHT";
+        }
+        return Integer.toHexString(gravity);
+    }
+
+    private static boolean hasOpaqueBackground(View v) {
+        Drawable bg = v.getBackground();
+        if (bg == null || bg.getOpacity() != -1) {
+            return false;
+        }
+        return true;
+    }
+
+    static boolean includeChildForAccessibility(View child) {
+        return (ViewCompat.getImportantForAccessibility(child) == 4 || ViewCompat.getImportantForAccessibility(child) == 2) ? false : true;
+    }
+
+    public float getDrawerElevation() {
+        if (SET_DRAWER_SHADOW_FROM_ELEVATION) {
+            return this.mDrawerElevation;
+        }
+        return 0.0f;
+    }
+
     public void setDrawerElevation(float elevation) {
         this.mDrawerElevation = elevation;
         for (int i = 0; i < getChildCount(); i++) {
@@ -204,13 +209,6 @@ public class DrawerLayout extends ViewGroup {
                 ViewCompat.setElevation(child, this.mDrawerElevation);
             }
         }
-    }
-
-    public float getDrawerElevation() {
-        if (SET_DRAWER_SHADOW_FROM_ELEVATION) {
-            return this.mDrawerElevation;
-        }
-        return 0.0f;
     }
 
     @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
@@ -576,16 +574,6 @@ public class DrawerLayout extends ViewGroup {
         return null;
     }
 
-    static String gravityToString(int gravity) {
-        if ((gravity & 3) == 3) {
-            return "LEFT";
-        }
-        if ((gravity & 5) == 5) {
-            return "RIGHT";
-        }
-        return Integer.toHexString(gravity);
-    }
-
     /* access modifiers changed from: protected */
     public void onDetachedFromWindow() {
         super.onDetachedFromWindow();
@@ -840,14 +828,6 @@ public class DrawerLayout extends ViewGroup {
         if (leftDraggerSettling || rightDraggerSettling) {
             ViewCompat.postInvalidateOnAnimation(this);
         }
-    }
-
-    private static boolean hasOpaqueBackground(View v) {
-        Drawable bg = v.getBackground();
-        if (bg == null || bg.getOpacity() != -1) {
-            return false;
-        }
-        return true;
     }
 
     public void setStatusBarBackground(@Nullable Drawable bg) {
@@ -1444,8 +1424,30 @@ public class DrawerLayout extends ViewGroup {
         }
     }
 
-    static boolean includeChildForAccessibility(View child) {
-        return (ViewCompat.getImportantForAccessibility(child) == 4 || ViewCompat.getImportantForAccessibility(child) == 2) ? false : true;
+    /* renamed from: android.support.v4.widget.DrawerLayout$DrawerListener */
+    public interface DrawerListener {
+        void onDrawerClosed(@NonNull View view);
+
+        void onDrawerOpened(@NonNull View view);
+
+        void onDrawerSlide(@NonNull View view, float f);
+
+        void onDrawerStateChanged(int i);
+    }
+
+    /* renamed from: android.support.v4.widget.DrawerLayout$SimpleDrawerListener */
+    public static abstract class SimpleDrawerListener implements DrawerListener {
+        public void onDrawerSlide(View drawerView, float slideOffset) {
+        }
+
+        public void onDrawerOpened(View drawerView) {
+        }
+
+        public void onDrawerClosed(View drawerView) {
+        }
+
+        public void onDrawerStateChanged(int newState) {
+        }
     }
 
     /* renamed from: android.support.v4.widget.DrawerLayout$SavedState */
@@ -1489,6 +1491,64 @@ public class DrawerLayout extends ViewGroup {
             dest.writeInt(this.lockModeRight);
             dest.writeInt(this.lockModeStart);
             dest.writeInt(this.lockModeEnd);
+        }
+    }
+
+    /* renamed from: android.support.v4.widget.DrawerLayout$LayoutParams */
+    public static class LayoutParams extends ViewGroup.MarginLayoutParams {
+        private static final int FLAG_IS_CLOSING = 4;
+        private static final int FLAG_IS_OPENED = 1;
+        private static final int FLAG_IS_OPENING = 2;
+        public int gravity;
+        boolean isPeeking;
+        float onScreen;
+        int openState;
+
+        public LayoutParams(@NonNull Context c, @Nullable AttributeSet attrs) {
+            super(c, attrs);
+            this.gravity = 0;
+            TypedArray a = c.obtainStyledAttributes(attrs, DrawerLayout.LAYOUT_ATTRS);
+            this.gravity = a.getInt(0, 0);
+            a.recycle();
+        }
+
+        public LayoutParams(int width, int height) {
+            super(width, height);
+            this.gravity = 0;
+        }
+
+        public LayoutParams(int width, int height, int gravity2) {
+            this(width, height);
+            this.gravity = gravity2;
+        }
+
+        public LayoutParams(@NonNull LayoutParams source) {
+            super((ViewGroup.MarginLayoutParams) source);
+            this.gravity = 0;
+            this.gravity = source.gravity;
+        }
+
+        public LayoutParams(@NonNull ViewGroup.LayoutParams source) {
+            super(source);
+            this.gravity = 0;
+        }
+
+        public LayoutParams(@NonNull ViewGroup.MarginLayoutParams source) {
+            super(source);
+            this.gravity = 0;
+        }
+    }
+
+    /* renamed from: android.support.v4.widget.DrawerLayout$ChildAccessibilityDelegate */
+    static final class ChildAccessibilityDelegate extends AccessibilityDelegateCompat {
+        ChildAccessibilityDelegate() {
+        }
+
+        public void onInitializeAccessibilityNodeInfo(View child, AccessibilityNodeInfoCompat info) {
+            super.onInitializeAccessibilityNodeInfo(child, info);
+            if (!DrawerLayout.includeChildForAccessibility(child)) {
+                info.setParent(null);
+            }
         }
     }
 
@@ -1634,51 +1694,6 @@ public class DrawerLayout extends ViewGroup {
         }
     }
 
-    /* renamed from: android.support.v4.widget.DrawerLayout$LayoutParams */
-    public static class LayoutParams extends ViewGroup.MarginLayoutParams {
-        private static final int FLAG_IS_CLOSING = 4;
-        private static final int FLAG_IS_OPENED = 1;
-        private static final int FLAG_IS_OPENING = 2;
-        public int gravity;
-        boolean isPeeking;
-        float onScreen;
-        int openState;
-
-        public LayoutParams(@NonNull Context c, @Nullable AttributeSet attrs) {
-            super(c, attrs);
-            this.gravity = 0;
-            TypedArray a = c.obtainStyledAttributes(attrs, DrawerLayout.LAYOUT_ATTRS);
-            this.gravity = a.getInt(0, 0);
-            a.recycle();
-        }
-
-        public LayoutParams(int width, int height) {
-            super(width, height);
-            this.gravity = 0;
-        }
-
-        public LayoutParams(int width, int height, int gravity2) {
-            this(width, height);
-            this.gravity = gravity2;
-        }
-
-        public LayoutParams(@NonNull LayoutParams source) {
-            super((ViewGroup.MarginLayoutParams) source);
-            this.gravity = 0;
-            this.gravity = source.gravity;
-        }
-
-        public LayoutParams(@NonNull ViewGroup.LayoutParams source) {
-            super(source);
-            this.gravity = 0;
-        }
-
-        public LayoutParams(@NonNull ViewGroup.MarginLayoutParams source) {
-            super(source);
-            this.gravity = 0;
-        }
-    }
-
     /* renamed from: android.support.v4.widget.DrawerLayout$AccessibilityDelegate */
     class AccessibilityDelegate extends AccessibilityDelegateCompat {
         private final Rect mTmpRect = new Rect();
@@ -1759,19 +1774,6 @@ public class DrawerLayout extends ViewGroup {
             dest.setAccessibilityFocused(src.isAccessibilityFocused());
             dest.setSelected(src.isSelected());
             dest.addAction(src.getActions());
-        }
-    }
-
-    /* renamed from: android.support.v4.widget.DrawerLayout$ChildAccessibilityDelegate */
-    static final class ChildAccessibilityDelegate extends AccessibilityDelegateCompat {
-        ChildAccessibilityDelegate() {
-        }
-
-        public void onInitializeAccessibilityNodeInfo(View child, AccessibilityNodeInfoCompat info) {
-            super.onInitializeAccessibilityNodeInfo(child, info);
-            if (!DrawerLayout.includeChildForAccessibility(child)) {
-                info.setParent(null);
-            }
         }
     }
 }

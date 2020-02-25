@@ -1,10 +1,12 @@
 package com.google.android.libraries.performance.primes.hprof;
 
 import android.support.annotation.VisibleForTesting;
+
 import com.android.ahat.dominators.Dominators;
 import com.google.android.gtalkservice.GTalkServiceConstants;
 import com.google.android.libraries.performance.primes.hprof.collect.IntIntMap;
 import com.google.android.libraries.performance.primes.hprof.collect.IntObjectMap;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayDeque;
@@ -16,6 +18,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
 import logs.proto.wireless.performance.mobile.PrimesHeapDumpProto;
 
 public class HprofSerializer {

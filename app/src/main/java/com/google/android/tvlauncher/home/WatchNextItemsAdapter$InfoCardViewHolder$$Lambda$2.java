@@ -1,7 +1,6 @@
 package com.google.android.tvlauncher.home;
 
 import android.view.View;
-import com.google.android.tvlauncher.home.WatchNextItemsAdapter;
 
 final /* synthetic */ class WatchNextItemsAdapter$InfoCardViewHolder$$Lambda$2 implements View.OnClickListener {
     private final WatchNextItemsAdapter.InfoCardViewHolder arg$1;

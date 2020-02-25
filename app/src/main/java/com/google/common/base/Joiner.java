@@ -3,17 +3,27 @@ package com.google.common.base;
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.GwtCompatible;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.IOException;
 import java.util.AbstractList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible
 public class Joiner {
     /* access modifiers changed from: private */
     public final String separator;
+
+    private Joiner(String separator2) {
+        this.separator = (String) Preconditions.checkNotNull(separator2);
+    }
+
+    private Joiner(Joiner prototype) {
+        this.separator = prototype.separator;
+    }
 
     /* renamed from: on */
     public static Joiner m79on(String separator2) {
@@ -25,12 +35,23 @@ public class Joiner {
         return new Joiner(String.valueOf(separator2));
     }
 
-    private Joiner(String separator2) {
-        this.separator = (String) Preconditions.checkNotNull(separator2);
-    }
+    private static Iterable<Object> iterable(final Object first, final Object second, final Object[] rest) {
+        Preconditions.checkNotNull(rest);
+        return new AbstractList<Object>() {
+            public int size() {
+                return rest.length + 2;
+            }
 
-    private Joiner(Joiner prototype) {
-        this.separator = prototype.separator;
+            public Object get(int index) {
+                if (index == 0) {
+                    return first;
+                }
+                if (index != 1) {
+                    return rest[index - 2];
+                }
+                return second;
+            }
+        };
     }
 
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
@@ -265,6 +286,12 @@ public class Joiner {
         return new MapJoiner(keyValueSeparator);
     }
 
+    /* access modifiers changed from: package-private */
+    public CharSequence toString(Object part) {
+        Preconditions.checkNotNull(part);
+        return part instanceof CharSequence ? (CharSequence) part : part.toString();
+    }
+
     public static final class MapJoiner {
         private final Joiner joiner;
         private final String keyValueSeparator;
@@ -422,30 +449,5 @@ public class Joiner {
         public MapJoiner useForNull(String nullText) {
             return new MapJoiner(this.joiner.useForNull(nullText), this.keyValueSeparator);
         }
-    }
-
-    /* access modifiers changed from: package-private */
-    public CharSequence toString(Object part) {
-        Preconditions.checkNotNull(part);
-        return part instanceof CharSequence ? (CharSequence) part : part.toString();
-    }
-
-    private static Iterable<Object> iterable(final Object first, final Object second, final Object[] rest) {
-        Preconditions.checkNotNull(rest);
-        return new AbstractList<Object>() {
-            public int size() {
-                return rest.length + 2;
-            }
-
-            public Object get(int index) {
-                if (index == 0) {
-                    return first;
-                }
-                if (index != 1) {
-                    return rest[index - 2];
-                }
-                return second;
-            }
-        };
     }
 }

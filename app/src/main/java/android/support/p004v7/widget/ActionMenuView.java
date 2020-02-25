@@ -11,7 +11,6 @@ import android.support.p004v7.view.menu.MenuBuilder;
 import android.support.p004v7.view.menu.MenuItemImpl;
 import android.support.p004v7.view.menu.MenuPresenter;
 import android.support.p004v7.view.menu.MenuView;
-import android.support.p004v7.widget.LinearLayoutCompat;
 import android.util.AttributeSet;
 import android.view.ContextThemeWrapper;
 import android.view.Menu;
@@ -26,31 +25,18 @@ public class ActionMenuView extends LinearLayoutCompat implements MenuBuilder.It
     static final int GENERATED_ITEM_PADDING = 4;
     static final int MIN_CELL_SIZE = 56;
     private static final String TAG = "ActionMenuView";
+    MenuBuilder.Callback mMenuBuilderCallback;
+    OnMenuItemClickListener mOnMenuItemClickListener;
     private MenuPresenter.Callback mActionMenuPresenterCallback;
     private boolean mFormatItems;
     private int mFormatItemsWidth;
     private int mGeneratedItemPadding;
     private MenuBuilder mMenu;
-    MenuBuilder.Callback mMenuBuilderCallback;
     private int mMinCellSize;
-    OnMenuItemClickListener mOnMenuItemClickListener;
     private Context mPopupContext;
     private int mPopupTheme;
     private ActionMenuPresenter mPresenter;
     private boolean mReserveOverflow;
-
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    /* renamed from: android.support.v7.widget.ActionMenuView$ActionMenuChildView */
-    public interface ActionMenuChildView {
-        boolean needsDividerAfter();
-
-        boolean needsDividerBefore();
-    }
-
-    /* renamed from: android.support.v7.widget.ActionMenuView$OnMenuItemClickListener */
-    public interface OnMenuItemClickListener {
-        boolean onMenuItemClick(MenuItem menuItem);
-    }
 
     public ActionMenuView(Context context) {
         this(context, null);
@@ -66,6 +52,39 @@ public class ActionMenuView extends LinearLayoutCompat implements MenuBuilder.It
         this.mPopupTheme = 0;
     }
 
+    static int measureChildForCells(View child, int cellSize, int cellsRemaining, int parentHeightMeasureSpec, int parentHeightPadding) {
+        View view = child;
+        int i = cellsRemaining;
+        LayoutParams lp = (LayoutParams) child.getLayoutParams();
+        int childHeightSpec = View.MeasureSpec.makeMeasureSpec(View.MeasureSpec.getSize(parentHeightMeasureSpec) - parentHeightPadding, View.MeasureSpec.getMode(parentHeightMeasureSpec));
+        ActionMenuItemView itemView = view instanceof ActionMenuItemView ? (ActionMenuItemView) view : null;
+        boolean expandable = false;
+        boolean hasText = itemView != null && itemView.hasText();
+        int cellsUsed = 0;
+        if (i > 0 && (!hasText || i >= 2)) {
+            child.measure(View.MeasureSpec.makeMeasureSpec(cellSize * i, Integer.MIN_VALUE), childHeightSpec);
+            int measuredWidth = child.getMeasuredWidth();
+            cellsUsed = measuredWidth / cellSize;
+            if (measuredWidth % cellSize != 0) {
+                cellsUsed++;
+            }
+            if (hasText && cellsUsed < 2) {
+                cellsUsed = 2;
+            }
+        }
+        if (!lp.isOverflowButton && hasText) {
+            expandable = true;
+        }
+        lp.expandable = expandable;
+        lp.cellsUsed = cellsUsed;
+        child.measure(View.MeasureSpec.makeMeasureSpec(cellsUsed * cellSize, 1073741824), childHeightSpec);
+        return cellsUsed;
+    }
+
+    public int getPopupTheme() {
+        return this.mPopupTheme;
+    }
+
     public void setPopupTheme(@StyleRes int resId) {
         if (this.mPopupTheme != resId) {
             this.mPopupTheme = resId;
@@ -75,10 +94,6 @@ public class ActionMenuView extends LinearLayoutCompat implements MenuBuilder.It
                 this.mPopupContext = new ContextThemeWrapper(getContext(), resId);
             }
         }
-    }
-
-    public int getPopupTheme() {
-        return this.mPopupTheme;
     }
 
     @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
@@ -349,35 +364,6 @@ public class ActionMenuView extends LinearLayoutCompat implements MenuBuilder.It
         setMeasuredDimension(widthSize, heightSize);
     }
 
-    static int measureChildForCells(View child, int cellSize, int cellsRemaining, int parentHeightMeasureSpec, int parentHeightPadding) {
-        View view = child;
-        int i = cellsRemaining;
-        LayoutParams lp = (LayoutParams) child.getLayoutParams();
-        int childHeightSpec = View.MeasureSpec.makeMeasureSpec(View.MeasureSpec.getSize(parentHeightMeasureSpec) - parentHeightPadding, View.MeasureSpec.getMode(parentHeightMeasureSpec));
-        ActionMenuItemView itemView = view instanceof ActionMenuItemView ? (ActionMenuItemView) view : null;
-        boolean expandable = false;
-        boolean hasText = itemView != null && itemView.hasText();
-        int cellsUsed = 0;
-        if (i > 0 && (!hasText || i >= 2)) {
-            child.measure(View.MeasureSpec.makeMeasureSpec(cellSize * i, Integer.MIN_VALUE), childHeightSpec);
-            int measuredWidth = child.getMeasuredWidth();
-            cellsUsed = measuredWidth / cellSize;
-            if (measuredWidth % cellSize != 0) {
-                cellsUsed++;
-            }
-            if (hasText && cellsUsed < 2) {
-                cellsUsed = 2;
-            }
-        }
-        if (!lp.isOverflowButton && hasText) {
-            expandable = true;
-        }
-        lp.expandable = expandable;
-        lp.cellsUsed = cellsUsed;
-        child.measure(View.MeasureSpec.makeMeasureSpec(cellsUsed * cellSize, 1073741824), childHeightSpec);
-        return cellsUsed;
-    }
-
     /* JADX INFO: Multiple debug info for r9v11 int: [D('t' int), D('isLayoutRtl' boolean)] */
     /* JADX INFO: Multiple debug info for r2v10 int: [D('midVertical' int), D('b' int)] */
     /* access modifiers changed from: protected */
@@ -519,15 +505,15 @@ public class ActionMenuView extends LinearLayoutCompat implements MenuBuilder.It
         dismissPopupMenus();
     }
 
-    public void setOverflowIcon(@Nullable Drawable icon) {
-        getMenu();
-        this.mPresenter.setOverflowIcon(icon);
-    }
-
     @Nullable
     public Drawable getOverflowIcon() {
         getMenu();
         return this.mPresenter.getOverflowIcon();
+    }
+
+    public void setOverflowIcon(@Nullable Drawable icon) {
+        getMenu();
+        this.mPresenter.setOverflowIcon(icon);
     }
 
     @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
@@ -675,20 +661,17 @@ public class ActionMenuView extends LinearLayoutCompat implements MenuBuilder.It
         this.mPresenter.setExpandedActionViewsExclusive(exclusive);
     }
 
-    /* renamed from: android.support.v7.widget.ActionMenuView$MenuBuilderCallback */
-    private class MenuBuilderCallback implements MenuBuilder.Callback {
-        MenuBuilderCallback() {
-        }
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    /* renamed from: android.support.v7.widget.ActionMenuView$ActionMenuChildView */
+    public interface ActionMenuChildView {
+        boolean needsDividerAfter();
 
-        public boolean onMenuItemSelected(MenuBuilder menu, MenuItem item) {
-            return ActionMenuView.this.mOnMenuItemClickListener != null && ActionMenuView.this.mOnMenuItemClickListener.onMenuItemClick(item);
-        }
+        boolean needsDividerBefore();
+    }
 
-        public void onMenuModeChange(MenuBuilder menu) {
-            if (ActionMenuView.this.mMenuBuilderCallback != null) {
-                ActionMenuView.this.mMenuBuilderCallback.onMenuModeChange(menu);
-            }
-        }
+    /* renamed from: android.support.v7.widget.ActionMenuView$OnMenuItemClickListener */
+    public interface OnMenuItemClickListener {
+        boolean onMenuItemClick(MenuItem menuItem);
     }
 
     /* renamed from: android.support.v7.widget.ActionMenuView$ActionMenuPresenterCallback */
@@ -710,13 +693,13 @@ public class ActionMenuView extends LinearLayoutCompat implements MenuBuilder.It
         public int cellsUsed;
         @ViewDebug.ExportedProperty
         public boolean expandable;
-        boolean expanded;
         @ViewDebug.ExportedProperty
         public int extraPixels;
         @ViewDebug.ExportedProperty
         public boolean isOverflowButton;
         @ViewDebug.ExportedProperty
         public boolean preventEdgeOffset;
+        boolean expanded;
 
         public LayoutParams(Context c, AttributeSet attrs) {
             super(c, attrs);
@@ -739,6 +722,22 @@ public class ActionMenuView extends LinearLayoutCompat implements MenuBuilder.It
         LayoutParams(int width, int height, boolean isOverflowButton2) {
             super(width, height);
             this.isOverflowButton = isOverflowButton2;
+        }
+    }
+
+    /* renamed from: android.support.v7.widget.ActionMenuView$MenuBuilderCallback */
+    private class MenuBuilderCallback implements MenuBuilder.Callback {
+        MenuBuilderCallback() {
+        }
+
+        public boolean onMenuItemSelected(MenuBuilder menu, MenuItem item) {
+            return ActionMenuView.this.mOnMenuItemClickListener != null && ActionMenuView.this.mOnMenuItemClickListener.onMenuItemClick(item);
+        }
+
+        public void onMenuModeChange(MenuBuilder menu) {
+            if (ActionMenuView.this.mMenuBuilderCallback != null) {
+                ActionMenuView.this.mMenuBuilderCallback.onMenuModeChange(menu);
+            }
         }
     }
 }

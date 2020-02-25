@@ -29,6 +29,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.InflateException;
 import android.view.View;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -42,6 +43,25 @@ public class AppCompatViewInflater {
     private static final Class<?>[] sConstructorSignature = {Context.class, AttributeSet.class};
     private static final int[] sOnClickAttrs = {16843375};
     private final Object[] mConstructorArgs = new Object[2];
+
+    private static Context themifyContext(Context context, AttributeSet attrs, boolean useAndroidTheme, boolean useAppTheme) {
+        TypedArray a = context.obtainStyledAttributes(attrs, C0233R.styleable.View, 0, 0);
+        int themeId = 0;
+        if (useAndroidTheme) {
+            themeId = a.getResourceId(C0233R.styleable.View_android_theme, 0);
+        }
+        if (useAppTheme && themeId == 0 && (themeId = a.getResourceId(C0233R.styleable.View_theme, 0)) != 0) {
+            Log.i(LOG_TAG, "app:theme is now deprecated. Please move to using android:theme instead.");
+        }
+        a.recycle();
+        if (themeId == 0) {
+            return context;
+        }
+        if (!(context instanceof ContextThemeWrapper) || ((ContextThemeWrapper) context).getThemeResId() != themeId) {
+            return new ContextThemeWrapper(context, themeId);
+        }
+        return context;
+    }
 
     /* access modifiers changed from: package-private */
     public final View createView(View parent, String name, @NonNull Context context, @NonNull AttributeSet attrs, boolean inheritContext, boolean readAndroidTheme, boolean readAppTheme, boolean wrapContext) {
@@ -375,25 +395,6 @@ public class AppCompatViewInflater {
         }
         constructor.setAccessible(true);
         return (View) constructor.newInstance(this.mConstructorArgs);
-    }
-
-    private static Context themifyContext(Context context, AttributeSet attrs, boolean useAndroidTheme, boolean useAppTheme) {
-        TypedArray a = context.obtainStyledAttributes(attrs, C0233R.styleable.View, 0, 0);
-        int themeId = 0;
-        if (useAndroidTheme) {
-            themeId = a.getResourceId(C0233R.styleable.View_android_theme, 0);
-        }
-        if (useAppTheme && themeId == 0 && (themeId = a.getResourceId(C0233R.styleable.View_theme, 0)) != 0) {
-            Log.i(LOG_TAG, "app:theme is now deprecated. Please move to using android:theme instead.");
-        }
-        a.recycle();
-        if (themeId == 0) {
-            return context;
-        }
-        if (!(context instanceof ContextThemeWrapper) || ((ContextThemeWrapper) context).getThemeResId() != themeId) {
-            return new ContextThemeWrapper(context, themeId);
-        }
-        return context;
     }
 
     /* renamed from: android.support.v7.app.AppCompatViewInflater$DeclaredOnClickListener */

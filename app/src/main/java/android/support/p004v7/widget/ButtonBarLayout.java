@@ -95,6 +95,10 @@ public class ButtonBarLayout extends LinearLayout {
         return Math.max(this.mMinimumHeight, super.getMinimumHeight());
     }
 
+    private boolean isStacked() {
+        return getOrientation() == 1;
+    }
+
     private void setStacked(boolean stacked) {
         setOrientation(stacked);
         setGravity(stacked ? 5 : 80);
@@ -105,9 +109,5 @@ public class ButtonBarLayout extends LinearLayout {
         for (int i = getChildCount() - 2; i >= 0; i--) {
             bringChildToFront(getChildAt(i));
         }
-    }
-
-    private boolean isStacked() {
-        return getOrientation() == 1;
     }
 }

@@ -5,22 +5,7 @@ import com.google.android.exoplayer2.util.Util;
 final class FixedSampleSizeRechunker {
     private static final int MAX_SAMPLE_SIZE = 8192;
 
-    public static final class Results {
-        public final long duration;
-        public final int[] flags;
-        public final int maximumSize;
-        public final long[] offsets;
-        public final int[] sizes;
-        public final long[] timestamps;
-
-        private Results(long[] offsets2, int[] sizes2, int maximumSize2, long[] timestamps2, int[] flags2, long duration2) {
-            this.offsets = offsets2;
-            this.sizes = sizes2;
-            this.maximumSize = maximumSize2;
-            this.timestamps = timestamps2;
-            this.flags = flags2;
-            this.duration = duration2;
-        }
+    private FixedSampleSizeRechunker() {
     }
 
     public static Results rechunk(int fixedSampleSize, long[] chunkOffsets, int[] chunkSampleCounts, long timestampDeltaInTimeUnits) {
@@ -60,6 +45,21 @@ final class FixedSampleSizeRechunker {
         return new Results(offsets, sizes, maximumSize, timestamps, flags, timestampDeltaInTimeUnits * ((long) originalSampleIndex));
     }
 
-    private FixedSampleSizeRechunker() {
+    public static final class Results {
+        public final long duration;
+        public final int[] flags;
+        public final int maximumSize;
+        public final long[] offsets;
+        public final int[] sizes;
+        public final long[] timestamps;
+
+        private Results(long[] offsets2, int[] sizes2, int maximumSize2, long[] timestamps2, int[] flags2, long duration2) {
+            this.offsets = offsets2;
+            this.sizes = sizes2;
+            this.maximumSize = maximumSize2;
+            this.timestamps = timestamps2;
+            this.flags = flags2;
+            this.duration = duration2;
+        }
     }
 }

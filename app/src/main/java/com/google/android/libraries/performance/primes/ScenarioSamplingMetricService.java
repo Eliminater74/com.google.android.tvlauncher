@@ -3,15 +3,17 @@ package com.google.android.libraries.performance.primes;
 import android.app.Application;
 import android.support.annotation.VisibleForTesting;
 import android.support.p001v4.media.session.PlaybackStateCompat;
-import com.google.android.libraries.performance.primes.MetricRecorder;
+
 import com.google.android.libraries.performance.primes.aggregation.impl.MetricSampler;
 import com.google.android.libraries.performance.primes.metriccapture.MemoryUsageCapture;
 import com.google.android.libraries.performance.primes.scenario.PrimesScenarioConfigurations;
 import com.google.android.libraries.performance.primes.transmitter.MetricTransmitter;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
 import logs.proto.wireless.performance.mobile.AggregatedMetricProto;
 import logs.proto.wireless.performance.mobile.SystemHealthProto;
 
@@ -21,6 +23,12 @@ class ScenarioSamplingMetricService extends AbstractMetricService {
     private static final long TOTAL_PSS_RECORD_INTERVAL_MS = TimeUnit.SECONDS.toMillis(2);
     private final Object lock = new Object();
     private final List<MetricSampler> scenarioMetrics;
+
+    @VisibleForTesting
+    ScenarioSamplingMetricService(Application application, MetricTransmitter transmitter, Supplier<MetricStamper> metricStamperSupplier, Supplier<ScheduledExecutorService> executorServiceSupplier, List<MetricSampler> scenarioMetrics2) {
+        super(transmitter, application, metricStamperSupplier, executorServiceSupplier, MetricRecorder.RunIn.BACKGROUND_THREAD);
+        this.scenarioMetrics = scenarioMetrics2;
+    }
 
     static ScenarioSamplingMetricService createService(MetricTransmitter transmitter, Application application, Supplier<MetricStamper> metricStamperSupplier, Supplier<ScheduledExecutorService> executorServiceSupplier, PrimesScenarioConfigurations config) {
         List<MetricSampler> scenarioMetrics2 = new ArrayList<>(2);
@@ -49,10 +57,11 @@ class ScenarioSamplingMetricService extends AbstractMetricService {
         });
     }
 
-    @VisibleForTesting
-    ScenarioSamplingMetricService(Application application, MetricTransmitter transmitter, Supplier<MetricStamper> metricStamperSupplier, Supplier<ScheduledExecutorService> executorServiceSupplier, List<MetricSampler> scenarioMetrics2) {
-        super(transmitter, application, metricStamperSupplier, executorServiceSupplier, MetricRecorder.RunIn.BACKGROUND_THREAD);
-        this.scenarioMetrics = scenarioMetrics2;
+    private static SystemHealthProto.SystemHealthMetric constructSystemHealthMetric(AggregatedMetricProto.AggregatedMetric aggregatedMetric) {
+        if (aggregatedMetric == null) {
+            return null;
+        }
+        return (SystemHealthProto.SystemHealthMetric) SystemHealthProto.SystemHealthMetric.newBuilder().addAggregatedMetrics(aggregatedMetric).build();
     }
 
     /* access modifiers changed from: package-private */
@@ -87,12 +96,5 @@ class ScenarioSamplingMetricService extends AbstractMetricService {
         for (MetricSampler sampler : this.scenarioMetrics) {
             sampler.cancel();
         }
-    }
-
-    private static SystemHealthProto.SystemHealthMetric constructSystemHealthMetric(AggregatedMetricProto.AggregatedMetric aggregatedMetric) {
-        if (aggregatedMetric == null) {
-            return null;
-        }
-        return (SystemHealthProto.SystemHealthMetric) SystemHealthProto.SystemHealthMetric.newBuilder().addAggregatedMetrics(aggregatedMetric).build();
     }
 }

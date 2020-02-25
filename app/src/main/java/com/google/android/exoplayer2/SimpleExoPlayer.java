@@ -12,9 +12,7 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.TextureView;
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.PlayerMessage;
+
 import com.google.android.exoplayer2.analytics.AnalyticsCollector;
 import com.google.android.exoplayer2.analytics.AnalyticsListener;
 import com.google.android.exoplayer2.audio.AudioAttributes;
@@ -43,6 +41,7 @@ import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoFrameMetadataListener;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
 import com.google.android.exoplayer2.video.spherical.CameraMotionListener;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -51,70 +50,66 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 public class SimpleExoPlayer extends BasePlayer implements ExoPlayer, Player.AudioComponent, Player.VideoComponent, Player.TextComponent, Player.MetadataComponent {
     private static final String TAG = "SimpleExoPlayer";
-    private final AnalyticsCollector analyticsCollector;
-    private AudioAttributes audioAttributes;
     /* access modifiers changed from: private */
     public final CopyOnWriteArraySet<AudioRendererEventListener> audioDebugListeners;
     /* access modifiers changed from: private */
+    public final CopyOnWriteArraySet<AudioListener> audioListeners;
+    /* access modifiers changed from: private */
+    public final CopyOnWriteArraySet<MetadataOutput> metadataOutputs;
+    /* access modifiers changed from: private */
+    public final CopyOnWriteArraySet<TextOutput> textOutputs;
+    /* access modifiers changed from: private */
+    public final CopyOnWriteArraySet<VideoRendererEventListener> videoDebugListeners;
+    /* access modifiers changed from: private */
+    public final CopyOnWriteArraySet<com.google.android.exoplayer2.video.VideoListener> videoListeners;
+    protected final Renderer[] renderers;
+    private final AnalyticsCollector analyticsCollector;
+    private final AudioFocusManager audioFocusManager;
+    private final BandwidthMeter bandwidthMeter;
+    private final ComponentListener componentListener;
+    private final Handler eventHandler;
+    private final ExoPlayerImpl player;
+    /* access modifiers changed from: private */
     @Nullable
     public DecoderCounters audioDecoderCounters;
-    private final AudioFocusManager audioFocusManager;
     /* access modifiers changed from: private */
     @Nullable
     public Format audioFormat;
     /* access modifiers changed from: private */
-    public final CopyOnWriteArraySet<AudioListener> audioListeners;
-    /* access modifiers changed from: private */
     public int audioSessionId;
-    private float audioVolume;
-    private final BandwidthMeter bandwidthMeter;
-    @Nullable
-    private CameraMotionListener cameraMotionListener;
-    private final ComponentListener componentListener;
     /* access modifiers changed from: private */
     public List<Cue> currentCues;
-    private final Handler eventHandler;
-    private boolean hasNotifiedFullWrongThreadWarning;
     /* access modifiers changed from: private */
     public boolean isPriorityTaskManagerRegistered;
-    @Nullable
-    private MediaSource mediaSource;
-    /* access modifiers changed from: private */
-    public final CopyOnWriteArraySet<MetadataOutput> metadataOutputs;
-    private boolean ownsSurface;
-    private final ExoPlayerImpl player;
     /* access modifiers changed from: private */
     @Nullable
     public PriorityTaskManager priorityTaskManager;
-    protected final Renderer[] renderers;
     /* access modifiers changed from: private */
     @Nullable
     public Surface surface;
-    private int surfaceHeight;
-    @Nullable
-    private SurfaceHolder surfaceHolder;
-    private int surfaceWidth;
-    /* access modifiers changed from: private */
-    public final CopyOnWriteArraySet<TextOutput> textOutputs;
-    @Nullable
-    private TextureView textureView;
-    /* access modifiers changed from: private */
-    public final CopyOnWriteArraySet<VideoRendererEventListener> videoDebugListeners;
     /* access modifiers changed from: private */
     @Nullable
     public DecoderCounters videoDecoderCounters;
     /* access modifiers changed from: private */
     @Nullable
     public Format videoFormat;
+    private AudioAttributes audioAttributes;
+    private float audioVolume;
+    @Nullable
+    private CameraMotionListener cameraMotionListener;
+    private boolean hasNotifiedFullWrongThreadWarning;
+    @Nullable
+    private MediaSource mediaSource;
+    private boolean ownsSurface;
+    private int surfaceHeight;
+    @Nullable
+    private SurfaceHolder surfaceHolder;
+    private int surfaceWidth;
+    @Nullable
+    private TextureView textureView;
     @Nullable
     private VideoFrameMetadataListener videoFrameMetadataListener;
-    /* access modifiers changed from: private */
-    public final CopyOnWriteArraySet<com.google.android.exoplayer2.video.VideoListener> videoListeners;
     private int videoScalingMode;
-
-    @Deprecated
-    public interface VideoListener extends com.google.android.exoplayer2.video.VideoListener {
-    }
 
     protected SimpleExoPlayer(Context context, RenderersFactory renderersFactory, TrackSelector trackSelector, LoadControl loadControl, BandwidthMeter bandwidthMeter2, @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager, Looper looper) {
         this(context, renderersFactory, trackSelector, loadControl, drmSessionManager, bandwidthMeter2, new AnalyticsCollector.Factory(), looper);
@@ -180,6 +175,10 @@ public class SimpleExoPlayer extends BasePlayer implements ExoPlayer, Player.Aud
         return this;
     }
 
+    public int getVideoScalingMode() {
+        return this.videoScalingMode;
+    }
+
     public void setVideoScalingMode(int videoScalingMode2) {
         verifyApplicationThread();
         this.videoScalingMode = videoScalingMode2;
@@ -188,10 +187,6 @@ public class SimpleExoPlayer extends BasePlayer implements ExoPlayer, Player.Aud
                 this.player.createMessage(renderer).setType(4).setPayload(Integer.valueOf(videoScalingMode2)).send();
             }
         }
-    }
-
-    public int getVideoScalingMode() {
-        return this.videoScalingMode;
     }
 
     public void clearVideoSurface() {
@@ -296,10 +291,6 @@ public class SimpleExoPlayer extends BasePlayer implements ExoPlayer, Player.Aud
         this.audioListeners.remove(listener);
     }
 
-    public void setAudioAttributes(AudioAttributes audioAttributes2) {
-        setAudioAttributes(audioAttributes2, false);
-    }
-
     public void setAudioAttributes(AudioAttributes audioAttributes2, boolean handleAudioFocus) {
         verifyApplicationThread();
         if (!Util.areEqual(this.audioAttributes, audioAttributes2)) {
@@ -321,6 +312,10 @@ public class SimpleExoPlayer extends BasePlayer implements ExoPlayer, Player.Aud
         return this.audioAttributes;
     }
 
+    public void setAudioAttributes(AudioAttributes audioAttributes2) {
+        setAudioAttributes(audioAttributes2, false);
+    }
+
     public int getAudioSessionId() {
         return this.audioSessionId;
     }
@@ -336,6 +331,10 @@ public class SimpleExoPlayer extends BasePlayer implements ExoPlayer, Player.Aud
 
     public void clearAuxEffectInfo() {
         setAuxEffectInfo(new AuxEffectInfo(0, 0.0f));
+    }
+
+    public float getVolume() {
+        return this.audioVolume;
     }
 
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
@@ -358,19 +357,15 @@ public class SimpleExoPlayer extends BasePlayer implements ExoPlayer, Player.Aud
         }
     }
 
-    public float getVolume() {
-        return this.audioVolume;
+    @Deprecated
+    public int getAudioStreamType() {
+        return Util.getStreamTypeForAudioUsage(this.audioAttributes.usage);
     }
 
     @Deprecated
     public void setAudioStreamType(int streamType) {
         int usage = Util.getAudioUsageForStreamType(streamType);
         setAudioAttributes(new AudioAttributes.Builder().setUsage(usage).setContentType(Util.getAudioContentTypeForStreamType(streamType)).build());
-    }
-
-    @Deprecated
-    public int getAudioStreamType() {
-        return Util.getStreamTypeForAudioUsage(this.audioAttributes.usage);
     }
 
     public AnalyticsCollector getAnalyticsCollector() {
@@ -636,14 +631,14 @@ public class SimpleExoPlayer extends BasePlayer implements ExoPlayer, Player.Aud
         this.player.prepare(mediaSource2, resetPosition, resetState);
     }
 
-    public void setPlayWhenReady(boolean playWhenReady) {
-        verifyApplicationThread();
-        updatePlayWhenReady(playWhenReady, this.audioFocusManager.handleSetPlayWhenReady(playWhenReady, getPlaybackState()));
-    }
-
     public boolean getPlayWhenReady() {
         verifyApplicationThread();
         return this.player.getPlayWhenReady();
+    }
+
+    public void setPlayWhenReady(boolean playWhenReady) {
+        verifyApplicationThread();
+        updatePlayWhenReady(playWhenReady, this.audioFocusManager.handleSetPlayWhenReady(playWhenReady, getPlaybackState()));
     }
 
     public int getRepeatMode() {
@@ -656,14 +651,14 @@ public class SimpleExoPlayer extends BasePlayer implements ExoPlayer, Player.Aud
         this.player.setRepeatMode(repeatMode);
     }
 
-    public void setShuffleModeEnabled(boolean shuffleModeEnabled) {
-        verifyApplicationThread();
-        this.player.setShuffleModeEnabled(shuffleModeEnabled);
-    }
-
     public boolean getShuffleModeEnabled() {
         verifyApplicationThread();
         return this.player.getShuffleModeEnabled();
+    }
+
+    public void setShuffleModeEnabled(boolean shuffleModeEnabled) {
+        verifyApplicationThread();
+        this.player.setShuffleModeEnabled(shuffleModeEnabled);
     }
 
     public boolean isLoading() {
@@ -677,24 +672,24 @@ public class SimpleExoPlayer extends BasePlayer implements ExoPlayer, Player.Aud
         this.player.seekTo(windowIndex, positionMs);
     }
 
-    public void setPlaybackParameters(@Nullable PlaybackParameters playbackParameters) {
-        verifyApplicationThread();
-        this.player.setPlaybackParameters(playbackParameters);
-    }
-
     public PlaybackParameters getPlaybackParameters() {
         verifyApplicationThread();
         return this.player.getPlaybackParameters();
     }
 
-    public void setSeekParameters(@Nullable SeekParameters seekParameters) {
+    public void setPlaybackParameters(@Nullable PlaybackParameters playbackParameters) {
         verifyApplicationThread();
-        this.player.setSeekParameters(seekParameters);
+        this.player.setPlaybackParameters(playbackParameters);
     }
 
     public SeekParameters getSeekParameters() {
         verifyApplicationThread();
         return this.player.getSeekParameters();
+    }
+
+    public void setSeekParameters(@Nullable SeekParameters seekParameters) {
+        verifyApplicationThread();
+        this.player.setSeekParameters(seekParameters);
     }
 
     public void setForegroundMode(boolean foregroundMode) {
@@ -924,7 +919,14 @@ public class SimpleExoPlayer extends BasePlayer implements ExoPlayer, Player.Aud
         }
     }
 
+    @Deprecated
+    public interface VideoListener extends com.google.android.exoplayer2.video.VideoListener {
+    }
+
     private final class ComponentListener implements VideoRendererEventListener, AudioRendererEventListener, TextOutput, MetadataOutput, SurfaceHolder.Callback, TextureView.SurfaceTextureListener, AudioFocusManager.PlayerControl, Player.EventListener {
+        private ComponentListener() {
+        }
+
         public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
             Player$EventListener$$CC.onPlaybackParametersChanged$$dflt$$(this, playbackParameters);
         }
@@ -959,9 +961,6 @@ public class SimpleExoPlayer extends BasePlayer implements ExoPlayer, Player.Aud
 
         public void onTracksChanged(TrackGroupArray trackGroupArray, TrackSelectionArray trackSelectionArray) {
             Player$EventListener$$CC.onTracksChanged$$dflt$$(this, trackGroupArray, trackSelectionArray);
-        }
-
-        private ComponentListener() {
         }
 
         public void onVideoEnabled(DecoderCounters counters) {

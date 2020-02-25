@@ -2,7 +2,6 @@ package com.google.android.gsf;
 
 import android.content.ContentResolver;
 import android.content.Context;
-import com.google.android.gsf.GoogleSettingsContract;
 
 public abstract class GservicesValue<T> {
     /* access modifiers changed from: private */
@@ -10,20 +9,13 @@ public abstract class GservicesValue<T> {
     protected final T mDefaultValue;
     protected final String mKey;
 
-    /* access modifiers changed from: protected */
-    public abstract T retrieve(String str);
-
-    public static void init(Context context) {
-        sContentResolver = context.getContentResolver();
-    }
-
     protected GservicesValue(String key, T defaultValue) {
         this.mKey = key;
         this.mDefaultValue = defaultValue;
     }
 
-    public final T get() {
-        return retrieve(this.mKey);
+    public static void init(Context context) {
+        sContentResolver = context.getContentResolver();
     }
 
     public static GservicesValue<Boolean> value(String key, boolean defaultValue) {
@@ -78,5 +70,12 @@ public abstract class GservicesValue<T> {
                 return GoogleSettingsContract.Partner.getString(GservicesValue.sContentResolver, this.mKey, (String) this.mDefaultValue);
             }
         };
+    }
+
+    /* access modifiers changed from: protected */
+    public abstract T retrieve(String str);
+
+    public final T get() {
+        return retrieve(this.mKey);
     }
 }

@@ -14,10 +14,10 @@ public interface ISessionStanzaListener extends IInterface {
     void onStanzaResponse(String str, String str2, String str3) throws RemoteException;
 
     public static abstract class Stub extends Binder implements ISessionStanzaListener {
-        private static final String DESCRIPTOR = "com.google.android.gtalkservice.ISessionStanzaListener";
         static final int TRANSACTION_getAccountId = 3;
         static final int TRANSACTION_onStanzaReceived = 1;
         static final int TRANSACTION_onStanzaResponse = 2;
+        private static final String DESCRIPTOR = "com.google.android.gtalkservice.ISessionStanzaListener";
 
         public Stub() {
             attachInterface(this, DESCRIPTOR);

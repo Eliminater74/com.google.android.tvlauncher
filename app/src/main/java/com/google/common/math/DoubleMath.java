@@ -6,21 +6,25 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.common.primitives.Booleans;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
 import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.Iterator;
 
 @GwtCompatible(emulated = true)
 public final class DoubleMath {
-    private static final double LN_2 = Math.log(2.0d);
     @VisibleForTesting
     static final int MAX_FACTORIAL = 170;
+    @VisibleForTesting
+    static final double[] everySixteenthFactorial = {1.0d, 2.0922789888E13d, 2.631308369336935E35d, 1.2413915592536073E61d, 1.2688693218588417E89d, 7.156945704626381E118d, 9.916779348709496E149d, 1.974506857221074E182d, 3.856204823625804E215d, 5.5502938327393044E249d, 4.7147236359920616E284d};
+    private static final double LN_2 = Math.log(2.0d);
     private static final double MAX_INT_AS_DOUBLE = 2.147483647E9d;
     private static final double MAX_LONG_AS_DOUBLE_PLUS_ONE = 9.223372036854776E18d;
     private static final double MIN_INT_AS_DOUBLE = -2.147483648E9d;
     private static final double MIN_LONG_AS_DOUBLE = -9.223372036854776E18d;
-    @VisibleForTesting
-    static final double[] everySixteenthFactorial = {1.0d, 2.0922789888E13d, 2.631308369336935E35d, 1.2413915592536073E61d, 1.2688693218588417E89d, 7.156945704626381E118d, 9.916779348709496E149d, 1.974506857221074E182d, 3.856204823625804E215d, 5.5502938327393044E249d, 4.7147236359920616E284d};
+
+    private DoubleMath() {
+    }
 
     @GwtIncompatible
     static double roundIntermediate(double x, RoundingMode mode) {
@@ -65,46 +69,6 @@ public final class DoubleMath {
             }
         } else {
             throw new ArithmeticException("input is infinite or NaN");
-        }
-    }
-
-    /* renamed from: com.google.common.math.DoubleMath$1 */
-    static /* synthetic */ class C17411 {
-        static final /* synthetic */ int[] $SwitchMap$java$math$RoundingMode = new int[RoundingMode.values().length];
-
-        static {
-            try {
-                $SwitchMap$java$math$RoundingMode[RoundingMode.UNNECESSARY.ordinal()] = 1;
-            } catch (NoSuchFieldError e) {
-            }
-            try {
-                $SwitchMap$java$math$RoundingMode[RoundingMode.FLOOR.ordinal()] = 2;
-            } catch (NoSuchFieldError e2) {
-            }
-            try {
-                $SwitchMap$java$math$RoundingMode[RoundingMode.CEILING.ordinal()] = 3;
-            } catch (NoSuchFieldError e3) {
-            }
-            try {
-                $SwitchMap$java$math$RoundingMode[RoundingMode.DOWN.ordinal()] = 4;
-            } catch (NoSuchFieldError e4) {
-            }
-            try {
-                $SwitchMap$java$math$RoundingMode[RoundingMode.UP.ordinal()] = 5;
-            } catch (NoSuchFieldError e5) {
-            }
-            try {
-                $SwitchMap$java$math$RoundingMode[RoundingMode.HALF_EVEN.ordinal()] = 6;
-            } catch (NoSuchFieldError e6) {
-            }
-            try {
-                $SwitchMap$java$math$RoundingMode[RoundingMode.HALF_UP.ordinal()] = 7;
-            } catch (NoSuchFieldError e7) {
-            }
-            try {
-                $SwitchMap$java$math$RoundingMode[RoundingMode.HALF_DOWN.ordinal()] = 8;
-            } catch (NoSuchFieldError e8) {
-            }
         }
     }
 
@@ -318,6 +282,43 @@ public final class DoubleMath {
         return argument;
     }
 
-    private DoubleMath() {
+    /* renamed from: com.google.common.math.DoubleMath$1 */
+    static /* synthetic */ class C17411 {
+        static final /* synthetic */ int[] $SwitchMap$java$math$RoundingMode = new int[RoundingMode.values().length];
+
+        static {
+            try {
+                $SwitchMap$java$math$RoundingMode[RoundingMode.UNNECESSARY.ordinal()] = 1;
+            } catch (NoSuchFieldError e) {
+            }
+            try {
+                $SwitchMap$java$math$RoundingMode[RoundingMode.FLOOR.ordinal()] = 2;
+            } catch (NoSuchFieldError e2) {
+            }
+            try {
+                $SwitchMap$java$math$RoundingMode[RoundingMode.CEILING.ordinal()] = 3;
+            } catch (NoSuchFieldError e3) {
+            }
+            try {
+                $SwitchMap$java$math$RoundingMode[RoundingMode.DOWN.ordinal()] = 4;
+            } catch (NoSuchFieldError e4) {
+            }
+            try {
+                $SwitchMap$java$math$RoundingMode[RoundingMode.UP.ordinal()] = 5;
+            } catch (NoSuchFieldError e5) {
+            }
+            try {
+                $SwitchMap$java$math$RoundingMode[RoundingMode.HALF_EVEN.ordinal()] = 6;
+            } catch (NoSuchFieldError e6) {
+            }
+            try {
+                $SwitchMap$java$math$RoundingMode[RoundingMode.HALF_UP.ordinal()] = 7;
+            } catch (NoSuchFieldError e7) {
+            }
+            try {
+                $SwitchMap$java$math$RoundingMode[RoundingMode.HALF_DOWN.ordinal()] = 8;
+            } catch (NoSuchFieldError e8) {
+            }
+        }
     }
 }

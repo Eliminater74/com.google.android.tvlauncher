@@ -2,83 +2,19 @@ package com.google.common.collect;
 
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Table;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible
 abstract class RegularImmutableTable<R, C, V> extends ImmutableTable<R, C, V> {
-    /* access modifiers changed from: package-private */
-    public abstract Table.Cell<R, C, V> getCell(int i);
-
-    /* access modifiers changed from: package-private */
-    public abstract V getValue(int i);
-
     RegularImmutableTable() {
-    }
-
-    /* access modifiers changed from: package-private */
-    public final ImmutableSet<Table.Cell<R, C, V>> createCellSet() {
-        return isEmpty() ? ImmutableSet.m149of() : new CellSet();
-    }
-
-    private final class CellSet extends IndexedImmutableSet<Table.Cell<R, C, V>> {
-        private CellSet() {
-        }
-
-        public int size() {
-            return RegularImmutableTable.this.size();
-        }
-
-        /* access modifiers changed from: package-private */
-        public Table.Cell<R, C, V> get(int index) {
-            return RegularImmutableTable.this.getCell(index);
-        }
-
-        public boolean contains(@NullableDecl Object object) {
-            if (!(object instanceof Table.Cell)) {
-                return false;
-            }
-            Table.Cell<?, ?, ?> cell = (Table.Cell) object;
-            Object value = RegularImmutableTable.this.get(cell.getRowKey(), cell.getColumnKey());
-            if (value == null || !value.equals(cell.getValue())) {
-                return false;
-            }
-            return true;
-        }
-
-        /* access modifiers changed from: package-private */
-        public boolean isPartialView() {
-            return false;
-        }
-    }
-
-    /* access modifiers changed from: package-private */
-    public final ImmutableCollection<V> createValues() {
-        return isEmpty() ? ImmutableList.m107of() : new Values();
-    }
-
-    private final class Values extends ImmutableList<V> {
-        private Values() {
-        }
-
-        public int size() {
-            return RegularImmutableTable.this.size();
-        }
-
-        public V get(int index) {
-            return RegularImmutableTable.this.getValue(index);
-        }
-
-        /* access modifiers changed from: package-private */
-        public boolean isPartialView() {
-            return true;
-        }
     }
 
     static <R, C, V> RegularImmutableTable<R, C, V> forCells(List<Table.Cell<R, C, V>> cells, @NullableDecl final Comparator<? super R> rowComparator, @NullableDecl final Comparator<? super C> columnComparator) {
@@ -142,7 +78,72 @@ abstract class RegularImmutableTable<R, C, V> extends ImmutableTable<R, C, V> {
     }
 
     /* access modifiers changed from: package-private */
+    public abstract Table.Cell<R, C, V> getCell(int i);
+
+    /* access modifiers changed from: package-private */
+    public abstract V getValue(int i);
+
+    /* access modifiers changed from: package-private */
+    public final ImmutableSet<Table.Cell<R, C, V>> createCellSet() {
+        return isEmpty() ? ImmutableSet.m149of() : new CellSet();
+    }
+
+    /* access modifiers changed from: package-private */
+    public final ImmutableCollection<V> createValues() {
+        return isEmpty() ? ImmutableList.m107of() : new Values();
+    }
+
+    /* access modifiers changed from: package-private */
     public final void checkNoDuplicate(R rowKey, C columnKey, V existingValue, V newValue) {
         Preconditions.checkArgument(existingValue == null, "Duplicate key: (row=%s, column=%s), values: [%s, %s].", rowKey, columnKey, newValue, existingValue);
+    }
+
+    private final class CellSet extends IndexedImmutableSet<Table.Cell<R, C, V>> {
+        private CellSet() {
+        }
+
+        public int size() {
+            return RegularImmutableTable.this.size();
+        }
+
+        /* access modifiers changed from: package-private */
+        public Table.Cell<R, C, V> get(int index) {
+            return RegularImmutableTable.this.getCell(index);
+        }
+
+        public boolean contains(@NullableDecl Object object) {
+            if (!(object instanceof Table.Cell)) {
+                return false;
+            }
+            Table.Cell<?, ?, ?> cell = (Table.Cell) object;
+            Object value = RegularImmutableTable.this.get(cell.getRowKey(), cell.getColumnKey());
+            if (value == null || !value.equals(cell.getValue())) {
+                return false;
+            }
+            return true;
+        }
+
+        /* access modifiers changed from: package-private */
+        public boolean isPartialView() {
+            return false;
+        }
+    }
+
+    private final class Values extends ImmutableList<V> {
+        private Values() {
+        }
+
+        public int size() {
+            return RegularImmutableTable.this.size();
+        }
+
+        public V get(int index) {
+            return RegularImmutableTable.this.getValue(index);
+        }
+
+        /* access modifiers changed from: package-private */
+        public boolean isPartialView() {
+            return true;
+        }
     }
 }

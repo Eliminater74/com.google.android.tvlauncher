@@ -12,25 +12,6 @@ final class zzgpf extends zzgpd {
         super();
     }
 
-    /* access modifiers changed from: package-private */
-    public final <L> List<L> zza(Object obj, long j) {
-        return zza(obj, j, 10);
-    }
-
-    /* access modifiers changed from: package-private */
-    public final void zzb(Object obj, long j) {
-        Object obj2;
-        List list = (List) zzgrj.zzf(obj, j);
-        if (list instanceof zzgpc) {
-            obj2 = ((zzgpc) list).zze();
-        } else if (!zza.isAssignableFrom(list.getClass())) {
-            obj2 = Collections.unmodifiableList(list);
-        } else {
-            return;
-        }
-        zzgrj.zza(obj, j, obj2);
-    }
-
     private static <L> List<L> zza(Object obj, long j, int i) {
         List<L> list;
         List<L> zzc = zzc(obj, j);
@@ -57,6 +38,29 @@ final class zzgpf extends zzgpd {
         }
     }
 
+    private static <E> List<E> zzc(Object obj, long j) {
+        return (List) zzgrj.zzf(obj, j);
+    }
+
+    /* access modifiers changed from: package-private */
+    public final <L> List<L> zza(Object obj, long j) {
+        return zza(obj, j, 10);
+    }
+
+    /* access modifiers changed from: package-private */
+    public final void zzb(Object obj, long j) {
+        Object obj2;
+        List list = (List) zzgrj.zzf(obj, j);
+        if (list instanceof zzgpc) {
+            obj2 = ((zzgpc) list).zze();
+        } else if (!zza.isAssignableFrom(list.getClass())) {
+            obj2 = Collections.unmodifiableList(list);
+        } else {
+            return;
+        }
+        zzgrj.zza(obj, j, obj2);
+    }
+
     /* access modifiers changed from: package-private */
     public final <E> void zza(Object obj, Object obj2, long j) {
         List zzc = zzc(obj2, j);
@@ -70,9 +74,5 @@ final class zzgpf extends zzgpd {
             zzc = zza2;
         }
         zzgrj.zza(obj, j, zzc);
-    }
-
-    private static <E> List<E> zzc(Object obj, long j) {
-        return (List) zzgrj.zzf(obj, j);
     }
 }

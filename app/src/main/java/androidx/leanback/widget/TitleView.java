@@ -8,17 +8,16 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.leanback.C0364R;
-import androidx.leanback.widget.SearchOrbView;
-import androidx.leanback.widget.TitleViewAdapter;
 
 public class TitleView extends FrameLayout implements TitleViewAdapter.Provider {
+    private final TitleViewAdapter mTitleViewAdapter;
     private int flags;
     private ImageView mBadgeView;
     private boolean mHasSearchListener;
     private SearchOrbView mSearchOrbView;
     private TextView mTextView;
-    private final TitleViewAdapter mTitleViewAdapter;
 
     public TitleView(Context context) {
         this(context, null);
@@ -49,20 +48,20 @@ public class TitleView extends FrameLayout implements TitleViewAdapter.Provider 
                 return TitleView.this.getBadgeDrawable();
             }
 
-            public SearchOrbView.Colors getSearchAffordanceColors() {
-                return TitleView.this.getSearchAffordanceColors();
-            }
-
-            public CharSequence getTitle() {
-                return TitleView.this.getTitle();
-            }
-
             public void setBadgeDrawable(Drawable drawable) {
                 TitleView.this.setBadgeDrawable(drawable);
             }
 
+            public SearchOrbView.Colors getSearchAffordanceColors() {
+                return TitleView.this.getSearchAffordanceColors();
+            }
+
             public void setSearchAffordanceColors(SearchOrbView.Colors colors) {
                 TitleView.this.setSearchAffordanceColors(colors);
+            }
+
+            public CharSequence getTitle() {
+                return TitleView.this.getTitle();
             }
 
             public void setTitle(CharSequence titleText) {
@@ -81,22 +80,22 @@ public class TitleView extends FrameLayout implements TitleViewAdapter.Provider 
         setClipChildren(false);
     }
 
+    public CharSequence getTitle() {
+        return this.mTextView.getText();
+    }
+
     public void setTitle(CharSequence titleText) {
         this.mTextView.setText(titleText);
         updateBadgeVisibility();
     }
 
-    public CharSequence getTitle() {
-        return this.mTextView.getText();
+    public Drawable getBadgeDrawable() {
+        return this.mBadgeView.getDrawable();
     }
 
     public void setBadgeDrawable(Drawable drawable) {
         this.mBadgeView.setImageDrawable(drawable);
         updateBadgeVisibility();
-    }
-
-    public Drawable getBadgeDrawable() {
-        return this.mBadgeView.getDrawable();
     }
 
     public void setOnSearchClickedListener(View.OnClickListener listener) {
@@ -109,12 +108,12 @@ public class TitleView extends FrameLayout implements TitleViewAdapter.Provider 
         return this.mSearchOrbView;
     }
 
-    public void setSearchAffordanceColors(SearchOrbView.Colors colors) {
-        this.mSearchOrbView.setOrbColors(colors);
-    }
-
     public SearchOrbView.Colors getSearchAffordanceColors() {
         return this.mSearchOrbView.getOrbColors();
+    }
+
+    public void setSearchAffordanceColors(SearchOrbView.Colors colors) {
+        this.mSearchOrbView.setOrbColors(colors);
     }
 
     public void enableAnimation(boolean enable) {

@@ -1,31 +1,30 @@
 package com.google.common.collect;
 
 import com.google.common.annotations.GwtCompatible;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableTable;
-import com.google.common.collect.Table;
 import com.google.errorprone.annotations.Immutable;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.lang.reflect.Array;
 import java.util.Map;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible
 @Immutable(containerOf = {"R", "C", "V"})
 final class DenseImmutableTable<R, C, V> extends RegularImmutableTable<R, C, V> {
-    private final int[] cellColumnIndices;
-    private final int[] cellRowIndices;
+    /* access modifiers changed from: private */
+    public final ImmutableMap<C, Integer> columnKeyToIndex;
     /* access modifiers changed from: private */
     public final int[] columnCounts = new int[this.columnKeyToIndex.size()];
     /* access modifiers changed from: private */
-    public final ImmutableMap<C, Integer> columnKeyToIndex;
-    private final ImmutableMap<C, ImmutableMap<R, V>> columnMap;
+    public final ImmutableMap<R, Integer> rowKeyToIndex;
     /* access modifiers changed from: private */
     public final int[] rowCounts = new int[this.rowKeyToIndex.size()];
     /* access modifiers changed from: private */
-    public final ImmutableMap<R, Integer> rowKeyToIndex;
-    private final ImmutableMap<R, ImmutableMap<C, V>> rowMap;
-    /* access modifiers changed from: private */
     public final V[][] values;
+    private final int[] cellColumnIndices;
+    private final int[] cellRowIndices;
+    private final ImmutableMap<C, ImmutableMap<R, V>> columnMap;
+    private final ImmutableMap<R, ImmutableMap<C, V>> rowMap;
 
     DenseImmutableTable(ImmutableList<Table.Cell<R, C, V>> cellList, ImmutableSet<R> rowSpace, ImmutableSet<C> columnSpace) {
         this.values = (Object[][]) Array.newInstance(Object.class, rowSpace.size(), columnSpace.size());
@@ -54,8 +53,50 @@ final class DenseImmutableTable<R, C, V> extends RegularImmutableTable<R, C, V> 
         this.columnMap = new ColumnMap();
     }
 
+    public ImmutableMap<C, Map<R, V>> columnMap() {
+        return ImmutableMap.copyOf(this.columnMap);
+    }
+
+    public ImmutableMap<R, Map<C, V>> rowMap() {
+        return ImmutableMap.copyOf(this.rowMap);
+    }
+
+    public V get(@NullableDecl Object rowKey, @NullableDecl Object columnKey) {
+        Integer rowIndex = this.rowKeyToIndex.get(rowKey);
+        Integer columnIndex = this.columnKeyToIndex.get(columnKey);
+        if (rowIndex == null || columnIndex == null) {
+            return null;
+        }
+        return this.values[rowIndex.intValue()][columnIndex.intValue()];
+    }
+
+    public int size() {
+        return this.cellRowIndices.length;
+    }
+
+    /* access modifiers changed from: package-private */
+    public Table.Cell<R, C, V> getCell(int index) {
+        int rowIndex = this.cellRowIndices[index];
+        int columnIndex = this.cellColumnIndices[index];
+        return cellOf(rowKeySet().asList().get(rowIndex), columnKeySet().asList().get(columnIndex), this.values[rowIndex][columnIndex]);
+    }
+
+    /* access modifiers changed from: package-private */
+    public V getValue(int index) {
+        return this.values[this.cellRowIndices[index]][this.cellColumnIndices[index]];
+    }
+
+    /* access modifiers changed from: package-private */
+    public ImmutableTable.SerializedForm createSerializedForm() {
+        return ImmutableTable.SerializedForm.create(this, this.cellRowIndices, this.cellColumnIndices);
+    }
+
     private static abstract class ImmutableArrayMap<K, V> extends ImmutableMap.IteratorBasedImmutableMap<K, V> {
         private final int size;
+
+        ImmutableArrayMap(int size2) {
+            this.size = size2;
+        }
 
         /* access modifiers changed from: package-private */
         @NullableDecl
@@ -63,10 +104,6 @@ final class DenseImmutableTable<R, C, V> extends RegularImmutableTable<R, C, V> 
 
         /* access modifiers changed from: package-private */
         public abstract ImmutableMap<K, Integer> keyToIndex();
-
-        ImmutableArrayMap(int size2) {
-            this.size = size2;
-        }
 
         private boolean isFull() {
             return this.size == keyToIndex().size();
@@ -97,8 +134,8 @@ final class DenseImmutableTable<R, C, V> extends RegularImmutableTable<R, C, V> 
         /* access modifiers changed from: package-private */
         public UnmodifiableIterator<Map.Entry<K, V>> entryIterator() {
             return new AbstractIterator<Map.Entry<K, V>>() {
-                private int index = -1;
                 private final int maxIndex = ImmutableArrayMap.this.keyToIndex().size();
+                private int index = -1;
 
                 /* access modifiers changed from: protected */
                 public Map.Entry<K, V> computeNext() {
@@ -208,43 +245,5 @@ final class DenseImmutableTable<R, C, V> extends RegularImmutableTable<R, C, V> 
         public boolean isPartialView() {
             return false;
         }
-    }
-
-    public ImmutableMap<C, Map<R, V>> columnMap() {
-        return ImmutableMap.copyOf(this.columnMap);
-    }
-
-    public ImmutableMap<R, Map<C, V>> rowMap() {
-        return ImmutableMap.copyOf(this.rowMap);
-    }
-
-    public V get(@NullableDecl Object rowKey, @NullableDecl Object columnKey) {
-        Integer rowIndex = this.rowKeyToIndex.get(rowKey);
-        Integer columnIndex = this.columnKeyToIndex.get(columnKey);
-        if (rowIndex == null || columnIndex == null) {
-            return null;
-        }
-        return this.values[rowIndex.intValue()][columnIndex.intValue()];
-    }
-
-    public int size() {
-        return this.cellRowIndices.length;
-    }
-
-    /* access modifiers changed from: package-private */
-    public Table.Cell<R, C, V> getCell(int index) {
-        int rowIndex = this.cellRowIndices[index];
-        int columnIndex = this.cellColumnIndices[index];
-        return cellOf(rowKeySet().asList().get(rowIndex), columnKeySet().asList().get(columnIndex), this.values[rowIndex][columnIndex]);
-    }
-
-    /* access modifiers changed from: package-private */
-    public V getValue(int index) {
-        return this.values[this.cellRowIndices[index]][this.cellColumnIndices[index]];
-    }
-
-    /* access modifiers changed from: package-private */
-    public ImmutableTable.SerializedForm createSerializedForm() {
-        return ImmutableTable.SerializedForm.create(this, this.cellRowIndices, this.cellColumnIndices);
     }
 }

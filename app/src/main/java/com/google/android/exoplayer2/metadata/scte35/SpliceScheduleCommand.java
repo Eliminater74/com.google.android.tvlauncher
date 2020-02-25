@@ -2,8 +2,10 @@ package com.google.android.exoplayer2.metadata.scte35;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.util.ParsableByteArray;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -19,6 +21,36 @@ public final class SpliceScheduleCommand extends SpliceCommand {
         }
     };
     public final List<Event> events;
+
+    private SpliceScheduleCommand(List<Event> events2) {
+        this.events = Collections.unmodifiableList(events2);
+    }
+
+    private SpliceScheduleCommand(Parcel in) {
+        int eventsSize = in.readInt();
+        ArrayList<Event> events2 = new ArrayList<>(eventsSize);
+        for (int i = 0; i < eventsSize; i++) {
+            events2.add(Event.createFromParcel(in));
+        }
+        this.events = Collections.unmodifiableList(events2);
+    }
+
+    static SpliceScheduleCommand parseFromSection(ParsableByteArray sectionData) {
+        int spliceCount = sectionData.readUnsignedByte();
+        ArrayList<Event> events2 = new ArrayList<>(spliceCount);
+        for (int i = 0; i < spliceCount; i++) {
+            events2.add(Event.parseFromSection(sectionData));
+        }
+        return new SpliceScheduleCommand(events2);
+    }
+
+    public void writeToParcel(Parcel dest, int flags) {
+        int eventsSize = this.events.size();
+        dest.writeInt(eventsSize);
+        for (int i = 0; i < eventsSize; i++) {
+            this.events.get(i).writeToParcel(dest);
+        }
+    }
 
     public static final class Event {
         public final boolean autoReturn;
@@ -141,6 +173,11 @@ public final class SpliceScheduleCommand extends SpliceCommand {
         }
 
         /* access modifiers changed from: private */
+        public static Event createFromParcel(Parcel in) {
+            return new Event(in);
+        }
+
+        /* access modifiers changed from: private */
         public void writeToParcel(Parcel dest) {
             dest.writeLong(this.spliceEventId);
             dest.writeByte(this.spliceEventCancelIndicator ? (byte) 1 : 0);
@@ -157,11 +194,6 @@ public final class SpliceScheduleCommand extends SpliceCommand {
             dest.writeInt(this.uniqueProgramId);
             dest.writeInt(this.availNum);
             dest.writeInt(this.availsExpected);
-        }
-
-        /* access modifiers changed from: private */
-        public static Event createFromParcel(Parcel in) {
-            return new Event(in);
         }
     }
 
@@ -183,36 +215,6 @@ public final class SpliceScheduleCommand extends SpliceCommand {
         public void writeToParcel(Parcel dest) {
             dest.writeInt(this.componentTag);
             dest.writeLong(this.utcSpliceTime);
-        }
-    }
-
-    private SpliceScheduleCommand(List<Event> events2) {
-        this.events = Collections.unmodifiableList(events2);
-    }
-
-    private SpliceScheduleCommand(Parcel in) {
-        int eventsSize = in.readInt();
-        ArrayList<Event> events2 = new ArrayList<>(eventsSize);
-        for (int i = 0; i < eventsSize; i++) {
-            events2.add(Event.createFromParcel(in));
-        }
-        this.events = Collections.unmodifiableList(events2);
-    }
-
-    static SpliceScheduleCommand parseFromSection(ParsableByteArray sectionData) {
-        int spliceCount = sectionData.readUnsignedByte();
-        ArrayList<Event> events2 = new ArrayList<>(spliceCount);
-        for (int i = 0; i < spliceCount; i++) {
-            events2.add(Event.parseFromSection(sectionData));
-        }
-        return new SpliceScheduleCommand(events2);
-    }
-
-    public void writeToParcel(Parcel dest, int flags) {
-        int eventsSize = this.events.size();
-        dest.writeInt(eventsSize);
-        for (int i = 0; i < eventsSize; i++) {
-            this.events.get(i).writeToParcel(dest);
         }
     }
 }

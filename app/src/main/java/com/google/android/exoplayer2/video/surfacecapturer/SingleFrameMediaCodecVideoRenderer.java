@@ -4,11 +4,13 @@ import android.content.Context;
 import android.media.MediaCodec;
 import android.support.annotation.Nullable;
 import android.view.Surface;
+
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.MediaCodecVideoRenderer;
+
 import java.nio.ByteBuffer;
 
 public class SingleFrameMediaCodecVideoRenderer extends MediaCodecVideoRenderer {

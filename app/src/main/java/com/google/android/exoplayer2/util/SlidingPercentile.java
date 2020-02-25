@@ -11,20 +11,20 @@ public class SlidingPercentile {
     private static final int SORT_ORDER_BY_VALUE = 0;
     private static final int SORT_ORDER_NONE = -1;
     private static final Comparator<Sample> VALUE_COMPARATOR = SlidingPercentile$$Lambda$1.$instance;
-    private int currentSortOrder = -1;
     private final int maxWeight;
-    private int nextSampleIndex;
-    private int recycledSampleCount;
     private final Sample[] recycledSamples = new Sample[5];
     private final ArrayList<Sample> samples = new ArrayList<>();
+    private int currentSortOrder = -1;
+    private int nextSampleIndex;
+    private int recycledSampleCount;
     private int totalWeight;
-
-    static final /* synthetic */ int lambda$static$0$SlidingPercentile(Sample a, Sample b) {
-        return a.index - b.index;
-    }
 
     public SlidingPercentile(int maxWeight2) {
         this.maxWeight = maxWeight2;
+    }
+
+    static final /* synthetic */ int lambda$static$0$SlidingPercentile(Sample a, Sample b) {
+        return a.index - b.index;
     }
 
     public void reset() {

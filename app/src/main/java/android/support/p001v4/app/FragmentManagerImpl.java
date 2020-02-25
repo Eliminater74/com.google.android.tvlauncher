@@ -15,8 +15,6 @@ import android.os.Looper;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.p001v4.app.Fragment;
-import android.support.p001v4.app.FragmentManager;
 import android.support.p001v4.util.ArraySet;
 import android.support.p001v4.util.DebugUtils;
 import android.support.p001v4.util.LogWriter;
@@ -38,6 +36,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.Transformation;
+
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -50,14 +49,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 /* renamed from: android.support.v4.app.FragmentManagerImpl */
 final class FragmentManagerImpl extends FragmentManager implements LayoutInflater.Factory2 {
-    static final int ANIM_DUR = 220;
     public static final int ANIM_STYLE_CLOSE_ENTER = 3;
     public static final int ANIM_STYLE_CLOSE_EXIT = 4;
     public static final int ANIM_STYLE_FADE_ENTER = 5;
     public static final int ANIM_STYLE_FADE_EXIT = 6;
     public static final int ANIM_STYLE_OPEN_ENTER = 1;
     public static final int ANIM_STYLE_OPEN_EXIT = 2;
-    static boolean DEBUG = false;
+    static final int ANIM_DUR = 220;
     static final Interpolator DECELERATE_CUBIC = new DecelerateInterpolator(1.5f);
     static final Interpolator DECELERATE_QUINT = new DecelerateInterpolator(2.5f);
     static final String TAG = "FragmentManager";
@@ -65,8 +63,10 @@ final class FragmentManagerImpl extends FragmentManager implements LayoutInflate
     static final String TARGET_STATE_TAG = "android:target_state";
     static final String USER_VISIBLE_HINT_TAG = "android:user_visible_hint";
     static final String VIEW_STATE_TAG = "android:view_state";
+    static boolean DEBUG = false;
     final HashMap<String, Fragment> mActive = new HashMap<>();
     final ArrayList<Fragment> mAdded = new ArrayList<>();
+    private final CopyOnWriteArrayList<FragmentLifecycleCallbacksHolder> mLifecycleCallbacks = new CopyOnWriteArrayList<>();
     ArrayList<Integer> mAvailBackStackIndices;
     ArrayList<BackStackRecord> mBackStack;
     ArrayList<FragmentManager.OnBackStackChangedListener> mBackStackChangeListeners;
@@ -75,18 +75,11 @@ final class FragmentManagerImpl extends FragmentManager implements LayoutInflate
     ArrayList<Fragment> mCreatedMenus;
     int mCurState = 0;
     boolean mDestroyed;
-    Runnable mExecCommit = new Runnable() {
-        public void run() {
-            FragmentManagerImpl.this.execPendingActions();
-        }
-    };
     boolean mExecutingActions;
     boolean mHavePendingDeferredStart;
     FragmentHostCallback mHost;
-    private final CopyOnWriteArrayList<FragmentLifecycleCallbacksHolder> mLifecycleCallbacks = new CopyOnWriteArrayList<>();
     boolean mNeedMenuInvalidate;
     int mNextFragmentIndex = 0;
-    private FragmentManagerViewModel mNonConfig;
     Fragment mParent;
     ArrayList<OpGenerator> mPendingActions;
     ArrayList<StartEnterTransitionListener> mPostponedTransactions;
@@ -99,23 +92,75 @@ final class FragmentManagerImpl extends FragmentManager implements LayoutInflate
     ArrayList<Fragment> mTmpAddedFragments;
     ArrayList<Boolean> mTmpIsPop;
     ArrayList<BackStackRecord> mTmpRecords;
-
-    /* renamed from: android.support.v4.app.FragmentManagerImpl$OpGenerator */
-    interface OpGenerator {
-        boolean generateOps(ArrayList<BackStackRecord> arrayList, ArrayList<Boolean> arrayList2);
-    }
+    Runnable mExecCommit = new Runnable() {
+        public void run() {
+            FragmentManagerImpl.this.execPendingActions();
+        }
+    };
+    private FragmentManagerViewModel mNonConfig;
 
     FragmentManagerImpl() {
     }
 
-    /* renamed from: android.support.v4.app.FragmentManagerImpl$FragmentLifecycleCallbacksHolder */
-    private static final class FragmentLifecycleCallbacksHolder {
-        final FragmentManager.FragmentLifecycleCallbacks mCallback;
-        final boolean mRecursive;
+    static AnimationOrAnimator makeOpenCloseAnimation(float startScale, float endScale, float startAlpha, float endAlpha) {
+        AnimationSet set = new AnimationSet(false);
+        ScaleAnimation scale = new ScaleAnimation(startScale, endScale, startScale, endScale, 1, 0.5f, 1, 0.5f);
+        scale.setInterpolator(DECELERATE_QUINT);
+        scale.setDuration(220);
+        set.addAnimation(scale);
+        AlphaAnimation alpha = new AlphaAnimation(startAlpha, endAlpha);
+        alpha.setInterpolator(DECELERATE_CUBIC);
+        alpha.setDuration(220);
+        set.addAnimation(alpha);
+        return new AnimationOrAnimator(set);
+    }
 
-        FragmentLifecycleCallbacksHolder(FragmentManager.FragmentLifecycleCallbacks callback, boolean recursive) {
-            this.mCallback = callback;
-            this.mRecursive = recursive;
+    static AnimationOrAnimator makeFadeAnimation(float start, float end) {
+        AlphaAnimation anim = new AlphaAnimation(start, end);
+        anim.setInterpolator(DECELERATE_CUBIC);
+        anim.setDuration(220);
+        return new AnimationOrAnimator(anim);
+    }
+
+    private static void executeOps(ArrayList<BackStackRecord> records, ArrayList<Boolean> isRecordPop, int startIndex, int endIndex) {
+        for (int i = startIndex; i < endIndex; i++) {
+            BackStackRecord record = records.get(i);
+            boolean moveToState = true;
+            if (isRecordPop.get(i).booleanValue()) {
+                record.bumpBackStackNesting(-1);
+                if (i != endIndex - 1) {
+                    moveToState = false;
+                }
+                record.executePopOps(moveToState);
+            } else {
+                record.bumpBackStackNesting(1);
+                record.executeOps();
+            }
+        }
+    }
+
+    public static int reverseTransit(int transit) {
+        if (transit == 4097) {
+            return 8194;
+        }
+        if (transit == 4099) {
+            return FragmentTransaction.TRANSIT_FRAGMENT_FADE;
+        }
+        if (transit != 8194) {
+            return 0;
+        }
+        return FragmentTransaction.TRANSIT_FRAGMENT_OPEN;
+    }
+
+    public static int transitToStyleIndex(int transit, boolean enter) {
+        if (transit == 4097) {
+            return enter ? 1 : 2;
+        } else if (transit == 4099) {
+            return enter ? 5 : 6;
+        } else if (transit != 8194) {
+            return -1;
+        } else {
+            return enter ? 3 : 4;
         }
     }
 
@@ -455,26 +500,6 @@ final class FragmentManagerImpl extends FragmentManager implements LayoutInflate
             writer.print("  mNeedMenuInvalidate=");
             writer.println(this.mNeedMenuInvalidate);
         }
-    }
-
-    static AnimationOrAnimator makeOpenCloseAnimation(float startScale, float endScale, float startAlpha, float endAlpha) {
-        AnimationSet set = new AnimationSet(false);
-        ScaleAnimation scale = new ScaleAnimation(startScale, endScale, startScale, endScale, 1, 0.5f, 1, 0.5f);
-        scale.setInterpolator(DECELERATE_QUINT);
-        scale.setDuration(220);
-        set.addAnimation(scale);
-        AlphaAnimation alpha = new AlphaAnimation(startAlpha, endAlpha);
-        alpha.setInterpolator(DECELERATE_CUBIC);
-        alpha.setDuration(220);
-        set.addAnimation(alpha);
-        return new AnimationOrAnimator(set);
-    }
-
-    static AnimationOrAnimator makeFadeAnimation(float start, float end) {
-        AlphaAnimation anim = new AlphaAnimation(start, end);
-        anim.setInterpolator(DECELERATE_CUBIC);
-        anim.setDuration(220);
-        return new AnimationOrAnimator(anim);
     }
 
     /* access modifiers changed from: package-private */
@@ -2062,23 +2087,6 @@ final class FragmentManagerImpl extends FragmentManager implements LayoutInflate
         return null;
     }
 
-    private static void executeOps(ArrayList<BackStackRecord> records, ArrayList<Boolean> isRecordPop, int startIndex, int endIndex) {
-        for (int i = startIndex; i < endIndex; i++) {
-            BackStackRecord record = records.get(i);
-            boolean moveToState = true;
-            if (isRecordPop.get(i).booleanValue()) {
-                record.bumpBackStackNesting(-1);
-                if (i != endIndex - 1) {
-                    moveToState = false;
-                }
-                record.executePopOps(moveToState);
-            } else {
-                record.bumpBackStackNesting(1);
-                record.executeOps();
-            }
-        }
-    }
-
     private void addAddedFragments(ArraySet<Fragment> added) {
         int i = this.mCurState;
         if (i >= 1) {
@@ -2675,17 +2683,17 @@ final class FragmentManagerImpl extends FragmentManager implements LayoutInflate
         }
     }
 
+    @Nullable
+    public Fragment getPrimaryNavigationFragment() {
+        return this.mPrimaryNav;
+    }
+
     public void setPrimaryNavigationFragment(Fragment f) {
         if (f == null || (this.mActive.get(f.mWho) == f && (f.mHost == null || f.getFragmentManager() == this))) {
             this.mPrimaryNav = f;
             return;
         }
         throw new IllegalArgumentException("Fragment " + f + " is not an active fragment of FragmentManager " + this);
-    }
-
-    @Nullable
-    public Fragment getPrimaryNavigationFragment() {
-        return this.mPrimaryNav;
     }
 
     public void setMaxLifecycle(Fragment f, Lifecycle.State state) {
@@ -2986,31 +2994,6 @@ final class FragmentManagerImpl extends FragmentManager implements LayoutInflate
         }
     }
 
-    public static int reverseTransit(int transit) {
-        if (transit == 4097) {
-            return 8194;
-        }
-        if (transit == 4099) {
-            return FragmentTransaction.TRANSIT_FRAGMENT_FADE;
-        }
-        if (transit != 8194) {
-            return 0;
-        }
-        return FragmentTransaction.TRANSIT_FRAGMENT_OPEN;
-    }
-
-    public static int transitToStyleIndex(int transit, boolean enter) {
-        if (transit == 4097) {
-            return enter ? 1 : 2;
-        } else if (transit == 4099) {
-            return enter ? 5 : 6;
-        } else if (transit != 8194) {
-            return -1;
-        } else {
-            return enter ? 3 : 4;
-        }
-    }
-
     @Nullable
     public View onCreateView(@Nullable View parent, @NonNull String name, @NonNull Context context, @NonNull AttributeSet attrs) {
         String fname;
@@ -3101,6 +3084,22 @@ final class FragmentManagerImpl extends FragmentManager implements LayoutInflate
         return this;
     }
 
+    /* renamed from: android.support.v4.app.FragmentManagerImpl$OpGenerator */
+    interface OpGenerator {
+        boolean generateOps(ArrayList<BackStackRecord> arrayList, ArrayList<Boolean> arrayList2);
+    }
+
+    /* renamed from: android.support.v4.app.FragmentManagerImpl$FragmentLifecycleCallbacksHolder */
+    private static final class FragmentLifecycleCallbacksHolder {
+        final FragmentManager.FragmentLifecycleCallbacks mCallback;
+        final boolean mRecursive;
+
+        FragmentLifecycleCallbacksHolder(FragmentManager.FragmentLifecycleCallbacks callback, boolean recursive) {
+            this.mCallback = callback;
+            this.mRecursive = recursive;
+        }
+    }
+
     /* renamed from: android.support.v4.app.FragmentManagerImpl$FragmentTag */
     static class FragmentTag {
         public static final int[] Fragment = {16842755, 16842960, 16842961};
@@ -3112,32 +3111,11 @@ final class FragmentManagerImpl extends FragmentManager implements LayoutInflate
         }
     }
 
-    /* renamed from: android.support.v4.app.FragmentManagerImpl$PopBackStackState */
-    private class PopBackStackState implements OpGenerator {
-        final int mFlags;
-        final int mId;
-        final String mName;
-
-        PopBackStackState(String name, int id, int flags) {
-            this.mName = name;
-            this.mId = id;
-            this.mFlags = flags;
-        }
-
-        public boolean generateOps(ArrayList<BackStackRecord> records, ArrayList<Boolean> isRecordPop) {
-            FragmentManager childManager;
-            if (FragmentManagerImpl.this.mPrimaryNav == null || this.mId >= 0 || this.mName != null || (childManager = FragmentManagerImpl.this.mPrimaryNav.peekChildFragmentManager()) == null || !childManager.popBackStackImmediate()) {
-                return FragmentManagerImpl.this.popBackStackState(records, isRecordPop, this.mName, this.mId, this.mFlags);
-            }
-            return false;
-        }
-    }
-
     /* renamed from: android.support.v4.app.FragmentManagerImpl$StartEnterTransitionListener */
     static class StartEnterTransitionListener implements Fragment.OnStartEnterTransitionListener {
         final boolean mIsBack;
-        private int mNumPostponed;
         final BackStackRecord mRecord;
+        private int mNumPostponed;
 
         StartEnterTransitionListener(BackStackRecord record, boolean isBack) {
             this.mIsBack = isBack;
@@ -3209,10 +3187,10 @@ final class FragmentManagerImpl extends FragmentManager implements LayoutInflate
 
     /* renamed from: android.support.v4.app.FragmentManagerImpl$EndViewTransitionAnimation */
     private static class EndViewTransitionAnimation extends AnimationSet implements Runnable {
-        private boolean mAnimating = true;
         private final View mChild;
-        private boolean mEnded;
         private final ViewGroup mParent;
+        private boolean mAnimating = true;
+        private boolean mEnded;
         private boolean mTransitionEnded;
 
         EndViewTransitionAnimation(@NonNull Animation animation, @NonNull ViewGroup parent, @NonNull View child) {
@@ -3255,6 +3233,27 @@ final class FragmentManagerImpl extends FragmentManager implements LayoutInflate
             }
             this.mAnimating = false;
             this.mParent.post(this);
+        }
+    }
+
+    /* renamed from: android.support.v4.app.FragmentManagerImpl$PopBackStackState */
+    private class PopBackStackState implements OpGenerator {
+        final int mFlags;
+        final int mId;
+        final String mName;
+
+        PopBackStackState(String name, int id, int flags) {
+            this.mName = name;
+            this.mId = id;
+            this.mFlags = flags;
+        }
+
+        public boolean generateOps(ArrayList<BackStackRecord> records, ArrayList<Boolean> isRecordPop) {
+            FragmentManager childManager;
+            if (FragmentManagerImpl.this.mPrimaryNav == null || this.mId >= 0 || this.mName != null || (childManager = FragmentManagerImpl.this.mPrimaryNav.peekChildFragmentManager()) == null || !childManager.popBackStackImmediate()) {
+                return FragmentManagerImpl.this.popBackStackState(records, isRecordPop, this.mName, this.mId, this.mFlags);
+            }
+            return false;
         }
     }
 }

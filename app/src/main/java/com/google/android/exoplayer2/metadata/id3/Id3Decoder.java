@@ -1,6 +1,7 @@
 package com.google.android.exoplayer2.metadata.id3;
 
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.metadata.Metadata;
 import com.google.android.exoplayer2.metadata.MetadataDecoder;
@@ -10,6 +11,7 @@ import com.google.android.exoplayer2.util.ParsableBitArray;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.Util;
 import com.google.common.primitives.UnsignedBytes;
+
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -18,6 +20,9 @@ import java.util.List;
 import java.util.Locale;
 
 public final class Id3Decoder implements MetadataDecoder {
+    public static final int ID3_HEADER_LENGTH = 10;
+    public static final int ID3_TAG = Util.getIntegerCodeForString("ID3");
+    public static final FramePredicate NO_FRAMES_PREDICATE = Id3Decoder$$Lambda$0.$instance;
     private static final int FRAME_FLAG_V3_HAS_GROUP_IDENTIFIER = 32;
     private static final int FRAME_FLAG_V3_IS_COMPRESSED = 128;
     private static final int FRAME_FLAG_V3_IS_ENCRYPTED = 64;
@@ -26,24 +31,13 @@ public final class Id3Decoder implements MetadataDecoder {
     private static final int FRAME_FLAG_V4_IS_COMPRESSED = 8;
     private static final int FRAME_FLAG_V4_IS_ENCRYPTED = 4;
     private static final int FRAME_FLAG_V4_IS_UNSYNCHRONIZED = 2;
-    public static final int ID3_HEADER_LENGTH = 10;
-    public static final int ID3_TAG = Util.getIntegerCodeForString("ID3");
     private static final int ID3_TEXT_ENCODING_ISO_8859_1 = 0;
     private static final int ID3_TEXT_ENCODING_UTF_16 = 1;
     private static final int ID3_TEXT_ENCODING_UTF_16BE = 2;
     private static final int ID3_TEXT_ENCODING_UTF_8 = 3;
-    public static final FramePredicate NO_FRAMES_PREDICATE = Id3Decoder$$Lambda$0.$instance;
     private static final String TAG = "Id3Decoder";
     @Nullable
     private final FramePredicate framePredicate;
-
-    public interface FramePredicate {
-        boolean evaluate(int i, int i2, int i3, int i4, int i5);
-    }
-
-    static final /* synthetic */ boolean lambda$static$0$Id3Decoder(int majorVersion, int id0, int id1, int id2, int id3) {
-        return false;
-    }
 
     public Id3Decoder() {
         this(null);
@@ -53,46 +47,8 @@ public final class Id3Decoder implements MetadataDecoder {
         this.framePredicate = framePredicate2;
     }
 
-    @Nullable
-    public Metadata decode(MetadataInputBuffer inputBuffer) {
-        ByteBuffer buffer = inputBuffer.data;
-        return decode(buffer.array(), buffer.limit());
-    }
-
-    @Nullable
-    public Metadata decode(byte[] data, int size) {
-        List<Id3Frame> id3Frames = new ArrayList<>();
-        ParsableByteArray id3Data = new ParsableByteArray(data, size);
-        Id3Header id3Header = decodeHeader(id3Data);
-        if (id3Header == null) {
-            return null;
-        }
-        int startPosition = id3Data.getPosition();
-        int frameHeaderSize = id3Header.majorVersion == 2 ? 6 : 10;
-        int framesSize = id3Header.framesSize;
-        if (id3Header.isUnsynchronized) {
-            framesSize = removeUnsynchronization(id3Data, id3Header.framesSize);
-        }
-        id3Data.setLimit(startPosition + framesSize);
-        boolean unsignedIntFrameSizeHack = false;
-        if (!validateFrames(id3Data, id3Header.majorVersion, frameHeaderSize, false)) {
-            if (id3Header.majorVersion != 4 || !validateFrames(id3Data, 4, frameHeaderSize, true)) {
-                int access$000 = id3Header.majorVersion;
-                StringBuilder sb = new StringBuilder(56);
-                sb.append("Failed to validate ID3 tag with majorVersion=");
-                sb.append(access$000);
-                Log.m30w(TAG, sb.toString());
-                return null;
-            }
-            unsignedIntFrameSizeHack = true;
-        }
-        while (id3Data.bytesLeft() >= frameHeaderSize) {
-            Id3Frame frame = decodeFrame(id3Header.majorVersion, id3Data, unsignedIntFrameSizeHack, frameHeaderSize, this.framePredicate);
-            if (frame != null) {
-                id3Frames.add(frame);
-            }
-        }
-        return new Metadata(id3Frames);
+    static final /* synthetic */ boolean lambda$static$0$Id3Decoder(int majorVersion, int id0, int id1, int id2, int id3) {
+        return false;
     }
 
     @Nullable
@@ -896,6 +852,52 @@ public final class Id3Decoder implements MetadataDecoder {
             return "";
         }
         return new String(data, from, to - from, charsetName);
+    }
+
+    @Nullable
+    public Metadata decode(MetadataInputBuffer inputBuffer) {
+        ByteBuffer buffer = inputBuffer.data;
+        return decode(buffer.array(), buffer.limit());
+    }
+
+    @Nullable
+    public Metadata decode(byte[] data, int size) {
+        List<Id3Frame> id3Frames = new ArrayList<>();
+        ParsableByteArray id3Data = new ParsableByteArray(data, size);
+        Id3Header id3Header = decodeHeader(id3Data);
+        if (id3Header == null) {
+            return null;
+        }
+        int startPosition = id3Data.getPosition();
+        int frameHeaderSize = id3Header.majorVersion == 2 ? 6 : 10;
+        int framesSize = id3Header.framesSize;
+        if (id3Header.isUnsynchronized) {
+            framesSize = removeUnsynchronization(id3Data, id3Header.framesSize);
+        }
+        id3Data.setLimit(startPosition + framesSize);
+        boolean unsignedIntFrameSizeHack = false;
+        if (!validateFrames(id3Data, id3Header.majorVersion, frameHeaderSize, false)) {
+            if (id3Header.majorVersion != 4 || !validateFrames(id3Data, 4, frameHeaderSize, true)) {
+                int access$000 = id3Header.majorVersion;
+                StringBuilder sb = new StringBuilder(56);
+                sb.append("Failed to validate ID3 tag with majorVersion=");
+                sb.append(access$000);
+                Log.m30w(TAG, sb.toString());
+                return null;
+            }
+            unsignedIntFrameSizeHack = true;
+        }
+        while (id3Data.bytesLeft() >= frameHeaderSize) {
+            Id3Frame frame = decodeFrame(id3Header.majorVersion, id3Data, unsignedIntFrameSizeHack, frameHeaderSize, this.framePredicate);
+            if (frame != null) {
+                id3Frames.add(frame);
+            }
+        }
+        return new Metadata(id3Frames);
+    }
+
+    public interface FramePredicate {
+        boolean evaluate(int i, int i2, int i3, int i4, int i5);
     }
 
     private static final class Id3Header {

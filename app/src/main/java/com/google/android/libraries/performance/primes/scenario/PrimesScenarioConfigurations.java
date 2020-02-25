@@ -1,13 +1,14 @@
 package com.google.android.libraries.performance.primes.scenario;
 
 import com.google.android.libraries.stitch.util.Preconditions;
+
 import java.util.concurrent.TimeUnit;
 
 public final class PrimesScenarioConfigurations {
-    private static final int DEFAULT_MAX_ACTIVE_SCENARIOS = 10;
-    private static final float DEFAULT_SAMPLING_PROBABILITY = 1.0f;
     /* access modifiers changed from: private */
     public static final int DEFAULT_TIMEOUT_MS = ((int) TimeUnit.HOURS.toMillis(1));
+    private static final int DEFAULT_MAX_ACTIVE_SCENARIOS = 10;
+    private static final float DEFAULT_SAMPLING_PROBABILITY = 1.0f;
     private final boolean isEnabled;
     private final boolean isTotalPssCaptureEnabled;
     private final int maxActiveScenarios;
@@ -22,6 +23,10 @@ public final class PrimesScenarioConfigurations {
         this.maxActiveScenarios = maxActiveScenarios2;
         this.scenarioStructureProvider = scenarioStructureProvider2;
         this.isTotalPssCaptureEnabled = isTotalPssCaptureEnabled2;
+    }
+
+    public static Builder newBuilder() {
+        return new Builder();
     }
 
     public boolean isEnabled() {
@@ -48,10 +53,6 @@ public final class PrimesScenarioConfigurations {
         return this.isTotalPssCaptureEnabled;
     }
 
-    public static Builder newBuilder() {
-        return new Builder();
-    }
-
     public static final class Builder {
         private boolean isEnabled;
         private boolean isTotalPssCaptureEnabled;
@@ -59,6 +60,12 @@ public final class PrimesScenarioConfigurations {
         private float samplingProbability;
         private ScenarioStructureProvider scenarioStructureProvider;
         private int timeoutMs;
+
+        private Builder() {
+            this.samplingProbability = PrimesScenarioConfigurations.DEFAULT_SAMPLING_PROBABILITY;
+            this.timeoutMs = PrimesScenarioConfigurations.DEFAULT_TIMEOUT_MS;
+            this.maxActiveScenarios = 10;
+        }
 
         public Builder setEnabled(boolean enabled) {
             this.isEnabled = enabled;
@@ -94,12 +101,6 @@ public final class PrimesScenarioConfigurations {
 
         public PrimesScenarioConfigurations build() {
             return new PrimesScenarioConfigurations(this.isEnabled, this.samplingProbability, this.timeoutMs, this.maxActiveScenarios, this.scenarioStructureProvider, this.isTotalPssCaptureEnabled);
-        }
-
-        private Builder() {
-            this.samplingProbability = PrimesScenarioConfigurations.DEFAULT_SAMPLING_PROBABILITY;
-            this.timeoutMs = PrimesScenarioConfigurations.DEFAULT_TIMEOUT_MS;
-            this.maxActiveScenarios = 10;
         }
     }
 }

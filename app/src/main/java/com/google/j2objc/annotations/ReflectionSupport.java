@@ -11,10 +11,10 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.CLASS)
 public @interface ReflectionSupport {
 
+    Level value();
+
     public enum Level {
         NATIVE_ONLY,
         FULL
     }
-
-    Level value();
 }

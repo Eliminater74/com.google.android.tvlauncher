@@ -2,7 +2,7 @@ package com.google.common.util.concurrent;
 
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.annotations.VisibleForTesting;
-import java.lang.Thread;
+
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;

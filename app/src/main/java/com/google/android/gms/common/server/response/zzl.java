@@ -3,12 +3,12 @@ package com.google.android.gms.common.server.response;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+
 import com.google.android.gms.common.internal.zzau;
-import com.google.android.gms.common.server.response.FastJsonResponse;
-import com.google.android.gms.common.util.zzc;
 import com.google.android.gms.common.util.zzn;
 import com.google.android.gms.common.util.zzo;
 import com.google.android.gms.internal.zzbky;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -47,6 +47,45 @@ public class zzl extends FastSafeParcelableJsonResponse {
             this.zze = fieldMappingDictionary2.getRootClassName();
         }
         this.zzf = 2;
+    }
+
+    private static void zza(StringBuilder sb, int i, Object obj) {
+        switch (i) {
+            case 0:
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+            case 6:
+                sb.append(obj);
+                return;
+            case 7:
+                sb.append("\"");
+                sb.append(zzn.zzb(obj.toString()));
+                sb.append("\"");
+                return;
+            case 8:
+                sb.append("\"");
+                sb.append(zzc.zza((byte[]) obj));
+                sb.append("\"");
+                return;
+            case 9:
+                sb.append("\"");
+                sb.append(zzc.zzb((byte[]) obj));
+                sb.append("\"");
+                return;
+            case 10:
+                zzo.zza(sb, (HashMap) obj);
+                return;
+            case 11:
+                throw new IllegalArgumentException("Method does not accept concrete type.");
+            default:
+                StringBuilder sb2 = new StringBuilder(26);
+                sb2.append("Unknown type = ");
+                sb2.append(i);
+                throw new IllegalArgumentException(sb2.toString());
+        }
     }
 
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
@@ -1301,44 +1340,5 @@ public class zzl extends FastSafeParcelableJsonResponse {
             return;
         }
         zza(sb, field.getTypeIn(), obj);
-    }
-
-    private static void zza(StringBuilder sb, int i, Object obj) {
-        switch (i) {
-            case 0:
-            case 1:
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-            case 6:
-                sb.append(obj);
-                return;
-            case 7:
-                sb.append("\"");
-                sb.append(zzn.zzb(obj.toString()));
-                sb.append("\"");
-                return;
-            case 8:
-                sb.append("\"");
-                sb.append(zzc.zza((byte[]) obj));
-                sb.append("\"");
-                return;
-            case 9:
-                sb.append("\"");
-                sb.append(zzc.zzb((byte[]) obj));
-                sb.append("\"");
-                return;
-            case 10:
-                zzo.zza(sb, (HashMap) obj);
-                return;
-            case 11:
-                throw new IllegalArgumentException("Method does not accept concrete type.");
-            default:
-                StringBuilder sb2 = new StringBuilder(26);
-                sb2.append("Unknown type = ");
-                sb2.append(i);
-                throw new IllegalArgumentException(sb2.toString());
-        }
     }
 }

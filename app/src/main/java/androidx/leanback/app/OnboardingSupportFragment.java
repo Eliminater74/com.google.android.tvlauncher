@@ -26,8 +26,10 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.leanback.C0364R;
 import androidx.leanback.widget.PagingIndicator;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,28 +47,15 @@ public abstract class OnboardingSupportFragment extends Fragment {
     private static final int SLIDE_DISTANCE = 60;
     private static final String TAG = "OnboardingF";
     private static int sSlideDistance;
-    private AnimatorSet mAnimator;
-    @ColorInt
-    private int mArrowBackgroundColor = 0;
-    private boolean mArrowBackgroundColorSet;
-    @ColorInt
-    private int mArrowColor = 0;
-    private boolean mArrowColorSet;
     int mCurrentPageIndex;
     TextView mDescriptionView;
-    @ColorInt
-    private int mDescriptionViewTextColor = 0;
-    private boolean mDescriptionViewTextColorSet;
-    @ColorInt
-    private int mDotBackgroundColor = 0;
-    private boolean mDotBackgroundColorSet;
     boolean mEnterAnimationFinished;
-    private int mIconResourceId;
     boolean mIsLtr;
     boolean mLogoAnimationFinished;
-    private int mLogoResourceId;
-    private ImageView mLogoView;
-    private ImageView mMainIconView;
+    PagingIndicator mPageIndicator;
+    View mStartButton;
+    TextView mTitleView;
+    private AnimatorSet mAnimator;
     private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
         public void onClick(View view) {
             if (OnboardingSupportFragment.this.mLogoAnimationFinished) {
@@ -115,12 +104,25 @@ public abstract class OnboardingSupportFragment extends Fragment {
             }
         }
     };
-    PagingIndicator mPageIndicator;
-    View mStartButton;
+    @ColorInt
+    private int mArrowBackgroundColor = 0;
+    private boolean mArrowBackgroundColorSet;
+    @ColorInt
+    private int mArrowColor = 0;
+    private boolean mArrowColorSet;
+    @ColorInt
+    private int mDescriptionViewTextColor = 0;
+    private boolean mDescriptionViewTextColorSet;
+    @ColorInt
+    private int mDotBackgroundColor = 0;
+    private boolean mDotBackgroundColorSet;
+    private int mIconResourceId;
+    private int mLogoResourceId;
+    private ImageView mLogoView;
+    private ImageView mMainIconView;
     private CharSequence mStartButtonText;
     private boolean mStartButtonTextSet;
     private ContextThemeWrapper mThemeWrapper;
-    TextView mTitleView;
     @ColorInt
     private int mTitleViewTextColor = 0;
     private boolean mTitleViewTextColorSet;
@@ -252,6 +254,11 @@ public abstract class OnboardingSupportFragment extends Fragment {
         outState.putBoolean(KEY_ENTER_ANIMATION_FINISHED, this.mEnterAnimationFinished);
     }
 
+    @ColorInt
+    public final int getTitleViewTextColor() {
+        return this.mTitleViewTextColor;
+    }
+
     public void setTitleViewTextColor(@ColorInt int color) {
         this.mTitleViewTextColor = color;
         this.mTitleViewTextColorSet = true;
@@ -262,8 +269,8 @@ public abstract class OnboardingSupportFragment extends Fragment {
     }
 
     @ColorInt
-    public final int getTitleViewTextColor() {
-        return this.mTitleViewTextColor;
+    public final int getDescriptionViewTextColor() {
+        return this.mDescriptionViewTextColor;
     }
 
     public void setDescriptionViewTextColor(@ColorInt int color) {
@@ -276,8 +283,8 @@ public abstract class OnboardingSupportFragment extends Fragment {
     }
 
     @ColorInt
-    public final int getDescriptionViewTextColor() {
-        return this.mDescriptionViewTextColor;
+    public final int getDotBackgroundColor() {
+        return this.mDotBackgroundColor;
     }
 
     public void setDotBackgroundColor(@ColorInt int color) {
@@ -290,8 +297,8 @@ public abstract class OnboardingSupportFragment extends Fragment {
     }
 
     @ColorInt
-    public final int getDotBackgroundColor() {
-        return this.mDotBackgroundColor;
+    public final int getArrowColor() {
+        return this.mArrowColor;
     }
 
     public void setArrowColor(@ColorInt int color) {
@@ -304,8 +311,8 @@ public abstract class OnboardingSupportFragment extends Fragment {
     }
 
     @ColorInt
-    public final int getArrowColor() {
-        return this.mArrowColor;
+    public final int getArrowBackgroundColor() {
+        return this.mArrowBackgroundColor;
     }
 
     public void setArrowBackgroundColor(@ColorInt int color) {
@@ -315,11 +322,6 @@ public abstract class OnboardingSupportFragment extends Fragment {
         if (pagingIndicator != null) {
             pagingIndicator.setArrowBackgroundColor(color);
         }
-    }
-
-    @ColorInt
-    public final int getArrowBackgroundColor() {
-        return this.mArrowBackgroundColor;
     }
 
     public final CharSequence getStartButtonText() {
@@ -359,12 +361,12 @@ public abstract class OnboardingSupportFragment extends Fragment {
         return contextThemeWrapper == null ? inflater : inflater.cloneInContext(contextThemeWrapper);
     }
 
-    public final void setLogoResourceId(int id) {
-        this.mLogoResourceId = id;
-    }
-
     public final int getLogoResourceId() {
         return this.mLogoResourceId;
+    }
+
+    public final void setLogoResourceId(int id) {
+        this.mLogoResourceId = id;
     }
 
     /* access modifiers changed from: protected */

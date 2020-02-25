@@ -2,10 +2,14 @@ package com.google.common.base;
 
 import com.google.common.annotations.GwtCompatible;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible
 public final class Verify {
+    private Verify() {
+    }
+
     public static void verify(boolean expression) {
         if (!expression) {
             throw new VerifyException();
@@ -159,8 +163,5 @@ public final class Verify {
     public static <T> T verifyNotNull(@NullableDecl T reference, @NullableDecl String errorMessageTemplate, @NullableDecl Object... errorMessageArgs) {
         verify(reference != null, errorMessageTemplate, errorMessageArgs);
         return reference;
-    }
-
-    private Verify() {
     }
 }

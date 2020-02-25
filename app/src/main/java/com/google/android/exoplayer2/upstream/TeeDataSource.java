@@ -2,16 +2,18 @@ package com.google.android.exoplayer2.upstream;
 
 import android.net.Uri;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.util.Assertions;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 public final class TeeDataSource implements DataSource {
-    private long bytesRemaining;
     private final DataSink dataSink;
-    private boolean dataSinkNeedsClosing;
     private final DataSource upstream;
+    private long bytesRemaining;
+    private boolean dataSinkNeedsClosing;
 
     public TeeDataSource(DataSource upstream2, DataSink dataSink2) {
         this.upstream = (DataSource) Assertions.checkNotNull(upstream2);

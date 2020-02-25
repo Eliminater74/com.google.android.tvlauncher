@@ -2,32 +2,21 @@ package com.google.common.collect;
 
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 import com.google.common.math.IntMath;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.util.AbstractList;
 import java.util.Collection;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.RandomAccess;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible
 final class CartesianList<E> extends AbstractList<List<E>> implements RandomAccess {
     /* access modifiers changed from: private */
     public final transient ImmutableList<List<E>> axes;
     private final transient int[] axesSizeProduct;
-
-    static <E> List<List<E>> create(List<? extends List<? extends E>> lists) {
-        ImmutableList.Builder<List<E>> axesBuilder = new ImmutableList.Builder<>(lists.size());
-        for (List<? extends E> list : lists) {
-            List<E> copy = ImmutableList.copyOf((Collection) list);
-            if (copy.isEmpty()) {
-                return ImmutableList.m107of();
-            }
-            axesBuilder.add((Object) copy);
-        }
-        return new CartesianList(axesBuilder.build());
-    }
 
     CartesianList(ImmutableList<List<E>> axes2) {
         this.axes = axes2;
@@ -41,6 +30,18 @@ final class CartesianList<E> extends AbstractList<List<E>> implements RandomAcce
         } catch (ArithmeticException e) {
             throw new IllegalArgumentException("Cartesian product too large; must have size at most Integer.MAX_VALUE");
         }
+    }
+
+    static <E> List<List<E>> create(List<? extends List<? extends E>> lists) {
+        ImmutableList.Builder<List<E>> axesBuilder = new ImmutableList.Builder<>(lists.size());
+        for (List<? extends E> list : lists) {
+            List<E> copy = ImmutableList.copyOf((Collection) list);
+            if (copy.isEmpty()) {
+                return ImmutableList.m107of();
+            }
+            axesBuilder.add((Object) copy);
+        }
+        return new CartesianList(axesBuilder.build());
     }
 
     /* access modifiers changed from: private */

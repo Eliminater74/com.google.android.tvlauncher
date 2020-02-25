@@ -1,6 +1,7 @@
 package com.google.android.gms.internal;
 
-import com.google.android.gms.internal.zzgoj;
+import com.google.android.gms.internal.zzgoj.zza;
+
 import java.io.IOException;
 
 /* compiled from: ClientAnalytics */
@@ -11,6 +12,14 @@ public final class zzgsz {
         /* access modifiers changed from: private */
         public static final zza zzh;
         private static volatile zzgqe<zza> zzi;
+
+        static {
+            zza zza = new zza();
+            zzh = zza;
+            zza.zzl();
+            zzgoj.zza(zza.class, zzh);
+        }
+
         private int zzd;
         private int zze;
         private String zzf = "";
@@ -19,16 +28,8 @@ public final class zzgsz {
         private zza() {
         }
 
-        /* renamed from: com.google.android.gms.internal.zzgsz$zza$zza  reason: collision with other inner class name */
-        /* compiled from: ClientAnalytics */
-        public static final class C2022zza extends zzgoj.zza<zza, C2022zza> implements zzgpv {
-            private C2022zza() {
-                super(zza.zzh);
-            }
-
-            /* synthetic */ C2022zza(zzgta zzgta) {
-                this();
-            }
+        public static zzgqe<zza> zzc() {
+            return (zzgqe) zzh.zza(zzgoj.zzg.zzh, (Object) null, (Object) null);
         }
 
         public final void zza(zzgnp zzgnp) throws IOException {
@@ -95,20 +96,21 @@ public final class zzgsz {
             }
         }
 
-        public static zzgqe<zza> zzc() {
-            return (zzgqe) zzh.zza(zzgoj.zzg.zzh, (Object) null, (Object) null);
-        }
-
         /* access modifiers changed from: protected */
         public final Object zzb() throws Exception {
             return zza(zzh, "\u0001\u0003\u0000\u0001\u0001\u0003\u0003\u0004\u0000\u0000\u0000\u0001\u0004\u0000\u0002\b\u0001\u0003\b\u0002", new Object[]{"zzd", "zze", "zzf", "zzg"});
         }
 
-        static {
-            zza zza = new zza();
-            zzh = zza;
-            zza.zzl();
-            zzgoj.zza(zza.class, zzh);
+        /* renamed from: com.google.android.gms.internal.zzgsz$zza$zza  reason: collision with other inner class name */
+        /* compiled from: ClientAnalytics */
+        public static final class C2022zza extends zzgoj.zza<zza, C2022zza> implements zzgpv {
+            private C2022zza() {
+                super(zza.zzh);
+            }
+
+            /* synthetic */ C2022zza(zzgta zzgta) {
+                this();
+            }
         }
     }
 }

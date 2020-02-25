@@ -1,6 +1,7 @@
 package com.google.android.exoplayer2.audio;
 
 import com.google.android.exoplayer2.util.Assertions;
+
 import java.nio.ShortBuffer;
 import java.util.Arrays;
 
@@ -10,26 +11,26 @@ final class Sonic {
     private static final int MINIMUM_PITCH = 65;
     private final int channelCount;
     private final short[] downSampleBuffer;
-    private short[] inputBuffer;
-    private int inputFrameCount;
     private final int inputSampleRateHz;
-    private int maxDiff;
     private final int maxPeriod;
     private final int maxRequiredFrameCount = (this.maxPeriod * 2);
-    private int minDiff;
     private final int minPeriod;
+    private final float pitch;
+    private final float rate;
+    private final float speed;
+    private short[] inputBuffer;
+    private int inputFrameCount;
+    private int maxDiff;
+    private int minDiff;
     private int newRatePosition;
     private int oldRatePosition;
     private short[] outputBuffer;
     private int outputFrameCount;
-    private final float pitch;
     private short[] pitchBuffer;
     private int pitchFrameCount;
     private int prevMinDiff;
     private int prevPeriod;
-    private final float rate;
     private int remainingInputToCopyFrameCount;
-    private final float speed;
 
     public Sonic(int inputSampleRateHz2, int channelCount2, float speed2, float pitch2, int outputSampleRateHz) {
         this.inputSampleRateHz = inputSampleRateHz2;
@@ -44,6 +45,20 @@ final class Sonic {
         this.inputBuffer = new short[(i * channelCount2)];
         this.outputBuffer = new short[(i * channelCount2)];
         this.pitchBuffer = new short[(i * channelCount2)];
+    }
+
+    private static void overlapAdd(int frameCount, int channelCount2, short[] out, int outPosition, short[] rampDown, int rampDownPosition, short[] rampUp, int rampUpPosition) {
+        for (int i = 0; i < channelCount2; i++) {
+            int o = (outPosition * channelCount2) + i;
+            int u = (rampUpPosition * channelCount2) + i;
+            int d = (rampDownPosition * channelCount2) + i;
+            for (int t = 0; t < frameCount; t++) {
+                out[o] = (short) (((rampDown[d] * (frameCount - t)) + (rampUp[u] * t)) / frameCount);
+                o += channelCount2;
+                d += channelCount2;
+                u += channelCount2;
+            }
+        }
     }
 
     public void queueInput(ShortBuffer buffer) {
@@ -376,20 +391,6 @@ final class Sonic {
         }
         if (r != 1.0f) {
             adjustRate(r, originalOutputFrameCount);
-        }
-    }
-
-    private static void overlapAdd(int frameCount, int channelCount2, short[] out, int outPosition, short[] rampDown, int rampDownPosition, short[] rampUp, int rampUpPosition) {
-        for (int i = 0; i < channelCount2; i++) {
-            int o = (outPosition * channelCount2) + i;
-            int u = (rampUpPosition * channelCount2) + i;
-            int d = (rampDownPosition * channelCount2) + i;
-            for (int t = 0; t < frameCount; t++) {
-                out[o] = (short) (((rampDown[d] * (frameCount - t)) + (rampUp[u] * t)) / frameCount);
-                o += channelCount2;
-                d += channelCount2;
-                u += channelCount2;
-            }
         }
     }
 }

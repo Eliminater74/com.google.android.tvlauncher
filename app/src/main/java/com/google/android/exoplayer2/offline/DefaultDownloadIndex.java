@@ -8,17 +8,20 @@ import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
+
 import com.google.android.exoplayer2.database.DatabaseIOException;
 import com.google.android.exoplayer2.database.DatabaseProvider;
 import com.google.android.exoplayer2.database.VersionTable;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Util;
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public final class DefaultDownloadIndex implements WritableDownloadIndex {
-    private static final String[] COLUMNS = {"id", "title", "uri", COLUMN_STREAM_KEYS, COLUMN_CUSTOM_CACHE_KEY, "data", "state", COLUMN_START_TIME_MS, COLUMN_UPDATE_TIME_MS, COLUMN_CONTENT_LENGTH, COLUMN_STOP_REASON, COLUMN_FAILURE_REASON, COLUMN_PERCENT_DOWNLOADED, COLUMN_BYTES_DOWNLOADED};
+    @VisibleForTesting
+    static final int TABLE_VERSION = 2;
     private static final String COLUMN_BYTES_DOWNLOADED = "bytes_downloaded";
     private static final String COLUMN_CONTENT_LENGTH = "content_length";
     private static final String COLUMN_CUSTOM_CACHE_KEY = "custom_cache_key";
@@ -46,18 +49,17 @@ public final class DefaultDownloadIndex implements WritableDownloadIndex {
     private static final String COLUMN_STREAM_KEYS = "stream_keys";
     private static final String COLUMN_TYPE = "title";
     private static final String COLUMN_UPDATE_TIME_MS = "update_time_ms";
+    private static final String[] COLUMNS = {"id", "title", "uri", COLUMN_STREAM_KEYS, COLUMN_CUSTOM_CACHE_KEY, "data", "state", COLUMN_START_TIME_MS, COLUMN_UPDATE_TIME_MS, COLUMN_CONTENT_LENGTH, COLUMN_STOP_REASON, COLUMN_FAILURE_REASON, COLUMN_PERCENT_DOWNLOADED, COLUMN_BYTES_DOWNLOADED};
     private static final String COLUMN_URI = "uri";
     private static final String TABLE_PREFIX = "ExoPlayerDownloads";
     private static final String TABLE_SCHEMA = "(id TEXT PRIMARY KEY NOT NULL,title TEXT NOT NULL,uri TEXT NOT NULL,stream_keys TEXT NOT NULL,custom_cache_key TEXT,data BLOB NOT NULL,state INTEGER NOT NULL,start_time_ms INTEGER NOT NULL,update_time_ms INTEGER NOT NULL,content_length INTEGER NOT NULL,stop_reason INTEGER NOT NULL,failure_reason INTEGER NOT NULL,percent_downloaded REAL NOT NULL,bytes_downloaded INTEGER NOT NULL)";
-    @VisibleForTesting
-    static final int TABLE_VERSION = 2;
     private static final String TRUE = "1";
     private static final String WHERE_ID_EQUALS = "id = ?";
     private static final String WHERE_STATE_TERMINAL = getStateQuery(3, 4);
     private final DatabaseProvider databaseProvider;
-    private boolean initialized;
     private final String name;
     private final String tableName;
+    private boolean initialized;
 
     public DefaultDownloadIndex(DatabaseProvider databaseProvider2) {
         this(databaseProvider2, "");
@@ -69,6 +71,62 @@ public final class DefaultDownloadIndex implements WritableDownloadIndex {
         String valueOf = String.valueOf(TABLE_PREFIX);
         String valueOf2 = String.valueOf(name2);
         this.tableName = valueOf2.length() != 0 ? valueOf.concat(valueOf2) : new String(valueOf);
+    }
+
+    private static String getStateQuery(int... states) {
+        if (states.length == 0) {
+            return "1";
+        }
+        StringBuilder selectionBuilder = new StringBuilder();
+        selectionBuilder.append("state");
+        selectionBuilder.append(" IN (");
+        for (int i = 0; i < states.length; i++) {
+            if (i > 0) {
+                selectionBuilder.append(',');
+            }
+            selectionBuilder.append(states[i]);
+        }
+        selectionBuilder.append(')');
+        return selectionBuilder.toString();
+    }
+
+    /* access modifiers changed from: private */
+    public static Download getDownloadForCurrentRow(Cursor cursor) {
+        DownloadRequest request = new DownloadRequest(cursor.getString(0), cursor.getString(1), Uri.parse(cursor.getString(2)), decodeStreamKeys(cursor.getString(3)), cursor.getString(4), cursor.getBlob(5));
+        DownloadProgress downloadProgress = new DownloadProgress();
+        downloadProgress.bytesDownloaded = cursor.getLong(13);
+        downloadProgress.percentDownloaded = cursor.getFloat(12);
+        return new Download(request, cursor.getInt(6), cursor.getLong(7), cursor.getLong(8), cursor.getLong(9), cursor.getInt(10), cursor.getInt(11), downloadProgress);
+    }
+
+    private static String encodeStreamKeys(List<StreamKey> streamKeys) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < streamKeys.size(); i++) {
+            StreamKey streamKey = streamKeys.get(i);
+            stringBuilder.append(streamKey.periodIndex);
+            stringBuilder.append('.');
+            stringBuilder.append(streamKey.groupIndex);
+            stringBuilder.append('.');
+            stringBuilder.append(streamKey.trackIndex);
+            stringBuilder.append(',');
+        }
+        if (stringBuilder.length() > 0) {
+            stringBuilder.setLength(stringBuilder.length() - 1);
+        }
+        return stringBuilder.toString();
+    }
+
+    private static List<StreamKey> decodeStreamKeys(String encodedStreamKeys) {
+        ArrayList<StreamKey> streamKeys = new ArrayList<>();
+        if (encodedStreamKeys.isEmpty()) {
+            return streamKeys;
+        }
+        for (String streamKeysString : Util.split(encodedStreamKeys, ",")) {
+            String[] indices = Util.split(streamKeysString, "\\.");
+            Assertions.checkState(indices.length == 3);
+            streamKeys.add(new StreamKey(Integer.parseInt(indices[0]), Integer.parseInt(indices[1]), Integer.parseInt(indices[2])));
+        }
+        return streamKeys;
     }
 
     /* JADX WARNING: Code restructure failed: missing block: B:18:0x0027, code lost:
@@ -232,64 +290,12 @@ public final class DefaultDownloadIndex implements WritableDownloadIndex {
         }
     }
 
-    private static String getStateQuery(int... states) {
-        if (states.length == 0) {
-            return "1";
-        }
-        StringBuilder selectionBuilder = new StringBuilder();
-        selectionBuilder.append("state");
-        selectionBuilder.append(" IN (");
-        for (int i = 0; i < states.length; i++) {
-            if (i > 0) {
-                selectionBuilder.append(',');
-            }
-            selectionBuilder.append(states[i]);
-        }
-        selectionBuilder.append(')');
-        return selectionBuilder.toString();
-    }
-
-    /* access modifiers changed from: private */
-    public static Download getDownloadForCurrentRow(Cursor cursor) {
-        DownloadRequest request = new DownloadRequest(cursor.getString(0), cursor.getString(1), Uri.parse(cursor.getString(2)), decodeStreamKeys(cursor.getString(3)), cursor.getString(4), cursor.getBlob(5));
-        DownloadProgress downloadProgress = new DownloadProgress();
-        downloadProgress.bytesDownloaded = cursor.getLong(13);
-        downloadProgress.percentDownloaded = cursor.getFloat(12);
-        return new Download(request, cursor.getInt(6), cursor.getLong(7), cursor.getLong(8), cursor.getLong(9), cursor.getInt(10), cursor.getInt(11), downloadProgress);
-    }
-
-    private static String encodeStreamKeys(List<StreamKey> streamKeys) {
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < streamKeys.size(); i++) {
-            StreamKey streamKey = streamKeys.get(i);
-            stringBuilder.append(streamKey.periodIndex);
-            stringBuilder.append('.');
-            stringBuilder.append(streamKey.groupIndex);
-            stringBuilder.append('.');
-            stringBuilder.append(streamKey.trackIndex);
-            stringBuilder.append(',');
-        }
-        if (stringBuilder.length() > 0) {
-            stringBuilder.setLength(stringBuilder.length() - 1);
-        }
-        return stringBuilder.toString();
-    }
-
-    private static List<StreamKey> decodeStreamKeys(String encodedStreamKeys) {
-        ArrayList<StreamKey> streamKeys = new ArrayList<>();
-        if (encodedStreamKeys.isEmpty()) {
-            return streamKeys;
-        }
-        for (String streamKeysString : Util.split(encodedStreamKeys, ",")) {
-            String[] indices = Util.split(streamKeysString, "\\.");
-            Assertions.checkState(indices.length == 3);
-            streamKeys.add(new StreamKey(Integer.parseInt(indices[0]), Integer.parseInt(indices[1]), Integer.parseInt(indices[2])));
-        }
-        return streamKeys;
-    }
-
     private static final class DownloadCursorImpl implements DownloadCursor {
         private final Cursor cursor;
+
+        private DownloadCursorImpl(Cursor cursor2) {
+            this.cursor = cursor2;
+        }
 
         public boolean isAfterLast() {
             return DownloadCursor$$CC.isAfterLast$$dflt$$(this);
@@ -321,10 +327,6 @@ public final class DefaultDownloadIndex implements WritableDownloadIndex {
 
         public boolean moveToPrevious() {
             return DownloadCursor$$CC.moveToPrevious$$dflt$$(this);
-        }
-
-        private DownloadCursorImpl(Cursor cursor2) {
-            this.cursor = cursor2;
         }
 
         public Download getDownload() {

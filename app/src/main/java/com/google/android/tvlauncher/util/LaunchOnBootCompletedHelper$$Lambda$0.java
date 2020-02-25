@@ -1,7 +1,5 @@
 package com.google.android.tvlauncher.util;
 
-import com.google.android.tvlauncher.util.LaunchOnBootCompletedHelper;
-
 final /* synthetic */ class LaunchOnBootCompletedHelper$$Lambda$0 implements LaunchOnBootCompletedHelper.SetLoadedDataCallback {
     private final LaunchOnBootCompletedHelper arg$1;
 

@@ -1,21 +1,16 @@
 package com.google.android.exoplayer2.trackselection;
 
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.source.TrackGroup;
 import com.google.android.exoplayer2.source.chunk.MediaChunk;
 import com.google.android.exoplayer2.source.chunk.MediaChunkIterator;
 import com.google.android.exoplayer2.upstream.BandwidthMeter;
+
 import java.util.List;
 
 public interface TrackSelection {
-
-    public interface Factory {
-        @Deprecated
-        TrackSelection createTrackSelection(TrackGroup trackGroup, BandwidthMeter bandwidthMeter, int... iArr);
-
-        TrackSelection[] createTrackSelections(Definition[] definitionArr, BandwidthMeter bandwidthMeter);
-    }
 
     boolean blacklist(int i, long j);
 
@@ -56,6 +51,13 @@ public interface TrackSelection {
     void updateSelectedTrack(long j, long j2, long j3);
 
     void updateSelectedTrack(long j, long j2, long j3, List<? extends MediaChunk> list, MediaChunkIterator[] mediaChunkIteratorArr);
+
+    public interface Factory {
+        @Deprecated
+        TrackSelection createTrackSelection(TrackGroup trackGroup, BandwidthMeter bandwidthMeter, int... iArr);
+
+        TrackSelection[] createTrackSelections(Definition[] definitionArr, BandwidthMeter bandwidthMeter);
+    }
 
     public static final class Definition {
         @Nullable

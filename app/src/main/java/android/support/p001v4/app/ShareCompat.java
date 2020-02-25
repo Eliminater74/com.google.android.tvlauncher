@@ -16,6 +16,7 @@ import android.view.ActionProvider;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ShareActionProvider;
+
 import java.util.ArrayList;
 
 /* renamed from: android.support.v4.app.ShareCompat */
@@ -88,10 +89,6 @@ public final class ShareCompat {
         private ArrayList<Uri> mStreams;
         private ArrayList<String> mToAddresses;
 
-        public static IntentBuilder from(Activity launchingActivity) {
-            return new IntentBuilder(launchingActivity);
-        }
-
         private IntentBuilder(Activity launchingActivity) {
             this.mActivity = launchingActivity;
             this.mIntent.putExtra("android.support.v4.app.EXTRA_CALLING_PACKAGE", launchingActivity.getPackageName());
@@ -99,6 +96,10 @@ public final class ShareCompat {
             this.mIntent.putExtra("android.support.v4.app.EXTRA_CALLING_ACTIVITY", launchingActivity.getComponentName());
             this.mIntent.putExtra("android.support.v4.app.EXTRA_CALLING_ACTIVITY", launchingActivity.getComponentName());
             this.mIntent.addFlags(524288);
+        }
+
+        public static IntentBuilder from(Activity launchingActivity) {
+            return new IntentBuilder(launchingActivity);
         }
 
         public Intent getIntent() {
@@ -306,15 +307,40 @@ public final class ShareCompat {
         private Intent mIntent;
         private ArrayList<Uri> mStreams;
 
-        public static IntentReader from(Activity activity) {
-            return new IntentReader(activity);
-        }
-
         private IntentReader(Activity activity) {
             this.mActivity = activity;
             this.mIntent = activity.getIntent();
             this.mCallingPackage = ShareCompat.getCallingPackage(activity);
             this.mCallingActivity = ShareCompat.getCallingActivity(activity);
+        }
+
+        public static IntentReader from(Activity activity) {
+            return new IntentReader(activity);
+        }
+
+        private static void withinStyle(StringBuilder out, CharSequence text, int start, int end) {
+            int i = start;
+            while (i < end) {
+                char c = text.charAt(i);
+                if (c == '<') {
+                    out.append("&lt;");
+                } else if (c == '>') {
+                    out.append("&gt;");
+                } else if (c == '&') {
+                    out.append("&amp;");
+                } else if (c > '~' || c < ' ') {
+                    out.append("&#" + ((int) c) + ";");
+                } else if (c == ' ') {
+                    while (i + 1 < end && text.charAt(i + 1) == ' ') {
+                        out.append("&nbsp;");
+                        i++;
+                    }
+                    out.append(' ');
+                } else {
+                    out.append(c);
+                }
+                i++;
+            }
         }
 
         public boolean isShareIntent() {
@@ -356,31 +382,6 @@ public final class ShareCompat {
             StringBuilder out = new StringBuilder();
             withinStyle(out, text, 0, text.length());
             return out.toString();
-        }
-
-        private static void withinStyle(StringBuilder out, CharSequence text, int start, int end) {
-            int i = start;
-            while (i < end) {
-                char c = text.charAt(i);
-                if (c == '<') {
-                    out.append("&lt;");
-                } else if (c == '>') {
-                    out.append("&gt;");
-                } else if (c == '&') {
-                    out.append("&amp;");
-                } else if (c > '~' || c < ' ') {
-                    out.append("&#" + ((int) c) + ";");
-                } else if (c == ' ') {
-                    while (i + 1 < end && text.charAt(i + 1) == ' ') {
-                        out.append("&nbsp;");
-                        i++;
-                    }
-                    out.append(' ');
-                } else {
-                    out.append(c);
-                }
-                i++;
-            }
         }
 
         public Uri getStream() {

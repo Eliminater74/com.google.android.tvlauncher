@@ -4,39 +4,31 @@ import android.app.Activity;
 import android.app.Application;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
-import com.google.android.libraries.performance.primes.AppLifecycleListener;
-import com.google.android.libraries.performance.primes.MetricRecorder;
+
 import com.google.android.libraries.performance.primes.metriccapture.DisplayStats;
 import com.google.android.libraries.performance.primes.transmitter.MetricTransmitter;
 import com.google.android.libraries.stitch.util.Preconditions;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
+
 import logs.proto.wireless.performance.mobile.ExtensionMetric;
 import logs.proto.wireless.performance.mobile.SystemHealthProto;
 
 @Deprecated
 final class JankMetricService extends AbstractMetricService {
     private static final String TAG = "JankMetricService";
+    /* access modifiers changed from: private */
+    public final JankMetricExtensionProvider metricExtensionProvider;
     private final AppLifecycleMonitor appLifecycleMonitor;
     private final Map<String, JankEvent> jankEvents = new HashMap();
     private final int maxAcceptedFrameRenderTimeMs;
-    /* access modifiers changed from: private */
-    public final JankMetricExtensionProvider metricExtensionProvider;
     private final AppLifecycleListener.OnActivityPaused onActivityPaused = new AppLifecycleListener.OnActivityPaused() {
         public void onActivityPaused(Activity activity) {
             JankMetricService.this.cleanUpPendingEvents();
         }
     };
-
-    @VisibleForTesting
-    static SystemHealthProto.SystemHealthMetric getMetric(JankEvent event) {
-        return (SystemHealthProto.SystemHealthMetric) SystemHealthProto.SystemHealthMetric.newBuilder().setJankMetric((SystemHealthProto.JankMetric) SystemHealthProto.JankMetric.newBuilder().setJankyFrameCount(event.getJankyFrameCount()).setRenderedFrameCount(event.getRenderedFrameCount()).setMaxFrameRenderTimeMs(event.getMaxRenderTimeMs()).setDurationMs(event.getElapsedTimeMs()).build()).build();
-    }
-
-    static JankMetricService createService(MetricTransmitter transmitter, Application application, Supplier<MetricStamper> metricStamperSupplier, Supplier<ScheduledExecutorService> executorServiceSupplier, PrimesJankConfigurations configs) {
-        return new JankMetricService(transmitter, application, metricStamperSupplier, executorServiceSupplier, AppLifecycleMonitor.getInstance(application), configs.getMetricExtensionProvider(), configs.getSampleRatePerSecond());
-    }
 
     @VisibleForTesting
     JankMetricService(MetricTransmitter transmitter, Application application, Supplier<MetricStamper> metricStamperSupplier, Supplier<ScheduledExecutorService> executorServiceSupplier, AppLifecycleMonitor appLifecycleMonitor2, JankMetricExtensionProvider metricExtensionProvider2, int sampleRatePerSecond) {
@@ -45,6 +37,15 @@ final class JankMetricService extends AbstractMetricService {
         this.metricExtensionProvider = metricExtensionProvider2;
         appLifecycleMonitor2.register(this.onActivityPaused);
         this.maxAcceptedFrameRenderTimeMs = DisplayStats.maxAcceptedFrameRenderTimeMs(application);
+    }
+
+    @VisibleForTesting
+    static SystemHealthProto.SystemHealthMetric getMetric(JankEvent event) {
+        return (SystemHealthProto.SystemHealthMetric) SystemHealthProto.SystemHealthMetric.newBuilder().setJankMetric((SystemHealthProto.JankMetric) SystemHealthProto.JankMetric.newBuilder().setJankyFrameCount(event.getJankyFrameCount()).setRenderedFrameCount(event.getRenderedFrameCount()).setMaxFrameRenderTimeMs(event.getMaxRenderTimeMs()).setDurationMs(event.getElapsedTimeMs()).build()).build();
+    }
+
+    static JankMetricService createService(MetricTransmitter transmitter, Application application, Supplier<MetricStamper> metricStamperSupplier, Supplier<ScheduledExecutorService> executorServiceSupplier, PrimesJankConfigurations configs) {
+        return new JankMetricService(transmitter, application, metricStamperSupplier, executorServiceSupplier, AppLifecycleMonitor.getInstance(application), configs.getMetricExtensionProvider(), configs.getSampleRatePerSecond());
     }
 
     /* access modifiers changed from: package-private */

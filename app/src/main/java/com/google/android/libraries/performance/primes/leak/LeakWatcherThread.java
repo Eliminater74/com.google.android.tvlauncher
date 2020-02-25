@@ -3,10 +3,12 @@ package com.google.android.libraries.performance.primes.leak;
 import android.os.Debug;
 import android.support.annotation.VisibleForTesting;
 import android.support.p001v4.media.session.PlaybackStateCompat;
+
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.libraries.performance.primes.PrimesLog;
 import com.google.android.libraries.performance.primes.hprof.HprofAnalyzer;
 import com.google.android.libraries.stitch.util.Preconditions;
+
 import java.io.File;
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
@@ -15,30 +17,25 @@ import java.util.Deque;
 import java.util.List;
 
 class LeakWatcherThread extends Thread {
-    private static final int DUMMY_DEPTH = 20;
     @VisibleForTesting
     static final int DUMMY_GC_CYCLES = 3;
-    private static final int DUMMY_RELEASE_MIN_GAP = 5000;
     @VisibleForTesting
     static final int QUEUE_FOR_DUMP_MAX_SIZE = 500;
+    private static final int DUMMY_DEPTH = 20;
+    private static final int DUMMY_RELEASE_MIN_GAP = 5000;
     private static final String SENTINEL = "Sentinel";
     private static final String TAG = "LeakWatcherThread";
     @VisibleForTesting
     final Deque<Object> dummyQueue;
+    @VisibleForTesting
+    final GarbageReference queueForDump;
     private final Deque<GarbageReference> garbageListQueue;
-    private File hprofFile;
     private final GarbageReference incomingList;
     private final LeakListener leakListener;
     private final boolean quantifyLeakSizeEnabled;
-    @VisibleForTesting
-    final GarbageReference queueForDump;
     private final GarbageReferenceFactory referenceFactory;
     private final ReferenceQueue<Object> referenceQueue;
-
-    @VisibleForTesting
-    interface GarbageReferenceFactory {
-        GarbageReference newReference(Object obj, String str, ReferenceQueue<Object> referenceQueue);
-    }
+    private File hprofFile;
 
     private LeakWatcherThread(ReferenceQueue<Object> referenceQueue2, GarbageReferenceFactory referenceFactory2, LeakListener leakListener2, boolean quantifyLeakSizeEnabled2) {
         this.dummyQueue = new ArrayDeque(20);
@@ -240,6 +237,11 @@ class LeakWatcherThread extends Thread {
         File fileToDelete2 = this.hprofFile;
         this.hprofFile = null;
         fileToDelete2.delete();
+    }
+
+    @VisibleForTesting
+    interface GarbageReferenceFactory {
+        GarbageReference newReference(Object obj, String str, ReferenceQueue<Object> referenceQueue);
     }
 
     static class LeakWatcherThreadFactory {

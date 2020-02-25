@@ -1,10 +1,12 @@
 package com.google.common.collect;
 
 import com.google.common.annotations.GwtIncompatible;
+
+import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
 
 @GwtIncompatible
 class CompactLinkedHashSet<E> extends CompactHashSet<E> {
@@ -15,6 +17,13 @@ class CompactLinkedHashSet<E> extends CompactHashSet<E> {
     private transient int[] predecessor;
     @MonotonicNonNullDecl
     private transient int[] successor;
+
+    CompactLinkedHashSet() {
+    }
+
+    CompactLinkedHashSet(int expectedSize) {
+        super(expectedSize);
+    }
 
     public static <E> CompactLinkedHashSet<E> create() {
         return new CompactLinkedHashSet<>();
@@ -34,13 +43,6 @@ class CompactLinkedHashSet<E> extends CompactHashSet<E> {
 
     public static <E> CompactLinkedHashSet<E> createWithExpectedSize(int expectedSize) {
         return new CompactLinkedHashSet<>(expectedSize);
-    }
-
-    CompactLinkedHashSet() {
-    }
-
-    CompactLinkedHashSet(int expectedSize) {
-        super(expectedSize);
     }
 
     /* access modifiers changed from: package-private */

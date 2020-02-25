@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RestrictTo;
 import android.text.TextUtils;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
@@ -58,114 +59,16 @@ public final class TvContractCompat {
     public static final String PARAM_INPUT = "input";
     @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
     public static final String PARAM_START_TIME = "start_time";
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    public static final String PERMISSION_READ_TV_LISTINGS = "android.permission.READ_TV_LISTINGS";
     private static final String PATH_CHANNEL = "channel";
     private static final String PATH_PASSTHROUGH = "passthrough";
     private static final String PATH_PREVIEW_PROGRAM = "preview_program";
     private static final String PATH_PROGRAM = "program";
     private static final String PATH_RECORDED_PROGRAM = "recorded_program";
     private static final String PATH_WATCH_NEXT_PROGRAM = "watch_next_program";
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    public static final String PERMISSION_READ_TV_LISTINGS = "android.permission.READ_TV_LISTINGS";
 
-    /* renamed from: androidx.tvprovider.media.tv.TvContractCompat$BaseTvColumns */
-    public interface BaseTvColumns extends BaseColumns {
-        public static final String COLUMN_PACKAGE_NAME = "package_name";
-    }
-
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    /* renamed from: androidx.tvprovider.media.tv.TvContractCompat$PreviewProgramColumns */
-    public interface PreviewProgramColumns {
-        public static final int ASPECT_RATIO_16_9 = 0;
-        public static final int ASPECT_RATIO_1_1 = 3;
-        public static final int ASPECT_RATIO_2_3 = 4;
-        public static final int ASPECT_RATIO_3_2 = 1;
-        public static final int ASPECT_RATIO_4_3 = 2;
-        public static final int ASPECT_RATIO_MOVIE_POSTER = 5;
-        public static final int AVAILABILITY_AVAILABLE = 0;
-        public static final int AVAILABILITY_FREE = 4;
-        public static final int AVAILABILITY_FREE_WITH_SUBSCRIPTION = 1;
-        public static final int AVAILABILITY_PAID_CONTENT = 2;
-        public static final int AVAILABILITY_PURCHASED = 3;
-        public static final String COLUMN_AUTHOR = "author";
-        public static final String COLUMN_AVAILABILITY = "availability";
-        public static final String COLUMN_BROWSABLE = "browsable";
-        public static final String COLUMN_CONTENT_ID = "content_id";
-        public static final String COLUMN_DURATION_MILLIS = "duration_millis";
-        public static final String COLUMN_END_TIME_UTC_MILLIS = "end_time_utc_millis";
-        public static final String COLUMN_GENRE = "genre";
-        public static final String COLUMN_INTENT_URI = "intent_uri";
-        public static final String COLUMN_INTERACTION_COUNT = "interaction_count";
-        public static final String COLUMN_INTERACTION_TYPE = "interaction_type";
-        public static final String COLUMN_INTERNAL_PROVIDER_ID = "internal_provider_id";
-        public static final String COLUMN_ITEM_COUNT = "item_count";
-        public static final String COLUMN_LAST_PLAYBACK_POSITION_MILLIS = "last_playback_position_millis";
-        public static final String COLUMN_LIVE = "live";
-        public static final String COLUMN_LOGO_CONTENT_DESCRIPTION = "logo_content_description";
-        public static final String COLUMN_LOGO_URI = "logo_uri";
-        public static final String COLUMN_OFFER_PRICE = "offer_price";
-        public static final String COLUMN_POSTER_ART_ASPECT_RATIO = "poster_art_aspect_ratio";
-        public static final String COLUMN_PREVIEW_AUDIO_URI = "preview_audio_uri";
-        public static final String COLUMN_PREVIEW_VIDEO_URI = "preview_video_uri";
-        public static final String COLUMN_RELEASE_DATE = "release_date";
-        public static final String COLUMN_STARTING_PRICE = "starting_price";
-        public static final String COLUMN_START_TIME_UTC_MILLIS = "start_time_utc_millis";
-        public static final String COLUMN_THUMBNAIL_ASPECT_RATIO = "poster_thumbnail_aspect_ratio";
-        public static final String COLUMN_TRANSIENT = "transient";
-        public static final String COLUMN_TV_SERIES_ITEM_TYPE = "tv_series_item_type";
-        public static final String COLUMN_TYPE = "type";
-        public static final int INTERACTION_TYPE_FANS = 3;
-        public static final int INTERACTION_TYPE_FOLLOWERS = 2;
-        public static final int INTERACTION_TYPE_LIKES = 4;
-        public static final int INTERACTION_TYPE_LISTENS = 1;
-        public static final int INTERACTION_TYPE_THUMBS = 5;
-        public static final int INTERACTION_TYPE_VIEWERS = 6;
-        public static final int INTERACTION_TYPE_VIEWS = 0;
-        public static final int TV_SERIES_ITEM_TYPE_CHAPTER = 1;
-        public static final int TV_SERIES_ITEM_TYPE_EPISODE = 0;
-        public static final int TYPE_ALBUM = 8;
-        public static final int TYPE_ARTIST = 9;
-        public static final int TYPE_CHANNEL = 6;
-        public static final int TYPE_CLIP = 4;
-        public static final int TYPE_EVENT = 5;
-        public static final int TYPE_GAME = 12;
-        public static final int TYPE_MOVIE = 0;
-        public static final int TYPE_PLAYLIST = 10;
-        public static final int TYPE_STATION = 11;
-        public static final int TYPE_TRACK = 7;
-        public static final int TYPE_TV_EPISODE = 3;
-        public static final int TYPE_TV_SEASON = 2;
-        public static final int TYPE_TV_SERIES = 1;
-    }
-
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    /* renamed from: androidx.tvprovider.media.tv.TvContractCompat$ProgramColumns */
-    interface ProgramColumns {
-        public static final String COLUMN_AUDIO_LANGUAGE = "audio_language";
-        public static final String COLUMN_CANONICAL_GENRE = "canonical_genre";
-        public static final String COLUMN_CONTENT_RATING = "content_rating";
-        public static final String COLUMN_EPISODE_DISPLAY_NUMBER = "episode_display_number";
-        public static final String COLUMN_EPISODE_TITLE = "episode_title";
-        public static final String COLUMN_INTERNAL_PROVIDER_DATA = "internal_provider_data";
-        public static final String COLUMN_INTERNAL_PROVIDER_FLAG1 = "internal_provider_flag1";
-        public static final String COLUMN_INTERNAL_PROVIDER_FLAG2 = "internal_provider_flag2";
-        public static final String COLUMN_INTERNAL_PROVIDER_FLAG3 = "internal_provider_flag3";
-        public static final String COLUMN_INTERNAL_PROVIDER_FLAG4 = "internal_provider_flag4";
-        public static final String COLUMN_LONG_DESCRIPTION = "long_description";
-        public static final String COLUMN_POSTER_ART_URI = "poster_art_uri";
-        public static final String COLUMN_REVIEW_RATING = "review_rating";
-        public static final String COLUMN_REVIEW_RATING_STYLE = "review_rating_style";
-        public static final String COLUMN_SEARCHABLE = "searchable";
-        public static final String COLUMN_SEASON_DISPLAY_NUMBER = "season_display_number";
-        public static final String COLUMN_SEASON_TITLE = "season_title";
-        public static final String COLUMN_SHORT_DESCRIPTION = "short_description";
-        public static final String COLUMN_THUMBNAIL_URI = "thumbnail_uri";
-        public static final String COLUMN_TITLE = "title";
-        public static final String COLUMN_VERSION_NUMBER = "version_number";
-        public static final String COLUMN_VIDEO_HEIGHT = "video_height";
-        public static final String COLUMN_VIDEO_WIDTH = "video_width";
-        public static final int REVIEW_RATING_STYLE_PERCENTAGE = 2;
-        public static final int REVIEW_RATING_STYLE_STARS = 0;
-        public static final int REVIEW_RATING_STYLE_THUMBS_UP_DOWN = 1;
+    private TvContractCompat() {
     }
 
     public static String buildInputId(ComponentName name) {
@@ -285,7 +188,105 @@ public final class TvContractCompat {
         }
     }
 
-    private TvContractCompat() {
+    /* renamed from: androidx.tvprovider.media.tv.TvContractCompat$BaseTvColumns */
+    public interface BaseTvColumns extends BaseColumns {
+        public static final String COLUMN_PACKAGE_NAME = "package_name";
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    /* renamed from: androidx.tvprovider.media.tv.TvContractCompat$PreviewProgramColumns */
+    public interface PreviewProgramColumns {
+        public static final int ASPECT_RATIO_16_9 = 0;
+        public static final int ASPECT_RATIO_1_1 = 3;
+        public static final int ASPECT_RATIO_2_3 = 4;
+        public static final int ASPECT_RATIO_3_2 = 1;
+        public static final int ASPECT_RATIO_4_3 = 2;
+        public static final int ASPECT_RATIO_MOVIE_POSTER = 5;
+        public static final int AVAILABILITY_AVAILABLE = 0;
+        public static final int AVAILABILITY_FREE = 4;
+        public static final int AVAILABILITY_FREE_WITH_SUBSCRIPTION = 1;
+        public static final int AVAILABILITY_PAID_CONTENT = 2;
+        public static final int AVAILABILITY_PURCHASED = 3;
+        public static final String COLUMN_AUTHOR = "author";
+        public static final String COLUMN_AVAILABILITY = "availability";
+        public static final String COLUMN_BROWSABLE = "browsable";
+        public static final String COLUMN_CONTENT_ID = "content_id";
+        public static final String COLUMN_DURATION_MILLIS = "duration_millis";
+        public static final String COLUMN_END_TIME_UTC_MILLIS = "end_time_utc_millis";
+        public static final String COLUMN_GENRE = "genre";
+        public static final String COLUMN_INTENT_URI = "intent_uri";
+        public static final String COLUMN_INTERACTION_COUNT = "interaction_count";
+        public static final String COLUMN_INTERACTION_TYPE = "interaction_type";
+        public static final String COLUMN_INTERNAL_PROVIDER_ID = "internal_provider_id";
+        public static final String COLUMN_ITEM_COUNT = "item_count";
+        public static final String COLUMN_LAST_PLAYBACK_POSITION_MILLIS = "last_playback_position_millis";
+        public static final String COLUMN_LIVE = "live";
+        public static final String COLUMN_LOGO_CONTENT_DESCRIPTION = "logo_content_description";
+        public static final String COLUMN_LOGO_URI = "logo_uri";
+        public static final String COLUMN_OFFER_PRICE = "offer_price";
+        public static final String COLUMN_POSTER_ART_ASPECT_RATIO = "poster_art_aspect_ratio";
+        public static final String COLUMN_PREVIEW_AUDIO_URI = "preview_audio_uri";
+        public static final String COLUMN_PREVIEW_VIDEO_URI = "preview_video_uri";
+        public static final String COLUMN_RELEASE_DATE = "release_date";
+        public static final String COLUMN_STARTING_PRICE = "starting_price";
+        public static final String COLUMN_START_TIME_UTC_MILLIS = "start_time_utc_millis";
+        public static final String COLUMN_THUMBNAIL_ASPECT_RATIO = "poster_thumbnail_aspect_ratio";
+        public static final String COLUMN_TRANSIENT = "transient";
+        public static final String COLUMN_TV_SERIES_ITEM_TYPE = "tv_series_item_type";
+        public static final String COLUMN_TYPE = "type";
+        public static final int INTERACTION_TYPE_FANS = 3;
+        public static final int INTERACTION_TYPE_FOLLOWERS = 2;
+        public static final int INTERACTION_TYPE_LIKES = 4;
+        public static final int INTERACTION_TYPE_LISTENS = 1;
+        public static final int INTERACTION_TYPE_THUMBS = 5;
+        public static final int INTERACTION_TYPE_VIEWERS = 6;
+        public static final int INTERACTION_TYPE_VIEWS = 0;
+        public static final int TV_SERIES_ITEM_TYPE_CHAPTER = 1;
+        public static final int TV_SERIES_ITEM_TYPE_EPISODE = 0;
+        public static final int TYPE_ALBUM = 8;
+        public static final int TYPE_ARTIST = 9;
+        public static final int TYPE_CHANNEL = 6;
+        public static final int TYPE_CLIP = 4;
+        public static final int TYPE_EVENT = 5;
+        public static final int TYPE_GAME = 12;
+        public static final int TYPE_MOVIE = 0;
+        public static final int TYPE_PLAYLIST = 10;
+        public static final int TYPE_STATION = 11;
+        public static final int TYPE_TRACK = 7;
+        public static final int TYPE_TV_EPISODE = 3;
+        public static final int TYPE_TV_SEASON = 2;
+        public static final int TYPE_TV_SERIES = 1;
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+            /* renamed from: androidx.tvprovider.media.tv.TvContractCompat$ProgramColumns */
+    interface ProgramColumns {
+        public static final String COLUMN_AUDIO_LANGUAGE = "audio_language";
+        public static final String COLUMN_CANONICAL_GENRE = "canonical_genre";
+        public static final String COLUMN_CONTENT_RATING = "content_rating";
+        public static final String COLUMN_EPISODE_DISPLAY_NUMBER = "episode_display_number";
+        public static final String COLUMN_EPISODE_TITLE = "episode_title";
+        public static final String COLUMN_INTERNAL_PROVIDER_DATA = "internal_provider_data";
+        public static final String COLUMN_INTERNAL_PROVIDER_FLAG1 = "internal_provider_flag1";
+        public static final String COLUMN_INTERNAL_PROVIDER_FLAG2 = "internal_provider_flag2";
+        public static final String COLUMN_INTERNAL_PROVIDER_FLAG3 = "internal_provider_flag3";
+        public static final String COLUMN_INTERNAL_PROVIDER_FLAG4 = "internal_provider_flag4";
+        public static final String COLUMN_LONG_DESCRIPTION = "long_description";
+        public static final String COLUMN_POSTER_ART_URI = "poster_art_uri";
+        public static final String COLUMN_REVIEW_RATING = "review_rating";
+        public static final String COLUMN_REVIEW_RATING_STYLE = "review_rating_style";
+        public static final String COLUMN_SEARCHABLE = "searchable";
+        public static final String COLUMN_SEASON_DISPLAY_NUMBER = "season_display_number";
+        public static final String COLUMN_SEASON_TITLE = "season_title";
+        public static final String COLUMN_SHORT_DESCRIPTION = "short_description";
+        public static final String COLUMN_THUMBNAIL_URI = "thumbnail_uri";
+        public static final String COLUMN_TITLE = "title";
+        public static final String COLUMN_VERSION_NUMBER = "version_number";
+        public static final String COLUMN_VIDEO_HEIGHT = "video_height";
+        public static final String COLUMN_VIDEO_WIDTH = "video_width";
+        public static final int REVIEW_RATING_STYLE_PERCENTAGE = 2;
+        public static final int REVIEW_RATING_STYLE_STARS = 0;
+        public static final int REVIEW_RATING_STYLE_THUMBS_UP_DOWN = 1;
     }
 
     /* renamed from: androidx.tvprovider.media.tv.TvContractCompat$Channels */
@@ -363,12 +364,32 @@ public final class TvContractCompat {
         public static final String VIDEO_FORMAT_576I = "VIDEO_FORMAT_576I";
         public static final String VIDEO_FORMAT_576P = "VIDEO_FORMAT_576P";
         public static final String VIDEO_FORMAT_720P = "VIDEO_FORMAT_720P";
-        private static final Map<String, String> VIDEO_FORMAT_TO_RESOLUTION_MAP = new HashMap();
         public static final String VIDEO_RESOLUTION_ED = "VIDEO_RESOLUTION_ED";
         public static final String VIDEO_RESOLUTION_FHD = "VIDEO_RESOLUTION_FHD";
         public static final String VIDEO_RESOLUTION_HD = "VIDEO_RESOLUTION_HD";
         public static final String VIDEO_RESOLUTION_SD = "VIDEO_RESOLUTION_SD";
         public static final String VIDEO_RESOLUTION_UHD = "VIDEO_RESOLUTION_UHD";
+        private static final Map<String, String> VIDEO_FORMAT_TO_RESOLUTION_MAP = new HashMap();
+
+        static {
+            VIDEO_FORMAT_TO_RESOLUTION_MAP.put(VIDEO_FORMAT_480I, VIDEO_RESOLUTION_SD);
+            VIDEO_FORMAT_TO_RESOLUTION_MAP.put(VIDEO_FORMAT_480P, VIDEO_RESOLUTION_ED);
+            VIDEO_FORMAT_TO_RESOLUTION_MAP.put(VIDEO_FORMAT_576I, VIDEO_RESOLUTION_SD);
+            VIDEO_FORMAT_TO_RESOLUTION_MAP.put(VIDEO_FORMAT_576P, VIDEO_RESOLUTION_ED);
+            VIDEO_FORMAT_TO_RESOLUTION_MAP.put(VIDEO_FORMAT_720P, VIDEO_RESOLUTION_HD);
+            VIDEO_FORMAT_TO_RESOLUTION_MAP.put(VIDEO_FORMAT_1080I, VIDEO_RESOLUTION_HD);
+            VIDEO_FORMAT_TO_RESOLUTION_MAP.put(VIDEO_FORMAT_1080P, VIDEO_RESOLUTION_FHD);
+            VIDEO_FORMAT_TO_RESOLUTION_MAP.put(VIDEO_FORMAT_2160P, VIDEO_RESOLUTION_UHD);
+            VIDEO_FORMAT_TO_RESOLUTION_MAP.put(VIDEO_FORMAT_4320P, VIDEO_RESOLUTION_UHD);
+        }
+
+        private Channels() {
+        }
+
+        @Nullable
+        public static String getVideoResolution(String videoFormat) {
+            return VIDEO_FORMAT_TO_RESOLUTION_MAP.get(videoFormat);
+        }
 
         @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
         @Retention(RetentionPolicy.SOURCE)
@@ -392,26 +413,6 @@ public final class TvContractCompat {
         @Retention(RetentionPolicy.SOURCE)
         /* renamed from: androidx.tvprovider.media.tv.TvContractCompat$Channels$VideoResolution */
         public @interface VideoResolution {
-        }
-
-        static {
-            VIDEO_FORMAT_TO_RESOLUTION_MAP.put(VIDEO_FORMAT_480I, VIDEO_RESOLUTION_SD);
-            VIDEO_FORMAT_TO_RESOLUTION_MAP.put(VIDEO_FORMAT_480P, VIDEO_RESOLUTION_ED);
-            VIDEO_FORMAT_TO_RESOLUTION_MAP.put(VIDEO_FORMAT_576I, VIDEO_RESOLUTION_SD);
-            VIDEO_FORMAT_TO_RESOLUTION_MAP.put(VIDEO_FORMAT_576P, VIDEO_RESOLUTION_ED);
-            VIDEO_FORMAT_TO_RESOLUTION_MAP.put(VIDEO_FORMAT_720P, VIDEO_RESOLUTION_HD);
-            VIDEO_FORMAT_TO_RESOLUTION_MAP.put(VIDEO_FORMAT_1080I, VIDEO_RESOLUTION_HD);
-            VIDEO_FORMAT_TO_RESOLUTION_MAP.put(VIDEO_FORMAT_1080P, VIDEO_RESOLUTION_FHD);
-            VIDEO_FORMAT_TO_RESOLUTION_MAP.put(VIDEO_FORMAT_2160P, VIDEO_RESOLUTION_UHD);
-            VIDEO_FORMAT_TO_RESOLUTION_MAP.put(VIDEO_FORMAT_4320P, VIDEO_RESOLUTION_UHD);
-        }
-
-        @Nullable
-        public static String getVideoResolution(String videoFormat) {
-            return VIDEO_FORMAT_TO_RESOLUTION_MAP.get(videoFormat);
-        }
-
-        private Channels() {
         }
 
         /* renamed from: androidx.tvprovider.media.tv.TvContractCompat$Channels$Logo */
@@ -445,14 +446,9 @@ public final class TvContractCompat {
         public static final class Genres {
             public static final String ANIMAL_WILDLIFE = "ANIMAL_WILDLIFE";
             public static final String ARTS = "ARTS";
-            private static final HashSet<String> CANONICAL_GENRES = new HashSet<>();
             public static final String COMEDY = "COMEDY";
-            private static final char COMMA = ',';
-            private static final String DELIMITER = ",";
-            private static final char DOUBLE_QUOTE = '\"';
             public static final String DRAMA = "DRAMA";
             public static final String EDUCATION = "EDUCATION";
-            private static final String[] EMPTY_STRING_ARRAY = new String[0];
             public static final String ENTERTAINMENT = "ENTERTAINMENT";
             public static final String FAMILY_KIDS = "FAMILY_KIDS";
             public static final String GAMING = "GAMING";
@@ -465,12 +461,11 @@ public final class TvContractCompat {
             public static final String SPORTS = "SPORTS";
             public static final String TECH_SCIENCE = "TECH_SCIENCE";
             public static final String TRAVEL = "TRAVEL";
-
-            @RestrictTo({RestrictTo.Scope.LIBRARY})
-            @Retention(RetentionPolicy.SOURCE)
-            /* renamed from: androidx.tvprovider.media.tv.TvContractCompat$Programs$Genres$Genre */
-            public @interface Genre {
-            }
+            private static final HashSet<String> CANONICAL_GENRES = new HashSet<>();
+            private static final char COMMA = ',';
+            private static final String DELIMITER = ",";
+            private static final char DOUBLE_QUOTE = '\"';
+            private static final String[] EMPTY_STRING_ARRAY = new String[0];
 
             static {
                 CANONICAL_GENRES.add(FAMILY_KIDS);
@@ -560,6 +555,12 @@ public final class TvContractCompat {
 
             public static boolean isCanonical(String genre) {
                 return CANONICAL_GENRES.contains(genre);
+            }
+
+            @RestrictTo({RestrictTo.Scope.LIBRARY})
+            @Retention(RetentionPolicy.SOURCE)
+            /* renamed from: androidx.tvprovider.media.tv.TvContractCompat$Programs$Genres$Genre */
+            public @interface Genre {
             }
         }
     }

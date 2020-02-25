@@ -1,6 +1,5 @@
 package android.support.p001v4.app;
 
-import android.app.Person;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
@@ -8,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.annotation.RestrictTo;
 import android.support.p001v4.graphics.drawable.IconCompat;
+
 import androidx.versionedparcelable.VersionedParcelable;
 
 /* renamed from: android.support.v4.app.Person */
@@ -35,6 +35,19 @@ public class Person implements VersionedParcelable {
     @RestrictTo({RestrictTo.Scope.LIBRARY})
     public String mUri;
 
+    Person(Builder builder) {
+        this.mName = builder.mName;
+        this.mIcon = builder.mIcon;
+        this.mUri = builder.mUri;
+        this.mKey = builder.mKey;
+        this.mIsBot = builder.mIsBot;
+        this.mIsImportant = builder.mIsImportant;
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY})
+    public Person() {
+    }
+
     @NonNull
     public static Person fromBundle(@NonNull Bundle bundle) {
         Bundle iconBundle = bundle.getBundle("icon");
@@ -53,19 +66,6 @@ public class Person implements VersionedParcelable {
     @NonNull
     public static Person fromAndroidPerson(@NonNull android.app.Person person) {
         return new Builder().setName(person.getName()).setIcon(person.getIcon() != null ? IconCompat.createFromIcon(person.getIcon()) : null).setUri(person.getUri()).setKey(person.getKey()).setBot(person.isBot()).setImportant(person.isImportant()).build();
-    }
-
-    Person(Builder builder) {
-        this.mName = builder.mName;
-        this.mIcon = builder.mIcon;
-        this.mUri = builder.mUri;
-        this.mKey = builder.mKey;
-        this.mIsBot = builder.mIsBot;
-        this.mIsImportant = builder.mIsImportant;
-    }
-
-    @RestrictTo({RestrictTo.Scope.LIBRARY})
-    public Person() {
     }
 
     @NonNull

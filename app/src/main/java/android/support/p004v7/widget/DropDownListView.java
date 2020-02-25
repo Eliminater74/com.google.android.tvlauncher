@@ -17,27 +17,29 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+
 import com.google.devtools.build.android.desugar.runtime.ThrowableExtension;
+
 import java.lang.reflect.Field;
 
 /* renamed from: android.support.v7.widget.DropDownListView */
 class DropDownListView extends ListView {
     public static final int INVALID_POSITION = -1;
     public static final int NO_POSITION = -1;
+    private final Rect mSelectorRect = new Rect();
+    ResolveHoverRunnable mResolveHoverRunnable;
     private ViewPropertyAnimatorCompat mClickAnimation;
     private boolean mDrawsInPressedState;
     private boolean mHijackFocus;
     private Field mIsChildViewEnabled;
     private boolean mListSelectionHidden;
     private int mMotionPosition;
-    ResolveHoverRunnable mResolveHoverRunnable;
     private ListViewAutoScrollHelper mScrollHelper;
     private int mSelectionBottomPadding = 0;
     private int mSelectionLeftPadding = 0;
     private int mSelectionRightPadding = 0;
     private int mSelectionTopPadding = 0;
     private GateKeeperDrawable mSelector;
-    private final Rect mSelectorRect = new Rect();
 
     DropDownListView(Context context, boolean hijackFocus) {
         super(context, null, C0233R.attr.dropDownListViewStyle);
@@ -205,52 +207,6 @@ class DropDownListView extends ListView {
         GateKeeperDrawable gateKeeperDrawable = this.mSelector;
         if (gateKeeperDrawable != null) {
             gateKeeperDrawable.setEnabled(enabled);
-        }
-    }
-
-    /* renamed from: android.support.v7.widget.DropDownListView$GateKeeperDrawable */
-    private static class GateKeeperDrawable extends DrawableWrapper {
-        private boolean mEnabled = true;
-
-        GateKeeperDrawable(Drawable drawable) {
-            super(drawable);
-        }
-
-        /* access modifiers changed from: package-private */
-        public void setEnabled(boolean enabled) {
-            this.mEnabled = enabled;
-        }
-
-        public boolean setState(int[] stateSet) {
-            if (this.mEnabled) {
-                return super.setState(stateSet);
-            }
-            return false;
-        }
-
-        public void draw(Canvas canvas) {
-            if (this.mEnabled) {
-                super.draw(canvas);
-            }
-        }
-
-        public void setHotspot(float x, float y) {
-            if (this.mEnabled) {
-                super.setHotspot(x, y);
-            }
-        }
-
-        public void setHotspotBounds(int left, int top, int right, int bottom) {
-            if (this.mEnabled) {
-                super.setHotspotBounds(left, top, right, bottom);
-            }
-        }
-
-        public boolean setVisible(boolean visible, boolean restart) {
-            if (this.mEnabled) {
-                return super.setVisible(visible, restart);
-            }
-            return false;
         }
     }
 
@@ -477,6 +433,52 @@ class DropDownListView extends ListView {
 
     private boolean touchModeDrawsInPressedStateCompat() {
         return this.mDrawsInPressedState;
+    }
+
+    /* renamed from: android.support.v7.widget.DropDownListView$GateKeeperDrawable */
+    private static class GateKeeperDrawable extends DrawableWrapper {
+        private boolean mEnabled = true;
+
+        GateKeeperDrawable(Drawable drawable) {
+            super(drawable);
+        }
+
+        /* access modifiers changed from: package-private */
+        public void setEnabled(boolean enabled) {
+            this.mEnabled = enabled;
+        }
+
+        public boolean setState(int[] stateSet) {
+            if (this.mEnabled) {
+                return super.setState(stateSet);
+            }
+            return false;
+        }
+
+        public void draw(Canvas canvas) {
+            if (this.mEnabled) {
+                super.draw(canvas);
+            }
+        }
+
+        public void setHotspot(float x, float y) {
+            if (this.mEnabled) {
+                super.setHotspot(x, y);
+            }
+        }
+
+        public void setHotspotBounds(int left, int top, int right, int bottom) {
+            if (this.mEnabled) {
+                super.setHotspotBounds(left, top, right, bottom);
+            }
+        }
+
+        public boolean setVisible(boolean visible, boolean restart) {
+            if (this.mEnabled) {
+                return super.setVisible(visible, restart);
+            }
+            return false;
+        }
     }
 
     /* renamed from: android.support.v7.widget.DropDownListView$ResolveHoverRunnable */

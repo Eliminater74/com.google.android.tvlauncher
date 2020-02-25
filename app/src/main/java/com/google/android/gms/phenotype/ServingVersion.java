@@ -7,11 +7,11 @@ public final class ServingVersion {
         this.zza = j;
     }
 
-    public final long getServingVersion() {
-        return this.zza;
-    }
-
     public static ServingVersion fromServer(long j) {
         return new ServingVersion(j);
+    }
+
+    public final long getServingVersion() {
+        return this.zza;
     }
 }

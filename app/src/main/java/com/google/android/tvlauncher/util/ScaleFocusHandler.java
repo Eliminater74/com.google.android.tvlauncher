@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.view.View;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -13,28 +14,18 @@ public class ScaleFocusHandler implements View.OnFocusChangeListener {
     public static final int PIVOT_CENTER = 0;
     public static final int PIVOT_START = 1;
     private final int mAnimationDuration;
+    private final float mFocusedElevation;
+    /* access modifiers changed from: private */
+    public View mView;
     private AnimatorSet mAnimator;
     private Animator.AnimatorListener mAnimatorListener;
     private Runnable mDelayedFocusRunnable;
     private Runnable mDelayedUnfocusRunnable;
-    private final float mFocusedElevation;
     private float mFocusedScale;
     private View.OnFocusChangeListener mOnFocusChangeListener;
     private int mPivot;
     private PivotProvider mPivotProvider;
     private int mPivotVerticalShift;
-    /* access modifiers changed from: private */
-    public View mView;
-
-    @Retention(RetentionPolicy.SOURCE)
-    @interface Pivot {
-    }
-
-    public interface PivotProvider {
-        int getPivot();
-
-        boolean shouldAnimate();
-    }
 
     public ScaleFocusHandler(int animationDuration, float scale, float elevation) {
         this(animationDuration, scale, elevation, 0);
@@ -199,5 +190,15 @@ public class ScaleFocusHandler implements View.OnFocusChangeListener {
         }
         this.mView.setPivotX((float) pivotX);
         this.mView.setPivotY((float) ((height / 2) + this.mPivotVerticalShift));
+    }
+
+    @Retention(RetentionPolicy.SOURCE)
+    @interface Pivot {
+    }
+
+    public interface PivotProvider {
+        int getPivot();
+
+        boolean shouldAnimate();
     }
 }

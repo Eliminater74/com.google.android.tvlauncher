@@ -1,6 +1,7 @@
 package com.google.android.exoplayer2.util;
 
 import com.google.android.exoplayer2.text.TextOutput;
+
 import java.util.List;
 
 final /* synthetic */ class Util$$Lambda$1 implements TextOutput {

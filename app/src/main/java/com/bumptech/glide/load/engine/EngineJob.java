@@ -3,16 +3,16 @@ package com.bumptech.glide.load.engine;
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 import android.support.p001v4.util.Pools;
+
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.Key;
-import com.bumptech.glide.load.engine.DecodeJob;
-import com.bumptech.glide.load.engine.EngineResource;
 import com.bumptech.glide.load.engine.executor.GlideExecutor;
 import com.bumptech.glide.request.ResourceCallback;
 import com.bumptech.glide.util.Executors;
 import com.bumptech.glide.util.Preconditions;
 import com.bumptech.glide.util.pool.FactoryPools;
 import com.bumptech.glide.util.pool.StateVerifier;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -21,28 +21,28 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 class EngineJob<R> implements DecodeJob.Callback<R>, FactoryPools.Poolable {
     private static final EngineResourceFactory DEFAULT_FACTORY = new EngineResourceFactory();
-    private final GlideExecutor animationExecutor;
     final ResourceCallbacksAndExecutors cbs;
-    DataSource dataSource;
-    private DecodeJob<R> decodeJob;
+    private final GlideExecutor animationExecutor;
     private final GlideExecutor diskCacheExecutor;
     private final EngineJobListener engineJobListener;
-    EngineResource<?> engineResource;
     private final EngineResourceFactory engineResourceFactory;
+    private final AtomicInteger pendingCallbacks;
+    private final Pools.Pool<EngineJob<?>> pool;
+    private final EngineResource.ResourceListener resourceListener;
+    private final GlideExecutor sourceExecutor;
+    private final GlideExecutor sourceUnlimitedExecutor;
+    private final StateVerifier stateVerifier;
+    DataSource dataSource;
+    EngineResource<?> engineResource;
     GlideException exception;
+    private DecodeJob<R> decodeJob;
     private boolean hasLoadFailed;
     private boolean hasResource;
     private boolean isCacheable;
     private volatile boolean isCancelled;
     private Key key;
     private boolean onlyRetrieveFromCache;
-    private final AtomicInteger pendingCallbacks;
-    private final Pools.Pool<EngineJob<?>> pool;
     private Resource<?> resource;
-    private final EngineResource.ResourceListener resourceListener;
-    private final GlideExecutor sourceExecutor;
-    private final GlideExecutor sourceUnlimitedExecutor;
-    private final StateVerifier stateVerifier;
     private boolean useAnimationPool;
     private boolean useUnlimitedSourceGeneratorPool;
 
@@ -424,46 +424,6 @@ class EngineJob<R> implements DecodeJob.Callback<R>, FactoryPools.Poolable {
         return this.stateVerifier;
     }
 
-    private class CallLoadFailed implements Runnable {
-
-        /* renamed from: cb */
-        private final ResourceCallback f52cb;
-
-        CallLoadFailed(ResourceCallback cb) {
-            this.f52cb = cb;
-        }
-
-        public void run() {
-            synchronized (EngineJob.this) {
-                if (EngineJob.this.cbs.contains(this.f52cb)) {
-                    EngineJob.this.callCallbackOnLoadFailed(this.f52cb);
-                }
-                EngineJob.this.decrementPendingCallbacks();
-            }
-        }
-    }
-
-    private class CallResourceReady implements Runnable {
-
-        /* renamed from: cb */
-        private final ResourceCallback f53cb;
-
-        CallResourceReady(ResourceCallback cb) {
-            this.f53cb = cb;
-        }
-
-        public void run() {
-            synchronized (EngineJob.this) {
-                if (EngineJob.this.cbs.contains(this.f53cb)) {
-                    EngineJob.this.engineResource.acquire();
-                    EngineJob.this.callCallbackOnResourceReady(this.f53cb);
-                    EngineJob.this.removeCallback(this.f53cb);
-                }
-                EngineJob.this.decrementPendingCallbacks();
-            }
-        }
-    }
-
     static final class ResourceCallbacksAndExecutors implements Iterable<ResourceCallbackAndExecutor> {
         private final List<ResourceCallbackAndExecutor> callbacksAndExecutors;
 
@@ -473,6 +433,10 @@ class EngineJob<R> implements DecodeJob.Callback<R>, FactoryPools.Poolable {
 
         ResourceCallbacksAndExecutors(List<ResourceCallbackAndExecutor> callbacksAndExecutors2) {
             this.callbacksAndExecutors = callbacksAndExecutors2;
+        }
+
+        private static ResourceCallbackAndExecutor defaultCallbackAndExecutor(ResourceCallback cb) {
+            return new ResourceCallbackAndExecutor(cb, Executors.directExecutor());
         }
 
         /* access modifiers changed from: package-private */
@@ -508,10 +472,6 @@ class EngineJob<R> implements DecodeJob.Callback<R>, FactoryPools.Poolable {
         /* access modifiers changed from: package-private */
         public ResourceCallbacksAndExecutors copy() {
             return new ResourceCallbacksAndExecutors(new ArrayList(this.callbacksAndExecutors));
-        }
-
-        private static ResourceCallbackAndExecutor defaultCallbackAndExecutor(ResourceCallback cb) {
-            return new ResourceCallbackAndExecutor(cb, Executors.directExecutor());
         }
 
         @NonNull
@@ -550,6 +510,46 @@ class EngineJob<R> implements DecodeJob.Callback<R>, FactoryPools.Poolable {
 
         public <R> EngineResource<R> build(Resource<R> resource, boolean isMemoryCacheable, Key key, EngineResource.ResourceListener listener) {
             return new EngineResource(resource, isMemoryCacheable, true, key, listener);
+        }
+    }
+
+    private class CallLoadFailed implements Runnable {
+
+        /* renamed from: cb */
+        private final ResourceCallback f52cb;
+
+        CallLoadFailed(ResourceCallback cb) {
+            this.f52cb = cb;
+        }
+
+        public void run() {
+            synchronized (EngineJob.this) {
+                if (EngineJob.this.cbs.contains(this.f52cb)) {
+                    EngineJob.this.callCallbackOnLoadFailed(this.f52cb);
+                }
+                EngineJob.this.decrementPendingCallbacks();
+            }
+        }
+    }
+
+    private class CallResourceReady implements Runnable {
+
+        /* renamed from: cb */
+        private final ResourceCallback f53cb;
+
+        CallResourceReady(ResourceCallback cb) {
+            this.f53cb = cb;
+        }
+
+        public void run() {
+            synchronized (EngineJob.this) {
+                if (EngineJob.this.cbs.contains(this.f53cb)) {
+                    EngineJob.this.engineResource.acquire();
+                    EngineJob.this.callCallbackOnResourceReady(this.f53cb);
+                    EngineJob.this.removeCallback(this.f53cb);
+                }
+                EngineJob.this.decrementPendingCallbacks();
+            }
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.google.android.tvlauncher.home;
 
-import com.google.android.tvlauncher.home.FavoriteLaunchItemsAdapter;
 import com.google.android.tvlauncher.util.ContextMenu;
 
 final /* synthetic */ class FavoriteLaunchItemsAdapter$AppViewHolder$$Lambda$2 implements ContextMenu.OnDismissListener {

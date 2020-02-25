@@ -1,11 +1,12 @@
 package com.google.android.exoplayer2.text.webvtt;
 
 import android.text.TextUtils;
+
 import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.text.SimpleSubtitleDecoder;
 import com.google.android.exoplayer2.text.SubtitleDecoderException;
-import com.google.android.exoplayer2.text.webvtt.WebvttCue;
 import com.google.android.exoplayer2.util.ParsableByteArray;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +26,31 @@ public final class WebvttDecoder extends SimpleSubtitleDecoder {
 
     public WebvttDecoder() {
         super("WebvttDecoder");
+    }
+
+    private static int getNextEvent(ParsableByteArray parsableWebvttData2) {
+        int foundEvent = -1;
+        int currentInputPosition = 0;
+        while (foundEvent == -1) {
+            currentInputPosition = parsableWebvttData2.getPosition();
+            String line = parsableWebvttData2.readLine();
+            if (line == null) {
+                foundEvent = 0;
+            } else if (STYLE_START.equals(line)) {
+                foundEvent = 2;
+            } else if (line.startsWith(COMMENT_START)) {
+                foundEvent = 1;
+            } else {
+                foundEvent = 3;
+            }
+        }
+        parsableWebvttData2.setPosition(currentInputPosition);
+        return foundEvent;
+    }
+
+    private static void skipComment(ParsableByteArray parsableWebvttData2) {
+        do {
+        } while (!TextUtils.isEmpty(parsableWebvttData2.readLine()));
     }
 
     /* access modifiers changed from: protected */
@@ -63,30 +89,5 @@ public final class WebvttDecoder extends SimpleSubtitleDecoder {
         } catch (ParserException e) {
             throw new SubtitleDecoderException(e);
         }
-    }
-
-    private static int getNextEvent(ParsableByteArray parsableWebvttData2) {
-        int foundEvent = -1;
-        int currentInputPosition = 0;
-        while (foundEvent == -1) {
-            currentInputPosition = parsableWebvttData2.getPosition();
-            String line = parsableWebvttData2.readLine();
-            if (line == null) {
-                foundEvent = 0;
-            } else if (STYLE_START.equals(line)) {
-                foundEvent = 2;
-            } else if (line.startsWith(COMMENT_START)) {
-                foundEvent = 1;
-            } else {
-                foundEvent = 3;
-            }
-        }
-        parsableWebvttData2.setPosition(currentInputPosition);
-        return foundEvent;
-    }
-
-    private static void skipComment(ParsableByteArray parsableWebvttData2) {
-        do {
-        } while (!TextUtils.isEmpty(parsableWebvttData2.readLine()));
     }
 }

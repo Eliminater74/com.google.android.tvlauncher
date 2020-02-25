@@ -16,18 +16,6 @@ public abstract class zzcmt<T> {
         zzcne.zza().zza(this);
     }
 
-    /* access modifiers changed from: protected */
-    @Hide
-    public abstract T zza(zzcnb zzcnb);
-
-    public final String zza() {
-        return this.zzb;
-    }
-
-    public final T zzb() {
-        return this.zzc;
-    }
-
     @Hide
     public static zzcmv zza(int i, String str, Boolean bool) {
         return new zzcmv(0, str, bool);
@@ -41,6 +29,18 @@ public abstract class zzcmt<T> {
     @Hide
     public static zzcmx zza(int i, String str, long j) {
         return new zzcmx(0, str, Long.valueOf(j));
+    }
+
+    /* access modifiers changed from: protected */
+    @Hide
+    public abstract T zza(zzcnb zzcnb);
+
+    public final String zza() {
+        return this.zzb;
+    }
+
+    public final T zzb() {
+        return this.zzc;
     }
 
     @Hide

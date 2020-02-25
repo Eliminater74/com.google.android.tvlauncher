@@ -1,7 +1,5 @@
 package com.google.android.tvlauncher.util;
 
-import com.google.android.tvlauncher.util.OemConfigurationData;
-
 final /* synthetic */ class OemConfigurationData$$Lambda$0 implements Runnable {
     private final OemConfigurationData arg$1;
     private final OemConfigurationData.OemConfigurationDataLoadingTask arg$2;

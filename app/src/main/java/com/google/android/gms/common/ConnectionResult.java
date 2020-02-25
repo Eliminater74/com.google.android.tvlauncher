@@ -6,10 +6,12 @@ import android.content.IntentSender;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
+
 import com.google.android.gms.common.internal.Hide;
 import com.google.android.gms.common.internal.zzak;
 import com.google.android.gms.internal.zzbkv;
 import com.google.android.gms.internal.zzbky;
+
 import java.util.Arrays;
 
 public final class ConnectionResult extends zzbkv {
@@ -60,34 +62,6 @@ public final class ConnectionResult extends zzbkv {
 
     public ConnectionResult(int i, PendingIntent pendingIntent, String str) {
         this(1, i, pendingIntent, str);
-    }
-
-    public final void startResolutionForResult(Activity activity, int i) throws IntentSender.SendIntentException {
-        if (hasResolution()) {
-            activity.startIntentSenderForResult(this.zzd.getIntentSender(), i, null, 0, 0, 0);
-        }
-    }
-
-    public final boolean hasResolution() {
-        return (this.zzc == 0 || this.zzd == null) ? false : true;
-    }
-
-    public final boolean isSuccess() {
-        return this.zzc == 0;
-    }
-
-    public final int getErrorCode() {
-        return this.zzc;
-    }
-
-    @Nullable
-    public final PendingIntent getResolution() {
-        return this.zzd;
-    }
-
-    @Nullable
-    public final String getErrorMessage() {
-        return this.zze;
     }
 
     static String zza(int i) {
@@ -152,6 +126,34 @@ public final class ConnectionResult extends zzbkv {
                         return sb.toString();
                 }
         }
+    }
+
+    public final void startResolutionForResult(Activity activity, int i) throws IntentSender.SendIntentException {
+        if (hasResolution()) {
+            activity.startIntentSenderForResult(this.zzd.getIntentSender(), i, null, 0, 0, 0);
+        }
+    }
+
+    public final boolean hasResolution() {
+        return (this.zzc == 0 || this.zzd == null) ? false : true;
+    }
+
+    public final boolean isSuccess() {
+        return this.zzc == 0;
+    }
+
+    public final int getErrorCode() {
+        return this.zzc;
+    }
+
+    @Nullable
+    public final PendingIntent getResolution() {
+        return this.zzd;
+    }
+
+    @Nullable
+    public final String getErrorMessage() {
+        return this.zze;
     }
 
     public final boolean equals(Object obj) {

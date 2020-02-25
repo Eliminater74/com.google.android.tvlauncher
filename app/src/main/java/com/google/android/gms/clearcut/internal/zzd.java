@@ -10,6 +10,10 @@ class zzd extends zzp {
     private zzd() {
     }
 
+    /* synthetic */ zzd(zzc zzc) {
+        this();
+    }
+
     public void zza(Status status) {
         throw new UnsupportedOperationException();
     }
@@ -44,9 +48,5 @@ class zzd extends zzp {
 
     public final void zza(DataHolder dataHolder) {
         throw new UnsupportedOperationException();
-    }
-
-    /* synthetic */ zzd(zzc zzc) {
-        this();
     }
 }

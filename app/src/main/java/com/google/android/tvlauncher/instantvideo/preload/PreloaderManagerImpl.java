@@ -1,7 +1,9 @@
 package com.google.android.tvlauncher.instantvideo.preload;
 
 import android.net.Uri;
+
 import com.google.android.tvlauncher.instantvideo.media.MediaPlayer;
+
 import java.util.ArrayList;
 import java.util.List;
 

@@ -4,9 +4,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.util.Log;
+
 import com.google.android.tvlauncher.doubleclick.TrackingUrl;
-import com.google.android.tvlauncher.doubleclick.customcreative.CustomCreativeVideoAd;
 import com.google.android.tvlauncher.doubleclick.proto.nano.AdConfig;
+
 import java.io.InputStream;
 import java.util.Collections;
 

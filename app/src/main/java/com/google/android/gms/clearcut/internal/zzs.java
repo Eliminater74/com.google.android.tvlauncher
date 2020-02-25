@@ -2,6 +2,7 @@ package com.google.android.gms.clearcut.internal;
 
 import android.content.Context;
 import android.util.Log;
+
 import com.google.android.gms.clearcut.ClearcutLogger;
 import com.google.android.gms.internal.zzbmk;
 import com.google.android.gms.internal.zzfij;
@@ -10,6 +11,7 @@ import com.google.android.gms.internal.zzfjh;
 import com.google.android.gms.phenotype.Phenotype;
 import com.google.android.gsf.Gservices;
 import com.google.android.gsf.GservicesKeys;
+
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.HashMap;

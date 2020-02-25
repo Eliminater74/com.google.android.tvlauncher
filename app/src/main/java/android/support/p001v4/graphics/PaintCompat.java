@@ -12,6 +12,9 @@ public final class PaintCompat {
     private static final String TOFU_STRING = "󟿽";
     private static final ThreadLocal<Pair<Rect, Rect>> sRectThreadLocal = new ThreadLocal<>();
 
+    private PaintCompat() {
+    }
+
     public static boolean hasGlyph(@NonNull Paint paint, @NonNull String string) {
         if (Build.VERSION.SDK_INT >= 23) {
             return paint.hasGlyph(string);
@@ -60,8 +63,5 @@ public final class PaintCompat {
         ((Rect) rects.first).setEmpty();
         ((Rect) rects.second).setEmpty();
         return rects;
-    }
-
-    private PaintCompat() {
     }
 }

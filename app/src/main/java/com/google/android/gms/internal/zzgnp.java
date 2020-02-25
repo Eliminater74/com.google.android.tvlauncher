@@ -2,6 +2,7 @@ package com.google.android.gms.internal;
 
 import com.google.common.base.Ascii;
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.io.IOException;
 import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
@@ -11,13 +12,269 @@ import java.util.logging.Logger;
 
 /* compiled from: CodedOutputStream */
 public abstract class zzgnp extends zzgna {
-    private static final Logger zzb = Logger.getLogger(zzgnp.class.getName());
     /* access modifiers changed from: private */
     public static final boolean zzc = zzgrj.zza();
+    private static final Logger zzb = Logger.getLogger(zzgnp.class.getName());
     zzgnr zza;
+
+    private zzgnp() {
+    }
 
     public static zzgnp zza(byte[] bArr) {
         return new zza(bArr, 0, bArr.length);
+    }
+
+    public static zzgnp zza(ByteBuffer byteBuffer) {
+        if (byteBuffer.hasArray()) {
+            return new zzb(byteBuffer);
+        }
+        if (!byteBuffer.isDirect() || byteBuffer.isReadOnly()) {
+            throw new IllegalArgumentException("ByteBuffer is read-only");
+        } else if (zzgrj.zzb()) {
+            return new zze(byteBuffer);
+        } else {
+            return new zzd(byteBuffer);
+        }
+    }
+
+    public static int zzf(int i, int i2) {
+        return zze(i) + zzf(i2);
+    }
+
+    public static int zzg(int i, int i2) {
+        return zze(i) + zzg(i2);
+    }
+
+    public static int zzh(int i, int i2) {
+        return zze(i) + zzg(zzn(i2));
+    }
+
+    public static int zzi(int i, int i2) {
+        return zze(i) + 4;
+    }
+
+    public static int zzj(int i, int i2) {
+        return zze(i) + 4;
+    }
+
+    public static int zzd(int i, long j) {
+        return zze(i) + zze(j);
+    }
+
+    public static int zze(int i, long j) {
+        return zze(i) + zze(j);
+    }
+
+    public static int zzf(int i, long j) {
+        return zze(i) + zze(zzi(j));
+    }
+
+    public static int zzg(int i, long j) {
+        return zze(i) + 8;
+    }
+
+    public static int zzh(int i, long j) {
+        return zze(i) + 8;
+    }
+
+    public static int zzb(int i, float f) {
+        return zze(i) + 4;
+    }
+
+    public static int zzb(int i, double d) {
+        return zze(i) + 8;
+    }
+
+    public static int zzb(int i, boolean z) {
+        return zze(i) + 1;
+    }
+
+    public static int zzk(int i, int i2) {
+        return zze(i) + zzf(i2);
+    }
+
+    public static int zzb(int i, String str) {
+        return zze(i) + zzb(str);
+    }
+
+    public static int zzc(int i, zzgnb zzgnb) {
+        int zze2 = zze(i);
+        int zza2 = zzgnb.zza();
+        return zze2 + zzg(zza2) + zza2;
+    }
+
+    public static int zza(int i, zzgpa zzgpa) {
+        int zze2 = zze(i);
+        int zzb2 = zzgpa.zzb();
+        return zze2 + zzg(zzb2) + zzb2;
+    }
+
+    public static int zzc(int i, zzgpt zzgpt) {
+        return zze(i) + zzb(zzgpt);
+    }
+
+    public static int zzd(int i, zzgpt zzgpt) {
+        return (zze(1) << 1) + zzg(2, i) + zzc(3, zzgpt);
+    }
+
+    public static int zzd(int i, zzgnb zzgnb) {
+        return (zze(1) << 1) + zzg(2, i) + zzc(3, zzgnb);
+    }
+
+    public static int zzb(int i, zzgpa zzgpa) {
+        return (zze(1) << 1) + zzg(2, i) + zza(3, zzgpa);
+    }
+
+    public static int zze(int i) {
+        return zzg(i << 3);
+    }
+
+    public static int zzf(int i) {
+        if (i >= 0) {
+            return zzg(i);
+        }
+        return 10;
+    }
+
+    public static int zzg(int i) {
+        if ((i & -128) == 0) {
+            return 1;
+        }
+        if ((i & -16384) == 0) {
+            return 2;
+        }
+        if ((-2097152 & i) == 0) {
+            return 3;
+        }
+        if ((i & -268435456) == 0) {
+            return 4;
+        }
+        return 5;
+    }
+
+    public static int zzh(int i) {
+        return zzg(zzn(i));
+    }
+
+    public static int zzi(int i) {
+        return 4;
+    }
+
+    public static int zzj(int i) {
+        return 4;
+    }
+
+    public static int zzd(long j) {
+        return zze(j);
+    }
+
+    public static int zze(long j) {
+        int i;
+        if ((-128 & j) == 0) {
+            return 1;
+        }
+        if (j < 0) {
+            return 10;
+        }
+        if ((-34359738368L & j) != 0) {
+            i = 6;
+            j >>>= 28;
+        } else {
+            i = 2;
+        }
+        if ((-2097152 & j) != 0) {
+            i += 2;
+            j >>>= 14;
+        }
+        if ((j & -16384) != 0) {
+            return i + 1;
+        }
+        return i;
+    }
+
+    public static int zzf(long j) {
+        return zze(zzi(j));
+    }
+
+    public static int zzg(long j) {
+        return 8;
+    }
+
+    public static int zzh(long j) {
+        return 8;
+    }
+
+    public static int zzb(float f) {
+        return 4;
+    }
+
+    public static int zzb(double d) {
+        return 8;
+    }
+
+    public static int zzb(boolean z) {
+        return 1;
+    }
+
+    public static int zzk(int i) {
+        return zzf(i);
+    }
+
+    public static int zzb(String str) {
+        int i;
+        try {
+            i = zzgrl.zza(str);
+        } catch (zzgro e) {
+            i = str.getBytes(zzgon.zza).length;
+        }
+        return zzg(i) + i;
+    }
+
+    public static int zza(zzgpa zzgpa) {
+        int zzb2 = zzgpa.zzb();
+        return zzg(zzb2) + zzb2;
+    }
+
+    public static int zzb(zzgnb zzgnb) {
+        int zza2 = zzgnb.zza();
+        return zzg(zza2) + zza2;
+    }
+
+    public static int zzb(byte[] bArr) {
+        int length = bArr.length;
+        return zzg(length) + length;
+    }
+
+    public static int zzb(zzgpt zzgpt) {
+        int zza2 = zzgpt.zza();
+        return zzg(zza2) + zza2;
+    }
+
+    static int zzl(int i) {
+        return zzg(i) + i;
+    }
+
+    private static int zzn(int i) {
+        return (i >> 31) ^ (i << 1);
+    }
+
+    private static long zzi(long j) {
+        return (j >> 63) ^ (j << 1);
+    }
+
+    @Deprecated
+    public static int zzf(int i, zzgpt zzgpt) {
+        return (zze(i) << 1) + zzgpt.zza();
+    }
+
+    @Deprecated
+    public static int zzc(zzgpt zzgpt) {
+        return zzgpt.zza();
+    }
+
+    @Deprecated
+    public static int zzm(int i) {
+        return zzg(i);
     }
 
     public abstract void zza() throws IOException;
@@ -71,6 +328,77 @@ public abstract class zzgnp extends zzgna {
 
     public abstract void zze(int i, int i2) throws IOException;
 
+    public final void zzd(int i, int i2) throws IOException {
+        zzc(i, zzn(i2));
+    }
+
+    public final void zzb(int i, long j) throws IOException {
+        zza(i, zzi(j));
+    }
+
+    public final void zza(int i, float f) throws IOException {
+        zze(i, Float.floatToRawIntBits(f));
+    }
+
+    public final void zza(int i, double d) throws IOException {
+        zzc(i, Double.doubleToRawLongBits(d));
+    }
+
+    public final void zzc(int i) throws IOException {
+        zzb(zzn(i));
+    }
+
+    public final void zzb(long j) throws IOException {
+        zza(zzi(j));
+    }
+
+    public final void zza(float f) throws IOException {
+        zzd(Float.floatToRawIntBits(f));
+    }
+
+    public final void zza(double d) throws IOException {
+        zzc(Double.doubleToRawLongBits(d));
+    }
+
+    public final void zza(boolean z) throws IOException {
+        zza(z ? (byte) 1 : 0);
+    }
+
+    public final void zzc() {
+        if (zzb() != 0) {
+            throw new IllegalStateException("Did not write as much data as expected.");
+        }
+    }
+
+    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+     method: ClspMth{java.util.logging.Logger.logp(java.util.logging.Level, java.lang.String, java.lang.String, java.lang.String, java.lang.Throwable):void}
+     arg types: [java.util.logging.Level, java.lang.String, java.lang.String, java.lang.String, com.google.android.gms.internal.zzgro]
+     candidates:
+      ClspMth{java.util.logging.Logger.logp(java.util.logging.Level, java.lang.String, java.lang.String, java.lang.Throwable, java.util.function.Supplier<java.lang.String>):void}
+      ClspMth{java.util.logging.Logger.logp(java.util.logging.Level, java.lang.String, java.lang.String, java.lang.String, java.lang.Object[]):void}
+      ClspMth{java.util.logging.Logger.logp(java.util.logging.Level, java.lang.String, java.lang.String, java.lang.String, java.lang.Object):void}
+      ClspMth{java.util.logging.Logger.logp(java.util.logging.Level, java.lang.String, java.lang.String, java.lang.String, java.lang.Throwable):void} */
+    /* access modifiers changed from: package-private */
+    public final void zza(String str, zzgro zzgro) throws IOException {
+        zzb.logp(Level.WARNING, "com.google.protobuf.CodedOutputStream", "inefficientWriteStringNoTag", "Converting ill-formed UTF-16. Your Protocol Buffer will not round trip correctly!", (Throwable) zzgro);
+        byte[] bytes = str.getBytes(zzgon.zza);
+        try {
+            zzb(bytes.length);
+            zza(bytes, 0, bytes.length);
+        } catch (IndexOutOfBoundsException e) {
+            throw new zzc(e);
+        } catch (zzc e2) {
+            throw e2;
+        }
+    }
+
+    @Deprecated
+    public final void zze(int i, zzgpt zzgpt) throws IOException {
+        zza(i, 3);
+        zzgpt.zza(this);
+        zza(i, 4);
+    }
+
     /* compiled from: CodedOutputStream */
     public static class zzc extends IOException {
         zzc() {
@@ -123,19 +451,6 @@ public abstract class zzgnp extends zzgna {
                 return
             */
             throw new UnsupportedOperationException("Method not decompiled: com.google.android.gms.internal.zzgnp.zzc.<init>(java.lang.String, java.lang.Throwable):void");
-        }
-    }
-
-    public static zzgnp zza(ByteBuffer byteBuffer) {
-        if (byteBuffer.hasArray()) {
-            return new zzb(byteBuffer);
-        }
-        if (!byteBuffer.isDirect() || byteBuffer.isReadOnly()) {
-            throw new IllegalArgumentException("ByteBuffer is read-only");
-        } else if (zzgrj.zzb()) {
-            return new zze(byteBuffer);
-        } else {
-            return new zzd(byteBuffer);
         }
     }
 
@@ -896,319 +1211,5 @@ public abstract class zzgnp extends zzgna {
         public final int zze() {
             return this.zze - this.zzc;
         }
-    }
-
-    private zzgnp() {
-    }
-
-    public final void zzd(int i, int i2) throws IOException {
-        zzc(i, zzn(i2));
-    }
-
-    public final void zzb(int i, long j) throws IOException {
-        zza(i, zzi(j));
-    }
-
-    public final void zza(int i, float f) throws IOException {
-        zze(i, Float.floatToRawIntBits(f));
-    }
-
-    public final void zza(int i, double d) throws IOException {
-        zzc(i, Double.doubleToRawLongBits(d));
-    }
-
-    public final void zzc(int i) throws IOException {
-        zzb(zzn(i));
-    }
-
-    public final void zzb(long j) throws IOException {
-        zza(zzi(j));
-    }
-
-    public final void zza(float f) throws IOException {
-        zzd(Float.floatToRawIntBits(f));
-    }
-
-    public final void zza(double d) throws IOException {
-        zzc(Double.doubleToRawLongBits(d));
-    }
-
-    public final void zza(boolean z) throws IOException {
-        zza(z ? (byte) 1 : 0);
-    }
-
-    public static int zzf(int i, int i2) {
-        return zze(i) + zzf(i2);
-    }
-
-    public static int zzg(int i, int i2) {
-        return zze(i) + zzg(i2);
-    }
-
-    public static int zzh(int i, int i2) {
-        return zze(i) + zzg(zzn(i2));
-    }
-
-    public static int zzi(int i, int i2) {
-        return zze(i) + 4;
-    }
-
-    public static int zzj(int i, int i2) {
-        return zze(i) + 4;
-    }
-
-    public static int zzd(int i, long j) {
-        return zze(i) + zze(j);
-    }
-
-    public static int zze(int i, long j) {
-        return zze(i) + zze(j);
-    }
-
-    public static int zzf(int i, long j) {
-        return zze(i) + zze(zzi(j));
-    }
-
-    public static int zzg(int i, long j) {
-        return zze(i) + 8;
-    }
-
-    public static int zzh(int i, long j) {
-        return zze(i) + 8;
-    }
-
-    public static int zzb(int i, float f) {
-        return zze(i) + 4;
-    }
-
-    public static int zzb(int i, double d) {
-        return zze(i) + 8;
-    }
-
-    public static int zzb(int i, boolean z) {
-        return zze(i) + 1;
-    }
-
-    public static int zzk(int i, int i2) {
-        return zze(i) + zzf(i2);
-    }
-
-    public static int zzb(int i, String str) {
-        return zze(i) + zzb(str);
-    }
-
-    public static int zzc(int i, zzgnb zzgnb) {
-        int zze2 = zze(i);
-        int zza2 = zzgnb.zza();
-        return zze2 + zzg(zza2) + zza2;
-    }
-
-    public static int zza(int i, zzgpa zzgpa) {
-        int zze2 = zze(i);
-        int zzb2 = zzgpa.zzb();
-        return zze2 + zzg(zzb2) + zzb2;
-    }
-
-    public static int zzc(int i, zzgpt zzgpt) {
-        return zze(i) + zzb(zzgpt);
-    }
-
-    public static int zzd(int i, zzgpt zzgpt) {
-        return (zze(1) << 1) + zzg(2, i) + zzc(3, zzgpt);
-    }
-
-    public static int zzd(int i, zzgnb zzgnb) {
-        return (zze(1) << 1) + zzg(2, i) + zzc(3, zzgnb);
-    }
-
-    public static int zzb(int i, zzgpa zzgpa) {
-        return (zze(1) << 1) + zzg(2, i) + zza(3, zzgpa);
-    }
-
-    public static int zze(int i) {
-        return zzg(i << 3);
-    }
-
-    public static int zzf(int i) {
-        if (i >= 0) {
-            return zzg(i);
-        }
-        return 10;
-    }
-
-    public static int zzg(int i) {
-        if ((i & -128) == 0) {
-            return 1;
-        }
-        if ((i & -16384) == 0) {
-            return 2;
-        }
-        if ((-2097152 & i) == 0) {
-            return 3;
-        }
-        if ((i & -268435456) == 0) {
-            return 4;
-        }
-        return 5;
-    }
-
-    public static int zzh(int i) {
-        return zzg(zzn(i));
-    }
-
-    public static int zzi(int i) {
-        return 4;
-    }
-
-    public static int zzj(int i) {
-        return 4;
-    }
-
-    public static int zzd(long j) {
-        return zze(j);
-    }
-
-    public static int zze(long j) {
-        int i;
-        if ((-128 & j) == 0) {
-            return 1;
-        }
-        if (j < 0) {
-            return 10;
-        }
-        if ((-34359738368L & j) != 0) {
-            i = 6;
-            j >>>= 28;
-        } else {
-            i = 2;
-        }
-        if ((-2097152 & j) != 0) {
-            i += 2;
-            j >>>= 14;
-        }
-        if ((j & -16384) != 0) {
-            return i + 1;
-        }
-        return i;
-    }
-
-    public static int zzf(long j) {
-        return zze(zzi(j));
-    }
-
-    public static int zzg(long j) {
-        return 8;
-    }
-
-    public static int zzh(long j) {
-        return 8;
-    }
-
-    public static int zzb(float f) {
-        return 4;
-    }
-
-    public static int zzb(double d) {
-        return 8;
-    }
-
-    public static int zzb(boolean z) {
-        return 1;
-    }
-
-    public static int zzk(int i) {
-        return zzf(i);
-    }
-
-    public static int zzb(String str) {
-        int i;
-        try {
-            i = zzgrl.zza(str);
-        } catch (zzgro e) {
-            i = str.getBytes(zzgon.zza).length;
-        }
-        return zzg(i) + i;
-    }
-
-    public static int zza(zzgpa zzgpa) {
-        int zzb2 = zzgpa.zzb();
-        return zzg(zzb2) + zzb2;
-    }
-
-    public static int zzb(zzgnb zzgnb) {
-        int zza2 = zzgnb.zza();
-        return zzg(zza2) + zza2;
-    }
-
-    public static int zzb(byte[] bArr) {
-        int length = bArr.length;
-        return zzg(length) + length;
-    }
-
-    public static int zzb(zzgpt zzgpt) {
-        int zza2 = zzgpt.zza();
-        return zzg(zza2) + zza2;
-    }
-
-    static int zzl(int i) {
-        return zzg(i) + i;
-    }
-
-    private static int zzn(int i) {
-        return (i >> 31) ^ (i << 1);
-    }
-
-    private static long zzi(long j) {
-        return (j >> 63) ^ (j << 1);
-    }
-
-    public final void zzc() {
-        if (zzb() != 0) {
-            throw new IllegalStateException("Did not write as much data as expected.");
-        }
-    }
-
-    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-     method: ClspMth{java.util.logging.Logger.logp(java.util.logging.Level, java.lang.String, java.lang.String, java.lang.String, java.lang.Throwable):void}
-     arg types: [java.util.logging.Level, java.lang.String, java.lang.String, java.lang.String, com.google.android.gms.internal.zzgro]
-     candidates:
-      ClspMth{java.util.logging.Logger.logp(java.util.logging.Level, java.lang.String, java.lang.String, java.lang.Throwable, java.util.function.Supplier<java.lang.String>):void}
-      ClspMth{java.util.logging.Logger.logp(java.util.logging.Level, java.lang.String, java.lang.String, java.lang.String, java.lang.Object[]):void}
-      ClspMth{java.util.logging.Logger.logp(java.util.logging.Level, java.lang.String, java.lang.String, java.lang.String, java.lang.Object):void}
-      ClspMth{java.util.logging.Logger.logp(java.util.logging.Level, java.lang.String, java.lang.String, java.lang.String, java.lang.Throwable):void} */
-    /* access modifiers changed from: package-private */
-    public final void zza(String str, zzgro zzgro) throws IOException {
-        zzb.logp(Level.WARNING, "com.google.protobuf.CodedOutputStream", "inefficientWriteStringNoTag", "Converting ill-formed UTF-16. Your Protocol Buffer will not round trip correctly!", (Throwable) zzgro);
-        byte[] bytes = str.getBytes(zzgon.zza);
-        try {
-            zzb(bytes.length);
-            zza(bytes, 0, bytes.length);
-        } catch (IndexOutOfBoundsException e) {
-            throw new zzc(e);
-        } catch (zzc e2) {
-            throw e2;
-        }
-    }
-
-    @Deprecated
-    public final void zze(int i, zzgpt zzgpt) throws IOException {
-        zza(i, 3);
-        zzgpt.zza(this);
-        zza(i, 4);
-    }
-
-    @Deprecated
-    public static int zzf(int i, zzgpt zzgpt) {
-        return (zze(i) << 1) + zzgpt.zza();
-    }
-
-    @Deprecated
-    public static int zzc(zzgpt zzgpt) {
-        return zzgpt.zza();
-    }
-
-    @Deprecated
-    public static int zzm(int i) {
-        return zzg(i);
     }
 }

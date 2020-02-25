@@ -1,6 +1,7 @@
 package com.google.android.gms.internal;
 
 import androidx.tvprovider.media.p005tv.TvContractCompat;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -12,13 +13,6 @@ final class zzgnn implements zzgqk {
     private int zzc;
     private int zzd = 0;
 
-    public static zzgnn zza(zzgnk zzgnk) {
-        if (zzgnk.zzc != null) {
-            return zzgnk.zzc;
-        }
-        return new zzgnn(zzgnk);
-    }
-
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
      method: com.google.android.gms.internal.zzgon.zza(java.lang.Object, java.lang.String):T
      arg types: [com.google.android.gms.internal.zzgnk, java.lang.String]
@@ -28,6 +22,25 @@ final class zzgnn implements zzgqk {
     private zzgnn(zzgnk zzgnk) {
         this.zza = (zzgnk) zzgon.zza((Object) zzgnk, TvContractCompat.PARAM_INPUT);
         this.zza.zzc = this;
+    }
+
+    public static zzgnn zza(zzgnk zzgnk) {
+        if (zzgnk.zzc != null) {
+            return zzgnk.zzc;
+        }
+        return new zzgnn(zzgnk);
+    }
+
+    private static void zzb(int i) throws IOException {
+        if ((i & 7) != 0) {
+            throw zzgot.zzh();
+        }
+    }
+
+    private static void zzc(int i) throws IOException {
+        if ((i & 3) != 0) {
+            throw zzgot.zzh();
+        }
     }
 
     public final int zza() throws IOException {
@@ -1007,12 +1020,6 @@ final class zzgnn implements zzgqk {
         }
     }
 
-    private static void zzb(int i) throws IOException {
-        if ((i & 7) != 0) {
-            throw zzgot.zzh();
-        }
-    }
-
     public final <K, V> void zza(Map<K, V> map, zzgpm<K, V> zzgpm, zzgnv zzgnv) throws IOException {
         zza(2);
         int zzd2 = this.zza.zzd(this.zza.zzm());
@@ -1081,12 +1088,6 @@ final class zzgnn implements zzgqk {
                 return Long.valueOf(zzf());
             default:
                 throw new RuntimeException("unsupported field type.");
-        }
-    }
-
-    private static void zzc(int i) throws IOException {
-        if ((i & 3) != 0) {
-            throw zzgot.zzh();
         }
     }
 

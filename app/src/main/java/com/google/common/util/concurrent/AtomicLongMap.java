@@ -6,19 +6,21 @@ import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
+
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
-import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
 
 @GwtCompatible
 public final class AtomicLongMap<K> implements Serializable {
+    private final ConcurrentHashMap<K, AtomicLong> map;
     @MonotonicNonNullDecl
     private transient Map<K, Long> asMap;
-    private final ConcurrentHashMap<K, AtomicLong> map;
 
     private AtomicLongMap(ConcurrentHashMap<K, AtomicLong> map2) {
         this.map = (ConcurrentHashMap) Preconditions.checkNotNull(map2);

@@ -7,6 +7,10 @@ import android.support.annotation.RestrictTo;
 /* renamed from: android.support.v7.view.menu.MenuView */
 public interface MenuView {
 
+    int getWindowAnimations();
+
+    void initialize(MenuBuilder menuBuilder);
+
     /* renamed from: android.support.v7.view.menu.MenuView$ItemView */
     public interface ItemView {
         MenuItemImpl getItemData();
@@ -29,8 +33,4 @@ public interface MenuView {
 
         boolean showsIcon();
     }
-
-    int getWindowAnimations();
-
-    void initialize(MenuBuilder menuBuilder);
 }

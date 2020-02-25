@@ -9,6 +9,7 @@ import android.os.Message;
 import android.support.p001v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import android.view.SurfaceView;
+
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -28,6 +29,7 @@ import com.google.android.tvlauncher.instantvideo.media.MediaPlayer;
 import com.google.android.tvlauncher.instantvideo.media.impl.ExoPlayerImpl;
 import com.google.android.tvlauncher.instantvideo.preload.Preloader;
 import com.google.android.tvlauncher.instantvideo.preload.PreloaderManager;
+
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -35,9 +37,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class ExoPlayerPreloaderManager extends PreloaderManager {
-    private static final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
     /* access modifiers changed from: private */
     public static final byte[] BUFFER = new byte[1000];
+    private static final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
     private static final boolean DEBUG = false;
     private static final int MSG_START_PRELOAD = 100;
     private static final int PLAYER_VIEW_POOL_SIZE = 2;
@@ -48,11 +50,11 @@ public class ExoPlayerPreloaderManager extends PreloaderManager {
     public final CacheDataSourceFactory cacheDataSourceFactory;
     /* access modifiers changed from: private */
     public final long cacheSizePerVideo;
-    private final Context context;
     /* access modifiers changed from: private */
     public final Handler handler = new Handler(Looper.getMainLooper());
     /* access modifiers changed from: private */
     public final HandlerThread handlerThread;
+    private final Context context;
     private final Deque<SimpleExoPlayerView> playerViewPool = new ArrayDeque();
     private final Set<Uri> preloadedVideo = new HashSet();
 
@@ -137,9 +139,9 @@ public class ExoPlayerPreloaderManager extends PreloaderManager {
     private class PreloadHandler extends Handler {
         /* access modifiers changed from: private */
         public final Preloader.OnPreloadFinishedListener onPreloadFinishedListener;
+        private final Uri videoUri;
         /* access modifiers changed from: private */
         public volatile boolean stopped;
-        private final Uri videoUri;
 
         PreloadHandler(Looper looper, Uri videoUri2, Preloader.OnPreloadFinishedListener onPreloadFinishedListener2) {
             super(looper);

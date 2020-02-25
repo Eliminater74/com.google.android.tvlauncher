@@ -7,8 +7,9 @@ import android.os.ParcelFileDescriptor;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
+
 import com.bumptech.glide.load.Options;
-import com.bumptech.glide.load.model.ModelLoader;
+
 import java.io.InputStream;
 
 public class ResourceLoader<Data> implements ModelLoader<Integer, Data> {

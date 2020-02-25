@@ -1,7 +1,5 @@
 package com.google.android.libraries.performance.primes;
 
-import com.google.android.libraries.performance.primes.PrimesStartupMeasure;
-
 /* renamed from: com.google.android.libraries.performance.primes.PrimesStartupMeasure$StartupCallbacks$MyOnPreDrawListener$$Lambda$0 */
 final /* synthetic */ class C1109xee2b9e1f implements Runnable {
     private final PrimesStartupMeasure.StartupCallbacks.MyOnPreDrawListener arg$1;

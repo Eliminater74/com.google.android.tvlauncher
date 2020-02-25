@@ -2,14 +2,13 @@ package com.google.android.exoplayer2;
 
 import android.support.annotation.CheckResult;
 import android.support.annotation.Nullable;
-import com.google.android.exoplayer2.Timeline;
+
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelectorResult;
 
 final class PlaybackInfo {
     private static final MediaSource.MediaPeriodId DUMMY_MEDIA_PERIOD_ID = new MediaSource.MediaPeriodId(new Object());
-    public volatile long bufferedPositionUs;
     public final long contentPositionUs;
     public final boolean isLoading;
     public final MediaSource.MediaPeriodId loadingMediaPeriodId;
@@ -17,17 +16,13 @@ final class PlaybackInfo {
     public final Object manifest;
     public final MediaSource.MediaPeriodId periodId;
     public final int playbackState;
-    public volatile long positionUs;
     public final long startPositionUs;
     public final Timeline timeline;
-    public volatile long totalBufferedDurationUs;
     public final TrackGroupArray trackGroups;
     public final TrackSelectorResult trackSelectorResult;
-
-    public static PlaybackInfo createDummy(long startPositionUs2, TrackSelectorResult emptyTrackSelectorResult) {
-        TrackSelectorResult trackSelectorResult2 = emptyTrackSelectorResult;
-        return new PlaybackInfo(Timeline.EMPTY, null, DUMMY_MEDIA_PERIOD_ID, startPositionUs2, C0841C.TIME_UNSET, 1, false, TrackGroupArray.EMPTY, trackSelectorResult2, DUMMY_MEDIA_PERIOD_ID, startPositionUs2, 0, startPositionUs2);
-    }
+    public volatile long bufferedPositionUs;
+    public volatile long positionUs;
+    public volatile long totalBufferedDurationUs;
 
     public PlaybackInfo(Timeline timeline2, @Nullable Object manifest2, MediaSource.MediaPeriodId periodId2, long startPositionUs2, long contentPositionUs2, int playbackState2, boolean isLoading2, TrackGroupArray trackGroups2, TrackSelectorResult trackSelectorResult2, MediaSource.MediaPeriodId loadingMediaPeriodId2, long bufferedPositionUs2, long totalBufferedDurationUs2, long positionUs2) {
         this.timeline = timeline2;
@@ -43,6 +38,11 @@ final class PlaybackInfo {
         this.bufferedPositionUs = bufferedPositionUs2;
         this.totalBufferedDurationUs = totalBufferedDurationUs2;
         this.positionUs = positionUs2;
+    }
+
+    public static PlaybackInfo createDummy(long startPositionUs2, TrackSelectorResult emptyTrackSelectorResult) {
+        TrackSelectorResult trackSelectorResult2 = emptyTrackSelectorResult;
+        return new PlaybackInfo(Timeline.EMPTY, null, DUMMY_MEDIA_PERIOD_ID, startPositionUs2, C0841C.TIME_UNSET, 1, false, TrackGroupArray.EMPTY, trackSelectorResult2, DUMMY_MEDIA_PERIOD_ID, startPositionUs2, 0, startPositionUs2);
     }
 
     public MediaSource.MediaPeriodId getDummyFirstMediaPeriodId(boolean shuffleModeEnabled, Timeline.Window window) {

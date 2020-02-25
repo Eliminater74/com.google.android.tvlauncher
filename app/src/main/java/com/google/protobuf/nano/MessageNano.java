@@ -8,32 +8,6 @@ public abstract class MessageNano {
     public static final int UNSET_ENUM_VALUE = Integer.MIN_VALUE;
     protected volatile int cachedSize = -1;
 
-    public interface GeneratedMapEntry {
-    }
-
-    public abstract MessageNano mergeFrom(CodedInputByteBufferNano codedInputByteBufferNano) throws IOException;
-
-    public int getCachedSize() {
-        if (this.cachedSize < 0) {
-            getSerializedSize();
-        }
-        return this.cachedSize;
-    }
-
-    public int getSerializedSize() {
-        int size = computeSerializedSize();
-        this.cachedSize = size;
-        return size;
-    }
-
-    /* access modifiers changed from: protected */
-    public int computeSerializedSize() {
-        return 0;
-    }
-
-    public void writeTo(CodedOutputByteBufferNano output) throws IOException {
-    }
-
     public static final byte[] toByteArray(MessageNano msg) {
         byte[] result = new byte[msg.getSerializedSize()];
         toByteArray(msg, result, 0, result.length);
@@ -118,11 +92,37 @@ public abstract class MessageNano {
         return Arrays.equals(aByteArray, bByteArray);
     }
 
+    public abstract MessageNano mergeFrom(CodedInputByteBufferNano codedInputByteBufferNano) throws IOException;
+
+    public int getCachedSize() {
+        if (this.cachedSize < 0) {
+            getSerializedSize();
+        }
+        return this.cachedSize;
+    }
+
+    public int getSerializedSize() {
+        int size = computeSerializedSize();
+        this.cachedSize = size;
+        return size;
+    }
+
+    /* access modifiers changed from: protected */
+    public int computeSerializedSize() {
+        return 0;
+    }
+
+    public void writeTo(CodedOutputByteBufferNano output) throws IOException {
+    }
+
     public String toString() {
         return MessageNanoPrinter.print(this);
     }
 
     public MessageNano clone() throws CloneNotSupportedException {
         return (MessageNano) super.clone();
+    }
+
+    public interface GeneratedMapEntry {
     }
 }

@@ -2,24 +2,32 @@ package com.google.android.exoplayer2.upstream;
 
 import android.net.Uri;
 import android.support.annotation.Nullable;
-import com.google.android.exoplayer2.upstream.Loader;
+
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
 public final class ParsingLoadable<T> implements Loader.Loadable {
-    private final StatsDataSource dataSource;
     public final DataSpec dataSpec;
+    public final int type;
+    private final StatsDataSource dataSource;
     private final Parser<? extends T> parser;
     @Nullable
     private volatile T result;
-    public final int type;
 
-    public interface Parser<T> {
-        T parse(Uri uri, InputStream inputStream) throws IOException;
+    public ParsingLoadable(DataSource dataSource2, Uri uri, int type2, Parser<? extends T> parser2) {
+        this(dataSource2, new DataSpec(uri, 1), type2, parser2);
+    }
+
+    public ParsingLoadable(DataSource dataSource2, DataSpec dataSpec2, int type2, Parser<? extends T> parser2) {
+        this.dataSource = new StatsDataSource(dataSource2);
+        this.dataSpec = dataSpec2;
+        this.type = type2;
+        this.parser = parser2;
     }
 
     public static <T> T load(DataSource dataSource2, Parser<? extends T> parser2, Uri uri, int type2) throws IOException {
@@ -32,17 +40,6 @@ public final class ParsingLoadable<T> implements Loader.Loadable {
         ParsingLoadable<T> loadable = new ParsingLoadable<>(dataSource2, dataSpec2, type2, parser2);
         loadable.load();
         return Assertions.checkNotNull(loadable.getResult());
-    }
-
-    public ParsingLoadable(DataSource dataSource2, Uri uri, int type2, Parser<? extends T> parser2) {
-        this(dataSource2, new DataSpec(uri, 1), type2, parser2);
-    }
-
-    public ParsingLoadable(DataSource dataSource2, DataSpec dataSpec2, int type2, Parser<? extends T> parser2) {
-        this.dataSource = new StatsDataSource(dataSource2);
-        this.dataSpec = dataSpec2;
-        this.type = type2;
-        this.parser = parser2;
     }
 
     @Nullable
@@ -74,5 +71,9 @@ public final class ParsingLoadable<T> implements Loader.Loadable {
         } finally {
             Util.closeQuietly(inputStream);
         }
+    }
+
+    public interface Parser<T> {
+        T parse(Uri uri, InputStream inputStream) throws IOException;
     }
 }

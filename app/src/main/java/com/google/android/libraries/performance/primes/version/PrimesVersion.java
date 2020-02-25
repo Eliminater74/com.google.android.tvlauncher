@@ -2,6 +2,7 @@ package com.google.android.libraries.performance.primes.version;
 
 import android.content.Context;
 import android.content.res.Resources;
+
 import com.google.android.libraries.performance.primes.PrimesLog;
 
 public final class PrimesVersion {

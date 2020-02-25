@@ -5,6 +5,9 @@ import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.base.Converter;
 import com.google.common.base.Preconditions;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.Serializable;
 import java.util.AbstractList;
 import java.util.Arrays;
@@ -13,7 +16,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.RandomAccess;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible(emulated = true)
 public final class Floats {
@@ -130,32 +132,6 @@ public final class Floats {
         return result;
     }
 
-    private static final class FloatConverter extends Converter<String, Float> implements Serializable {
-        static final FloatConverter INSTANCE = new FloatConverter();
-        private static final long serialVersionUID = 1;
-
-        private FloatConverter() {
-        }
-
-        /* access modifiers changed from: protected */
-        public Float doForward(String value) {
-            return Float.valueOf(value);
-        }
-
-        /* access modifiers changed from: protected */
-        public String doBackward(Float value) {
-            return value.toString();
-        }
-
-        public String toString() {
-            return "Floats.stringConverter()";
-        }
-
-        private Object readResolve() {
-            return INSTANCE;
-        }
-    }
-
     @Beta
     public static Converter<String, Float> stringConverter() {
         return FloatConverter.INSTANCE;
@@ -187,25 +163,6 @@ public final class Floats {
 
     public static Comparator<float[]> lexicographicalComparator() {
         return LexicographicalComparator.INSTANCE;
-    }
-
-    private enum LexicographicalComparator implements Comparator<float[]> {
-        INSTANCE;
-
-        public int compare(float[] left, float[] right) {
-            int minLength = Math.min(left.length, right.length);
-            for (int i = 0; i < minLength; i++) {
-                int result = Float.compare(left[i], right[i]);
-                if (result != 0) {
-                    return result;
-                }
-            }
-            return left.length - right.length;
-        }
-
-        public String toString() {
-            return "Floats.lexicographicalComparator()";
-        }
     }
 
     public static void sortDescending(float[] array) {
@@ -255,6 +212,65 @@ public final class Floats {
             return Collections.emptyList();
         }
         return new FloatArrayAsList(backingArray);
+    }
+
+    @NullableDecl
+    @GwtIncompatible
+    @Beta
+    public static Float tryParse(String string) {
+        if (!Doubles.FLOATING_POINT_PATTERN.matcher(string).matches()) {
+            return null;
+        }
+        try {
+            return Float.valueOf(Float.parseFloat(string));
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    private enum LexicographicalComparator implements Comparator<float[]> {
+        INSTANCE;
+
+        public int compare(float[] left, float[] right) {
+            int minLength = Math.min(left.length, right.length);
+            for (int i = 0; i < minLength; i++) {
+                int result = Float.compare(left[i], right[i]);
+                if (result != 0) {
+                    return result;
+                }
+            }
+            return left.length - right.length;
+        }
+
+        public String toString() {
+            return "Floats.lexicographicalComparator()";
+        }
+    }
+
+    private static final class FloatConverter extends Converter<String, Float> implements Serializable {
+        static final FloatConverter INSTANCE = new FloatConverter();
+        private static final long serialVersionUID = 1;
+
+        private FloatConverter() {
+        }
+
+        /* access modifiers changed from: protected */
+        public Float doForward(String value) {
+            return Float.valueOf(value);
+        }
+
+        /* access modifiers changed from: protected */
+        public String doBackward(Float value) {
+            return value.toString();
+        }
+
+        public String toString() {
+            return "Floats.stringConverter()";
+        }
+
+        private Object readResolve() {
+            return INSTANCE;
+        }
     }
 
     @GwtCompatible
@@ -374,20 +390,6 @@ public final class Floats {
         /* access modifiers changed from: package-private */
         public float[] toFloatArray() {
             return Arrays.copyOfRange(this.array, this.start, this.end);
-        }
-    }
-
-    @NullableDecl
-    @GwtIncompatible
-    @Beta
-    public static Float tryParse(String string) {
-        if (!Doubles.FLOATING_POINT_PATTERN.matcher(string).matches()) {
-            return null;
-        }
-        try {
-            return Float.valueOf(Float.parseFloat(string));
-        } catch (NumberFormatException e) {
-            return null;
         }
     }
 }

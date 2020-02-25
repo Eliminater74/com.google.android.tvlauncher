@@ -15,6 +15,7 @@ import com.google.protobuf.ProtoMessage;
 import com.google.protobuf.ProtoPresenceBits;
 import com.google.protobuf.ProtoPresenceCheckedField;
 import com.google.protobuf.ProtoSyntax;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -22,6 +23,205 @@ import java.util.Collections;
 import java.util.List;
 
 public final class PrimesHeapDumpProto {
+
+    private PrimesHeapDumpProto() {
+    }
+
+    public static void registerAllExtensions(ExtensionRegistryLite registry) {
+    }
+
+    public enum PrimitiveType implements Internal.EnumLite {
+        BOOLEAN(4),
+        CHAR(5),
+        FLOAT(6),
+        DOUBLE(7),
+        BYTE(8),
+        SHORT(9),
+        INT(10),
+        LONG(11);
+
+        public static final int BOOLEAN_VALUE = 4;
+        public static final int BYTE_VALUE = 8;
+        public static final int CHAR_VALUE = 5;
+        public static final int DOUBLE_VALUE = 7;
+        public static final int FLOAT_VALUE = 6;
+        public static final int INT_VALUE = 10;
+        public static final int LONG_VALUE = 11;
+        public static final int SHORT_VALUE = 9;
+        private static final Internal.EnumLiteMap<PrimitiveType> internalValueMap = new Internal.EnumLiteMap<PrimitiveType>() {
+            public PrimitiveType findValueByNumber(int number) {
+                return PrimitiveType.forNumber(number);
+            }
+        };
+        private final int value;
+
+        private PrimitiveType(int value2) {
+            this.value = value2;
+        }
+
+        public static PrimitiveType forNumber(int value2) {
+            switch (value2) {
+                case 4:
+                    return BOOLEAN;
+                case 5:
+                    return CHAR;
+                case 6:
+                    return FLOAT;
+                case 7:
+                    return DOUBLE;
+                case 8:
+                    return BYTE;
+                case 9:
+                    return SHORT;
+                case 10:
+                    return INT;
+                case 11:
+                    return LONG;
+                default:
+                    return null;
+            }
+        }
+
+        public static Internal.EnumLiteMap<PrimitiveType> internalGetValueMap() {
+            return internalValueMap;
+        }
+
+        public static Internal.EnumVerifier internalGetVerifier() {
+            return PrimitiveTypeVerifier.INSTANCE;
+        }
+
+        public final int getNumber() {
+            return this.value;
+        }
+
+        private static final class PrimitiveTypeVerifier implements Internal.EnumVerifier {
+            static final Internal.EnumVerifier INSTANCE = new PrimitiveTypeVerifier();
+
+            private PrimitiveTypeVerifier() {
+            }
+
+            public boolean isInRange(int number) {
+                return PrimitiveType.forNumber(number) != null;
+            }
+        }
+    }
+
+    public enum RootTag implements Internal.EnumLite {
+        ROOT_TAG_DEFAULT(0),
+        UNKNOWN(255),
+        JNI_GLOBAL(1),
+        JNI_LOCAL(2),
+        JAVA_LOCAL(3),
+        NATIVE_STACK(4),
+        STICKY_CLASS(5),
+        THREAD_BLOCK(6),
+        MONITOR_USED(7),
+        THREAD_OBJECT(8),
+        INTERNED_STRING(137),
+        FINALIZING(138),
+        DEBUGGER(139),
+        REFERENCE_CLEANUP(140),
+        VM_INTERNAL(141),
+        JNI_MONITOR(142),
+        UNREACHABLE(144);
+
+        public static final int DEBUGGER_VALUE = 139;
+        public static final int FINALIZING_VALUE = 138;
+        public static final int INTERNED_STRING_VALUE = 137;
+        public static final int JAVA_LOCAL_VALUE = 3;
+        public static final int JNI_GLOBAL_VALUE = 1;
+        public static final int JNI_LOCAL_VALUE = 2;
+        public static final int JNI_MONITOR_VALUE = 142;
+        public static final int MONITOR_USED_VALUE = 7;
+        public static final int NATIVE_STACK_VALUE = 4;
+        public static final int REFERENCE_CLEANUP_VALUE = 140;
+        public static final int ROOT_TAG_DEFAULT_VALUE = 0;
+        public static final int STICKY_CLASS_VALUE = 5;
+        public static final int THREAD_BLOCK_VALUE = 6;
+        public static final int THREAD_OBJECT_VALUE = 8;
+        public static final int UNKNOWN_VALUE = 255;
+        public static final int UNREACHABLE_VALUE = 144;
+        public static final int VM_INTERNAL_VALUE = 141;
+        private static final Internal.EnumLiteMap<RootTag> internalValueMap = new Internal.EnumLiteMap<RootTag>() {
+            public RootTag findValueByNumber(int number) {
+                return RootTag.forNumber(number);
+            }
+        };
+        private final int value;
+
+        private RootTag(int value2) {
+            this.value = value2;
+        }
+
+        public static RootTag forNumber(int value2) {
+            if (value2 == 144) {
+                return UNREACHABLE;
+            }
+            if (value2 == 255) {
+                return UNKNOWN;
+            }
+            switch (value2) {
+                case 0:
+                    return ROOT_TAG_DEFAULT;
+                case 1:
+                    return JNI_GLOBAL;
+                case 2:
+                    return JNI_LOCAL;
+                case 3:
+                    return JAVA_LOCAL;
+                case 4:
+                    return NATIVE_STACK;
+                case 5:
+                    return STICKY_CLASS;
+                case 6:
+                    return THREAD_BLOCK;
+                case 7:
+                    return MONITOR_USED;
+                case 8:
+                    return THREAD_OBJECT;
+                default:
+                    switch (value2) {
+                        case 137:
+                            return INTERNED_STRING;
+                        case 138:
+                            return FINALIZING;
+                        case 139:
+                            return DEBUGGER;
+                        case 140:
+                            return REFERENCE_CLEANUP;
+                        case 141:
+                            return VM_INTERNAL;
+                        case 142:
+                            return JNI_MONITOR;
+                        default:
+                            return null;
+                    }
+            }
+        }
+
+        public static Internal.EnumLiteMap<RootTag> internalGetValueMap() {
+            return internalValueMap;
+        }
+
+        public static Internal.EnumVerifier internalGetVerifier() {
+            return RootTagVerifier.INSTANCE;
+        }
+
+        public final int getNumber() {
+            return this.value;
+        }
+
+        private static final class RootTagVerifier implements Internal.EnumVerifier {
+            static final Internal.EnumVerifier INSTANCE = new RootTagVerifier();
+
+            private RootTagVerifier() {
+            }
+
+            public boolean isInRange(int number) {
+                return RootTag.forNumber(number) != null;
+            }
+        }
+    }
 
     public interface ArrayInstanceOrBuilder extends MessageLiteOrBuilder {
         int getClazz();
@@ -183,205 +383,6 @@ public final class PrimesHeapDumpProto {
         boolean hasTag();
     }
 
-    private PrimesHeapDumpProto() {
-    }
-
-    public static void registerAllExtensions(ExtensionRegistryLite registry) {
-    }
-
-    public enum PrimitiveType implements Internal.EnumLite {
-        BOOLEAN(4),
-        CHAR(5),
-        FLOAT(6),
-        DOUBLE(7),
-        BYTE(8),
-        SHORT(9),
-        INT(10),
-        LONG(11);
-        
-        public static final int BOOLEAN_VALUE = 4;
-        public static final int BYTE_VALUE = 8;
-        public static final int CHAR_VALUE = 5;
-        public static final int DOUBLE_VALUE = 7;
-        public static final int FLOAT_VALUE = 6;
-        public static final int INT_VALUE = 10;
-        public static final int LONG_VALUE = 11;
-        public static final int SHORT_VALUE = 9;
-        private static final Internal.EnumLiteMap<PrimitiveType> internalValueMap = new Internal.EnumLiteMap<PrimitiveType>() {
-            public PrimitiveType findValueByNumber(int number) {
-                return PrimitiveType.forNumber(number);
-            }
-        };
-        private final int value;
-
-        public final int getNumber() {
-            return this.value;
-        }
-
-        public static PrimitiveType forNumber(int value2) {
-            switch (value2) {
-                case 4:
-                    return BOOLEAN;
-                case 5:
-                    return CHAR;
-                case 6:
-                    return FLOAT;
-                case 7:
-                    return DOUBLE;
-                case 8:
-                    return BYTE;
-                case 9:
-                    return SHORT;
-                case 10:
-                    return INT;
-                case 11:
-                    return LONG;
-                default:
-                    return null;
-            }
-        }
-
-        public static Internal.EnumLiteMap<PrimitiveType> internalGetValueMap() {
-            return internalValueMap;
-        }
-
-        public static Internal.EnumVerifier internalGetVerifier() {
-            return PrimitiveTypeVerifier.INSTANCE;
-        }
-
-        private static final class PrimitiveTypeVerifier implements Internal.EnumVerifier {
-            static final Internal.EnumVerifier INSTANCE = new PrimitiveTypeVerifier();
-
-            private PrimitiveTypeVerifier() {
-            }
-
-            public boolean isInRange(int number) {
-                return PrimitiveType.forNumber(number) != null;
-            }
-        }
-
-        private PrimitiveType(int value2) {
-            this.value = value2;
-        }
-    }
-
-    public enum RootTag implements Internal.EnumLite {
-        ROOT_TAG_DEFAULT(0),
-        UNKNOWN(255),
-        JNI_GLOBAL(1),
-        JNI_LOCAL(2),
-        JAVA_LOCAL(3),
-        NATIVE_STACK(4),
-        STICKY_CLASS(5),
-        THREAD_BLOCK(6),
-        MONITOR_USED(7),
-        THREAD_OBJECT(8),
-        INTERNED_STRING(137),
-        FINALIZING(138),
-        DEBUGGER(139),
-        REFERENCE_CLEANUP(140),
-        VM_INTERNAL(141),
-        JNI_MONITOR(142),
-        UNREACHABLE(144);
-        
-        public static final int DEBUGGER_VALUE = 139;
-        public static final int FINALIZING_VALUE = 138;
-        public static final int INTERNED_STRING_VALUE = 137;
-        public static final int JAVA_LOCAL_VALUE = 3;
-        public static final int JNI_GLOBAL_VALUE = 1;
-        public static final int JNI_LOCAL_VALUE = 2;
-        public static final int JNI_MONITOR_VALUE = 142;
-        public static final int MONITOR_USED_VALUE = 7;
-        public static final int NATIVE_STACK_VALUE = 4;
-        public static final int REFERENCE_CLEANUP_VALUE = 140;
-        public static final int ROOT_TAG_DEFAULT_VALUE = 0;
-        public static final int STICKY_CLASS_VALUE = 5;
-        public static final int THREAD_BLOCK_VALUE = 6;
-        public static final int THREAD_OBJECT_VALUE = 8;
-        public static final int UNKNOWN_VALUE = 255;
-        public static final int UNREACHABLE_VALUE = 144;
-        public static final int VM_INTERNAL_VALUE = 141;
-        private static final Internal.EnumLiteMap<RootTag> internalValueMap = new Internal.EnumLiteMap<RootTag>() {
-            public RootTag findValueByNumber(int number) {
-                return RootTag.forNumber(number);
-            }
-        };
-        private final int value;
-
-        public final int getNumber() {
-            return this.value;
-        }
-
-        public static RootTag forNumber(int value2) {
-            if (value2 == 144) {
-                return UNREACHABLE;
-            }
-            if (value2 == 255) {
-                return UNKNOWN;
-            }
-            switch (value2) {
-                case 0:
-                    return ROOT_TAG_DEFAULT;
-                case 1:
-                    return JNI_GLOBAL;
-                case 2:
-                    return JNI_LOCAL;
-                case 3:
-                    return JAVA_LOCAL;
-                case 4:
-                    return NATIVE_STACK;
-                case 5:
-                    return STICKY_CLASS;
-                case 6:
-                    return THREAD_BLOCK;
-                case 7:
-                    return MONITOR_USED;
-                case 8:
-                    return THREAD_OBJECT;
-                default:
-                    switch (value2) {
-                        case 137:
-                            return INTERNED_STRING;
-                        case 138:
-                            return FINALIZING;
-                        case 139:
-                            return DEBUGGER;
-                        case 140:
-                            return REFERENCE_CLEANUP;
-                        case 141:
-                            return VM_INTERNAL;
-                        case 142:
-                            return JNI_MONITOR;
-                        default:
-                            return null;
-                    }
-            }
-        }
-
-        public static Internal.EnumLiteMap<RootTag> internalGetValueMap() {
-            return internalValueMap;
-        }
-
-        public static Internal.EnumVerifier internalGetVerifier() {
-            return RootTagVerifier.INSTANCE;
-        }
-
-        private static final class RootTagVerifier implements Internal.EnumVerifier {
-            static final Internal.EnumVerifier INSTANCE = new RootTagVerifier();
-
-            private RootTagVerifier() {
-            }
-
-            public boolean isInRange(int number) {
-                return RootTag.forNumber(number) != null;
-            }
-        }
-
-        private RootTag(int value2) {
-            this.value = value2;
-        }
-    }
-
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
     public static final class PrimesHeapDump extends GeneratedMessageLite<PrimesHeapDump, Builder> implements PrimesHeapDumpOrBuilder {
         public static final int ARRAY_INSTANCE_FIELD_NUMBER = 3;
@@ -391,10 +392,15 @@ public final class PrimesHeapDumpProto {
         public static final int CONTEXT_FIELD_NUMBER = 7;
         /* access modifiers changed from: private */
         public static final PrimesHeapDump DEFAULT_INSTANCE = new PrimesHeapDump();
-        private static volatile Parser<PrimesHeapDump> PARSER = null;
         public static final int PRIMITIVE_ARRAY_INSTANCE_FIELD_NUMBER = 4;
         public static final int ROOTS_FIELD_NUMBER = 6;
         public static final int TOTAL_PSS_FIELD_NUMBER = 5;
+        private static volatile Parser<PrimesHeapDump> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(PrimesHeapDump.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoField(fieldNumber = 3, type = FieldType.MESSAGE_LIST)
         private Internal.ProtobufList<ArrayInstance> arrayInstance_ = emptyProtobufList();
         @ProtoPresenceBits(mo28548id = 0)
@@ -417,6 +423,70 @@ public final class PrimesHeapDumpProto {
         private int totalPss_;
 
         private PrimesHeapDump() {
+        }
+
+        public static PrimesHeapDump parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (PrimesHeapDump) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static PrimesHeapDump parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (PrimesHeapDump) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static PrimesHeapDump parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (PrimesHeapDump) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static PrimesHeapDump parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (PrimesHeapDump) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static PrimesHeapDump parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (PrimesHeapDump) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static PrimesHeapDump parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (PrimesHeapDump) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static PrimesHeapDump parseFrom(InputStream input) throws IOException {
+            return (PrimesHeapDump) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static PrimesHeapDump parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (PrimesHeapDump) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static PrimesHeapDump parseDelimitedFrom(InputStream input) throws IOException {
+            return (PrimesHeapDump) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static PrimesHeapDump parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (PrimesHeapDump) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static PrimesHeapDump parseFrom(CodedInputStream input) throws IOException {
+            return (PrimesHeapDump) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static PrimesHeapDump parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (PrimesHeapDump) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(PrimesHeapDump prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static PrimesHeapDump getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<PrimesHeapDump> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public List<ClassInfo> getClassInfoList() {
@@ -1069,60 +1139,36 @@ public final class PrimesHeapDumpProto {
             this.bitField0_ &= -3;
         }
 
-        public static PrimesHeapDump parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (PrimesHeapDump) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static PrimesHeapDump parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (PrimesHeapDump) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static PrimesHeapDump parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (PrimesHeapDump) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static PrimesHeapDump parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (PrimesHeapDump) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static PrimesHeapDump parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (PrimesHeapDump) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static PrimesHeapDump parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (PrimesHeapDump) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static PrimesHeapDump parseFrom(InputStream input) throws IOException {
-            return (PrimesHeapDump) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static PrimesHeapDump parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (PrimesHeapDump) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static PrimesHeapDump parseDelimitedFrom(InputStream input) throws IOException {
-            return (PrimesHeapDump) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static PrimesHeapDump parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (PrimesHeapDump) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static PrimesHeapDump parseFrom(CodedInputStream input) throws IOException {
-            return (PrimesHeapDump) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static PrimesHeapDump parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (PrimesHeapDump) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(PrimesHeapDump prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new PrimesHeapDump();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\b\u0000\u0001\u0001\b\b\u0000\u0006\u0000\u0001\u001b\u0002\u001b\u0003\u001b\u0004\u001b\u0005\u0004\u0000\u0006\u001b\u0007\t\u0001\b\u001b", new Object[]{"bitField0_", "classInfo_", ClassInfo.class, "classInstance_", ClassInstance.class, "arrayInstance_", ArrayInstance.class, "primitiveArrayInstance_", PrimitiveArrayInstance.class, "totalPss_", "roots_", Root.class, "context_", "collapsedArrayInstance_", CollapsedArrayInstance.class});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<PrimesHeapDump> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (PrimesHeapDump.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<PrimesHeapDump, Builder> implements PrimesHeapDumpOrBuilder {
@@ -1582,50 +1628,6 @@ public final class PrimesHeapDumpProto {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new PrimesHeapDump();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\b\u0000\u0001\u0001\b\b\u0000\u0006\u0000\u0001\u001b\u0002\u001b\u0003\u001b\u0004\u001b\u0005\u0004\u0000\u0006\u001b\u0007\t\u0001\b\u001b", new Object[]{"bitField0_", "classInfo_", ClassInfo.class, "classInstance_", ClassInstance.class, "arrayInstance_", ArrayInstance.class, "primitiveArrayInstance_", PrimitiveArrayInstance.class, "totalPss_", "roots_", Root.class, "context_", "collapsedArrayInstance_", CollapsedArrayInstance.class});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<PrimesHeapDump> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (PrimesHeapDump.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(PrimesHeapDump.class, DEFAULT_INSTANCE);
-        }
-
-        public static PrimesHeapDump getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<PrimesHeapDump> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -1634,9 +1636,14 @@ public final class PrimesHeapDumpProto {
         /* access modifiers changed from: private */
         public static final ClassInfo DEFAULT_INSTANCE = new ClassInfo();
         public static final int INSTANCE_SIZE_FIELD_NUMBER = 6;
-        private static volatile Parser<ClassInfo> PARSER = null;
         public static final int SUPER_CLASS_FIELD_NUMBER = 1;
         public static final int VALUES_FIELD_NUMBER = 5;
+        private static volatile Parser<ClassInfo> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(ClassInfo.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 2, isEnforceUtf8 = false, isRequired = false, type = FieldType.STRING)
@@ -1653,6 +1660,70 @@ public final class PrimesHeapDumpProto {
         private Internal.IntList values_ = emptyIntList();
 
         private ClassInfo() {
+        }
+
+        public static ClassInfo parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (ClassInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static ClassInfo parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (ClassInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static ClassInfo parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (ClassInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static ClassInfo parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (ClassInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static ClassInfo parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (ClassInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static ClassInfo parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (ClassInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static ClassInfo parseFrom(InputStream input) throws IOException {
+            return (ClassInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static ClassInfo parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (ClassInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static ClassInfo parseDelimitedFrom(InputStream input) throws IOException {
+            return (ClassInfo) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static ClassInfo parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (ClassInfo) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static ClassInfo parseFrom(CodedInputStream input) throws IOException {
+            return (ClassInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static ClassInfo parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (ClassInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(ClassInfo prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static ClassInfo getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<ClassInfo> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasSuperClass() {
@@ -1683,10 +1754,6 @@ public final class PrimesHeapDumpProto {
             return this.className_;
         }
 
-        public ByteString getClassNameBytes() {
-            return ByteString.copyFromUtf8(this.className_);
-        }
-
         /* access modifiers changed from: private */
         public void setClassName(String value) {
             if (value != null) {
@@ -1697,10 +1764,8 @@ public final class PrimesHeapDumpProto {
             throw new NullPointerException();
         }
 
-        /* access modifiers changed from: private */
-        public void clearClassName() {
-            this.bitField0_ &= -3;
-            this.className_ = getDefaultInstance().getClassName();
+        public ByteString getClassNameBytes() {
+            return ByteString.copyFromUtf8(this.className_);
         }
 
         /* access modifiers changed from: private */
@@ -1711,6 +1776,12 @@ public final class PrimesHeapDumpProto {
                 return;
             }
             throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearClassName() {
+            this.bitField0_ &= -3;
+            this.className_ = getDefaultInstance().getClassName();
         }
 
         public List<Integer> getValuesList() {
@@ -1780,60 +1851,36 @@ public final class PrimesHeapDumpProto {
             this.instanceSize_ = 0;
         }
 
-        public static ClassInfo parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (ClassInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static ClassInfo parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (ClassInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static ClassInfo parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (ClassInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static ClassInfo parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (ClassInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static ClassInfo parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (ClassInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static ClassInfo parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (ClassInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static ClassInfo parseFrom(InputStream input) throws IOException {
-            return (ClassInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static ClassInfo parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (ClassInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static ClassInfo parseDelimitedFrom(InputStream input) throws IOException {
-            return (ClassInfo) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static ClassInfo parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (ClassInfo) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static ClassInfo parseFrom(CodedInputStream input) throws IOException {
-            return (ClassInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static ClassInfo parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (ClassInfo) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(ClassInfo prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new ClassInfo();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0004\u0000\u0001\u0001\u0006\u0004\u0000\u0001\u0000\u0001\u0004\u0000\u0002\b\u0001\u0005'\u0006\u0004\u0002", new Object[]{"bitField0_", "superClass_", "className_", "values_", "instanceSize_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<ClassInfo> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (ClassInfo.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<ClassInfo, Builder> implements ClassInfoOrBuilder {
@@ -1869,25 +1916,25 @@ public final class PrimesHeapDumpProto {
                 return ((ClassInfo) this.instance).getClassName();
             }
 
-            public ByteString getClassNameBytes() {
-                return ((ClassInfo) this.instance).getClassNameBytes();
-            }
-
             public Builder setClassName(String value) {
                 copyOnWrite();
                 ((ClassInfo) this.instance).setClassName(value);
                 return this;
             }
 
-            public Builder clearClassName() {
-                copyOnWrite();
-                ((ClassInfo) this.instance).clearClassName();
-                return this;
+            public ByteString getClassNameBytes() {
+                return ((ClassInfo) this.instance).getClassNameBytes();
             }
 
             public Builder setClassNameBytes(ByteString value) {
                 copyOnWrite();
                 ((ClassInfo) this.instance).setClassNameBytes(value);
+                return this;
+            }
+
+            public Builder clearClassName() {
+                copyOnWrite();
+                ((ClassInfo) this.instance).clearClassName();
                 return this;
             }
 
@@ -1947,50 +1994,6 @@ public final class PrimesHeapDumpProto {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new ClassInfo();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0004\u0000\u0001\u0001\u0006\u0004\u0000\u0001\u0000\u0001\u0004\u0000\u0002\b\u0001\u0005'\u0006\u0004\u0002", new Object[]{"bitField0_", "superClass_", "className_", "values_", "instanceSize_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<ClassInfo> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (ClassInfo.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(ClassInfo.class, DEFAULT_INSTANCE);
-        }
-
-        public static ClassInfo getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<ClassInfo> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -1998,8 +2001,13 @@ public final class PrimesHeapDumpProto {
         public static final int CLAZZ_FIELD_NUMBER = 1;
         /* access modifiers changed from: private */
         public static final ClassInstance DEFAULT_INSTANCE = new ClassInstance();
-        private static volatile Parser<ClassInstance> PARSER = null;
         public static final int VALUES_FIELD_NUMBER = 2;
+        private static volatile Parser<ClassInstance> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(ClassInstance.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.INT32)
@@ -2010,6 +2018,70 @@ public final class PrimesHeapDumpProto {
         private Internal.IntList values_ = emptyIntList();
 
         private ClassInstance() {
+        }
+
+        public static ClassInstance parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (ClassInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static ClassInstance parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (ClassInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static ClassInstance parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (ClassInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static ClassInstance parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (ClassInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static ClassInstance parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (ClassInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static ClassInstance parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (ClassInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static ClassInstance parseFrom(InputStream input) throws IOException {
+            return (ClassInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static ClassInstance parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (ClassInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static ClassInstance parseDelimitedFrom(InputStream input) throws IOException {
+            return (ClassInstance) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static ClassInstance parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (ClassInstance) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static ClassInstance parseFrom(CodedInputStream input) throws IOException {
+            return (ClassInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static ClassInstance parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (ClassInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(ClassInstance prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static ClassInstance getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<ClassInstance> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasClazz() {
@@ -2079,60 +2151,36 @@ public final class PrimesHeapDumpProto {
             this.values_ = emptyIntList();
         }
 
-        public static ClassInstance parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (ClassInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static ClassInstance parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (ClassInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static ClassInstance parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (ClassInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static ClassInstance parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (ClassInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static ClassInstance parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (ClassInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static ClassInstance parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (ClassInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static ClassInstance parseFrom(InputStream input) throws IOException {
-            return (ClassInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static ClassInstance parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (ClassInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static ClassInstance parseDelimitedFrom(InputStream input) throws IOException {
-            return (ClassInstance) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static ClassInstance parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (ClassInstance) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static ClassInstance parseFrom(CodedInputStream input) throws IOException {
-            return (ClassInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static ClassInstance parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (ClassInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(ClassInstance prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new ClassInstance();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0001\u0000\u0001\u0004\u0000\u0002'", new Object[]{"bitField0_", "clazz_", "values_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<ClassInstance> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (ClassInstance.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<ClassInstance, Builder> implements ClassInstanceOrBuilder {
@@ -2196,50 +2244,6 @@ public final class PrimesHeapDumpProto {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new ClassInstance();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0001\u0000\u0001\u0004\u0000\u0002'", new Object[]{"bitField0_", "clazz_", "values_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<ClassInstance> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (ClassInstance.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(ClassInstance.class, DEFAULT_INSTANCE);
-        }
-
-        public static ClassInstance getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<ClassInstance> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -2247,8 +2251,13 @@ public final class PrimesHeapDumpProto {
         public static final int CLAZZ_FIELD_NUMBER = 1;
         /* access modifiers changed from: private */
         public static final ArrayInstance DEFAULT_INSTANCE = new ArrayInstance();
-        private static volatile Parser<ArrayInstance> PARSER = null;
         public static final int VALUES_FIELD_NUMBER = 2;
+        private static volatile Parser<ArrayInstance> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(ArrayInstance.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.INT32)
@@ -2259,6 +2268,70 @@ public final class PrimesHeapDumpProto {
         private Internal.IntList values_ = emptyIntList();
 
         private ArrayInstance() {
+        }
+
+        public static ArrayInstance parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (ArrayInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static ArrayInstance parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (ArrayInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static ArrayInstance parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (ArrayInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static ArrayInstance parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (ArrayInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static ArrayInstance parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (ArrayInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static ArrayInstance parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (ArrayInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static ArrayInstance parseFrom(InputStream input) throws IOException {
+            return (ArrayInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static ArrayInstance parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (ArrayInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static ArrayInstance parseDelimitedFrom(InputStream input) throws IOException {
+            return (ArrayInstance) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static ArrayInstance parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (ArrayInstance) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static ArrayInstance parseFrom(CodedInputStream input) throws IOException {
+            return (ArrayInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static ArrayInstance parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (ArrayInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(ArrayInstance prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static ArrayInstance getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<ArrayInstance> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasClazz() {
@@ -2328,60 +2401,36 @@ public final class PrimesHeapDumpProto {
             this.values_ = emptyIntList();
         }
 
-        public static ArrayInstance parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (ArrayInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static ArrayInstance parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (ArrayInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static ArrayInstance parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (ArrayInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static ArrayInstance parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (ArrayInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static ArrayInstance parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (ArrayInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static ArrayInstance parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (ArrayInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static ArrayInstance parseFrom(InputStream input) throws IOException {
-            return (ArrayInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static ArrayInstance parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (ArrayInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static ArrayInstance parseDelimitedFrom(InputStream input) throws IOException {
-            return (ArrayInstance) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static ArrayInstance parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (ArrayInstance) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static ArrayInstance parseFrom(CodedInputStream input) throws IOException {
-            return (ArrayInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static ArrayInstance parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (ArrayInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(ArrayInstance prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new ArrayInstance();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0001\u0000\u0001\u0004\u0000\u0002'", new Object[]{"bitField0_", "clazz_", "values_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<ArrayInstance> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (ArrayInstance.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<ArrayInstance, Builder> implements ArrayInstanceOrBuilder {
@@ -2445,50 +2494,6 @@ public final class PrimesHeapDumpProto {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new ArrayInstance();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0001\u0000\u0001\u0004\u0000\u0002'", new Object[]{"bitField0_", "clazz_", "values_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<ArrayInstance> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (ArrayInstance.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(ArrayInstance.class, DEFAULT_INSTANCE);
-        }
-
-        public static ArrayInstance getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<ArrayInstance> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -2496,8 +2501,13 @@ public final class PrimesHeapDumpProto {
         /* access modifiers changed from: private */
         public static final PrimitiveArrayInstance DEFAULT_INSTANCE = new PrimitiveArrayInstance();
         public static final int NUM_ELEMENTS_FIELD_NUMBER = 2;
-        private static volatile Parser<PrimitiveArrayInstance> PARSER = null;
         public static final int TYPE_FIELD_NUMBER = 1;
+        private static volatile Parser<PrimitiveArrayInstance> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(PrimitiveArrayInstance.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 2, isRequired = false, type = FieldType.INT32)
@@ -2508,51 +2518,6 @@ public final class PrimesHeapDumpProto {
         private int type_ = 4;
 
         private PrimitiveArrayInstance() {
-        }
-
-        public boolean hasType() {
-            return (this.bitField0_ & 1) != 0;
-        }
-
-        public PrimitiveType getType() {
-            PrimitiveType result = PrimitiveType.forNumber(this.type_);
-            return result == null ? PrimitiveType.BOOLEAN : result;
-        }
-
-        /* access modifiers changed from: private */
-        public void setType(PrimitiveType value) {
-            if (value != null) {
-                this.bitField0_ |= 1;
-                this.type_ = value.getNumber();
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        /* access modifiers changed from: private */
-        public void clearType() {
-            this.bitField0_ &= -2;
-            this.type_ = 4;
-        }
-
-        public boolean hasNumElements() {
-            return (this.bitField0_ & 2) != 0;
-        }
-
-        public int getNumElements() {
-            return this.numElements_;
-        }
-
-        /* access modifiers changed from: private */
-        public void setNumElements(int value) {
-            this.bitField0_ |= 2;
-            this.numElements_ = value;
-        }
-
-        /* access modifiers changed from: private */
-        public void clearNumElements() {
-            this.bitField0_ &= -3;
-            this.numElements_ = 0;
         }
 
         public static PrimitiveArrayInstance parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
@@ -2611,6 +2576,91 @@ public final class PrimesHeapDumpProto {
             return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
         }
 
+        public static PrimitiveArrayInstance getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<PrimitiveArrayInstance> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
+        }
+
+        public boolean hasType() {
+            return (this.bitField0_ & 1) != 0;
+        }
+
+        public PrimitiveType getType() {
+            PrimitiveType result = PrimitiveType.forNumber(this.type_);
+            return result == null ? PrimitiveType.BOOLEAN : result;
+        }
+
+        /* access modifiers changed from: private */
+        public void setType(PrimitiveType value) {
+            if (value != null) {
+                this.bitField0_ |= 1;
+                this.type_ = value.getNumber();
+                return;
+            }
+            throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearType() {
+            this.bitField0_ &= -2;
+            this.type_ = 4;
+        }
+
+        public boolean hasNumElements() {
+            return (this.bitField0_ & 2) != 0;
+        }
+
+        public int getNumElements() {
+            return this.numElements_;
+        }
+
+        /* access modifiers changed from: private */
+        public void setNumElements(int value) {
+            this.bitField0_ |= 2;
+            this.numElements_ = value;
+        }
+
+        /* access modifiers changed from: private */
+        public void clearNumElements() {
+            this.bitField0_ &= -3;
+            this.numElements_ = 0;
+        }
+
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new PrimitiveArrayInstance();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0000\u0000\u0001\f\u0000\u0002\u0004\u0001", new Object[]{"bitField0_", "type_", PrimitiveType.internalGetVerifier(), "numElements_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<PrimitiveArrayInstance> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (PrimitiveArrayInstance.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
+        }
+
         public static final class Builder extends GeneratedMessageLite.Builder<PrimitiveArrayInstance, Builder> implements PrimitiveArrayInstanceOrBuilder {
             private Builder() {
                 super(PrimitiveArrayInstance.DEFAULT_INSTANCE);
@@ -2656,50 +2706,6 @@ public final class PrimesHeapDumpProto {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new PrimitiveArrayInstance();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0000\u0000\u0001\f\u0000\u0002\u0004\u0001", new Object[]{"bitField0_", "type_", PrimitiveType.internalGetVerifier(), "numElements_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<PrimitiveArrayInstance> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (PrimitiveArrayInstance.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(PrimitiveArrayInstance.class, DEFAULT_INSTANCE);
-        }
-
-        public static PrimitiveArrayInstance getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<PrimitiveArrayInstance> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -2710,9 +2716,14 @@ public final class PrimesHeapDumpProto {
         public static final int ELEMENT_CLASS_FIELD_NUMBER = 2;
         public static final int LENGTH_FIELD_NUMBER = 5;
         public static final int NUM_ELEMENTS_FIELD_NUMBER = 4;
-        private static volatile Parser<CollapsedArrayInstance> PARSER = null;
         public static final int PRIMITIVE_ARRAY_TYPE_FIELD_NUMBER = 3;
         public static final int RETAINED_BYTES_FIELD_NUMBER = 6;
+        private static volatile Parser<CollapsedArrayInstance> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(CollapsedArrayInstance.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.INT32)
@@ -2735,6 +2746,70 @@ public final class PrimesHeapDumpProto {
         private int retainedBytes_;
 
         private CollapsedArrayInstance() {
+        }
+
+        public static CollapsedArrayInstance parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (CollapsedArrayInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static CollapsedArrayInstance parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (CollapsedArrayInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static CollapsedArrayInstance parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (CollapsedArrayInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static CollapsedArrayInstance parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (CollapsedArrayInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static CollapsedArrayInstance parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (CollapsedArrayInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static CollapsedArrayInstance parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (CollapsedArrayInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static CollapsedArrayInstance parseFrom(InputStream input) throws IOException {
+            return (CollapsedArrayInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static CollapsedArrayInstance parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (CollapsedArrayInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static CollapsedArrayInstance parseDelimitedFrom(InputStream input) throws IOException {
+            return (CollapsedArrayInstance) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static CollapsedArrayInstance parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (CollapsedArrayInstance) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static CollapsedArrayInstance parseFrom(CodedInputStream input) throws IOException {
+            return (CollapsedArrayInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static CollapsedArrayInstance parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (CollapsedArrayInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(CollapsedArrayInstance prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static CollapsedArrayInstance getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<CollapsedArrayInstance> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasClazz() {
@@ -2862,60 +2937,36 @@ public final class PrimesHeapDumpProto {
             this.retainedBytes_ = 0;
         }
 
-        public static CollapsedArrayInstance parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (CollapsedArrayInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static CollapsedArrayInstance parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (CollapsedArrayInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static CollapsedArrayInstance parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (CollapsedArrayInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static CollapsedArrayInstance parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (CollapsedArrayInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static CollapsedArrayInstance parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (CollapsedArrayInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static CollapsedArrayInstance parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (CollapsedArrayInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static CollapsedArrayInstance parseFrom(InputStream input) throws IOException {
-            return (CollapsedArrayInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static CollapsedArrayInstance parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (CollapsedArrayInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static CollapsedArrayInstance parseDelimitedFrom(InputStream input) throws IOException {
-            return (CollapsedArrayInstance) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static CollapsedArrayInstance parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (CollapsedArrayInstance) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static CollapsedArrayInstance parseFrom(CodedInputStream input) throws IOException {
-            return (CollapsedArrayInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static CollapsedArrayInstance parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (CollapsedArrayInstance) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(CollapsedArrayInstance prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new CollapsedArrayInstance();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0006\u0000\u0001\u0001\u0006\u0006\u0000\u0000\u0000\u0001\u0004\u0000\u0002\u0004\u0001\u0003\f\u0002\u0004\u0004\u0003\u0005\u0004\u0004\u0006\u0004\u0005", new Object[]{"bitField0_", "clazz_", "elementClass_", "primitiveArrayType_", PrimitiveType.internalGetVerifier(), "numElements_", "length_", "retainedBytes_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<CollapsedArrayInstance> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (CollapsedArrayInstance.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<CollapsedArrayInstance, Builder> implements CollapsedArrayInstanceOrBuilder {
@@ -3043,50 +3094,6 @@ public final class PrimesHeapDumpProto {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new CollapsedArrayInstance();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0006\u0000\u0001\u0001\u0006\u0006\u0000\u0000\u0000\u0001\u0004\u0000\u0002\u0004\u0001\u0003\f\u0002\u0004\u0004\u0003\u0005\u0004\u0004\u0006\u0004\u0005", new Object[]{"bitField0_", "clazz_", "elementClass_", "primitiveArrayType_", PrimitiveType.internalGetVerifier(), "numElements_", "length_", "retainedBytes_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<CollapsedArrayInstance> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (CollapsedArrayInstance.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(CollapsedArrayInstance.class, DEFAULT_INSTANCE);
-        }
-
-        public static CollapsedArrayInstance getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<CollapsedArrayInstance> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -3094,8 +3101,13 @@ public final class PrimesHeapDumpProto {
         /* access modifiers changed from: private */
         public static final Root DEFAULT_INSTANCE = new Root();
         public static final int NODES_FIELD_NUMBER = 2;
-        private static volatile Parser<Root> PARSER = null;
         public static final int TAG_FIELD_NUMBER = 1;
+        private static volatile Parser<Root> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(Root.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         private int nodesMemoizedSerializedSize = -1;
@@ -3106,6 +3118,70 @@ public final class PrimesHeapDumpProto {
         private int tag_;
 
         private Root() {
+        }
+
+        public static Root parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (Root) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static Root parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (Root) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static Root parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (Root) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static Root parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (Root) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static Root parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (Root) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static Root parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (Root) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static Root parseFrom(InputStream input) throws IOException {
+            return (Root) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static Root parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (Root) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Root parseDelimitedFrom(InputStream input) throws IOException {
+            return (Root) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static Root parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (Root) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Root parseFrom(CodedInputStream input) throws IOException {
+            return (Root) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static Root parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (Root) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(Root prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static Root getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<Root> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasTag() {
@@ -3180,60 +3256,36 @@ public final class PrimesHeapDumpProto {
             this.nodes_ = emptyIntList();
         }
 
-        public static Root parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (Root) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static Root parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (Root) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static Root parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (Root) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static Root parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (Root) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static Root parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (Root) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static Root parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (Root) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static Root parseFrom(InputStream input) throws IOException {
-            return (Root) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static Root parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (Root) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Root parseDelimitedFrom(InputStream input) throws IOException {
-            return (Root) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static Root parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (Root) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Root parseFrom(CodedInputStream input) throws IOException {
-            return (Root) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static Root parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (Root) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(Root prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new Root();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0001\u0000\u0001\f\u0000\u0002'", new Object[]{"bitField0_", "tag_", RootTag.internalGetVerifier(), "nodes_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<Root> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (Root.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<Root, Builder> implements RootOrBuilder {
@@ -3297,50 +3349,6 @@ public final class PrimesHeapDumpProto {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new Root();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0001\u0000\u0001\f\u0000\u0002'", new Object[]{"bitField0_", "tag_", RootTag.internalGetVerifier(), "nodes_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<Root> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (Root.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(Root.class, DEFAULT_INSTANCE);
-        }
-
-        public static Root getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<Root> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -3349,9 +3357,14 @@ public final class PrimesHeapDumpProto {
         /* access modifiers changed from: private */
         public static final HeapDumpContext DEFAULT_INSTANCE = new HeapDumpContext();
         public static final int GARBAGE_COLLECTED_BYTES_FIELD_NUMBER = 4;
-        private static volatile Parser<HeapDumpContext> PARSER = null;
         public static final int TOTAL_PSS_KB_FIELD_NUMBER = 2;
         public static final int TRIGGER_TYPE_FIELD_NUMBER = 1;
+        private static volatile Parser<HeapDumpContext> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(HeapDumpContext.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoField(fieldNumber = 3, isRequired = false, type = FieldType.INT64)
         @ProtoPresenceCheckedField(mask = 4, presenceBitsId = 0)
         private long allocatedBytes_;
@@ -3370,60 +3383,68 @@ public final class PrimesHeapDumpProto {
         private HeapDumpContext() {
         }
 
-        public enum TriggerType implements Internal.EnumLite {
-            UNKNOWN(0),
-            BACKGROUND_MEMORY_SAMPLE_THRESHOLD(1),
-            OUT_OF_MEMORY_ERROR(2);
-            
-            public static final int BACKGROUND_MEMORY_SAMPLE_THRESHOLD_VALUE = 1;
-            public static final int OUT_OF_MEMORY_ERROR_VALUE = 2;
-            public static final int UNKNOWN_VALUE = 0;
-            private static final Internal.EnumLiteMap<TriggerType> internalValueMap = new Internal.EnumLiteMap<TriggerType>() {
-                public TriggerType findValueByNumber(int number) {
-                    return TriggerType.forNumber(number);
-                }
-            };
-            private final int value;
+        public static HeapDumpContext parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (HeapDumpContext) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
 
-            public final int getNumber() {
-                return this.value;
-            }
+        public static HeapDumpContext parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (HeapDumpContext) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-            public static TriggerType forNumber(int value2) {
-                if (value2 == 0) {
-                    return UNKNOWN;
-                }
-                if (value2 == 1) {
-                    return BACKGROUND_MEMORY_SAMPLE_THRESHOLD;
-                }
-                if (value2 != 2) {
-                    return null;
-                }
-                return OUT_OF_MEMORY_ERROR;
-            }
+        public static HeapDumpContext parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (HeapDumpContext) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
 
-            public static Internal.EnumLiteMap<TriggerType> internalGetValueMap() {
-                return internalValueMap;
-            }
+        public static HeapDumpContext parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (HeapDumpContext) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-            public static Internal.EnumVerifier internalGetVerifier() {
-                return TriggerTypeVerifier.INSTANCE;
-            }
+        public static HeapDumpContext parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (HeapDumpContext) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
 
-            private static final class TriggerTypeVerifier implements Internal.EnumVerifier {
-                static final Internal.EnumVerifier INSTANCE = new TriggerTypeVerifier();
+        public static HeapDumpContext parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (HeapDumpContext) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-                private TriggerTypeVerifier() {
-                }
+        public static HeapDumpContext parseFrom(InputStream input) throws IOException {
+            return (HeapDumpContext) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
 
-                public boolean isInRange(int number) {
-                    return TriggerType.forNumber(number) != null;
-                }
-            }
+        public static HeapDumpContext parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (HeapDumpContext) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
 
-            private TriggerType(int value2) {
-                this.value = value2;
-            }
+        public static HeapDumpContext parseDelimitedFrom(InputStream input) throws IOException {
+            return (HeapDumpContext) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static HeapDumpContext parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (HeapDumpContext) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static HeapDumpContext parseFrom(CodedInputStream input) throws IOException {
+            return (HeapDumpContext) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static HeapDumpContext parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (HeapDumpContext) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(HeapDumpContext prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static HeapDumpContext getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<HeapDumpContext> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasTriggerType() {
@@ -3511,60 +3532,92 @@ public final class PrimesHeapDumpProto {
             this.garbageCollectedBytes_ = 0;
         }
 
-        public static HeapDumpContext parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (HeapDumpContext) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new HeapDumpContext();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0004\u0000\u0001\u0001\u0004\u0004\u0000\u0000\u0000\u0001\f\u0000\u0002\u0004\u0001\u0003\u0002\u0002\u0004\u0002\u0003", new Object[]{"bitField0_", "triggerType_", TriggerType.internalGetVerifier(), "totalPssKb_", "allocatedBytes_", "garbageCollectedBytes_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<HeapDumpContext> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (HeapDumpContext.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
-        public static HeapDumpContext parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (HeapDumpContext) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
+        public enum TriggerType implements Internal.EnumLite {
+            UNKNOWN(0),
+            BACKGROUND_MEMORY_SAMPLE_THRESHOLD(1),
+            OUT_OF_MEMORY_ERROR(2);
 
-        public static HeapDumpContext parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (HeapDumpContext) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
+            public static final int BACKGROUND_MEMORY_SAMPLE_THRESHOLD_VALUE = 1;
+            public static final int OUT_OF_MEMORY_ERROR_VALUE = 2;
+            public static final int UNKNOWN_VALUE = 0;
+            private static final Internal.EnumLiteMap<TriggerType> internalValueMap = new Internal.EnumLiteMap<TriggerType>() {
+                public TriggerType findValueByNumber(int number) {
+                    return TriggerType.forNumber(number);
+                }
+            };
+            private final int value;
 
-        public static HeapDumpContext parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (HeapDumpContext) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
+            private TriggerType(int value2) {
+                this.value = value2;
+            }
 
-        public static HeapDumpContext parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (HeapDumpContext) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
+            public static TriggerType forNumber(int value2) {
+                if (value2 == 0) {
+                    return UNKNOWN;
+                }
+                if (value2 == 1) {
+                    return BACKGROUND_MEMORY_SAMPLE_THRESHOLD;
+                }
+                if (value2 != 2) {
+                    return null;
+                }
+                return OUT_OF_MEMORY_ERROR;
+            }
 
-        public static HeapDumpContext parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (HeapDumpContext) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
+            public static Internal.EnumLiteMap<TriggerType> internalGetValueMap() {
+                return internalValueMap;
+            }
 
-        public static HeapDumpContext parseFrom(InputStream input) throws IOException {
-            return (HeapDumpContext) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
+            public static Internal.EnumVerifier internalGetVerifier() {
+                return TriggerTypeVerifier.INSTANCE;
+            }
 
-        public static HeapDumpContext parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (HeapDumpContext) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
+            public final int getNumber() {
+                return this.value;
+            }
 
-        public static HeapDumpContext parseDelimitedFrom(InputStream input) throws IOException {
-            return (HeapDumpContext) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
+            private static final class TriggerTypeVerifier implements Internal.EnumVerifier {
+                static final Internal.EnumVerifier INSTANCE = new TriggerTypeVerifier();
 
-        public static HeapDumpContext parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (HeapDumpContext) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
+                private TriggerTypeVerifier() {
+                }
 
-        public static HeapDumpContext parseFrom(CodedInputStream input) throws IOException {
-            return (HeapDumpContext) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static HeapDumpContext parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (HeapDumpContext) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(HeapDumpContext prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+                public boolean isInRange(int number) {
+                    return TriggerType.forNumber(number) != null;
+                }
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<HeapDumpContext, Builder> implements HeapDumpContextOrBuilder {
@@ -3651,50 +3704,6 @@ public final class PrimesHeapDumpProto {
                 ((HeapDumpContext) this.instance).clearGarbageCollectedBytes();
                 return this;
             }
-        }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new HeapDumpContext();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0004\u0000\u0001\u0001\u0004\u0004\u0000\u0000\u0000\u0001\f\u0000\u0002\u0004\u0001\u0003\u0002\u0002\u0004\u0002\u0003", new Object[]{"bitField0_", "triggerType_", TriggerType.internalGetVerifier(), "totalPssKb_", "allocatedBytes_", "garbageCollectedBytes_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<HeapDumpContext> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (HeapDumpContext.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(HeapDumpContext.class, DEFAULT_INSTANCE);
-        }
-
-        public static HeapDumpContext getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<HeapDumpContext> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
         }
     }
 }

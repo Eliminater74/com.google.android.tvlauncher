@@ -6,9 +6,11 @@ import android.support.annotation.VisibleForTesting;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
+
 import androidx.leanback.C0364R;
-import androidx.leanback.widget.picker.PickerUtility;
+
 import com.google.protos.datapol.SemanticAnnotations;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -21,12 +23,12 @@ public class DatePicker extends Picker {
     private static final int[] DATE_FIELDS = {5, 2, 1};
     private static final String DATE_FORMAT = "MM/dd/yyyy";
     private static final String LOG_TAG = "DatePicker";
+    private final DateFormat mDateFormat;
     private int mColDayIndex;
     private int mColMonthIndex;
     private int mColYearIndex;
     private PickerUtility.DateConstant mConstant;
     private Calendar mCurrentDate;
-    private final DateFormat mDateFormat;
     private String mDatePickerFormat;
     private PickerColumn mDayColumn;
     private Calendar mMaxDate;
@@ -69,6 +71,31 @@ public class DatePicker extends Picker {
             attributesArray.recycle();
             throw th;
         }
+    }
+
+    private static boolean isAnyOf(char c, char[] any) {
+        for (char c2 : any) {
+            if (c == c2) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean updateMin(PickerColumn column, int value) {
+        if (value == column.getMinValue()) {
+            return false;
+        }
+        column.setMinValue(value);
+        return true;
+    }
+
+    private static boolean updateMax(PickerColumn column, int value) {
+        if (value == column.getMaxValue()) {
+            return false;
+        }
+        column.setMaxValue(value);
+        return true;
     }
 
     private boolean parseDate(String date, Calendar outDate) {
@@ -132,13 +159,8 @@ public class DatePicker extends Picker {
         return separators;
     }
 
-    private static boolean isAnyOf(char c, char[] any) {
-        for (char c2 : any) {
-            if (c == c2) {
-                return true;
-            }
-        }
-        return false;
+    public String getDatePickerFormat() {
+        return this.mDatePickerFormat;
     }
 
     public void setDatePickerFormat(String datePickerFormat) {
@@ -200,10 +222,6 @@ public class DatePicker extends Picker {
         }
     }
 
-    public String getDatePickerFormat() {
-        return this.mDatePickerFormat;
-    }
-
     private void updateCurrentLocale() {
         this.mConstant = PickerUtility.getDateConstantInstance(Locale.getDefault(), getContext().getResources());
         this.mTempDate = PickerUtility.getCalendarForLocale(this.mTempDate, this.mConstant.locale);
@@ -232,6 +250,10 @@ public class DatePicker extends Picker {
         setDate(this.mTempDate.get(1), this.mTempDate.get(2), this.mTempDate.get(5));
     }
 
+    public long getMinDate() {
+        return this.mMinDate.getTimeInMillis();
+    }
+
     public void setMinDate(long minDate) {
         this.mTempDate.setTimeInMillis(minDate);
         if (this.mTempDate.get(1) != this.mMinDate.get(1) || this.mTempDate.get(6) == this.mMinDate.get(6)) {
@@ -243,8 +265,8 @@ public class DatePicker extends Picker {
         }
     }
 
-    public long getMinDate() {
-        return this.mMinDate.getTimeInMillis();
+    public long getMaxDate() {
+        return this.mMaxDate.getTimeInMillis();
     }
 
     public void setMaxDate(long maxDate) {
@@ -258,21 +280,17 @@ public class DatePicker extends Picker {
         }
     }
 
-    public long getMaxDate() {
-        return this.mMaxDate.getTimeInMillis();
-    }
-
     public long getDate() {
         return this.mCurrentDate.getTimeInMillis();
-    }
-
-    private void setDate(int year, int month, int dayOfMonth) {
-        setDate(year, month, dayOfMonth, false);
     }
 
     public void setDate(long timeInMilliseconds) {
         this.mTempDate.setTimeInMillis(timeInMilliseconds);
         setDate(this.mTempDate.get(1), this.mTempDate.get(2), this.mTempDate.get(5), false);
+    }
+
+    private void setDate(int year, int month, int dayOfMonth) {
+        setDate(year, month, dayOfMonth, false);
     }
 
     public void setDate(int year, int month, int dayOfMonth, boolean animation) {
@@ -291,22 +309,6 @@ public class DatePicker extends Picker {
         if (this.mCurrentDate.get(1) == year && this.mCurrentDate.get(2) == dayOfMonth && this.mCurrentDate.get(5) == month) {
             return false;
         }
-        return true;
-    }
-
-    private static boolean updateMin(PickerColumn column, int value) {
-        if (value == column.getMinValue()) {
-            return false;
-        }
-        column.setMinValue(value);
-        return true;
-    }
-
-    private static boolean updateMax(PickerColumn column, int value) {
-        if (value == column.getMaxValue()) {
-            return false;
-        }
-        column.setMaxValue(value);
         return true;
     }
 

@@ -8,9 +8,9 @@ import com.google.android.exoplayer2.extractor.ExtractorOutput;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
 import com.google.android.exoplayer2.extractor.PositionHolder;
 import com.google.android.exoplayer2.extractor.SeekMap;
-import com.google.android.exoplayer2.extractor.p007ts.TsPayloadReader;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.IOException;
 
 /* renamed from: com.google.android.exoplayer2.extractor.ts.Ac4Extractor */
@@ -25,10 +25,6 @@ public final class Ac4Extractor implements Extractor {
     private final ParsableByteArray sampleData;
     private boolean startedPacket;
 
-    static final /* synthetic */ Extractor[] lambda$static$0$Ac4Extractor() {
-        return new Extractor[]{new Ac4Extractor()};
-    }
-
     public Ac4Extractor() {
         this(0);
     }
@@ -37,6 +33,10 @@ public final class Ac4Extractor implements Extractor {
         this.firstSampleTimestampUs = firstSampleTimestampUs2;
         this.reader = new Ac4Reader();
         this.sampleData = new ParsableByteArray(16384);
+    }
+
+    static final /* synthetic */ Extractor[] lambda$static$0$Ac4Extractor() {
+        return new Extractor[]{new Ac4Extractor()};
     }
 
     public boolean sniff(ExtractorInput input) throws IOException, InterruptedException {

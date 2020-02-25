@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.PowerManager;
 import android.os.SystemClock;
+
 import com.google.android.exoplayer2.upstream.DefaultLoadErrorHandlingPolicy;
 
 /* compiled from: DeviceStateUtils */

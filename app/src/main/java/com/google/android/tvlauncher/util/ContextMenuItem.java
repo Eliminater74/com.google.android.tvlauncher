@@ -13,10 +13,6 @@ public class ContextMenuItem {
     private String mTitle;
     private boolean mVisible;
 
-    interface OnMenuItemChangedListener {
-        void onMenuItemChanged(ContextMenuItem contextMenuItem);
-    }
-
     public ContextMenuItem(int id, String title, Drawable icon) {
         this.mId = id;
         this.mTitle = title;
@@ -34,23 +30,15 @@ public class ContextMenuItem {
         return this.mTitle;
     }
 
-    public Drawable getIcon() {
-        return this.mIcon;
-    }
-
-    public boolean isEnabled() {
-        return this.mEnabled;
-    }
-
-    public boolean isVisible() {
-        return this.mVisible;
-    }
-
     public void setTitle(String title) {
         if (!TextUtils.equals(this.mTitle, title)) {
             this.mTitle = title;
             notifyMenuItemChanged();
         }
+    }
+
+    public Drawable getIcon() {
+        return this.mIcon;
     }
 
     public void setIcon(Drawable icon) {
@@ -60,11 +48,19 @@ public class ContextMenuItem {
         }
     }
 
+    public boolean isEnabled() {
+        return this.mEnabled;
+    }
+
     public void setEnabled(boolean isEnabled) {
         if (this.mEnabled != isEnabled) {
             this.mEnabled = isEnabled;
             notifyMenuItemChanged();
         }
+    }
+
+    public boolean isVisible() {
+        return this.mVisible;
     }
 
     public void setVisible(boolean isVisible) {
@@ -74,13 +70,14 @@ public class ContextMenuItem {
         }
     }
 
-    public void setAutoDismiss(boolean autoDismiss) {
-        this.mAutoDismiss = autoDismiss;
-    }
-
     /* access modifiers changed from: package-private */
     public boolean isLinkedWithTriangle() {
         return this.mIsLinkedWithTriangle;
+    }
+
+    /* access modifiers changed from: package-private */
+    public void setLinkedWithTriangle(boolean linkedWithTriangle) {
+        this.mIsLinkedWithTriangle = linkedWithTriangle;
     }
 
     /* access modifiers changed from: package-private */
@@ -88,9 +85,8 @@ public class ContextMenuItem {
         return this.mAutoDismiss;
     }
 
-    /* access modifiers changed from: package-private */
-    public void setLinkedWithTriangle(boolean linkedWithTriangle) {
-        this.mIsLinkedWithTriangle = linkedWithTriangle;
+    public void setAutoDismiss(boolean autoDismiss) {
+        this.mAutoDismiss = autoDismiss;
     }
 
     /* access modifiers changed from: package-private */
@@ -103,5 +99,9 @@ public class ContextMenuItem {
         if (onMenuItemChangedListener != null) {
             onMenuItemChangedListener.onMenuItemChanged(this);
         }
+    }
+
+    interface OnMenuItemChangedListener {
+        void onMenuItemChanged(ContextMenuItem contextMenuItem);
     }
 }

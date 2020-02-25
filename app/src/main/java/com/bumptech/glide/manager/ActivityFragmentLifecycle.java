@@ -1,15 +1,17 @@
 package com.bumptech.glide.manager;
 
 import android.support.annotation.NonNull;
+
 import com.bumptech.glide.util.Util;
+
 import java.util.Collections;
 import java.util.Set;
 import java.util.WeakHashMap;
 
 class ActivityFragmentLifecycle implements Lifecycle {
+    private final Set<LifecycleListener> lifecycleListeners = Collections.newSetFromMap(new WeakHashMap());
     private boolean isDestroyed;
     private boolean isStarted;
-    private final Set<LifecycleListener> lifecycleListeners = Collections.newSetFromMap(new WeakHashMap());
 
     ActivityFragmentLifecycle() {
     }

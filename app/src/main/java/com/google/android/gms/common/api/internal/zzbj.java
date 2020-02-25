@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailabilityLight;
 import com.google.android.gms.common.api.Api;
@@ -12,6 +13,7 @@ import com.google.android.gms.common.api.Result;
 import com.google.android.gms.common.internal.ClientSettings;
 import com.google.android.gms.signin.SignInOptions;
 import com.google.android.gms.signin.zzd;
+
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -23,13 +25,12 @@ import java.util.concurrent.locks.Lock;
 
 /* compiled from: GoogleApiClientStateHolder */
 public final class zzbj implements zzcc, zzv {
-    final Map<Api.zzc<?>, Api.Client> zza;
-    final Map<Api.zzc<?>, ConnectionResult> zzb = new HashMap();
-    int zzc;
-    final zzbb zzd;
-    final zzcd zze;
     /* access modifiers changed from: private */
     public final Lock zzf;
+    final Map<Api.zzc<?>, Api.Client> zza;
+    final Map<Api.zzc<?>, ConnectionResult> zzb = new HashMap();
+    final zzbb zzd;
+    final zzcd zze;
     private final Condition zzg;
     private final Context zzh;
     private final GoogleApiAvailabilityLight zzi;
@@ -39,6 +40,7 @@ public final class zzbj implements zzcc, zzv {
     private final Api.zza<? extends zzd, SignInOptions> zzm;
     /* access modifiers changed from: private */
     public volatile zzbi zzn;
+    int zzc;
     private ConnectionResult zzo = null;
 
     public zzbj(Context context, zzbb zzbb, Lock lock, Looper looper, GoogleApiAvailabilityLight googleApiAvailabilityLight, Map<Api.zzc<?>, Api.Client> map, ClientSettings clientSettings, Map<Api<?>, Boolean> map2, Api.zza<? extends zzd, SignInOptions> zza2, ArrayList<zzu> arrayList, zzcd zzcd) {

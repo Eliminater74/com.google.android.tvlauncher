@@ -1,10 +1,11 @@
 package com.google.android.exoplayer2.source;
 
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.Timeline;
-import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.upstream.Allocator;
 import com.google.android.exoplayer2.upstream.TransferListener;
+
 import java.io.IOException;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -17,25 +18,11 @@ public final class MergingMediaSource extends CompositeMediaSource<Integer> {
     private static final int PERIOD_COUNT_UNSET = -1;
     private final CompositeSequenceableLoaderFactory compositeSequenceableLoaderFactory;
     private final MediaSource[] mediaSources;
-    private IllegalMergeException mergeError;
     private final ArrayList<MediaSource> pendingTimelineSources;
+    private final Timeline[] timelines;
+    private IllegalMergeException mergeError;
     private int periodCount;
     private Object primaryManifest;
-    private final Timeline[] timelines;
-
-    public static final class IllegalMergeException extends IOException {
-        public static final int REASON_PERIOD_COUNT_MISMATCH = 0;
-        public final int reason;
-
-        @Documented
-        @Retention(RetentionPolicy.SOURCE)
-        public @interface Reason {
-        }
-
-        public IllegalMergeException(int reason2) {
-            this.reason = reason2;
-        }
-    }
 
     public MergingMediaSource(MediaSource... mediaSources2) {
         this(new DefaultCompositeSequenceableLoaderFactory(), mediaSources2);
@@ -141,6 +128,20 @@ public final class MergingMediaSource extends CompositeMediaSource<Integer> {
             return new IllegalMergeException(0);
         } else {
             return null;
+        }
+    }
+
+    public static final class IllegalMergeException extends IOException {
+        public static final int REASON_PERIOD_COUNT_MISMATCH = 0;
+        public final int reason;
+
+        public IllegalMergeException(int reason2) {
+            this.reason = reason2;
+        }
+
+        @Documented
+        @Retention(RetentionPolicy.SOURCE)
+        public @interface Reason {
         }
     }
 }

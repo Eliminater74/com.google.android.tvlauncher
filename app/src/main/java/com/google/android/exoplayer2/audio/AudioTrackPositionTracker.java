@@ -3,9 +3,11 @@ package com.google.android.exoplayer2.audio;
 import android.media.AudioTrack;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Util;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -21,6 +23,8 @@ final class AudioTrackPositionTracker {
     private static final int PLAYSTATE_PAUSED = 2;
     private static final int PLAYSTATE_PLAYING = 3;
     private static final int PLAYSTATE_STOPPED = 1;
+    private final Listener listener;
+    private final long[] playheadOffsets;
     @Nullable
     private AudioTimestampPoller audioTimestampPoller;
     @Nullable
@@ -37,33 +41,16 @@ final class AudioTrackPositionTracker {
     private long lastPlayheadSampleTimeUs;
     private long lastRawPlaybackHeadPosition;
     private long latencyUs;
-    private final Listener listener;
     private boolean needsPassthroughWorkarounds;
     private int nextPlayheadOffsetIndex;
     private int outputPcmFrameSize;
     private int outputSampleRate;
     private long passthroughWorkaroundPauseOffset;
     private int playheadOffsetCount;
-    private final long[] playheadOffsets;
     private long rawPlaybackHeadWrapCount;
     private long smoothedPlayheadOffsetUs;
     private long stopPlaybackHeadPosition;
     private long stopTimestampUs;
-
-    public interface Listener {
-        void onInvalidLatency(long j);
-
-        void onPositionFramesMismatch(long j, long j2, long j3, long j4);
-
-        void onSystemTimeUsMismatch(long j, long j2, long j3, long j4);
-
-        void onUnderrun(int i, long j);
-    }
-
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    private @interface PlayState {
-    }
 
     public AudioTrackPositionTracker(Listener listener2) {
         this.listener = (Listener) Assertions.checkNotNull(listener2);
@@ -74,6 +61,10 @@ final class AudioTrackPositionTracker {
             }
         }
         this.playheadOffsets = new long[10];
+    }
+
+    private static boolean needsPassthroughWorkarounds(int outputEncoding) {
+        return Util.SDK_INT < 23 && (outputEncoding == 5 || outputEncoding == 6);
     }
 
     public void setAudioTrack(AudioTrack audioTrack2, int outputEncoding, int outputPcmFrameSize2, int bufferSize2) {
@@ -272,10 +263,6 @@ final class AudioTrackPositionTracker {
         return this.needsPassthroughWorkarounds && ((AudioTrack) Assertions.checkNotNull(this.audioTrack)).getPlayState() == 2 && getPlaybackHeadPosition() == 0;
     }
 
-    private static boolean needsPassthroughWorkarounds(int outputEncoding) {
-        return Util.SDK_INT < 23 && (outputEncoding == 5 || outputEncoding == 6);
-    }
-
     private long getPlaybackHeadPositionUs() {
         return framesToDurationUs(getPlaybackHeadPosition());
     }
@@ -311,5 +298,20 @@ final class AudioTrackPositionTracker {
         }
         this.lastRawPlaybackHeadPosition = rawPlaybackHeadPosition;
         return (this.rawPlaybackHeadWrapCount << 32) + rawPlaybackHeadPosition;
+    }
+
+    public interface Listener {
+        void onInvalidLatency(long j);
+
+        void onPositionFramesMismatch(long j, long j2, long j3, long j4);
+
+        void onSystemTimeUsMismatch(long j, long j2, long j3, long j4);
+
+        void onUnderrun(int i, long j);
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    private @interface PlayState {
     }
 }

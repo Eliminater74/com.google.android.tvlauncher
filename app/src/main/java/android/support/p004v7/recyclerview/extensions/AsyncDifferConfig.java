@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RestrictTo;
 import android.support.p004v7.util.DiffUtil;
+
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -40,10 +41,10 @@ public final class AsyncDifferConfig<T> {
 
     /* renamed from: android.support.v7.recyclerview.extensions.AsyncDifferConfig$Builder */
     public static final class Builder<T> {
-        private static Executor sDiffExecutor = null;
         private static final Object sExecutorLock = new Object();
-        private Executor mBackgroundThreadExecutor;
+        private static Executor sDiffExecutor = null;
         private final DiffUtil.ItemCallback<T> mDiffCallback;
+        private Executor mBackgroundThreadExecutor;
         @Nullable
         private Executor mMainThreadExecutor;
 

@@ -3,6 +3,7 @@ package com.google.android.libraries.gcoreclient.common.api.support;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.IntentSender;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.libraries.gcoreclient.common.GcoreConnectionResult;
 

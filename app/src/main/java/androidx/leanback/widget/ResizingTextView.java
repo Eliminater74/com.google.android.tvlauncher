@@ -7,6 +7,7 @@ import android.text.Layout;
 import android.util.AttributeSet;
 import android.view.ActionMode;
 import android.widget.TextView;
+
 import androidx.leanback.C0364R;
 
 class ResizingTextView extends TextView {

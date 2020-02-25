@@ -1,12 +1,12 @@
 package com.google.android.exoplayer2.extractor.ogg;
 
 import android.support.annotation.VisibleForTesting;
+
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.ParserException;
-import com.google.android.exoplayer2.extractor.ogg.StreamReader;
-import com.google.android.exoplayer2.extractor.ogg.VorbisUtil;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.ParsableByteArray;
+
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -26,6 +26,27 @@ final class VorbisReader extends StreamReader {
         } catch (ParserException e) {
             return false;
         }
+    }
+
+    @VisibleForTesting
+    static int readBits(byte src, int length, int leastSignificantBitIndex) {
+        return (src >> leastSignificantBitIndex) & (255 >>> (8 - length));
+    }
+
+    @VisibleForTesting
+    static void appendNumberOfSamples(ParsableByteArray buffer, long packetSampleCount) {
+        buffer.setLimit(buffer.limit() + 4);
+        buffer.data[buffer.limit() - 4] = (byte) ((int) (packetSampleCount & 255));
+        buffer.data[buffer.limit() - 3] = (byte) ((int) ((packetSampleCount >>> 8) & 255));
+        buffer.data[buffer.limit() - 2] = (byte) ((int) ((packetSampleCount >>> 16) & 255));
+        buffer.data[buffer.limit() - 1] = (byte) ((int) (255 & (packetSampleCount >>> 24)));
+    }
+
+    private static int decodeBlockSize(byte firstByteOfAudioPacket, VorbisSetup vorbisSetup2) {
+        if (!vorbisSetup2.modes[readBits(firstByteOfAudioPacket, vorbisSetup2.iLogModes, 1)].blockFlag) {
+            return vorbisSetup2.idHeader.blockSize0;
+        }
+        return vorbisSetup2.idHeader.blockSize1;
     }
 
     /* access modifiers changed from: protected */
@@ -99,27 +120,6 @@ final class VorbisReader extends StreamReader {
             VorbisUtil.Mode[] modes = VorbisUtil.readVorbisModes(scratch, this.vorbisIdHeader.channels);
             return new VorbisSetup(this.vorbisIdHeader, this.commentHeader, setupHeaderData, modes, VorbisUtil.iLog(modes.length - 1));
         }
-    }
-
-    @VisibleForTesting
-    static int readBits(byte src, int length, int leastSignificantBitIndex) {
-        return (src >> leastSignificantBitIndex) & (255 >>> (8 - length));
-    }
-
-    @VisibleForTesting
-    static void appendNumberOfSamples(ParsableByteArray buffer, long packetSampleCount) {
-        buffer.setLimit(buffer.limit() + 4);
-        buffer.data[buffer.limit() - 4] = (byte) ((int) (packetSampleCount & 255));
-        buffer.data[buffer.limit() - 3] = (byte) ((int) ((packetSampleCount >>> 8) & 255));
-        buffer.data[buffer.limit() - 2] = (byte) ((int) ((packetSampleCount >>> 16) & 255));
-        buffer.data[buffer.limit() - 1] = (byte) ((int) (255 & (packetSampleCount >>> 24)));
-    }
-
-    private static int decodeBlockSize(byte firstByteOfAudioPacket, VorbisSetup vorbisSetup2) {
-        if (!vorbisSetup2.modes[readBits(firstByteOfAudioPacket, vorbisSetup2.iLogModes, 1)].blockFlag) {
-            return vorbisSetup2.idHeader.blockSize0;
-        }
-        return vorbisSetup2.idHeader.blockSize1;
     }
 
     static final class VorbisSetup {

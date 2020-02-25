@@ -17,11 +17,6 @@ public abstract class DialogPreference extends Preference {
     private CharSequence mNegativeButtonText;
     private CharSequence mPositiveButtonText;
 
-    public interface TargetFragment {
-        @Nullable
-        <T extends Preference> T findPreference(@NonNull CharSequence charSequence);
-    }
-
     public DialogPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         TypedArray a = context.obtainStyledAttributes(attrs, C0731R.styleable.DialogPreference, defStyleAttr, defStyleRes);
@@ -49,6 +44,10 @@ public abstract class DialogPreference extends Preference {
         this(context, null);
     }
 
+    public CharSequence getDialogTitle() {
+        return this.mDialogTitle;
+    }
+
     public void setDialogTitle(CharSequence dialogTitle) {
         this.mDialogTitle = dialogTitle;
     }
@@ -57,8 +56,8 @@ public abstract class DialogPreference extends Preference {
         setDialogTitle(getContext().getString(dialogTitleResId));
     }
 
-    public CharSequence getDialogTitle() {
-        return this.mDialogTitle;
+    public CharSequence getDialogMessage() {
+        return this.mDialogMessage;
     }
 
     public void setDialogMessage(CharSequence dialogMessage) {
@@ -69,8 +68,8 @@ public abstract class DialogPreference extends Preference {
         setDialogMessage(getContext().getString(dialogMessageResId));
     }
 
-    public CharSequence getDialogMessage() {
-        return this.mDialogMessage;
+    public Drawable getDialogIcon() {
+        return this.mDialogIcon;
     }
 
     public void setDialogIcon(Drawable dialogIcon) {
@@ -81,8 +80,8 @@ public abstract class DialogPreference extends Preference {
         this.mDialogIcon = AppCompatResources.getDrawable(getContext(), dialogIconRes);
     }
 
-    public Drawable getDialogIcon() {
-        return this.mDialogIcon;
+    public CharSequence getPositiveButtonText() {
+        return this.mPositiveButtonText;
     }
 
     public void setPositiveButtonText(CharSequence positiveButtonText) {
@@ -93,8 +92,8 @@ public abstract class DialogPreference extends Preference {
         setPositiveButtonText(getContext().getString(positiveButtonTextResId));
     }
 
-    public CharSequence getPositiveButtonText() {
-        return this.mPositiveButtonText;
+    public CharSequence getNegativeButtonText() {
+        return this.mNegativeButtonText;
     }
 
     public void setNegativeButtonText(CharSequence negativeButtonText) {
@@ -105,20 +104,21 @@ public abstract class DialogPreference extends Preference {
         setNegativeButtonText(getContext().getString(negativeButtonTextResId));
     }
 
-    public CharSequence getNegativeButtonText() {
-        return this.mNegativeButtonText;
+    public int getDialogLayoutResource() {
+        return this.mDialogLayoutResId;
     }
 
     public void setDialogLayoutResource(int dialogLayoutResId) {
         this.mDialogLayoutResId = dialogLayoutResId;
     }
 
-    public int getDialogLayoutResource() {
-        return this.mDialogLayoutResId;
-    }
-
     /* access modifiers changed from: protected */
     public void onClick() {
         getPreferenceManager().showDialog(this);
+    }
+
+    public interface TargetFragment {
+        @Nullable
+        <T extends Preference> T findPreference(@NonNull CharSequence charSequence);
     }
 }

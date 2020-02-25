@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+
 import java.lang.ref.WeakReference;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
@@ -21,11 +22,6 @@ public final class ViewStubCompat extends View {
     private WeakReference<View> mInflatedViewRef;
     private LayoutInflater mInflater;
     private int mLayoutResource;
-
-    /* renamed from: android.support.v7.widget.ViewStubCompat$OnInflateListener */
-    public interface OnInflateListener {
-        void onInflate(ViewStubCompat viewStubCompat, View view);
-    }
 
     public ViewStubCompat(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -59,12 +55,12 @@ public final class ViewStubCompat extends View {
         this.mLayoutResource = layoutResource;
     }
 
-    public void setLayoutInflater(LayoutInflater inflater) {
-        this.mInflater = inflater;
-    }
-
     public LayoutInflater getLayoutInflater() {
         return this.mInflater;
+    }
+
+    public void setLayoutInflater(LayoutInflater inflater) {
+        this.mInflater = inflater;
     }
 
     /* access modifiers changed from: protected */
@@ -140,5 +136,10 @@ public final class ViewStubCompat extends View {
 
     public void setOnInflateListener(OnInflateListener inflateListener) {
         this.mInflateListener = inflateListener;
+    }
+
+    /* renamed from: android.support.v7.widget.ViewStubCompat$OnInflateListener */
+    public interface OnInflateListener {
+        void onInflate(ViewStubCompat viewStubCompat, View view);
     }
 }

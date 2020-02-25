@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.RestrictTo;
 import android.view.KeyEvent;
 import android.view.View;
-import androidx.leanback.media.PlayerAdapter;
+
 import androidx.leanback.widget.AbstractDetailsDescriptionPresenter;
 import androidx.leanback.widget.Action;
 import androidx.leanback.widget.ArrayObjectAdapter;
@@ -13,7 +13,9 @@ import androidx.leanback.widget.PlaybackControlsRow;
 import androidx.leanback.widget.PlaybackControlsRowPresenter;
 import androidx.leanback.widget.PlaybackRowPresenter;
 import androidx.leanback.widget.RowPresenter;
+
 import com.google.android.tvlauncher.inputs.InputsManagerUtil;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -25,7 +27,6 @@ public class PlaybackBannerControlGlue<T extends PlayerAdapter> extends Playback
     public static final int ACTION_REWIND = 32;
     public static final int ACTION_SKIP_TO_NEXT = 256;
     public static final int ACTION_SKIP_TO_PREVIOUS = 16;
-    private static final int NUMBER_OF_SEEK_SPEEDS = 5;
     public static final int PLAYBACK_SPEED_FAST_L0 = 10;
     public static final int PLAYBACK_SPEED_FAST_L1 = 11;
     public static final int PLAYBACK_SPEED_FAST_L2 = 12;
@@ -34,23 +35,19 @@ public class PlaybackBannerControlGlue<T extends PlayerAdapter> extends Playback
     public static final int PLAYBACK_SPEED_INVALID = -1;
     public static final int PLAYBACK_SPEED_NORMAL = 1;
     public static final int PLAYBACK_SPEED_PAUSED = 0;
+    private static final int NUMBER_OF_SEEK_SPEEDS = 5;
     private static final String TAG = PlaybackBannerControlGlue.class.getSimpleName();
-    private PlaybackControlsRow.FastForwardAction mFastForwardAction;
     private final int[] mFastForwardSpeeds;
+    private final int[] mRewindSpeeds;
+    private PlaybackControlsRow.FastForwardAction mFastForwardAction;
     private boolean mIsCustomizedFastForwardSupported;
     private boolean mIsCustomizedRewindSupported;
     private int mPlaybackSpeed;
     private PlaybackControlsRow.RewindAction mRewindAction;
-    private final int[] mRewindSpeeds;
     private PlaybackControlsRow.SkipNextAction mSkipNextAction;
     private PlaybackControlsRow.SkipPreviousAction mSkipPreviousAction;
     private long mStartPosition;
     private long mStartTime;
-
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface ACTION_ {
-    }
 
     public PlaybackBannerControlGlue(Context context, int[] seekSpeeds, T impl) {
         this(context, seekSpeeds, seekSpeeds, impl);
@@ -435,5 +432,10 @@ public class PlaybackBannerControlGlue<T extends PlayerAdapter> extends Playback
         this.mStartTime = System.currentTimeMillis();
         super.pause();
         onUpdatePlaybackState();
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface ACTION_ {
     }
 }

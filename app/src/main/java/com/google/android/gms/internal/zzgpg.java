@@ -8,6 +8,10 @@ final class zzgpg extends zzgpd {
         super();
     }
 
+    private static <E> zzgos<E> zzc(Object obj, long j) {
+        return (zzgos) zzgrj.zzf(obj, j);
+    }
+
     /* access modifiers changed from: package-private */
     public final <L> List<L> zza(Object obj, long j) {
         zzgos zzc = zzc(obj, j);
@@ -41,9 +45,5 @@ final class zzgpg extends zzgpd {
             zzc2 = zzc;
         }
         zzgrj.zza(obj, j, zzc2);
-    }
-
-    private static <E> zzgos<E> zzc(Object obj, long j) {
-        return (zzgos) zzgrj.zzf(obj, j);
     }
 }

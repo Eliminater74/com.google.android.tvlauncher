@@ -7,13 +7,18 @@ import android.transition.TransitionManager;
 import android.transition.TransitionSet;
 import android.view.View;
 import android.view.ViewGroup;
+
 import java.util.ArrayList;
 import java.util.List;
 
 @RequiresApi(21)
-/* renamed from: android.support.v4.app.FragmentTransitionCompat21 */
+        /* renamed from: android.support.v4.app.FragmentTransitionCompat21 */
 class FragmentTransitionCompat21 extends FragmentTransitionImpl {
     FragmentTransitionCompat21() {
+    }
+
+    private static boolean hasSimpleTarget(Transition transition) {
+        return !isNullOrEmpty(transition.getTargetIds()) || !isNullOrEmpty(transition.getTargetNames()) || !isNullOrEmpty(transition.getTargetTypes());
     }
 
     public boolean canHandle(Object transition) {
@@ -77,10 +82,6 @@ class FragmentTransitionCompat21 extends FragmentTransitionImpl {
                 }
             }
         }
-    }
-
-    private static boolean hasSimpleTarget(Transition transition) {
-        return !isNullOrEmpty(transition.getTargetIds()) || !isNullOrEmpty(transition.getTargetNames()) || !isNullOrEmpty(transition.getTargetTypes());
     }
 
     public Object mergeTransitionsTogether(Object transition1, Object transition2, Object transition3) {

@@ -3,129 +3,20 @@ package androidx.leanback.widget;
 import android.support.p004v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
-import androidx.leanback.widget.ObjectAdapter;
-import androidx.leanback.widget.Presenter;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class ItemBridgeAdapter extends RecyclerView.Adapter implements FacetProviderAdapter {
     static final boolean DEBUG = false;
     static final String TAG = "ItemBridgeAdapter";
+    FocusHighlightHandler mFocusHighlight;
+    Wrapper mWrapper;
     private ObjectAdapter mAdapter;
     private AdapterListener mAdapterListener;
     private ObjectAdapter.DataObserver mDataObserver;
-    FocusHighlightHandler mFocusHighlight;
     private PresenterSelector mPresenterSelector;
     private ArrayList<Presenter> mPresenters;
-    Wrapper mWrapper;
-
-    public static abstract class Wrapper {
-        public abstract View createWrapper(View view);
-
-        public abstract void wrap(View view, View view2);
-    }
-
-    public static class AdapterListener {
-        public void onAddPresenter(Presenter presenter, int type) {
-        }
-
-        public void onCreate(ViewHolder viewHolder) {
-        }
-
-        public void onBind(ViewHolder viewHolder) {
-        }
-
-        public void onBind(ViewHolder viewHolder, List payloads) {
-            onBind(viewHolder);
-        }
-
-        public void onUnbind(ViewHolder viewHolder) {
-        }
-
-        public void onAttachedToWindow(ViewHolder viewHolder) {
-        }
-
-        public void onDetachedFromWindow(ViewHolder viewHolder) {
-        }
-    }
-
-    static final class ChainingFocusChangeListener implements View.OnFocusChangeListener {
-        final View.OnFocusChangeListener mChainedListener;
-        FocusHighlightHandler mFocusHighlight;
-        boolean mHasWrapper;
-
-        ChainingFocusChangeListener(View.OnFocusChangeListener chainedListener, boolean hasWrapper, FocusHighlightHandler focusHighlight) {
-            this.mChainedListener = chainedListener;
-            this.mHasWrapper = hasWrapper;
-            this.mFocusHighlight = focusHighlight;
-        }
-
-        /* access modifiers changed from: package-private */
-        public void update(boolean hasWrapper, FocusHighlightHandler focusHighlight) {
-            this.mHasWrapper = hasWrapper;
-            this.mFocusHighlight = focusHighlight;
-        }
-
-        /* JADX WARN: Type inference failed for: r0v3, types: [android.view.ViewParent] */
-        /* JADX WARNING: Multi-variable type inference failed */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
-        public void onFocusChange(android.view.View r2, boolean r3) {
-            /*
-                r1 = this;
-                boolean r0 = r1.mHasWrapper
-                if (r0 == 0) goto L_0x000b
-                android.view.ViewParent r0 = r2.getParent()
-                r2 = r0
-                android.view.View r2 = (android.view.View) r2
-            L_0x000b:
-                androidx.leanback.widget.FocusHighlightHandler r0 = r1.mFocusHighlight
-                r0.onItemFocused(r2, r3)
-                android.view.View$OnFocusChangeListener r0 = r1.mChainedListener
-                if (r0 == 0) goto L_0x0017
-                r0.onFocusChange(r2, r3)
-            L_0x0017:
-                return
-            */
-            throw new UnsupportedOperationException("Method not decompiled: androidx.leanback.widget.ItemBridgeAdapter.ChainingFocusChangeListener.onFocusChange(android.view.View, boolean):void");
-        }
-    }
-
-    public static class ViewHolder extends RecyclerView.ViewHolder implements FacetProvider {
-        Object mExtraObject;
-        final Presenter.ViewHolder mHolder;
-        Object mItem;
-        final Presenter mPresenter;
-
-        public final Presenter getPresenter() {
-            return this.mPresenter;
-        }
-
-        public final Presenter.ViewHolder getViewHolder() {
-            return this.mHolder;
-        }
-
-        public final Object getItem() {
-            return this.mItem;
-        }
-
-        public final Object getExtraObject() {
-            return this.mExtraObject;
-        }
-
-        public void setExtraObject(Object object) {
-            this.mExtraObject = object;
-        }
-
-        public Object getFacet(Class<?> facetClass) {
-            return this.mHolder.getFacet(facetClass);
-        }
-
-        ViewHolder(Presenter presenter, View view, Presenter.ViewHolder holder) {
-            super(view);
-            this.mPresenter = presenter;
-            this.mHolder = holder;
-        }
-    }
 
     public ItemBridgeAdapter(ObjectAdapter adapter, PresenterSelector presenterSelector) {
         this.mPresenters = new ArrayList<>();
@@ -216,12 +107,12 @@ public class ItemBridgeAdapter extends RecyclerView.Adapter implements FacetProv
         notifyDataSetChanged();
     }
 
-    public void setWrapper(Wrapper wrapper) {
-        this.mWrapper = wrapper;
-    }
-
     public Wrapper getWrapper() {
         return this.mWrapper;
+    }
+
+    public void setWrapper(Wrapper wrapper) {
+        this.mWrapper = wrapper;
     }
 
     /* access modifiers changed from: package-private */
@@ -233,12 +124,12 @@ public class ItemBridgeAdapter extends RecyclerView.Adapter implements FacetProv
         setAdapter(null);
     }
 
-    public void setPresenterMapper(ArrayList<Presenter> presenters) {
-        this.mPresenters = presenters;
-    }
-
     public ArrayList<Presenter> getPresenterMapper() {
         return this.mPresenters;
+    }
+
+    public void setPresenterMapper(ArrayList<Presenter> presenters) {
+        this.mPresenters = presenters;
     }
 
     public int getItemCount() {
@@ -402,5 +293,113 @@ public class ItemBridgeAdapter extends RecyclerView.Adapter implements FacetProv
 
     public FacetProvider getFacetProvider(int type) {
         return this.mPresenters.get(type);
+    }
+
+    public static abstract class Wrapper {
+        public abstract View createWrapper(View view);
+
+        public abstract void wrap(View view, View view2);
+    }
+
+    public static class AdapterListener {
+        public void onAddPresenter(Presenter presenter, int type) {
+        }
+
+        public void onCreate(ViewHolder viewHolder) {
+        }
+
+        public void onBind(ViewHolder viewHolder) {
+        }
+
+        public void onBind(ViewHolder viewHolder, List payloads) {
+            onBind(viewHolder);
+        }
+
+        public void onUnbind(ViewHolder viewHolder) {
+        }
+
+        public void onAttachedToWindow(ViewHolder viewHolder) {
+        }
+
+        public void onDetachedFromWindow(ViewHolder viewHolder) {
+        }
+    }
+
+    static final class ChainingFocusChangeListener implements View.OnFocusChangeListener {
+        final View.OnFocusChangeListener mChainedListener;
+        FocusHighlightHandler mFocusHighlight;
+        boolean mHasWrapper;
+
+        ChainingFocusChangeListener(View.OnFocusChangeListener chainedListener, boolean hasWrapper, FocusHighlightHandler focusHighlight) {
+            this.mChainedListener = chainedListener;
+            this.mHasWrapper = hasWrapper;
+            this.mFocusHighlight = focusHighlight;
+        }
+
+        /* access modifiers changed from: package-private */
+        public void update(boolean hasWrapper, FocusHighlightHandler focusHighlight) {
+            this.mHasWrapper = hasWrapper;
+            this.mFocusHighlight = focusHighlight;
+        }
+
+        /* JADX WARN: Type inference failed for: r0v3, types: [android.view.ViewParent] */
+        /* JADX WARNING: Multi-variable type inference failed */
+        /* Code decompiled incorrectly, please refer to instructions dump. */
+        public void onFocusChange(android.view.View r2, boolean r3) {
+            /*
+                r1 = this;
+                boolean r0 = r1.mHasWrapper
+                if (r0 == 0) goto L_0x000b
+                android.view.ViewParent r0 = r2.getParent()
+                r2 = r0
+                android.view.View r2 = (android.view.View) r2
+            L_0x000b:
+                androidx.leanback.widget.FocusHighlightHandler r0 = r1.mFocusHighlight
+                r0.onItemFocused(r2, r3)
+                android.view.View$OnFocusChangeListener r0 = r1.mChainedListener
+                if (r0 == 0) goto L_0x0017
+                r0.onFocusChange(r2, r3)
+            L_0x0017:
+                return
+            */
+            throw new UnsupportedOperationException("Method not decompiled: androidx.leanback.widget.ItemBridgeAdapter.ChainingFocusChangeListener.onFocusChange(android.view.View, boolean):void");
+        }
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder implements FacetProvider {
+        final Presenter.ViewHolder mHolder;
+        final Presenter mPresenter;
+        Object mExtraObject;
+        Object mItem;
+
+        ViewHolder(Presenter presenter, View view, Presenter.ViewHolder holder) {
+            super(view);
+            this.mPresenter = presenter;
+            this.mHolder = holder;
+        }
+
+        public final Presenter getPresenter() {
+            return this.mPresenter;
+        }
+
+        public final Presenter.ViewHolder getViewHolder() {
+            return this.mHolder;
+        }
+
+        public final Object getItem() {
+            return this.mItem;
+        }
+
+        public final Object getExtraObject() {
+            return this.mExtraObject;
+        }
+
+        public void setExtraObject(Object object) {
+            this.mExtraObject = object;
+        }
+
+        public Object getFacet(Class<?> facetClass) {
+            return this.mHolder.getFacet(facetClass);
+        }
     }
 }

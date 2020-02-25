@@ -1,22 +1,22 @@
 package android.support.p004v7.view.menu;
 
 import android.support.annotation.RestrictTo;
-import android.support.p004v7.view.menu.MenuView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+
 import java.util.ArrayList;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
 /* renamed from: android.support.v7.view.menu.MenuAdapter */
 public class MenuAdapter extends BaseAdapter {
-    MenuBuilder mAdapterMenu;
-    private int mExpandedIndex = -1;
-    private boolean mForceShowIcon;
     private final LayoutInflater mInflater;
     private final int mItemLayoutRes;
     private final boolean mOverflowOnly;
+    MenuBuilder mAdapterMenu;
+    private int mExpandedIndex = -1;
+    private boolean mForceShowIcon;
 
     public MenuAdapter(MenuBuilder menu, LayoutInflater inflater, boolean overflowOnly, int itemLayoutRes) {
         this.mOverflowOnly = overflowOnly;

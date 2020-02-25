@@ -18,9 +18,8 @@ import android.support.annotation.WorkerThread;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.LongSparseArray;
+
 import com.google.android.tvlauncher.application.TvLauncherApplicationBase;
-import com.google.android.tvlauncher.data.DataLoadingBackgroundTask;
-import com.google.android.tvlauncher.data.DataSourceObserver;
 import com.google.android.tvlauncher.home.WatchNextPrefs;
 import com.google.android.tvlauncher.model.Channel;
 import com.google.android.tvlauncher.model.ChannelPackage;
@@ -34,6 +33,7 @@ import com.google.android.tvlauncher.util.OemConfiguration;
 import com.google.android.tvrecommendations.shared.util.Constants;
 import com.google.devtools.build.android.desugar.runtime.ThrowableExtension;
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,13 +47,15 @@ import java.util.Queue;
 import java.util.Set;
 
 public class TvDataManager implements DataLoadingBackgroundTask.Callbacks {
+    public static final String ENABLE_PREVIEW_AUDIO_KEY = "enable_preview_audio_key";
+    public static final String ENABLE_PREVIEW_VIDEO_KEY = "show_preview_video_key";
+    public static final String PREVIEW_MEDIA_PREF_FILE_NAME = "com.google.android.tvlauncher.data.TvDataManager.PREVIEW_VIDEO_PREF_FILE_NAME";
+    public static final long WATCH_NEXT_REQUERY_INTERVAL_MILLIS = 600000;
     private static final int CHANNEL_PROGRAM_COUNT_BATCH_SIZE = 1000;
     private static final int COLUMN_INDEX_CONTENT_ID = 0;
     private static final int COLUMN_INDEX_PACKAGE_NAME = 1;
     private static final boolean DEBUG = false;
     private static final LongSparseArray<ChannelConfigurationInfo> EMPTY_PINNED_CHANNEL_CONFIG = new LongSparseArray<>(0);
-    public static final String ENABLE_PREVIEW_AUDIO_KEY = "enable_preview_audio_key";
-    public static final String ENABLE_PREVIEW_VIDEO_KEY = "show_preview_video_key";
     private static final int FIRST_PROGRAMS_CHANNELS_ALWAYS_CACHED = 5;
     private static final String HOME_CHANNELS_SELECTION = "browsable=1 AND type='TYPE_PREVIEW'";
     private static final String KEY_BOOT_COUNT = "boot_count";
@@ -65,10 +67,8 @@ public class TvDataManager implements DataLoadingBackgroundTask.Callbacks {
     private static final int MAX_WATCH_NEXT_PROGRAMS = 1000;
     private static final String OLD_CHANNEL_IDS_SEPARATOR = ",";
     private static final String PACKAGE_CHANNELS_SELECTION = "type='TYPE_PREVIEW'";
-    public static final String PREVIEW_MEDIA_PREF_FILE_NAME = "com.google.android.tvlauncher.data.TvDataManager.PREVIEW_VIDEO_PREF_FILE_NAME";
     private static final String PROGRAMS_BY_CHANNEL_ID_SELECTION = "channel_id=? AND browsable=1";
     private static final String PROMO_CHANNEL_SELECTION = "package_name=?";
-    public static Provider PROVIDER = TvDataManager$$Lambda$2.$instance;
     private static final long SPONSORED_GOOGLE_CHANNEL_NO_ID = -1;
     private static final int SPONSORED_GOOGLE_CHANNEL_NO_OOB_POSITION = -1;
     private static final String TAG = "TvDataManager";
@@ -80,15 +80,19 @@ public class TvDataManager implements DataLoadingBackgroundTask.Callbacks {
     private static final int TASK_WATCH_NEXT_PROGRAMS = 4;
     private static final String TV_DATA_MANAGER_PREF_FILE_NAME = "com.google.android.tvlauncher.data.TvDataManager.PREF";
     private static final String[] WATCH_NEXT_CACHE_PROJECTION = {"content_id", "package_name"};
-    public static final long WATCH_NEXT_REQUERY_INTERVAL_MILLIS = 600000;
     private static final String WATCH_NEXT_SELECTION = "browsable=1 AND last_engagement_time_utc_millis<=?";
+    public static Provider PROVIDER = TvDataManager$$Lambda$2.$instance;
     private static int sChannelProgramCountBatchSize = 1000;
     @SuppressLint({"StaticFieldLeak"})
     private static TvDataManager sInstance;
     /* access modifiers changed from: private */
+    public final Context mContext;
+    private final DataSourceObserver mDataSourceObserver;
+    private final GoogleConfigurationManager mGoogleConfigurationManager;
+    private final Handler mHandler = new Handler();
+    /* access modifiers changed from: private */
     @SuppressLint({"UseSparseArrays"})
     public Map<Long, HomeChannel> mBrowsableChannels = new HashMap();
-    private Queue<Long> mCachedProgramsChannelOrder = new ArrayDeque();
     /* access modifiers changed from: private */
     @SuppressLint({"UseSparseArrays"})
     public Map<Long, Uri> mChannelLogoUris = new HashMap();
@@ -101,45 +105,49 @@ public class TvDataManager implements DataLoadingBackgroundTask.Callbacks {
     @SuppressLint({"UseSparseArrays"})
     public Map<Long, List<ChannelProgramsObserver>> mChannelProgramsObservers = new HashMap();
     /* access modifiers changed from: private */
-    public final Context mContext;
-    private final DataSourceObserver mDataSourceObserver;
-    private final GoogleConfigurationManager mGoogleConfigurationManager;
-    private final Handler mHandler = new Handler();
-    /* access modifiers changed from: private */
     public HashSet<Long> mHomeChannelIds = new HashSet<>();
-    @SuppressLint({"UseSparseArrays"})
-    private Map<Long, DataLoadingBackgroundTask> mHomeChannelProgramsBackgroundTasks = new HashMap();
     /* access modifiers changed from: private */
     public List<HomeChannel> mHomeChannels;
-    private DataLoadingBackgroundTask mHomeChannelsBackgroundTask;
     /* access modifiers changed from: private */
     public List<HomeChannelsObserver> mHomeChannelsObservers = new LinkedList();
     /* access modifiers changed from: private */
     public boolean mHomeChannelsStale = true;
+    /* access modifiers changed from: private */
+    public Set<Long> mNonEmptyHomeChannelIds;
+    /* access modifiers changed from: private */
+    @SuppressLint({"UseSparseArrays"})
+    public Map<Long, Long> mProgramChannelIds = Collections.synchronizedMap(new HashMap());
+    /* access modifiers changed from: private */
+    public List<PromoChannelObserver> mPromoChannelObservers = new LinkedList();
+    /* access modifiers changed from: private */
+    public Set<Long> mStaleProgramsChannels = new HashSet();
+    /* access modifiers changed from: private */
+    public List<WatchNextProgramsObserver> mWatchNextProgramsObservers = new LinkedList();
+    /* access modifiers changed from: private */
+    public boolean mWatchNextProgramsStale = true;
+    /* access modifiers changed from: private */
+    public String mWatchNextSelection;
+    private Queue<Long> mCachedProgramsChannelOrder = new ArrayDeque();
+    @SuppressLint({"UseSparseArrays"})
+    private Map<Long, DataLoadingBackgroundTask> mHomeChannelProgramsBackgroundTasks = new HashMap();
+    private DataLoadingBackgroundTask mHomeChannelsBackgroundTask;
     private boolean mIsFirstLaunchAfterBoot = true;
     private long mLiveTvChannelId;
     private SharedPreferences mLiveTvChannelPref;
-    /* access modifiers changed from: private */
-    public Set<Long> mNonEmptyHomeChannelIds;
     private Map<String, List<Channel>> mPackageChannels;
     private DataLoadingBackgroundTask mPackageChannelsBackgroundTask;
     private List<PackageChannelsObserver> mPackageChannelsObservers = new LinkedList();
     private List<ChannelPackage> mPackagesWithChannels;
     private List<PackagesWithChannelsObserver> mPackagesWithChannelsObservers = new LinkedList();
     private PinnedChannelOrderManager mPinnedChannelOrderManager = new PinnedChannelOrderManager();
-    /* access modifiers changed from: private */
-    @SuppressLint({"UseSparseArrays"})
-    public Map<Long, Long> mProgramChannelIds = Collections.synchronizedMap(new HashMap());
     private Channel mPromoChannel;
     private DataLoadingBackgroundTask mPromoChannelBackgroundTask;
     private boolean mPromoChannelLoaded;
-    /* access modifiers changed from: private */
-    public List<PromoChannelObserver> mPromoChannelObservers = new LinkedList();
-    /* access modifiers changed from: private */
-    public Set<Long> mStaleProgramsChannels = new HashSet();
     private SharedPreferences mTvDataManagerPref;
     private DataLoadingBackgroundTask mWatchNextCacheBackgroundTask;
     private Set<String> mWatchNextContentIdsCache = new HashSet();
+    private WatchNextProgramsDataBuffer mWatchNextPrograms;
+    private DataLoadingBackgroundTask mWatchNextProgramsBackgroundTask;
     private final SharedPreferences.OnSharedPreferenceChangeListener mWatchNextPrefListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             if (key.startsWith(WatchNextPrefs.WATCH_NEXT_PACKAGE_KEY_PREFIX)) {
@@ -149,30 +157,6 @@ public class TvDataManager implements DataLoadingBackgroundTask.Callbacks {
             }
         }
     };
-    private WatchNextProgramsDataBuffer mWatchNextPrograms;
-    private DataLoadingBackgroundTask mWatchNextProgramsBackgroundTask;
-    /* access modifiers changed from: private */
-    public List<WatchNextProgramsObserver> mWatchNextProgramsObservers = new LinkedList();
-    /* access modifiers changed from: private */
-    public boolean mWatchNextProgramsStale = true;
-    /* access modifiers changed from: private */
-    public String mWatchNextSelection;
-
-    public interface Provider {
-        TvDataManager get(Context context);
-    }
-
-    @VisibleForTesting
-    static void setChannelProgramCountBatchSize(int channelProgramCountBatchSize) {
-        sChannelProgramCountBatchSize = channelProgramCountBatchSize;
-    }
-
-    public static TvDataManager getInstance(Context context) {
-        if (sInstance == null) {
-            sInstance = new TvDataManager(context, ((TvLauncherApplicationBase) context.getApplicationContext()).getGoogleConfigurationManager());
-        }
-        return sInstance;
-    }
 
     @VisibleForTesting
     TvDataManager(Context context, GoogleConfigurationManager googleConfigurationManager) {
@@ -205,6 +189,51 @@ public class TvDataManager implements DataLoadingBackgroundTask.Callbacks {
         this.mNonEmptyHomeChannelIds = (Set) this.mHomeChannelIds.clone();
     }
 
+    @VisibleForTesting
+    static void setChannelProgramCountBatchSize(int channelProgramCountBatchSize) {
+        sChannelProgramCountBatchSize = channelProgramCountBatchSize;
+    }
+
+    public static TvDataManager getInstance(Context context) {
+        if (sInstance == null) {
+            sInstance = new TvDataManager(context, ((TvLauncherApplicationBase) context.getApplicationContext()).getGoogleConfigurationManager());
+        }
+        return sInstance;
+    }
+
+    private static <K, V> void addToMultimap(Map<K, List<V>> multimap, K key, V item) {
+        List<V> list = multimap.get(key);
+        if (list == null) {
+            List<V> list2 = new LinkedList<>();
+            list2.add(item);
+            multimap.put(key, list2);
+        } else if (!list.contains(item)) {
+            list.add(item);
+        }
+    }
+
+    private static <K, V> void removeFromMultimap(Map<K, List<V>> multimap, K key, V item) {
+        List<V> list = multimap.get(key);
+        if (list != null) {
+            list.remove(item);
+            if (list.size() == 0) {
+                multimap.remove(key);
+            }
+        }
+    }
+
+    private static /* synthetic */ void $closeResource(Throwable x0, Cursor x1) {
+        if (x0 != null) {
+            try {
+                x1.close();
+            } catch (Throwable th) {
+                ThrowableExtension.addSuppressed(x0, th);
+            }
+        } else {
+            x1.close();
+        }
+    }
+
     /* access modifiers changed from: private */
     public void saveNonEmptyHomeChannelIdsToSharedPref() {
         SharedPreferences.Editor editor = this.mTvDataManagerPref.edit();
@@ -219,12 +248,6 @@ public class TvDataManager implements DataLoadingBackgroundTask.Callbacks {
             editor.putString(KEY_NON_EMPTY_OLD_HOME_CHANNEL_IDS, "");
         }
         editor.apply();
-    }
-
-    /* access modifiers changed from: package-private */
-    @VisibleForTesting
-    public void setChannelOrderManager(ChannelOrderManager channelOrderManager) {
-        this.mChannelOrderManager = channelOrderManager;
     }
 
     /* access modifiers changed from: package-private */
@@ -463,27 +486,6 @@ public class TvDataManager implements DataLoadingBackgroundTask.Callbacks {
     public void addProgramToWatchNextCache(String contentId, String packageName) {
         if (contentId != null && packageName != null) {
             this.mWatchNextContentIdsCache.add(createKeyFor(contentId, packageName));
-        }
-    }
-
-    private static <K, V> void addToMultimap(Map<K, List<V>> multimap, K key, V item) {
-        List<V> list = multimap.get(key);
-        if (list == null) {
-            List<V> list2 = new LinkedList<>();
-            list2.add(item);
-            multimap.put(key, list2);
-        } else if (!list.contains(item)) {
-            list.add(item);
-        }
-    }
-
-    private static <K, V> void removeFromMultimap(Map<K, List<V>> multimap, K key, V item) {
-        List<V> list = multimap.get(key);
-        if (list != null) {
-            list.remove(item);
-            if (list.size() == 0) {
-                multimap.remove(key);
-            }
         }
     }
 
@@ -1088,18 +1090,6 @@ public class TvDataManager implements DataLoadingBackgroundTask.Callbacks {
             if (cursor5 != null) {
                 $closeResource(null, cursor5);
             }
-        }
-    }
-
-    private static /* synthetic */ void $closeResource(Throwable x0, Cursor x1) {
-        if (x0 != null) {
-            try {
-                x1.close();
-            } catch (Throwable th) {
-                ThrowableExtension.addSuppressed(x0, th);
-            }
-        } else {
-            x1.close();
         }
     }
 
@@ -1907,6 +1897,16 @@ public class TvDataManager implements DataLoadingBackgroundTask.Callbacks {
             return this.mChannelOrderManager;
         }
         throw new IllegalStateException("Home channel data not loaded yet");
+    }
+
+    /* access modifiers changed from: package-private */
+    @VisibleForTesting
+    public void setChannelOrderManager(ChannelOrderManager channelOrderManager) {
+        this.mChannelOrderManager = channelOrderManager;
+    }
+
+    public interface Provider {
+        TvDataManager get(Context context);
     }
 
     private class DataSourceObserverCallbacks implements DataSourceObserver.Callbacks {

@@ -3,14 +3,15 @@ package com.bumptech.glide.load.model;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.p001v4.util.Pools;
+
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.Key;
 import com.bumptech.glide.load.Options;
 import com.bumptech.glide.load.data.DataFetcher;
 import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.load.model.ModelLoader;
 import com.bumptech.glide.util.Preconditions;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -61,14 +62,14 @@ class MultiModelLoader<Model, Data> implements ModelLoader<Model, Data> {
     }
 
     static class MultiFetcher<Data> implements DataFetcher<Data>, DataFetcher.DataCallback<Data> {
+        private final List<DataFetcher<Data>> fetchers;
+        private final Pools.Pool<List<Throwable>> throwableListPool;
         private DataFetcher.DataCallback<? super Data> callback;
         private int currentIndex = 0;
         @Nullable
         private List<Throwable> exceptions;
-        private final List<DataFetcher<Data>> fetchers;
         private boolean isCancelled;
         private Priority priority;
-        private final Pools.Pool<List<Throwable>> throwableListPool;
 
         MultiFetcher(@NonNull List<DataFetcher<Data>> fetchers2, @NonNull Pools.Pool<List<Throwable>> throwableListPool2) {
             this.throwableListPool = throwableListPool2;

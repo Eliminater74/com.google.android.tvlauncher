@@ -18,6 +18,9 @@ public final class ContentUriUtils {
     private static final String TAG = "ContentUriUtils";
     private static final String WEBP_MIME_TYPE = "image/webp";
 
+    private ContentUriUtils() {
+    }
+
     public static boolean isFileUri(Uri uri) {
         return uri != null && "file".equals(uri.getScheme());
     }
@@ -186,8 +189,5 @@ public final class ContentUriUtils {
             Log.w(TAG, sb.toString(), e);
             return null;
         }
-    }
-
-    private ContentUriUtils() {
     }
 }

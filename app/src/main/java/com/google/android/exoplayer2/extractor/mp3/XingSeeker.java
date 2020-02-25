@@ -1,10 +1,10 @@
 package com.google.android.exoplayer2.extractor.mp3;
 
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.extractor.MpegAudioHeader;
 import com.google.android.exoplayer2.extractor.SeekMap;
 import com.google.android.exoplayer2.extractor.SeekPoint;
-import com.google.android.exoplayer2.extractor.mp3.Mp3Extractor;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.ParsableByteArray;
@@ -19,6 +19,19 @@ final class XingSeeker implements Mp3Extractor.Seeker {
     @Nullable
     private final long[] tableOfContents;
     private final int xingFrameSize;
+
+    private XingSeeker(long dataStartPosition2, int xingFrameSize2, long durationUs2) {
+        this(dataStartPosition2, xingFrameSize2, durationUs2, -1, null);
+    }
+
+    private XingSeeker(long dataStartPosition2, int xingFrameSize2, long durationUs2, long dataSize2, @Nullable long[] tableOfContents2) {
+        this.dataStartPosition = dataStartPosition2;
+        this.xingFrameSize = xingFrameSize2;
+        this.durationUs = durationUs2;
+        this.tableOfContents = tableOfContents2;
+        this.dataSize = dataSize2;
+        this.dataEndPosition = dataSize2 != -1 ? dataStartPosition2 + dataSize2 : -1;
+    }
 
     @Nullable
     public static XingSeeker create(long inputLength, long position, MpegAudioHeader mpegAudioHeader, ParsableByteArray frame) {
@@ -53,19 +66,6 @@ final class XingSeeker implements Mp3Extractor.Seeker {
             Log.m30w(TAG, sb.toString());
         }
         return new XingSeeker(position, mpegAudioHeader2.frameSize, durationUs2, dataSize2, tableOfContents2);
-    }
-
-    private XingSeeker(long dataStartPosition2, int xingFrameSize2, long durationUs2) {
-        this(dataStartPosition2, xingFrameSize2, durationUs2, -1, null);
-    }
-
-    private XingSeeker(long dataStartPosition2, int xingFrameSize2, long durationUs2, long dataSize2, @Nullable long[] tableOfContents2) {
-        this.dataStartPosition = dataStartPosition2;
-        this.xingFrameSize = xingFrameSize2;
-        this.durationUs = durationUs2;
-        this.tableOfContents = tableOfContents2;
-        this.dataSize = dataSize2;
-        this.dataEndPosition = dataSize2 != -1 ? dataStartPosition2 + dataSize2 : -1;
     }
 
     public boolean isSeekable() {

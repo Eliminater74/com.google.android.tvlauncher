@@ -2,12 +2,10 @@ package android.support.p004v7.recyclerview.extensions;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.p004v7.recyclerview.extensions.AsyncDifferConfig;
-import android.support.p004v7.recyclerview.extensions.AsyncListDiffer;
 import android.support.p004v7.util.AdapterListUpdateCallback;
 import android.support.p004v7.util.DiffUtil;
 import android.support.p004v7.widget.RecyclerView;
-import android.support.p004v7.widget.RecyclerView.ViewHolder;
+
 import java.util.List;
 
 /* renamed from: android.support.v7.recyclerview.extensions.ListAdapter */

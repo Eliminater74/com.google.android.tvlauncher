@@ -10,11 +10,15 @@ import android.support.annotation.RestrictTo;
 import android.transition.Transition;
 import android.transition.TransitionValues;
 import android.view.View;
+
 import androidx.leanback.C0364R;
 
 @RequiresApi(21)
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
 class TranslationAnimationCreator {
+    private TranslationAnimationCreator() {
+    }
+
     static Animator createAnimation(View view, TransitionValues values, int viewPosX, int viewPosY, float startX, float startY, float endX, float endY, TimeInterpolator interpolator, Transition transition) {
         float startY2;
         float startX2;
@@ -53,14 +57,14 @@ class TranslationAnimationCreator {
 
     private static class TransitionPositionListener extends AnimatorListenerAdapter implements Transition.TransitionListener {
         private final View mMovingView;
-        private float mPausedX;
-        private float mPausedY;
         private final int mStartX;
         private final int mStartY;
         private final float mTerminalX;
         private final float mTerminalY;
-        private int[] mTransitionPosition = ((int[]) this.mViewInHierarchy.getTag(C0364R.C0366id.transitionPosition));
         private final View mViewInHierarchy;
+        private float mPausedX;
+        private float mPausedY;
+        private int[] mTransitionPosition = ((int[]) this.mViewInHierarchy.getTag(C0364R.C0366id.transitionPosition));
 
         TransitionPositionListener(View movingView, View viewInHierarchy, int startX, int startY, float terminalX, float terminalY) {
             this.mMovingView = movingView;
@@ -114,8 +118,5 @@ class TranslationAnimationCreator {
 
         public void onTransitionResume(Transition transition) {
         }
-    }
-
-    private TranslationAnimationCreator() {
     }
 }

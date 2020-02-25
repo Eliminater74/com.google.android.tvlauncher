@@ -4,6 +4,7 @@ import android.graphics.SurfaceTexture;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.GlUtil;
@@ -13,24 +14,25 @@ import com.google.android.exoplayer2.video.spherical.CameraMotionListener;
 import com.google.android.exoplayer2.video.spherical.FrameRotationQueue;
 import com.google.android.exoplayer2.video.spherical.Projection;
 import com.google.android.exoplayer2.video.spherical.ProjectionDecoder;
+
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /* renamed from: com.google.android.exoplayer2.ui.spherical.SceneRenderer */
 public final class SceneRenderer implements VideoFrameMetadataListener, CameraMotionListener {
-    private volatile int defaultStereoMode = 0;
     private final AtomicBoolean frameAvailable = new AtomicBoolean();
     private final FrameRotationQueue frameRotationQueue = new FrameRotationQueue();
-    @Nullable
-    private byte[] lastProjectionData;
-    private int lastStereoMode = -1;
     private final TimedValueQueue<Projection> projectionQueue = new TimedValueQueue<>();
     private final ProjectionRenderer projectionRenderer = new ProjectionRenderer();
     private final AtomicBoolean resetRotationAtNextFrame = new AtomicBoolean(true);
     private final float[] rotationMatrix = new float[16];
     private final TimedValueQueue<Long> sampleTimestampQueue = new TimedValueQueue<>();
-    private SurfaceTexture surfaceTexture;
     private final float[] tempMatrix = new float[16];
+    private volatile int defaultStereoMode = 0;
+    @Nullable
+    private byte[] lastProjectionData;
+    private int lastStereoMode = -1;
+    private SurfaceTexture surfaceTexture;
     private int textureId;
 
     public void setDefaultStereoMode(int stereoMode) {

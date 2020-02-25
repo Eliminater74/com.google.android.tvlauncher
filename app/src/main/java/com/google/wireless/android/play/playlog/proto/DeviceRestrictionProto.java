@@ -10,19 +10,20 @@ import com.google.protobuf.MessageLiteOrBuilder;
 import com.google.protobuf.Parser;
 import com.google.protobuf.ProtoMessage;
 import com.google.protobuf.ProtoSyntax;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 public final class DeviceRestrictionProto {
 
-    public interface DeviceRestrictionOrBuilder extends MessageLiteOrBuilder {
-    }
-
     private DeviceRestrictionProto() {
     }
 
     public static void registerAllExtensions(ExtensionRegistryLite registry) {
+    }
+
+    public interface DeviceRestrictionOrBuilder extends MessageLiteOrBuilder {
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -31,65 +32,11 @@ public final class DeviceRestrictionProto {
         public static final DeviceRestriction DEFAULT_INSTANCE = new DeviceRestriction();
         private static volatile Parser<DeviceRestriction> PARSER;
 
-        private DeviceRestriction() {
+        static {
+            GeneratedMessageLite.registerDefaultInstance(DeviceRestriction.class, DEFAULT_INSTANCE);
         }
 
-        /* renamed from: com.google.wireless.android.play.playlog.proto.DeviceRestrictionProto$DeviceRestriction$Id */
-        public enum C1930Id implements Internal.EnumLite {
-            NO_RESTRICTION(0),
-            SIDEWINDER_DEVICE(1),
-            LATCHSKY_DEVICE(2);
-            
-            public static final int LATCHSKY_DEVICE_VALUE = 2;
-            public static final int NO_RESTRICTION_VALUE = 0;
-            public static final int SIDEWINDER_DEVICE_VALUE = 1;
-            private static final Internal.EnumLiteMap<C1930Id> internalValueMap = new Internal.EnumLiteMap<C1930Id>() {
-                public C1930Id findValueByNumber(int number) {
-                    return C1930Id.forNumber(number);
-                }
-            };
-            private final int value;
-
-            public final int getNumber() {
-                return this.value;
-            }
-
-            public static C1930Id forNumber(int value2) {
-                if (value2 == 0) {
-                    return NO_RESTRICTION;
-                }
-                if (value2 == 1) {
-                    return SIDEWINDER_DEVICE;
-                }
-                if (value2 != 2) {
-                    return null;
-                }
-                return LATCHSKY_DEVICE;
-            }
-
-            public static Internal.EnumLiteMap<C1930Id> internalGetValueMap() {
-                return internalValueMap;
-            }
-
-            public static Internal.EnumVerifier internalGetVerifier() {
-                return IdVerifier.INSTANCE;
-            }
-
-            /* renamed from: com.google.wireless.android.play.playlog.proto.DeviceRestrictionProto$DeviceRestriction$Id$IdVerifier */
-            private static final class IdVerifier implements Internal.EnumVerifier {
-                static final Internal.EnumVerifier INSTANCE = new IdVerifier();
-
-                private IdVerifier() {
-                }
-
-                public boolean isInRange(int number) {
-                    return C1930Id.forNumber(number) != null;
-                }
-            }
-
-            private C1930Id(int value2) {
-                this.value = value2;
-            }
+        private DeviceRestriction() {
         }
 
         public static DeviceRestriction parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
@@ -148,10 +95,12 @@ public final class DeviceRestrictionProto {
             return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
         }
 
-        public static final class Builder extends GeneratedMessageLite.Builder<DeviceRestriction, Builder> implements DeviceRestrictionOrBuilder {
-            private Builder() {
-                super(DeviceRestriction.DEFAULT_INSTANCE);
-            }
+        public static DeviceRestriction getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<DeviceRestriction> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         /* access modifiers changed from: protected */
@@ -186,16 +135,68 @@ public final class DeviceRestrictionProto {
             }
         }
 
-        static {
-            GeneratedMessageLite.registerDefaultInstance(DeviceRestriction.class, DEFAULT_INSTANCE);
+        /* renamed from: com.google.wireless.android.play.playlog.proto.DeviceRestrictionProto$DeviceRestriction$Id */
+        public enum C1930Id implements Internal.EnumLite {
+            NO_RESTRICTION(0),
+            SIDEWINDER_DEVICE(1),
+            LATCHSKY_DEVICE(2);
+
+            public static final int LATCHSKY_DEVICE_VALUE = 2;
+            public static final int NO_RESTRICTION_VALUE = 0;
+            public static final int SIDEWINDER_DEVICE_VALUE = 1;
+            private static final Internal.EnumLiteMap<C1930Id> internalValueMap = new Internal.EnumLiteMap<C1930Id>() {
+                public C1930Id findValueByNumber(int number) {
+                    return C1930Id.forNumber(number);
+                }
+            };
+            private final int value;
+
+            private C1930Id(int value2) {
+                this.value = value2;
+            }
+
+            public static C1930Id forNumber(int value2) {
+                if (value2 == 0) {
+                    return NO_RESTRICTION;
+                }
+                if (value2 == 1) {
+                    return SIDEWINDER_DEVICE;
+                }
+                if (value2 != 2) {
+                    return null;
+                }
+                return LATCHSKY_DEVICE;
+            }
+
+            public static Internal.EnumLiteMap<C1930Id> internalGetValueMap() {
+                return internalValueMap;
+            }
+
+            public static Internal.EnumVerifier internalGetVerifier() {
+                return IdVerifier.INSTANCE;
+            }
+
+            public final int getNumber() {
+                return this.value;
+            }
+
+            /* renamed from: com.google.wireless.android.play.playlog.proto.DeviceRestrictionProto$DeviceRestriction$Id$IdVerifier */
+            private static final class IdVerifier implements Internal.EnumVerifier {
+                static final Internal.EnumVerifier INSTANCE = new IdVerifier();
+
+                private IdVerifier() {
+                }
+
+                public boolean isInRange(int number) {
+                    return C1930Id.forNumber(number) != null;
+                }
+            }
         }
 
-        public static DeviceRestriction getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<DeviceRestriction> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
+        public static final class Builder extends GeneratedMessageLite.Builder<DeviceRestriction, Builder> implements DeviceRestrictionOrBuilder {
+            private Builder() {
+                super(DeviceRestriction.DEFAULT_INSTANCE);
+            }
         }
     }
 }

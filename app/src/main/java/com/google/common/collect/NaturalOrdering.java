@@ -2,8 +2,10 @@ package com.google.common.collect;
 
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.base.Preconditions;
-import java.io.Serializable;
+
 import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
+
+import java.io.Serializable;
 
 @GwtCompatible(serializable = true)
 final class NaturalOrdering extends Ordering<Comparable> implements Serializable {
@@ -13,6 +15,9 @@ final class NaturalOrdering extends Ordering<Comparable> implements Serializable
     private transient Ordering<Comparable> nullsFirst;
     @MonotonicNonNullDecl
     private transient Ordering<Comparable> nullsLast;
+
+    private NaturalOrdering() {
+    }
 
     public int compare(Comparable left, Comparable right) {
         Preconditions.checkNotNull(left);
@@ -50,8 +55,5 @@ final class NaturalOrdering extends Ordering<Comparable> implements Serializable
 
     public String toString() {
         return "Ordering.natural()";
-    }
-
-    private NaturalOrdering() {
     }
 }

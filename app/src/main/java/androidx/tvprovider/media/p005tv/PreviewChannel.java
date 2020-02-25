@@ -14,7 +14,7 @@ import android.support.annotation.RestrictTo;
 import android.support.annotation.WorkerThread;
 import android.text.TextUtils;
 import android.util.Log;
-import androidx.tvprovider.media.p005tv.TvContractCompat;
+
 import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
 import java.util.Objects;
@@ -24,11 +24,11 @@ public class PreviewChannel {
     private static final long INVALID_CHANNEL_ID = -1;
     private static final int IS_BROWSABLE = 1;
     private static final String TAG = "PreviewChannel";
+    ContentValues mValues;
     private boolean mLogoChanged;
     private volatile boolean mLogoFetched;
     private volatile Bitmap mLogoImage;
     private Uri mLogoUri;
-    ContentValues mValues;
 
     PreviewChannel(Builder builder) {
         this.mValues = builder.mValues;

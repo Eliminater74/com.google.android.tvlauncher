@@ -1,7 +1,5 @@
 package com.google.android.exoplayer2.source.ads;
 
-import com.google.android.exoplayer2.source.ads.AdsMediaSource;
-
 final /* synthetic */ class AdsMediaSource$ComponentListener$$Lambda$0 implements Runnable {
     private final AdsMediaSource.ComponentListener arg$1;
     private final AdPlaybackState arg$2;

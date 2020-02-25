@@ -9,12 +9,14 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.SortedSet;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible(emulated = true)
 public abstract class FluentIterable<E> implements Iterable<E> {
@@ -27,10 +29,6 @@ public abstract class FluentIterable<E> implements Iterable<E> {
     FluentIterable(Iterable<E> iterable) {
         Preconditions.checkNotNull(iterable);
         this.iterableDelegate = Optional.fromNullable(this != iterable ? iterable : null);
-    }
-
-    private Iterable<E> getDelegate() {
-        return this.iterableDelegate.mo22987or((PrimesBatteryConfigurations) this);
     }
 
     public static <E> FluentIterable<E> from(final Iterable<E> iterable) {
@@ -109,6 +107,10 @@ public abstract class FluentIterable<E> implements Iterable<E> {
     /* renamed from: of */
     public static <E> FluentIterable<E> m98of(@NullableDecl E element, E... elements) {
         return from(Lists.asList(element, elements));
+    }
+
+    private Iterable<E> getDelegate() {
+        return this.iterableDelegate.mo22987or((PrimesBatteryConfigurations) this);
     }
 
     public String toString() {

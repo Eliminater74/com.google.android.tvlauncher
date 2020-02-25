@@ -3,6 +3,7 @@ package android.support.p001v4.view;
 import android.graphics.Rect;
 import android.os.Build;
 import android.view.DisplayCutout;
+
 import java.util.List;
 
 /* renamed from: android.support.v4.view.DisplayCutoutCompat */
@@ -16,6 +17,13 @@ public final class DisplayCutoutCompat {
 
     private DisplayCutoutCompat(Object displayCutout) {
         this.mDisplayCutout = displayCutout;
+    }
+
+    static DisplayCutoutCompat wrap(Object displayCutout) {
+        if (displayCutout == null) {
+            return null;
+        }
+        return new DisplayCutoutCompat(displayCutout);
     }
 
     public int getSafeInsetTop() {
@@ -81,12 +89,5 @@ public final class DisplayCutoutCompat {
 
     public String toString() {
         return "DisplayCutoutCompat{" + this.mDisplayCutout + "}";
-    }
-
-    static DisplayCutoutCompat wrap(Object displayCutout) {
-        if (displayCutout == null) {
-            return null;
-        }
-        return new DisplayCutoutCompat(displayCutout);
     }
 }

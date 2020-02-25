@@ -5,6 +5,19 @@ final class zzgrp extends zzgrm {
     zzgrp() {
     }
 
+    private static int zza(byte[] bArr, int i, long j, int i2) {
+        if (i2 == 0) {
+            return zzgrl.zzb(i);
+        }
+        if (i2 == 1) {
+            return zzgrl.zzb(i, zzgrj.zza(bArr, j));
+        }
+        if (i2 == 2) {
+            return zzgrl.zzb(i, zzgrj.zza(bArr, j), zzgrj.zza(bArr, j + 1));
+        }
+        throw new AssertionError();
+    }
+
     /* access modifiers changed from: package-private */
     /* JADX WARNING: Code restructure failed: missing block: B:29:0x0063, code lost:
         return -1;
@@ -168,7 +181,7 @@ final class zzgrp extends zzgrm {
 
     /* access modifiers changed from: package-private */
     /* JADX WARNING: Removed duplicated region for block: B:11:0x0031  */
-    /* JADX WARNING: Removed duplicated region for block: B:13:0x0033 A[LOOP:1: B:13:0x0033->B:37:0x00fd, LOOP_START, PHI: r2 r3 r4 r11 
+    /* JADX WARNING: Removed duplicated region for block: B:13:0x0033 A[LOOP:1: B:13:0x0033->B:37:0x00fd, LOOP_START, PHI: r2 r3 r4 r11
       PHI: (r2v4 int) = (r2v3 int), (r2v6 int) binds: [B:10:0x002f, B:37:0x00fd] A[DONT_GENERATE, DONT_INLINE]
       PHI: (r3v3 char) = (r3v2 char), (r3v4 char) binds: [B:10:0x002f, B:37:0x00fd] A[DONT_GENERATE, DONT_INLINE]
       PHI: (r4v3 long) = (r4v2 long), (r4v5 long) binds: [B:10:0x002f, B:37:0x00fd] A[DONT_GENERATE, DONT_INLINE]
@@ -376,7 +389,7 @@ final class zzgrp extends zzgrm {
     }
 
     /* access modifiers changed from: package-private */
-    /* JADX WARNING: Removed duplicated region for block: B:11:0x0041 A[LOOP:1: B:11:0x0041->B:35:0x0102, LOOP_START, PHI: r2 r4 r9 r10 
+    /* JADX WARNING: Removed duplicated region for block: B:11:0x0041 A[LOOP:1: B:11:0x0041->B:35:0x0102, LOOP_START, PHI: r2 r4 r9 r10
       PHI: (r2v2 long) = (r2v0 long), (r2v3 long) binds: [B:8:0x0039, B:35:0x0102] A[DONT_GENERATE, DONT_INLINE]
       PHI: (r4v5 long) = (r4v4 long), (r4v7 long) binds: [B:8:0x0039, B:35:0x0102] A[DONT_GENERATE, DONT_INLINE]
       PHI: (r9v3 int) = (r9v2 int), (r9v5 int) binds: [B:8:0x0039, B:35:0x0102] A[DONT_GENERATE, DONT_INLINE]
@@ -585,18 +598,5 @@ final class zzgrp extends zzgrm {
             return
         */
         throw new UnsupportedOperationException("Method not decompiled: com.google.android.gms.internal.zzgrp.zza(java.lang.CharSequence, java.nio.ByteBuffer):void");
-    }
-
-    private static int zza(byte[] bArr, int i, long j, int i2) {
-        if (i2 == 0) {
-            return zzgrl.zzb(i);
-        }
-        if (i2 == 1) {
-            return zzgrl.zzb(i, zzgrj.zza(bArr, j));
-        }
-        if (i2 == 2) {
-            return zzgrl.zzb(i, zzgrj.zza(bArr, j), zzgrj.zza(bArr, j + 1));
-        }
-        throw new AssertionError();
     }
 }

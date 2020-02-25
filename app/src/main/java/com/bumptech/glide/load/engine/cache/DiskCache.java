@@ -2,10 +2,21 @@ package com.bumptech.glide.load.engine.cache;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import com.bumptech.glide.load.Key;
+
 import java.io.File;
 
 public interface DiskCache {
+
+    void clear();
+
+    void delete(Key key);
+
+    @Nullable
+    File get(Key key);
+
+    void put(Key key, Writer writer);
 
     public interface Factory {
         public static final String DEFAULT_DISK_CACHE_DIR = "image_manager_disk_cache";
@@ -18,13 +29,4 @@ public interface DiskCache {
     public interface Writer {
         boolean write(@NonNull File file);
     }
-
-    void clear();
-
-    void delete(Key key);
-
-    @Nullable
-    File get(Key key);
-
-    void put(Key key, Writer writer);
 }

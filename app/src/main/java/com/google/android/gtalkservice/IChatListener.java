@@ -30,7 +30,6 @@ public interface IChatListener extends IInterface {
     void willConvertToGroupChat(String str, String str2, long j) throws RemoteException;
 
     public static abstract class Stub extends Binder implements IChatListener {
-        private static final String DESCRIPTOR = "com.google.android.gtalkservice.IChatListener";
         static final int TRANSACTION_callEnded = 4;
         static final int TRANSACTION_chatClosed = 6;
         static final int TRANSACTION_chatRead = 5;
@@ -42,6 +41,7 @@ public interface IChatListener extends IInterface {
         static final int TRANSACTION_participantLeft = 10;
         static final int TRANSACTION_useLightweightNotify = 11;
         static final int TRANSACTION_willConvertToGroupChat = 7;
+        private static final String DESCRIPTOR = "com.google.android.gtalkservice.IChatListener";
 
         public Stub() {
             attachInterface(this, DESCRIPTOR);

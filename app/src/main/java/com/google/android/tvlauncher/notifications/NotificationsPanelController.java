@@ -3,6 +3,7 @@ package com.google.android.tvlauncher.notifications;
 import android.content.Context;
 import android.database.Cursor;
 import android.view.View;
+
 import com.google.android.tvlauncher.TvlauncherLogEnum;
 import com.google.android.tvlauncher.analytics.ClickEvent;
 import com.google.android.tvlauncher.analytics.EventLogger;
@@ -13,8 +14,8 @@ import com.google.logs.tvlauncher.config.TvLauncherConstants;
 public class NotificationsPanelController {
     public static final String NOTIFS_SEEN = "notifs_seen";
     public static final String NOTIF_PANEL_SEEN_STATE = "notif_panel_seen_state";
-    private Context mContext;
     private final EventLogger mEventLogger;
+    private Context mContext;
     private int mNotifCount = 0;
     private NotificationsPanelButtonView mPanelButtonView;
     private boolean mSeen;

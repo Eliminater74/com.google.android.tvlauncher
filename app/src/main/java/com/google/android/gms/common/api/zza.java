@@ -1,7 +1,5 @@
 package com.google.android.gms.common.api;
 
-import com.google.android.gms.common.api.PendingResult;
-
 /* compiled from: Batch */
 final class zza implements PendingResult.zza {
     private final /* synthetic */ Batch zza;

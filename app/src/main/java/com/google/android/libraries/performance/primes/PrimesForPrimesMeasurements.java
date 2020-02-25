@@ -7,6 +7,25 @@ final class PrimesForPrimesMeasurements {
     private PrimesForPrimesMeasurements() {
     }
 
+    static PrimesInitializationMeasurement initializationMeasurement() {
+        return MeasurementsHolder.initializationMeasurement;
+    }
+
+    static PrimesApiMeasurement apiMeasurement() {
+        return MeasurementsHolder.apiMeasurement;
+    }
+
+    @VisibleForTesting(otherwise = 5)
+    static void reset() {
+        CpuWallTime unused = apiMeasurement().primesInitializeStart = null;
+        CpuWallTime unused2 = apiMeasurement().primesInitializeEnd = null;
+        CpuWallTime unused3 = initializationMeasurement().primesInitStart = null;
+        CpuWallTime unused4 = initializationMeasurement().primesShutdownInitialized = null;
+        CpuWallTime unused5 = initializationMeasurement().primesConfigsCreated = null;
+        CpuWallTime unused6 = initializationMeasurement().primesFlagsCreated = null;
+        CpuWallTime unused7 = initializationMeasurement().primesInitEnd = null;
+    }
+
     static final class PrimesInitializationMeasurement {
         /* access modifiers changed from: private */
         public volatile CpuWallTime primesConfigsCreated;
@@ -111,24 +130,5 @@ final class PrimesForPrimesMeasurements {
 
         private MeasurementsHolder() {
         }
-    }
-
-    static PrimesInitializationMeasurement initializationMeasurement() {
-        return MeasurementsHolder.initializationMeasurement;
-    }
-
-    static PrimesApiMeasurement apiMeasurement() {
-        return MeasurementsHolder.apiMeasurement;
-    }
-
-    @VisibleForTesting(otherwise = 5)
-    static void reset() {
-        CpuWallTime unused = apiMeasurement().primesInitializeStart = null;
-        CpuWallTime unused2 = apiMeasurement().primesInitializeEnd = null;
-        CpuWallTime unused3 = initializationMeasurement().primesInitStart = null;
-        CpuWallTime unused4 = initializationMeasurement().primesShutdownInitialized = null;
-        CpuWallTime unused5 = initializationMeasurement().primesConfigsCreated = null;
-        CpuWallTime unused6 = initializationMeasurement().primesFlagsCreated = null;
-        CpuWallTime unused7 = initializationMeasurement().primesInitEnd = null;
     }
 }

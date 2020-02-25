@@ -4,7 +4,6 @@ import android.content.DialogInterface;
 import android.os.IBinder;
 import android.support.p004v7.app.AlertDialog;
 import android.support.p004v7.appcompat.C0233R;
-import android.support.p004v7.view.menu.MenuPresenter;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
@@ -12,9 +11,9 @@ import android.view.WindowManager;
 
 /* renamed from: android.support.v7.view.menu.MenuDialogHelper */
 class MenuDialogHelper implements DialogInterface.OnKeyListener, DialogInterface.OnClickListener, DialogInterface.OnDismissListener, MenuPresenter.Callback {
+    ListMenuPresenter mPresenter;
     private AlertDialog mDialog;
     private MenuBuilder mMenu;
-    ListMenuPresenter mPresenter;
     private MenuPresenter.Callback mPresenterCallback;
 
     public MenuDialogHelper(MenuBuilder menu) {

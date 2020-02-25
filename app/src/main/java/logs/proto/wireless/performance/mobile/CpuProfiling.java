@@ -13,11 +13,18 @@ import com.google.protobuf.ProtoMessage;
 import com.google.protobuf.ProtoPresenceBits;
 import com.google.protobuf.ProtoPresenceCheckedField;
 import com.google.protobuf.ProtoSyntax;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 public final class CpuProfiling {
+
+    private CpuProfiling() {
+    }
+
+    public static void registerAllExtensions(ExtensionRegistryLite registry) {
+    }
 
     public interface CpuProfilingMetricOrBuilder extends MessageLiteOrBuilder {
         DeviceMetadata getDeviceMetadata();
@@ -81,12 +88,6 @@ public final class CpuProfiling {
         boolean hasWifiOn();
     }
 
-    private CpuProfiling() {
-    }
-
-    public static void registerAllExtensions(ExtensionRegistryLite registry) {
-    }
-
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
     public static final class DeviceMetadata extends GeneratedMessageLite<DeviceMetadata, Builder> implements DeviceMetadataOrBuilder {
         public static final int AFTER_STATE_FIELD_NUMBER = 2;
@@ -95,6 +96,11 @@ public final class CpuProfiling {
         /* access modifiers changed from: private */
         public static final DeviceMetadata DEFAULT_INSTANCE = new DeviceMetadata();
         private static volatile Parser<DeviceMetadata> PARSER;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(DeviceMetadata.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoField(fieldNumber = 2, isRequired = false, type = FieldType.MESSAGE)
         @ProtoPresenceCheckedField(mask = 2, presenceBitsId = 0)
         private DeviceState afterState_;
@@ -108,6 +114,70 @@ public final class CpuProfiling {
         private int bitField0_;
 
         private DeviceMetadata() {
+        }
+
+        public static DeviceMetadata parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (DeviceMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static DeviceMetadata parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (DeviceMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static DeviceMetadata parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (DeviceMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static DeviceMetadata parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (DeviceMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static DeviceMetadata parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (DeviceMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static DeviceMetadata parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (DeviceMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static DeviceMetadata parseFrom(InputStream input) throws IOException {
+            return (DeviceMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static DeviceMetadata parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (DeviceMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static DeviceMetadata parseDelimitedFrom(InputStream input) throws IOException {
+            return (DeviceMetadata) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static DeviceMetadata parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (DeviceMetadata) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static DeviceMetadata parseFrom(CodedInputStream input) throws IOException {
+            return (DeviceMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static DeviceMetadata parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (DeviceMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(DeviceMetadata prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static DeviceMetadata getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<DeviceMetadata> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasBeforeState() {
@@ -222,60 +292,36 @@ public final class CpuProfiling {
             this.batteryDropPercent_ = 0.0f;
         }
 
-        public static DeviceMetadata parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (DeviceMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static DeviceMetadata parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (DeviceMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static DeviceMetadata parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (DeviceMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static DeviceMetadata parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (DeviceMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static DeviceMetadata parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (DeviceMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static DeviceMetadata parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (DeviceMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static DeviceMetadata parseFrom(InputStream input) throws IOException {
-            return (DeviceMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static DeviceMetadata parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (DeviceMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static DeviceMetadata parseDelimitedFrom(InputStream input) throws IOException {
-            return (DeviceMetadata) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static DeviceMetadata parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (DeviceMetadata) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static DeviceMetadata parseFrom(CodedInputStream input) throws IOException {
-            return (DeviceMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static DeviceMetadata parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (DeviceMetadata) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(DeviceMetadata prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new DeviceMetadata();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0003\u0000\u0001\u0001\u0003\u0003\u0000\u0000\u0000\u0001\t\u0000\u0002\t\u0001\u0003\u0001\u0002", new Object[]{"bitField0_", "beforeState_", "afterState_", "batteryDropPercent_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<DeviceMetadata> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (DeviceMetadata.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<DeviceMetadata, Builder> implements DeviceMetadataOrBuilder {
@@ -367,50 +413,6 @@ public final class CpuProfiling {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new DeviceMetadata();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0003\u0000\u0001\u0001\u0003\u0003\u0000\u0000\u0000\u0001\t\u0000\u0002\t\u0001\u0003\u0001\u0002", new Object[]{"bitField0_", "beforeState_", "afterState_", "batteryDropPercent_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<DeviceMetadata> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (DeviceMetadata.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(DeviceMetadata.class, DEFAULT_INSTANCE);
-        }
-
-        public static DeviceMetadata getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<DeviceMetadata> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -419,9 +421,14 @@ public final class CpuProfiling {
         public static final int CHARGING_FIELD_NUMBER = 2;
         /* access modifiers changed from: private */
         public static final DeviceState DEFAULT_INSTANCE = new DeviceState();
-        private static volatile Parser<DeviceState> PARSER = null;
         public static final int SCREEN_ON_FIELD_NUMBER = 1;
         public static final int WIFI_ON_FIELD_NUMBER = 3;
+        private static volatile Parser<DeviceState> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(DeviceState.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 4, isRequired = false, type = FieldType.BOOL)
@@ -438,6 +445,70 @@ public final class CpuProfiling {
         private boolean wifiOn_;
 
         private DeviceState() {
+        }
+
+        public static DeviceState parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (DeviceState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static DeviceState parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (DeviceState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static DeviceState parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (DeviceState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static DeviceState parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (DeviceState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static DeviceState parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (DeviceState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static DeviceState parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (DeviceState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static DeviceState parseFrom(InputStream input) throws IOException {
+            return (DeviceState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static DeviceState parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (DeviceState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static DeviceState parseDelimitedFrom(InputStream input) throws IOException {
+            return (DeviceState) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static DeviceState parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (DeviceState) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static DeviceState parseFrom(CodedInputStream input) throws IOException {
+            return (DeviceState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static DeviceState parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (DeviceState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(DeviceState prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static DeviceState getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<DeviceState> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasScreenOn() {
@@ -520,60 +591,36 @@ public final class CpuProfiling {
             this.bluetoothOn_ = false;
         }
 
-        public static DeviceState parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (DeviceState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static DeviceState parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (DeviceState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static DeviceState parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (DeviceState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static DeviceState parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (DeviceState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static DeviceState parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (DeviceState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static DeviceState parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (DeviceState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static DeviceState parseFrom(InputStream input) throws IOException {
-            return (DeviceState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static DeviceState parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (DeviceState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static DeviceState parseDelimitedFrom(InputStream input) throws IOException {
-            return (DeviceState) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static DeviceState parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (DeviceState) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static DeviceState parseFrom(CodedInputStream input) throws IOException {
-            return (DeviceState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static DeviceState parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (DeviceState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(DeviceState prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new DeviceState();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0004\u0000\u0001\u0001\u0004\u0004\u0000\u0000\u0000\u0001\u0007\u0000\u0002\u0007\u0001\u0003\u0007\u0002\u0004\u0007\u0003", new Object[]{"bitField0_", "screenOn_", "charging_", "wifiOn_", "bluetoothOn_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<DeviceState> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (DeviceState.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<DeviceState, Builder> implements DeviceStateOrBuilder {
@@ -661,50 +708,6 @@ public final class CpuProfiling {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new DeviceState();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0004\u0000\u0001\u0001\u0004\u0004\u0000\u0000\u0000\u0001\u0007\u0000\u0002\u0007\u0001\u0003\u0007\u0002\u0004\u0007\u0003", new Object[]{"bitField0_", "screenOn_", "charging_", "wifiOn_", "bluetoothOn_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<DeviceState> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (DeviceState.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(DeviceState.class, DEFAULT_INSTANCE);
-        }
-
-        public static DeviceState getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<DeviceState> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -712,13 +715,18 @@ public final class CpuProfiling {
         /* access modifiers changed from: private */
         public static final CpuProfilingMetric DEFAULT_INSTANCE = new CpuProfilingMetric();
         public static final int DEVICE_METADATA_FIELD_NUMBER = 2;
-        private static volatile Parser<CpuProfilingMetric> PARSER = null;
         public static final int SAMPLES_PER_EPOCH_FIELD_NUMBER = 3;
         public static final int SAMPLE_BUFFER_SIZE_FIELD_NUMBER = 7;
         public static final int SAMPLE_DURATION_ACTUAL_FIELD_NUMBER = 5;
         public static final int SAMPLE_DURATION_SCHEDULED_FIELD_NUMBER = 4;
         public static final int SAMPLE_FREQUENCY_FIELD_NUMBER = 6;
         public static final int TRACE_BLOB_FIELD_NUMBER = 1;
+        private static volatile Parser<CpuProfilingMetric> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(CpuProfilingMetric.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 2, isRequired = false, type = FieldType.MESSAGE)
@@ -744,6 +752,70 @@ public final class CpuProfiling {
         private ByteString traceBlob_ = ByteString.EMPTY;
 
         private CpuProfilingMetric() {
+        }
+
+        public static CpuProfilingMetric parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (CpuProfilingMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static CpuProfilingMetric parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (CpuProfilingMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static CpuProfilingMetric parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (CpuProfilingMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static CpuProfilingMetric parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (CpuProfilingMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static CpuProfilingMetric parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (CpuProfilingMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static CpuProfilingMetric parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (CpuProfilingMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static CpuProfilingMetric parseFrom(InputStream input) throws IOException {
+            return (CpuProfilingMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static CpuProfilingMetric parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (CpuProfilingMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static CpuProfilingMetric parseDelimitedFrom(InputStream input) throws IOException {
+            return (CpuProfilingMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static CpuProfilingMetric parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (CpuProfilingMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static CpuProfilingMetric parseFrom(CodedInputStream input) throws IOException {
+            return (CpuProfilingMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static CpuProfilingMetric parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (CpuProfilingMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(CpuProfilingMetric prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static CpuProfilingMetric getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<CpuProfilingMetric> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasTraceBlob() {
@@ -916,60 +988,36 @@ public final class CpuProfiling {
             this.sampleBufferSize_ = 0;
         }
 
-        public static CpuProfilingMetric parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (CpuProfilingMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static CpuProfilingMetric parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (CpuProfilingMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static CpuProfilingMetric parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (CpuProfilingMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static CpuProfilingMetric parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (CpuProfilingMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static CpuProfilingMetric parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (CpuProfilingMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static CpuProfilingMetric parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (CpuProfilingMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static CpuProfilingMetric parseFrom(InputStream input) throws IOException {
-            return (CpuProfilingMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static CpuProfilingMetric parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (CpuProfilingMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static CpuProfilingMetric parseDelimitedFrom(InputStream input) throws IOException {
-            return (CpuProfilingMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static CpuProfilingMetric parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (CpuProfilingMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static CpuProfilingMetric parseFrom(CodedInputStream input) throws IOException {
-            return (CpuProfilingMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static CpuProfilingMetric parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (CpuProfilingMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(CpuProfilingMetric prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new CpuProfilingMetric();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0007\u0000\u0001\u0001\u0007\u0007\u0000\u0000\u0000\u0001\n\u0000\u0002\t\u0001\u0003\u0000\u0002\u0004\u0004\u0003\u0005\u0004\u0004\u0006\u0004\u0005\u0007\u0004\u0006", new Object[]{"bitField0_", "traceBlob_", "deviceMetadata_", "samplesPerEpoch_", "sampleDurationScheduled_", "sampleDurationActual_", "sampleFrequency_", "sampleBufferSize_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<CpuProfilingMetric> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (CpuProfilingMetric.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<CpuProfilingMetric, Builder> implements CpuProfilingMetricOrBuilder {
@@ -1128,50 +1176,6 @@ public final class CpuProfiling {
                 ((CpuProfilingMetric) this.instance).clearSampleBufferSize();
                 return this;
             }
-        }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new CpuProfilingMetric();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0007\u0000\u0001\u0001\u0007\u0007\u0000\u0000\u0000\u0001\n\u0000\u0002\t\u0001\u0003\u0000\u0002\u0004\u0004\u0003\u0005\u0004\u0004\u0006\u0004\u0005\u0007\u0004\u0006", new Object[]{"bitField0_", "traceBlob_", "deviceMetadata_", "samplesPerEpoch_", "sampleDurationScheduled_", "sampleDurationActual_", "sampleFrequency_", "sampleBufferSize_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<CpuProfilingMetric> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (CpuProfilingMetric.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(CpuProfilingMetric.class, DEFAULT_INSTANCE);
-        }
-
-        public static CpuProfilingMetric getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<CpuProfilingMetric> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
         }
     }
 }

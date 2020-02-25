@@ -15,7 +15,9 @@ import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+
 import androidx.leanback.C0364R;
+
 import com.google.android.tvlauncher.C1188R;
 
 public class SearchOrb extends FrameLayout {
@@ -56,10 +58,6 @@ public class SearchOrb extends FrameLayout {
         this.mFocusIndicator.setClipToOutline(true);
     }
 
-    public void setOrbIcon(Drawable icon) {
-        this.mIcon.setImageDrawable(icon);
-    }
-
     public void setFocusedOrbColor(int color) {
         this.mIndicatorFocusedColor = color;
     }
@@ -84,5 +82,9 @@ public class SearchOrb extends FrameLayout {
     @VisibleForTesting
     public Drawable getOrbIcon() {
         return this.mIcon.getDrawable();
+    }
+
+    public void setOrbIcon(Drawable icon) {
+        this.mIcon.setImageDrawable(icon);
     }
 }

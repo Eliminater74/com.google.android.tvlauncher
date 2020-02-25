@@ -18,6 +18,10 @@ public final class PrimesTraceConfigurations {
         this.maxTracingBufferSize = maxTracingBufferSize2;
     }
 
+    public static Builder newBuilder() {
+        return new Builder().setSamplingPropability(DEFAULT_TRACING_SAMPLING_PROPABILITY).setSpanDurationThresholdMs(5).setMaxTracingBufferSize(1000);
+    }
+
     public boolean isEnabled() {
         return this.isEnabled;
     }
@@ -41,10 +45,6 @@ public final class PrimesTraceConfigurations {
         int unused3 = builder.minSpanDurationMs = this.minSpanDurationMs;
         int unused4 = builder.maxTracingBufferSize = this.maxTracingBufferSize;
         return builder;
-    }
-
-    public static Builder newBuilder() {
-        return new Builder().setSamplingPropability(DEFAULT_TRACING_SAMPLING_PROPABILITY).setSpanDurationThresholdMs(5).setMaxTracingBufferSize(1000);
     }
 
     public static final class Builder {

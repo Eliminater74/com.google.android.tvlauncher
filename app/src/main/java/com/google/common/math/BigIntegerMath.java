@@ -5,6 +5,7 @@ import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
@@ -13,12 +14,15 @@ import java.util.List;
 
 @GwtCompatible(emulated = true)
 public final class BigIntegerMath {
-    private static final double LN_10 = Math.log(10.0d);
-    private static final double LN_2 = Math.log(2.0d);
     @VisibleForTesting
     static final BigInteger SQRT2_PRECOMPUTED_BITS = new BigInteger("16a09e667f3bcc908b2fb1366ea957d3e3adec17512775099da2f590b0667322a", 16);
     @VisibleForTesting
     static final int SQRT2_PRECOMPUTE_THRESHOLD = 256;
+    private static final double LN_10 = Math.log(10.0d);
+    private static final double LN_2 = Math.log(2.0d);
+
+    private BigIntegerMath() {
+    }
 
     @Beta
     public static BigInteger ceilingPowerOfTwo(BigInteger x) {
@@ -63,46 +67,6 @@ public final class BigIntegerMath {
                 throw new AssertionError();
         }
         return logFloor;
-    }
-
-    /* renamed from: com.google.common.math.BigIntegerMath$1 */
-    static /* synthetic */ class C17401 {
-        static final /* synthetic */ int[] $SwitchMap$java$math$RoundingMode = new int[RoundingMode.values().length];
-
-        static {
-            try {
-                $SwitchMap$java$math$RoundingMode[RoundingMode.UNNECESSARY.ordinal()] = 1;
-            } catch (NoSuchFieldError e) {
-            }
-            try {
-                $SwitchMap$java$math$RoundingMode[RoundingMode.DOWN.ordinal()] = 2;
-            } catch (NoSuchFieldError e2) {
-            }
-            try {
-                $SwitchMap$java$math$RoundingMode[RoundingMode.FLOOR.ordinal()] = 3;
-            } catch (NoSuchFieldError e3) {
-            }
-            try {
-                $SwitchMap$java$math$RoundingMode[RoundingMode.UP.ordinal()] = 4;
-            } catch (NoSuchFieldError e4) {
-            }
-            try {
-                $SwitchMap$java$math$RoundingMode[RoundingMode.CEILING.ordinal()] = 5;
-            } catch (NoSuchFieldError e5) {
-            }
-            try {
-                $SwitchMap$java$math$RoundingMode[RoundingMode.HALF_DOWN.ordinal()] = 6;
-            } catch (NoSuchFieldError e6) {
-            }
-            try {
-                $SwitchMap$java$math$RoundingMode[RoundingMode.HALF_UP.ordinal()] = 7;
-            } catch (NoSuchFieldError e7) {
-            }
-            try {
-                $SwitchMap$java$math$RoundingMode[RoundingMode.HALF_EVEN.ordinal()] = 8;
-            } catch (NoSuchFieldError e8) {
-            }
-        }
     }
 
     /* JADX INFO: Multiple debug info for r3v0 int: [D('floorLog' int), D('nextPow' java.math.BigInteger)] */
@@ -315,6 +279,43 @@ public final class BigIntegerMath {
         return x.bitLength() <= 63;
     }
 
-    private BigIntegerMath() {
+    /* renamed from: com.google.common.math.BigIntegerMath$1 */
+    static /* synthetic */ class C17401 {
+        static final /* synthetic */ int[] $SwitchMap$java$math$RoundingMode = new int[RoundingMode.values().length];
+
+        static {
+            try {
+                $SwitchMap$java$math$RoundingMode[RoundingMode.UNNECESSARY.ordinal()] = 1;
+            } catch (NoSuchFieldError e) {
+            }
+            try {
+                $SwitchMap$java$math$RoundingMode[RoundingMode.DOWN.ordinal()] = 2;
+            } catch (NoSuchFieldError e2) {
+            }
+            try {
+                $SwitchMap$java$math$RoundingMode[RoundingMode.FLOOR.ordinal()] = 3;
+            } catch (NoSuchFieldError e3) {
+            }
+            try {
+                $SwitchMap$java$math$RoundingMode[RoundingMode.UP.ordinal()] = 4;
+            } catch (NoSuchFieldError e4) {
+            }
+            try {
+                $SwitchMap$java$math$RoundingMode[RoundingMode.CEILING.ordinal()] = 5;
+            } catch (NoSuchFieldError e5) {
+            }
+            try {
+                $SwitchMap$java$math$RoundingMode[RoundingMode.HALF_DOWN.ordinal()] = 6;
+            } catch (NoSuchFieldError e6) {
+            }
+            try {
+                $SwitchMap$java$math$RoundingMode[RoundingMode.HALF_UP.ordinal()] = 7;
+            } catch (NoSuchFieldError e7) {
+            }
+            try {
+                $SwitchMap$java$math$RoundingMode[RoundingMode.HALF_EVEN.ordinal()] = 8;
+            } catch (NoSuchFieldError e8) {
+            }
+        }
     }
 }

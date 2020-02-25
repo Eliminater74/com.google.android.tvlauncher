@@ -2,6 +2,7 @@ package com.google.android.gms.clearcut;
 
 import android.content.Context;
 import android.os.Looper;
+
 import com.google.android.gms.clearcut.internal.zzi;
 import com.google.android.gms.common.api.Api;
 import com.google.android.gms.common.api.GoogleApiClient;

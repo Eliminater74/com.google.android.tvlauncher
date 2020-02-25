@@ -2,8 +2,10 @@ package com.google.android.libraries.performance.primes.metriccapture;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import logs.proto.wireless.performance.mobile.CpuMetric;
 
 public final class CpuUsageCapture {

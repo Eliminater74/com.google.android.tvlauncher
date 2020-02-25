@@ -20,23 +20,24 @@ import android.view.ViewOutlineProvider;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.google.android.tvlauncher.C1188R;
 
 public class HomeTopRowButton extends LinearLayout {
+    /* access modifiers changed from: private */
+    public final int mIndicatorFocusedColor;
     private final AnimatorSet mAnimateIn;
     private final AnimatorSet mAnimateOut;
     private final int mAnimationDuration;
-    private View.OnFocusChangeListener mFocusChangeListener;
-    /* access modifiers changed from: private */
-    public ImageView mIcon;
     private final int mIconFocusedColor;
     private final int mIconUnfocusedColor;
     /* access modifiers changed from: private */
+    public ImageView mIcon;
+    /* access modifiers changed from: private */
     public View mIndicator;
     /* access modifiers changed from: private */
-    public final int mIndicatorFocusedColor;
-    /* access modifiers changed from: private */
     public TextView mTitle;
+    private View.OnFocusChangeListener mFocusChangeListener;
 
     public HomeTopRowButton(Context context) {
         this(context, null);
@@ -150,26 +151,6 @@ public class HomeTopRowButton extends LinearLayout {
         setOnFocusChangeListener(this.mFocusChangeListener);
     }
 
-    public void setIcon(int id) {
-        ImageView imageView = this.mIcon;
-        if (imageView != null) {
-            imageView.setImageResource(id);
-            if (hasFocus()) {
-                this.mIcon.getDrawable().setTint(this.mIconFocusedColor);
-            }
-        }
-    }
-
-    public void setIcon(@NonNull Drawable drawable) {
-        ImageView imageView = this.mIcon;
-        if (imageView != null) {
-            imageView.setImageDrawable(drawable);
-            if (hasFocus()) {
-                drawable.setTint(this.mIconFocusedColor);
-            }
-        }
-    }
-
     public void setText(int id) {
         TextView textView = this.mTitle;
         if (textView != null) {
@@ -206,6 +187,26 @@ public class HomeTopRowButton extends LinearLayout {
             return imageView.getDrawable();
         }
         return null;
+    }
+
+    public void setIcon(int id) {
+        ImageView imageView = this.mIcon;
+        if (imageView != null) {
+            imageView.setImageResource(id);
+            if (hasFocus()) {
+                this.mIcon.getDrawable().setTint(this.mIconFocusedColor);
+            }
+        }
+    }
+
+    public void setIcon(@NonNull Drawable drawable) {
+        ImageView imageView = this.mIcon;
+        if (imageView != null) {
+            imageView.setImageDrawable(drawable);
+            if (hasFocus()) {
+                drawable.setTint(this.mIconFocusedColor);
+            }
+        }
     }
 
     @VisibleForTesting(otherwise = 2)

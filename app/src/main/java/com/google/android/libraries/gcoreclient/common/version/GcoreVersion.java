@@ -27,15 +27,11 @@ public interface GcoreVersion {
         V11(11021000),
         V12(11200000),
         V13(11400000);
-        
+
         private final int versionCode;
 
         private Version(int versionCode2) {
             this.versionCode = versionCode2;
-        }
-
-        public int getVersionCode() {
-            return this.versionCode;
         }
 
         public static Version getVersionFromCode(int versionCode2) {
@@ -49,6 +45,10 @@ public interface GcoreVersion {
             sb.append("Unsupported GMS version code: ");
             sb.append(versionCode2);
             throw new IllegalArgumentException(sb.toString());
+        }
+
+        public int getVersionCode() {
+            return this.versionCode;
         }
     }
 }

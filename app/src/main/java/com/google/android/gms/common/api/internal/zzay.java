@@ -2,6 +2,7 @@ package com.google.android.gms.common.api.internal;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 
@@ -11,6 +12,10 @@ final class zzay implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient
 
     private zzay(zzap zzap) {
         this.zza = zzap;
+    }
+
+    /* synthetic */ zzay(zzap zzap, zzaq zzaq) {
+        this(zzap);
     }
 
     public final void onConnected(Bundle bundle) {
@@ -32,9 +37,5 @@ final class zzay implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient
         } finally {
             this.zza.zzb.unlock();
         }
-    }
-
-    /* synthetic */ zzay(zzap zzap, zzaq zzaq) {
-        this(zzap);
     }
 }

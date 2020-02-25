@@ -2,6 +2,9 @@ package com.google.common.primitives;
 
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.base.Preconditions;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.Serializable;
 import java.util.AbstractList;
 import java.util.Arrays;
@@ -9,7 +12,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.RandomAccess;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible
 public final class Bytes {
@@ -120,6 +122,23 @@ public final class Bytes {
             return Collections.emptyList();
         }
         return new ByteArrayAsList(backingArray);
+    }
+
+    public static void reverse(byte[] array) {
+        Preconditions.checkNotNull(array);
+        reverse(array, 0, array.length);
+    }
+
+    public static void reverse(byte[] array, int fromIndex, int toIndex) {
+        Preconditions.checkNotNull(array);
+        Preconditions.checkPositionIndexes(fromIndex, toIndex, array.length);
+        int i = fromIndex;
+        for (int j = toIndex - 1; i < j; j--) {
+            byte tmp = array[i];
+            array[i] = array[j];
+            array[j] = tmp;
+            i++;
+        }
     }
 
     @GwtCompatible
@@ -239,23 +258,6 @@ public final class Bytes {
         /* access modifiers changed from: package-private */
         public byte[] toByteArray() {
             return Arrays.copyOfRange(this.array, this.start, this.end);
-        }
-    }
-
-    public static void reverse(byte[] array) {
-        Preconditions.checkNotNull(array);
-        reverse(array, 0, array.length);
-    }
-
-    public static void reverse(byte[] array, int fromIndex, int toIndex) {
-        Preconditions.checkNotNull(array);
-        Preconditions.checkPositionIndexes(fromIndex, toIndex, array.length);
-        int i = fromIndex;
-        for (int j = toIndex - 1; i < j; j--) {
-            byte tmp = array[i];
-            array[i] = array[j];
-            array[j] = tmp;
-            i++;
         }
     }
 }

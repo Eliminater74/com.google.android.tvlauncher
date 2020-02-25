@@ -1,42 +1,37 @@
 package com.google.android.exoplayer2.source;
 
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.SeekParameters;
-import com.google.android.exoplayer2.source.MediaPeriod;
-import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.upstream.Allocator;
+
 import java.io.IOException;
 import java.util.List;
 
 public final class DeferredMediaPeriod implements MediaPeriod, MediaPeriod.Callback {
-    private final Allocator allocator;
-    private MediaPeriod.Callback callback;
-
     /* renamed from: id */
     public final MediaSource.MediaPeriodId f91id;
+    public final MediaSource mediaSource;
+    private final Allocator allocator;
+    private MediaPeriod.Callback callback;
     @Nullable
     private PrepareErrorListener listener;
     private MediaPeriod mediaPeriod;
-    public final MediaSource mediaSource;
     private boolean notifiedPrepareError;
     private long preparePositionOverrideUs = C0841C.TIME_UNSET;
     private long preparePositionUs;
-
-    public interface PrepareErrorListener {
-        void onPrepareError(MediaSource.MediaPeriodId mediaPeriodId, IOException iOException);
-    }
-
-    public List getStreamKeys(List list) {
-        return MediaPeriod$$CC.getStreamKeys$$dflt$$(this, list);
-    }
 
     public DeferredMediaPeriod(MediaSource mediaSource2, MediaSource.MediaPeriodId id, Allocator allocator2, long preparePositionUs2) {
         this.f91id = id;
         this.allocator = allocator2;
         this.mediaSource = mediaSource2;
         this.preparePositionUs = preparePositionUs2;
+    }
+
+    public List getStreamKeys(List list) {
+        return MediaPeriod$$CC.getStreamKeys$$dflt$$(this, list);
     }
 
     public void setPrepareErrorListener(PrepareErrorListener listener2) {
@@ -154,5 +149,9 @@ public final class DeferredMediaPeriod implements MediaPeriod, MediaPeriod.Callb
             return j;
         }
         return preparePositionUs2;
+    }
+
+    public interface PrepareErrorListener {
+        void onPrepareError(MediaSource.MediaPeriodId mediaPeriodId, IOException iOException);
     }
 }

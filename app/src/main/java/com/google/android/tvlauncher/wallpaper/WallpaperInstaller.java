@@ -10,7 +10,9 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
+
 import com.google.android.tvlauncher.C1188R;
+
 import java.io.IOException;
 
 public class WallpaperInstaller {
@@ -23,6 +25,9 @@ public class WallpaperInstaller {
     /* access modifiers changed from: private */
     public boolean mInstallingWallpaper;
 
+    private WallpaperInstaller() {
+    }
+
     public static WallpaperInstaller getInstance() {
         if (sInstance == null) {
             synchronized (WallpaperInstaller.class) {
@@ -32,9 +37,6 @@ public class WallpaperInstaller {
             }
         }
         return sInstance;
-    }
-
-    private WallpaperInstaller() {
     }
 
     @SuppressLint({"StaticFieldLeak"})

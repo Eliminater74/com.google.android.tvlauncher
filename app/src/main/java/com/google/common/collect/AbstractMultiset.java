@@ -1,15 +1,15 @@
 package com.google.common.collect;
 
 import com.google.common.annotations.GwtCompatible;
-import com.google.common.collect.Multiset;
-import com.google.common.collect.Multisets;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.util.AbstractCollection;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
-import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible
 abstract class AbstractMultiset<E> extends AbstractCollection<E> implements Multiset<E> {
@@ -17,6 +17,9 @@ abstract class AbstractMultiset<E> extends AbstractCollection<E> implements Mult
     private transient Set<E> elementSet;
     @MonotonicNonNullDecl
     private transient Set<Multiset.Entry<E>> entrySet;
+
+    AbstractMultiset() {
+    }
 
     public abstract void clear();
 
@@ -28,9 +31,6 @@ abstract class AbstractMultiset<E> extends AbstractCollection<E> implements Mult
 
     /* access modifiers changed from: package-private */
     public abstract Iterator<Multiset.Entry<E>> entryIterator();
-
-    AbstractMultiset() {
-    }
 
     public boolean isEmpty() {
         return entrySet().isEmpty();
@@ -102,6 +102,34 @@ abstract class AbstractMultiset<E> extends AbstractCollection<E> implements Mult
         return new ElementSet();
     }
 
+    public Set<Multiset.Entry<E>> entrySet() {
+        Set<Multiset.Entry<E>> result = this.entrySet;
+        if (result != null) {
+            return result;
+        }
+        Set<Multiset.Entry<E>> createEntrySet = createEntrySet();
+        Set<Multiset.Entry<E>> result2 = createEntrySet;
+        this.entrySet = createEntrySet;
+        return result2;
+    }
+
+    /* access modifiers changed from: package-private */
+    public Set<Multiset.Entry<E>> createEntrySet() {
+        return new EntrySet();
+    }
+
+    public final boolean equals(@NullableDecl Object object) {
+        return Multisets.equalsImpl(this, object);
+    }
+
+    public final int hashCode() {
+        return entrySet().hashCode();
+    }
+
+    public final String toString() {
+        return entrySet().toString();
+    }
+
     class ElementSet extends Multisets.ElementSet<E> {
         ElementSet() {
         }
@@ -114,17 +142,6 @@ abstract class AbstractMultiset<E> extends AbstractCollection<E> implements Mult
         public Iterator<E> iterator() {
             return AbstractMultiset.this.elementIterator();
         }
-    }
-
-    public Set<Multiset.Entry<E>> entrySet() {
-        Set<Multiset.Entry<E>> result = this.entrySet;
-        if (result != null) {
-            return result;
-        }
-        Set<Multiset.Entry<E>> createEntrySet = createEntrySet();
-        Set<Multiset.Entry<E>> result2 = createEntrySet;
-        this.entrySet = createEntrySet;
-        return result2;
     }
 
     class EntrySet extends Multisets.EntrySet<E> {
@@ -143,22 +160,5 @@ abstract class AbstractMultiset<E> extends AbstractCollection<E> implements Mult
         public int size() {
             return AbstractMultiset.this.distinctElements();
         }
-    }
-
-    /* access modifiers changed from: package-private */
-    public Set<Multiset.Entry<E>> createEntrySet() {
-        return new EntrySet();
-    }
-
-    public final boolean equals(@NullableDecl Object object) {
-        return Multisets.equalsImpl(this, object);
-    }
-
-    public final int hashCode() {
-        return entrySet().hashCode();
-    }
-
-    public final String toString() {
-        return entrySet().toString();
     }
 }

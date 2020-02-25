@@ -2,6 +2,7 @@ package com.google.android.gms.usagereporting;
 
 import android.content.Context;
 import android.os.Looper;
+
 import com.google.android.gms.common.api.Api;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.internal.ClientSettings;

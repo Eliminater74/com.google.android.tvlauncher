@@ -2,19 +2,25 @@ package com.google.android.libraries.performance.primes.tracing;
 
 import com.google.android.libraries.performance.primes.PrimesLog;
 import com.google.android.libraries.performance.primes.PrimesToken;
-import com.google.android.libraries.performance.primes.tracing.SpanEvent;
 import com.google.android.libraries.stitch.util.Preconditions;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import logs.proto.wireless.performance.mobile.PrimesTraceOuterClass;
 
 public final class SpanProtoGenerator {
     private static final int ROOT_SPAN_ID = 1;
     private static final int ROOT_SPAN_PARENT_ID = 0;
     private static final String TAG = "TraceDataToProto";
-    private long nextId;
     private final List<PrimesTraceOuterClass.Span> result = new ArrayList();
     private final SpanEvent rootSpan;
+    private long nextId;
+
+    private SpanProtoGenerator(SpanEvent rootSpan2) {
+        this.rootSpan = rootSpan2;
+        this.nextId = 1;
+    }
 
     static SpanProtoGenerator create(SpanEvent rootSpan2) {
         return new SpanProtoGenerator(rootSpan2);
@@ -23,11 +29,6 @@ public final class SpanProtoGenerator {
     public static SpanProtoGenerator create(PrimesToken token, SpanEvent rootSpan2) {
         Preconditions.checkNotNull(token);
         return new SpanProtoGenerator(rootSpan2);
-    }
-
-    private SpanProtoGenerator(SpanEvent rootSpan2) {
-        this.rootSpan = rootSpan2;
-        this.nextId = 1;
     }
 
     private static PrimesTraceOuterClass.Span createSpanProto(SpanEvent spanEvent, long id, long parentId) {
@@ -47,24 +48,6 @@ public final class SpanProtoGenerator {
             span.setSpanType(PrimesTraceOuterClass.Span.SpanType.TIMER);
         }
         return (PrimesTraceOuterClass.Span) span.build();
-    }
-
-    /* renamed from: com.google.android.libraries.performance.primes.tracing.SpanProtoGenerator$1 */
-    static /* synthetic */ class C11481 {
-
-        /* renamed from: $SwitchMap$com$google$android$libraries$performance$primes$tracing$SpanEvent$SpanType */
-        static final /* synthetic */ int[] f121x6154420e = new int[SpanEvent.SpanType.values().length];
-
-        static {
-            try {
-                f121x6154420e[SpanEvent.SpanType.ROOT_SPAN.ordinal()] = 1;
-            } catch (NoSuchFieldError e) {
-            }
-            try {
-                f121x6154420e[SpanEvent.SpanType.TIMER_SPAN.ordinal()] = 2;
-            } catch (NoSuchFieldError e2) {
-            }
-        }
     }
 
     private void traverse(SpanEvent span, long parentId) {
@@ -97,5 +80,23 @@ public final class SpanProtoGenerator {
     public PrimesTraceOuterClass.Span[] generate(PrimesToken token) {
         Preconditions.checkNotNull(token);
         return generate();
+    }
+
+    /* renamed from: com.google.android.libraries.performance.primes.tracing.SpanProtoGenerator$1 */
+    static /* synthetic */ class C11481 {
+
+        /* renamed from: $SwitchMap$com$google$android$libraries$performance$primes$tracing$SpanEvent$SpanType */
+        static final /* synthetic */ int[] f121x6154420e = new int[SpanEvent.SpanType.values().length];
+
+        static {
+            try {
+                f121x6154420e[SpanEvent.SpanType.ROOT_SPAN.ordinal()] = 1;
+            } catch (NoSuchFieldError e) {
+            }
+            try {
+                f121x6154420e[SpanEvent.SpanType.TIMER_SPAN.ordinal()] = 2;
+            } catch (NoSuchFieldError e2) {
+            }
+        }
     }
 }

@@ -2,18 +2,22 @@ package com.google.common.collect;
 
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.Serializable;
 import java.util.AbstractCollection;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible(emulated = true)
 public abstract class ImmutableCollection<E> extends AbstractCollection<E> implements Serializable {
     private static final Object[] EMPTY_ARRAY = new Object[0];
+
+    ImmutableCollection() {
+    }
 
     public abstract boolean contains(@NullableDecl Object obj);
 
@@ -21,9 +25,6 @@ public abstract class ImmutableCollection<E> extends AbstractCollection<E> imple
     public abstract boolean isPartialView();
 
     public abstract UnmodifiableIterator<E> iterator();
-
-    ImmutableCollection() {
-    }
 
     public final Object[] toArray() {
         return toArray(EMPTY_ARRAY);
@@ -119,10 +120,8 @@ public abstract class ImmutableCollection<E> extends AbstractCollection<E> imple
     public static abstract class Builder<E> {
         static final int DEFAULT_INITIAL_CAPACITY = 4;
 
-        @CanIgnoreReturnValue
-        public abstract Builder<E> add(Object obj);
-
-        public abstract ImmutableCollection<E> build();
+        Builder() {
+        }
 
         static int expandedCapacity(int oldCapacity, int minCapacity) {
             if (minCapacity >= 0) {
@@ -138,8 +137,10 @@ public abstract class ImmutableCollection<E> extends AbstractCollection<E> imple
             throw new AssertionError("cannot store more than MAX_VALUE elements");
         }
 
-        Builder() {
-        }
+        @CanIgnoreReturnValue
+        public abstract Builder<E> add(Object obj);
+
+        public abstract ImmutableCollection<E> build();
 
         @CanIgnoreReturnValue
         public Builder<E> add(Object... objArr) {

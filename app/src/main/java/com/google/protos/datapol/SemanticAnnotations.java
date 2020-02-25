@@ -16,7 +16,7 @@ import com.google.protobuf.ProtoPresenceBits;
 import com.google.protobuf.ProtoPresenceCheckedField;
 import com.google.protobuf.ProtoSyntax;
 import com.google.protobuf.WireFormat;
-import com.google.protos.datapol.RetentionAnnotations;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -49,86 +49,6 @@ public final class SemanticAnnotations {
     public static final GeneratedMessageLite.GeneratedExtension<DescriptorProtos.FieldOptions, Qualifier> qualifier = GeneratedMessageLite.newSingularGeneratedExtension(DescriptorProtos.FieldOptions.getDefaultInstance(), Qualifier.getDefaultInstance(), Qualifier.getDefaultInstance(), null, QUALIFIER_FIELD_NUMBER, WireFormat.FieldType.MESSAGE, Qualifier.class);
     public static final GeneratedMessageLite.GeneratedExtension<DescriptorProtos.FieldOptions, List<RetentionAnnotations.RetentionSpec>> retention = GeneratedMessageLite.newRepeatedGeneratedExtension(DescriptorProtos.FieldOptions.getDefaultInstance(), RetentionAnnotations.RetentionSpec.getDefaultInstance(), null, RETENTION_FIELD_NUMBER, WireFormat.FieldType.MESSAGE, false, RetentionAnnotations.RetentionSpec.class);
     public static final GeneratedMessageLite.GeneratedExtension<DescriptorProtos.FieldOptions, SemanticType> semanticType = GeneratedMessageLite.newSingularGeneratedExtension(DescriptorProtos.FieldOptions.getDefaultInstance(), SemanticType.ST_NOT_SPECIFIED, null, SemanticType.internalGetValueMap(), SEMANTIC_TYPE_FIELD_NUMBER, WireFormat.FieldType.ENUM, SemanticType.class);
-
-    public interface FieldDetailsOrBuilder extends MessageLiteOrBuilder {
-        SemanticType getSemanticType(int i);
-
-        int getSemanticTypeCount();
-
-        List<SemanticType> getSemanticTypeList();
-    }
-
-    public interface LocationQualifierOrBuilder extends MessageLiteOrBuilder {
-        boolean getNonUserLocation();
-
-        boolean getPreciseLocation();
-
-        boolean hasNonUserLocation();
-
-        boolean hasPreciseLocation();
-    }
-
-    public interface MessageDetailsOrBuilder extends MessageLiteOrBuilder {
-        SemanticType getSemanticType(int i);
-
-        int getSemanticTypeCount();
-
-        List<SemanticType> getSemanticTypeList();
-    }
-
-    public interface QualifierOrBuilder extends MessageLiteOrBuilder {
-        boolean getAutoDeleteWithin180Days();
-
-        boolean getAutoDeleteWithinWipeout();
-
-        boolean getHasExplicitConsent();
-
-        boolean getIsAccessTarget();
-
-        boolean getIsEncrypted();
-
-        boolean getIsGoogle();
-
-        boolean getIsPartner();
-
-        boolean getIsPublic();
-
-        boolean getIsPublisher();
-
-        boolean getLimitedAccess();
-
-        boolean getNonUserLocation();
-
-        boolean getOtherUser();
-
-        int getRelatedField();
-
-        boolean hasAutoDeleteWithin180Days();
-
-        boolean hasAutoDeleteWithinWipeout();
-
-        boolean hasHasExplicitConsent();
-
-        boolean hasIsAccessTarget();
-
-        boolean hasIsEncrypted();
-
-        boolean hasIsGoogle();
-
-        boolean hasIsPartner();
-
-        boolean hasIsPublic();
-
-        boolean hasIsPublisher();
-
-        boolean hasLimitedAccess();
-
-        boolean hasNonUserLocation();
-
-        boolean hasOtherUser();
-
-        boolean hasRelatedField();
-    }
 
     private SemanticAnnotations() {
     }
@@ -217,7 +137,7 @@ public final class SemanticAnnotations {
         ST_KEY(ST_KEY_VALUE),
         ST_VALUE(ST_VALUE_VALUE),
         ST_REFERER_URL(ST_REFERER_URL_VALUE);
-        
+
         public static final int ST_ACCOUNT_CREDENTIAL_VALUE = 2602;
         public static final int ST_ACSA_ID_VALUE = 1007;
         public static final int ST_ANALYTICS_ID_VALUE = 1004;
@@ -292,8 +212,8 @@ public final class SemanticAnnotations {
         };
         private final int value;
 
-        public final int getNumber() {
-            return this.value;
+        private SemanticType(int value2) {
+            this.value = value2;
         }
 
         public static SemanticType forNumber(int value2) {
@@ -470,6 +390,10 @@ public final class SemanticAnnotations {
             return SemanticTypeVerifier.INSTANCE;
         }
 
+        public final int getNumber() {
+            return this.value;
+        }
+
         private static final class SemanticTypeVerifier implements Internal.EnumVerifier {
             static final Internal.EnumVerifier INSTANCE = new SemanticTypeVerifier();
 
@@ -479,10 +403,6 @@ public final class SemanticAnnotations {
             public boolean isInRange(int number) {
                 return SemanticType.forNumber(number) != null;
             }
-        }
-
-        private SemanticType(int value2) {
-            this.value = value2;
         }
     }
 
@@ -495,7 +415,7 @@ public final class SemanticAnnotations {
         DF_HOST_ORDER(5),
         DF_BYTE_SWAPPED(6),
         DF_LOGGING_ELEMENT_TYPE_ID(7);
-        
+
         public static final int DF_BYTE_SWAPPED_VALUE = 6;
         public static final int DF_CGI_ARGS_VALUE = 4;
         public static final int DF_COOKIE_VALUE = 2;
@@ -511,8 +431,8 @@ public final class SemanticAnnotations {
         };
         private final int value;
 
-        public final int getNumber() {
-            return this.value;
+        private DataFormat(int value2) {
+            this.value = value2;
         }
 
         public static DataFormat forNumber(int value2) {
@@ -546,6 +466,10 @@ public final class SemanticAnnotations {
             return DataFormatVerifier.INSTANCE;
         }
 
+        public final int getNumber() {
+            return this.value;
+        }
+
         private static final class DataFormatVerifier implements Internal.EnumVerifier {
             static final Internal.EnumVerifier INSTANCE = new DataFormatVerifier();
 
@@ -556,10 +480,86 @@ public final class SemanticAnnotations {
                 return DataFormat.forNumber(number) != null;
             }
         }
+    }
 
-        private DataFormat(int value2) {
-            this.value = value2;
-        }
+    public interface FieldDetailsOrBuilder extends MessageLiteOrBuilder {
+        SemanticType getSemanticType(int i);
+
+        int getSemanticTypeCount();
+
+        List<SemanticType> getSemanticTypeList();
+    }
+
+    public interface LocationQualifierOrBuilder extends MessageLiteOrBuilder {
+        boolean getNonUserLocation();
+
+        boolean getPreciseLocation();
+
+        boolean hasNonUserLocation();
+
+        boolean hasPreciseLocation();
+    }
+
+    public interface MessageDetailsOrBuilder extends MessageLiteOrBuilder {
+        SemanticType getSemanticType(int i);
+
+        int getSemanticTypeCount();
+
+        List<SemanticType> getSemanticTypeList();
+    }
+
+    public interface QualifierOrBuilder extends MessageLiteOrBuilder {
+        boolean getAutoDeleteWithin180Days();
+
+        boolean getAutoDeleteWithinWipeout();
+
+        boolean getHasExplicitConsent();
+
+        boolean getIsAccessTarget();
+
+        boolean getIsEncrypted();
+
+        boolean getIsGoogle();
+
+        boolean getIsPartner();
+
+        boolean getIsPublic();
+
+        boolean getIsPublisher();
+
+        boolean getLimitedAccess();
+
+        boolean getNonUserLocation();
+
+        boolean getOtherUser();
+
+        int getRelatedField();
+
+        boolean hasAutoDeleteWithin180Days();
+
+        boolean hasAutoDeleteWithinWipeout();
+
+        boolean hasHasExplicitConsent();
+
+        boolean hasIsAccessTarget();
+
+        boolean hasIsEncrypted();
+
+        boolean hasIsGoogle();
+
+        boolean hasIsPartner();
+
+        boolean hasIsPublic();
+
+        boolean hasIsPublisher();
+
+        boolean hasLimitedAccess();
+
+        boolean hasNonUserLocation();
+
+        boolean hasOtherUser();
+
+        boolean hasRelatedField();
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -578,8 +578,13 @@ public final class SemanticAnnotations {
         public static final int LIMITED_ACCESS_FIELD_NUMBER = 10;
         public static final int NON_USER_LOCATION_FIELD_NUMBER = 9;
         public static final int OTHER_USER_FIELD_NUMBER = 3;
-        private static volatile Parser<Qualifier> PARSER = null;
         public static final int RELATED_FIELD_FIELD_NUMBER = 8;
+        private static volatile Parser<Qualifier> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(Qualifier.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoField(fieldNumber = 13, isRequired = false, type = FieldType.BOOL)
         @ProtoPresenceCheckedField(mask = 2048, presenceBitsId = 0)
         private boolean autoDeleteWithin180Days_;
@@ -623,6 +628,70 @@ public final class SemanticAnnotations {
         private int relatedField_;
 
         private Qualifier() {
+        }
+
+        public static Qualifier parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (Qualifier) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static Qualifier parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (Qualifier) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static Qualifier parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (Qualifier) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static Qualifier parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (Qualifier) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static Qualifier parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (Qualifier) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static Qualifier parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (Qualifier) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static Qualifier parseFrom(InputStream input) throws IOException {
+            return (Qualifier) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static Qualifier parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (Qualifier) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Qualifier parseDelimitedFrom(InputStream input) throws IOException {
+            return (Qualifier) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static Qualifier parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (Qualifier) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Qualifier parseFrom(CodedInputStream input) throws IOException {
+            return (Qualifier) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static Qualifier parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (Qualifier) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(Qualifier prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static Qualifier getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<Qualifier> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasIsPublic() {
@@ -885,60 +954,36 @@ public final class SemanticAnnotations {
             this.isAccessTarget_ = false;
         }
 
-        public static Qualifier parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (Qualifier) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static Qualifier parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (Qualifier) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static Qualifier parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (Qualifier) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static Qualifier parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (Qualifier) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static Qualifier parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (Qualifier) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static Qualifier parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (Qualifier) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static Qualifier parseFrom(InputStream input) throws IOException {
-            return (Qualifier) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static Qualifier parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (Qualifier) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Qualifier parseDelimitedFrom(InputStream input) throws IOException {
-            return (Qualifier) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static Qualifier parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (Qualifier) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Qualifier parseFrom(CodedInputStream input) throws IOException {
-            return (Qualifier) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static Qualifier parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (Qualifier) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(Qualifier prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new Qualifier();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\r\u0000\u0001\u0001\r\r\u0000\u0000\u0000\u0001\u0007\u0000\u0002\u0007\u0001\u0003\u0007\u0002\u0004\u0007\u0003\u0005\u0007\u0004\u0006\u0007\u0005\u0007\u0007\u0006\b\u0004\u0007\t\u0007\b\n\u0007\t\u000b\u0007\n\f\u0007\f\r\u0007\u000b", new Object[]{"bitField0_", "isPublic_", "isGoogle_", "otherUser_", "isPartner_", "isPublisher_", "hasExplicitConsent_", "isEncrypted_", "relatedField_", "nonUserLocation_", "limitedAccess_", "autoDeleteWithinWipeout_", "isAccessTarget_", "autoDeleteWithin180Days_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<Qualifier> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (Qualifier.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<Qualifier, Builder> implements QualifierOrBuilder {
@@ -1206,50 +1251,6 @@ public final class SemanticAnnotations {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new Qualifier();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\r\u0000\u0001\u0001\r\r\u0000\u0000\u0000\u0001\u0007\u0000\u0002\u0007\u0001\u0003\u0007\u0002\u0004\u0007\u0003\u0005\u0007\u0004\u0006\u0007\u0005\u0007\u0007\u0006\b\u0004\u0007\t\u0007\b\n\u0007\t\u000b\u0007\n\f\u0007\f\r\u0007\u000b", new Object[]{"bitField0_", "isPublic_", "isGoogle_", "otherUser_", "isPartner_", "isPublisher_", "hasExplicitConsent_", "isEncrypted_", "relatedField_", "nonUserLocation_", "limitedAccess_", "autoDeleteWithinWipeout_", "isAccessTarget_", "autoDeleteWithin180Days_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<Qualifier> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (Qualifier.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(Qualifier.class, DEFAULT_INSTANCE);
-        }
-
-        public static Qualifier getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<Qualifier> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -1257,8 +1258,13 @@ public final class SemanticAnnotations {
         /* access modifiers changed from: private */
         public static final LocationQualifier DEFAULT_INSTANCE = new LocationQualifier();
         public static final int NON_USER_LOCATION_FIELD_NUMBER = 1;
-        private static volatile Parser<LocationQualifier> PARSER = null;
         public static final int PRECISE_LOCATION_FIELD_NUMBER = 2;
+        private static volatile Parser<LocationQualifier> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(LocationQualifier.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.BOOL)
@@ -1269,46 +1275,6 @@ public final class SemanticAnnotations {
         private boolean preciseLocation_;
 
         private LocationQualifier() {
-        }
-
-        public boolean hasNonUserLocation() {
-            return (this.bitField0_ & 1) != 0;
-        }
-
-        public boolean getNonUserLocation() {
-            return this.nonUserLocation_;
-        }
-
-        /* access modifiers changed from: private */
-        public void setNonUserLocation(boolean value) {
-            this.bitField0_ |= 1;
-            this.nonUserLocation_ = value;
-        }
-
-        /* access modifiers changed from: private */
-        public void clearNonUserLocation() {
-            this.bitField0_ &= -2;
-            this.nonUserLocation_ = false;
-        }
-
-        public boolean hasPreciseLocation() {
-            return (this.bitField0_ & 2) != 0;
-        }
-
-        public boolean getPreciseLocation() {
-            return this.preciseLocation_;
-        }
-
-        /* access modifiers changed from: private */
-        public void setPreciseLocation(boolean value) {
-            this.bitField0_ |= 2;
-            this.preciseLocation_ = value;
-        }
-
-        /* access modifiers changed from: private */
-        public void clearPreciseLocation() {
-            this.bitField0_ &= -3;
-            this.preciseLocation_ = false;
         }
 
         public static LocationQualifier parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
@@ -1367,6 +1333,86 @@ public final class SemanticAnnotations {
             return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
         }
 
+        public static LocationQualifier getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<LocationQualifier> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
+        }
+
+        public boolean hasNonUserLocation() {
+            return (this.bitField0_ & 1) != 0;
+        }
+
+        public boolean getNonUserLocation() {
+            return this.nonUserLocation_;
+        }
+
+        /* access modifiers changed from: private */
+        public void setNonUserLocation(boolean value) {
+            this.bitField0_ |= 1;
+            this.nonUserLocation_ = value;
+        }
+
+        /* access modifiers changed from: private */
+        public void clearNonUserLocation() {
+            this.bitField0_ &= -2;
+            this.nonUserLocation_ = false;
+        }
+
+        public boolean hasPreciseLocation() {
+            return (this.bitField0_ & 2) != 0;
+        }
+
+        public boolean getPreciseLocation() {
+            return this.preciseLocation_;
+        }
+
+        /* access modifiers changed from: private */
+        public void setPreciseLocation(boolean value) {
+            this.bitField0_ |= 2;
+            this.preciseLocation_ = value;
+        }
+
+        /* access modifiers changed from: private */
+        public void clearPreciseLocation() {
+            this.bitField0_ &= -3;
+            this.preciseLocation_ = false;
+        }
+
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new LocationQualifier();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0000\u0000\u0001\u0007\u0000\u0002\u0007\u0001", new Object[]{"bitField0_", "nonUserLocation_", "preciseLocation_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<LocationQualifier> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (LocationQualifier.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
+        }
+
         public static final class Builder extends GeneratedMessageLite.Builder<LocationQualifier, Builder> implements LocationQualifierOrBuilder {
             private Builder() {
                 super(LocationQualifier.DEFAULT_INSTANCE);
@@ -1412,57 +1458,12 @@ public final class SemanticAnnotations {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new LocationQualifier();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0000\u0000\u0001\u0007\u0000\u0002\u0007\u0001", new Object[]{"bitField0_", "nonUserLocation_", "preciseLocation_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<LocationQualifier> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (LocationQualifier.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(LocationQualifier.class, DEFAULT_INSTANCE);
-        }
-
-        public static LocationQualifier getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<LocationQualifier> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
     public static final class FieldDetails extends GeneratedMessageLite<FieldDetails, Builder> implements FieldDetailsOrBuilder {
         /* access modifiers changed from: private */
         public static final FieldDetails DEFAULT_INSTANCE = new FieldDetails();
-        private static volatile Parser<FieldDetails> PARSER = null;
         public static final int SEMANTIC_TYPE_FIELD_NUMBER = 1;
         private static final Internal.ListAdapter.Converter<Integer, SemanticType> semanticType_converter_ = new Internal.ListAdapter.Converter<Integer, SemanticType>() {
             public SemanticType convert(Integer from) {
@@ -1470,65 +1471,16 @@ public final class SemanticAnnotations {
                 return result == null ? SemanticType.ST_NOT_SPECIFIED : result;
             }
         };
-        @ProtoField(fieldNumber = 1, type = FieldType.ENUM_LIST)
-        private Internal.IntList semanticType_ = emptyIntList();
-
-        private FieldDetails() {
-        }
+        private static volatile Parser<FieldDetails> PARSER = null;
 
         static {
             GeneratedMessageLite.registerDefaultInstance(FieldDetails.class, DEFAULT_INSTANCE);
         }
 
-        public List<SemanticType> getSemanticTypeList() {
-            return new Internal.ListAdapter(this.semanticType_, semanticType_converter_);
-        }
+        @ProtoField(fieldNumber = 1, type = FieldType.ENUM_LIST)
+        private Internal.IntList semanticType_ = emptyIntList();
 
-        public int getSemanticTypeCount() {
-            return this.semanticType_.size();
-        }
-
-        public SemanticType getSemanticType(int index) {
-            return semanticType_converter_.convert(Integer.valueOf(this.semanticType_.getInt(index)));
-        }
-
-        private void ensureSemanticTypeIsMutable() {
-            if (!this.semanticType_.isModifiable()) {
-                this.semanticType_ = GeneratedMessageLite.mutableCopy(this.semanticType_);
-            }
-        }
-
-        /* access modifiers changed from: private */
-        public void setSemanticType(int index, SemanticType value) {
-            if (value != null) {
-                ensureSemanticTypeIsMutable();
-                this.semanticType_.setInt(index, value.getNumber());
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        /* access modifiers changed from: private */
-        public void addSemanticType(SemanticType value) {
-            if (value != null) {
-                ensureSemanticTypeIsMutable();
-                this.semanticType_.addInt(value.getNumber());
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        /* access modifiers changed from: private */
-        public void addAllSemanticType(Iterable<? extends SemanticType> values) {
-            ensureSemanticTypeIsMutable();
-            for (SemanticType value : values) {
-                this.semanticType_.addInt(value.getNumber());
-            }
-        }
-
-        /* access modifiers changed from: private */
-        public void clearSemanticType() {
-            this.semanticType_ = emptyIntList();
+        private FieldDetails() {
         }
 
         public static FieldDetails parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
@@ -1587,109 +1539,12 @@ public final class SemanticAnnotations {
             return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
         }
 
-        public static final class Builder extends GeneratedMessageLite.Builder<FieldDetails, Builder> implements FieldDetailsOrBuilder {
-            private Builder() {
-                super(FieldDetails.DEFAULT_INSTANCE);
-            }
-
-            public List<SemanticType> getSemanticTypeList() {
-                return ((FieldDetails) this.instance).getSemanticTypeList();
-            }
-
-            public int getSemanticTypeCount() {
-                return ((FieldDetails) this.instance).getSemanticTypeCount();
-            }
-
-            public SemanticType getSemanticType(int index) {
-                return ((FieldDetails) this.instance).getSemanticType(index);
-            }
-
-            public Builder setSemanticType(int index, SemanticType value) {
-                copyOnWrite();
-                ((FieldDetails) this.instance).setSemanticType(index, value);
-                return this;
-            }
-
-            public Builder addSemanticType(SemanticType value) {
-                copyOnWrite();
-                ((FieldDetails) this.instance).addSemanticType(value);
-                return this;
-            }
-
-            public Builder addAllSemanticType(Iterable<? extends SemanticType> values) {
-                copyOnWrite();
-                ((FieldDetails) this.instance).addAllSemanticType(values);
-                return this;
-            }
-
-            public Builder clearSemanticType() {
-                copyOnWrite();
-                ((FieldDetails) this.instance).clearSemanticType();
-                return this;
-            }
-        }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new FieldDetails();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0001\u0000\u0000\u0001\u0001\u0001\u0000\u0001\u0000\u0001\u001e", new Object[]{"semanticType_", SemanticType.internalGetVerifier()});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<FieldDetails> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (FieldDetails.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
         public static FieldDetails getDefaultInstance() {
             return DEFAULT_INSTANCE;
         }
 
         public static Parser<FieldDetails> parser() {
             return DEFAULT_INSTANCE.getParserForType();
-        }
-    }
-
-    @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
-    public static final class MessageDetails extends GeneratedMessageLite<MessageDetails, Builder> implements MessageDetailsOrBuilder {
-        /* access modifiers changed from: private */
-        public static final MessageDetails DEFAULT_INSTANCE = new MessageDetails();
-        private static volatile Parser<MessageDetails> PARSER = null;
-        public static final int SEMANTIC_TYPE_FIELD_NUMBER = 1;
-        private static final Internal.ListAdapter.Converter<Integer, SemanticType> semanticType_converter_ = new Internal.ListAdapter.Converter<Integer, SemanticType>() {
-            public SemanticType convert(Integer from) {
-                SemanticType result = SemanticType.forNumber(from.intValue());
-                return result == null ? SemanticType.ST_NOT_SPECIFIED : result;
-            }
-        };
-        @ProtoField(fieldNumber = 1, type = FieldType.ENUM_LIST)
-        private Internal.IntList semanticType_ = emptyIntList();
-
-        private MessageDetails() {
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(MessageDetails.class, DEFAULT_INSTANCE);
         }
 
         public List<SemanticType> getSemanticTypeList() {
@@ -1741,6 +1596,104 @@ public final class SemanticAnnotations {
         /* access modifiers changed from: private */
         public void clearSemanticType() {
             this.semanticType_ = emptyIntList();
+        }
+
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new FieldDetails();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0001\u0000\u0000\u0001\u0001\u0001\u0000\u0001\u0000\u0001\u001e", new Object[]{"semanticType_", SemanticType.internalGetVerifier()});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<FieldDetails> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (FieldDetails.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
+        }
+
+        public static final class Builder extends GeneratedMessageLite.Builder<FieldDetails, Builder> implements FieldDetailsOrBuilder {
+            private Builder() {
+                super(FieldDetails.DEFAULT_INSTANCE);
+            }
+
+            public List<SemanticType> getSemanticTypeList() {
+                return ((FieldDetails) this.instance).getSemanticTypeList();
+            }
+
+            public int getSemanticTypeCount() {
+                return ((FieldDetails) this.instance).getSemanticTypeCount();
+            }
+
+            public SemanticType getSemanticType(int index) {
+                return ((FieldDetails) this.instance).getSemanticType(index);
+            }
+
+            public Builder setSemanticType(int index, SemanticType value) {
+                copyOnWrite();
+                ((FieldDetails) this.instance).setSemanticType(index, value);
+                return this;
+            }
+
+            public Builder addSemanticType(SemanticType value) {
+                copyOnWrite();
+                ((FieldDetails) this.instance).addSemanticType(value);
+                return this;
+            }
+
+            public Builder addAllSemanticType(Iterable<? extends SemanticType> values) {
+                copyOnWrite();
+                ((FieldDetails) this.instance).addAllSemanticType(values);
+                return this;
+            }
+
+            public Builder clearSemanticType() {
+                copyOnWrite();
+                ((FieldDetails) this.instance).clearSemanticType();
+                return this;
+            }
+        }
+    }
+
+    @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
+    public static final class MessageDetails extends GeneratedMessageLite<MessageDetails, Builder> implements MessageDetailsOrBuilder {
+        /* access modifiers changed from: private */
+        public static final MessageDetails DEFAULT_INSTANCE = new MessageDetails();
+        public static final int SEMANTIC_TYPE_FIELD_NUMBER = 1;
+        private static final Internal.ListAdapter.Converter<Integer, SemanticType> semanticType_converter_ = new Internal.ListAdapter.Converter<Integer, SemanticType>() {
+            public SemanticType convert(Integer from) {
+                SemanticType result = SemanticType.forNumber(from.intValue());
+                return result == null ? SemanticType.ST_NOT_SPECIFIED : result;
+            }
+        };
+        private static volatile Parser<MessageDetails> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(MessageDetails.class, DEFAULT_INSTANCE);
+        }
+
+        @ProtoField(fieldNumber = 1, type = FieldType.ENUM_LIST)
+        private Internal.IntList semanticType_ = emptyIntList();
+
+        private MessageDetails() {
         }
 
         public static MessageDetails parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
@@ -1799,6 +1752,97 @@ public final class SemanticAnnotations {
             return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
         }
 
+        public static MessageDetails getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<MessageDetails> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
+        }
+
+        public List<SemanticType> getSemanticTypeList() {
+            return new Internal.ListAdapter(this.semanticType_, semanticType_converter_);
+        }
+
+        public int getSemanticTypeCount() {
+            return this.semanticType_.size();
+        }
+
+        public SemanticType getSemanticType(int index) {
+            return semanticType_converter_.convert(Integer.valueOf(this.semanticType_.getInt(index)));
+        }
+
+        private void ensureSemanticTypeIsMutable() {
+            if (!this.semanticType_.isModifiable()) {
+                this.semanticType_ = GeneratedMessageLite.mutableCopy(this.semanticType_);
+            }
+        }
+
+        /* access modifiers changed from: private */
+        public void setSemanticType(int index, SemanticType value) {
+            if (value != null) {
+                ensureSemanticTypeIsMutable();
+                this.semanticType_.setInt(index, value.getNumber());
+                return;
+            }
+            throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void addSemanticType(SemanticType value) {
+            if (value != null) {
+                ensureSemanticTypeIsMutable();
+                this.semanticType_.addInt(value.getNumber());
+                return;
+            }
+            throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void addAllSemanticType(Iterable<? extends SemanticType> values) {
+            ensureSemanticTypeIsMutable();
+            for (SemanticType value : values) {
+                this.semanticType_.addInt(value.getNumber());
+            }
+        }
+
+        /* access modifiers changed from: private */
+        public void clearSemanticType() {
+            this.semanticType_ = emptyIntList();
+        }
+
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new MessageDetails();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0001\u0000\u0000\u0001\u0001\u0001\u0000\u0001\u0000\u0001\u001e", new Object[]{"semanticType_", SemanticType.internalGetVerifier()});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<MessageDetails> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (MessageDetails.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
+        }
+
         public static final class Builder extends GeneratedMessageLite.Builder<MessageDetails, Builder> implements MessageDetailsOrBuilder {
             private Builder() {
                 super(MessageDetails.DEFAULT_INSTANCE);
@@ -1839,46 +1883,6 @@ public final class SemanticAnnotations {
                 ((MessageDetails) this.instance).clearSemanticType();
                 return this;
             }
-        }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new MessageDetails();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0001\u0000\u0000\u0001\u0001\u0001\u0000\u0001\u0000\u0001\u001e", new Object[]{"semanticType_", SemanticType.internalGetVerifier()});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<MessageDetails> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (MessageDetails.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        public static MessageDetails getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<MessageDetails> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
         }
     }
 }

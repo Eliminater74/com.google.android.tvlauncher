@@ -1,7 +1,7 @@
 package com.google.android.gms.internal;
 
-import com.google.android.gms.internal.zzgoj;
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -13,6 +13,18 @@ public final class zzgre {
     private Object[] zzd;
     private int zze;
     private boolean zzf;
+
+    private zzgre() {
+        this(0, new int[8], new Object[8], true);
+    }
+
+    private zzgre(int i, int[] iArr, Object[] objArr, boolean z) {
+        this.zze = -1;
+        this.zzb = i;
+        this.zzc = iArr;
+        this.zzd = objArr;
+        this.zzf = z;
+    }
 
     public static zzgre zza() {
         return zza;
@@ -31,16 +43,30 @@ public final class zzgre {
         return new zzgre(i, copyOf, copyOf2, true);
     }
 
-    private zzgre() {
-        this(0, new int[8], new Object[8], true);
-    }
-
-    private zzgre(int i, int[] iArr, Object[] objArr, boolean z) {
-        this.zze = -1;
-        this.zzb = i;
-        this.zzc = iArr;
-        this.zzd = objArr;
-        this.zzf = z;
+    private static void zza(int i, Object obj, zzgrx zzgrx) {
+        int i2 = i >>> 3;
+        int i3 = i & 7;
+        if (i3 == 0) {
+            zzgrx.zza(i2, ((Long) obj).longValue());
+        } else if (i3 == 1) {
+            zzgrx.zzd(i2, ((Long) obj).longValue());
+        } else if (i3 == 2) {
+            zzgrx.zza(i2, (zzgnb) obj);
+        } else if (i3 != 3) {
+            if (i3 == 5) {
+                zzgrx.zzd(i2, ((Integer) obj).intValue());
+                return;
+            }
+            throw new RuntimeException(zzgot.zzf());
+        } else if (zzgrx.zza() == zzgoj.zzg.zzk) {
+            zzgrx.zza(i2);
+            ((zzgre) obj).zzb(zzgrx);
+            zzgrx.zzb(i2);
+        } else {
+            zzgrx.zzb(i2);
+            ((zzgre) obj).zzb(zzgrx);
+            zzgrx.zza(i2);
+        }
     }
 
     public final void zzc() {
@@ -94,32 +120,6 @@ public final class zzgre {
             for (int i2 = this.zzb - 1; i2 >= 0; i2--) {
                 zza(this.zzc[i2], this.zzd[i2], zzgrx);
             }
-        }
-    }
-
-    private static void zza(int i, Object obj, zzgrx zzgrx) {
-        int i2 = i >>> 3;
-        int i3 = i & 7;
-        if (i3 == 0) {
-            zzgrx.zza(i2, ((Long) obj).longValue());
-        } else if (i3 == 1) {
-            zzgrx.zzd(i2, ((Long) obj).longValue());
-        } else if (i3 == 2) {
-            zzgrx.zza(i2, (zzgnb) obj);
-        } else if (i3 != 3) {
-            if (i3 == 5) {
-                zzgrx.zzd(i2, ((Integer) obj).intValue());
-                return;
-            }
-            throw new RuntimeException(zzgot.zzf());
-        } else if (zzgrx.zza() == zzgoj.zzg.zzk) {
-            zzgrx.zza(i2);
-            ((zzgre) obj).zzb(zzgrx);
-            zzgrx.zzb(i2);
-        } else {
-            zzgrx.zzb(i2);
-            ((zzgre) obj).zzb(zzgrx);
-            zzgrx.zza(i2);
         }
     }
 

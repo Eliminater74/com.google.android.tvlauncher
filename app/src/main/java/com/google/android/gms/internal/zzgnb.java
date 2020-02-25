@@ -14,6 +14,58 @@ public abstract class zzgnb implements Serializable, Iterable<Byte> {
     zzgnb() {
     }
 
+    public static zzgnb zza(byte[] bArr, int i, int i2) {
+        return new zzgni(zzb.zza(bArr, i, i2));
+    }
+
+    public static zzgnb zza(byte[] bArr) {
+        return zza(bArr, 0, bArr.length);
+    }
+
+    static zzgnb zzb(byte[] bArr) {
+        return new zzgni(bArr);
+    }
+
+    static zzgnb zzb(byte[] bArr, int i, int i2) {
+        return new zzgne(bArr, i, i2);
+    }
+
+    public static zzgnb zza(String str) {
+        return new zzgni(str.getBytes(zzgon.zza));
+    }
+
+    static zzgng zzb(int i) {
+        return new zzgng(i, null);
+    }
+
+    static int zzb(int i, int i2, int i3) {
+        int i4 = i2 - i;
+        if ((i | i2 | i4 | (i3 - i2)) >= 0) {
+            return i4;
+        }
+        if (i < 0) {
+            StringBuilder sb = new StringBuilder(32);
+            sb.append("Beginning index: ");
+            sb.append(i);
+            sb.append(" < 0");
+            throw new IndexOutOfBoundsException(sb.toString());
+        } else if (i2 < i) {
+            StringBuilder sb2 = new StringBuilder(66);
+            sb2.append("Beginning index larger than ending index: ");
+            sb2.append(i);
+            sb2.append(", ");
+            sb2.append(i2);
+            throw new IndexOutOfBoundsException(sb2.toString());
+        } else {
+            StringBuilder sb3 = new StringBuilder(37);
+            sb3.append("End index: ");
+            sb3.append(i2);
+            sb3.append(" >= ");
+            sb3.append(i3);
+            throw new IndexOutOfBoundsException(sb3.toString());
+        }
+    }
+
     public abstract boolean equals(Object obj);
 
     public abstract byte zza(int i);
@@ -40,26 +92,6 @@ public abstract class zzgnb implements Serializable, Iterable<Byte> {
 
     public final boolean zzb() {
         return zza() == 0;
-    }
-
-    public static zzgnb zza(byte[] bArr, int i, int i2) {
-        return new zzgni(zzb.zza(bArr, i, i2));
-    }
-
-    public static zzgnb zza(byte[] bArr) {
-        return zza(bArr, 0, bArr.length);
-    }
-
-    static zzgnb zzb(byte[] bArr) {
-        return new zzgni(bArr);
-    }
-
-    static zzgnb zzb(byte[] bArr, int i, int i2) {
-        return new zzgne(bArr, i, i2);
-    }
-
-    public static zzgnb zza(String str) {
-        return new zzgni(str.getBytes(zzgon.zza));
     }
 
     public final byte[] zzc() {
@@ -89,41 +121,9 @@ public abstract class zzgnb implements Serializable, Iterable<Byte> {
         return i;
     }
 
-    static zzgng zzb(int i) {
-        return new zzgng(i, null);
-    }
-
     /* access modifiers changed from: protected */
     public final int zzg() {
         return this.zzc;
-    }
-
-    static int zzb(int i, int i2, int i3) {
-        int i4 = i2 - i;
-        if ((i | i2 | i4 | (i3 - i2)) >= 0) {
-            return i4;
-        }
-        if (i < 0) {
-            StringBuilder sb = new StringBuilder(32);
-            sb.append("Beginning index: ");
-            sb.append(i);
-            sb.append(" < 0");
-            throw new IndexOutOfBoundsException(sb.toString());
-        } else if (i2 < i) {
-            StringBuilder sb2 = new StringBuilder(66);
-            sb2.append("Beginning index larger than ending index: ");
-            sb2.append(i);
-            sb2.append(", ");
-            sb2.append(i2);
-            throw new IndexOutOfBoundsException(sb2.toString());
-        } else {
-            StringBuilder sb3 = new StringBuilder(37);
-            sb3.append("End index: ");
-            sb3.append(i2);
-            sb3.append(" >= ");
-            sb3.append(i3);
-            throw new IndexOutOfBoundsException(sb3.toString());
-        }
     }
 
     public final String toString() {

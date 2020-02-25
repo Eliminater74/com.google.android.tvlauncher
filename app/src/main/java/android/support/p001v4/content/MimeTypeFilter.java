@@ -2,6 +2,7 @@ package android.support.p001v4.content;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import java.util.ArrayList;
 
 /* renamed from: android.support.v4.content.MimeTypeFilter */

@@ -2,7 +2,9 @@ package com.bumptech.glide.signature;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import com.bumptech.glide.load.Key;
+
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 

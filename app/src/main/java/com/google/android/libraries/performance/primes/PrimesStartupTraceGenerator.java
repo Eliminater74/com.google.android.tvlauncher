@@ -2,12 +2,14 @@ package com.google.android.libraries.performance.primes;
 
 import android.os.Looper;
 import android.support.annotation.VisibleForTesting;
-import com.google.android.libraries.performance.primes.PrimesStartupMeasure;
+
 import com.google.android.libraries.performance.primes.tracing.SpanEvent;
 import com.google.android.libraries.performance.primes.tracing.SpanProtoGenerator;
 import com.google.android.libraries.performance.primes.tracing.TraceData;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import logs.proto.wireless.performance.mobile.PrimesTraceOuterClass;
 
 final class PrimesStartupTraceGenerator {

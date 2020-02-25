@@ -1,7 +1,6 @@
 package com.google.android.exoplayer2.p008ui;
 
 import android.graphics.Bitmap;
-import com.google.android.exoplayer2.p008ui.PlayerNotificationManager;
 
 /* renamed from: com.google.android.exoplayer2.ui.PlayerNotificationManager$BitmapCallback$$Lambda$0 */
 final /* synthetic */ class PlayerNotificationManager$BitmapCallback$$Lambda$0 implements Runnable {

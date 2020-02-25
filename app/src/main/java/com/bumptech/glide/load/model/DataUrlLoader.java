@@ -2,12 +2,13 @@ package com.bumptech.glide.load.model;
 
 import android.support.annotation.NonNull;
 import android.util.Base64;
+
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.Options;
 import com.bumptech.glide.load.data.DataFetcher;
-import com.bumptech.glide.load.model.ModelLoader;
 import com.bumptech.glide.signature.ObjectKey;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,14 +17,6 @@ public final class DataUrlLoader<Model, Data> implements ModelLoader<Model, Data
     private static final String BASE64_TAG = ";base64";
     private static final String DATA_SCHEME_IMAGE = "data:image";
     private final DataDecoder<Data> dataDecoder;
-
-    public interface DataDecoder<Data> {
-        void close(Data data) throws IOException;
-
-        Data decode(String str) throws IllegalArgumentException;
-
-        Class<Data> getDataClass();
-    }
 
     public DataUrlLoader(DataDecoder<Data> dataDecoder2) {
         this.dataDecoder = dataDecoder2;
@@ -37,10 +30,18 @@ public final class DataUrlLoader<Model, Data> implements ModelLoader<Model, Data
         return model.toString().startsWith(DATA_SCHEME_IMAGE);
     }
 
+    public interface DataDecoder<Data> {
+        void close(Data data) throws IOException;
+
+        Data decode(String str) throws IllegalArgumentException;
+
+        Class<Data> getDataClass();
+    }
+
     private static final class DataUriFetcher<Data> implements DataFetcher<Data> {
-        private Data data;
         private final String dataUri;
         private final DataDecoder<Data> reader;
+        private Data data;
 
         DataUriFetcher(String dataUri2, DataDecoder<Data> reader2) {
             this.dataUri = dataUri2;

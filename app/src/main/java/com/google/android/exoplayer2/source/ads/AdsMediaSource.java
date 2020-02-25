@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.source.CompositeMediaSource;
@@ -11,12 +12,12 @@ import com.google.android.exoplayer2.source.DeferredMediaPeriod;
 import com.google.android.exoplayer2.source.MediaPeriod;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
-import com.google.android.exoplayer2.source.ads.AdsLoader;
 import com.google.android.exoplayer2.upstream.Allocator;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.TransferListener;
 import com.google.android.exoplayer2.util.Assertions;
+
 import java.io.IOException;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -30,69 +31,21 @@ import java.util.Map;
 
 public final class AdsMediaSource extends CompositeMediaSource<MediaSource.MediaPeriodId> {
     private static final MediaSource.MediaPeriodId DUMMY_CONTENT_MEDIA_PERIOD_ID = new MediaSource.MediaPeriodId(new Object());
-    private MediaSource[][] adGroupMediaSources;
-    private Timeline[][] adGroupTimelines;
-    private final MediaSourceFactory adMediaSourceFactory;
-    private AdPlaybackState adPlaybackState;
-    private final AdsLoader.AdViewProvider adViewProvider;
     /* access modifiers changed from: private */
     public final AdsLoader adsLoader;
-    private ComponentListener componentListener;
-    private Object contentManifest;
-    private final MediaSource contentMediaSource;
-    private Timeline contentTimeline;
-    private final Map<MediaSource, List<DeferredMediaPeriod>> deferredMediaPeriodByAdMediaSource;
     /* access modifiers changed from: private */
     public final Handler mainHandler;
+    private final MediaSourceFactory adMediaSourceFactory;
+    private final AdsLoader.AdViewProvider adViewProvider;
+    private final MediaSource contentMediaSource;
+    private final Map<MediaSource, List<DeferredMediaPeriod>> deferredMediaPeriodByAdMediaSource;
     private final Timeline.Period period;
-
-    public interface MediaSourceFactory {
-        MediaSource createMediaSource(Uri uri);
-
-        int[] getSupportedTypes();
-    }
-
-    public static final class AdLoadException extends IOException {
-        public static final int TYPE_AD = 0;
-        public static final int TYPE_AD_GROUP = 1;
-        public static final int TYPE_ALL_ADS = 2;
-        public static final int TYPE_UNEXPECTED = 3;
-        public final int type;
-
-        @Documented
-        @Retention(RetentionPolicy.SOURCE)
-        public @interface Type {
-        }
-
-        public static AdLoadException createForAd(Exception error) {
-            return new AdLoadException(0, error);
-        }
-
-        public static AdLoadException createForAdGroup(Exception error, int adGroupIndex) {
-            StringBuilder sb = new StringBuilder(35);
-            sb.append("Failed to load ad group ");
-            sb.append(adGroupIndex);
-            return new AdLoadException(1, new IOException(sb.toString(), error));
-        }
-
-        public static AdLoadException createForAllAds(Exception error) {
-            return new AdLoadException(2, error);
-        }
-
-        public static AdLoadException createForUnexpected(RuntimeException error) {
-            return new AdLoadException(3, error);
-        }
-
-        private AdLoadException(int type2, Exception cause) {
-            super(cause);
-            this.type = type2;
-        }
-
-        public RuntimeException getRuntimeExceptionForUnexpected() {
-            Assertions.checkState(this.type == 3);
-            return (RuntimeException) getCause();
-        }
-    }
+    private MediaSource[][] adGroupMediaSources;
+    private Timeline[][] adGroupTimelines;
+    private AdPlaybackState adPlaybackState;
+    private ComponentListener componentListener;
+    private Object contentManifest;
+    private Timeline contentTimeline;
 
     public AdsMediaSource(MediaSource contentMediaSource2, DataSource.Factory dataSourceFactory, AdsLoader adsLoader2, AdsLoader.AdViewProvider adViewProvider2) {
         this(contentMediaSource2, new ProgressiveMediaSource.Factory(dataSourceFactory), adsLoader2, adViewProvider2);
@@ -109,6 +62,24 @@ public final class AdsMediaSource extends CompositeMediaSource<MediaSource.Media
         this.adGroupMediaSources = new MediaSource[0][];
         this.adGroupTimelines = new Timeline[0][];
         adsLoader2.setSupportedContentTypes(adMediaSourceFactory2.getSupportedTypes());
+    }
+
+    private static long[][] getAdDurations(Timeline[][] adTimelines, Timeline.Period period2) {
+        long j;
+        long[][] adDurations = new long[adTimelines.length][];
+        for (int i = 0; i < adTimelines.length; i++) {
+            adDurations[i] = new long[adTimelines[i].length];
+            for (int j2 = 0; j2 < adTimelines[i].length; j2++) {
+                long[] jArr = adDurations[i];
+                if (adTimelines[i][j2] == null) {
+                    j = C0841C.TIME_UNSET;
+                } else {
+                    j = adTimelines[i][j2].getPeriod(0, period2).getDurationUs();
+                }
+                jArr[j2] = j;
+            }
+        }
+        return adDurations;
     }
 
     @Nullable
@@ -259,27 +230,60 @@ public final class AdsMediaSource extends CompositeMediaSource<MediaSource.Media
         }
     }
 
-    private static long[][] getAdDurations(Timeline[][] adTimelines, Timeline.Period period2) {
-        long j;
-        long[][] adDurations = new long[adTimelines.length][];
-        for (int i = 0; i < adTimelines.length; i++) {
-            adDurations[i] = new long[adTimelines[i].length];
-            for (int j2 = 0; j2 < adTimelines[i].length; j2++) {
-                long[] jArr = adDurations[i];
-                if (adTimelines[i][j2] == null) {
-                    j = C0841C.TIME_UNSET;
-                } else {
-                    j = adTimelines[i][j2].getPeriod(0, period2).getDurationUs();
-                }
-                jArr[j2] = j;
-            }
+    public interface MediaSourceFactory {
+        MediaSource createMediaSource(Uri uri);
+
+        int[] getSupportedTypes();
+    }
+
+    public static final class AdLoadException extends IOException {
+        public static final int TYPE_AD = 0;
+        public static final int TYPE_AD_GROUP = 1;
+        public static final int TYPE_ALL_ADS = 2;
+        public static final int TYPE_UNEXPECTED = 3;
+        public final int type;
+
+        private AdLoadException(int type2, Exception cause) {
+            super(cause);
+            this.type = type2;
         }
-        return adDurations;
+
+        public static AdLoadException createForAd(Exception error) {
+            return new AdLoadException(0, error);
+        }
+
+        public static AdLoadException createForAdGroup(Exception error, int adGroupIndex) {
+            StringBuilder sb = new StringBuilder(35);
+            sb.append("Failed to load ad group ");
+            sb.append(adGroupIndex);
+            return new AdLoadException(1, new IOException(sb.toString(), error));
+        }
+
+        public static AdLoadException createForAllAds(Exception error) {
+            return new AdLoadException(2, error);
+        }
+
+        public static AdLoadException createForUnexpected(RuntimeException error) {
+            return new AdLoadException(3, error);
+        }
+
+        public RuntimeException getRuntimeExceptionForUnexpected() {
+            Assertions.checkState(this.type == 3);
+            return (RuntimeException) getCause();
+        }
+
+        @Documented
+        @Retention(RetentionPolicy.SOURCE)
+        public @interface Type {
+        }
     }
 
     private final class ComponentListener implements AdsLoader.EventListener {
         private final Handler playerHandler = new Handler();
         private volatile boolean released;
+
+        public ComponentListener() {
+        }
 
         public void onAdClicked() {
             AdsLoader$EventListener$$CC.onAdClicked$$dflt$$(this);
@@ -287,9 +291,6 @@ public final class AdsMediaSource extends CompositeMediaSource<MediaSource.Media
 
         public void onAdTapped() {
             AdsLoader$EventListener$$CC.onAdTapped$$dflt$$(this);
-        }
-
-        public ComponentListener() {
         }
 
         public void release() {

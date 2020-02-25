@@ -1,6 +1,5 @@
 package com.google.android.exoplayer2.mediacodec;
 
-import com.google.android.exoplayer2.mediacodec.MediaCodecUtil;
 import java.util.Comparator;
 
 final /* synthetic */ class MediaCodecUtil$$Lambda$3 implements Comparator {

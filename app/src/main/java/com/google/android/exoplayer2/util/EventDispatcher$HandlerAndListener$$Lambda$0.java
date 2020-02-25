@@ -1,7 +1,5 @@
 package com.google.android.exoplayer2.util;
 
-import com.google.android.exoplayer2.util.EventDispatcher;
-
 final /* synthetic */ class EventDispatcher$HandlerAndListener$$Lambda$0 implements Runnable {
     private final EventDispatcher.HandlerAndListener arg$1;
     private final EventDispatcher.Event arg$2;

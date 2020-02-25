@@ -1,6 +1,7 @@
 package com.google.android.libraries.performance.primes;
 
 import android.support.annotation.Nullable;
+
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;

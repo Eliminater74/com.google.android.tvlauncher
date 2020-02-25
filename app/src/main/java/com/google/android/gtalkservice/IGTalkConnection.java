@@ -5,8 +5,6 @@ import android.os.IBinder;
 import android.os.IInterface;
 import android.os.Parcel;
 import android.os.RemoteException;
-import com.google.android.gtalkservice.IHttpRequestCallback;
-import com.google.android.gtalkservice.IImSession;
 
 public interface IGTalkConnection extends IInterface {
     void clearConnectionStatistics() throws RemoteException;
@@ -40,7 +38,6 @@ public interface IGTalkConnection extends IInterface {
     void sendHttpRequest(byte[] bArr, IHttpRequestCallback iHttpRequestCallback) throws RemoteException;
 
     public static abstract class Stub extends Binder implements IGTalkConnection {
-        private static final String DESCRIPTOR = "com.google.android.gtalkservice.IGTalkConnection";
         static final int TRANSACTION_clearConnectionStatistics = 13;
         static final int TRANSACTION_createImSession = 5;
         static final int TRANSACTION_getConnectionUptime = 12;
@@ -56,6 +53,7 @@ public interface IGTalkConnection extends IInterface {
         static final int TRANSACTION_isConnected = 4;
         static final int TRANSACTION_sendHeartbeat = 15;
         static final int TRANSACTION_sendHttpRequest = 14;
+        private static final String DESCRIPTOR = "com.google.android.gtalkservice.IGTalkConnection";
 
         public Stub() {
             attachInterface(this, DESCRIPTOR);

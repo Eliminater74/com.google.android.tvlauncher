@@ -2,36 +2,20 @@ package com.google.android.libraries.performance.primes;
 
 import android.animation.TimeAnimator;
 import android.annotation.TargetApi;
+
 import com.google.android.libraries.stitch.util.ThreadUtil;
+
 import java.util.concurrent.CountDownLatch;
 
 @TargetApi(16)
 final class JankEvent {
-    private long elapsedTimeMs;
-    private int jankyFrameCount;
-    /* access modifiers changed from: private */
-    public long maxRenderTimeMs;
-    private int renderedFrameCount;
     /* access modifiers changed from: private */
     public final TimeAnimator timeAnimator = new TimeAnimator();
-
-    static /* synthetic */ int access$008(JankEvent x0) {
-        int i = x0.jankyFrameCount;
-        x0.jankyFrameCount = i + 1;
-        return i;
-    }
-
-    static /* synthetic */ int access$108(JankEvent x0) {
-        int i = x0.renderedFrameCount;
-        x0.renderedFrameCount = i + 1;
-        return i;
-    }
-
-    static /* synthetic */ long access$214(JankEvent x0, long x1) {
-        long j = x0.elapsedTimeMs + x1;
-        x0.elapsedTimeMs = j;
-        return j;
-    }
+    /* access modifiers changed from: private */
+    public long maxRenderTimeMs;
+    private long elapsedTimeMs;
+    private int jankyFrameCount;
+    private int renderedFrameCount;
 
     JankEvent(final int maxAcceptedFrameRenderTimeMs) {
         final int minAcceptedFrameRenderTimeMs = maxAcceptedFrameRenderTimeMs - 1;
@@ -49,6 +33,24 @@ final class JankEvent {
             }
         });
         start();
+    }
+
+    static /* synthetic */ int access$008(JankEvent x0) {
+        int i = x0.jankyFrameCount;
+        x0.jankyFrameCount = i + 1;
+        return i;
+    }
+
+    static /* synthetic */ int access$108(JankEvent x0) {
+        int i = x0.renderedFrameCount;
+        x0.renderedFrameCount = i + 1;
+        return i;
+    }
+
+    static /* synthetic */ long access$214(JankEvent x0, long x1) {
+        long j = x0.elapsedTimeMs + x1;
+        x0.elapsedTimeMs = j;
+        return j;
     }
 
     private void start() {

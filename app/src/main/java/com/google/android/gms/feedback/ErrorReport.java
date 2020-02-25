@@ -7,10 +7,12 @@ import android.graphics.RectF;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+
 import com.google.android.gms.common.data.BitmapTeleporter;
 import com.google.android.gms.common.internal.ReflectedParcelable;
 import com.google.android.gms.internal.zzbkv;
 import com.google.android.gms.internal.zzbky;
+
 import java.util.List;
 
 public class ErrorReport extends zzbkv implements ReflectedParcelable {
@@ -139,6 +141,15 @@ public class ErrorReport extends zzbkv implements ReflectedParcelable {
     }
 
     public ErrorReport() {
+    }
+
+    public static ErrorReport fromByteArray(byte[] bArr) {
+        Parcel obtain = Parcel.obtain();
+        obtain.unmarshall(bArr, 0, bArr.length);
+        obtain.setDataPosition(0);
+        ErrorReport createFromParcel = CREATOR.createFromParcel(obtain);
+        obtain.recycle();
+        return createFromParcel;
     }
 
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
@@ -354,14 +365,5 @@ public class ErrorReport extends zzbkv implements ReflectedParcelable {
         byte[] marshall = obtain.marshall();
         obtain.recycle();
         return marshall;
-    }
-
-    public static ErrorReport fromByteArray(byte[] bArr) {
-        Parcel obtain = Parcel.obtain();
-        obtain.unmarshall(bArr, 0, bArr.length);
-        obtain.setDataPosition(0);
-        ErrorReport createFromParcel = CREATOR.createFromParcel(obtain);
-        obtain.recycle();
-        return createFromParcel;
     }
 }

@@ -6,184 +6,21 @@ import android.media.tv.TvContentRating;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.RestrictTo;
-import androidx.tvprovider.media.p005tv.TvContractCompat;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY})
 /* renamed from: androidx.tvprovider.media.tv.BaseProgram */
 public abstract class BaseProgram {
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    public static final String[] PROJECTION = getProjection();
     private static final int INVALID_INT_VALUE = -1;
     private static final long INVALID_LONG_VALUE = -1;
     private static final int IS_SEARCHABLE = 1;
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    public static final String[] PROJECTION = getProjection();
     private static final int REVIEW_RATING_STYLE_UNKNOWN = -1;
     @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
     protected ContentValues mValues;
 
     BaseProgram(Builder builder) {
         this.mValues = builder.mValues;
-    }
-
-    public long getId() {
-        Long l = this.mValues.getAsLong("_id");
-        if (l == null) {
-            return -1;
-        }
-        return l.longValue();
-    }
-
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    public String getPackageName() {
-        return this.mValues.getAsString("package_name");
-    }
-
-    public String getTitle() {
-        return this.mValues.getAsString("title");
-    }
-
-    public String getEpisodeTitle() {
-        return this.mValues.getAsString(TvContractCompat.ProgramColumns.COLUMN_EPISODE_TITLE);
-    }
-
-    public String getSeasonNumber() {
-        if (Build.VERSION.SDK_INT >= 24) {
-            return this.mValues.getAsString(TvContractCompat.ProgramColumns.COLUMN_SEASON_DISPLAY_NUMBER);
-        }
-        return this.mValues.getAsString(TvContractCompat.Programs.COLUMN_SEASON_NUMBER);
-    }
-
-    public String getEpisodeNumber() {
-        if (Build.VERSION.SDK_INT >= 24) {
-            return this.mValues.getAsString(TvContractCompat.ProgramColumns.COLUMN_EPISODE_DISPLAY_NUMBER);
-        }
-        return this.mValues.getAsString(TvContractCompat.Programs.COLUMN_EPISODE_NUMBER);
-    }
-
-    public String getDescription() {
-        return this.mValues.getAsString(TvContractCompat.ProgramColumns.COLUMN_SHORT_DESCRIPTION);
-    }
-
-    public String getLongDescription() {
-        return this.mValues.getAsString(TvContractCompat.ProgramColumns.COLUMN_LONG_DESCRIPTION);
-    }
-
-    public int getVideoWidth() {
-        Integer i = this.mValues.getAsInteger(TvContractCompat.ProgramColumns.COLUMN_VIDEO_WIDTH);
-        if (i == null) {
-            return -1;
-        }
-        return i.intValue();
-    }
-
-    public int getVideoHeight() {
-        Integer i = this.mValues.getAsInteger(TvContractCompat.ProgramColumns.COLUMN_VIDEO_HEIGHT);
-        if (i == null) {
-            return -1;
-        }
-        return i.intValue();
-    }
-
-    public String[] getCanonicalGenres() {
-        return TvContractCompat.Programs.Genres.decode(this.mValues.getAsString("canonical_genre"));
-    }
-
-    public TvContentRating[] getContentRatings() {
-        return TvContractUtils.stringToContentRatings(this.mValues.getAsString(TvContractCompat.ProgramColumns.COLUMN_CONTENT_RATING));
-    }
-
-    public Uri getPosterArtUri() {
-        String uri = this.mValues.getAsString(TvContractCompat.ProgramColumns.COLUMN_POSTER_ART_URI);
-        if (uri == null) {
-            return null;
-        }
-        return Uri.parse(uri);
-    }
-
-    public Uri getThumbnailUri() {
-        String uri = this.mValues.getAsString(TvContractCompat.ProgramColumns.COLUMN_POSTER_ART_URI);
-        if (uri == null) {
-            return null;
-        }
-        return Uri.parse(uri);
-    }
-
-    public byte[] getInternalProviderDataByteArray() {
-        return this.mValues.getAsByteArray("internal_provider_data");
-    }
-
-    public String[] getAudioLanguages() {
-        return TvContractUtils.stringToAudioLanguages(this.mValues.getAsString(TvContractCompat.ProgramColumns.COLUMN_AUDIO_LANGUAGE));
-    }
-
-    public boolean isSearchable() {
-        Integer i = this.mValues.getAsInteger("searchable");
-        return i == null || i.intValue() == 1;
-    }
-
-    public Long getInternalProviderFlag1() {
-        return this.mValues.getAsLong("internal_provider_flag1");
-    }
-
-    public Long getInternalProviderFlag2() {
-        return this.mValues.getAsLong("internal_provider_flag2");
-    }
-
-    public Long getInternalProviderFlag3() {
-        return this.mValues.getAsLong("internal_provider_flag3");
-    }
-
-    public Long getInternalProviderFlag4() {
-        return this.mValues.getAsLong("internal_provider_flag4");
-    }
-
-    public String getSeasonTitle() {
-        return this.mValues.getAsString(TvContractCompat.ProgramColumns.COLUMN_SEASON_TITLE);
-    }
-
-    public int getReviewRatingStyle() {
-        Integer i = this.mValues.getAsInteger(TvContractCompat.ProgramColumns.COLUMN_REVIEW_RATING_STYLE);
-        if (i == null) {
-            return -1;
-        }
-        return i.intValue();
-    }
-
-    public String getReviewRating() {
-        return this.mValues.getAsString(TvContractCompat.ProgramColumns.COLUMN_REVIEW_RATING);
-    }
-
-    public int hashCode() {
-        return this.mValues.hashCode();
-    }
-
-    public boolean equals(Object other) {
-        if (!(other instanceof BaseProgram)) {
-            return false;
-        }
-        return this.mValues.equals(((BaseProgram) other).mValues);
-    }
-
-    public String toString() {
-        return "BaseProgram{" + this.mValues.toString() + "}";
-    }
-
-    public ContentValues toContentValues() {
-        ContentValues values = new ContentValues(this.mValues);
-        if (Build.VERSION.SDK_INT < 23) {
-            values.remove("searchable");
-            values.remove("internal_provider_flag1");
-            values.remove("internal_provider_flag2");
-            values.remove("internal_provider_flag3");
-            values.remove("internal_provider_flag4");
-        }
-        if (Build.VERSION.SDK_INT < 24) {
-            values.remove(TvContractCompat.ProgramColumns.COLUMN_SEASON_TITLE);
-        }
-        if (Build.VERSION.SDK_INT < 26) {
-            values.remove(TvContractCompat.ProgramColumns.COLUMN_REVIEW_RATING_STYLE);
-            values.remove(TvContractCompat.ProgramColumns.COLUMN_REVIEW_RATING);
-        }
-        return values;
     }
 
     static void setFieldsFromCursor(Cursor cursor, Builder builder) {
@@ -365,6 +202,168 @@ public abstract class BaseProgram {
         } else {
             return (String[]) CollectionUtils.concatAll(baseColumns, marshmallowColumns);
         }
+    }
+
+    public long getId() {
+        Long l = this.mValues.getAsLong("_id");
+        if (l == null) {
+            return -1;
+        }
+        return l.longValue();
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    public String getPackageName() {
+        return this.mValues.getAsString("package_name");
+    }
+
+    public String getTitle() {
+        return this.mValues.getAsString("title");
+    }
+
+    public String getEpisodeTitle() {
+        return this.mValues.getAsString(TvContractCompat.ProgramColumns.COLUMN_EPISODE_TITLE);
+    }
+
+    public String getSeasonNumber() {
+        if (Build.VERSION.SDK_INT >= 24) {
+            return this.mValues.getAsString(TvContractCompat.ProgramColumns.COLUMN_SEASON_DISPLAY_NUMBER);
+        }
+        return this.mValues.getAsString(TvContractCompat.Programs.COLUMN_SEASON_NUMBER);
+    }
+
+    public String getEpisodeNumber() {
+        if (Build.VERSION.SDK_INT >= 24) {
+            return this.mValues.getAsString(TvContractCompat.ProgramColumns.COLUMN_EPISODE_DISPLAY_NUMBER);
+        }
+        return this.mValues.getAsString(TvContractCompat.Programs.COLUMN_EPISODE_NUMBER);
+    }
+
+    public String getDescription() {
+        return this.mValues.getAsString(TvContractCompat.ProgramColumns.COLUMN_SHORT_DESCRIPTION);
+    }
+
+    public String getLongDescription() {
+        return this.mValues.getAsString(TvContractCompat.ProgramColumns.COLUMN_LONG_DESCRIPTION);
+    }
+
+    public int getVideoWidth() {
+        Integer i = this.mValues.getAsInteger(TvContractCompat.ProgramColumns.COLUMN_VIDEO_WIDTH);
+        if (i == null) {
+            return -1;
+        }
+        return i.intValue();
+    }
+
+    public int getVideoHeight() {
+        Integer i = this.mValues.getAsInteger(TvContractCompat.ProgramColumns.COLUMN_VIDEO_HEIGHT);
+        if (i == null) {
+            return -1;
+        }
+        return i.intValue();
+    }
+
+    public String[] getCanonicalGenres() {
+        return TvContractCompat.Programs.Genres.decode(this.mValues.getAsString("canonical_genre"));
+    }
+
+    public TvContentRating[] getContentRatings() {
+        return TvContractUtils.stringToContentRatings(this.mValues.getAsString(TvContractCompat.ProgramColumns.COLUMN_CONTENT_RATING));
+    }
+
+    public Uri getPosterArtUri() {
+        String uri = this.mValues.getAsString(TvContractCompat.ProgramColumns.COLUMN_POSTER_ART_URI);
+        if (uri == null) {
+            return null;
+        }
+        return Uri.parse(uri);
+    }
+
+    public Uri getThumbnailUri() {
+        String uri = this.mValues.getAsString(TvContractCompat.ProgramColumns.COLUMN_POSTER_ART_URI);
+        if (uri == null) {
+            return null;
+        }
+        return Uri.parse(uri);
+    }
+
+    public byte[] getInternalProviderDataByteArray() {
+        return this.mValues.getAsByteArray("internal_provider_data");
+    }
+
+    public String[] getAudioLanguages() {
+        return TvContractUtils.stringToAudioLanguages(this.mValues.getAsString(TvContractCompat.ProgramColumns.COLUMN_AUDIO_LANGUAGE));
+    }
+
+    public boolean isSearchable() {
+        Integer i = this.mValues.getAsInteger("searchable");
+        return i == null || i.intValue() == 1;
+    }
+
+    public Long getInternalProviderFlag1() {
+        return this.mValues.getAsLong("internal_provider_flag1");
+    }
+
+    public Long getInternalProviderFlag2() {
+        return this.mValues.getAsLong("internal_provider_flag2");
+    }
+
+    public Long getInternalProviderFlag3() {
+        return this.mValues.getAsLong("internal_provider_flag3");
+    }
+
+    public Long getInternalProviderFlag4() {
+        return this.mValues.getAsLong("internal_provider_flag4");
+    }
+
+    public String getSeasonTitle() {
+        return this.mValues.getAsString(TvContractCompat.ProgramColumns.COLUMN_SEASON_TITLE);
+    }
+
+    public int getReviewRatingStyle() {
+        Integer i = this.mValues.getAsInteger(TvContractCompat.ProgramColumns.COLUMN_REVIEW_RATING_STYLE);
+        if (i == null) {
+            return -1;
+        }
+        return i.intValue();
+    }
+
+    public String getReviewRating() {
+        return this.mValues.getAsString(TvContractCompat.ProgramColumns.COLUMN_REVIEW_RATING);
+    }
+
+    public int hashCode() {
+        return this.mValues.hashCode();
+    }
+
+    public boolean equals(Object other) {
+        if (!(other instanceof BaseProgram)) {
+            return false;
+        }
+        return this.mValues.equals(((BaseProgram) other).mValues);
+    }
+
+    public String toString() {
+        return "BaseProgram{" + this.mValues.toString() + "}";
+    }
+
+    public ContentValues toContentValues() {
+        ContentValues values = new ContentValues(this.mValues);
+        if (Build.VERSION.SDK_INT < 23) {
+            values.remove("searchable");
+            values.remove("internal_provider_flag1");
+            values.remove("internal_provider_flag2");
+            values.remove("internal_provider_flag3");
+            values.remove("internal_provider_flag4");
+        }
+        if (Build.VERSION.SDK_INT < 24) {
+            values.remove(TvContractCompat.ProgramColumns.COLUMN_SEASON_TITLE);
+        }
+        if (Build.VERSION.SDK_INT < 26) {
+            values.remove(TvContractCompat.ProgramColumns.COLUMN_REVIEW_RATING_STYLE);
+            values.remove(TvContractCompat.ProgramColumns.COLUMN_REVIEW_RATING);
+        }
+        return values;
     }
 
     /* renamed from: androidx.tvprovider.media.tv.BaseProgram$Builder */

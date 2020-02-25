@@ -9,6 +9,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.CLASS)
 public @interface RestrictTo {
 
+    Scope[] value();
+
     public enum Scope {
         LIBRARY,
         LIBRARY_GROUP,
@@ -17,6 +19,4 @@ public @interface RestrictTo {
         TESTS,
         SUBCLASSES
     }
-
-    Scope[] value();
 }

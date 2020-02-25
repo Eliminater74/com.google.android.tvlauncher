@@ -9,6 +9,34 @@ public final class Size {
         this.zzb = i2;
     }
 
+    private static NumberFormatException zza(String str) {
+        StringBuilder sb = new StringBuilder(String.valueOf(str).length() + 16);
+        sb.append("Invalid Size: \"");
+        sb.append(str);
+        sb.append("\"");
+        throw new NumberFormatException(sb.toString());
+    }
+
+    public static Size parseSize(String str) throws NumberFormatException {
+        if (str != null) {
+            int indexOf = str.indexOf(42);
+            if (indexOf < 0) {
+                indexOf = str.indexOf(120);
+            }
+            if (indexOf >= 0) {
+                try {
+                    return new Size(Integer.parseInt(str.substring(0, indexOf)), Integer.parseInt(str.substring(indexOf + 1)));
+                } catch (NumberFormatException e) {
+                    throw zza(str);
+                }
+            } else {
+                throw zza(str);
+            }
+        } else {
+            throw new IllegalArgumentException("string must not be null");
+        }
+    }
+
     public final int getWidth() {
         return this.zza;
     }
@@ -42,34 +70,6 @@ public final class Size {
         sb.append("x");
         sb.append(i2);
         return sb.toString();
-    }
-
-    private static NumberFormatException zza(String str) {
-        StringBuilder sb = new StringBuilder(String.valueOf(str).length() + 16);
-        sb.append("Invalid Size: \"");
-        sb.append(str);
-        sb.append("\"");
-        throw new NumberFormatException(sb.toString());
-    }
-
-    public static Size parseSize(String str) throws NumberFormatException {
-        if (str != null) {
-            int indexOf = str.indexOf(42);
-            if (indexOf < 0) {
-                indexOf = str.indexOf(120);
-            }
-            if (indexOf >= 0) {
-                try {
-                    return new Size(Integer.parseInt(str.substring(0, indexOf)), Integer.parseInt(str.substring(indexOf + 1)));
-                } catch (NumberFormatException e) {
-                    throw zza(str);
-                }
-            } else {
-                throw zza(str);
-            }
-        } else {
-            throw new IllegalArgumentException("string must not be null");
-        }
     }
 
     public final int hashCode() {

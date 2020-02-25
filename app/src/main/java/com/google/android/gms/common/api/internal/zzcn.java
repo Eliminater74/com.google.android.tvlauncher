@@ -2,7 +2,9 @@ package com.google.android.gms.common.api.internal;
 
 import android.os.Looper;
 import android.support.annotation.NonNull;
+
 import com.google.android.gms.common.internal.zzau;
+
 import java.util.Collections;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -10,19 +12,6 @@ import java.util.WeakHashMap;
 /* compiled from: ListenerHolders */
 public final class zzcn {
     private final Set<zzcj<?>> zza = Collections.newSetFromMap(new WeakHashMap());
-
-    public final <L> zzcj<L> zza(@NonNull L l, @NonNull Looper looper, @NonNull String str) {
-        zzcj<L> zzb = zzb(l, looper, str);
-        this.zza.add(zzb);
-        return zzb;
-    }
-
-    public final void zza() {
-        for (zzcj<?> zzb : this.zza) {
-            zzb.zzb();
-        }
-        this.zza.clear();
-    }
 
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
      method: com.google.android.gms.common.internal.zzau.zza(java.lang.Object, java.lang.Object):T
@@ -81,5 +70,18 @@ public final class zzcn {
         zzau.zza((Object) str, (Object) "Listener type must not be null");
         zzau.zza(str, (Object) "Listener type must not be empty");
         return new zzcl<>(l, str);
+    }
+
+    public final <L> zzcj<L> zza(@NonNull L l, @NonNull Looper looper, @NonNull String str) {
+        zzcj<L> zzb = zzb(l, looper, str);
+        this.zza.add(zzb);
+        return zzb;
+    }
+
+    public final void zza() {
+        for (zzcj<?> zzb : this.zza) {
+            zzb.zzb();
+        }
+        this.zza.clear();
     }
 }

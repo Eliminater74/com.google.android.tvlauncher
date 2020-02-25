@@ -3,9 +3,11 @@ package com.bumptech.glide.load.engine;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
+
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.Key;
 import com.google.devtools.build.android.desugar.runtime.ThrowableExtension;
+
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -38,6 +40,35 @@ public final class GlideException extends Exception {
         this.causes = causes2;
     }
 
+    private static void appendExceptionMessage(Throwable t, Appendable appendable) {
+        try {
+            appendable.append(t.getClass().toString()).append(": ").append(t.getMessage()).append(10);
+        } catch (IOException e) {
+            throw new RuntimeException(t);
+        }
+    }
+
+    private static void appendCauses(List<Throwable> causes2, Appendable appendable) {
+        try {
+            appendCausesWrapped(causes2, appendable);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static void appendCausesWrapped(List<Throwable> causes2, Appendable appendable) throws IOException {
+        int size = causes2.size();
+        for (int i = 0; i < size; i++) {
+            appendable.append("Cause (").append(String.valueOf(i + 1)).append(" of ").append(String.valueOf(size)).append("): ");
+            Throwable cause = causes2.get(i);
+            if (cause instanceof GlideException) {
+                ((GlideException) cause).printStackTrace(appendable);
+            } else {
+                appendExceptionMessage(cause, appendable);
+            }
+        }
+    }
+
     /* access modifiers changed from: package-private */
     public void setLoggingDetails(Key key2, DataSource dataSource2) {
         setLoggingDetails(key2, dataSource2, null);
@@ -50,13 +81,13 @@ public final class GlideException extends Exception {
         this.dataClass = dataClass2;
     }
 
-    public void setOrigin(@Nullable Exception exception2) {
-        this.exception = exception2;
-    }
-
     @Nullable
     public Exception getOrigin() {
         return this.exception;
+    }
+
+    public void setOrigin(@Nullable Exception exception2) {
+        this.exception = exception2;
     }
 
     public Throwable fillInStackTrace() {
@@ -171,35 +202,6 @@ public final class GlideException extends Exception {
         }
         result.append("\n call GlideException#logRootCauses(String) for more detail");
         return result.toString();
-    }
-
-    private static void appendExceptionMessage(Throwable t, Appendable appendable) {
-        try {
-            appendable.append(t.getClass().toString()).append(": ").append(t.getMessage()).append(10);
-        } catch (IOException e) {
-            throw new RuntimeException(t);
-        }
-    }
-
-    private static void appendCauses(List<Throwable> causes2, Appendable appendable) {
-        try {
-            appendCausesWrapped(causes2, appendable);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static void appendCausesWrapped(List<Throwable> causes2, Appendable appendable) throws IOException {
-        int size = causes2.size();
-        for (int i = 0; i < size; i++) {
-            appendable.append("Cause (").append(String.valueOf(i + 1)).append(" of ").append(String.valueOf(size)).append("): ");
-            Throwable cause = causes2.get(i);
-            if (cause instanceof GlideException) {
-                ((GlideException) cause).printStackTrace(appendable);
-            } else {
-                appendExceptionMessage(cause, appendable);
-            }
-        }
     }
 
     private static final class IndentedAppendable implements Appendable {

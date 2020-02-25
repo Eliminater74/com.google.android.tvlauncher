@@ -14,6 +14,7 @@ import android.view.ViewOutlineProvider;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.google.android.tvlauncher.C1188R;
 import com.google.android.tvlauncher.appsview.LaunchItem;
 import com.google.android.tvlauncher.appsview.LaunchItemImageLoader;
@@ -23,6 +24,7 @@ import com.google.android.tvlauncher.appsview.data.LaunchItemsManagerProvider;
 import com.google.android.tvlauncher.appsview.data.PackageImageDataSource;
 import com.google.android.tvlauncher.model.Program;
 import com.google.android.tvlauncher.util.Util;
+
 import java.util.Locale;
 
 public class WatchNextItemMetadataController {

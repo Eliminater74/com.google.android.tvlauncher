@@ -1,6 +1,7 @@
 package com.google.android.exoplayer2.audio;
 
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.drm.DrmInitData;
 import com.google.android.exoplayer2.util.MimeTypes;
@@ -8,12 +9,15 @@ import com.google.android.exoplayer2.util.ParsableBitArray;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.common.primitives.UnsignedBytes;
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.nio.ByteBuffer;
 
 public final class Ac3Util {
+    public static final int TRUEHD_RECHUNK_SAMPLE_COUNT = 16;
+    public static final int TRUEHD_SYNCFRAME_PREFIX_LENGTH = 10;
     private static final int AC3_SYNCFRAME_AUDIO_SAMPLE_COUNT = 1536;
     private static final int AUDIO_SAMPLES_PER_AUDIO_BLOCK = 256;
     private static final int[] BITRATE_BY_HALF_FRMSIZECOD = {32, 40, 48, 56, 64, 80, 96, 112, 128, ClientAnalytics.LogRequest.LogSource.JAM_KIOSK_ANDROID_PRIMES_VALUE, 192, 224, 256, ClientAnalytics.LogRequest.LogSource.ANDROID_MIGRATE_VALUE, ClientAnalytics.LogRequest.LogSource.TOOLKIT_QUICKSTART_VALUE, ClientAnalytics.LogRequest.LogSource.ANDROID_CREATIVE_PREVIEW_PRIMES_VALUE, 512, ClientAnalytics.LogRequest.LogSource.CLEARCUT_LOG_LOSS_VALUE, ClientAnalytics.LogRequest.LogSource.GMSCORE_BACKEND_COUNTERS_VALUE};
@@ -22,35 +26,8 @@ public final class Ac3Util {
     private static final int[] SAMPLE_RATE_BY_FSCOD = {48000, 44100, 32000};
     private static final int[] SAMPLE_RATE_BY_FSCOD2 = {24000, 22050, 16000};
     private static final int[] SYNCFRAME_SIZE_WORDS_BY_HALF_FRMSIZECOD_44_1 = {69, 87, 104, 121, 139, ClientAnalytics.LogRequest.LogSource.NQLOOKUP_VALUE, ClientAnalytics.LogRequest.LogSource.BLUETOOTH_VALUE, ClientAnalytics.LogRequest.LogSource.CW_COUNTERS_VALUE, ClientAnalytics.LogRequest.LogSource.YOUTUBE_DIRECTOR_APP_VALUE, ClientAnalytics.LogRequest.LogSource.SMARTCAM_VALUE, ClientAnalytics.LogRequest.LogSource.GMAIL_IOS_VALUE, ClientAnalytics.LogRequest.LogSource.LINKS_ANDROID_PRIMES_VALUE, ClientAnalytics.LogRequest.LogSource.GOOGLETTS_ANDROID_PRIMES_VALUE, ClientAnalytics.LogRequest.LogSource.YETI_TLS_PROXY_VALUE, ClientAnalytics.LogRequest.LogSource.GOOGLE_WIFI_IOS_PRIMES_VALUE, ClientAnalytics.LogRequest.LogSource.SPEAKEASY_WEBRTC_STATS_VALUE, 1114, 1253, 1393};
-    public static final int TRUEHD_RECHUNK_SAMPLE_COUNT = 16;
-    public static final int TRUEHD_SYNCFRAME_PREFIX_LENGTH = 10;
 
-    public static final class SyncFrameInfo {
-        public static final int STREAM_TYPE_TYPE0 = 0;
-        public static final int STREAM_TYPE_TYPE1 = 1;
-        public static final int STREAM_TYPE_TYPE2 = 2;
-        public static final int STREAM_TYPE_UNDEFINED = -1;
-        public final int channelCount;
-        public final int frameSize;
-        @Nullable
-        public final String mimeType;
-        public final int sampleCount;
-        public final int sampleRate;
-        public final int streamType;
-
-        @Documented
-        @Retention(RetentionPolicy.SOURCE)
-        public @interface StreamType {
-        }
-
-        private SyncFrameInfo(@Nullable String mimeType2, int streamType2, int channelCount2, int sampleRate2, int frameSize2, int sampleCount2) {
-            this.mimeType = mimeType2;
-            this.streamType = streamType2;
-            this.channelCount = channelCount2;
-            this.sampleRate = sampleRate2;
-            this.frameSize = frameSize2;
-            this.sampleCount = sampleCount2;
-        }
+    private Ac3Util() {
     }
 
     public static Format parseAc3AnnexFFormat(ParsableByteArray data, String trackId, String language, DrmInitData drmInitData) {
@@ -383,6 +360,31 @@ public final class Ac3Util {
         return bitrate * 4;
     }
 
-    private Ac3Util() {
+    public static final class SyncFrameInfo {
+        public static final int STREAM_TYPE_TYPE0 = 0;
+        public static final int STREAM_TYPE_TYPE1 = 1;
+        public static final int STREAM_TYPE_TYPE2 = 2;
+        public static final int STREAM_TYPE_UNDEFINED = -1;
+        public final int channelCount;
+        public final int frameSize;
+        @Nullable
+        public final String mimeType;
+        public final int sampleCount;
+        public final int sampleRate;
+        public final int streamType;
+
+        private SyncFrameInfo(@Nullable String mimeType2, int streamType2, int channelCount2, int sampleRate2, int frameSize2, int sampleCount2) {
+            this.mimeType = mimeType2;
+            this.streamType = streamType2;
+            this.channelCount = channelCount2;
+            this.sampleRate = sampleRate2;
+            this.frameSize = frameSize2;
+            this.sampleCount = sampleCount2;
+        }
+
+        @Documented
+        @Retention(RetentionPolicy.SOURCE)
+        public @interface StreamType {
+        }
     }
 }

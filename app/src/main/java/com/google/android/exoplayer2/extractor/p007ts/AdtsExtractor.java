@@ -1,6 +1,7 @@
 package com.google.android.exoplayer2.extractor.p007ts;
 
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.extractor.ConstantBitrateSeekMap;
@@ -10,11 +11,11 @@ import com.google.android.exoplayer2.extractor.ExtractorOutput;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
 import com.google.android.exoplayer2.extractor.PositionHolder;
 import com.google.android.exoplayer2.extractor.SeekMap;
-import com.google.android.exoplayer2.extractor.p007ts.TsPayloadReader;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.ParsableBitArray;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.IOException;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -28,30 +29,20 @@ public final class AdtsExtractor implements Extractor {
     private static final int MAX_PACKET_SIZE = 2048;
     private static final int MAX_SNIFF_BYTES = 8192;
     private static final int NUM_FRAMES_FOR_AVERAGE_FRAME_SIZE = 1000;
+    private final long firstStreamSampleTimestampUs;
+    private final int flags;
+    private final ParsableByteArray packetBuffer;
+    private final AdtsReader reader;
+    private final ParsableByteArray scratch;
+    private final ParsableBitArray scratchBits;
     private int averageFrameSize;
     @Nullable
     private ExtractorOutput extractorOutput;
     private long firstFramePosition;
     private long firstSampleTimestampUs;
-    private final long firstStreamSampleTimestampUs;
-    private final int flags;
     private boolean hasCalculatedAverageFrameSize;
     private boolean hasOutputSeekMap;
-    private final ParsableByteArray packetBuffer;
-    private final AdtsReader reader;
-    private final ParsableByteArray scratch;
-    private final ParsableBitArray scratchBits;
     private boolean startedPacket;
-
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    /* renamed from: com.google.android.exoplayer2.extractor.ts.AdtsExtractor$Flags */
-    public @interface Flags {
-    }
-
-    static final /* synthetic */ Extractor[] lambda$static$0$AdtsExtractor() {
-        return new Extractor[]{new AdtsExtractor()};
-    }
 
     public AdtsExtractor() {
         this(0);
@@ -71,6 +62,14 @@ public final class AdtsExtractor implements Extractor {
         this.firstFramePosition = -1;
         this.scratch = new ParsableByteArray(10);
         this.scratchBits = new ParsableBitArray(this.scratch.data);
+    }
+
+    static final /* synthetic */ Extractor[] lambda$static$0$AdtsExtractor() {
+        return new Extractor[]{new AdtsExtractor()};
+    }
+
+    private static int getBitrateFromFrameSize(int frameSize, long durationUsPerFrame) {
+        return (int) ((((long) (frameSize * 8)) * 1000000) / durationUsPerFrame);
     }
 
     public boolean sniff(ExtractorInput input) throws IOException, InterruptedException {
@@ -232,7 +231,9 @@ public final class AdtsExtractor implements Extractor {
         return new ConstantBitrateSeekMap(inputLength, this.firstFramePosition, getBitrateFromFrameSize(this.averageFrameSize, this.reader.getSampleDurationUs()), this.averageFrameSize);
     }
 
-    private static int getBitrateFromFrameSize(int frameSize, long durationUsPerFrame) {
-        return (int) ((((long) (frameSize * 8)) * 1000000) / durationUsPerFrame);
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    /* renamed from: com.google.android.exoplayer2.extractor.ts.AdtsExtractor$Flags */
+    public @interface Flags {
     }
 }

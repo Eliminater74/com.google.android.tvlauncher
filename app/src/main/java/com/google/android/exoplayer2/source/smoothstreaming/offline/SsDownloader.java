@@ -1,6 +1,7 @@
 package com.google.android.exoplayer2.source.smoothstreaming.offline;
 
 import android.net.Uri;
+
 import com.google.android.exoplayer2.offline.DownloaderConstructorHelper;
 import com.google.android.exoplayer2.offline.SegmentDownloader;
 import com.google.android.exoplayer2.offline.StreamKey;
@@ -10,6 +11,7 @@ import com.google.android.exoplayer2.source.smoothstreaming.manifest.SsUtil;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.ParsingLoadable;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;

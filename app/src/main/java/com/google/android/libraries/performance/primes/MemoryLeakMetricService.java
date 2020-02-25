@@ -7,8 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.annotation.VisibleForTesting;
-import com.google.android.libraries.performance.primes.AppLifecycleListener;
-import com.google.android.libraries.performance.primes.MetricRecorder;
+
 import com.google.android.libraries.performance.primes.hprof.PrimesHprofs;
 import com.google.android.libraries.performance.primes.leak.LeakInfo;
 import com.google.android.libraries.performance.primes.leak.LeakListener;
@@ -17,6 +16,7 @@ import com.google.android.libraries.performance.primes.metriccapture.TimeCapture
 import com.google.android.libraries.performance.primes.transmitter.MetricTransmitter;
 import com.google.android.libraries.stitch.util.Preconditions;
 import com.google.common.base.Optional;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,18 +25,16 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
+
 import logs.proto.wireless.performance.mobile.SystemHealthProto;
 
 final class MemoryLeakMetricService extends AbstractMetricService implements AppLifecycleListener.OnActivityDestroyed {
-    private static final String DEV_HEAP_DUMP_NOWAIT = "primes.dev.heapdump_nowait";
     static final int DUMP_DELAY_AFTER_SCREEN_OFF = 5;
     static final long MIN_HEAP_DUMP_INTERVAL = 43200000;
+    private static final String DEV_HEAP_DUMP_NOWAIT = "primes.dev.heapdump_nowait";
     private static final String TAG = "MemoryLeakService";
-    private final AppLifecycleMonitor appLifecycleMonitor;
     /* access modifiers changed from: private */
     public final Application application;
-    /* access modifiers changed from: private */
-    public ScheduledFuture<?> dumpFutureTask;
     /* access modifiers changed from: private */
     public final AtomicBoolean dumpScheduled = new AtomicBoolean();
     /* access modifiers changed from: private */
@@ -51,6 +49,9 @@ final class MemoryLeakMetricService extends AbstractMetricService implements App
     public final boolean leakDetectionV2Enabled;
     /* access modifiers changed from: private */
     public final LeakWatcher leakWatcher;
+    private final AppLifecycleMonitor appLifecycleMonitor;
+    /* access modifiers changed from: private */
+    public ScheduledFuture<?> dumpFutureTask;
 
     @VisibleForTesting
     MemoryLeakMetricService(Application application2, boolean leakDetectionV2Enabled2, boolean heapDumpEnabled2, AppLifecycleMonitor appLifecycleMonitor2, Supplier<MetricStamper> metricStamperSupplier, Supplier<ScheduledExecutorService> executorServiceSupplier2, LeakWatcher leakWatcher2, MetricTransmitter metricTransmitter) {
@@ -92,6 +93,39 @@ final class MemoryLeakMetricService extends AbstractMetricService implements App
     public void onActivityDestroyed(Activity activity) {
         if (!isShutdown()) {
             this.leakWatcher.watch(activity, activity.getClass().getName());
+        }
+    }
+
+    /* access modifiers changed from: private */
+    public void cancelDumpTaskIfAny() {
+        ScheduledFuture<?> scheduledFuture = this.dumpFutureTask;
+        if (scheduledFuture != null) {
+            if (!scheduledFuture.isDone()) {
+                this.dumpFutureTask.cancel(true);
+            }
+            this.dumpFutureTask = null;
+        }
+    }
+
+    private static class LeakCounter {
+        /* access modifiers changed from: private */
+        public int leaked;
+        /* access modifiers changed from: private */
+        public int released;
+
+        private LeakCounter() {
+        }
+
+        static /* synthetic */ int access$208(LeakCounter x0) {
+            int i = x0.released;
+            x0.released = i + 1;
+            return i;
+        }
+
+        static /* synthetic */ int access$308(LeakCounter x0) {
+            int i = x0.leaked;
+            x0.leaked = i + 1;
+            return i;
         }
     }
 
@@ -178,39 +212,6 @@ final class MemoryLeakMetricService extends AbstractMetricService implements App
             if (!leaks.isEmpty()) {
                 PrimesLog.m52v(MemoryLeakMetricService.TAG, "Primes found %d leak(s): %s", Integer.valueOf(leaks.size()), leaks);
             }
-        }
-    }
-
-    private static class LeakCounter {
-        /* access modifiers changed from: private */
-        public int leaked;
-        /* access modifiers changed from: private */
-        public int released;
-
-        private LeakCounter() {
-        }
-
-        static /* synthetic */ int access$208(LeakCounter x0) {
-            int i = x0.released;
-            x0.released = i + 1;
-            return i;
-        }
-
-        static /* synthetic */ int access$308(LeakCounter x0) {
-            int i = x0.leaked;
-            x0.leaked = i + 1;
-            return i;
-        }
-    }
-
-    /* access modifiers changed from: private */
-    public void cancelDumpTaskIfAny() {
-        ScheduledFuture<?> scheduledFuture = this.dumpFutureTask;
-        if (scheduledFuture != null) {
-            if (!scheduledFuture.isDone()) {
-                this.dumpFutureTask.cancel(true);
-            }
-            this.dumpFutureTask = null;
         }
     }
 

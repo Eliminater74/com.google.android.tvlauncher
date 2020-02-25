@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import androidx.leanback.C0364R;
 
 public final class ListRowHoverCardView extends LinearLayout {

@@ -28,23 +28,6 @@ public class LoginData implements Parcelable {
     public Status mStatus;
     public String mUsername;
 
-    public enum Status {
-        SUCCESS,
-        ACCOUNT_DISABLED,
-        BAD_USERNAME,
-        BAD_REQUEST,
-        LOGIN_FAIL,
-        SERVER_ERROR,
-        MISSING_APPS,
-        NO_GMAIL,
-        NETWORK_ERROR,
-        CAPTCHA,
-        CANCELLED,
-        DELETED_GMAIL,
-        OAUTH_MIGRATION_REQUIRED,
-        DMAGENT
-    }
-
     public LoginData() {
         this.mUsername = null;
         this.mEncryptedPassword = null;
@@ -93,6 +76,24 @@ public class LoginData implements Parcelable {
         this.mOAuthAccessToken = other.mOAuthAccessToken;
     }
 
+    private LoginData(Parcel in) {
+        this.mUsername = null;
+        this.mEncryptedPassword = null;
+        this.mPassword = null;
+        this.mService = null;
+        this.mCaptchaToken = null;
+        this.mCaptchaData = null;
+        this.mCaptchaMimeType = null;
+        this.mCaptchaAnswer = null;
+        this.mFlags = 0;
+        this.mStatus = null;
+        this.mJsonString = null;
+        this.mSid = null;
+        this.mAuthtoken = null;
+        this.mOAuthAccessToken = null;
+        readFromParcel(in);
+    }
+
     public int describeContents() {
         return 0;
     }
@@ -123,24 +124,6 @@ public class LoginData implements Parcelable {
         out.writeString(this.mSid);
         out.writeString(this.mAuthtoken);
         out.writeString(this.mOAuthAccessToken);
-    }
-
-    private LoginData(Parcel in) {
-        this.mUsername = null;
-        this.mEncryptedPassword = null;
-        this.mPassword = null;
-        this.mService = null;
-        this.mCaptchaToken = null;
-        this.mCaptchaData = null;
-        this.mCaptchaMimeType = null;
-        this.mCaptchaAnswer = null;
-        this.mFlags = 0;
-        this.mStatus = null;
-        this.mJsonString = null;
-        this.mSid = null;
-        this.mAuthtoken = null;
-        this.mOAuthAccessToken = null;
-        readFromParcel(in);
     }
 
     public void readFromParcel(Parcel in) {
@@ -200,5 +183,22 @@ public class LoginData implements Parcelable {
         }
         sb.append(str);
         return sb.toString();
+    }
+
+    public enum Status {
+        SUCCESS,
+        ACCOUNT_DISABLED,
+        BAD_USERNAME,
+        BAD_REQUEST,
+        LOGIN_FAIL,
+        SERVER_ERROR,
+        MISSING_APPS,
+        NO_GMAIL,
+        NETWORK_ERROR,
+        CAPTCHA,
+        CANCELLED,
+        DELETED_GMAIL,
+        OAUTH_MIGRATION_REQUIRED,
+        DMAGENT
     }
 }

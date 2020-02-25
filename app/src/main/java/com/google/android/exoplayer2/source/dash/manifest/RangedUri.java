@@ -2,13 +2,14 @@ package com.google.android.exoplayer2.source.dash.manifest;
 
 import android.net.Uri;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.util.UriUtil;
 
 public final class RangedUri {
-    private int hashCode;
     public final long length;
-    private final String referenceUri;
     public final long start;
+    private final String referenceUri;
+    private int hashCode;
 
     public RangedUri(@Nullable String referenceUri2, long start2, long length2) {
         this.referenceUri = referenceUri2 == null ? "" : referenceUri2;

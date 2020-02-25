@@ -10,8 +10,8 @@ public interface IGroupChatInvitationListener extends IInterface {
     boolean onInvitationReceived(GroupChatInvitation groupChatInvitation) throws RemoteException;
 
     public static abstract class Stub extends Binder implements IGroupChatInvitationListener {
-        private static final String DESCRIPTOR = "com.google.android.gtalkservice.IGroupChatInvitationListener";
         static final int TRANSACTION_onInvitationReceived = 1;
+        private static final String DESCRIPTOR = "com.google.android.gtalkservice.IGroupChatInvitationListener";
 
         public Stub() {
             attachInterface(this, DESCRIPTOR);

@@ -4,6 +4,7 @@ import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.extractor.ExtractorInput;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.EOFException;
 import java.io.IOException;
 
@@ -13,15 +14,15 @@ final class OggPageHeader {
     public static final int MAX_PAGE_SIZE = 65307;
     public static final int MAX_SEGMENT_COUNT = 255;
     private static final int TYPE_OGGS = Util.getIntegerCodeForString("OggS");
+    public final int[] laces = new int[255];
+    private final ParsableByteArray scratch = new ParsableByteArray(255);
     public int bodySize;
     public long granulePosition;
     public int headerSize;
-    public final int[] laces = new int[255];
     public long pageChecksum;
     public int pageSegmentCount;
     public long pageSequenceNumber;
     public int revision;
-    private final ParsableByteArray scratch = new ParsableByteArray(255);
     public long streamSerialNumber;
     public int type;
 

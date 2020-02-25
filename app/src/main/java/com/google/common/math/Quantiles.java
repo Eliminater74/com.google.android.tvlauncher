@@ -5,6 +5,7 @@ import com.google.common.annotations.GwtIncompatible;
 import com.google.common.base.Preconditions;
 import com.google.common.primitives.Doubles;
 import com.google.common.primitives.Ints;
+
 import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.Collection;
@@ -29,155 +30,6 @@ public final class Quantiles {
 
     public static Scale scale(int scale) {
         return new Scale(scale);
-    }
-
-    public static final class Scale {
-        private final int scale;
-
-        private Scale(int scale2) {
-            Preconditions.checkArgument(scale2 > 0, "Quantile scale must be positive");
-            this.scale = scale2;
-        }
-
-        public ScaleAndIndex index(int index) {
-            return new ScaleAndIndex(this.scale, index);
-        }
-
-        public ScaleAndIndexes indexes(int... indexes) {
-            return new ScaleAndIndexes(this.scale, (int[]) indexes.clone());
-        }
-
-        public ScaleAndIndexes indexes(Collection<Integer> indexes) {
-            return new ScaleAndIndexes(this.scale, Ints.toArray(indexes));
-        }
-    }
-
-    public static final class ScaleAndIndex {
-        private final int index;
-        private final int scale;
-
-        private ScaleAndIndex(int scale2, int index2) {
-            Quantiles.checkIndex(index2, scale2);
-            this.scale = scale2;
-            this.index = index2;
-        }
-
-        public double compute(Collection<? extends Number> dataset) {
-            return computeInPlace(Doubles.toArray(dataset));
-        }
-
-        public double compute(double... dataset) {
-            return computeInPlace((double[]) dataset.clone());
-        }
-
-        public double compute(long... dataset) {
-            return computeInPlace(Quantiles.longsToDoubles(dataset));
-        }
-
-        public double compute(int... dataset) {
-            return computeInPlace(Quantiles.intsToDoubles(dataset));
-        }
-
-        public double computeInPlace(double... dataset) {
-            double[] dArr = dataset;
-            Preconditions.checkArgument(dArr.length > 0, "Cannot calculate quantiles of an empty dataset");
-            if (Quantiles.containsNaN(dataset)) {
-                return Double.NaN;
-            }
-            long numerator = ((long) this.index) * ((long) (dArr.length - 1));
-            int quotient = (int) LongMath.divide(numerator, (long) this.scale, RoundingMode.DOWN);
-            int remainder = (int) (numerator - (((long) quotient) * ((long) this.scale)));
-            Quantiles.selectInPlace(quotient, dArr, 0, dArr.length - 1);
-            if (remainder == 0) {
-                return dArr[quotient];
-            }
-            Quantiles.selectInPlace(quotient + 1, dArr, quotient + 1, dArr.length - 1);
-            return Quantiles.interpolate(dArr[quotient], dArr[quotient + 1], (double) remainder, (double) this.scale);
-        }
-    }
-
-    public static final class ScaleAndIndexes {
-        private final int[] indexes;
-        private final int scale;
-
-        private ScaleAndIndexes(int scale2, int[] indexes2) {
-            for (int index : indexes2) {
-                Quantiles.checkIndex(index, scale2);
-            }
-            this.scale = scale2;
-            this.indexes = indexes2;
-        }
-
-        public Map<Integer, Double> compute(Collection<? extends Number> dataset) {
-            return computeInPlace(Doubles.toArray(dataset));
-        }
-
-        public Map<Integer, Double> compute(double... dataset) {
-            return computeInPlace((double[]) dataset.clone());
-        }
-
-        public Map<Integer, Double> compute(long... dataset) {
-            return computeInPlace(Quantiles.longsToDoubles(dataset));
-        }
-
-        public Map<Integer, Double> compute(int... dataset) {
-            return computeInPlace(Quantiles.intsToDoubles(dataset));
-        }
-
-        public Map<Integer, Double> computeInPlace(double... dataset) {
-            double[] dArr = dataset;
-            Preconditions.checkArgument(dArr.length > 0, "Cannot calculate quantiles of an empty dataset");
-            if (Quantiles.containsNaN(dataset)) {
-                Map<Integer, Double> nanMap = new HashMap<>();
-                for (int index : this.indexes) {
-                    nanMap.put(Integer.valueOf(index), Double.valueOf(Double.NaN));
-                }
-                return Collections.unmodifiableMap(nanMap);
-            }
-            int[] iArr = this.indexes;
-            int[] quotients = new int[iArr.length];
-            int[] remainders = new int[iArr.length];
-            int[] requiredSelections = new int[(iArr.length * 2)];
-            int i = 0;
-            int requiredSelectionsCount = 0;
-            while (true) {
-                int[] iArr2 = this.indexes;
-                if (i >= iArr2.length) {
-                    break;
-                }
-                long numerator = ((long) iArr2[i]) * ((long) (dArr.length - 1));
-                int quotient = (int) LongMath.divide(numerator, (long) this.scale, RoundingMode.DOWN);
-                int remainder = (int) (numerator - (((long) quotient) * ((long) this.scale)));
-                quotients[i] = quotient;
-                remainders[i] = remainder;
-                requiredSelections[requiredSelectionsCount] = quotient;
-                requiredSelectionsCount++;
-                if (remainder != 0) {
-                    requiredSelections[requiredSelectionsCount] = quotient + 1;
-                    requiredSelectionsCount++;
-                }
-                i++;
-            }
-            Arrays.sort(requiredSelections, 0, requiredSelectionsCount);
-            Quantiles.selectAllInPlace(requiredSelections, 0, requiredSelectionsCount - 1, dataset, 0, dArr.length - 1);
-            Map<Integer, Double> ret = new HashMap<>();
-            int i2 = 0;
-            while (true) {
-                int[] iArr3 = this.indexes;
-                if (i2 >= iArr3.length) {
-                    return Collections.unmodifiableMap(ret);
-                }
-                int quotient2 = quotients[i2];
-                int remainder2 = remainders[i2];
-                if (remainder2 == 0) {
-                    ret.put(Integer.valueOf(iArr3[i2]), Double.valueOf(dArr[quotient2]));
-                } else {
-                    ret.put(Integer.valueOf(iArr3[i2]), Double.valueOf(Quantiles.interpolate(dArr[quotient2], dArr[quotient2 + 1], (double) remainder2, (double) this.scale)));
-                }
-                i2++;
-                dArr = dataset;
-            }
-        }
     }
 
     /* access modifiers changed from: private */
@@ -337,5 +189,154 @@ public final class Quantiles {
         double temp = array[i];
         array[i] = array[j];
         array[j] = temp;
+    }
+
+    public static final class Scale {
+        private final int scale;
+
+        private Scale(int scale2) {
+            Preconditions.checkArgument(scale2 > 0, "Quantile scale must be positive");
+            this.scale = scale2;
+        }
+
+        public ScaleAndIndex index(int index) {
+            return new ScaleAndIndex(this.scale, index);
+        }
+
+        public ScaleAndIndexes indexes(int... indexes) {
+            return new ScaleAndIndexes(this.scale, (int[]) indexes.clone());
+        }
+
+        public ScaleAndIndexes indexes(Collection<Integer> indexes) {
+            return new ScaleAndIndexes(this.scale, Ints.toArray(indexes));
+        }
+    }
+
+    public static final class ScaleAndIndex {
+        private final int index;
+        private final int scale;
+
+        private ScaleAndIndex(int scale2, int index2) {
+            Quantiles.checkIndex(index2, scale2);
+            this.scale = scale2;
+            this.index = index2;
+        }
+
+        public double compute(Collection<? extends Number> dataset) {
+            return computeInPlace(Doubles.toArray(dataset));
+        }
+
+        public double compute(double... dataset) {
+            return computeInPlace((double[]) dataset.clone());
+        }
+
+        public double compute(long... dataset) {
+            return computeInPlace(Quantiles.longsToDoubles(dataset));
+        }
+
+        public double compute(int... dataset) {
+            return computeInPlace(Quantiles.intsToDoubles(dataset));
+        }
+
+        public double computeInPlace(double... dataset) {
+            double[] dArr = dataset;
+            Preconditions.checkArgument(dArr.length > 0, "Cannot calculate quantiles of an empty dataset");
+            if (Quantiles.containsNaN(dataset)) {
+                return Double.NaN;
+            }
+            long numerator = ((long) this.index) * ((long) (dArr.length - 1));
+            int quotient = (int) LongMath.divide(numerator, (long) this.scale, RoundingMode.DOWN);
+            int remainder = (int) (numerator - (((long) quotient) * ((long) this.scale)));
+            Quantiles.selectInPlace(quotient, dArr, 0, dArr.length - 1);
+            if (remainder == 0) {
+                return dArr[quotient];
+            }
+            Quantiles.selectInPlace(quotient + 1, dArr, quotient + 1, dArr.length - 1);
+            return Quantiles.interpolate(dArr[quotient], dArr[quotient + 1], (double) remainder, (double) this.scale);
+        }
+    }
+
+    public static final class ScaleAndIndexes {
+        private final int[] indexes;
+        private final int scale;
+
+        private ScaleAndIndexes(int scale2, int[] indexes2) {
+            for (int index : indexes2) {
+                Quantiles.checkIndex(index, scale2);
+            }
+            this.scale = scale2;
+            this.indexes = indexes2;
+        }
+
+        public Map<Integer, Double> compute(Collection<? extends Number> dataset) {
+            return computeInPlace(Doubles.toArray(dataset));
+        }
+
+        public Map<Integer, Double> compute(double... dataset) {
+            return computeInPlace((double[]) dataset.clone());
+        }
+
+        public Map<Integer, Double> compute(long... dataset) {
+            return computeInPlace(Quantiles.longsToDoubles(dataset));
+        }
+
+        public Map<Integer, Double> compute(int... dataset) {
+            return computeInPlace(Quantiles.intsToDoubles(dataset));
+        }
+
+        public Map<Integer, Double> computeInPlace(double... dataset) {
+            double[] dArr = dataset;
+            Preconditions.checkArgument(dArr.length > 0, "Cannot calculate quantiles of an empty dataset");
+            if (Quantiles.containsNaN(dataset)) {
+                Map<Integer, Double> nanMap = new HashMap<>();
+                for (int index : this.indexes) {
+                    nanMap.put(Integer.valueOf(index), Double.valueOf(Double.NaN));
+                }
+                return Collections.unmodifiableMap(nanMap);
+            }
+            int[] iArr = this.indexes;
+            int[] quotients = new int[iArr.length];
+            int[] remainders = new int[iArr.length];
+            int[] requiredSelections = new int[(iArr.length * 2)];
+            int i = 0;
+            int requiredSelectionsCount = 0;
+            while (true) {
+                int[] iArr2 = this.indexes;
+                if (i >= iArr2.length) {
+                    break;
+                }
+                long numerator = ((long) iArr2[i]) * ((long) (dArr.length - 1));
+                int quotient = (int) LongMath.divide(numerator, (long) this.scale, RoundingMode.DOWN);
+                int remainder = (int) (numerator - (((long) quotient) * ((long) this.scale)));
+                quotients[i] = quotient;
+                remainders[i] = remainder;
+                requiredSelections[requiredSelectionsCount] = quotient;
+                requiredSelectionsCount++;
+                if (remainder != 0) {
+                    requiredSelections[requiredSelectionsCount] = quotient + 1;
+                    requiredSelectionsCount++;
+                }
+                i++;
+            }
+            Arrays.sort(requiredSelections, 0, requiredSelectionsCount);
+            Quantiles.selectAllInPlace(requiredSelections, 0, requiredSelectionsCount - 1, dataset, 0, dArr.length - 1);
+            Map<Integer, Double> ret = new HashMap<>();
+            int i2 = 0;
+            while (true) {
+                int[] iArr3 = this.indexes;
+                if (i2 >= iArr3.length) {
+                    return Collections.unmodifiableMap(ret);
+                }
+                int quotient2 = quotients[i2];
+                int remainder2 = remainders[i2];
+                if (remainder2 == 0) {
+                    ret.put(Integer.valueOf(iArr3[i2]), Double.valueOf(dArr[quotient2]));
+                } else {
+                    ret.put(Integer.valueOf(iArr3[i2]), Double.valueOf(Quantiles.interpolate(dArr[quotient2], dArr[quotient2 + 1], (double) remainder2, (double) this.scale)));
+                }
+                i2++;
+                dArr = dataset;
+            }
+        }
     }
 }

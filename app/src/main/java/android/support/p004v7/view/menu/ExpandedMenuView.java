@@ -2,7 +2,6 @@ package android.support.p004v7.view.menu;
 
 import android.content.Context;
 import android.support.annotation.RestrictTo;
-import android.support.p004v7.view.menu.MenuBuilder;
 import android.support.p004v7.widget.TintTypedArray;
 import android.util.AttributeSet;
 import android.view.View;

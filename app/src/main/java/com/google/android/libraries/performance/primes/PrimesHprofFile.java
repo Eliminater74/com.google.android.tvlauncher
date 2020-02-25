@@ -1,8 +1,10 @@
 package com.google.android.libraries.performance.primes;
 
 import android.content.Context;
+
 import com.google.android.libraries.performance.primes.metriccapture.ProcessStats;
 import com.google.android.libraries.stitch.util.Preconditions;
+
 import java.io.File;
 
 final class PrimesHprofFile {

@@ -10,11 +10,6 @@ public class zzgot extends IOException {
         super(str);
     }
 
-    public final zzgot zza(zzgpt zzgpt) {
-        this.zza = zzgpt;
-        return this;
-    }
-
     static zzgot zza() {
         return new zzgot("While parsing a protocol message, the input ended unexpectedly in the middle of a field.  This could mean either that the input has been truncated or that an embedded message misreported its own length.");
     }
@@ -49,5 +44,10 @@ public class zzgot extends IOException {
 
     static zzgot zzi() {
         return new zzgot("Protocol message had invalid UTF-8.");
+    }
+
+    public final zzgot zza(zzgpt zzgpt) {
+        this.zza = zzgpt;
+        return this;
     }
 }

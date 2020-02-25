@@ -1,15 +1,16 @@
 package com.google.android.exoplayer2.extractor.p007ts;
 
 import android.util.SparseArray;
+
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.extractor.ExtractorOutput;
 import com.google.android.exoplayer2.extractor.TrackOutput;
-import com.google.android.exoplayer2.extractor.p007ts.TsPayloadReader;
 import com.google.android.exoplayer2.util.CodecSpecificDataUtil;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.NalUnitUtil;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.ParsableNalUnitBitArray;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -20,18 +21,18 @@ public final class H264Reader implements ElementaryStreamReader {
     private static final int NAL_UNIT_TYPE_SPS = 7;
     private final boolean allowNonIdrKeyframes;
     private final boolean detectAccessUnits;
-    private String formatId;
-    private boolean hasOutputFormat;
-    private TrackOutput output;
-    private long pesTimeUs;
     private final NalUnitTargetBuffer pps = new NalUnitTargetBuffer(8, 128);
     private final boolean[] prefixFlags = new boolean[3];
-    private boolean randomAccessIndicator;
-    private SampleReader sampleReader;
     private final NalUnitTargetBuffer sei = new NalUnitTargetBuffer(6, 128);
     private final SeiReader seiReader;
     private final ParsableByteArray seiWrapper = new ParsableByteArray();
     private final NalUnitTargetBuffer sps = new NalUnitTargetBuffer(7, 128);
+    private String formatId;
+    private boolean hasOutputFormat;
+    private TrackOutput output;
+    private long pesTimeUs;
+    private boolean randomAccessIndicator;
+    private SampleReader sampleReader;
     private long totalBytesWritten;
 
     public H264Reader(SeiReader seiReader2, boolean allowNonIdrKeyframes2, boolean detectAccessUnits2) {
@@ -159,23 +160,23 @@ public final class H264Reader implements ElementaryStreamReader {
         private static final int NAL_UNIT_TYPE_NON_IDR = 1;
         private static final int NAL_UNIT_TYPE_PARTITION_A = 2;
         private final boolean allowNonIdrKeyframes;
-        private final ParsableNalUnitBitArray bitArray = new ParsableNalUnitBitArray(this.buffer, 0, 0);
-        private byte[] buffer = new byte[128];
-        private int bufferLength;
         private final boolean detectAccessUnits;
+        private final TrackOutput output;
+        private final SparseArray<NalUnitUtil.PpsData> pps = new SparseArray<>();
+        private final SparseArray<NalUnitUtil.SpsData> sps = new SparseArray<>();
+        private byte[] buffer = new byte[128];
+        private final ParsableNalUnitBitArray bitArray = new ParsableNalUnitBitArray(this.buffer, 0, 0);
+        private int bufferLength;
         private boolean isFilling;
         private long nalUnitStartPosition;
         private long nalUnitTimeUs;
         private int nalUnitType;
-        private final TrackOutput output;
-        private final SparseArray<NalUnitUtil.PpsData> pps = new SparseArray<>();
         private SliceHeaderData previousSliceHeader = new SliceHeaderData();
         private boolean readingSample;
         private boolean sampleIsKeyframe;
         private long samplePosition;
         private long sampleTimeUs;
         private SliceHeaderData sliceHeader = new SliceHeaderData();
-        private final SparseArray<NalUnitUtil.SpsData> sps = new SparseArray<>();
 
         public SampleReader(TrackOutput output2, boolean allowNonIdrKeyframes2, boolean detectAccessUnits2) {
             this.output = output2;

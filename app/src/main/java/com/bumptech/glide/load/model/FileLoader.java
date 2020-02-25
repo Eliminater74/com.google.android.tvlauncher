@@ -3,13 +3,14 @@ package com.bumptech.glide.load.model;
 import android.os.ParcelFileDescriptor;
 import android.support.annotation.NonNull;
 import android.util.Log;
+
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.Options;
 import com.bumptech.glide.load.data.DataFetcher;
-import com.bumptech.glide.load.model.ModelLoader;
 import com.bumptech.glide.signature.ObjectKey;
 import com.google.android.exoplayer2.C0841C;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -19,14 +20,6 @@ import java.io.InputStream;
 public class FileLoader<Data> implements ModelLoader<File, Data> {
     private static final String TAG = "FileLoader";
     private final FileOpener<Data> fileOpener;
-
-    public interface FileOpener<Data> {
-        void close(Data data) throws IOException;
-
-        Class<Data> getDataClass();
-
-        Data open(File file) throws FileNotFoundException;
-    }
 
     public FileLoader(FileOpener<Data> fileOpener2) {
         this.fileOpener = fileOpener2;
@@ -40,10 +33,18 @@ public class FileLoader<Data> implements ModelLoader<File, Data> {
         return true;
     }
 
+    public interface FileOpener<Data> {
+        void close(Data data) throws IOException;
+
+        Class<Data> getDataClass();
+
+        Data open(File file) throws FileNotFoundException;
+    }
+
     private static final class FileFetcher<Data> implements DataFetcher<Data> {
-        private Data data;
         private final File file;
         private final FileOpener<Data> opener;
+        private Data data;
 
         FileFetcher(File file2, FileOpener<Data> opener2) {
             this.file = file2;

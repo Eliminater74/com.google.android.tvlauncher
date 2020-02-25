@@ -2,8 +2,10 @@ package com.google.android.tvlauncher.settings;
 
 import android.content.Context;
 import android.widget.ImageView;
+
 import androidx.preference.Preference;
 import androidx.preference.PreferenceViewHolder;
+
 import com.google.android.tvlauncher.C1188R;
 
 public class FavoriteLaunchItemPreference extends Preference {

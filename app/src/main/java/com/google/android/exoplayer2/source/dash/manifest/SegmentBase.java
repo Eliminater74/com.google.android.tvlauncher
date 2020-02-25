@@ -2,6 +2,7 @@ package com.google.android.exoplayer2.source.dash.manifest;
 
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.util.Util;
+
 import java.util.List;
 
 public abstract class SegmentBase {
@@ -51,16 +52,16 @@ public abstract class SegmentBase {
         final List<SegmentTimelineElement> segmentTimeline;
         final long startNumber;
 
-        public abstract int getSegmentCount(long j);
-
-        public abstract RangedUri getSegmentUrl(Representation representation, long j);
-
         public MultiSegmentBase(RangedUri initialization, long timescale, long presentationTimeOffset, long startNumber2, long duration2, List<SegmentTimelineElement> segmentTimeline2) {
             super(initialization, timescale, presentationTimeOffset);
             this.startNumber = startNumber2;
             this.duration = duration2;
             this.segmentTimeline = segmentTimeline2;
         }
+
+        public abstract int getSegmentCount(long j);
+
+        public abstract RangedUri getSegmentUrl(Representation representation, long j);
 
         public long getSegmentNum(long timeUs, long periodDurationUs) {
             long firstSegmentNum = getFirstSegmentNum();

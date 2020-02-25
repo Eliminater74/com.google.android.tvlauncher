@@ -9,7 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import androidx.savedstate.Recreator;
+
 import java.util.Iterator;
 import java.util.Map;
 
@@ -22,15 +22,6 @@ public final class SavedStateRegistry {
     private boolean mRestored;
     @Nullable
     private Bundle mRestoredState;
-
-    public interface AutoRecreated {
-        void onRecreated(@NonNull SavedStateRegistryOwner savedStateRegistryOwner);
-    }
-
-    public interface SavedStateProvider {
-        @NonNull
-        Bundle saveState();
-    }
 
     SavedStateRegistry() {
     }
@@ -123,5 +114,14 @@ public final class SavedStateRegistry {
             components.putBundle((String) entry1.getKey(), ((SavedStateProvider) entry1.getValue()).saveState());
         }
         outBundle.putBundle(SAVED_COMPONENTS_KEY, components);
+    }
+
+    public interface AutoRecreated {
+        void onRecreated(@NonNull SavedStateRegistryOwner savedStateRegistryOwner);
+    }
+
+    public interface SavedStateProvider {
+        @NonNull
+        Bundle saveState();
     }
 }

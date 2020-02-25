@@ -3,19 +3,21 @@ package com.google.common.collect;
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.GwtCompatible;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible
 public abstract class ForwardingList<E> extends ForwardingCollection<E> implements List<E> {
-    /* access modifiers changed from: protected */
-    public abstract List<E> delegate();
-
     protected ForwardingList() {
     }
+
+    /* access modifiers changed from: protected */
+    public abstract List<E> delegate();
 
     public void add(int index, E element) {
         delegate().add(index, element);

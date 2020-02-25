@@ -4,10 +4,10 @@ import android.support.annotation.Nullable;
 
 interface FlagLoader {
 
+    @Nullable
+    Object getFlag(String str);
+
     public interface BinderAwareFunction<V> {
         V execute();
     }
-
-    @Nullable
-    Object getFlag(String str);
 }

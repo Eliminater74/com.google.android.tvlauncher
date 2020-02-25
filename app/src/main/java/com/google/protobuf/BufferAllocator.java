@@ -13,14 +13,14 @@ abstract class BufferAllocator {
         }
     };
 
-    public abstract AllocatedBuffer allocateDirectBuffer(int i);
-
-    public abstract AllocatedBuffer allocateHeapBuffer(int i);
-
     BufferAllocator() {
     }
 
     public static BufferAllocator unpooled() {
         return UNPOOLED;
     }
+
+    public abstract AllocatedBuffer allocateDirectBuffer(int i);
+
+    public abstract AllocatedBuffer allocateHeapBuffer(int i);
 }

@@ -5,11 +5,11 @@ import android.database.Cursor;
 abstract class AbstractDataBuffer<T> {
     protected Cursor mCursor;
 
-    public abstract T get(int i);
-
     AbstractDataBuffer(Cursor cursor) {
         this.mCursor = cursor;
     }
+
+    public abstract T get(int i);
 
     public void release() {
         this.mCursor.close();

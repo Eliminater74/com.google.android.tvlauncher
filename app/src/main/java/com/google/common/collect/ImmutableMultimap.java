@@ -4,10 +4,12 @@ import com.google.common.annotations.Beta;
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Multiset;
-import com.google.common.collect.Serialization;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.j2objc.annotations.Weak;
+
+import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,8 +18,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible(emulated = true)
 public abstract class ImmutableMultimap<K, V> extends BaseImmutableMultimap<K, V> implements Serializable {
@@ -25,28 +25,9 @@ public abstract class ImmutableMultimap<K, V> extends BaseImmutableMultimap<K, V
     final transient ImmutableMap<K, ? extends ImmutableCollection<V>> map;
     final transient int size;
 
-    public abstract ImmutableCollection<V> get(Object obj);
-
-    public abstract ImmutableMultimap<V, K> inverse();
-
-    public /* bridge */ /* synthetic */ boolean containsEntry(@NullableDecl Object obj, @NullableDecl Object obj2) {
-        return super.containsEntry(obj, obj2);
-    }
-
-    public /* bridge */ /* synthetic */ boolean equals(@NullableDecl Object obj) {
-        return super.equals(obj);
-    }
-
-    public /* bridge */ /* synthetic */ int hashCode() {
-        return super.hashCode();
-    }
-
-    public /* bridge */ /* synthetic */ boolean isEmpty() {
-        return super.isEmpty();
-    }
-
-    public /* bridge */ /* synthetic */ String toString() {
-        return super.toString();
+    ImmutableMultimap(ImmutableMap<K, ? extends ImmutableCollection<V>> map2, int size2) {
+        this.map = map2;
+        this.size = size2;
     }
 
     /* renamed from: of */
@@ -111,6 +92,189 @@ public abstract class ImmutableMultimap<K, V> extends BaseImmutableMultimap<K, V
 
     public static <K, V> Builder<K, V> builder() {
         return new Builder<>();
+    }
+
+    public static <K, V> ImmutableMultimap<K, V> copyOf(Multimap<? extends K, ? extends V> multimap) {
+        if (multimap instanceof ImmutableMultimap) {
+            ImmutableMultimap<K, V> kvMultimap = (ImmutableMultimap) multimap;
+            if (!kvMultimap.isPartialView()) {
+                return kvMultimap;
+            }
+        }
+        return ImmutableListMultimap.copyOf((Multimap) multimap);
+    }
+
+    @Beta
+    public static <K, V> ImmutableMultimap<K, V> copyOf(Iterable<? extends Map.Entry<? extends K, ? extends V>> entries) {
+        return ImmutableListMultimap.copyOf((Iterable) entries);
+    }
+
+    public abstract ImmutableCollection<V> get(Object obj);
+
+    public abstract ImmutableMultimap<V, K> inverse();
+
+    public /* bridge */ /* synthetic */ boolean containsEntry(@NullableDecl Object obj, @NullableDecl Object obj2) {
+        return super.containsEntry(obj, obj2);
+    }
+
+    public /* bridge */ /* synthetic */ boolean equals(@NullableDecl Object obj) {
+        return super.equals(obj);
+    }
+
+    public /* bridge */ /* synthetic */ int hashCode() {
+        return super.hashCode();
+    }
+
+    public /* bridge */ /* synthetic */ boolean isEmpty() {
+        return super.isEmpty();
+    }
+
+    public /* bridge */ /* synthetic */ String toString() {
+        return super.toString();
+    }
+
+    @CanIgnoreReturnValue
+    @Deprecated
+    public ImmutableCollection<V> removeAll(Object key) {
+        throw new UnsupportedOperationException();
+    }
+
+    @CanIgnoreReturnValue
+    @Deprecated
+    public ImmutableCollection<V> replaceValues(Object obj, Iterable iterable) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Deprecated
+    public void clear() {
+        throw new UnsupportedOperationException();
+    }
+
+    @CanIgnoreReturnValue
+    @Deprecated
+    public boolean put(K k, V v) {
+        throw new UnsupportedOperationException();
+    }
+
+    @CanIgnoreReturnValue
+    @Deprecated
+    public boolean putAll(K k, Iterable<? extends V> iterable) {
+        throw new UnsupportedOperationException();
+    }
+
+    @CanIgnoreReturnValue
+    @Deprecated
+    public boolean putAll(Multimap<? extends K, ? extends V> multimap) {
+        throw new UnsupportedOperationException();
+    }
+
+    @CanIgnoreReturnValue
+    @Deprecated
+    public boolean remove(Object key, Object value) {
+        throw new UnsupportedOperationException();
+    }
+
+    /* access modifiers changed from: package-private */
+    public boolean isPartialView() {
+        return this.map.isPartialView();
+    }
+
+    public boolean containsKey(@NullableDecl Object key) {
+        return this.map.containsKey(key);
+    }
+
+    public boolean containsValue(@NullableDecl Object value) {
+        return value != null && super.containsValue(value);
+    }
+
+    public int size() {
+        return this.size;
+    }
+
+    public ImmutableSet<K> keySet() {
+        return this.map.keySet();
+    }
+
+    /* access modifiers changed from: package-private */
+    public Set<K> createKeySet() {
+        throw new AssertionError("unreachable");
+    }
+
+    public ImmutableMap<K, Collection<V>> asMap() {
+        return this.map;
+    }
+
+    /* access modifiers changed from: package-private */
+    public Map<K, Collection<V>> createAsMap() {
+        throw new AssertionError("should never be called");
+    }
+
+    public ImmutableCollection<Map.Entry<K, V>> entries() {
+        return (ImmutableCollection) super.entries();
+    }
+
+    /* access modifiers changed from: package-private */
+    public ImmutableCollection<Map.Entry<K, V>> createEntries() {
+        return new EntryCollection(this);
+    }
+
+    /* access modifiers changed from: package-private */
+    public UnmodifiableIterator<Map.Entry<K, V>> entryIterator() {
+        return new UnmodifiableIterator<Map.Entry<K, V>>() {
+            final Iterator<? extends Map.Entry<K, ? extends ImmutableCollection<V>>> asMapItr = ImmutableMultimap.this.map.entrySet().iterator();
+            K currentKey = null;
+            Iterator<V> valueItr = Iterators.emptyIterator();
+
+            public boolean hasNext() {
+                return this.valueItr.hasNext() || this.asMapItr.hasNext();
+            }
+
+            public Map.Entry<K, V> next() {
+                if (!this.valueItr.hasNext()) {
+                    Map.Entry<K, ? extends ImmutableCollection<V>> entry = (Map.Entry) this.asMapItr.next();
+                    this.currentKey = entry.getKey();
+                    this.valueItr = ((ImmutableCollection) entry.getValue()).iterator();
+                }
+                return Maps.immutableEntry(this.currentKey, this.valueItr.next());
+            }
+        };
+    }
+
+    public ImmutableMultiset<K> keys() {
+        return (ImmutableMultiset) super.keys();
+    }
+
+    /* access modifiers changed from: package-private */
+    public ImmutableMultiset<K> createKeys() {
+        return new Keys();
+    }
+
+    public ImmutableCollection<V> values() {
+        return (ImmutableCollection) super.values();
+    }
+
+    /* access modifiers changed from: package-private */
+    public ImmutableCollection<V> createValues() {
+        return new Values(this);
+    }
+
+    /* access modifiers changed from: package-private */
+    public UnmodifiableIterator<V> valueIterator() {
+        return new UnmodifiableIterator<V>() {
+            Iterator<? extends ImmutableCollection<V>> valueCollectionItr = ImmutableMultimap.this.map.values().iterator();
+            Iterator<V> valueItr = Iterators.emptyIterator();
+
+            public boolean hasNext() {
+                return this.valueItr.hasNext() || this.valueCollectionItr.hasNext();
+            }
+
+            public V next() {
+                if (!this.valueItr.hasNext()) {
+                    this.valueItr = ((ImmutableCollection) this.valueCollectionItr.next()).iterator();
+                }
+                return this.valueItr.next();
+            }
+        };
     }
 
     public static class Builder<K, V> {
@@ -226,21 +390,6 @@ public abstract class ImmutableMultimap<K, V> extends BaseImmutableMultimap<K, V
         }
     }
 
-    public static <K, V> ImmutableMultimap<K, V> copyOf(Multimap<? extends K, ? extends V> multimap) {
-        if (multimap instanceof ImmutableMultimap) {
-            ImmutableMultimap<K, V> kvMultimap = (ImmutableMultimap) multimap;
-            if (!kvMultimap.isPartialView()) {
-                return kvMultimap;
-            }
-        }
-        return ImmutableListMultimap.copyOf((Multimap) multimap);
-    }
-
-    @Beta
-    public static <K, V> ImmutableMultimap<K, V> copyOf(Iterable<? extends Map.Entry<? extends K, ? extends V>> entries) {
-        return ImmutableListMultimap.copyOf((Iterable) entries);
-    }
-
     @GwtIncompatible
     static class FieldSettersHolder {
         static final Serialization.FieldSetter<ImmutableMultimap> MAP_FIELD_SETTER = Serialization.getFieldSetter(ImmutableMultimap.class, "map");
@@ -248,96 +397,6 @@ public abstract class ImmutableMultimap<K, V> extends BaseImmutableMultimap<K, V
 
         FieldSettersHolder() {
         }
-    }
-
-    ImmutableMultimap(ImmutableMap<K, ? extends ImmutableCollection<V>> map2, int size2) {
-        this.map = map2;
-        this.size = size2;
-    }
-
-    @CanIgnoreReturnValue
-    @Deprecated
-    public ImmutableCollection<V> removeAll(Object key) {
-        throw new UnsupportedOperationException();
-    }
-
-    @CanIgnoreReturnValue
-    @Deprecated
-    public ImmutableCollection<V> replaceValues(Object obj, Iterable iterable) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Deprecated
-    public void clear() {
-        throw new UnsupportedOperationException();
-    }
-
-    @CanIgnoreReturnValue
-    @Deprecated
-    public boolean put(K k, V v) {
-        throw new UnsupportedOperationException();
-    }
-
-    @CanIgnoreReturnValue
-    @Deprecated
-    public boolean putAll(K k, Iterable<? extends V> iterable) {
-        throw new UnsupportedOperationException();
-    }
-
-    @CanIgnoreReturnValue
-    @Deprecated
-    public boolean putAll(Multimap<? extends K, ? extends V> multimap) {
-        throw new UnsupportedOperationException();
-    }
-
-    @CanIgnoreReturnValue
-    @Deprecated
-    public boolean remove(Object key, Object value) {
-        throw new UnsupportedOperationException();
-    }
-
-    /* access modifiers changed from: package-private */
-    public boolean isPartialView() {
-        return this.map.isPartialView();
-    }
-
-    public boolean containsKey(@NullableDecl Object key) {
-        return this.map.containsKey(key);
-    }
-
-    public boolean containsValue(@NullableDecl Object value) {
-        return value != null && super.containsValue(value);
-    }
-
-    public int size() {
-        return this.size;
-    }
-
-    public ImmutableSet<K> keySet() {
-        return this.map.keySet();
-    }
-
-    /* access modifiers changed from: package-private */
-    public Set<K> createKeySet() {
-        throw new AssertionError("unreachable");
-    }
-
-    public ImmutableMap<K, Collection<V>> asMap() {
-        return this.map;
-    }
-
-    /* access modifiers changed from: package-private */
-    public Map<K, Collection<V>> createAsMap() {
-        throw new AssertionError("should never be called");
-    }
-
-    public ImmutableCollection<Map.Entry<K, V>> entries() {
-        return (ImmutableCollection) super.entries();
-    }
-
-    /* access modifiers changed from: package-private */
-    public ImmutableCollection<Map.Entry<K, V>> createEntries() {
-        return new EntryCollection(this);
     }
 
     private static class EntryCollection<K, V> extends ImmutableCollection<Map.Entry<K, V>> {
@@ -371,35 +430,55 @@ public abstract class ImmutableMultimap<K, V> extends BaseImmutableMultimap<K, V
         }
     }
 
-    /* access modifiers changed from: package-private */
-    public UnmodifiableIterator<Map.Entry<K, V>> entryIterator() {
-        return new UnmodifiableIterator<Map.Entry<K, V>>() {
-            final Iterator<? extends Map.Entry<K, ? extends ImmutableCollection<V>>> asMapItr = ImmutableMultimap.this.map.entrySet().iterator();
-            K currentKey = null;
-            Iterator<V> valueItr = Iterators.emptyIterator();
+    @GwtIncompatible
+    private static final class KeysSerializedForm implements Serializable {
+        final ImmutableMultimap<?, ?> multimap;
 
-            public boolean hasNext() {
-                return this.valueItr.hasNext() || this.asMapItr.hasNext();
-            }
+        KeysSerializedForm(ImmutableMultimap<?, ?> multimap2) {
+            this.multimap = multimap2;
+        }
 
-            public Map.Entry<K, V> next() {
-                if (!this.valueItr.hasNext()) {
-                    Map.Entry<K, ? extends ImmutableCollection<V>> entry = (Map.Entry) this.asMapItr.next();
-                    this.currentKey = entry.getKey();
-                    this.valueItr = ((ImmutableCollection) entry.getValue()).iterator();
-                }
-                return Maps.immutableEntry(this.currentKey, this.valueItr.next());
-            }
-        };
+        /* access modifiers changed from: package-private */
+        public Object readResolve() {
+            return this.multimap.keys();
+        }
     }
 
-    public ImmutableMultiset<K> keys() {
-        return (ImmutableMultiset) super.keys();
-    }
+    private static final class Values<K, V> extends ImmutableCollection<V> {
+        private static final long serialVersionUID = 0;
+        @Weak
+        private final transient ImmutableMultimap<K, V> multimap;
 
-    /* access modifiers changed from: package-private */
-    public ImmutableMultiset<K> createKeys() {
-        return new Keys();
+        Values(ImmutableMultimap<K, V> multimap2) {
+            this.multimap = multimap2;
+        }
+
+        public boolean contains(@NullableDecl Object object) {
+            return this.multimap.containsValue(object);
+        }
+
+        public UnmodifiableIterator<V> iterator() {
+            return this.multimap.valueIterator();
+        }
+
+        /* access modifiers changed from: package-private */
+        @GwtIncompatible
+        public int copyIntoArray(Object[] dst, int offset) {
+            UnmodifiableIterator<? extends ImmutableCollection<V>> it = this.multimap.map.values().iterator();
+            while (it.hasNext()) {
+                offset = ((ImmutableCollection) it.next()).copyIntoArray(dst, offset);
+            }
+            return offset;
+        }
+
+        public int size() {
+            return this.multimap.size();
+        }
+
+        /* access modifiers changed from: package-private */
+        public boolean isPartialView() {
+            return true;
+        }
     }
 
     class Keys extends ImmutableMultiset<K> {
@@ -441,85 +520,6 @@ public abstract class ImmutableMultimap<K, V> extends BaseImmutableMultimap<K, V
         @GwtIncompatible
         public Object writeReplace() {
             return new KeysSerializedForm(ImmutableMultimap.this);
-        }
-    }
-
-    @GwtIncompatible
-    private static final class KeysSerializedForm implements Serializable {
-        final ImmutableMultimap<?, ?> multimap;
-
-        KeysSerializedForm(ImmutableMultimap<?, ?> multimap2) {
-            this.multimap = multimap2;
-        }
-
-        /* access modifiers changed from: package-private */
-        public Object readResolve() {
-            return this.multimap.keys();
-        }
-    }
-
-    public ImmutableCollection<V> values() {
-        return (ImmutableCollection) super.values();
-    }
-
-    /* access modifiers changed from: package-private */
-    public ImmutableCollection<V> createValues() {
-        return new Values(this);
-    }
-
-    /* access modifiers changed from: package-private */
-    public UnmodifiableIterator<V> valueIterator() {
-        return new UnmodifiableIterator<V>() {
-            Iterator<? extends ImmutableCollection<V>> valueCollectionItr = ImmutableMultimap.this.map.values().iterator();
-            Iterator<V> valueItr = Iterators.emptyIterator();
-
-            public boolean hasNext() {
-                return this.valueItr.hasNext() || this.valueCollectionItr.hasNext();
-            }
-
-            public V next() {
-                if (!this.valueItr.hasNext()) {
-                    this.valueItr = ((ImmutableCollection) this.valueCollectionItr.next()).iterator();
-                }
-                return this.valueItr.next();
-            }
-        };
-    }
-
-    private static final class Values<K, V> extends ImmutableCollection<V> {
-        private static final long serialVersionUID = 0;
-        @Weak
-        private final transient ImmutableMultimap<K, V> multimap;
-
-        Values(ImmutableMultimap<K, V> multimap2) {
-            this.multimap = multimap2;
-        }
-
-        public boolean contains(@NullableDecl Object object) {
-            return this.multimap.containsValue(object);
-        }
-
-        public UnmodifiableIterator<V> iterator() {
-            return this.multimap.valueIterator();
-        }
-
-        /* access modifiers changed from: package-private */
-        @GwtIncompatible
-        public int copyIntoArray(Object[] dst, int offset) {
-            UnmodifiableIterator<? extends ImmutableCollection<V>> it = this.multimap.map.values().iterator();
-            while (it.hasNext()) {
-                offset = ((ImmutableCollection) it.next()).copyIntoArray(dst, offset);
-            }
-            return offset;
-        }
-
-        public int size() {
-            return this.multimap.size();
-        }
-
-        /* access modifiers changed from: package-private */
-        public boolean isPartialView() {
-            return true;
         }
     }
 }

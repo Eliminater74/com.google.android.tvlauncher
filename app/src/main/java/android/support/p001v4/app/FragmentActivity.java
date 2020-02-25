@@ -16,7 +16,6 @@ import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RestrictTo;
-import android.support.p001v4.app.ActivityCompat;
 import android.support.p001v4.internal.view.SupportMenu;
 import android.support.p001v4.util.SparseArrayCompat;
 import android.util.AttributeSet;
@@ -26,8 +25,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+
 import androidx.activity.ComponentActivity;
 import androidx.activity.OnBackPressedCallback;
+
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 
@@ -39,8 +40,8 @@ public class FragmentActivity extends ComponentActivity implements ActivityCompa
     static final String NEXT_CANDIDATE_REQUEST_INDEX_TAG = "android:support:next_request_index";
     static final String REQUEST_FRAGMENT_WHO_TAG = "android:support:request_fragment_who";
     private static final String TAG = "FragmentActivity";
-    boolean mCreated;
     final FragmentController mFragments = FragmentController.createController(new HostCallbacks());
+    boolean mCreated;
     int mNextCandidateRequestIndex;
     SparseArrayCompat<String> mPendingFragmentActivityResults;
     boolean mRequestedPermissionsFromFragment;
@@ -57,6 +58,29 @@ public class FragmentActivity extends ComponentActivity implements ActivityCompa
     public FragmentActivity(@LayoutRes int contentLayoutId) {
         super(contentLayoutId);
         init();
+    }
+
+    static void checkForValidRequestCode(int requestCode) {
+        if ((-65536 & requestCode) != 0) {
+            throw new IllegalArgumentException("Can only use lower 16 bits for requestCode");
+        }
+    }
+
+    private static boolean markState(FragmentManager manager, Lifecycle.State state) {
+        boolean hadNotMarked = false;
+        for (Fragment fragment : manager.getFragments()) {
+            if (fragment != null) {
+                if (fragment.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
+                    fragment.mLifecycleRegistry.markState(state);
+                    hadNotMarked = true;
+                }
+                FragmentManager childFragmentManager = fragment.peekChildFragmentManager();
+                if (childFragmentManager != null) {
+                    hadNotMarked |= markState(childFragmentManager, state);
+                }
+            }
+        }
+        return hadNotMarked;
     }
 
     private void init() {
@@ -397,12 +421,6 @@ public class FragmentActivity extends ComponentActivity implements ActivityCompa
         super.startIntentSenderForResult(intent, requestCode, fillInIntent, flagsMask, flagsValues, extraFlags, options);
     }
 
-    static void checkForValidRequestCode(int requestCode) {
-        if ((-65536 & requestCode) != 0) {
-            throw new IllegalArgumentException("Can only use lower 16 bits for requestCode");
-        }
-    }
-
     public final void validateRequestPermissionsRequestCode(int requestCode) {
         if (!this.mRequestedPermissionsFromFragment && requestCode != -1) {
             checkForValidRequestCode(requestCode);
@@ -495,6 +513,11 @@ public class FragmentActivity extends ComponentActivity implements ActivityCompa
         }
     }
 
+    private void markFragmentsCreated() {
+        do {
+        } while (markState(getSupportFragmentManager(), Lifecycle.State.CREATED));
+    }
+
     /* renamed from: android.support.v4.app.FragmentActivity$HostCallbacks */
     class HostCallbacks extends FragmentHostCallback<FragmentActivity> implements ViewModelStoreOwner {
         public HostCallbacks() {
@@ -572,27 +595,5 @@ public class FragmentActivity extends ComponentActivity implements ActivityCompa
             Window w = FragmentActivity.this.getWindow();
             return (w == null || w.peekDecorView() == null) ? false : true;
         }
-    }
-
-    private void markFragmentsCreated() {
-        do {
-        } while (markState(getSupportFragmentManager(), Lifecycle.State.CREATED));
-    }
-
-    private static boolean markState(FragmentManager manager, Lifecycle.State state) {
-        boolean hadNotMarked = false;
-        for (Fragment fragment : manager.getFragments()) {
-            if (fragment != null) {
-                if (fragment.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
-                    fragment.mLifecycleRegistry.markState(state);
-                    hadNotMarked = true;
-                }
-                FragmentManager childFragmentManager = fragment.peekChildFragmentManager();
-                if (childFragmentManager != null) {
-                    hadNotMarked |= markState(childFragmentManager, state);
-                }
-            }
-        }
-        return hadNotMarked;
     }
 }

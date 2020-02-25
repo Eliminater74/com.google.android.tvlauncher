@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.animation.AnimationUtils;
+
 import java.util.ArrayList;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
@@ -26,15 +27,11 @@ public final class TransitionHelper {
     public static final int FADE_IN = 1;
     public static final int FADE_OUT = 2;
 
-    public static boolean systemSupportsEntranceTransitions() {
-        return Build.VERSION.SDK_INT >= 21;
+    private TransitionHelper() {
     }
 
-    private static class TransitionStub {
-        ArrayList<TransitionListener> mTransitionListeners;
-
-        TransitionStub() {
-        }
+    public static boolean systemSupportsEntranceTransitions() {
+        return Build.VERSION.SDK_INT >= 21;
     }
 
     public static Object getSharedElementEnterTransition(Window window) {
@@ -426,6 +423,10 @@ public final class TransitionHelper {
         }
     }
 
-    private TransitionHelper() {
+    private static class TransitionStub {
+        ArrayList<TransitionListener> mTransitionListeners;
+
+        TransitionStub() {
+        }
     }
 }

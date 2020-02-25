@@ -7,6 +7,9 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.math.IntMath;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,7 +18,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible
 public final class Collections2 {
@@ -45,6 +47,95 @@ public final class Collections2 {
         } catch (ClassCastException | NullPointerException e) {
             return false;
         }
+    }
+
+    public static <F, T> Collection<T> transform(Collection<F> fromCollection, Function<? super F, T> function) {
+        return new TransformedCollection(fromCollection, function);
+    }
+
+    static boolean containsAllImpl(Collection<?> self, Collection<?> c) {
+        for (Object o : c) {
+            if (!self.contains(o)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    static String toStringImpl(Collection<?> collection) {
+        StringBuilder sb = newStringBuilderForCollection(collection.size()).append('[');
+        boolean first = true;
+        for (Object o : collection) {
+            if (!first) {
+                sb.append(", ");
+            }
+            first = false;
+            if (o == collection) {
+                sb.append("(this Collection)");
+            } else {
+                sb.append(o);
+            }
+        }
+        sb.append(']');
+        return sb.toString();
+    }
+
+    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+     method: ClspMth{java.lang.Math.min(long, long):long}
+     arg types: [long, int]
+     candidates:
+      ClspMth{java.lang.Math.min(double, double):double}
+      ClspMth{java.lang.Math.min(float, float):float}
+      ClspMth{java.lang.Math.min(int, int):int}
+      ClspMth{java.lang.Math.min(long, long):long} */
+    static StringBuilder newStringBuilderForCollection(int size) {
+        CollectPreconditions.checkNonnegative(size, "size");
+        return new StringBuilder((int) Math.min(((long) size) * 8, 1073741824L));
+    }
+
+    static <T> Collection<T> cast(Iterable<T> iterable) {
+        return (Collection) iterable;
+    }
+
+    @Beta
+    public static <E extends Comparable<? super E>> Collection<List<E>> orderedPermutations(Iterable<E> elements) {
+        return orderedPermutations(elements, Ordering.natural());
+    }
+
+    @Beta
+    public static <E> Collection<List<E>> orderedPermutations(Iterable<E> elements, Comparator<? super E> comparator) {
+        return new OrderedPermutationCollection(elements, comparator);
+    }
+
+    @Beta
+    public static <E> Collection<List<E>> permutations(Collection<E> elements) {
+        return new PermutationCollection(ImmutableList.copyOf((Collection) elements));
+    }
+
+    /* access modifiers changed from: private */
+    public static boolean isPermutation(List<?> first, List<?> second) {
+        if (first.size() != second.size()) {
+            return false;
+        }
+        ObjectCountHashMap<?> firstCounts = counts(first);
+        ObjectCountHashMap<?> secondCounts = counts(second);
+        if (first.size() != second.size()) {
+            return false;
+        }
+        for (int i = 0; i < first.size(); i++) {
+            if (firstCounts.getValue(i) != secondCounts.get(firstCounts.getKey(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static <E> ObjectCountHashMap<E> counts(Collection<E> collection) {
+        ObjectCountHashMap<E> map = new ObjectCountHashMap<>();
+        for (E e : collection) {
+            map.put(e, map.get(e) + 1);
+        }
+        return map;
     }
 
     static class FilteredCollection<E> extends AbstractCollection<E> {
@@ -145,10 +236,6 @@ public final class Collections2 {
         }
     }
 
-    public static <F, T> Collection<T> transform(Collection<F> fromCollection, Function<? super F, T> function) {
-        return new TransformedCollection(fromCollection, function);
-    }
-
     static class TransformedCollection<F, T> extends AbstractCollection<T> {
         final Collection<F> fromCollection;
         final Function<? super F, ? extends T> function;
@@ -173,60 +260,6 @@ public final class Collections2 {
         public int size() {
             return this.fromCollection.size();
         }
-    }
-
-    static boolean containsAllImpl(Collection<?> self, Collection<?> c) {
-        for (Object o : c) {
-            if (!self.contains(o)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    static String toStringImpl(Collection<?> collection) {
-        StringBuilder sb = newStringBuilderForCollection(collection.size()).append('[');
-        boolean first = true;
-        for (Object o : collection) {
-            if (!first) {
-                sb.append(", ");
-            }
-            first = false;
-            if (o == collection) {
-                sb.append("(this Collection)");
-            } else {
-                sb.append(o);
-            }
-        }
-        sb.append(']');
-        return sb.toString();
-    }
-
-    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-     method: ClspMth{java.lang.Math.min(long, long):long}
-     arg types: [long, int]
-     candidates:
-      ClspMth{java.lang.Math.min(double, double):double}
-      ClspMth{java.lang.Math.min(float, float):float}
-      ClspMth{java.lang.Math.min(int, int):int}
-      ClspMth{java.lang.Math.min(long, long):long} */
-    static StringBuilder newStringBuilderForCollection(int size) {
-        CollectPreconditions.checkNonnegative(size, "size");
-        return new StringBuilder((int) Math.min(((long) size) * 8, 1073741824L));
-    }
-
-    static <T> Collection<T> cast(Iterable<T> iterable) {
-        return (Collection) iterable;
-    }
-
-    @Beta
-    public static <E extends Comparable<? super E>> Collection<List<E>> orderedPermutations(Iterable<E> elements) {
-        return orderedPermutations(elements, Ordering.natural());
-    }
-
-    @Beta
-    public static <E> Collection<List<E>> orderedPermutations(Iterable<E> elements, Comparator<? super E> comparator) {
-        return new OrderedPermutationCollection(elements, comparator);
     }
 
     private static final class OrderedPermutationCollection<E> extends AbstractCollection<List<E>> {
@@ -341,11 +374,6 @@ public final class Collections2 {
         }
     }
 
-    @Beta
-    public static <E> Collection<List<E>> permutations(Collection<E> elements) {
-        return new PermutationCollection(ImmutableList.copyOf((Collection) elements));
-    }
-
     private static final class PermutationCollection<E> extends AbstractCollection<List<E>> {
         final ImmutableList<E> inputList;
 
@@ -386,13 +414,11 @@ public final class Collections2 {
 
         /* renamed from: c */
         final int[] f167c;
-
-        /* renamed from: j */
-        int f168j = Integer.MAX_VALUE;
         final List<E> list;
-
         /* renamed from: o */
         final int[] f169o;
+        /* renamed from: j */
+        int f168j = Integer.MAX_VALUE;
 
         PermutationIterator(List<E> list2) {
             this.list = new ArrayList(list2);
@@ -445,31 +471,5 @@ public final class Collections2 {
             iArr[i] = -iArr[i];
             this.f168j = i - 1;
         }
-    }
-
-    /* access modifiers changed from: private */
-    public static boolean isPermutation(List<?> first, List<?> second) {
-        if (first.size() != second.size()) {
-            return false;
-        }
-        ObjectCountHashMap<?> firstCounts = counts(first);
-        ObjectCountHashMap<?> secondCounts = counts(second);
-        if (first.size() != second.size()) {
-            return false;
-        }
-        for (int i = 0; i < first.size(); i++) {
-            if (firstCounts.getValue(i) != secondCounts.get(firstCounts.getKey(i))) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private static <E> ObjectCountHashMap<E> counts(Collection<E> collection) {
-        ObjectCountHashMap<E> map = new ObjectCountHashMap<>();
-        for (E e : collection) {
-            map.put(e, map.get(e) + 1);
-        }
-        return map;
     }
 }

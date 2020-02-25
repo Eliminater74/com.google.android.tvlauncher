@@ -17,12 +17,12 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
+
 import androidx.leanback.C0364R;
 
 @RequiresApi(21)
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
 public class FadeAndShortSlide extends Visibility {
-    private static final String PROPNAME_SCREEN_POSITION = "android:fadeAndShortSlideTransition:screenPosition";
     static final CalculateSlide sCalculateBottom = new CalculateSlide() {
         public float getGoneY(FadeAndShortSlide t, ViewGroup sceneRoot, View view, int[] position) {
             return view.getTranslationY() + t.getVerticalDistance(sceneRoot);
@@ -74,38 +74,12 @@ public class FadeAndShortSlide extends Visibility {
             return view.getTranslationY() - t.getVerticalDistance(sceneRoot);
         }
     };
+    private static final String PROPNAME_SCREEN_POSITION = "android:fadeAndShortSlideTransition:screenPosition";
     private static final TimeInterpolator sDecelerate = new DecelerateInterpolator();
+    final CalculateSlide sCalculateTopBottom;
     private float mDistance;
     private Visibility mFade;
     private CalculateSlide mSlideCalculator;
-    final CalculateSlide sCalculateTopBottom;
-
-    private static abstract class CalculateSlide {
-        CalculateSlide() {
-        }
-
-        /* access modifiers changed from: package-private */
-        public float getGoneX(FadeAndShortSlide t, ViewGroup sceneRoot, View view, int[] position) {
-            return view.getTranslationX();
-        }
-
-        /* access modifiers changed from: package-private */
-        public float getGoneY(FadeAndShortSlide t, ViewGroup sceneRoot, View view, int[] position) {
-            return view.getTranslationY();
-        }
-    }
-
-    /* access modifiers changed from: package-private */
-    public float getHorizontalDistance(ViewGroup sceneRoot) {
-        float f = this.mDistance;
-        return f >= 0.0f ? f : (float) (sceneRoot.getWidth() / 4);
-    }
-
-    /* access modifiers changed from: package-private */
-    public float getVerticalDistance(ViewGroup sceneRoot) {
-        float f = this.mDistance;
-        return f >= 0.0f ? f : (float) (sceneRoot.getHeight() / 4);
-    }
 
     public FadeAndShortSlide() {
         this(GravityCompat.START);
@@ -158,6 +132,18 @@ public class FadeAndShortSlide extends Visibility {
         TypedArray a = context.obtainStyledAttributes(attrs, C0364R.styleable.lbSlide);
         setSlideEdge(a.getInt(C0364R.styleable.lbSlide_lb_slideEdge, GravityCompat.START));
         a.recycle();
+    }
+
+    /* access modifiers changed from: package-private */
+    public float getHorizontalDistance(ViewGroup sceneRoot) {
+        float f = this.mDistance;
+        return f >= 0.0f ? f : (float) (sceneRoot.getWidth() / 4);
+    }
+
+    /* access modifiers changed from: package-private */
+    public float getVerticalDistance(ViewGroup sceneRoot) {
+        float f = this.mDistance;
+        return f >= 0.0f ? f : (float) (sceneRoot.getHeight() / 4);
     }
 
     public void setEpicenterCallback(Transition.EpicenterCallback epicenterCallback) {
@@ -275,5 +261,20 @@ public class FadeAndShortSlide extends Visibility {
         FadeAndShortSlide clone = (FadeAndShortSlide) super.clone();
         clone.mFade = (Visibility) this.mFade.clone();
         return clone;
+    }
+
+    private static abstract class CalculateSlide {
+        CalculateSlide() {
+        }
+
+        /* access modifiers changed from: package-private */
+        public float getGoneX(FadeAndShortSlide t, ViewGroup sceneRoot, View view, int[] position) {
+            return view.getTranslationX();
+        }
+
+        /* access modifiers changed from: package-private */
+        public float getGoneY(FadeAndShortSlide t, ViewGroup sceneRoot, View view, int[] position) {
+            return view.getTranslationY();
+        }
     }
 }

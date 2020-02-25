@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+
 import androidx.leanback.C0364R;
 import androidx.leanback.transition.TransitionHelper;
 import androidx.leanback.transition.TransitionListener;
@@ -29,6 +30,7 @@ import androidx.leanback.widget.ObjectAdapter;
 import androidx.leanback.widget.Presenter;
 import androidx.leanback.widget.RowPresenter;
 import androidx.leanback.widget.VerticalGridView;
+
 import java.lang.ref.WeakReference;
 
 @Deprecated
@@ -40,11 +42,51 @@ public class DetailsFragment extends BaseFragment {
     final StateMachine.Event EVT_NO_ENTER_TRANSITION = new StateMachine.Event("EVT_NO_ENTER_TRANSITION");
     final StateMachine.Event EVT_ONSTART = new StateMachine.Event("onStart");
     final StateMachine.Event EVT_SWITCH_TO_VIDEO = new StateMachine.Event("switchToVideo");
-    final StateMachine.State STATE_ENTER_TRANSITION_ADDLISTENER = new StateMachine.State("STATE_ENTER_TRANSITION_PENDING") {
+    final StateMachine.State STATE_ENTER_TRANSITION_COMPLETE = new StateMachine.State("STATE_ENTER_TRANSIITON_COMPLETE", true, false);
+    final StateMachine.State STATE_ENTER_TRANSITION_INIT = new StateMachine.State("STATE_ENTER_TRANSIITON_INIT");
+    final SetSelectionRunnable mSetSelectionRunnable = new SetSelectionRunnable();
+    ObjectAdapter mAdapter;
+    Drawable mBackgroundDrawable;
+    View mBackgroundView;
+    int mContainerListAlignTop;
+    DetailsFragmentBackgroundController mDetailsBackgroundController;
+    final StateMachine.State STATE_ON_SAFE_START = new StateMachine.State("STATE_ON_SAFE_START") {
         public void run() {
-            TransitionHelper.addTransitionListener(TransitionHelper.getEnterTransition(DetailsFragment.this.getActivity().getWindow()), DetailsFragment.this.mEnterTransitionListener);
+            DetailsFragment.this.onSafeStart();
         }
     };
+    DetailsParallax mDetailsParallax;
+    BaseOnItemViewSelectedListener mExternalOnItemViewSelectedListener;
+    BaseOnItemViewClickedListener mOnItemViewClickedListener;
+    boolean mPendingFocusOnVideo = false;
+    BrowseFrameLayout mRootView;
+    RowsFragment mRowsFragment;
+    final StateMachine.State STATE_SET_ENTRANCE_START_STATE = new StateMachine.State("STATE_SET_ENTRANCE_START_STATE") {
+        public void run() {
+            DetailsFragment.this.mRowsFragment.setEntranceTransitionState(false);
+        }
+    };
+    final StateMachine.State STATE_SWITCH_TO_VIDEO_IN_ON_CREATE = new StateMachine.State("STATE_SWITCH_TO_VIDEO_IN_ON_CREATE", false, false) {
+        public void run() {
+            DetailsFragment.this.switchToVideoBeforeVideoFragmentCreated();
+        }
+    };
+    final BaseOnItemViewSelectedListener<Object> mOnItemViewSelectedListener = new BaseOnItemViewSelectedListener<Object>() {
+        public void onItemSelected(Presenter.ViewHolder itemViewHolder, Object item, RowPresenter.ViewHolder rowViewHolder, Object row) {
+            DetailsFragment.this.onRowSelected(DetailsFragment.this.mRowsFragment.getVerticalGridView().getSelectedPosition(), DetailsFragment.this.mRowsFragment.getVerticalGridView().getSelectedSubPosition());
+            if (DetailsFragment.this.mExternalOnItemViewSelectedListener != null) {
+                DetailsFragment.this.mExternalOnItemViewSelectedListener.onItemSelected(itemViewHolder, item, rowViewHolder, row);
+            }
+        }
+    };
+    Object mSceneAfterEntranceTransition;
+    Fragment mVideoFragment;
+    TransitionListener mReturnTransitionListener = new TransitionListener() {
+        public void onTransitionStart(Object transition) {
+            DetailsFragment.this.onReturnTransitionStart();
+        }
+    };
+    WaitEnterTransitionTimeout mWaitEnterTransitionTimeout;
     final StateMachine.State STATE_ENTER_TRANSITION_CANCEL = new StateMachine.State("STATE_ENTER_TRANSITION_CANCEL", false, false) {
         public void run() {
             if (DetailsFragment.this.mWaitEnterTransitionTimeout != null) {
@@ -61,8 +103,6 @@ public class DetailsFragment extends BaseFragment {
             }
         }
     };
-    final StateMachine.State STATE_ENTER_TRANSITION_COMPLETE = new StateMachine.State("STATE_ENTER_TRANSIITON_COMPLETE", true, false);
-    final StateMachine.State STATE_ENTER_TRANSITION_INIT = new StateMachine.State("STATE_ENTER_TRANSIITON_INIT");
     final StateMachine.State STATE_ENTER_TRANSITION_PENDING = new StateMachine.State("STATE_ENTER_TRANSITION_PENDING") {
         public void run() {
             if (DetailsFragment.this.mWaitEnterTransitionTimeout == null) {
@@ -70,27 +110,6 @@ public class DetailsFragment extends BaseFragment {
             }
         }
     };
-    final StateMachine.State STATE_ON_SAFE_START = new StateMachine.State("STATE_ON_SAFE_START") {
-        public void run() {
-            DetailsFragment.this.onSafeStart();
-        }
-    };
-    final StateMachine.State STATE_SET_ENTRANCE_START_STATE = new StateMachine.State("STATE_SET_ENTRANCE_START_STATE") {
-        public void run() {
-            DetailsFragment.this.mRowsFragment.setEntranceTransitionState(false);
-        }
-    };
-    final StateMachine.State STATE_SWITCH_TO_VIDEO_IN_ON_CREATE = new StateMachine.State("STATE_SWITCH_TO_VIDEO_IN_ON_CREATE", false, false) {
-        public void run() {
-            DetailsFragment.this.switchToVideoBeforeVideoFragmentCreated();
-        }
-    };
-    ObjectAdapter mAdapter;
-    Drawable mBackgroundDrawable;
-    View mBackgroundView;
-    int mContainerListAlignTop;
-    DetailsFragmentBackgroundController mDetailsBackgroundController;
-    DetailsParallax mDetailsParallax;
     TransitionListener mEnterTransitionListener = new TransitionListener() {
         public void onTransitionStart(Object transition) {
             if (DetailsFragment.this.mWaitEnterTransitionTimeout != null) {
@@ -106,28 +125,11 @@ public class DetailsFragment extends BaseFragment {
             DetailsFragment.this.mStateMachine.fireEvent(DetailsFragment.this.EVT_ENTER_TRANSIITON_DONE);
         }
     };
-    BaseOnItemViewSelectedListener mExternalOnItemViewSelectedListener;
-    BaseOnItemViewClickedListener mOnItemViewClickedListener;
-    final BaseOnItemViewSelectedListener<Object> mOnItemViewSelectedListener = new BaseOnItemViewSelectedListener<Object>() {
-        public void onItemSelected(Presenter.ViewHolder itemViewHolder, Object item, RowPresenter.ViewHolder rowViewHolder, Object row) {
-            DetailsFragment.this.onRowSelected(DetailsFragment.this.mRowsFragment.getVerticalGridView().getSelectedPosition(), DetailsFragment.this.mRowsFragment.getVerticalGridView().getSelectedSubPosition());
-            if (DetailsFragment.this.mExternalOnItemViewSelectedListener != null) {
-                DetailsFragment.this.mExternalOnItemViewSelectedListener.onItemSelected(itemViewHolder, item, rowViewHolder, row);
-            }
+    final StateMachine.State STATE_ENTER_TRANSITION_ADDLISTENER = new StateMachine.State("STATE_ENTER_TRANSITION_PENDING") {
+        public void run() {
+            TransitionHelper.addTransitionListener(TransitionHelper.getEnterTransition(DetailsFragment.this.getActivity().getWindow()), DetailsFragment.this.mEnterTransitionListener);
         }
     };
-    boolean mPendingFocusOnVideo = false;
-    TransitionListener mReturnTransitionListener = new TransitionListener() {
-        public void onTransitionStart(Object transition) {
-            DetailsFragment.this.onReturnTransitionStart();
-        }
-    };
-    BrowseFrameLayout mRootView;
-    RowsFragment mRowsFragment;
-    Object mSceneAfterEntranceTransition;
-    final SetSelectionRunnable mSetSelectionRunnable = new SetSelectionRunnable();
-    Fragment mVideoFragment;
-    WaitEnterTransitionTimeout mWaitEnterTransitionTimeout;
 
     /* access modifiers changed from: package-private */
     public void switchToVideoBeforeVideoFragmentCreated() {
@@ -135,23 +137,6 @@ public class DetailsFragment extends BaseFragment {
         showTitle(false);
         this.mPendingFocusOnVideo = true;
         slideOutGridView();
-    }
-
-    static class WaitEnterTransitionTimeout implements Runnable {
-        static final long WAIT_ENTERTRANSITION_START = 200;
-        final WeakReference<DetailsFragment> mRef;
-
-        WaitEnterTransitionTimeout(DetailsFragment f) {
-            this.mRef = new WeakReference<>(f);
-            f.getView().postDelayed(this, WAIT_ENTERTRANSITION_START);
-        }
-
-        public void run() {
-            DetailsFragment f = this.mRef.get();
-            if (f != null) {
-                f.mStateMachine.fireEvent(f.EVT_ENTER_TRANSIITON_DONE);
-            }
-        }
     }
 
     /* access modifiers changed from: package-private */
@@ -189,18 +174,8 @@ public class DetailsFragment extends BaseFragment {
         this.mStateMachine.addTransition(this.STATE_ENTER_TRANSITION_COMPLETE, this.STATE_ON_SAFE_START);
     }
 
-    private class SetSelectionRunnable implements Runnable {
-        int mPosition;
-        boolean mSmooth = true;
-
-        SetSelectionRunnable() {
-        }
-
-        public void run() {
-            if (DetailsFragment.this.mRowsFragment != null) {
-                DetailsFragment.this.mRowsFragment.setSelectedPosition(this.mPosition, this.mSmooth);
-            }
-        }
+    public ObjectAdapter getAdapter() {
+        return this.mAdapter;
     }
 
     public void setAdapter(ObjectAdapter adapter) {
@@ -219,12 +194,12 @@ public class DetailsFragment extends BaseFragment {
         }
     }
 
-    public ObjectAdapter getAdapter() {
-        return this.mAdapter;
-    }
-
     public void setOnItemViewSelectedListener(BaseOnItemViewSelectedListener listener) {
         this.mExternalOnItemViewSelectedListener = listener;
+    }
+
+    public BaseOnItemViewClickedListener getOnItemViewClickedListener() {
+        return this.mOnItemViewClickedListener;
     }
 
     public void setOnItemViewClickedListener(BaseOnItemViewClickedListener listener) {
@@ -235,10 +210,6 @@ public class DetailsFragment extends BaseFragment {
                 rowsFragment.setOnItemViewClickedListener(listener);
             }
         }
-    }
-
-    public BaseOnItemViewClickedListener getOnItemViewClickedListener() {
-        return this.mOnItemViewClickedListener;
     }
 
     public void onCreate(Bundle savedInstanceState) {
@@ -617,6 +588,37 @@ public class DetailsFragment extends BaseFragment {
     public void slideInGridView() {
         if (getVerticalGridView() != null) {
             getVerticalGridView().animateIn();
+        }
+    }
+
+    static class WaitEnterTransitionTimeout implements Runnable {
+        static final long WAIT_ENTERTRANSITION_START = 200;
+        final WeakReference<DetailsFragment> mRef;
+
+        WaitEnterTransitionTimeout(DetailsFragment f) {
+            this.mRef = new WeakReference<>(f);
+            f.getView().postDelayed(this, WAIT_ENTERTRANSITION_START);
+        }
+
+        public void run() {
+            DetailsFragment f = this.mRef.get();
+            if (f != null) {
+                f.mStateMachine.fireEvent(f.EVT_ENTER_TRANSIITON_DONE);
+            }
+        }
+    }
+
+    private class SetSelectionRunnable implements Runnable {
+        int mPosition;
+        boolean mSmooth = true;
+
+        SetSelectionRunnable() {
+        }
+
+        public void run() {
+            if (DetailsFragment.this.mRowsFragment != null) {
+                DetailsFragment.this.mRowsFragment.setSelectedPosition(this.mPosition, this.mSmooth);
+            }
         }
     }
 }

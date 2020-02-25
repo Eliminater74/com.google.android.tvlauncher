@@ -9,29 +9,6 @@ public abstract class zzgsh {
     public static final int UNSET_ENUM_VALUE = Integer.MIN_VALUE;
     protected volatile int zzaz = -1;
 
-    public abstract zzgsh mergeFrom(zzgry zzgry) throws IOException;
-
-    public int getCachedSize() {
-        if (this.zzaz < 0) {
-            getSerializedSize();
-        }
-        return this.zzaz;
-    }
-
-    public int getSerializedSize() {
-        int computeSerializedSize = computeSerializedSize();
-        this.zzaz = computeSerializedSize;
-        return computeSerializedSize;
-    }
-
-    /* access modifiers changed from: protected */
-    public int computeSerializedSize() {
-        return 0;
-    }
-
-    public void writeTo(zzgrz zzgrz) throws IOException {
-    }
-
     public static final byte[] toByteArray(zzgsh zzgsh) {
         byte[] bArr = new byte[zzgsh.getSerializedSize()];
         toByteArray(zzgsh, bArr, 0, bArr.length);
@@ -114,6 +91,29 @@ public abstract class zzgsh {
         toByteArray(zzgsh, bArr, 0, serializedSize);
         toByteArray(zzgsh2, bArr2, 0, serializedSize);
         return Arrays.equals(bArr, bArr2);
+    }
+
+    public abstract zzgsh mergeFrom(zzgry zzgry) throws IOException;
+
+    public int getCachedSize() {
+        if (this.zzaz < 0) {
+            getSerializedSize();
+        }
+        return this.zzaz;
+    }
+
+    public int getSerializedSize() {
+        int computeSerializedSize = computeSerializedSize();
+        this.zzaz = computeSerializedSize;
+        return computeSerializedSize;
+    }
+
+    /* access modifiers changed from: protected */
+    public int computeSerializedSize() {
+        return 0;
+    }
+
+    public void writeTo(zzgrz zzgrz) throws IOException {
     }
 
     public String toString() {

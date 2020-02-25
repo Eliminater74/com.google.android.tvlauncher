@@ -10,9 +10,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.text.TextUtils;
+
 import com.google.android.gms.common.internal.BaseGmsClient;
 import com.google.android.gms.common.internal.Hide;
 import com.google.android.gms.common.internal.zzau;
+
 import java.io.IOException;
 
 @Hide

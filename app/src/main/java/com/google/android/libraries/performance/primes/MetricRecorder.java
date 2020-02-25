@@ -1,11 +1,14 @@
 package com.google.android.libraries.performance.primes;
 
 import android.support.annotation.Nullable;
+
 import com.google.android.libraries.performance.primes.sampling.PrimesSampling;
 import com.google.android.libraries.performance.primes.transmitter.MetricTransmitter;
 import com.google.android.libraries.stitch.util.Preconditions;
+
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
+
 import logs.proto.wireless.performance.mobile.ExtensionMetric;
 import logs.proto.wireless.performance.mobile.SystemHealthProto;
 
@@ -16,11 +19,6 @@ class MetricRecorder {
     private final Supplier<MetricStamper> metricStamperSupplier;
     private final MetricTransmitter metricTransmitter;
     private final RunIn whereToRun;
-
-    public enum RunIn {
-        SAME_THREAD,
-        BACKGROUND_THREAD
-    }
 
     MetricRecorder(MetricTransmitter metricTransmitter2, Supplier<MetricStamper> metricStamperSupplier2, Supplier<ScheduledExecutorService> executorServiceSupplier2, RunIn whereToRun2, int sampleRatePerSecond) {
         this.metricTransmitter = (MetricTransmitter) Preconditions.checkNotNull(metricTransmitter2);
@@ -93,5 +91,10 @@ class MetricRecorder {
         }
         this.metricTransmitter.send((SystemHealthProto.SystemHealthMetric) metricBuilder.build());
         this.instrumentationSampling.incrementSampleCount();
+    }
+
+    public enum RunIn {
+        SAME_THREAD,
+        BACKGROUND_THREAD
     }
 }

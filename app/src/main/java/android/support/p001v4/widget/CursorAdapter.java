@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.DataSetObserver;
 import android.os.Handler;
 import android.support.annotation.RestrictTo;
-import android.support.p001v4.widget.CursorFilter;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -38,10 +37,6 @@ public abstract class CursorAdapter extends BaseAdapter implements Filterable, C
     @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
     protected int mRowIDColumn;
 
-    public abstract void bindView(View view, Context context, Cursor cursor);
-
-    public abstract View newView(Context context, Cursor cursor, ViewGroup viewGroup);
-
     @Deprecated
     public CursorAdapter(Context context, Cursor c) {
         init(context, c, 1);
@@ -54,6 +49,10 @@ public abstract class CursorAdapter extends BaseAdapter implements Filterable, C
     public CursorAdapter(Context context, Cursor c, int flags) {
         init(context, c, flags);
     }
+
+    public abstract void bindView(View view, Context context, Cursor cursor);
+
+    public abstract View newView(Context context, Cursor cursor, ViewGroup viewGroup);
 
     /* access modifiers changed from: protected */
     @Deprecated

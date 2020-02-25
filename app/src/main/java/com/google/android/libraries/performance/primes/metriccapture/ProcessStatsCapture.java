@@ -2,6 +2,7 @@ package com.google.android.libraries.performance.primes.metriccapture;
 
 import android.content.Context;
 import android.os.Process;
+
 import logs.proto.wireless.performance.mobile.ProcessProto;
 
 public final class ProcessStatsCapture {

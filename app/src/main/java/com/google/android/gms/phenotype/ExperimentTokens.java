@@ -3,9 +3,11 @@ package com.google.android.gms.phenotype;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Base64;
+
 import com.google.android.gms.common.annotation.KeepForSdk;
 import com.google.android.gms.internal.zzbkv;
 import com.google.android.gms.internal.zzbky;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -26,6 +28,12 @@ public class ExperimentTokens extends zzbkv {
     private static final zza zzb = new zzf();
     private static final zza zzc = new zzg();
     private static final zza zzd = new zzh();
+
+    static {
+        byte[][] bArr = EMPTY_BYTES;
+        EMPTY = new ExperimentTokens("", null, bArr, bArr, bArr, bArr, null, null);
+    }
+
     public final byte[][] additionalDirectExperimentTokens;
     public final byte[][] alwaysCrossExperimentTokens;
     public final byte[] directExperimentToken;
@@ -35,8 +43,19 @@ public class ExperimentTokens extends zzbkv {
     public final String user;
     public final int[] weakExperimentIds;
 
-    interface zza {
-        byte[][] zza(ExperimentTokens experimentTokens);
+    public ExperimentTokens(String str, byte[] bArr, byte[][] bArr2, byte[][] bArr3, byte[][] bArr4, byte[][] bArr5, int[] iArr, byte[][] bArr6) {
+        this.user = str;
+        this.directExperimentToken = bArr;
+        this.gaiaCrossExperimentTokens = bArr2;
+        this.pseudonymousCrossExperimentTokens = bArr3;
+        this.alwaysCrossExperimentTokens = bArr4;
+        this.otherCrossExperimentTokens = bArr5;
+        this.weakExperimentIds = iArr;
+        this.additionalDirectExperimentTokens = bArr6;
+    }
+
+    public ExperimentTokens(String str, byte[] bArr, byte[][] bArr2, byte[][] bArr3, byte[][] bArr4, byte[][] bArr5, int[] iArr) {
+        this(str, bArr, bArr2, bArr3, bArr4, bArr5, iArr, null);
     }
 
     public static ExperimentTokens merge(List<ExperimentTokens> list) {
@@ -69,19 +88,244 @@ public class ExperimentTokens extends zzbkv {
         return true;
     }
 
-    public ExperimentTokens(String str, byte[] bArr, byte[][] bArr2, byte[][] bArr3, byte[][] bArr4, byte[][] bArr5, int[] iArr, byte[][] bArr6) {
-        this.user = str;
-        this.directExperimentToken = bArr;
-        this.gaiaCrossExperimentTokens = bArr2;
-        this.pseudonymousCrossExperimentTokens = bArr3;
-        this.alwaysCrossExperimentTokens = bArr4;
-        this.otherCrossExperimentTokens = bArr5;
-        this.weakExperimentIds = iArr;
-        this.additionalDirectExperimentTokens = bArr6;
+    private static byte[][] zza(byte[][] bArr) {
+        if (bArr == null || bArr.length == 0) {
+            return bArr;
+        }
+        byte[][] bArr2 = new byte[bArr.length][];
+        for (int i = 0; i < bArr.length; i++) {
+            if (bArr[i] == null || bArr[i].length == 0) {
+                bArr2[i] = bArr[i];
+            } else {
+                bArr2[i] = Arrays.copyOf(bArr[i], bArr[i].length);
+            }
+        }
+        return bArr2;
     }
 
-    public ExperimentTokens(String str, byte[] bArr, byte[][] bArr2, byte[][] bArr3, byte[][] bArr4, byte[][] bArr5, int[] iArr) {
-        this(str, bArr, bArr2, bArr3, bArr4, bArr5, iArr, null);
+    private static void zza(StringBuilder sb, String str, byte[][] bArr) {
+        sb.append(str);
+        sb.append("=");
+        if (bArr == null) {
+            sb.append("null");
+            return;
+        }
+        sb.append("(");
+        int length = bArr.length;
+        int i = 0;
+        boolean z = true;
+        while (i < length) {
+            byte[] bArr2 = bArr[i];
+            if (!z) {
+                sb.append(", ");
+            }
+            sb.append("'");
+            sb.append(Base64.encodeToString(bArr2, 3));
+            sb.append("'");
+            i++;
+            z = false;
+        }
+        sb.append(")");
+    }
+
+    private static List<String> zzb(byte[][] bArr) {
+        if (bArr == null) {
+            return Collections.emptyList();
+        }
+        ArrayList arrayList = new ArrayList(bArr.length);
+        for (byte[] encodeToString : bArr) {
+            arrayList.add(Base64.encodeToString(encodeToString, 3));
+        }
+        Collections.sort(arrayList);
+        return arrayList;
+    }
+
+    private static List<Integer> zza(int[] iArr) {
+        if (iArr == null) {
+            return Collections.emptyList();
+        }
+        ArrayList arrayList = new ArrayList(iArr.length);
+        for (int valueOf : iArr) {
+            arrayList.add(Integer.valueOf(valueOf));
+        }
+        Collections.sort(arrayList);
+        return arrayList;
+    }
+
+    private static int zzc(byte[][] bArr) {
+        if (bArr == null) {
+            return 0;
+        }
+        int i = 0;
+        for (byte[] bArr2 : bArr) {
+            if (bArr2 != null) {
+                i += bArr2.length;
+            }
+        }
+        return i;
+    }
+
+    private static byte[][] zza(List<ExperimentTokens> list) {
+        byte[][] bArr;
+        byte[] bArr2;
+        byte[][] bArr3;
+        int i = 0;
+        for (ExperimentTokens next : list) {
+            if (!(next == null || next.directExperimentToken == null)) {
+                i++;
+            }
+            if (!(next == null || (bArr3 = next.additionalDirectExperimentTokens) == null)) {
+                i += bArr3.length;
+            }
+        }
+        byte[][] bArr4 = new byte[i][];
+        int i2 = 0;
+        for (ExperimentTokens next2 : list) {
+            if (!(next2 == null || (bArr2 = next2.directExperimentToken) == null)) {
+                bArr4[i2] = bArr2;
+                i2++;
+            }
+            if (!(next2 == null || (bArr = next2.additionalDirectExperimentTokens) == null)) {
+                int length = bArr.length;
+                int i3 = i2;
+                int i4 = 0;
+                while (i4 < length) {
+                    bArr4[i3] = bArr[i4];
+                    i4++;
+                    i3++;
+                }
+                i2 = i3;
+            }
+        }
+        return bArr4;
+    }
+
+    private static int[] zzb(List<ExperimentTokens> list) {
+        int[] iArr;
+        int[] iArr2;
+        int i = 0;
+        for (ExperimentTokens next : list) {
+            if (!(next == null || (iArr2 = next.weakExperimentIds) == null)) {
+                i += iArr2.length;
+            }
+        }
+        int[] iArr3 = new int[i];
+        int i2 = 0;
+        for (ExperimentTokens next2 : list) {
+            if (!(next2 == null || (iArr = next2.weakExperimentIds) == null)) {
+                int length = iArr.length;
+                int i3 = i2;
+                int i4 = 0;
+                while (i4 < length) {
+                    iArr3[i3] = iArr[i4];
+                    i4++;
+                    i3++;
+                }
+                i2 = i3;
+            }
+        }
+        return iArr3;
+    }
+
+    private static byte[][] zza(List<ExperimentTokens> list, zza zza2) {
+        int i = 0;
+        for (ExperimentTokens next : list) {
+            if (!(next == null || zza2.zza(next) == null)) {
+                i += zza2.zza(next).length;
+            }
+        }
+        byte[][] bArr = new byte[i][];
+        int i2 = 0;
+        for (ExperimentTokens next2 : list) {
+            if (!(next2 == null || zza2.zza(next2) == null)) {
+                byte[][] zza3 = zza2.zza(next2);
+                int length = zza3.length;
+                int i3 = i2;
+                int i4 = 0;
+                while (i4 < length) {
+                    bArr[i3] = zza3[i4];
+                    i4++;
+                    i3++;
+                }
+                i2 = i3;
+            }
+        }
+        return bArr;
+    }
+
+    private static void zza(byte[] bArr, DataOutputStream dataOutputStream) throws IOException {
+        if (bArr != null) {
+            dataOutputStream.writeInt(bArr.length);
+            dataOutputStream.write(bArr, 0, bArr.length);
+            return;
+        }
+        dataOutputStream.writeInt(0);
+    }
+
+    private static void zza(byte[][] bArr, DataOutputStream dataOutputStream) throws IOException {
+        if (bArr != null) {
+            dataOutputStream.writeInt(bArr.length);
+            for (byte[] zza2 : bArr) {
+                zza(zza2, dataOutputStream);
+            }
+            return;
+        }
+        dataOutputStream.writeInt(0);
+    }
+
+    public static ExperimentTokens deserializeFromString(String str) {
+        int[] iArr;
+        DataInputStream dataInputStream = new DataInputStream(new ByteArrayInputStream(Base64.decode(str, 0)));
+        try {
+            int readInt = dataInputStream.readInt();
+            if (readInt == 1) {
+                String readUTF = dataInputStream.readUTF();
+                byte[] zza2 = zza(dataInputStream);
+                byte[][] zzb2 = zzb(dataInputStream);
+                byte[][] zzb3 = zzb(dataInputStream);
+                byte[][] zzb4 = zzb(dataInputStream);
+                byte[][] zzb5 = zzb(dataInputStream);
+                int readInt2 = dataInputStream.readInt();
+                if (readInt2 == 0) {
+                    iArr = null;
+                } else {
+                    int[] iArr2 = new int[readInt2];
+                    for (int i = 0; i < readInt2; i++) {
+                        iArr2[i] = dataInputStream.readInt();
+                    }
+                    iArr = iArr2;
+                }
+                return new ExperimentTokens(readUTF, zza2, zzb2, zzb3, zzb4, zzb5, iArr, zzb(dataInputStream));
+            }
+            StringBuilder sb = new StringBuilder(30);
+            sb.append("Unexpected version ");
+            sb.append(readInt);
+            throw new RuntimeException(sb.toString());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static byte[] zza(DataInputStream dataInputStream) throws IOException {
+        int readInt = dataInputStream.readInt();
+        if (readInt == 0) {
+            return null;
+        }
+        byte[] bArr = new byte[readInt];
+        dataInputStream.readFully(bArr);
+        return bArr;
+    }
+
+    private static byte[][] zzb(DataInputStream dataInputStream) throws IOException {
+        int readInt = dataInputStream.readInt();
+        if (readInt == 0) {
+            return null;
+        }
+        byte[][] bArr = new byte[readInt][];
+        for (int i = 0; i < readInt; i++) {
+            bArr[i] = zza(dataInputStream);
+        }
+        return bArr;
     }
 
     public ExperimentTokens deepCopy() {
@@ -105,21 +349,6 @@ public class ExperimentTokens extends zzbkv {
             iArr = Arrays.copyOf(iArr2, iArr2.length);
         }
         return new ExperimentTokens(str, bArr, zza2, zza3, zza4, zza5, iArr, zza(this.additionalDirectExperimentTokens));
-    }
-
-    private static byte[][] zza(byte[][] bArr) {
-        if (bArr == null || bArr.length == 0) {
-            return bArr;
-        }
-        byte[][] bArr2 = new byte[bArr.length][];
-        for (int i = 0; i < bArr.length; i++) {
-            if (bArr[i] == null || bArr[i].length == 0) {
-                bArr2[i] = bArr[i];
-            } else {
-                bArr2[i] = Arrays.copyOf(bArr[i], bArr[i].length);
-            }
-        }
-        return bArr2;
     }
 
     public String toString() {
@@ -184,31 +413,6 @@ public class ExperimentTokens extends zzbkv {
         return sb.toString();
     }
 
-    private static void zza(StringBuilder sb, String str, byte[][] bArr) {
-        sb.append(str);
-        sb.append("=");
-        if (bArr == null) {
-            sb.append("null");
-            return;
-        }
-        sb.append("(");
-        int length = bArr.length;
-        int i = 0;
-        boolean z = true;
-        while (i < length) {
-            byte[] bArr2 = bArr[i];
-            if (!z) {
-                sb.append(", ");
-            }
-            sb.append("'");
-            sb.append(Base64.encodeToString(bArr2, 3));
-            sb.append("'");
-            i++;
-            z = false;
-        }
-        sb.append(")");
-    }
-
     public boolean equals(Object obj) {
         if (!(obj instanceof ExperimentTokens)) {
             return false;
@@ -218,30 +422,6 @@ public class ExperimentTokens extends zzbkv {
             return false;
         }
         return true;
-    }
-
-    private static List<String> zzb(byte[][] bArr) {
-        if (bArr == null) {
-            return Collections.emptyList();
-        }
-        ArrayList arrayList = new ArrayList(bArr.length);
-        for (byte[] encodeToString : bArr) {
-            arrayList.add(Base64.encodeToString(encodeToString, 3));
-        }
-        Collections.sort(arrayList);
-        return arrayList;
-    }
-
-    private static List<Integer> zza(int[] iArr) {
-        if (iArr == null) {
-            return Collections.emptyList();
-        }
-        ArrayList arrayList = new ArrayList(iArr.length);
-        for (int valueOf : iArr) {
-            arrayList.add(Integer.valueOf(valueOf));
-        }
-        Collections.sort(arrayList);
-        return arrayList;
     }
 
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
@@ -377,107 +557,6 @@ public class ExperimentTokens extends zzbkv {
         return length2 + (i * 4);
     }
 
-    private static int zzc(byte[][] bArr) {
-        if (bArr == null) {
-            return 0;
-        }
-        int i = 0;
-        for (byte[] bArr2 : bArr) {
-            if (bArr2 != null) {
-                i += bArr2.length;
-            }
-        }
-        return i;
-    }
-
-    private static byte[][] zza(List<ExperimentTokens> list) {
-        byte[][] bArr;
-        byte[] bArr2;
-        byte[][] bArr3;
-        int i = 0;
-        for (ExperimentTokens next : list) {
-            if (!(next == null || next.directExperimentToken == null)) {
-                i++;
-            }
-            if (!(next == null || (bArr3 = next.additionalDirectExperimentTokens) == null)) {
-                i += bArr3.length;
-            }
-        }
-        byte[][] bArr4 = new byte[i][];
-        int i2 = 0;
-        for (ExperimentTokens next2 : list) {
-            if (!(next2 == null || (bArr2 = next2.directExperimentToken) == null)) {
-                bArr4[i2] = bArr2;
-                i2++;
-            }
-            if (!(next2 == null || (bArr = next2.additionalDirectExperimentTokens) == null)) {
-                int length = bArr.length;
-                int i3 = i2;
-                int i4 = 0;
-                while (i4 < length) {
-                    bArr4[i3] = bArr[i4];
-                    i4++;
-                    i3++;
-                }
-                i2 = i3;
-            }
-        }
-        return bArr4;
-    }
-
-    private static int[] zzb(List<ExperimentTokens> list) {
-        int[] iArr;
-        int[] iArr2;
-        int i = 0;
-        for (ExperimentTokens next : list) {
-            if (!(next == null || (iArr2 = next.weakExperimentIds) == null)) {
-                i += iArr2.length;
-            }
-        }
-        int[] iArr3 = new int[i];
-        int i2 = 0;
-        for (ExperimentTokens next2 : list) {
-            if (!(next2 == null || (iArr = next2.weakExperimentIds) == null)) {
-                int length = iArr.length;
-                int i3 = i2;
-                int i4 = 0;
-                while (i4 < length) {
-                    iArr3[i3] = iArr[i4];
-                    i4++;
-                    i3++;
-                }
-                i2 = i3;
-            }
-        }
-        return iArr3;
-    }
-
-    private static byte[][] zza(List<ExperimentTokens> list, zza zza2) {
-        int i = 0;
-        for (ExperimentTokens next : list) {
-            if (!(next == null || zza2.zza(next) == null)) {
-                i += zza2.zza(next).length;
-            }
-        }
-        byte[][] bArr = new byte[i][];
-        int i2 = 0;
-        for (ExperimentTokens next2 : list) {
-            if (!(next2 == null || zza2.zza(next2) == null)) {
-                byte[][] zza3 = zza2.zza(next2);
-                int length = zza3.length;
-                int i3 = i2;
-                int i4 = 0;
-                while (i4 < length) {
-                    bArr[i3] = zza3[i4];
-                    i4++;
-                    i3++;
-                }
-                i2 = i3;
-            }
-        }
-        return bArr;
-    }
-
     public String serializeToString() {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream);
@@ -519,83 +598,7 @@ public class ExperimentTokens extends zzbkv {
         }
     }
 
-    private static void zza(byte[] bArr, DataOutputStream dataOutputStream) throws IOException {
-        if (bArr != null) {
-            dataOutputStream.writeInt(bArr.length);
-            dataOutputStream.write(bArr, 0, bArr.length);
-            return;
-        }
-        dataOutputStream.writeInt(0);
-    }
-
-    private static void zza(byte[][] bArr, DataOutputStream dataOutputStream) throws IOException {
-        if (bArr != null) {
-            dataOutputStream.writeInt(bArr.length);
-            for (byte[] zza2 : bArr) {
-                zza(zza2, dataOutputStream);
-            }
-            return;
-        }
-        dataOutputStream.writeInt(0);
-    }
-
-    public static ExperimentTokens deserializeFromString(String str) {
-        int[] iArr;
-        DataInputStream dataInputStream = new DataInputStream(new ByteArrayInputStream(Base64.decode(str, 0)));
-        try {
-            int readInt = dataInputStream.readInt();
-            if (readInt == 1) {
-                String readUTF = dataInputStream.readUTF();
-                byte[] zza2 = zza(dataInputStream);
-                byte[][] zzb2 = zzb(dataInputStream);
-                byte[][] zzb3 = zzb(dataInputStream);
-                byte[][] zzb4 = zzb(dataInputStream);
-                byte[][] zzb5 = zzb(dataInputStream);
-                int readInt2 = dataInputStream.readInt();
-                if (readInt2 == 0) {
-                    iArr = null;
-                } else {
-                    int[] iArr2 = new int[readInt2];
-                    for (int i = 0; i < readInt2; i++) {
-                        iArr2[i] = dataInputStream.readInt();
-                    }
-                    iArr = iArr2;
-                }
-                return new ExperimentTokens(readUTF, zza2, zzb2, zzb3, zzb4, zzb5, iArr, zzb(dataInputStream));
-            }
-            StringBuilder sb = new StringBuilder(30);
-            sb.append("Unexpected version ");
-            sb.append(readInt);
-            throw new RuntimeException(sb.toString());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static byte[] zza(DataInputStream dataInputStream) throws IOException {
-        int readInt = dataInputStream.readInt();
-        if (readInt == 0) {
-            return null;
-        }
-        byte[] bArr = new byte[readInt];
-        dataInputStream.readFully(bArr);
-        return bArr;
-    }
-
-    private static byte[][] zzb(DataInputStream dataInputStream) throws IOException {
-        int readInt = dataInputStream.readInt();
-        if (readInt == 0) {
-            return null;
-        }
-        byte[][] bArr = new byte[readInt][];
-        for (int i = 0; i < readInt; i++) {
-            bArr[i] = zza(dataInputStream);
-        }
-        return bArr;
-    }
-
-    static {
-        byte[][] bArr = EMPTY_BYTES;
-        EMPTY = new ExperimentTokens("", null, bArr, bArr, bArr, bArr, null, null);
+    interface zza {
+        byte[][] zza(ExperimentTokens experimentTokens);
     }
 }

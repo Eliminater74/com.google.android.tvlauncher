@@ -12,6 +12,10 @@ class zzgqx extends AbstractSet<Map.Entry<K, V>> {
         this.zza = zzgqo;
     }
 
+    /* synthetic */ zzgqx(zzgqo zzgqo, zzgqp zzgqp) {
+        this(zzgqo);
+    }
+
     public Iterator<Map.Entry<K, V>> iterator() {
         return new zzgqw(this.zza, null);
     }
@@ -50,9 +54,5 @@ class zzgqx extends AbstractSet<Map.Entry<K, V>> {
         }
         this.zza.put((Comparable) entry.getKey(), entry.getValue());
         return true;
-    }
-
-    /* synthetic */ zzgqx(zzgqo zzgqo, zzgqp zzgqp) {
-        this(zzgqo);
     }
 }

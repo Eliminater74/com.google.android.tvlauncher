@@ -7,6 +7,9 @@ import android.widget.ListView;
 
 /* renamed from: android.support.v4.widget.ListViewCompat */
 public final class ListViewCompat {
+    private ListViewCompat() {
+    }
+
     public static void scrollListBy(@NonNull ListView listView, int y) {
         View firstView;
         if (Build.VERSION.SDK_INT >= 19) {
@@ -40,8 +43,5 @@ public final class ListViewCompat {
             return true;
         }
         return false;
-    }
-
-    private ListViewCompat() {
     }
 }

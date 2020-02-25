@@ -30,11 +30,17 @@ public interface DecorToolbar {
 
     View getCustomView();
 
+    void setCustomView(View view);
+
     int getDisplayOptions();
+
+    void setDisplayOptions(int i);
 
     int getDropdownItemCount();
 
     int getDropdownSelectedPosition();
+
+    void setDropdownSelectedPosition(int i);
 
     int getHeight();
 
@@ -42,13 +48,21 @@ public interface DecorToolbar {
 
     int getNavigationMode();
 
+    void setNavigationMode(int i);
+
     CharSequence getSubtitle();
 
+    void setSubtitle(CharSequence charSequence);
+
     CharSequence getTitle();
+
+    void setTitle(CharSequence charSequence);
 
     ViewGroup getViewGroup();
 
     int getVisibility();
+
+    void setVisibility(int i);
 
     boolean hasEmbeddedTabs();
 
@@ -78,17 +92,11 @@ public interface DecorToolbar {
 
     void setCollapsible(boolean z);
 
-    void setCustomView(View view);
-
     void setDefaultNavigationContentDescription(int i);
 
     void setDefaultNavigationIcon(Drawable drawable);
 
-    void setDisplayOptions(int i);
-
     void setDropdownParams(SpinnerAdapter spinnerAdapter, AdapterView.OnItemSelectedListener onItemSelectedListener);
-
-    void setDropdownSelectedPosition(int i);
 
     void setEmbeddedTabView(ScrollingTabContainerView scrollingTabContainerView);
 
@@ -115,14 +123,6 @@ public interface DecorToolbar {
     void setNavigationIcon(int i);
 
     void setNavigationIcon(Drawable drawable);
-
-    void setNavigationMode(int i);
-
-    void setSubtitle(CharSequence charSequence);
-
-    void setTitle(CharSequence charSequence);
-
-    void setVisibility(int i);
 
     void setWindowCallback(Window.Callback callback);
 

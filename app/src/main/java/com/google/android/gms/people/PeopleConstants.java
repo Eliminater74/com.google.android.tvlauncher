@@ -5,6 +5,27 @@ import com.google.android.gms.common.internal.Hide;
 @Hide
 public class PeopleConstants {
 
+    private PeopleConstants() {
+    }
+
+    public static int booleanToTriState(Boolean bool) {
+        if (bool == null) {
+            return 0;
+        }
+        return bool.booleanValue() ? 2 : 1;
+    }
+
+    public static Boolean triStateToBoolean(int i) {
+        if (i == 0) {
+            return null;
+        }
+        boolean z = true;
+        if (i == 1) {
+            z = false;
+        }
+        return Boolean.valueOf(z);
+    }
+
     public interface AcItemType {
         public static final int EMAIL = 1;
         public static final int GAIA_ID = 3;
@@ -303,26 +324,5 @@ public class PeopleConstants {
         public static final int FALSE = 1;
         public static final int TRUE = 2;
         public static final int UNKNOWN = 0;
-    }
-
-    private PeopleConstants() {
-    }
-
-    public static int booleanToTriState(Boolean bool) {
-        if (bool == null) {
-            return 0;
-        }
-        return bool.booleanValue() ? 2 : 1;
-    }
-
-    public static Boolean triStateToBoolean(int i) {
-        if (i == 0) {
-            return null;
-        }
-        boolean z = true;
-        if (i == 1) {
-            z = false;
-        }
-        return Boolean.valueOf(z);
     }
 }

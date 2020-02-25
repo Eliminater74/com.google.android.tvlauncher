@@ -3,7 +3,6 @@ package androidx.leanback.widget;
 import android.support.annotation.RestrictTo;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
-import androidx.leanback.widget.RowPresenter;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
 public class InvisibleRowPresenter extends RowPresenter {

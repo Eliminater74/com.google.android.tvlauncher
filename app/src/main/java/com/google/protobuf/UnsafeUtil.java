@@ -1,6 +1,7 @@
 package com.google.protobuf;
 
 import com.google.common.primitives.UnsignedBytes;
+
 import java.lang.reflect.Field;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
@@ -9,36 +10,37 @@ import java.security.AccessController;
 import java.security.PrivilegedExceptionAction;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import libcore.io.Memory;
 import sun.misc.Unsafe;
 
 final class UnsafeUtil {
-    private static final long BOOLEAN_ARRAY_BASE_OFFSET = ((long) arrayBaseOffset(boolean[].class));
-    private static final long BOOLEAN_ARRAY_INDEX_SCALE = ((long) arrayIndexScale(boolean[].class));
-    private static final long BUFFER_ADDRESS_OFFSET = fieldOffset(bufferAddressField());
+    static final boolean IS_BIG_ENDIAN = (ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN);
     private static final int BYTE_ARRAY_ALIGNMENT = ((int) (BYTE_ARRAY_BASE_OFFSET & 7));
-    static final long BYTE_ARRAY_BASE_OFFSET = ((long) arrayBaseOffset(byte[].class));
-    private static final long DOUBLE_ARRAY_BASE_OFFSET = ((long) arrayBaseOffset(double[].class));
-    private static final long DOUBLE_ARRAY_INDEX_SCALE = ((long) arrayIndexScale(double[].class));
-    private static final long FLOAT_ARRAY_BASE_OFFSET = ((long) arrayBaseOffset(float[].class));
-    private static final long FLOAT_ARRAY_INDEX_SCALE = ((long) arrayIndexScale(float[].class));
-    private static final boolean HAS_UNSAFE_ARRAY_OPERATIONS = supportsUnsafeArrayOperations();
-    private static final boolean HAS_UNSAFE_BYTEBUFFER_OPERATIONS = supportsUnsafeByteBufferOperations();
-    private static final long INT_ARRAY_BASE_OFFSET = ((long) arrayBaseOffset(int[].class));
-    private static final long INT_ARRAY_INDEX_SCALE = ((long) arrayIndexScale(int[].class));
+    private static final Class<?> MEMORY_CLASS = Android.getMemoryClass();
     private static final boolean IS_ANDROID_32 = determineAndroidSupportByAddressSize(Integer.TYPE);
     private static final boolean IS_ANDROID_64 = determineAndroidSupportByAddressSize(Long.TYPE);
-    static final boolean IS_BIG_ENDIAN = (ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN);
-    private static final long LONG_ARRAY_BASE_OFFSET = ((long) arrayBaseOffset(long[].class));
-    private static final long LONG_ARRAY_INDEX_SCALE = ((long) arrayIndexScale(long[].class));
-    private static final MemoryAccessor MEMORY_ACCESSOR = getMemoryAccessor();
-    private static final Class<?> MEMORY_CLASS = Android.getMemoryClass();
     private static final long OBJECT_ARRAY_BASE_OFFSET = ((long) arrayBaseOffset(Object[].class));
     private static final long OBJECT_ARRAY_INDEX_SCALE = ((long) arrayIndexScale(Object[].class));
     private static final int STRIDE = 8;
     private static final int STRIDE_ALIGNMENT_MASK = 7;
     private static final Unsafe UNSAFE = getUnsafe();
+    private static final MemoryAccessor MEMORY_ACCESSOR = getMemoryAccessor();
+    private static final long BUFFER_ADDRESS_OFFSET = fieldOffset(bufferAddressField());
+    private static final long INT_ARRAY_BASE_OFFSET = ((long) arrayBaseOffset(int[].class));
+    private static final long INT_ARRAY_INDEX_SCALE = ((long) arrayIndexScale(int[].class));
+    private static final long LONG_ARRAY_BASE_OFFSET = ((long) arrayBaseOffset(long[].class));
+    private static final long LONG_ARRAY_INDEX_SCALE = ((long) arrayIndexScale(long[].class));
     private static final Logger logger = Logger.getLogger(UnsafeUtil.class.getName());
+    private static final boolean HAS_UNSAFE_ARRAY_OPERATIONS = supportsUnsafeArrayOperations();
+    private static final long BOOLEAN_ARRAY_BASE_OFFSET = ((long) arrayBaseOffset(boolean[].class));
+    private static final long BOOLEAN_ARRAY_INDEX_SCALE = ((long) arrayIndexScale(boolean[].class));
+    static final long BYTE_ARRAY_BASE_OFFSET = ((long) arrayBaseOffset(byte[].class));
+    private static final long DOUBLE_ARRAY_BASE_OFFSET = ((long) arrayBaseOffset(double[].class));
+    private static final long DOUBLE_ARRAY_INDEX_SCALE = ((long) arrayIndexScale(double[].class));
+    private static final long FLOAT_ARRAY_BASE_OFFSET = ((long) arrayBaseOffset(float[].class));
+    private static final long FLOAT_ARRAY_INDEX_SCALE = ((long) arrayIndexScale(float[].class));
+    private static final boolean HAS_UNSAFE_BYTEBUFFER_OPERATIONS = supportsUnsafeByteBufferOperations();
 
     private UnsafeUtil() {
     }
@@ -446,8 +448,56 @@ final class UnsafeUtil {
         }
     }
 
+    /* access modifiers changed from: private */
+    public static byte getByteBigEndian(Object target, long offset) {
+        return (byte) ((getInt(target, -4 & offset) >>> ((int) (((-1 ^ offset) & 3) << 3))) & 255);
+    }
+
+    /* access modifiers changed from: private */
+    public static byte getByteLittleEndian(Object target, long offset) {
+        return (byte) ((getInt(target, -4 & offset) >>> ((int) ((3 & offset) << 3))) & 255);
+    }
+
+    /* access modifiers changed from: private */
+    public static void putByteBigEndian(Object target, long offset, byte value) {
+        int shift = ((((int) offset) ^ -1) & 3) << 3;
+        long j = -4 & offset;
+        putInt(target, j, (((255 << shift) ^ -1) & getInt(target, offset & -4)) | ((value & UnsignedBytes.MAX_VALUE) << shift));
+    }
+
+    /* access modifiers changed from: private */
+    public static void putByteLittleEndian(Object target, long offset, byte value) {
+        int shift = (((int) offset) & 3) << 3;
+        long j = -4 & offset;
+        putInt(target, j, (((255 << shift) ^ -1) & getInt(target, offset & -4)) | ((value & UnsignedBytes.MAX_VALUE) << shift));
+    }
+
+    /* access modifiers changed from: private */
+    public static boolean getBooleanBigEndian(Object target, long offset) {
+        return getByteBigEndian(target, offset) != 0;
+    }
+
+    /* access modifiers changed from: private */
+    public static boolean getBooleanLittleEndian(Object target, long offset) {
+        return getByteLittleEndian(target, offset) != 0;
+    }
+
+    /* access modifiers changed from: private */
+    public static void putBooleanBigEndian(Object target, long offset, boolean value) {
+        putByteBigEndian(target, offset, value ? (byte) 1 : 0);
+    }
+
+    /* access modifiers changed from: private */
+    public static void putBooleanLittleEndian(Object target, long offset, boolean value) {
+        putByteLittleEndian(target, offset, value ? (byte) 1 : 0);
+    }
+
     private static abstract class MemoryAccessor {
         Unsafe unsafe;
+
+        MemoryAccessor(Unsafe unsafe2) {
+            this.unsafe = unsafe2;
+        }
 
         public abstract void copyMemory(long j, byte[] bArr, long j2, long j3);
 
@@ -482,10 +532,6 @@ final class UnsafeUtil {
         public abstract void putInt(long j, int i);
 
         public abstract void putLong(long j, long j2);
-
-        MemoryAccessor(Unsafe unsafe2) {
-            this.unsafe = unsafe2;
-        }
 
         public final long objectFieldOffset(Field field) {
             return this.unsafe.objectFieldOffset(field);
@@ -693,12 +739,12 @@ final class UnsafeUtil {
     private static final class Android32MemoryAccessor extends MemoryAccessor {
         private static final long SMALL_ADDRESS_MASK = -1;
 
-        private static int smallAddress(long address) {
-            return (int) (-1 & address);
-        }
-
         Android32MemoryAccessor(Unsafe unsafe) {
             super(unsafe);
+        }
+
+        private static int smallAddress(long address) {
+            return (int) (-1 & address);
         }
 
         public byte getByte(long address) {
@@ -786,49 +832,5 @@ final class UnsafeUtil {
                 return null;
             }
         }
-    }
-
-    /* access modifiers changed from: private */
-    public static byte getByteBigEndian(Object target, long offset) {
-        return (byte) ((getInt(target, -4 & offset) >>> ((int) (((-1 ^ offset) & 3) << 3))) & 255);
-    }
-
-    /* access modifiers changed from: private */
-    public static byte getByteLittleEndian(Object target, long offset) {
-        return (byte) ((getInt(target, -4 & offset) >>> ((int) ((3 & offset) << 3))) & 255);
-    }
-
-    /* access modifiers changed from: private */
-    public static void putByteBigEndian(Object target, long offset, byte value) {
-        int shift = ((((int) offset) ^ -1) & 3) << 3;
-        long j = -4 & offset;
-        putInt(target, j, (((255 << shift) ^ -1) & getInt(target, offset & -4)) | ((value & UnsignedBytes.MAX_VALUE) << shift));
-    }
-
-    /* access modifiers changed from: private */
-    public static void putByteLittleEndian(Object target, long offset, byte value) {
-        int shift = (((int) offset) & 3) << 3;
-        long j = -4 & offset;
-        putInt(target, j, (((255 << shift) ^ -1) & getInt(target, offset & -4)) | ((value & UnsignedBytes.MAX_VALUE) << shift));
-    }
-
-    /* access modifiers changed from: private */
-    public static boolean getBooleanBigEndian(Object target, long offset) {
-        return getByteBigEndian(target, offset) != 0;
-    }
-
-    /* access modifiers changed from: private */
-    public static boolean getBooleanLittleEndian(Object target, long offset) {
-        return getByteLittleEndian(target, offset) != 0;
-    }
-
-    /* access modifiers changed from: private */
-    public static void putBooleanBigEndian(Object target, long offset, boolean value) {
-        putByteBigEndian(target, offset, value ? (byte) 1 : 0);
-    }
-
-    /* access modifiers changed from: private */
-    public static void putBooleanLittleEndian(Object target, long offset, boolean value) {
-        putByteLittleEndian(target, offset, value ? (byte) 1 : 0);
     }
 }

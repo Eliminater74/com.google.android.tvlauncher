@@ -3,12 +3,12 @@ package com.google.common.collect;
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.GwtIncompatible;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMultimap;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.concurrent.LazyInit;
 import com.google.j2objc.annotations.RetainedWith;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
@@ -16,7 +16,6 @@ import java.io.ObjectOutputStream;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Map;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible(emulated = true, serializable = true)
 public class ImmutableListMultimap<K, V> extends ImmutableMultimap<K, V> implements ListMultimap<K, V> {
@@ -25,6 +24,10 @@ public class ImmutableListMultimap<K, V> extends ImmutableMultimap<K, V> impleme
     @RetainedWith
     @LazyInit
     private transient ImmutableListMultimap<V, K> inverse;
+
+    ImmutableListMultimap(ImmutableMap<K, ImmutableList<V>> map, int size) {
+        super(map, size);
+    }
 
     /* renamed from: of */
     public static <K, V> ImmutableListMultimap<K, V> m120of() {
@@ -115,85 +118,6 @@ public class ImmutableListMultimap<K, V> extends ImmutableMultimap<K, V> impleme
         return new Builder<>();
     }
 
-    public static final class Builder<K, V> extends ImmutableMultimap.Builder<K, V> {
-        /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-         method: com.google.common.collect.ImmutableMultimap.Builder.put(java.lang.Object, java.lang.Object):com.google.common.collect.ImmutableMultimap$Builder<K, V>
-         arg types: [java.lang.Object, java.lang.Object]
-         candidates:
-          com.google.common.collect.ImmutableListMultimap.Builder.put(java.lang.Object, java.lang.Object):com.google.common.collect.ImmutableListMultimap$Builder<K, V>
-          com.google.common.collect.ImmutableMultimap.Builder.put(java.lang.Object, java.lang.Object):com.google.common.collect.ImmutableMultimap$Builder<K, V> */
-        @CanIgnoreReturnValue
-        public Builder<K, V> put(Object obj, Object obj2) {
-            super.put(obj, obj2);
-            return this;
-        }
-
-        @CanIgnoreReturnValue
-        public Builder<K, V> put(Map.Entry<? extends K, ? extends V> entry) {
-            super.put((Map.Entry) entry);
-            return this;
-        }
-
-        @CanIgnoreReturnValue
-        @Beta
-        public Builder<K, V> putAll(Iterable<? extends Map.Entry<? extends K, ? extends V>> entries) {
-            super.putAll((Iterable) entries);
-            return this;
-        }
-
-        /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-         method: com.google.common.collect.ImmutableMultimap.Builder.putAll(java.lang.Object, java.lang.Iterable):com.google.common.collect.ImmutableMultimap$Builder<K, V>
-         arg types: [K, java.lang.Iterable<? extends V>]
-         candidates:
-          com.google.common.collect.ImmutableListMultimap.Builder.putAll(java.lang.Object, java.lang.Iterable):com.google.common.collect.ImmutableListMultimap$Builder<K, V>
-          com.google.common.collect.ImmutableListMultimap.Builder.putAll(java.lang.Object, java.lang.Object[]):com.google.common.collect.ImmutableListMultimap$Builder<K, V>
-          com.google.common.collect.ImmutableListMultimap.Builder.putAll(java.lang.Object, java.lang.Object[]):com.google.common.collect.ImmutableMultimap$Builder
-          com.google.common.collect.ImmutableMultimap.Builder.putAll(java.lang.Object, java.lang.Object[]):com.google.common.collect.ImmutableMultimap$Builder<K, V>
-          com.google.common.collect.ImmutableMultimap.Builder.putAll(java.lang.Object, java.lang.Iterable):com.google.common.collect.ImmutableMultimap$Builder<K, V> */
-        @CanIgnoreReturnValue
-        public Builder<K, V> putAll(K key, Iterable<? extends V> values) {
-            super.putAll((Object) key, (Iterable) values);
-            return this;
-        }
-
-        /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-         method: com.google.common.collect.ImmutableMultimap.Builder.putAll(java.lang.Object, java.lang.Object[]):com.google.common.collect.ImmutableMultimap$Builder<K, V>
-         arg types: [K, V[]]
-         candidates:
-          com.google.common.collect.ImmutableListMultimap.Builder.putAll(java.lang.Object, java.lang.Iterable):com.google.common.collect.ImmutableListMultimap$Builder<K, V>
-          com.google.common.collect.ImmutableListMultimap.Builder.putAll(java.lang.Object, java.lang.Object[]):com.google.common.collect.ImmutableListMultimap$Builder<K, V>
-          com.google.common.collect.ImmutableListMultimap.Builder.putAll(java.lang.Object, java.lang.Iterable):com.google.common.collect.ImmutableMultimap$Builder
-          com.google.common.collect.ImmutableMultimap.Builder.putAll(java.lang.Object, java.lang.Iterable):com.google.common.collect.ImmutableMultimap$Builder<K, V>
-          com.google.common.collect.ImmutableMultimap.Builder.putAll(java.lang.Object, java.lang.Object[]):com.google.common.collect.ImmutableMultimap$Builder<K, V> */
-        @CanIgnoreReturnValue
-        public Builder<K, V> putAll(K key, V... values) {
-            super.putAll((Object) key, (Object[]) values);
-            return this;
-        }
-
-        @CanIgnoreReturnValue
-        public Builder<K, V> putAll(Multimap<? extends K, ? extends V> multimap) {
-            super.putAll((Multimap) multimap);
-            return this;
-        }
-
-        @CanIgnoreReturnValue
-        public Builder<K, V> orderKeysBy(Comparator<? super K> keyComparator) {
-            super.orderKeysBy((Comparator) keyComparator);
-            return this;
-        }
-
-        @CanIgnoreReturnValue
-        public Builder<K, V> orderValuesBy(Comparator<? super V> valueComparator) {
-            super.orderValuesBy((Comparator) valueComparator);
-            return this;
-        }
-
-        public ImmutableListMultimap<K, V> build() {
-            return (ImmutableListMultimap) super.build();
-        }
-    }
-
     public static <K, V> ImmutableListMultimap<K, V> copyOf(Multimap<? extends K, ? extends V> multimap) {
         if (multimap.isEmpty()) {
             return m120of();
@@ -233,10 +157,6 @@ public class ImmutableListMultimap<K, V> extends ImmutableMultimap<K, V> impleme
             }
         }
         return new ImmutableListMultimap<>(builder.build(), size);
-    }
-
-    ImmutableListMultimap(ImmutableMap<K, ImmutableList<V>> map, int size) {
-        super(map, size);
     }
 
     public ImmutableList<V> get(@NullableDecl K key) {
@@ -341,6 +261,85 @@ public class ImmutableListMultimap<K, V> extends ImmutableMultimap<K, V> impleme
             sb2.append("Invalid key count ");
             sb2.append(keyCount);
             throw new InvalidObjectException(sb2.toString());
+        }
+    }
+
+    public static final class Builder<K, V> extends ImmutableMultimap.Builder<K, V> {
+        /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+         method: com.google.common.collect.ImmutableMultimap.Builder.put(java.lang.Object, java.lang.Object):com.google.common.collect.ImmutableMultimap$Builder<K, V>
+         arg types: [java.lang.Object, java.lang.Object]
+         candidates:
+          com.google.common.collect.ImmutableListMultimap.Builder.put(java.lang.Object, java.lang.Object):com.google.common.collect.ImmutableListMultimap$Builder<K, V>
+          com.google.common.collect.ImmutableMultimap.Builder.put(java.lang.Object, java.lang.Object):com.google.common.collect.ImmutableMultimap$Builder<K, V> */
+        @CanIgnoreReturnValue
+        public Builder<K, V> put(Object obj, Object obj2) {
+            super.put(obj, obj2);
+            return this;
+        }
+
+        @CanIgnoreReturnValue
+        public Builder<K, V> put(Map.Entry<? extends K, ? extends V> entry) {
+            super.put((Map.Entry) entry);
+            return this;
+        }
+
+        @CanIgnoreReturnValue
+        @Beta
+        public Builder<K, V> putAll(Iterable<? extends Map.Entry<? extends K, ? extends V>> entries) {
+            super.putAll((Iterable) entries);
+            return this;
+        }
+
+        /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+         method: com.google.common.collect.ImmutableMultimap.Builder.putAll(java.lang.Object, java.lang.Iterable):com.google.common.collect.ImmutableMultimap$Builder<K, V>
+         arg types: [K, java.lang.Iterable<? extends V>]
+         candidates:
+          com.google.common.collect.ImmutableListMultimap.Builder.putAll(java.lang.Object, java.lang.Iterable):com.google.common.collect.ImmutableListMultimap$Builder<K, V>
+          com.google.common.collect.ImmutableListMultimap.Builder.putAll(java.lang.Object, java.lang.Object[]):com.google.common.collect.ImmutableListMultimap$Builder<K, V>
+          com.google.common.collect.ImmutableListMultimap.Builder.putAll(java.lang.Object, java.lang.Object[]):com.google.common.collect.ImmutableMultimap$Builder
+          com.google.common.collect.ImmutableMultimap.Builder.putAll(java.lang.Object, java.lang.Object[]):com.google.common.collect.ImmutableMultimap$Builder<K, V>
+          com.google.common.collect.ImmutableMultimap.Builder.putAll(java.lang.Object, java.lang.Iterable):com.google.common.collect.ImmutableMultimap$Builder<K, V> */
+        @CanIgnoreReturnValue
+        public Builder<K, V> putAll(K key, Iterable<? extends V> values) {
+            super.putAll((Object) key, (Iterable) values);
+            return this;
+        }
+
+        /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+         method: com.google.common.collect.ImmutableMultimap.Builder.putAll(java.lang.Object, java.lang.Object[]):com.google.common.collect.ImmutableMultimap$Builder<K, V>
+         arg types: [K, V[]]
+         candidates:
+          com.google.common.collect.ImmutableListMultimap.Builder.putAll(java.lang.Object, java.lang.Iterable):com.google.common.collect.ImmutableListMultimap$Builder<K, V>
+          com.google.common.collect.ImmutableListMultimap.Builder.putAll(java.lang.Object, java.lang.Object[]):com.google.common.collect.ImmutableListMultimap$Builder<K, V>
+          com.google.common.collect.ImmutableListMultimap.Builder.putAll(java.lang.Object, java.lang.Iterable):com.google.common.collect.ImmutableMultimap$Builder
+          com.google.common.collect.ImmutableMultimap.Builder.putAll(java.lang.Object, java.lang.Iterable):com.google.common.collect.ImmutableMultimap$Builder<K, V>
+          com.google.common.collect.ImmutableMultimap.Builder.putAll(java.lang.Object, java.lang.Object[]):com.google.common.collect.ImmutableMultimap$Builder<K, V> */
+        @CanIgnoreReturnValue
+        public Builder<K, V> putAll(K key, V... values) {
+            super.putAll((Object) key, (Object[]) values);
+            return this;
+        }
+
+        @CanIgnoreReturnValue
+        public Builder<K, V> putAll(Multimap<? extends K, ? extends V> multimap) {
+            super.putAll((Multimap) multimap);
+            return this;
+        }
+
+        @CanIgnoreReturnValue
+        public Builder<K, V> orderKeysBy(Comparator<? super K> keyComparator) {
+            super.orderKeysBy((Comparator) keyComparator);
+            return this;
+        }
+
+        @CanIgnoreReturnValue
+        public Builder<K, V> orderValuesBy(Comparator<? super V> valueComparator) {
+            super.orderValuesBy((Comparator) valueComparator);
+            return this;
+        }
+
+        public ImmutableListMultimap<K, V> build() {
+            return (ImmutableListMultimap) super.build();
         }
     }
 }

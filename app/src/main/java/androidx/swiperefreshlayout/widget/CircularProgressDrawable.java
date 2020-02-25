@@ -17,11 +17,15 @@ import android.support.annotation.RestrictTo;
 import android.support.p001v4.util.Preconditions;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
+
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 public class CircularProgressDrawable extends Drawable implements Animatable {
+    public static final int DEFAULT = 1;
+    public static final int LARGE = 0;
     private static final int ANIMATION_DURATION = 1332;
     private static final int ARROW_HEIGHT = 5;
     private static final int ARROW_HEIGHT_LARGE = 6;
@@ -31,9 +35,7 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
     private static final float CENTER_RADIUS_LARGE = 11.0f;
     private static final int[] COLORS = {-16777216};
     private static final float COLOR_CHANGE_OFFSET = 0.75f;
-    public static final int DEFAULT = 1;
     private static final float GROUP_FULL_ROTATION = 216.0f;
-    public static final int LARGE = 0;
     private static final Interpolator LINEAR_INTERPOLATOR = new LinearInterpolator();
     private static final Interpolator MATERIAL_INTERPOLATOR = new FastOutSlowInInterpolator();
     private static final float MAX_PROGRESS_ARC = 0.8f;
@@ -42,17 +44,12 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
     private static final float SHRINK_OFFSET = 0.5f;
     private static final float STROKE_WIDTH = 2.5f;
     private static final float STROKE_WIDTH_LARGE = 3.0f;
-    private Animator mAnimator;
-    boolean mFinishing;
-    private Resources mResources;
     private final Ring mRing = new Ring();
-    private float mRotation;
+    boolean mFinishing;
     float mRotationCount;
-
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface ProgressDrawableSize {
-    }
+    private Animator mAnimator;
+    private Resources mResources;
+    private float mRotation;
 
     public CircularProgressDrawable(@NonNull Context context) {
         this.mResources = ((Context) Preconditions.checkNotNull(context)).getResources();
@@ -97,14 +94,14 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
         invalidateSelf();
     }
 
-    public void setStrokeCap(@NonNull Paint.Cap strokeCap) {
-        this.mRing.setStrokeCap(strokeCap);
-        invalidateSelf();
-    }
-
     @NonNull
     public Paint.Cap getStrokeCap() {
         return this.mRing.getStrokeCap();
+    }
+
+    public void setStrokeCap(@NonNull Paint.Cap strokeCap) {
+        this.mRing.setStrokeCap(strokeCap);
+        invalidateSelf();
     }
 
     public float getArrowWidth() {
@@ -189,13 +186,13 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
         canvas.restore();
     }
 
+    public int getAlpha() {
+        return this.mRing.getAlpha();
+    }
+
     public void setAlpha(int alpha) {
         this.mRing.setAlpha(alpha);
         invalidateSelf();
-    }
-
-    public int getAlpha() {
-        return this.mRing.getAlpha();
     }
 
     public void setColorFilter(ColorFilter colorFilter) {
@@ -203,12 +200,12 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
         invalidateSelf();
     }
 
-    private void setRotation(float rotation) {
-        this.mRotation = rotation;
-    }
-
     private float getRotation() {
         return this.mRotation;
+    }
+
+    private void setRotation(float rotation) {
+        this.mRotation = rotation;
     }
 
     public int getOpacity() {
@@ -336,19 +333,25 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
         this.mAnimator = animator;
     }
 
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface ProgressDrawableSize {
+    }
+
     private static class Ring {
+        final Paint mArrowPaint = new Paint();
+        final Paint mCirclePaint = new Paint();
+        final Paint mPaint = new Paint();
+        final RectF mTempBounds = new RectF();
         int mAlpha = 255;
         Path mArrow;
         int mArrowHeight;
-        final Paint mArrowPaint = new Paint();
         float mArrowScale = 1.0f;
         int mArrowWidth;
-        final Paint mCirclePaint = new Paint();
         int mColorIndex;
         int[] mColors;
         int mCurrentColor;
         float mEndTrim = 0.0f;
-        final Paint mPaint = new Paint();
         float mRingCenterRadius;
         float mRotation = 0.0f;
         boolean mShowArrow;
@@ -357,7 +360,6 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
         float mStartingRotation;
         float mStartingStartTrim;
         float mStrokeWidth = 5.0f;
-        final RectF mTempBounds = new RectF();
 
         Ring() {
             this.mPaint.setStrokeCap(Paint.Cap.SQUARE);
@@ -375,13 +377,13 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
         }
 
         /* access modifiers changed from: package-private */
-        public void setStrokeCap(Paint.Cap strokeCap) {
-            this.mPaint.setStrokeCap(strokeCap);
+        public Paint.Cap getStrokeCap() {
+            return this.mPaint.getStrokeCap();
         }
 
         /* access modifiers changed from: package-private */
-        public Paint.Cap getStrokeCap() {
-            return this.mPaint.getStrokeCap();
+        public void setStrokeCap(Paint.Cap strokeCap) {
+            this.mPaint.setStrokeCap(strokeCap);
         }
 
         /* access modifiers changed from: package-private */
@@ -447,14 +449,14 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
         }
 
         /* access modifiers changed from: package-private */
-        public void setColors(@NonNull int[] colors) {
-            this.mColors = colors;
-            setColorIndex(0);
+        public int[] getColors() {
+            return this.mColors;
         }
 
         /* access modifiers changed from: package-private */
-        public int[] getColors() {
-            return this.mColors;
+        public void setColors(@NonNull int[] colors) {
+            this.mColors = colors;
+            setColorIndex(0);
         }
 
         /* access modifiers changed from: package-private */
@@ -463,13 +465,13 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
         }
 
         /* access modifiers changed from: package-private */
-        public void setBackgroundColor(int color) {
-            this.mCirclePaint.setColor(color);
+        public int getBackgroundColor() {
+            return this.mCirclePaint.getColor();
         }
 
         /* access modifiers changed from: package-private */
-        public int getBackgroundColor() {
-            return this.mCirclePaint.getColor();
+        public void setBackgroundColor(int color) {
+            this.mCirclePaint.setColor(color);
         }
 
         /* access modifiers changed from: package-private */
@@ -499,13 +501,18 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
         }
 
         /* access modifiers changed from: package-private */
+        public int getAlpha() {
+            return this.mAlpha;
+        }
+
+        /* access modifiers changed from: package-private */
         public void setAlpha(int alpha) {
             this.mAlpha = alpha;
         }
 
         /* access modifiers changed from: package-private */
-        public int getAlpha() {
-            return this.mAlpha;
+        public float getStrokeWidth() {
+            return this.mStrokeWidth;
         }
 
         /* access modifiers changed from: package-private */
@@ -515,18 +522,13 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
         }
 
         /* access modifiers changed from: package-private */
-        public float getStrokeWidth() {
-            return this.mStrokeWidth;
+        public float getStartTrim() {
+            return this.mStartTrim;
         }
 
         /* access modifiers changed from: package-private */
         public void setStartTrim(float startTrim) {
             this.mStartTrim = startTrim;
-        }
-
-        /* access modifiers changed from: package-private */
-        public float getStartTrim() {
-            return this.mStartTrim;
         }
 
         /* access modifiers changed from: package-private */
@@ -545,18 +547,13 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
         }
 
         /* access modifiers changed from: package-private */
-        public void setEndTrim(float endTrim) {
-            this.mEndTrim = endTrim;
-        }
-
-        /* access modifiers changed from: package-private */
         public float getEndTrim() {
             return this.mEndTrim;
         }
 
         /* access modifiers changed from: package-private */
-        public void setRotation(float rotation) {
-            this.mRotation = rotation;
+        public void setEndTrim(float endTrim) {
+            this.mEndTrim = endTrim;
         }
 
         /* access modifiers changed from: package-private */
@@ -565,13 +562,23 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
         }
 
         /* access modifiers changed from: package-private */
-        public void setCenterRadius(float centerRadius) {
-            this.mRingCenterRadius = centerRadius;
+        public void setRotation(float rotation) {
+            this.mRotation = rotation;
         }
 
         /* access modifiers changed from: package-private */
         public float getCenterRadius() {
             return this.mRingCenterRadius;
+        }
+
+        /* access modifiers changed from: package-private */
+        public void setCenterRadius(float centerRadius) {
+            this.mRingCenterRadius = centerRadius;
+        }
+
+        /* access modifiers changed from: package-private */
+        public boolean getShowArrow() {
+            return this.mShowArrow;
         }
 
         /* access modifiers changed from: package-private */
@@ -582,8 +589,8 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
         }
 
         /* access modifiers changed from: package-private */
-        public boolean getShowArrow() {
-            return this.mShowArrow;
+        public float getArrowScale() {
+            return this.mArrowScale;
         }
 
         /* access modifiers changed from: package-private */
@@ -591,11 +598,6 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
             if (scale != this.mArrowScale) {
                 this.mArrowScale = scale;
             }
-        }
-
-        /* access modifiers changed from: package-private */
-        public float getArrowScale() {
-            return this.mArrowScale;
         }
 
         /* access modifiers changed from: package-private */

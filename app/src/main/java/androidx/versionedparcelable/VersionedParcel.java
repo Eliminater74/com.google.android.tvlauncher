@@ -14,7 +14,9 @@ import android.support.p001v4.util.ArraySet;
 import android.util.Size;
 import android.util.SizeF;
 import android.util.SparseBooleanArray;
+
 import com.google.android.tvlauncher.inputs.InputsManagerUtil;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -51,6 +53,20 @@ public abstract class VersionedParcel {
     protected final ArrayMap<String, Class> mParcelizerCache;
     protected final ArrayMap<String, Method> mReadCache;
     protected final ArrayMap<String, Method> mWriteCache;
+
+    public VersionedParcel(ArrayMap<String, Method> readCache, ArrayMap<String, Method> writeCache, ArrayMap<String, Class> parcelizerCache) {
+        this.mReadCache = readCache;
+        this.mWriteCache = writeCache;
+        this.mParcelizerCache = parcelizerCache;
+    }
+
+    @NonNull
+    protected static Throwable getRootCause(@NonNull Throwable t) {
+        while (t.getCause() != null) {
+            t = t.getCause();
+        }
+        return t;
+    }
 
     /* access modifiers changed from: protected */
     public abstract void closeField();
@@ -135,12 +151,6 @@ public abstract class VersionedParcel {
 
     /* access modifiers changed from: protected */
     public abstract void writeStrongInterface(IInterface iInterface);
-
-    public VersionedParcel(ArrayMap<String, Method> readCache, ArrayMap<String, Method> writeCache, ArrayMap<String, Class> parcelizerCache) {
-        this.mReadCache = readCache;
-        this.mWriteCache = writeCache;
-        this.mParcelizerCache = parcelizerCache;
-    }
 
     public boolean isStream() {
         return false;
@@ -803,14 +813,6 @@ public abstract class VersionedParcel {
 
     private Exception readException(int code, String msg) {
         return createException(code, msg);
-    }
-
-    @NonNull
-    protected static Throwable getRootCause(@NonNull Throwable t) {
-        while (t.getCause() != null) {
-            t = t.getCause();
-        }
-        return t;
     }
 
     private Exception createException(int code, String msg) {

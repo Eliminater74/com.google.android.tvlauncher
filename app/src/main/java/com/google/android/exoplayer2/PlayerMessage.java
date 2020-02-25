@@ -2,9 +2,13 @@ package com.google.android.exoplayer2;
 
 import android.os.Handler;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.util.Assertions;
 
 public final class PlayerMessage {
+    private final Sender sender;
+    private final Target target;
+    private final Timeline timeline;
     private boolean deleteAfterDelivery = true;
     private Handler handler;
     private boolean isCanceled;
@@ -14,19 +18,8 @@ public final class PlayerMessage {
     @Nullable
     private Object payload;
     private long positionMs = C0841C.TIME_UNSET;
-    private final Sender sender;
-    private final Target target;
-    private final Timeline timeline;
     private int type;
     private int windowIndex;
-
-    public interface Sender {
-        void sendMessage(PlayerMessage playerMessage);
-    }
-
-    public interface Target {
-        void handleMessage(int i, @Nullable Object obj) throws ExoPlaybackException;
-    }
 
     public PlayerMessage(Sender sender2, Target target2, Timeline timeline2, int defaultWindowIndex, Handler defaultHandler) {
         this.sender = sender2;
@@ -44,19 +37,13 @@ public final class PlayerMessage {
         return this.target;
     }
 
-    public PlayerMessage setType(int messageType) {
-        Assertions.checkState(!this.isSent);
-        this.type = messageType;
-        return this;
-    }
-
     public int getType() {
         return this.type;
     }
 
-    public PlayerMessage setPayload(@Nullable Object payload2) {
+    public PlayerMessage setType(int messageType) {
         Assertions.checkState(!this.isSent);
-        this.payload = payload2;
+        this.type = messageType;
         return this;
     }
 
@@ -65,14 +52,20 @@ public final class PlayerMessage {
         return this.payload;
     }
 
-    public PlayerMessage setHandler(Handler handler2) {
+    public PlayerMessage setPayload(@Nullable Object payload2) {
         Assertions.checkState(!this.isSent);
-        this.handler = handler2;
+        this.payload = payload2;
         return this;
     }
 
     public Handler getHandler() {
         return this.handler;
+    }
+
+    public PlayerMessage setHandler(Handler handler2) {
+        Assertions.checkState(!this.isSent);
+        this.handler = handler2;
+        return this;
     }
 
     public long getPositionMs() {
@@ -104,14 +97,14 @@ public final class PlayerMessage {
         return this.windowIndex;
     }
 
+    public boolean getDeleteAfterDelivery() {
+        return this.deleteAfterDelivery;
+    }
+
     public PlayerMessage setDeleteAfterDelivery(boolean deleteAfterDelivery2) {
         Assertions.checkState(!this.isSent);
         this.deleteAfterDelivery = deleteAfterDelivery2;
         return this;
-    }
-
-    public boolean getDeleteAfterDelivery() {
-        return this.deleteAfterDelivery;
     }
 
     public PlayerMessage send() {
@@ -148,5 +141,13 @@ public final class PlayerMessage {
         this.isDelivered |= isDelivered2;
         this.isProcessed = true;
         notifyAll();
+    }
+
+    public interface Sender {
+        void sendMessage(PlayerMessage playerMessage);
+    }
+
+    public interface Target {
+        void handleMessage(int i, @Nullable Object obj) throws ExoPlaybackException;
     }
 }

@@ -2,11 +2,16 @@ package com.google.common.base;
 
 import com.google.common.annotations.GwtCompatible;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import java.util.Arrays;
+
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
+import java.util.Arrays;
 
 @GwtCompatible
 public final class MoreObjects {
+    private MoreObjects() {
+    }
+
     public static <T> T firstNonNull(@NullableDecl T first, @NullableDecl T second) {
         if (first != null) {
             return first;
@@ -183,8 +188,5 @@ public final class MoreObjects {
             private ValueHolder() {
             }
         }
-    }
-
-    private MoreObjects() {
     }
 }

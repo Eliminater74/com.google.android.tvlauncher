@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.audio.AudioCapabilities;
 import com.google.android.exoplayer2.audio.AudioProcessor;
 import com.google.android.exoplayer2.audio.AudioRendererEventListener;
@@ -19,6 +20,7 @@ import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.video.MediaCodecVideoRenderer;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
 import com.google.android.exoplayer2.video.spherical.CameraMotionRenderer;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -31,18 +33,13 @@ public class DefaultRenderersFactory implements RenderersFactory {
     public static final int EXTENSION_RENDERER_MODE_PREFER = 2;
     protected static final int MAX_DROPPED_VIDEO_FRAME_COUNT_TO_NOTIFY = 50;
     private static final String TAG = "DefaultRenderersFactory";
-    private long allowedVideoJoiningTimeMs;
     private final Context context;
+    private long allowedVideoJoiningTimeMs;
     @Nullable
     private DrmSessionManager<FrameworkMediaCrypto> drmSessionManager;
     private int extensionRendererMode;
     private MediaCodecSelector mediaCodecSelector;
     private boolean playClearSamplesWithoutKeys;
-
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface ExtensionRendererMode {
-    }
 
     public DefaultRenderersFactory(Context context2) {
         this.context = context2;
@@ -237,5 +234,10 @@ public class DefaultRenderersFactory implements RenderersFactory {
     /* access modifiers changed from: protected */
     public AudioProcessor[] buildAudioProcessors() {
         return new AudioProcessor[0];
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface ExtensionRendererMode {
     }
 }

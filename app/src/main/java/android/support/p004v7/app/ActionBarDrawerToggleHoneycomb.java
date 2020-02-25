@@ -9,12 +9,16 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
 import java.lang.reflect.Method;
 
 /* renamed from: android.support.v7.app.ActionBarDrawerToggleHoneycomb */
 class ActionBarDrawerToggleHoneycomb {
     private static final String TAG = "ActionBarDrawerToggleHC";
     private static final int[] THEME_ATTRS = {16843531};
+
+    private ActionBarDrawerToggleHoneycomb() {
+    }
 
     public static SetIndicatorInfo setActionBarUpIndicator(Activity activity, Drawable drawable, int contentDescRes) {
         SetIndicatorInfo info = new SetIndicatorInfo(activity);
@@ -83,8 +87,5 @@ class ActionBarDrawerToggleHoneycomb {
                 }
             }
         }
-    }
-
-    private ActionBarDrawerToggleHoneycomb() {
     }
 }

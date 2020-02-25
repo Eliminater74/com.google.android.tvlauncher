@@ -7,16 +7,13 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
+
 import androidx.leanback.C0364R;
 
 class GuidedActionsRelativeLayout extends RelativeLayout {
     private boolean mInOverride;
     private InterceptKeyEventListener mInterceptKeyEventListener;
     private float mKeyLinePercent;
-
-    interface InterceptKeyEventListener {
-        boolean onInterceptKeyEvent(KeyEvent keyEvent);
-    }
 
     public GuidedActionsRelativeLayout(Context context) {
         this(context, null);
@@ -70,5 +67,9 @@ class GuidedActionsRelativeLayout extends RelativeLayout {
             return super.dispatchKeyEvent(event);
         }
         return true;
+    }
+
+    interface InterceptKeyEventListener {
+        boolean onInterceptKeyEvent(KeyEvent keyEvent);
     }
 }

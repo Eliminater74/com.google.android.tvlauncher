@@ -1,45 +1,16 @@
 package org.checkerframework.checker.regex;
 
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 import org.checkerframework.checker.regex.qual.Regex;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
 import org.checkerframework.framework.qual.EnsuresQualifierIf;
 
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+
 public final class RegexUtil {
     private RegexUtil() {
         throw new Error("do not instantiate");
-    }
-
-    public static class CheckedPatternSyntaxException extends Exception {
-        private static final long serialVersionUID = 6266881831979001480L;
-        private final PatternSyntaxException pse;
-
-        public CheckedPatternSyntaxException(PatternSyntaxException pse2) {
-            this.pse = pse2;
-        }
-
-        public CheckedPatternSyntaxException(String desc, String regex, int index) {
-            this(new PatternSyntaxException(desc, regex, index));
-        }
-
-        public String getDescription() {
-            return this.pse.getDescription();
-        }
-
-        public int getIndex() {
-            return this.pse.getIndex();
-        }
-
-        @Pure
-        public String getMessage() {
-            return this.pse.getMessage();
-        }
-
-        public String getPattern() {
-            return this.pse.getPattern();
-        }
     }
 
     @EnsuresQualifierIf(expression = {"#1"}, qualifier = Regex.class, result = true)
@@ -129,5 +100,35 @@ public final class RegexUtil {
     @Pure
     private static int getGroupCount(Pattern p) {
         return p.matcher("").groupCount();
+    }
+
+    public static class CheckedPatternSyntaxException extends Exception {
+        private static final long serialVersionUID = 6266881831979001480L;
+        private final PatternSyntaxException pse;
+
+        public CheckedPatternSyntaxException(PatternSyntaxException pse2) {
+            this.pse = pse2;
+        }
+
+        public CheckedPatternSyntaxException(String desc, String regex, int index) {
+            this(new PatternSyntaxException(desc, regex, index));
+        }
+
+        public String getDescription() {
+            return this.pse.getDescription();
+        }
+
+        public int getIndex() {
+            return this.pse.getIndex();
+        }
+
+        @Pure
+        public String getMessage() {
+            return this.pse.getMessage();
+        }
+
+        public String getPattern() {
+            return this.pse.getPattern();
+        }
     }
 }

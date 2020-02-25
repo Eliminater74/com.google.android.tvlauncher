@@ -4,12 +4,13 @@ import com.google.android.exoplayer2.FormatHolder;
 import com.google.android.exoplayer2.decoder.DecoderInputBuffer;
 import com.google.android.exoplayer2.source.SampleStream;
 import com.google.android.exoplayer2.util.Assertions;
+
 import java.io.IOException;
 
 final class HlsSampleStream implements SampleStream {
-    private int sampleQueueIndex = -1;
     private final HlsSampleStreamWrapper sampleStreamWrapper;
     private final int trackGroupIndex;
+    private int sampleQueueIndex = -1;
 
     public HlsSampleStream(HlsSampleStreamWrapper sampleStreamWrapper2, int trackGroupIndex2) {
         this.sampleStreamWrapper = sampleStreamWrapper2;

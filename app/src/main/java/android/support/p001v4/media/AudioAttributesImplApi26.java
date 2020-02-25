@@ -3,7 +3,6 @@ package android.support.p001v4.media;
 import android.media.AudioAttributes;
 import android.support.annotation.RequiresApi;
 import android.support.annotation.RestrictTo;
-import android.support.p001v4.media.AudioAttributesImplApi21;
 
 @RequiresApi(26)
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})

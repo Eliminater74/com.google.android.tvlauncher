@@ -2,9 +2,10 @@ package com.google.android.gms.common.server.response;
 
 import android.util.Base64;
 import android.util.Log;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.gms.common.internal.Hide;
-import com.google.android.gms.common.server.response.FastJsonResponse;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -40,23 +41,93 @@ public class FastParser<T extends FastJsonResponse> {
     private final StringBuilder zze = new StringBuilder(1024);
     private final Stack<Integer> zzl = new Stack<>();
 
-    interface zza<O> {
-        O zza(FastParser fastParser, BufferedReader bufferedReader) throws ParseException, IOException;
-    }
-
-    @Hide
-    public static class ParseException extends Exception {
-        public ParseException(String str) {
-            super(str);
-        }
-
-        public ParseException(String str, Throwable th) {
-            super(str, th);
-        }
-
-        public ParseException(Throwable th) {
-            super(th);
-        }
+    /* JADX WARNING: Removed duplicated region for block: B:38:0x0034 A[SYNTHETIC] */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    private static java.lang.String zzb(java.io.BufferedReader r9, char[] r10, java.lang.StringBuilder r11, char[] r12) throws com.google.android.gms.common.server.response.FastParser.ParseException, java.io.IOException {
+        /*
+            r0 = 0
+            r11.setLength(r0)
+            int r1 = r10.length
+            r9.mark(r1)
+            r1 = 0
+            r2 = 0
+        L_0x000c:
+            int r3 = r9.read(r10)
+            r4 = -1
+            if (r3 == r4) goto L_0x0074
+            r4 = r2
+            r2 = r1
+            r1 = 0
+        L_0x0016:
+            if (r1 >= r3) goto L_0x006a
+            char r5 = r10[r1]
+            boolean r6 = java.lang.Character.isISOControl(r5)
+            r7 = 1
+            if (r6 == 0) goto L_0x003c
+            if (r12 == 0) goto L_0x0030
+            r6 = 0
+        L_0x0024:
+            int r8 = r12.length
+            if (r6 >= r8) goto L_0x0030
+            char r8 = r12[r6]
+            if (r8 != r5) goto L_0x002d
+            r6 = 1
+            goto L_0x0031
+        L_0x002d:
+            int r6 = r6 + 1
+            goto L_0x0024
+        L_0x0030:
+            r6 = 0
+        L_0x0031:
+            if (r6 == 0) goto L_0x0034
+            goto L_0x003c
+        L_0x0034:
+            com.google.android.gms.common.server.response.FastParser$ParseException r9 = new com.google.android.gms.common.server.response.FastParser$ParseException
+            java.lang.String r10 = "Unexpected control character while reading string"
+            r9.<init>(r10)
+            throw r9
+        L_0x003c:
+            r6 = 34
+            if (r5 != r6) goto L_0x005d
+            if (r2 != 0) goto L_0x005d
+            r11.append(r10, r0, r1)
+            r9.reset()
+            int r1 = r1 + r7
+            long r0 = (long) r1
+            r9.skip(r0)
+            if (r4 == 0) goto L_0x0058
+            java.lang.String r9 = r11.toString()
+            java.lang.String r9 = com.google.android.gms.common.util.zzn.zza(r9)
+            return r9
+        L_0x0058:
+            java.lang.String r9 = r11.toString()
+            return r9
+        L_0x005d:
+            r6 = 92
+            if (r5 != r6) goto L_0x0066
+            r2 = r2 ^ 1
+            r4 = 1
+            goto L_0x0067
+        L_0x0066:
+            r2 = 0
+        L_0x0067:
+            int r1 = r1 + 1
+            goto L_0x0016
+        L_0x006a:
+            r11.append(r10, r0, r3)
+            int r1 = r10.length
+            r9.mark(r1)
+            r1 = r2
+            r2 = r4
+            goto L_0x000c
+        L_0x0074:
+            com.google.android.gms.common.server.response.FastParser$ParseException r9 = new com.google.android.gms.common.server.response.FastParser$ParseException
+            java.lang.String r10 = "Unexpected EOF while parsing string"
+            r9.<init>(r10)
+            throw r9
+            return
+        */
+        throw new UnsupportedOperationException("Method not decompiled: com.google.android.gms.common.server.response.FastParser.zzb(java.io.BufferedReader, char[], java.lang.StringBuilder, char[]):java.lang.String");
     }
 
     public void parse(InputStream inputStream, FastJsonResponse fastJsonResponse) throws ParseException {
@@ -517,95 +588,6 @@ public class FastParser<T extends FastJsonResponse> {
         throw new ParseException("Expected string");
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:38:0x0034 A[SYNTHETIC] */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
-    private static java.lang.String zzb(java.io.BufferedReader r9, char[] r10, java.lang.StringBuilder r11, char[] r12) throws com.google.android.gms.common.server.response.FastParser.ParseException, java.io.IOException {
-        /*
-            r0 = 0
-            r11.setLength(r0)
-            int r1 = r10.length
-            r9.mark(r1)
-            r1 = 0
-            r2 = 0
-        L_0x000c:
-            int r3 = r9.read(r10)
-            r4 = -1
-            if (r3 == r4) goto L_0x0074
-            r4 = r2
-            r2 = r1
-            r1 = 0
-        L_0x0016:
-            if (r1 >= r3) goto L_0x006a
-            char r5 = r10[r1]
-            boolean r6 = java.lang.Character.isISOControl(r5)
-            r7 = 1
-            if (r6 == 0) goto L_0x003c
-            if (r12 == 0) goto L_0x0030
-            r6 = 0
-        L_0x0024:
-            int r8 = r12.length
-            if (r6 >= r8) goto L_0x0030
-            char r8 = r12[r6]
-            if (r8 != r5) goto L_0x002d
-            r6 = 1
-            goto L_0x0031
-        L_0x002d:
-            int r6 = r6 + 1
-            goto L_0x0024
-        L_0x0030:
-            r6 = 0
-        L_0x0031:
-            if (r6 == 0) goto L_0x0034
-            goto L_0x003c
-        L_0x0034:
-            com.google.android.gms.common.server.response.FastParser$ParseException r9 = new com.google.android.gms.common.server.response.FastParser$ParseException
-            java.lang.String r10 = "Unexpected control character while reading string"
-            r9.<init>(r10)
-            throw r9
-        L_0x003c:
-            r6 = 34
-            if (r5 != r6) goto L_0x005d
-            if (r2 != 0) goto L_0x005d
-            r11.append(r10, r0, r1)
-            r9.reset()
-            int r1 = r1 + r7
-            long r0 = (long) r1
-            r9.skip(r0)
-            if (r4 == 0) goto L_0x0058
-            java.lang.String r9 = r11.toString()
-            java.lang.String r9 = com.google.android.gms.common.util.zzn.zza(r9)
-            return r9
-        L_0x0058:
-            java.lang.String r9 = r11.toString()
-            return r9
-        L_0x005d:
-            r6 = 92
-            if (r5 != r6) goto L_0x0066
-            r2 = r2 ^ 1
-            r4 = 1
-            goto L_0x0067
-        L_0x0066:
-            r2 = 0
-        L_0x0067:
-            int r1 = r1 + 1
-            goto L_0x0016
-        L_0x006a:
-            r11.append(r10, r0, r3)
-            int r1 = r10.length
-            r9.mark(r1)
-            r1 = r2
-            r2 = r4
-            goto L_0x000c
-        L_0x0074:
-            com.google.android.gms.common.server.response.FastParser$ParseException r9 = new com.google.android.gms.common.server.response.FastParser$ParseException
-            java.lang.String r10 = "Unexpected EOF while parsing string"
-            r9.<init>(r10)
-            throw r9
-            return
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.google.android.gms.common.server.response.FastParser.zzb(java.io.BufferedReader, char[], java.lang.StringBuilder, char[]):java.lang.String");
-    }
-
     /* access modifiers changed from: private */
     public final int zzd(BufferedReader bufferedReader) throws ParseException, IOException {
         int i;
@@ -944,5 +926,24 @@ public class FastParser<T extends FastJsonResponse> {
         sb2.append(i);
         sb2.append(" but had empty stack");
         throw new ParseException(sb2.toString());
+    }
+
+    interface zza<O> {
+        O zza(FastParser fastParser, BufferedReader bufferedReader) throws ParseException, IOException;
+    }
+
+    @Hide
+    public static class ParseException extends Exception {
+        public ParseException(String str) {
+            super(str);
+        }
+
+        public ParseException(String str, Throwable th) {
+            super(str, th);
+        }
+
+        public ParseException(Throwable th) {
+            super(th);
+        }
     }
 }

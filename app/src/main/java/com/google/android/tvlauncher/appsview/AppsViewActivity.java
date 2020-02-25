@@ -13,16 +13,17 @@ import android.transition.Transition;
 import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.ViewGroup;
+
 import com.google.android.tvlauncher.BlockForDataLauncherActivity;
 import com.google.android.tvlauncher.settings.SettingsIntents;
 import com.google.android.tvlauncher.util.Util;
 import com.google.logs.tvlauncher.config.TvLauncherConstants;
 
 public class AppsViewActivity extends BlockForDataLauncherActivity {
-    private static final String CHECK_FOR_EDIT_MODE = "check_for_edit_mode";
-    private static final String TAG = "AppsViewActivity";
     static final String TAG_APPS_VIEW_FRAGMENT = "apps_view_fragment";
     static final String TAG_EDIT_MODE_FRAGMENT = "edit_mode_fragment";
+    private static final String CHECK_FOR_EDIT_MODE = "check_for_edit_mode";
+    private static final String TAG = "AppsViewActivity";
 
     public AppsViewActivity() {
         super("Apps", TvLauncherConstants.APPS_PAGE);

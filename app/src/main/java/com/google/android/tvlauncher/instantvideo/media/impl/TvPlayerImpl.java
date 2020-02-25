@@ -8,9 +8,12 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
+
 import androidx.tvprovider.media.p005tv.TvContractCompat;
+
 import com.google.android.tvlauncher.instantvideo.media.MediaPlayer;
 import com.google.android.tvlauncher.instantvideo.widget.CustomTvView;
+
 import java.util.List;
 
 public class TvPlayerImpl implements MediaPlayer {
@@ -25,6 +28,8 @@ public class TvPlayerImpl implements MediaPlayer {
     /* access modifiers changed from: private */
     public final Context mContext;
     /* access modifiers changed from: private */
+    public final CustomTvView mTvView;
+    /* access modifiers changed from: private */
     public long mCurrentPosition = 0;
     /* access modifiers changed from: private */
     public boolean mStarted = false;
@@ -33,20 +38,38 @@ public class TvPlayerImpl implements MediaPlayer {
     /* access modifiers changed from: private */
     public String mTvInputId;
     /* access modifiers changed from: private */
-    public final CustomTvView mTvView;
-    /* access modifiers changed from: private */
     public MediaPlayer.VideoCallback mVideoCallback;
     /* access modifiers changed from: private */
     public int mVideoType;
     /* access modifiers changed from: private */
     public Uri mVideoUri;
-    private float mVolume = 1.0f;
     /* access modifiers changed from: private */
     public boolean mVolumeUpdated = false;
+    private float mVolume = 1.0f;
 
     public TvPlayerImpl(Context context, CustomTvView tvView) {
         this.mContext = context;
         this.mTvView = tvView;
+    }
+
+    public static boolean isRecordedProgramUri(Uri uri) {
+        return isTvUri(uri) && isTwoSegmentUriStartingWith(uri, PATH_RECORDED_PROGRAM);
+    }
+
+    public static boolean isPreviewProgramUri(Uri uri) {
+        return isTvUri(uri) && isTwoSegmentUriStartingWith(uri, PATH_PREVIEW_PROGRAM);
+    }
+
+    private static boolean isTvUri(Uri uri) {
+        return uri != null && "content".equals(uri.getScheme()) && TvContractCompat.AUTHORITY.equals(uri.getAuthority());
+    }
+
+    private static boolean isTwoSegmentUriStartingWith(Uri uri, String pathSegment) {
+        List<String> pathSegments = uri.getPathSegments();
+        if (pathSegments != null && pathSegments.size() == 2 && pathSegment.equals(pathSegments.get(0))) {
+            return true;
+        }
+        return false;
     }
 
     public Uri getVideoUri() {
@@ -201,26 +224,6 @@ public class TvPlayerImpl implements MediaPlayer {
 
     public View getPlayerView() {
         return this.mTvView;
-    }
-
-    public static boolean isRecordedProgramUri(Uri uri) {
-        return isTvUri(uri) && isTwoSegmentUriStartingWith(uri, PATH_RECORDED_PROGRAM);
-    }
-
-    public static boolean isPreviewProgramUri(Uri uri) {
-        return isTvUri(uri) && isTwoSegmentUriStartingWith(uri, PATH_PREVIEW_PROGRAM);
-    }
-
-    private static boolean isTvUri(Uri uri) {
-        return uri != null && "content".equals(uri.getScheme()) && TvContractCompat.AUTHORITY.equals(uri.getAuthority());
-    }
-
-    private static boolean isTwoSegmentUriStartingWith(Uri uri, String pathSegment) {
-        List<String> pathSegments = uri.getPathSegments();
-        if (pathSegments != null && pathSegments.size() == 2 && pathSegment.equals(pathSegments.get(0))) {
-            return true;
-        }
-        return false;
     }
 
     /* access modifiers changed from: private */

@@ -1,13 +1,14 @@
 package android.support.p004v7.util;
 
 import android.util.SparseArray;
+
 import java.lang.reflect.Array;
 
 /* renamed from: android.support.v7.util.TileList */
 class TileList<T> {
-    Tile<T> mLastAccessedTile;
     final int mTileSize;
     private final SparseArray<Tile<T>> mTiles = new SparseArray<>(10);
+    Tile<T> mLastAccessedTile;
 
     public TileList(int tileSize) {
         this.mTileSize = tileSize;
@@ -62,10 +63,10 @@ class TileList<T> {
 
     /* renamed from: android.support.v7.util.TileList$Tile */
     public static class Tile<T> {
-        public int mItemCount;
         public final T[] mItems;
-        Tile<T> mNext;
+        public int mItemCount;
         public int mStartPosition;
+        Tile<T> mNext;
 
         /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
          method: ClspMth{java.lang.reflect.Array.newInstance(java.lang.Class<?>, int):java.lang.Object throws java.lang.NegativeArraySizeException}

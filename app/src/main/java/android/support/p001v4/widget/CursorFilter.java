@@ -7,17 +7,6 @@ import android.widget.Filter;
 class CursorFilter extends Filter {
     CursorFilterClient mClient;
 
-    /* renamed from: android.support.v4.widget.CursorFilter$CursorFilterClient */
-    interface CursorFilterClient {
-        void changeCursor(Cursor cursor);
-
-        CharSequence convertToString(Cursor cursor);
-
-        Cursor getCursor();
-
-        Cursor runQueryOnBackgroundThread(CharSequence charSequence);
-    }
-
     CursorFilter(CursorFilterClient client) {
         this.mClient = client;
     }
@@ -46,5 +35,16 @@ class CursorFilter extends Filter {
         if (results.values != null && results.values != oldCursor) {
             this.mClient.changeCursor((Cursor) results.values);
         }
+    }
+
+    /* renamed from: android.support.v4.widget.CursorFilter$CursorFilterClient */
+    interface CursorFilterClient {
+        void changeCursor(Cursor cursor);
+
+        CharSequence convertToString(Cursor cursor);
+
+        Cursor getCursor();
+
+        Cursor runQueryOnBackgroundThread(CharSequence charSequence);
     }
 }

@@ -1,6 +1,7 @@
 package com.google.common.collect;
 
 import com.google.common.annotations.GwtCompatible;
+
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible

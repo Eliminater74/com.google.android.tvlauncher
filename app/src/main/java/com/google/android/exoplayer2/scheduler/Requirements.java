@@ -8,7 +8,9 @@ import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
 import android.os.PowerManager;
+
 import com.google.android.exoplayer2.util.Util;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -21,13 +23,32 @@ public final class Requirements {
     private static final String TAG = "Requirements";
     private final int requirements;
 
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface RequirementFlags {
-    }
-
     public Requirements(int requirements2) {
         this.requirements = (requirements2 & 2) != 0 ? requirements2 | 1 : requirements2;
+    }
+
+    private static boolean isInternetConnectivityValidated(ConnectivityManager connectivityManager) {
+        if (Util.SDK_INT < 23) {
+            return true;
+        }
+        Network activeNetwork = connectivityManager.getActiveNetwork();
+        if (activeNetwork == null) {
+            logd("No active network.");
+            return false;
+        }
+        NetworkCapabilities networkCapabilities = connectivityManager.getNetworkCapabilities(activeNetwork);
+        boolean validated = networkCapabilities == null || !networkCapabilities.hasCapability(16);
+        StringBuilder sb = new StringBuilder(35);
+        sb.append("Network capability validated: ");
+        sb.append(validated);
+        logd(sb.toString());
+        if (!validated) {
+            return true;
+        }
+        return false;
+    }
+
+    private static void logd(String message) {
     }
 
     public int getRequirements() {
@@ -108,30 +129,6 @@ public final class Requirements {
         return false;
     }
 
-    private static boolean isInternetConnectivityValidated(ConnectivityManager connectivityManager) {
-        if (Util.SDK_INT < 23) {
-            return true;
-        }
-        Network activeNetwork = connectivityManager.getActiveNetwork();
-        if (activeNetwork == null) {
-            logd("No active network.");
-            return false;
-        }
-        NetworkCapabilities networkCapabilities = connectivityManager.getNetworkCapabilities(activeNetwork);
-        boolean validated = networkCapabilities == null || !networkCapabilities.hasCapability(16);
-        StringBuilder sb = new StringBuilder(35);
-        sb.append("Network capability validated: ");
-        sb.append(validated);
-        logd(sb.toString());
-        if (!validated) {
-            return true;
-        }
-        return false;
-    }
-
-    private static void logd(String message) {
-    }
-
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -144,5 +141,10 @@ public final class Requirements {
 
     public int hashCode() {
         return this.requirements;
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface RequirementFlags {
     }
 }

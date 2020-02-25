@@ -4,9 +4,9 @@ import android.os.SystemClock;
 
 public final class PrimesSampling {
     private static final int TIME_UNIT_MS = 1000;
-    private long firstSampleInLastSecond = 0;
     private final int maxSamplesRate;
     private final Object mutex = new Object();
+    private long firstSampleInLastSecond = 0;
     private int samplesCount = 0;
 
     public PrimesSampling(int samplesRate) {

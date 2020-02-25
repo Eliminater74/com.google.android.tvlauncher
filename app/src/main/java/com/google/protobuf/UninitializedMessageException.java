@@ -17,14 +17,6 @@ public class UninitializedMessageException extends RuntimeException {
         this.missingFields = missingFields2;
     }
 
-    public List<String> getMissingFields() {
-        return Collections.unmodifiableList(this.missingFields);
-    }
-
-    public InvalidProtocolBufferException asInvalidProtocolBufferException() {
-        return new InvalidProtocolBufferException(getMessage());
-    }
-
     private static String buildDescription(List<String> missingFields2) {
         StringBuilder description = new StringBuilder("Message missing required fields: ");
         boolean first = true;
@@ -37,5 +29,13 @@ public class UninitializedMessageException extends RuntimeException {
             description.append(field);
         }
         return description.toString();
+    }
+
+    public List<String> getMissingFields() {
+        return Collections.unmodifiableList(this.missingFields);
+    }
+
+    public InvalidProtocolBufferException asInvalidProtocolBufferException() {
+        return new InvalidProtocolBufferException(getMessage());
     }
 }

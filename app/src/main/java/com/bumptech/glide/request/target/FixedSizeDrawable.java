@@ -10,15 +10,16 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
+
 import com.bumptech.glide.util.Preconditions;
 
 public class FixedSizeDrawable extends Drawable {
     private final RectF bounds;
     private final Matrix matrix;
+    private final RectF wrappedRect;
     private boolean mutated;
     private State state;
     private Drawable wrapped;
-    private final RectF wrappedRect;
 
     public FixedSizeDrawable(Drawable wrapped2, int width, int height) {
         this(new State(wrapped2.getConstantState(), width, height), wrapped2);
@@ -49,12 +50,12 @@ public class FixedSizeDrawable extends Drawable {
         this.matrix.setRectToRect(this.wrappedRect, this.bounds, Matrix.ScaleToFit.CENTER);
     }
 
-    public void setChangingConfigurations(int configs) {
-        this.wrapped.setChangingConfigurations(configs);
-    }
-
     public int getChangingConfigurations() {
         return this.wrapped.getChangingConfigurations();
+    }
+
+    public void setChangingConfigurations(int configs) {
+        this.wrapped.setChangingConfigurations(configs);
     }
 
     @Deprecated
@@ -73,6 +74,10 @@ public class FixedSizeDrawable extends Drawable {
     @RequiresApi(19)
     public int getAlpha() {
         return this.wrapped.getAlpha();
+    }
+
+    public void setAlpha(int i) {
+        this.wrapped.setAlpha(i);
     }
 
     public void setColorFilter(int color, @NonNull PorterDuff.Mode mode) {
@@ -132,10 +137,6 @@ public class FixedSizeDrawable extends Drawable {
         canvas.concat(this.matrix);
         this.wrapped.draw(canvas);
         canvas.restore();
-    }
-
-    public void setAlpha(int i) {
-        this.wrapped.setAlpha(i);
     }
 
     public void setColorFilter(ColorFilter colorFilter) {

@@ -1,11 +1,11 @@
 package android.arch.lifecycle;
 
 import android.arch.core.internal.FastSafeIterableMap;
-import android.arch.lifecycle.Lifecycle;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -13,9 +13,9 @@ import java.util.Map;
 
 public class LifecycleRegistry extends Lifecycle {
     private static final String LOG_TAG = "LifecycleRegistry";
+    private final WeakReference<LifecycleOwner> mLifecycleOwner;
     private int mAddingObserverCounter = 0;
     private boolean mHandlingEvent = false;
-    private final WeakReference<LifecycleOwner> mLifecycleOwner;
     private boolean mNewEventOccurred = false;
     private FastSafeIterableMap<LifecycleObserver, ObserverWithState> mObserverMap = new FastSafeIterableMap<>();
     private ArrayList<Lifecycle.State> mParentStates = new ArrayList<>();
@@ -24,6 +24,65 @@ public class LifecycleRegistry extends Lifecycle {
     public LifecycleRegistry(@NonNull LifecycleOwner provider) {
         this.mLifecycleOwner = new WeakReference<>(provider);
         this.mState = Lifecycle.State.INITIALIZED;
+    }
+
+    static Lifecycle.State getStateAfter(Lifecycle.Event event) {
+        switch (event) {
+            case ON_CREATE:
+            case ON_STOP:
+                return Lifecycle.State.CREATED;
+            case ON_START:
+            case ON_PAUSE:
+                return Lifecycle.State.STARTED;
+            case ON_RESUME:
+                return Lifecycle.State.RESUMED;
+            case ON_DESTROY:
+                return Lifecycle.State.DESTROYED;
+            default:
+                throw new IllegalArgumentException("Unexpected event value " + event);
+        }
+    }
+
+    private static Lifecycle.Event downEvent(Lifecycle.State state) {
+        int i = C00111.$SwitchMap$android$arch$lifecycle$Lifecycle$State[state.ordinal()];
+        if (i == 1) {
+            throw new IllegalArgumentException();
+        } else if (i == 2) {
+            return Lifecycle.Event.ON_DESTROY;
+        } else {
+            if (i == 3) {
+                return Lifecycle.Event.ON_STOP;
+            }
+            if (i == 4) {
+                return Lifecycle.Event.ON_PAUSE;
+            }
+            if (i != 5) {
+                throw new IllegalArgumentException("Unexpected state value " + state);
+            }
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private static Lifecycle.Event upEvent(Lifecycle.State state) {
+        int i = C00111.$SwitchMap$android$arch$lifecycle$Lifecycle$State[state.ordinal()];
+        if (i != 1) {
+            if (i == 2) {
+                return Lifecycle.Event.ON_START;
+            }
+            if (i == 3) {
+                return Lifecycle.Event.ON_RESUME;
+            }
+            if (i == 4) {
+                throw new IllegalArgumentException();
+            } else if (i != 5) {
+                throw new IllegalArgumentException("Unexpected state value " + state);
+            }
+        }
+        return Lifecycle.Event.ON_CREATE;
+    }
+
+    static Lifecycle.State min(@NonNull Lifecycle.State state1, @Nullable Lifecycle.State state2) {
+        return (state2 == null || state2.compareTo(state1) >= 0) ? state1 : state2;
     }
 
     @MainThread
@@ -113,21 +172,50 @@ public class LifecycleRegistry extends Lifecycle {
         return this.mState;
     }
 
-    static Lifecycle.State getStateAfter(Lifecycle.Event event) {
-        switch (event) {
-            case ON_CREATE:
-            case ON_STOP:
-                return Lifecycle.State.CREATED;
-            case ON_START:
-            case ON_PAUSE:
-                return Lifecycle.State.STARTED;
-            case ON_RESUME:
-                return Lifecycle.State.RESUMED;
-            case ON_DESTROY:
-                return Lifecycle.State.DESTROYED;
-            default:
-                throw new IllegalArgumentException("Unexpected event value " + event);
+    private void forwardPass(LifecycleOwner lifecycleOwner) {
+        Iterator<Map.Entry<LifecycleObserver, ObserverWithState>> ascendingIterator = this.mObserverMap.iteratorWithAdditions();
+        while (ascendingIterator.hasNext() && !this.mNewEventOccurred) {
+            Map.Entry<LifecycleObserver, ObserverWithState> entry = ascendingIterator.next();
+            ObserverWithState observer = (ObserverWithState) entry.getValue();
+            while (observer.mState.compareTo((Enum) this.mState) < 0 && !this.mNewEventOccurred && this.mObserverMap.contains(entry.getKey())) {
+                pushParentState(observer.mState);
+                observer.dispatchEvent(lifecycleOwner, upEvent(observer.mState));
+                popParentState();
+            }
         }
+    }
+
+    private void backwardPass(LifecycleOwner lifecycleOwner) {
+        Iterator<Map.Entry<LifecycleObserver, ObserverWithState>> descendingIterator = this.mObserverMap.descendingIterator();
+        while (descendingIterator.hasNext() && !this.mNewEventOccurred) {
+            Map.Entry<LifecycleObserver, ObserverWithState> entry = descendingIterator.next();
+            ObserverWithState observer = (ObserverWithState) entry.getValue();
+            while (observer.mState.compareTo((Enum) this.mState) > 0 && !this.mNewEventOccurred && this.mObserverMap.contains(entry.getKey())) {
+                Lifecycle.Event event = downEvent(observer.mState);
+                pushParentState(getStateAfter(event));
+                observer.dispatchEvent(lifecycleOwner, event);
+                popParentState();
+            }
+        }
+    }
+
+    private void sync() {
+        LifecycleOwner lifecycleOwner = this.mLifecycleOwner.get();
+        if (lifecycleOwner == null) {
+            Log.w(LOG_TAG, "LifecycleOwner is garbage collected, you shouldn't try dispatch new events from it.");
+            return;
+        }
+        while (!isSynced()) {
+            this.mNewEventOccurred = false;
+            if (this.mState.compareTo((Enum) this.mObserverMap.eldest().getValue().mState) < 0) {
+                backwardPass(lifecycleOwner);
+            }
+            Map.Entry<LifecycleObserver, ObserverWithState> newest = this.mObserverMap.newest();
+            if (!this.mNewEventOccurred && newest != null && this.mState.compareTo((Enum) newest.getValue().mState) > 0) {
+                forwardPass(lifecycleOwner);
+            }
+        }
+        this.mNewEventOccurred = false;
     }
 
     /* renamed from: android.arch.lifecycle.LifecycleRegistry$1 */
@@ -185,94 +273,6 @@ public class LifecycleRegistry extends Lifecycle {
             } catch (NoSuchFieldError e12) {
             }
         }
-    }
-
-    private static Lifecycle.Event downEvent(Lifecycle.State state) {
-        int i = C00111.$SwitchMap$android$arch$lifecycle$Lifecycle$State[state.ordinal()];
-        if (i == 1) {
-            throw new IllegalArgumentException();
-        } else if (i == 2) {
-            return Lifecycle.Event.ON_DESTROY;
-        } else {
-            if (i == 3) {
-                return Lifecycle.Event.ON_STOP;
-            }
-            if (i == 4) {
-                return Lifecycle.Event.ON_PAUSE;
-            }
-            if (i != 5) {
-                throw new IllegalArgumentException("Unexpected state value " + state);
-            }
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private static Lifecycle.Event upEvent(Lifecycle.State state) {
-        int i = C00111.$SwitchMap$android$arch$lifecycle$Lifecycle$State[state.ordinal()];
-        if (i != 1) {
-            if (i == 2) {
-                return Lifecycle.Event.ON_START;
-            }
-            if (i == 3) {
-                return Lifecycle.Event.ON_RESUME;
-            }
-            if (i == 4) {
-                throw new IllegalArgumentException();
-            } else if (i != 5) {
-                throw new IllegalArgumentException("Unexpected state value " + state);
-            }
-        }
-        return Lifecycle.Event.ON_CREATE;
-    }
-
-    private void forwardPass(LifecycleOwner lifecycleOwner) {
-        Iterator<Map.Entry<LifecycleObserver, ObserverWithState>> ascendingIterator = this.mObserverMap.iteratorWithAdditions();
-        while (ascendingIterator.hasNext() && !this.mNewEventOccurred) {
-            Map.Entry<LifecycleObserver, ObserverWithState> entry = ascendingIterator.next();
-            ObserverWithState observer = (ObserverWithState) entry.getValue();
-            while (observer.mState.compareTo((Enum) this.mState) < 0 && !this.mNewEventOccurred && this.mObserverMap.contains(entry.getKey())) {
-                pushParentState(observer.mState);
-                observer.dispatchEvent(lifecycleOwner, upEvent(observer.mState));
-                popParentState();
-            }
-        }
-    }
-
-    private void backwardPass(LifecycleOwner lifecycleOwner) {
-        Iterator<Map.Entry<LifecycleObserver, ObserverWithState>> descendingIterator = this.mObserverMap.descendingIterator();
-        while (descendingIterator.hasNext() && !this.mNewEventOccurred) {
-            Map.Entry<LifecycleObserver, ObserverWithState> entry = descendingIterator.next();
-            ObserverWithState observer = (ObserverWithState) entry.getValue();
-            while (observer.mState.compareTo((Enum) this.mState) > 0 && !this.mNewEventOccurred && this.mObserverMap.contains(entry.getKey())) {
-                Lifecycle.Event event = downEvent(observer.mState);
-                pushParentState(getStateAfter(event));
-                observer.dispatchEvent(lifecycleOwner, event);
-                popParentState();
-            }
-        }
-    }
-
-    private void sync() {
-        LifecycleOwner lifecycleOwner = this.mLifecycleOwner.get();
-        if (lifecycleOwner == null) {
-            Log.w(LOG_TAG, "LifecycleOwner is garbage collected, you shouldn't try dispatch new events from it.");
-            return;
-        }
-        while (!isSynced()) {
-            this.mNewEventOccurred = false;
-            if (this.mState.compareTo((Enum) this.mObserverMap.eldest().getValue().mState) < 0) {
-                backwardPass(lifecycleOwner);
-            }
-            Map.Entry<LifecycleObserver, ObserverWithState> newest = this.mObserverMap.newest();
-            if (!this.mNewEventOccurred && newest != null && this.mState.compareTo((Enum) newest.getValue().mState) > 0) {
-                forwardPass(lifecycleOwner);
-            }
-        }
-        this.mNewEventOccurred = false;
-    }
-
-    static Lifecycle.State min(@NonNull Lifecycle.State state1, @Nullable Lifecycle.State state2) {
-        return (state2 == null || state2.compareTo(state1) >= 0) ? state1 : state2;
     }
 
     static class ObserverWithState {

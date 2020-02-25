@@ -6,6 +6,9 @@ import java.lang.reflect.Array;
 final class GrowingArrayUtils {
     static final /* synthetic */ boolean $assertionsDisabled = false;
 
+    private GrowingArrayUtils() {
+    }
+
     public static <T> T[] append(T[] array, int currentSize, Object obj) {
         if (currentSize + 1 > array.length) {
             T[] newArray = (Object[]) Array.newInstance(array.getClass().getComponentType(), growSize(currentSize));
@@ -103,8 +106,5 @@ final class GrowingArrayUtils {
             return 8;
         }
         return currentSize * 2;
-    }
-
-    private GrowingArrayUtils() {
     }
 }

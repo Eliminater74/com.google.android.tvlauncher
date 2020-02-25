@@ -6,15 +6,17 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.support.annotation.NonNull;
+
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
 import com.google.android.tvlauncher.C1188R;
+
 import java.security.MessageDigest;
 import java.util.Arrays;
 
 public final class CropBackgroundBitmapTransformation extends BitmapTransformation {
-    private static final int sHashCode = Arrays.hashCode(sKeyBytes);
     private static final byte[] sKeyBytes = CropBackgroundBitmapTransformation.class.getName().getBytes(CHARSET);
+    private static final int sHashCode = Arrays.hashCode(sKeyBytes);
     private final int mViewPortHeight;
     private final int mViewPortWidth;
 

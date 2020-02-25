@@ -2,6 +2,7 @@ package com.google.android.exoplayer2.source.dash.offline;
 
 import android.net.Uri;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.extractor.ChunkIndex;
 import com.google.android.exoplayer2.offline.DownloaderConstructorHelper;
@@ -19,6 +20,7 @@ import com.google.android.exoplayer2.source.dash.manifest.Representation;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.ParsingLoadable;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,28 +28,6 @@ import java.util.List;
 public final class DashDownloader extends SegmentDownloader<DashManifest> {
     public DashDownloader(Uri manifestUri, List<StreamKey> streamKeys, DownloaderConstructorHelper constructorHelper) {
         super(manifestUri, streamKeys, constructorHelper);
-    }
-
-    /* access modifiers changed from: protected */
-    public DashManifest getManifest(DataSource dataSource, DataSpec dataSpec) throws IOException {
-        return (DashManifest) ParsingLoadable.load(dataSource, new DashManifestParser(), dataSpec, 4);
-    }
-
-    /* access modifiers changed from: protected */
-    public List<SegmentDownloader.Segment> getSegments(DataSource dataSource, DashManifest manifest, boolean allowIncompleteList) throws InterruptedException, IOException {
-        DashManifest dashManifest = manifest;
-        ArrayList<SegmentDownloader.Segment> segments = new ArrayList<>();
-        for (int i = 0; i < manifest.getPeriodCount(); i++) {
-            Period period = dashManifest.getPeriod(i);
-            long periodStartUs = C0841C.msToUs(period.startMs);
-            long periodDurationUs = dashManifest.getPeriodDurationUs(i);
-            int j = 0;
-            for (List<AdaptationSet> adaptationSets = period.adaptationSets; j < adaptationSets.size(); adaptationSets = adaptationSets) {
-                addSegmentsForAdaptationSet(dataSource, adaptationSets.get(j), periodStartUs, periodDurationUs, allowIncompleteList, segments);
-                j++;
-            }
-        }
-        return segments;
     }
 
     /* JADX WARNING: Removed duplicated region for block: B:33:0x0090 A[SYNTHETIC] */
@@ -155,5 +135,27 @@ public final class DashDownloader extends SegmentDownloader<DashManifest> {
             return null;
         }
         return new DashWrappingSegmentIndex(seekMap, representation.presentationTimeOffsetUs);
+    }
+
+    /* access modifiers changed from: protected */
+    public DashManifest getManifest(DataSource dataSource, DataSpec dataSpec) throws IOException {
+        return (DashManifest) ParsingLoadable.load(dataSource, new DashManifestParser(), dataSpec, 4);
+    }
+
+    /* access modifiers changed from: protected */
+    public List<SegmentDownloader.Segment> getSegments(DataSource dataSource, DashManifest manifest, boolean allowIncompleteList) throws InterruptedException, IOException {
+        DashManifest dashManifest = manifest;
+        ArrayList<SegmentDownloader.Segment> segments = new ArrayList<>();
+        for (int i = 0; i < manifest.getPeriodCount(); i++) {
+            Period period = dashManifest.getPeriod(i);
+            long periodStartUs = C0841C.msToUs(period.startMs);
+            long periodDurationUs = dashManifest.getPeriodDurationUs(i);
+            int j = 0;
+            for (List<AdaptationSet> adaptationSets = period.adaptationSets; j < adaptationSets.size(); adaptationSets = adaptationSets) {
+                addSegmentsForAdaptationSet(dataSource, adaptationSets.get(j), periodStartUs, periodDurationUs, allowIncompleteList, segments);
+                j++;
+            }
+        }
+        return segments;
     }
 }

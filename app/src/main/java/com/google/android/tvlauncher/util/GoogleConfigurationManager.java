@@ -10,10 +10,10 @@ import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.support.annotation.WorkerThread;
 import android.util.Log;
-import com.google.android.tvlauncher.util.ChannelConfigContract;
-import com.google.android.tvlauncher.util.ChannelConfigurationInfo;
+
 import com.google.android.tvrecommendations.shared.util.Constants;
 import com.google.devtools.build.android.desugar.runtime.ThrowableExtension;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -24,13 +24,13 @@ public class GoogleConfigurationManager {
     private static final int NO_POSITION = -1;
     private static final String TAG = "GoogleConfigManager";
     private static final int TRUE = 1;
+    /* access modifiers changed from: private */
+    public final Object mLock = new Object();
+    /* access modifiers changed from: private */
+    public boolean mIsConfigurationLoaded;
     private List<ChannelConfigurationInfo> mChannelConfigurations = new ArrayList();
     private ContentObserver mConfigurationObserver;
     private Context mContext;
-    /* access modifiers changed from: private */
-    public boolean mIsConfigurationLoaded;
-    /* access modifiers changed from: private */
-    public final Object mLock = new Object();
     private Set<String> mSponsoredChannels = new HashSet();
 
     public GoogleConfigurationManager(Context context) {

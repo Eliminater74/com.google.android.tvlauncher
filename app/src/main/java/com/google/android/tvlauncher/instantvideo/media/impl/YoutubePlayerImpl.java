@@ -10,9 +10,11 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+
 import com.google.android.tvlauncher.instantvideo.media.MediaPlayer;
 import com.google.android.tvlauncher.instantvideo.util.YouTubeUriUtils;
 import com.google.devtools.build.android.desugar.runtime.ThrowableExtension;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,7 +39,8 @@ public class YoutubePlayerImpl implements MediaPlayer {
     private static final int YOUTUBE_STATE_PLAYING = 1;
     private static final int YOUTUBE_STATE_UNSTARTED = -1;
     private static String sYoutubeHtmlTemplate;
-    private Context mContext;
+    /* access modifiers changed from: private */
+    public final WebView mWebView;
     /* access modifiers changed from: private */
     public int mDisplayHeight;
     /* access modifiers changed from: private */
@@ -46,18 +49,17 @@ public class YoutubePlayerImpl implements MediaPlayer {
     public int mDisplayWidth;
     /* access modifiers changed from: private */
     public boolean mFirstFrameDrawn;
-    private Handler mHandler = new Handler();
     /* access modifiers changed from: private */
     public boolean mPlayWhenReady;
     /* access modifiers changed from: private */
     public int mState = 1;
     /* access modifiers changed from: private */
     public MediaPlayer.VideoCallback mVideoCallback;
-    private String mVideoId;
-    /* access modifiers changed from: private */
-    public final WebView mWebView;
     /* access modifiers changed from: private */
     public int mWebViewState;
+    private Context mContext;
+    private Handler mHandler = new Handler();
+    private String mVideoId;
     private Uri mYoutubeUri;
 
     public YoutubePlayerImpl(Context context) {
@@ -96,6 +98,10 @@ public class YoutubePlayerImpl implements MediaPlayer {
         return this.mState;
     }
 
+    public Uri getVideoUri() {
+        return this.mYoutubeUri;
+    }
+
     public void setVideoUri(Uri uri) {
         if (Uri.EMPTY.equals(uri) || !YouTubeUriUtils.isYouTubeWatchUri(uri)) {
             String valueOf = String.valueOf(uri);
@@ -108,10 +114,6 @@ public class YoutubePlayerImpl implements MediaPlayer {
         this.mVideoId = YouTubeUriUtils.getYouTubeVideoId(uri);
         this.mDisplayWidth = 932;
         this.mDisplayHeight = 524;
-    }
-
-    public Uri getVideoUri() {
-        return this.mYoutubeUri;
     }
 
     public void prepare() {

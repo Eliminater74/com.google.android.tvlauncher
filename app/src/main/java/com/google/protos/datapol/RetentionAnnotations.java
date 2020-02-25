@@ -14,23 +14,12 @@ import com.google.protobuf.ProtoMessage;
 import com.google.protobuf.ProtoPresenceBits;
 import com.google.protobuf.ProtoPresenceCheckedField;
 import com.google.protobuf.ProtoSyntax;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 public final class RetentionAnnotations {
-
-    public interface RetentionSpecOrBuilder extends MessageLiteOrBuilder {
-        String getContext();
-
-        ByteString getContextBytes();
-
-        RetentionTag getDesiredRetention();
-
-        boolean hasContext();
-
-        boolean hasDesiredRetention();
-    }
 
     private RetentionAnnotations() {
     }
@@ -52,7 +41,7 @@ public final class RetentionAnnotations {
         RT_2_YEARS(70),
         RT_3_YEARS(80),
         RT_ARCHIVAL(1000);
-        
+
         public static final int RT_16_MONTHS_VALUE = 58;
         public static final int RT_2_YEARS_VALUE = 70;
         public static final int RT_3_YEARS_VALUE = 80;
@@ -73,8 +62,8 @@ public final class RetentionAnnotations {
         };
         private final int value;
 
-        public final int getNumber() {
-            return this.value;
+        private RetentionTag(int value2) {
+            this.value = value2;
         }
 
         public static RetentionTag forNumber(int value2) {
@@ -128,6 +117,10 @@ public final class RetentionAnnotations {
             return RetentionTagVerifier.INSTANCE;
         }
 
+        public final int getNumber() {
+            return this.value;
+        }
+
         private static final class RetentionTagVerifier implements Internal.EnumVerifier {
             static final Internal.EnumVerifier INSTANCE = new RetentionTagVerifier();
 
@@ -138,10 +131,18 @@ public final class RetentionAnnotations {
                 return RetentionTag.forNumber(number) != null;
             }
         }
+    }
 
-        private RetentionTag(int value2) {
-            this.value = value2;
-        }
+    public interface RetentionSpecOrBuilder extends MessageLiteOrBuilder {
+        String getContext();
+
+        ByteString getContextBytes();
+
+        RetentionTag getDesiredRetention();
+
+        boolean hasContext();
+
+        boolean hasDesiredRetention();
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -151,6 +152,11 @@ public final class RetentionAnnotations {
         public static final RetentionSpec DEFAULT_INSTANCE = new RetentionSpec();
         public static final int DESIRED_RETENTION_FIELD_NUMBER = 1;
         private static volatile Parser<RetentionSpec> PARSER;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(RetentionSpec.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 2, isEnforceUtf8 = false, isRequired = false, type = FieldType.STRING)
@@ -161,69 +167,6 @@ public final class RetentionAnnotations {
         private int desiredRetention_;
 
         private RetentionSpec() {
-        }
-
-        public boolean hasDesiredRetention() {
-            return (this.bitField0_ & 1) != 0;
-        }
-
-        public RetentionTag getDesiredRetention() {
-            RetentionTag result = RetentionTag.forNumber(this.desiredRetention_);
-            return result == null ? RetentionTag.RT_DEFAULT : result;
-        }
-
-        /* access modifiers changed from: private */
-        public void setDesiredRetention(RetentionTag value) {
-            if (value != null) {
-                this.bitField0_ |= 1;
-                this.desiredRetention_ = value.getNumber();
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        /* access modifiers changed from: private */
-        public void clearDesiredRetention() {
-            this.bitField0_ &= -2;
-            this.desiredRetention_ = 0;
-        }
-
-        public boolean hasContext() {
-            return (this.bitField0_ & 2) != 0;
-        }
-
-        public String getContext() {
-            return this.context_;
-        }
-
-        public ByteString getContextBytes() {
-            return ByteString.copyFromUtf8(this.context_);
-        }
-
-        /* access modifiers changed from: private */
-        public void setContext(String value) {
-            if (value != null) {
-                this.bitField0_ |= 2;
-                this.context_ = value;
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        /* access modifiers changed from: private */
-        public void clearContext() {
-            this.bitField0_ &= -3;
-            this.context_ = getDefaultInstance().getContext();
-        }
-
-        /* access modifiers changed from: private */
-        public void setContextBytes(ByteString value) {
-            if (value != null) {
-                this.bitField0_ |= 2;
-                this.context_ = value.toStringUtf8();
-                return;
-            }
-            throw new NullPointerException();
         }
 
         public static RetentionSpec parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
@@ -282,60 +225,75 @@ public final class RetentionAnnotations {
             return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
         }
 
-        public static final class Builder extends GeneratedMessageLite.Builder<RetentionSpec, Builder> implements RetentionSpecOrBuilder {
-            private Builder() {
-                super(RetentionSpec.DEFAULT_INSTANCE);
-            }
+        public static RetentionSpec getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
 
-            public boolean hasDesiredRetention() {
-                return ((RetentionSpec) this.instance).hasDesiredRetention();
-            }
+        public static Parser<RetentionSpec> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
+        }
 
-            public RetentionTag getDesiredRetention() {
-                return ((RetentionSpec) this.instance).getDesiredRetention();
-            }
+        public boolean hasDesiredRetention() {
+            return (this.bitField0_ & 1) != 0;
+        }
 
-            public Builder setDesiredRetention(RetentionTag value) {
-                copyOnWrite();
-                ((RetentionSpec) this.instance).setDesiredRetention(value);
-                return this;
-            }
+        public RetentionTag getDesiredRetention() {
+            RetentionTag result = RetentionTag.forNumber(this.desiredRetention_);
+            return result == null ? RetentionTag.RT_DEFAULT : result;
+        }
 
-            public Builder clearDesiredRetention() {
-                copyOnWrite();
-                ((RetentionSpec) this.instance).clearDesiredRetention();
-                return this;
+        /* access modifiers changed from: private */
+        public void setDesiredRetention(RetentionTag value) {
+            if (value != null) {
+                this.bitField0_ |= 1;
+                this.desiredRetention_ = value.getNumber();
+                return;
             }
+            throw new NullPointerException();
+        }
 
-            public boolean hasContext() {
-                return ((RetentionSpec) this.instance).hasContext();
-            }
+        /* access modifiers changed from: private */
+        public void clearDesiredRetention() {
+            this.bitField0_ &= -2;
+            this.desiredRetention_ = 0;
+        }
 
-            public String getContext() {
-                return ((RetentionSpec) this.instance).getContext();
-            }
+        public boolean hasContext() {
+            return (this.bitField0_ & 2) != 0;
+        }
 
-            public ByteString getContextBytes() {
-                return ((RetentionSpec) this.instance).getContextBytes();
-            }
+        public String getContext() {
+            return this.context_;
+        }
 
-            public Builder setContext(String value) {
-                copyOnWrite();
-                ((RetentionSpec) this.instance).setContext(value);
-                return this;
+        /* access modifiers changed from: private */
+        public void setContext(String value) {
+            if (value != null) {
+                this.bitField0_ |= 2;
+                this.context_ = value;
+                return;
             }
+            throw new NullPointerException();
+        }
 
-            public Builder clearContext() {
-                copyOnWrite();
-                ((RetentionSpec) this.instance).clearContext();
-                return this;
-            }
+        public ByteString getContextBytes() {
+            return ByteString.copyFromUtf8(this.context_);
+        }
 
-            public Builder setContextBytes(ByteString value) {
-                copyOnWrite();
-                ((RetentionSpec) this.instance).setContextBytes(value);
-                return this;
+        /* access modifiers changed from: private */
+        public void setContextBytes(ByteString value) {
+            if (value != null) {
+                this.bitField0_ |= 2;
+                this.context_ = value.toStringUtf8();
+                return;
             }
+            throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearContext() {
+            this.bitField0_ &= -3;
+            this.context_ = getDefaultInstance().getContext();
         }
 
         /* access modifiers changed from: protected */
@@ -370,16 +328,60 @@ public final class RetentionAnnotations {
             }
         }
 
-        static {
-            GeneratedMessageLite.registerDefaultInstance(RetentionSpec.class, DEFAULT_INSTANCE);
-        }
+        public static final class Builder extends GeneratedMessageLite.Builder<RetentionSpec, Builder> implements RetentionSpecOrBuilder {
+            private Builder() {
+                super(RetentionSpec.DEFAULT_INSTANCE);
+            }
 
-        public static RetentionSpec getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
+            public boolean hasDesiredRetention() {
+                return ((RetentionSpec) this.instance).hasDesiredRetention();
+            }
 
-        public static Parser<RetentionSpec> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
+            public RetentionTag getDesiredRetention() {
+                return ((RetentionSpec) this.instance).getDesiredRetention();
+            }
+
+            public Builder setDesiredRetention(RetentionTag value) {
+                copyOnWrite();
+                ((RetentionSpec) this.instance).setDesiredRetention(value);
+                return this;
+            }
+
+            public Builder clearDesiredRetention() {
+                copyOnWrite();
+                ((RetentionSpec) this.instance).clearDesiredRetention();
+                return this;
+            }
+
+            public boolean hasContext() {
+                return ((RetentionSpec) this.instance).hasContext();
+            }
+
+            public String getContext() {
+                return ((RetentionSpec) this.instance).getContext();
+            }
+
+            public Builder setContext(String value) {
+                copyOnWrite();
+                ((RetentionSpec) this.instance).setContext(value);
+                return this;
+            }
+
+            public ByteString getContextBytes() {
+                return ((RetentionSpec) this.instance).getContextBytes();
+            }
+
+            public Builder setContextBytes(ByteString value) {
+                copyOnWrite();
+                ((RetentionSpec) this.instance).setContextBytes(value);
+                return this;
+            }
+
+            public Builder clearContext() {
+                copyOnWrite();
+                ((RetentionSpec) this.instance).clearContext();
+                return this;
+            }
         }
     }
 }

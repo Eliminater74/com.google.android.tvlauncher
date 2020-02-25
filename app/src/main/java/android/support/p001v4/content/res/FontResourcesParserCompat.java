@@ -12,120 +12,28 @@ import android.support.p001v4.provider.FontRequest;
 import android.util.Base64;
 import android.util.TypedValue;
 import android.util.Xml;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+
 import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
 /* renamed from: android.support.v4.content.res.FontResourcesParserCompat */
 public class FontResourcesParserCompat {
-    private static final int DEFAULT_TIMEOUT_MILLIS = 500;
     public static final int FETCH_STRATEGY_ASYNC = 1;
     public static final int FETCH_STRATEGY_BLOCKING = 0;
     public static final int INFINITE_TIMEOUT_VALUE = -1;
+    private static final int DEFAULT_TIMEOUT_MILLIS = 500;
     private static final int ITALIC = 1;
     private static final int NORMAL_WEIGHT = 400;
 
-    /* renamed from: android.support.v4.content.res.FontResourcesParserCompat$FamilyResourceEntry */
-    public interface FamilyResourceEntry {
-    }
-
-    @Retention(RetentionPolicy.SOURCE)
-    /* renamed from: android.support.v4.content.res.FontResourcesParserCompat$FetchStrategy */
-    public @interface FetchStrategy {
-    }
-
-    /* renamed from: android.support.v4.content.res.FontResourcesParserCompat$ProviderResourceEntry */
-    public static final class ProviderResourceEntry implements FamilyResourceEntry {
-        @NonNull
-        private final FontRequest mRequest;
-        private final int mStrategy;
-        private final int mTimeoutMs;
-
-        public ProviderResourceEntry(@NonNull FontRequest request, int strategy, int timeoutMs) {
-            this.mRequest = request;
-            this.mStrategy = strategy;
-            this.mTimeoutMs = timeoutMs;
-        }
-
-        @NonNull
-        public FontRequest getRequest() {
-            return this.mRequest;
-        }
-
-        public int getFetchStrategy() {
-            return this.mStrategy;
-        }
-
-        public int getTimeout() {
-            return this.mTimeoutMs;
-        }
-    }
-
-    /* renamed from: android.support.v4.content.res.FontResourcesParserCompat$FontFileResourceEntry */
-    public static final class FontFileResourceEntry {
-        @NonNull
-        private final String mFileName;
-        private boolean mItalic;
-        private int mResourceId;
-        private int mTtcIndex;
-        private String mVariationSettings;
-        private int mWeight;
-
-        public FontFileResourceEntry(@NonNull String fileName, int weight, boolean italic, @Nullable String variationSettings, int ttcIndex, int resourceId) {
-            this.mFileName = fileName;
-            this.mWeight = weight;
-            this.mItalic = italic;
-            this.mVariationSettings = variationSettings;
-            this.mTtcIndex = ttcIndex;
-            this.mResourceId = resourceId;
-        }
-
-        @NonNull
-        public String getFileName() {
-            return this.mFileName;
-        }
-
-        public int getWeight() {
-            return this.mWeight;
-        }
-
-        public boolean isItalic() {
-            return this.mItalic;
-        }
-
-        @Nullable
-        public String getVariationSettings() {
-            return this.mVariationSettings;
-        }
-
-        public int getTtcIndex() {
-            return this.mTtcIndex;
-        }
-
-        public int getResourceId() {
-            return this.mResourceId;
-        }
-    }
-
-    /* renamed from: android.support.v4.content.res.FontResourcesParserCompat$FontFamilyFilesResourceEntry */
-    public static final class FontFamilyFilesResourceEntry implements FamilyResourceEntry {
-        @NonNull
-        private final FontFileResourceEntry[] mEntries;
-
-        public FontFamilyFilesResourceEntry(@NonNull FontFileResourceEntry[] entries) {
-            this.mEntries = entries;
-        }
-
-        @NonNull
-        public FontFileResourceEntry[] getEntries() {
-            return this.mEntries;
-        }
+    private FontResourcesParserCompat() {
     }
 
     @Nullable
@@ -259,6 +167,100 @@ public class FontResourcesParserCompat {
         }
     }
 
-    private FontResourcesParserCompat() {
+    /* renamed from: android.support.v4.content.res.FontResourcesParserCompat$FamilyResourceEntry */
+    public interface FamilyResourceEntry {
+    }
+
+    @Retention(RetentionPolicy.SOURCE)
+    /* renamed from: android.support.v4.content.res.FontResourcesParserCompat$FetchStrategy */
+    public @interface FetchStrategy {
+    }
+
+    /* renamed from: android.support.v4.content.res.FontResourcesParserCompat$ProviderResourceEntry */
+    public static final class ProviderResourceEntry implements FamilyResourceEntry {
+        @NonNull
+        private final FontRequest mRequest;
+        private final int mStrategy;
+        private final int mTimeoutMs;
+
+        public ProviderResourceEntry(@NonNull FontRequest request, int strategy, int timeoutMs) {
+            this.mRequest = request;
+            this.mStrategy = strategy;
+            this.mTimeoutMs = timeoutMs;
+        }
+
+        @NonNull
+        public FontRequest getRequest() {
+            return this.mRequest;
+        }
+
+        public int getFetchStrategy() {
+            return this.mStrategy;
+        }
+
+        public int getTimeout() {
+            return this.mTimeoutMs;
+        }
+    }
+
+    /* renamed from: android.support.v4.content.res.FontResourcesParserCompat$FontFileResourceEntry */
+    public static final class FontFileResourceEntry {
+        @NonNull
+        private final String mFileName;
+        private boolean mItalic;
+        private int mResourceId;
+        private int mTtcIndex;
+        private String mVariationSettings;
+        private int mWeight;
+
+        public FontFileResourceEntry(@NonNull String fileName, int weight, boolean italic, @Nullable String variationSettings, int ttcIndex, int resourceId) {
+            this.mFileName = fileName;
+            this.mWeight = weight;
+            this.mItalic = italic;
+            this.mVariationSettings = variationSettings;
+            this.mTtcIndex = ttcIndex;
+            this.mResourceId = resourceId;
+        }
+
+        @NonNull
+        public String getFileName() {
+            return this.mFileName;
+        }
+
+        public int getWeight() {
+            return this.mWeight;
+        }
+
+        public boolean isItalic() {
+            return this.mItalic;
+        }
+
+        @Nullable
+        public String getVariationSettings() {
+            return this.mVariationSettings;
+        }
+
+        public int getTtcIndex() {
+            return this.mTtcIndex;
+        }
+
+        public int getResourceId() {
+            return this.mResourceId;
+        }
+    }
+
+    /* renamed from: android.support.v4.content.res.FontResourcesParserCompat$FontFamilyFilesResourceEntry */
+    public static final class FontFamilyFilesResourceEntry implements FamilyResourceEntry {
+        @NonNull
+        private final FontFileResourceEntry[] mEntries;
+
+        public FontFamilyFilesResourceEntry(@NonNull FontFileResourceEntry[] entries) {
+            this.mEntries = entries;
+        }
+
+        @NonNull
+        public FontFileResourceEntry[] getEntries() {
+            return this.mEntries;
+        }
     }
 }

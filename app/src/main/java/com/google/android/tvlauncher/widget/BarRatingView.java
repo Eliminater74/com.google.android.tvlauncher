@@ -12,11 +12,13 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.VisibleForTesting;
 import android.util.AttributeSet;
 import android.view.View;
+
 import com.google.android.tvlauncher.C1188R;
 
 public class BarRatingView extends View {
     private static final int MAX_RATING = 5;
     private static final float STEP_SIZE = 0.25f;
+    private final int mOverallScore;
     private float mFillPortion;
     private RectF mFilledItemRect;
     private Paint mFilledPaint;
@@ -24,7 +26,6 @@ public class BarRatingView extends View {
     private Bitmap mItemUnfilledBitmap;
     private int mLayoutHeight;
     private int mLayoutWidth;
-    private final int mOverallScore;
     private float mRating;
     private RectF mUnfilledItemRect;
     private Paint mUnfilledPaint;
@@ -68,6 +69,11 @@ public class BarRatingView extends View {
         return bitmap;
     }
 
+    @VisibleForTesting
+    public float getRating() {
+        return this.mRating;
+    }
+
     public void setRating(float rating) {
         int roundedScore;
         this.mRating = rating;
@@ -98,11 +104,6 @@ public class BarRatingView extends View {
             this.mUnfilledItemRect = new RectF(f * ((float) i2), 0.0f, (float) i2, (float) this.mLayoutHeight);
         }
         invalidate();
-    }
-
-    @VisibleForTesting
-    public float getRating() {
-        return this.mRating;
     }
 
     /* access modifiers changed from: protected */

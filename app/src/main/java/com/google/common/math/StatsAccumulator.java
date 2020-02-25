@@ -4,6 +4,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.base.Preconditions;
 import com.google.common.primitives.Doubles;
+
 import java.util.Iterator;
 
 @GwtIncompatible
@@ -14,6 +15,16 @@ public final class StatsAccumulator {
     private double mean = 0.0d;
     private double min = Double.NaN;
     private double sumOfSquaresOfDeltas = 0.0d;
+
+    static double calculateNewMeanNonFinite(double previousMean, double value) {
+        if (Doubles.isFinite(previousMean)) {
+            return value;
+        }
+        if (Doubles.isFinite(value) || previousMean == value) {
+            return previousMean;
+        }
+        return Double.NaN;
+    }
 
     public void add(double value) {
         long j = this.count;
@@ -175,15 +186,5 @@ public final class StatsAccumulator {
     /* access modifiers changed from: package-private */
     public double sumOfSquaresOfDeltas() {
         return this.sumOfSquaresOfDeltas;
-    }
-
-    static double calculateNewMeanNonFinite(double previousMean, double value) {
-        if (Doubles.isFinite(previousMean)) {
-            return value;
-        }
-        if (Doubles.isFinite(value) || previousMean == value) {
-            return previousMean;
-        }
-        return Double.NaN;
     }
 }

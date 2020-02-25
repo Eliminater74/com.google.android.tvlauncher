@@ -3,14 +3,15 @@ package com.google.android.gms.common.stats;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
+
 import com.google.android.gms.internal.zzbky;
+
 import java.util.List;
 
 public final class WakeLockEvent extends StatsEvent {
     public static final Parcelable.Creator<WakeLockEvent> CREATOR = new zzd();
     private final int zza;
     private final long zzb;
-    private int zzc;
     private final String zzd;
     private final String zze;
     private final String zzf;
@@ -18,10 +19,11 @@ public final class WakeLockEvent extends StatsEvent {
     private final List<String> zzh;
     private final String zzi;
     private final long zzj;
-    private int zzk;
     private final String zzl;
     private final float zzm;
     private final long zzn;
+    private int zzc;
+    private int zzk;
     private long zzo;
 
     WakeLockEvent(int i, long j, int i2, String str, int i3, List<String> list, String str2, long j2, int i4, String str3, String str4, float f, long j3, String str5) {

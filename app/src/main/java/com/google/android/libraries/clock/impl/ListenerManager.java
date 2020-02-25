@@ -4,24 +4,22 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+
 import java.util.Collection;
 import java.util.Set;
 
 public class ListenerManager<T> {
-    private final String mAction;
-    private final Context mContext;
     /* access modifiers changed from: private */
     public final Dispatcher<T> mDispatcher;
     /* access modifiers changed from: private */
     public final Set<T> mListeners = Sets.newHashSet();
+    private final String mAction;
+    private final Context mContext;
     private BroadcastReceiver mReceiver = new Receiver();
-
-    public interface Dispatcher<T> {
-        void dispatch(T t);
-    }
 
     public ListenerManager(Context context, String action, Dispatcher<T> dispatcher) {
         this.mAction = action;
@@ -55,6 +53,10 @@ public class ListenerManager<T> {
     @VisibleForTesting
     public BroadcastReceiver getReceiver() {
         return this.mReceiver;
+    }
+
+    public interface Dispatcher<T> {
+        void dispatch(T t);
     }
 
     class Receiver extends BroadcastReceiver {

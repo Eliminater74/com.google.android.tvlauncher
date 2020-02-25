@@ -12,12 +12,12 @@ import android.view.View;
 
 /* renamed from: android.support.v7.widget.AppCompatBackgroundHelper */
 class AppCompatBackgroundHelper {
+    private final AppCompatDrawableManager mDrawableManager;
+    private final View mView;
     private int mBackgroundResId = -1;
     private TintInfo mBackgroundTint;
-    private final AppCompatDrawableManager mDrawableManager;
     private TintInfo mInternalBackgroundTint;
     private TintInfo mTmpInfo;
-    private final View mView;
 
     AppCompatBackgroundHelper(View view) {
         this.mView = view;
@@ -62,6 +62,15 @@ class AppCompatBackgroundHelper {
     }
 
     /* access modifiers changed from: package-private */
+    public ColorStateList getSupportBackgroundTintList() {
+        TintInfo tintInfo = this.mBackgroundTint;
+        if (tintInfo != null) {
+            return tintInfo.mTintList;
+        }
+        return null;
+    }
+
+    /* access modifiers changed from: package-private */
     public void setSupportBackgroundTintList(ColorStateList tint) {
         if (this.mBackgroundTint == null) {
             this.mBackgroundTint = new TintInfo();
@@ -73,10 +82,10 @@ class AppCompatBackgroundHelper {
     }
 
     /* access modifiers changed from: package-private */
-    public ColorStateList getSupportBackgroundTintList() {
+    public PorterDuff.Mode getSupportBackgroundTintMode() {
         TintInfo tintInfo = this.mBackgroundTint;
         if (tintInfo != null) {
-            return tintInfo.mTintList;
+            return tintInfo.mTintMode;
         }
         return null;
     }
@@ -90,15 +99,6 @@ class AppCompatBackgroundHelper {
         tintInfo.mTintMode = tintMode;
         tintInfo.mHasTintMode = true;
         applySupportBackgroundTint();
-    }
-
-    /* access modifiers changed from: package-private */
-    public PorterDuff.Mode getSupportBackgroundTintMode() {
-        TintInfo tintInfo = this.mBackgroundTint;
-        if (tintInfo != null) {
-            return tintInfo.mTintMode;
-        }
-        return null;
     }
 
     /* access modifiers changed from: package-private */

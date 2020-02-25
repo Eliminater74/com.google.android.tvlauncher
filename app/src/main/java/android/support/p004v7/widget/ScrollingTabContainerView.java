@@ -9,7 +9,6 @@ import android.support.annotation.RestrictTo;
 import android.support.p004v7.app.ActionBar;
 import android.support.p004v7.appcompat.C0233R;
 import android.support.p004v7.view.ActionBarPolicy;
-import android.support.p004v7.widget.LinearLayoutCompat;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,17 +34,17 @@ public class ScrollingTabContainerView extends HorizontalScrollView implements A
     private static final int FADE_DURATION = 200;
     private static final String TAG = "ScrollingTabContainerView";
     private static final Interpolator sAlphaInterpolator = new DecelerateInterpolator();
-    private boolean mAllowCollapse;
-    private int mContentHeight;
-    int mMaxTabWidth;
-    private int mSelectedTabIndex;
-    int mStackedTabMaxWidth;
-    private TabClickListener mTabClickListener;
-    LinearLayoutCompat mTabLayout;
-    Runnable mTabSelector;
-    private Spinner mTabSpinner;
     protected final VisibilityAnimListener mVisAnimListener = new VisibilityAnimListener();
     protected ViewPropertyAnimator mVisibilityAnim;
+    int mMaxTabWidth;
+    int mStackedTabMaxWidth;
+    LinearLayoutCompat mTabLayout;
+    Runnable mTabSelector;
+    private boolean mAllowCollapse;
+    private int mContentHeight;
+    private int mSelectedTabIndex;
+    private TabClickListener mTabClickListener;
+    private Spinner mTabSpinner;
 
     public ScrollingTabContainerView(Context context) {
         super(context);

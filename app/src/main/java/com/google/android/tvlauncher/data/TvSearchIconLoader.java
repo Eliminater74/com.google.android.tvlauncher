@@ -2,6 +2,7 @@ package com.google.android.tvlauncher.data;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+
 import com.google.android.tvlauncher.home.util.SearchWidgetInfoContract;
 
 public class TvSearchIconLoader extends DataLoader<Drawable> {

@@ -4,39 +4,39 @@ import android.content.Context;
 import android.database.Cursor;
 import android.os.Handler;
 import android.support.p004v7.widget.RecyclerView;
-import android.support.p004v7.widget.RecyclerView.ViewHolder;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.leanback.widget.VerticalGridView;
+
 import com.google.android.tvlauncher.C1188R;
 import com.google.android.tvlauncher.TvlauncherLogEnum;
 import com.google.android.tvlauncher.analytics.EventLogger;
 import com.google.android.tvlauncher.analytics.LogEvent;
 import com.google.android.tvlauncher.analytics.UserActionEvent;
-import com.google.android.tvlauncher.notifications.NotificationsPanelView;
 import com.google.protos.logs.proto.wireless.android.tvlauncher.TvlauncherClientLog;
 
 public class NotificationsPanelAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<NotificationPanelViewHolder> implements EventLogger, NotificationsPanelView.OnFocusChangedListener {
     private static final boolean DEBUG = false;
     private static final String TAG = "NotifsPanelAdapter";
-    private Cursor mCursor;
     private final EventLogger mEventLogger;
+    private final Runnable mNotifySelectionChangedRunnable = new NotificationsPanelAdapter$$Lambda$0(this);
+    private Cursor mCursor;
     private Handler mHandler = new Handler();
     private VerticalGridView mList;
-    private final Runnable mNotifySelectionChangedRunnable = new NotificationsPanelAdapter$$Lambda$0(this);
-
-    /* access modifiers changed from: package-private */
-    public final /* synthetic */ void lambda$new$0$NotificationsPanelAdapter() {
-        notifyDataSetChanged();
-    }
 
     public NotificationsPanelAdapter(Context context, Cursor cursor, EventLogger logger) {
         this.mCursor = cursor;
         this.mEventLogger = logger;
         setHasStableIds(true);
+    }
+
+    /* access modifiers changed from: package-private */
+    public final /* synthetic */ void lambda$new$0$NotificationsPanelAdapter() {
+        notifyDataSetChanged();
     }
 
     public Cursor getCursor() {
@@ -97,16 +97,6 @@ public class NotificationsPanelAdapter<VH extends RecyclerView.ViewHolder> exten
         this.mNotifySelectionChangedRunnable.run();
     }
 
-    public static class NotificationPanelViewHolder extends RecyclerView.ViewHolder {
-        public NotificationPanelViewHolder(View itemView) {
-            super(itemView);
-        }
-
-        public void setNotification(TvNotification notification, EventLogger logger) {
-            ((NotificationPanelItemView) this.itemView).setNotification(notification, logger);
-        }
-    }
-
     public void changeCursor(Cursor newCursor) {
         this.mCursor = newCursor;
         notifyDataSetChanged();
@@ -147,5 +137,15 @@ public class NotificationsPanelAdapter<VH extends RecyclerView.ViewHolder> exten
     public void setList(VerticalGridView list) {
         this.mList = list;
         this.mList.setItemAnimator(new NotificationPanelItemAnimator());
+    }
+
+    public static class NotificationPanelViewHolder extends RecyclerView.ViewHolder {
+        public NotificationPanelViewHolder(View itemView) {
+            super(itemView);
+        }
+
+        public void setNotification(TvNotification notification, EventLogger logger) {
+            ((NotificationPanelItemView) this.itemView).setNotification(notification, logger);
+        }
     }
 }

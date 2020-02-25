@@ -23,6 +23,7 @@ import android.util.AttributeSet;
 import android.util.Property;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
+
 import androidx.leanback.C0364R;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
@@ -58,33 +59,33 @@ public class PagingIndicator extends View {
     private static final long DURATION_ALPHA = 167;
     private static final long DURATION_DIAMETER = 417;
     private static final long DURATION_TRANSLATION_X = 417;
-    private final AnimatorSet mAnimator;
-    Bitmap mArrow;
     final int mArrowDiameter;
-    private final int mArrowGap;
-    Paint mArrowPaint;
     final int mArrowRadius;
     final Rect mArrowRect;
     final float mArrowToBgRatio;
     final Paint mBgPaint;
-    private int mCurrentPage;
-    int mDotCenterY;
     final int mDotDiameter;
+    final int mDotRadius;
+    final Paint mFgPaint;
+    private final AnimatorSet mAnimator;
+    private final int mArrowGap;
+    private final int mDotGap;
+    private final AnimatorSet mHideAnimator;
+    private final int mShadowRadius;
+    private final AnimatorSet mShowAnimator;
+    Bitmap mArrow;
+    Paint mArrowPaint;
+    int mDotCenterY;
     @ColorInt
     int mDotFgSelectColor;
-    private final int mDotGap;
-    final int mDotRadius;
+    boolean mIsLtr;
+    private int mCurrentPage;
     private int[] mDotSelectedNextX;
     private int[] mDotSelectedPrevX;
     private int[] mDotSelectedX;
     private Dot[] mDots;
-    final Paint mFgPaint;
-    private final AnimatorSet mHideAnimator;
-    boolean mIsLtr;
     private int mPageCount;
     private int mPreviousPage;
-    private final int mShadowRadius;
-    private final AnimatorSet mShowAnimator;
 
     public PagingIndicator(Context context) {
         this(context, null, 0);
@@ -190,20 +191,6 @@ public class PagingIndicator extends View {
         return animator;
     }
 
-    public void setPageCount(int pages) {
-        if (pages > 0) {
-            this.mPageCount = pages;
-            this.mDots = new Dot[this.mPageCount];
-            for (int i = 0; i < this.mPageCount; i++) {
-                this.mDots[i] = new Dot();
-            }
-            calculateDotPositions();
-            setSelectedPage(0);
-            return;
-        }
-        throw new IllegalArgumentException("The page count should be a positive integer");
-    }
-
     public void onPageSelected(int pageIndex, boolean withAnimation) {
         if (this.mCurrentPage != pageIndex) {
             if (this.mAnimator.isStarted()) {
@@ -274,6 +261,20 @@ public class PagingIndicator extends View {
     @VisibleForTesting
     public int getPageCount() {
         return this.mPageCount;
+    }
+
+    public void setPageCount(int pages) {
+        if (pages > 0) {
+            this.mPageCount = pages;
+            this.mDots = new Dot[this.mPageCount];
+            for (int i = 0; i < this.mPageCount; i++) {
+                this.mDots[i] = new Dot();
+            }
+            calculateDotPositions();
+            setSelectedPage(0);
+            return;
+        }
+        throw new IllegalArgumentException("The page count should be a positive integer");
     }
 
     /* access modifiers changed from: package-private */

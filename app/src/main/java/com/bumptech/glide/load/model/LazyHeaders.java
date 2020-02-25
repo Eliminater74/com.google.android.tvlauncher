@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.text.TextUtils;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -12,8 +13,8 @@ import java.util.List;
 import java.util.Map;
 
 public final class LazyHeaders implements Headers {
-    private volatile Map<String, String> combinedHeaders;
     private final Map<String, List<LazyHeaderFactory>> headers;
+    private volatile Map<String, String> combinedHeaders;
 
     LazyHeaders(Map<String, List<LazyHeaderFactory>> headers2) {
         this.headers = Collections.unmodifiableMap(headers2);
@@ -81,9 +82,6 @@ public final class LazyHeaders implements Headers {
         private static final Map<String, List<LazyHeaderFactory>> DEFAULT_HEADERS;
         private static final String DEFAULT_USER_AGENT = getSanitizedUserAgent();
         private static final String USER_AGENT_HEADER = "User-Agent";
-        private boolean copyOnModify = true;
-        private Map<String, List<LazyHeaderFactory>> headers = DEFAULT_HEADERS;
-        private boolean isUserAgentDefault = true;
 
         static {
             Map<String, List<LazyHeaderFactory>> temp = new HashMap<>(2);
@@ -91,6 +89,29 @@ public final class LazyHeaders implements Headers {
                 temp.put(USER_AGENT_HEADER, Collections.singletonList(new StringHeaderFactory(DEFAULT_USER_AGENT)));
             }
             DEFAULT_HEADERS = Collections.unmodifiableMap(temp);
+        }
+
+        private boolean copyOnModify = true;
+        private Map<String, List<LazyHeaderFactory>> headers = DEFAULT_HEADERS;
+        private boolean isUserAgentDefault = true;
+
+        @VisibleForTesting
+        static String getSanitizedUserAgent() {
+            String defaultUserAgent = System.getProperty("http.agent");
+            if (TextUtils.isEmpty(defaultUserAgent)) {
+                return defaultUserAgent;
+            }
+            int length = defaultUserAgent.length();
+            StringBuilder sb = new StringBuilder(defaultUserAgent.length());
+            for (int i = 0; i < length; i++) {
+                char c = defaultUserAgent.charAt(i);
+                if ((c > 31 || c == 9) && c < 127) {
+                    sb.append(c);
+                } else {
+                    sb.append('?');
+                }
+            }
+            return sb.toString();
         }
 
         public Builder addHeader(@NonNull String key, @NonNull String value) {
@@ -153,25 +174,6 @@ public final class LazyHeaders implements Headers {
                 result.put((String) entry.getKey(), new ArrayList<>((Collection) entry.getValue()));
             }
             return result;
-        }
-
-        @VisibleForTesting
-        static String getSanitizedUserAgent() {
-            String defaultUserAgent = System.getProperty("http.agent");
-            if (TextUtils.isEmpty(defaultUserAgent)) {
-                return defaultUserAgent;
-            }
-            int length = defaultUserAgent.length();
-            StringBuilder sb = new StringBuilder(defaultUserAgent.length());
-            for (int i = 0; i < length; i++) {
-                char c = defaultUserAgent.charAt(i);
-                if ((c > 31 || c == 9) && c < 127) {
-                    sb.append(c);
-                } else {
-                    sb.append('?');
-                }
-            }
-            return sb.toString();
         }
     }
 

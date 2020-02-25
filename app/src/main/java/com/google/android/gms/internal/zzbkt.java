@@ -3,6 +3,7 @@ package com.google.android.gms.internal;
 import android.graphics.Canvas;
 import android.net.Uri;
 import android.widget.ImageView;
+
 import com.google.android.gms.common.internal.Hide;
 
 @Hide

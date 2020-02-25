@@ -9,6 +9,7 @@ import android.os.HandlerThread;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.view.Surface;
+
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.EGLSurfaceTexture;
 import com.google.android.exoplayer2.util.Log;
@@ -24,6 +25,12 @@ public final class DummySurface extends Surface {
     public final boolean secure;
     private final DummySurfaceThread thread;
     private boolean threadReleased;
+
+    private DummySurface(DummySurfaceThread thread2, SurfaceTexture surfaceTexture, boolean secure2) {
+        super(surfaceTexture);
+        this.thread = thread2;
+        this.secure = secure2;
+    }
 
     public static synchronized boolean isSecureSupported(Context context) {
         boolean z;
@@ -51,22 +58,6 @@ public final class DummySurface extends Surface {
         return thread2.init(i);
     }
 
-    private DummySurface(DummySurfaceThread thread2, SurfaceTexture surfaceTexture, boolean secure2) {
-        super(surfaceTexture);
-        this.thread = thread2;
-        this.secure = secure2;
-    }
-
-    public void release() {
-        super.release();
-        synchronized (this.thread) {
-            if (!this.threadReleased) {
-                this.thread.release();
-                this.threadReleased = true;
-            }
-        }
-    }
-
     private static void assertApiLevel17OrHigher() {
         if (Util.SDK_INT < 17) {
             throw new UnsupportedOperationException("Unsupported prior to API level 17");
@@ -86,6 +77,16 @@ public final class DummySurface extends Surface {
             return 1;
         }
         return 2;
+    }
+
+    public void release() {
+        super.release();
+        synchronized (this.thread) {
+            if (!this.threadReleased) {
+                this.thread.release();
+                this.threadReleased = true;
+            }
+        }
     }
 
     private static class DummySurfaceThread extends HandlerThread implements Handler.Callback {

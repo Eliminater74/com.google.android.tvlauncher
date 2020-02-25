@@ -2,26 +2,24 @@ package com.google.android.exoplayer2.source;
 
 import android.net.Uri;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.TransferListener;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.common.primitives.UnsignedBytes;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 final class IcyDataSource implements DataSource {
-    private int bytesUntilMetadata;
     private final Listener listener;
     private final int metadataIntervalBytes;
     private final byte[] metadataLengthByteHolder;
     private final DataSource upstream;
-
-    public interface Listener {
-        void onIcyMetadata(ParsableByteArray parsableByteArray);
-    }
+    private int bytesUntilMetadata;
 
     public IcyDataSource(DataSource upstream2, int metadataIntervalBytes2, Listener listener2) {
         Assertions.checkArgument(metadataIntervalBytes2 > 0);
@@ -93,5 +91,9 @@ final class IcyDataSource implements DataSource {
             this.listener.onIcyMetadata(new ParsableByteArray(metadata, metadataLength));
         }
         return true;
+    }
+
+    public interface Listener {
+        void onIcyMetadata(ParsableByteArray parsableByteArray);
     }
 }

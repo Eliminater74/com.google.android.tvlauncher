@@ -3,11 +3,15 @@ package android.support.p001v4.graphics;
 import android.graphics.Path;
 import android.support.annotation.Nullable;
 import android.util.Log;
+
 import java.util.ArrayList;
 
 /* renamed from: android.support.v4.graphics.PathParser */
 public class PathParser {
     private static final String LOGTAG = "PathParser";
+
+    private PathParser() {
+    }
 
     static float[] copyOfRange(float[] original, int start, int end) {
         if (start <= end) {
@@ -104,15 +108,6 @@ public class PathParser {
 
     private static void addNode(ArrayList<PathDataNode> list, char cmd, float[] val) {
         list.add(new PathDataNode(cmd, val));
-    }
-
-    /* renamed from: android.support.v4.graphics.PathParser$ExtractFloatResult */
-    private static class ExtractFloatResult {
-        int mEndPosition;
-        boolean mEndWithNegOrDot;
-
-        ExtractFloatResult() {
-        }
     }
 
     private static float[] getFloats(String s) {
@@ -223,6 +218,15 @@ public class PathParser {
         }
     }
 
+    /* renamed from: android.support.v4.graphics.PathParser$ExtractFloatResult */
+    private static class ExtractFloatResult {
+        int mEndPosition;
+        boolean mEndWithNegOrDot;
+
+        ExtractFloatResult() {
+        }
+    }
+
     /* renamed from: android.support.v4.graphics.PathParser$PathDataNode */
     public static class PathDataNode {
         public float[] mParams;
@@ -245,20 +249,6 @@ public class PathParser {
             for (int i = 0; i < node.length; i++) {
                 addCommand(path, current, previousCommand, node[i].mType, node[i].mParams);
                 previousCommand = node[i].mType;
-            }
-        }
-
-        public void interpolatePathDataNode(PathDataNode nodeFrom, PathDataNode nodeTo, float fraction) {
-            this.mType = nodeFrom.mType;
-            int i = 0;
-            while (true) {
-                float[] fArr = nodeFrom.mParams;
-                if (i < fArr.length) {
-                    this.mParams[i] = (fArr[i] * (1.0f - fraction)) + (nodeTo.mParams[i] * fraction);
-                    i++;
-                } else {
-                    return;
-                }
             }
         }
 
@@ -650,8 +640,19 @@ public class PathParser {
                 sinTheta = sinTheta;
             }
         }
-    }
 
-    private PathParser() {
+        public void interpolatePathDataNode(PathDataNode nodeFrom, PathDataNode nodeTo, float fraction) {
+            this.mType = nodeFrom.mType;
+            int i = 0;
+            while (true) {
+                float[] fArr = nodeFrom.mParams;
+                if (i < fArr.length) {
+                    this.mParams[i] = (fArr[i] * (1.0f - fraction)) + (nodeTo.mParams[i] * fraction);
+                    i++;
+                } else {
+                    return;
+                }
+            }
+        }
     }
 }

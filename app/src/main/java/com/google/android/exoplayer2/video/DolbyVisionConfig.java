@@ -1,12 +1,19 @@
 package com.google.android.exoplayer2.video;
 
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.util.ParsableByteArray;
 
 public final class DolbyVisionConfig {
     public final String codecs;
     public final int level;
     public final int profile;
+
+    private DolbyVisionConfig(int profile2, int level2, String codecs2) {
+        this.profile = profile2;
+        this.level = level2;
+        this.codecs = codecs2;
+    }
 
     @Nullable
     public static DolbyVisionConfig parse(ParsableByteArray data) {
@@ -31,11 +38,5 @@ public final class DolbyVisionConfig {
         sb.append(".0");
         sb.append(dvLevel);
         return new DolbyVisionConfig(dvProfile, dvLevel, sb.toString());
-    }
-
-    private DolbyVisionConfig(int profile2, int level2, String codecs2) {
-        this.profile = profile2;
-        this.level = level2;
-        this.codecs = codecs2;
     }
 }

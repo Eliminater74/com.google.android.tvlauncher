@@ -9,11 +9,14 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import com.bumptech.glide.manager.ConnectivityMonitor;
+
 import com.bumptech.glide.util.Preconditions;
 
 final class DefaultConnectivityMonitor implements ConnectivityMonitor {
     private static final String TAG = "ConnectivityMonitor";
+    final ConnectivityMonitor.ConnectivityListener listener;
+    private final Context context;
+    boolean isConnected;
     private final BroadcastReceiver connectivityReceiver = new BroadcastReceiver() {
         public void onReceive(@NonNull Context context, Intent intent) {
             boolean wasConnected = DefaultConnectivityMonitor.this.isConnected;
@@ -31,10 +34,7 @@ final class DefaultConnectivityMonitor implements ConnectivityMonitor {
             }
         }
     };
-    private final Context context;
-    boolean isConnected;
     private boolean isRegistered;
-    final ConnectivityMonitor.ConnectivityListener listener;
 
     DefaultConnectivityMonitor(@NonNull Context context2, @NonNull ConnectivityMonitor.ConnectivityListener listener2) {
         this.context = context2.getApplicationContext();

@@ -29,12 +29,6 @@ final class SampleMetadataQueue {
     private boolean upstreamKeyframeRequired;
     private int upstreamSourceId;
 
-    public static final class SampleExtrasHolder {
-        public TrackOutput.CryptoData cryptoData;
-        public long offset;
-        public int size;
-    }
-
     public SampleMetadataQueue() {
         int i = this.capacity;
         this.sourceIds = new int[i];
@@ -567,5 +561,11 @@ final class SampleMetadataQueue {
         int relativeIndex = this.relativeFirstIndex + offset;
         int i = this.capacity;
         return relativeIndex < i ? relativeIndex : relativeIndex - i;
+    }
+
+    public static final class SampleExtrasHolder {
+        public TrackOutput.CryptoData cryptoData;
+        public long offset;
+        public int size;
     }
 }

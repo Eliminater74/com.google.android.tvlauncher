@@ -1,7 +1,5 @@
 package com.google.android.tvlauncher.home;
 
-import com.google.android.tvlauncher.home.ChannelItemsAdapter;
-
 final /* synthetic */ class ChannelItemsAdapter$ProgramViewHolder$$Lambda$0 implements Runnable {
     private final ChannelItemsAdapter.ProgramViewHolder arg$1;
 

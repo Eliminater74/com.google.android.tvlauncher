@@ -5,7 +5,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.KeyEvent;
 import android.view.View;
-import androidx.leanback.media.PlayerAdapter;
+
 import androidx.leanback.widget.AbstractDetailsDescriptionPresenter;
 import androidx.leanback.widget.Action;
 import androidx.leanback.widget.ArrayObjectAdapter;
@@ -15,7 +15,9 @@ import androidx.leanback.widget.PlaybackSeekDataProvider;
 import androidx.leanback.widget.PlaybackSeekUi;
 import androidx.leanback.widget.PlaybackTransportRowPresenter;
 import androidx.leanback.widget.RowPresenter;
+
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
+
 import java.lang.ref.WeakReference;
 
 public class PlaybackTransportControlGlue<T extends PlayerAdapter> extends PlaybackBaseControlGlue<T> {
@@ -28,18 +30,6 @@ public class PlaybackTransportControlGlue<T extends PlayerAdapter> extends Playb
     final PlaybackTransportControlGlue<T>.SeekUiClient mPlaybackSeekUiClient = new SeekUiClient();
     boolean mSeekEnabled;
     PlaybackSeekDataProvider mSeekProvider;
-
-    static class UpdatePlaybackStateHandler extends Handler {
-        UpdatePlaybackStateHandler() {
-        }
-
-        public void handleMessage(Message msg) {
-            PlaybackTransportControlGlue glue;
-            if (msg.what == 100 && (glue = (PlaybackTransportControlGlue) ((WeakReference) msg.obj).get()) != null) {
-                glue.onUpdatePlaybackState();
-            }
-        }
-    }
 
     public PlaybackTransportControlGlue(Context context, T impl) {
         super(context, impl);
@@ -211,6 +201,34 @@ public class PlaybackTransportControlGlue<T extends PlayerAdapter> extends Playb
         }
     }
 
+    public final PlaybackSeekDataProvider getSeekProvider() {
+        return this.mSeekProvider;
+    }
+
+    public final void setSeekProvider(PlaybackSeekDataProvider seekProvider) {
+        this.mSeekProvider = seekProvider;
+    }
+
+    public final boolean isSeekEnabled() {
+        return this.mSeekEnabled;
+    }
+
+    public final void setSeekEnabled(boolean seekEnabled) {
+        this.mSeekEnabled = seekEnabled;
+    }
+
+    static class UpdatePlaybackStateHandler extends Handler {
+        UpdatePlaybackStateHandler() {
+        }
+
+        public void handleMessage(Message msg) {
+            PlaybackTransportControlGlue glue;
+            if (msg.what == 100 && (glue = (PlaybackTransportControlGlue) ((WeakReference) msg.obj).get()) != null) {
+                glue.onUpdatePlaybackState();
+            }
+        }
+    }
+
     class SeekUiClient extends PlaybackSeekUi.Client {
         boolean mIsSeek;
         long mLastUserPosition;
@@ -268,21 +286,5 @@ public class PlaybackTransportControlGlue<T extends PlayerAdapter> extends Playb
             PlaybackTransportControlGlue.this.mPlayerAdapter.setProgressUpdatingEnabled(false);
             PlaybackTransportControlGlue.this.onUpdateProgress();
         }
-    }
-
-    public final void setSeekProvider(PlaybackSeekDataProvider seekProvider) {
-        this.mSeekProvider = seekProvider;
-    }
-
-    public final PlaybackSeekDataProvider getSeekProvider() {
-        return this.mSeekProvider;
-    }
-
-    public final void setSeekEnabled(boolean seekEnabled) {
-        this.mSeekEnabled = seekEnabled;
-    }
-
-    public final boolean isSeekEnabled() {
-        return this.mSeekEnabled;
     }
 }

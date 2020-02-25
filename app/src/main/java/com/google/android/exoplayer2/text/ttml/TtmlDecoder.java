@@ -1,6 +1,7 @@
 package com.google.android.exoplayer2.text.ttml;
 
 import android.text.Layout;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.text.SimpleSubtitleDecoder;
 import com.google.android.exoplayer2.text.SubtitleDecoderException;
@@ -8,6 +9,11 @@ import com.google.android.exoplayer2.util.ColorParser;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.util.XmlPullParserUtil;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayDeque;
@@ -15,9 +21,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-import org.xmlpull.v1.XmlPullParserFactory;
 
 public final class TtmlDecoder extends SimpleSubtitleDecoder {
     private static final String ATTR_BEGIN = "begin";
@@ -47,6 +50,147 @@ public final class TtmlDecoder extends SimpleSubtitleDecoder {
         } catch (XmlPullParserException e) {
             throw new RuntimeException("Couldn't create XmlPullParserFactory instance", e);
         }
+    }
+
+    private static boolean isSupportedTag(String tag) {
+        return tag.equals(TtmlNode.TAG_TT) || tag.equals(TtmlNode.TAG_HEAD) || tag.equals("body") || tag.equals(TtmlNode.TAG_DIV) || tag.equals(TtmlNode.TAG_P) || tag.equals(TtmlNode.TAG_SPAN) || tag.equals(TtmlNode.TAG_BR) || tag.equals("style") || tag.equals(TtmlNode.TAG_STYLING) || tag.equals(TtmlNode.TAG_LAYOUT) || tag.equals("region") || tag.equals(TtmlNode.TAG_METADATA) || tag.equals(TtmlNode.TAG_IMAGE) || tag.equals("data") || tag.equals(TtmlNode.TAG_INFORMATION);
+    }
+
+    private static void parseFontSize(String expression, TtmlStyle out) throws SubtitleDecoderException {
+        Matcher matcher;
+        String[] expressions = Util.split(expression, "\\s+");
+        if (expressions.length == 1) {
+            matcher = FONT_SIZE.matcher(expression);
+        } else if (expressions.length == 2) {
+            matcher = FONT_SIZE.matcher(expressions[1]);
+            Log.m30w(TAG, "Multiple values in fontSize attribute. Picking the second value for vertical font size and ignoring the first.");
+        } else {
+            int length = expressions.length;
+            StringBuilder sb = new StringBuilder(52);
+            sb.append("Invalid number of entries for fontSize: ");
+            sb.append(length);
+            sb.append(".");
+            throw new SubtitleDecoderException(sb.toString());
+        }
+        if (matcher.matches()) {
+            String unit = matcher.group(3);
+            char c = 65535;
+            int hashCode = unit.hashCode();
+            if (hashCode != 37) {
+                if (hashCode != 3240) {
+                    if (hashCode == 3592 && unit.equals("px")) {
+                        c = 0;
+                    }
+                } else if (unit.equals("em")) {
+                    c = 1;
+                }
+            } else if (unit.equals("%")) {
+                c = 2;
+            }
+            if (c == 0) {
+                out.setFontSizeUnit(1);
+            } else if (c == 1) {
+                out.setFontSizeUnit(2);
+            } else if (c == 2) {
+                out.setFontSizeUnit(3);
+            } else {
+                StringBuilder sb2 = new StringBuilder(String.valueOf(unit).length() + 30);
+                sb2.append("Invalid unit for fontSize: '");
+                sb2.append(unit);
+                sb2.append("'.");
+                throw new SubtitleDecoderException(sb2.toString());
+            }
+            out.setFontSize(Float.valueOf(matcher.group(1)).floatValue());
+            return;
+        }
+        StringBuilder sb3 = new StringBuilder(String.valueOf(expression).length() + 36);
+        sb3.append("Invalid expression for fontSize: '");
+        sb3.append(expression);
+        sb3.append("'.");
+        throw new SubtitleDecoderException(sb3.toString());
+    }
+
+    private static long parseTimeExpression(String time, FrameAndTickRate frameAndTickRate) throws SubtitleDecoderException {
+        String str = time;
+        FrameAndTickRate frameAndTickRate2 = frameAndTickRate;
+        Matcher matcher = CLOCK_TIME.matcher(str);
+        if (matcher.matches()) {
+            double durationSeconds = (double) (Long.parseLong(matcher.group(1)) * 3600);
+            double parseLong = (double) (Long.parseLong(matcher.group(2)) * 60);
+            Double.isNaN(durationSeconds);
+            Double.isNaN(parseLong);
+            double durationSeconds2 = durationSeconds + parseLong;
+            double parseLong2 = (double) Long.parseLong(matcher.group(3));
+            Double.isNaN(parseLong2);
+            double durationSeconds3 = durationSeconds2 + parseLong2;
+            String fraction = matcher.group(4);
+            double d = 0.0d;
+            double durationSeconds4 = durationSeconds3 + (fraction != null ? Double.parseDouble(fraction) : 0.0d);
+            String frames = matcher.group(5);
+            double durationSeconds5 = durationSeconds4 + (frames != null ? (double) (((float) Long.parseLong(frames)) / frameAndTickRate2.effectiveFrameRate) : 0.0d);
+            String subframes = matcher.group(6);
+            if (subframes != null) {
+                double parseLong3 = (double) Long.parseLong(subframes);
+                double d2 = (double) frameAndTickRate2.subFrameRate;
+                Double.isNaN(parseLong3);
+                Double.isNaN(d2);
+                double d3 = parseLong3 / d2;
+                double d4 = (double) frameAndTickRate2.effectiveFrameRate;
+                Double.isNaN(d4);
+                d = d3 / d4;
+            }
+            return (long) (1000000.0d * (durationSeconds5 + d));
+        }
+        Matcher matcher2 = OFFSET_TIME.matcher(str);
+        if (matcher2.matches()) {
+            double offsetSeconds = Double.parseDouble(matcher2.group(1));
+            String unit = matcher2.group(2);
+            char c = 65535;
+            int hashCode = unit.hashCode();
+            if (hashCode != 102) {
+                if (hashCode != 104) {
+                    if (hashCode != 109) {
+                        if (hashCode != 3494) {
+                            if (hashCode != 115) {
+                                if (hashCode == 116 && unit.equals("t")) {
+                                    c = 5;
+                                }
+                            } else if (unit.equals("s")) {
+                                c = 2;
+                            }
+                        } else if (unit.equals("ms")) {
+                            c = 3;
+                        }
+                    } else if (unit.equals("m")) {
+                        c = 1;
+                    }
+                } else if (unit.equals("h")) {
+                    c = 0;
+                }
+            } else if (unit.equals("f")) {
+                c = 4;
+            }
+            if (c == 0) {
+                offsetSeconds *= 3600.0d;
+            } else if (c == 1) {
+                offsetSeconds *= 60.0d;
+            } else if (c != 2) {
+                if (c == 3) {
+                    offsetSeconds /= 1000.0d;
+                } else if (c == 4) {
+                    double d5 = (double) frameAndTickRate2.effectiveFrameRate;
+                    Double.isNaN(d5);
+                    offsetSeconds /= d5;
+                } else if (c == 5) {
+                    double d6 = (double) frameAndTickRate2.tickRate;
+                    Double.isNaN(d6);
+                    offsetSeconds /= d6;
+                }
+            }
+            return (long) (1000000.0d * offsetSeconds);
+        }
+        String valueOf = String.valueOf(time);
+        throw new SubtitleDecoderException(valueOf.length() != 0 ? "Malformed time expression: ".concat(valueOf) : new String("Malformed time expression: "));
     }
 
     /* JADX INFO: Multiple debug info for r15v3 int: [D('eventType' int), D('inputStream' java.io.ByteArrayInputStream)] */
@@ -959,147 +1103,6 @@ public final class TtmlDecoder extends SimpleSubtitleDecoder {
         }
         endTime = endTime2;
         return TtmlNode.buildNode(parser.getName(), startTime, endTime, style, styleIds, regionId, imageId3);
-    }
-
-    private static boolean isSupportedTag(String tag) {
-        return tag.equals(TtmlNode.TAG_TT) || tag.equals(TtmlNode.TAG_HEAD) || tag.equals("body") || tag.equals(TtmlNode.TAG_DIV) || tag.equals(TtmlNode.TAG_P) || tag.equals(TtmlNode.TAG_SPAN) || tag.equals(TtmlNode.TAG_BR) || tag.equals("style") || tag.equals(TtmlNode.TAG_STYLING) || tag.equals(TtmlNode.TAG_LAYOUT) || tag.equals("region") || tag.equals(TtmlNode.TAG_METADATA) || tag.equals(TtmlNode.TAG_IMAGE) || tag.equals("data") || tag.equals(TtmlNode.TAG_INFORMATION);
-    }
-
-    private static void parseFontSize(String expression, TtmlStyle out) throws SubtitleDecoderException {
-        Matcher matcher;
-        String[] expressions = Util.split(expression, "\\s+");
-        if (expressions.length == 1) {
-            matcher = FONT_SIZE.matcher(expression);
-        } else if (expressions.length == 2) {
-            matcher = FONT_SIZE.matcher(expressions[1]);
-            Log.m30w(TAG, "Multiple values in fontSize attribute. Picking the second value for vertical font size and ignoring the first.");
-        } else {
-            int length = expressions.length;
-            StringBuilder sb = new StringBuilder(52);
-            sb.append("Invalid number of entries for fontSize: ");
-            sb.append(length);
-            sb.append(".");
-            throw new SubtitleDecoderException(sb.toString());
-        }
-        if (matcher.matches()) {
-            String unit = matcher.group(3);
-            char c = 65535;
-            int hashCode = unit.hashCode();
-            if (hashCode != 37) {
-                if (hashCode != 3240) {
-                    if (hashCode == 3592 && unit.equals("px")) {
-                        c = 0;
-                    }
-                } else if (unit.equals("em")) {
-                    c = 1;
-                }
-            } else if (unit.equals("%")) {
-                c = 2;
-            }
-            if (c == 0) {
-                out.setFontSizeUnit(1);
-            } else if (c == 1) {
-                out.setFontSizeUnit(2);
-            } else if (c == 2) {
-                out.setFontSizeUnit(3);
-            } else {
-                StringBuilder sb2 = new StringBuilder(String.valueOf(unit).length() + 30);
-                sb2.append("Invalid unit for fontSize: '");
-                sb2.append(unit);
-                sb2.append("'.");
-                throw new SubtitleDecoderException(sb2.toString());
-            }
-            out.setFontSize(Float.valueOf(matcher.group(1)).floatValue());
-            return;
-        }
-        StringBuilder sb3 = new StringBuilder(String.valueOf(expression).length() + 36);
-        sb3.append("Invalid expression for fontSize: '");
-        sb3.append(expression);
-        sb3.append("'.");
-        throw new SubtitleDecoderException(sb3.toString());
-    }
-
-    private static long parseTimeExpression(String time, FrameAndTickRate frameAndTickRate) throws SubtitleDecoderException {
-        String str = time;
-        FrameAndTickRate frameAndTickRate2 = frameAndTickRate;
-        Matcher matcher = CLOCK_TIME.matcher(str);
-        if (matcher.matches()) {
-            double durationSeconds = (double) (Long.parseLong(matcher.group(1)) * 3600);
-            double parseLong = (double) (Long.parseLong(matcher.group(2)) * 60);
-            Double.isNaN(durationSeconds);
-            Double.isNaN(parseLong);
-            double durationSeconds2 = durationSeconds + parseLong;
-            double parseLong2 = (double) Long.parseLong(matcher.group(3));
-            Double.isNaN(parseLong2);
-            double durationSeconds3 = durationSeconds2 + parseLong2;
-            String fraction = matcher.group(4);
-            double d = 0.0d;
-            double durationSeconds4 = durationSeconds3 + (fraction != null ? Double.parseDouble(fraction) : 0.0d);
-            String frames = matcher.group(5);
-            double durationSeconds5 = durationSeconds4 + (frames != null ? (double) (((float) Long.parseLong(frames)) / frameAndTickRate2.effectiveFrameRate) : 0.0d);
-            String subframes = matcher.group(6);
-            if (subframes != null) {
-                double parseLong3 = (double) Long.parseLong(subframes);
-                double d2 = (double) frameAndTickRate2.subFrameRate;
-                Double.isNaN(parseLong3);
-                Double.isNaN(d2);
-                double d3 = parseLong3 / d2;
-                double d4 = (double) frameAndTickRate2.effectiveFrameRate;
-                Double.isNaN(d4);
-                d = d3 / d4;
-            }
-            return (long) (1000000.0d * (durationSeconds5 + d));
-        }
-        Matcher matcher2 = OFFSET_TIME.matcher(str);
-        if (matcher2.matches()) {
-            double offsetSeconds = Double.parseDouble(matcher2.group(1));
-            String unit = matcher2.group(2);
-            char c = 65535;
-            int hashCode = unit.hashCode();
-            if (hashCode != 102) {
-                if (hashCode != 104) {
-                    if (hashCode != 109) {
-                        if (hashCode != 3494) {
-                            if (hashCode != 115) {
-                                if (hashCode == 116 && unit.equals("t")) {
-                                    c = 5;
-                                }
-                            } else if (unit.equals("s")) {
-                                c = 2;
-                            }
-                        } else if (unit.equals("ms")) {
-                            c = 3;
-                        }
-                    } else if (unit.equals("m")) {
-                        c = 1;
-                    }
-                } else if (unit.equals("h")) {
-                    c = 0;
-                }
-            } else if (unit.equals("f")) {
-                c = 4;
-            }
-            if (c == 0) {
-                offsetSeconds *= 3600.0d;
-            } else if (c == 1) {
-                offsetSeconds *= 60.0d;
-            } else if (c != 2) {
-                if (c == 3) {
-                    offsetSeconds /= 1000.0d;
-                } else if (c == 4) {
-                    double d5 = (double) frameAndTickRate2.effectiveFrameRate;
-                    Double.isNaN(d5);
-                    offsetSeconds /= d5;
-                } else if (c == 5) {
-                    double d6 = (double) frameAndTickRate2.tickRate;
-                    Double.isNaN(d6);
-                    offsetSeconds /= d6;
-                }
-            }
-            return (long) (1000000.0d * offsetSeconds);
-        }
-        String valueOf = String.valueOf(time);
-        throw new SubtitleDecoderException(valueOf.length() != 0 ? "Malformed time expression: ".concat(valueOf) : new String("Malformed time expression: "));
     }
 
     private static final class FrameAndTickRate {

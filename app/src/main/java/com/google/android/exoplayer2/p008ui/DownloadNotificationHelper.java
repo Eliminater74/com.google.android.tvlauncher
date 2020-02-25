@@ -7,7 +7,9 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.p001v4.app.NotificationCompat;
+
 import com.google.android.exoplayer2.offline.Download;
+
 import java.util.List;
 
 /* renamed from: com.google.android.exoplayer2.ui.DownloadNotificationHelper */

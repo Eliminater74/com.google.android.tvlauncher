@@ -1,6 +1,7 @@
 package org.checkerframework.checker.i18nformatter.qual;
 
 import com.google.android.gsf.TalkContract;
+
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
@@ -11,7 +12,7 @@ public enum I18nConversionCategory {
     GENERAL(null, null),
     DATE(new Class[]{Date.class, Number.class}, new String[]{TalkContract.MessageColumns.DATE, "time"}),
     NUMBER(new Class[]{Number.class}, new String[]{"number", "choice"});
-    
+
     public final String[] strings;
     public final Class<? extends Object>[] types;
 

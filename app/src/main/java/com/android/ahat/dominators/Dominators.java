@@ -2,6 +2,7 @@ package com.android.ahat.dominators;
 
 import com.android.ahat.progress.NullProgress;
 import com.android.ahat.progress.Progress;
+
 import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Deque;
@@ -13,140 +14,21 @@ public class Dominators<Node> {
     private long numNodes = 0;
     private Progress progress = new NullProgress();
 
-    public interface Graph<Node> {
-        Object getDominatorsComputationState(Node node);
-
-        Iterable<? extends Node> getReferencesForDominators(Node node);
-
-        void setDominator(Node node, Node node2);
-
-        void setDominatorsComputationState(Node node, Object obj);
-    }
-
     public Dominators(Graph graph2) {
         this.graph = graph2;
+    }
+
+    private static boolean isReachableAscending(NodeS srcS, NodeS dstS) {
+        if (dstS.f39id < srcS.f39id) {
+            return dstS.inRefIds.hasIdInRange(srcS.f39id, srcS.maxReachableId);
+        }
+        return dstS.f39id <= srcS.maxReachableId;
     }
 
     public Dominators progress(Progress progress2, long numNodes2) {
         this.progress = progress2;
         this.numNodes = numNodes2;
         return this;
-    }
-
-    private static class NodeS {
-        public long depth;
-        public NodeS domS;
-        public NodeSet dominated;
-
-        /* renamed from: id */
-        public long f39id;
-        public IdSet inRefIds;
-        public long maxReachableId;
-        public Object node;
-        public NodeS oldDomS;
-        public NodeSet revisit;
-
-        private NodeS() {
-            this.inRefIds = new IdSet();
-            this.dominated = new NodeSet();
-            this.revisit = null;
-        }
-    }
-
-    private static class IdSet {
-        static final /* synthetic */ boolean $assertionsDisabled = false;
-        private long[] ids;
-        /* access modifiers changed from: private */
-        public int size;
-
-        static {
-            Class<Dominators> cls = Dominators.class;
-        }
-
-        private IdSet() {
-            this.size = 0;
-            this.ids = new long[4];
-        }
-
-        public void add(long id) {
-            int i = this.size;
-            long[] jArr = this.ids;
-            if (i == jArr.length) {
-                this.ids = Arrays.copyOf(jArr, i * 2);
-            }
-            long[] jArr2 = this.ids;
-            int i2 = this.size;
-            this.size = i2 + 1;
-            jArr2[i2] = id;
-        }
-
-        public long last() {
-            return this.ids[this.size - 1];
-        }
-
-        public boolean hasIdInRange(long low, long high) {
-            for (int i = 0; i < this.size; i++) {
-                long[] jArr = this.ids;
-                if (low <= jArr[i] && jArr[i] <= high) {
-                    return true;
-                }
-            }
-            return false;
-        }
-    }
-
-    private static class NodeSet {
-        public NodeS[] nodes;
-        public int size;
-
-        private NodeSet() {
-            this.size = 0;
-            this.nodes = new NodeS[4];
-        }
-
-        public void add(NodeS nodeS) {
-            int i = this.size;
-            NodeS[] nodeSArr = this.nodes;
-            if (i == nodeSArr.length) {
-                this.nodes = (NodeS[]) Arrays.copyOf(nodeSArr, i * 2);
-            }
-            NodeS[] nodeSArr2 = this.nodes;
-            int i2 = this.size;
-            this.size = i2 + 1;
-            nodeSArr2[i2] = nodeS;
-        }
-
-        public void remove(NodeS nodeS) {
-            for (int i = 0; i < this.size; i++) {
-                if (this.nodes[i] == nodeS) {
-                    remove(i);
-                    return;
-                }
-            }
-        }
-
-        public void remove(int index) {
-            NodeS[] nodeSArr = this.nodes;
-            int i = this.size - 1;
-            this.size = i;
-            nodeSArr[index] = nodeSArr[i];
-            nodeSArr[this.size] = null;
-        }
-    }
-
-    private static class Link<Node> {
-        public final Node dst;
-        public final NodeS srcS;
-
-        public Link(NodeS srcS2, Node dst2) {
-            this.srcS = srcS2;
-            this.dst = dst2;
-        }
-
-        public Link(NodeS srcS2) {
-            this.srcS = srcS2;
-            this.dst = null;
-        }
     }
 
     public void computeDominators(Node root) {
@@ -303,10 +185,130 @@ public class Dominators<Node> {
         }
     }
 
-    private static boolean isReachableAscending(NodeS srcS, NodeS dstS) {
-        if (dstS.f39id < srcS.f39id) {
-            return dstS.inRefIds.hasIdInRange(srcS.f39id, srcS.maxReachableId);
+    public interface Graph<Node> {
+        Object getDominatorsComputationState(Node node);
+
+        Iterable<? extends Node> getReferencesForDominators(Node node);
+
+        void setDominator(Node node, Node node2);
+
+        void setDominatorsComputationState(Node node, Object obj);
+    }
+
+    private static class NodeS {
+        public long depth;
+        public NodeS domS;
+        public NodeSet dominated;
+
+        /* renamed from: id */
+        public long f39id;
+        public IdSet inRefIds;
+        public long maxReachableId;
+        public Object node;
+        public NodeS oldDomS;
+        public NodeSet revisit;
+
+        private NodeS() {
+            this.inRefIds = new IdSet();
+            this.dominated = new NodeSet();
+            this.revisit = null;
         }
-        return dstS.f39id <= srcS.maxReachableId;
+    }
+
+    private static class IdSet {
+        static final /* synthetic */ boolean $assertionsDisabled = false;
+
+        static {
+            Class<Dominators> cls = Dominators.class;
+        }
+
+        /* access modifiers changed from: private */
+        public int size;
+        private long[] ids;
+
+        private IdSet() {
+            this.size = 0;
+            this.ids = new long[4];
+        }
+
+        public void add(long id) {
+            int i = this.size;
+            long[] jArr = this.ids;
+            if (i == jArr.length) {
+                this.ids = Arrays.copyOf(jArr, i * 2);
+            }
+            long[] jArr2 = this.ids;
+            int i2 = this.size;
+            this.size = i2 + 1;
+            jArr2[i2] = id;
+        }
+
+        public long last() {
+            return this.ids[this.size - 1];
+        }
+
+        public boolean hasIdInRange(long low, long high) {
+            for (int i = 0; i < this.size; i++) {
+                long[] jArr = this.ids;
+                if (low <= jArr[i] && jArr[i] <= high) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    private static class NodeSet {
+        public NodeS[] nodes;
+        public int size;
+
+        private NodeSet() {
+            this.size = 0;
+            this.nodes = new NodeS[4];
+        }
+
+        public void add(NodeS nodeS) {
+            int i = this.size;
+            NodeS[] nodeSArr = this.nodes;
+            if (i == nodeSArr.length) {
+                this.nodes = (NodeS[]) Arrays.copyOf(nodeSArr, i * 2);
+            }
+            NodeS[] nodeSArr2 = this.nodes;
+            int i2 = this.size;
+            this.size = i2 + 1;
+            nodeSArr2[i2] = nodeS;
+        }
+
+        public void remove(NodeS nodeS) {
+            for (int i = 0; i < this.size; i++) {
+                if (this.nodes[i] == nodeS) {
+                    remove(i);
+                    return;
+                }
+            }
+        }
+
+        public void remove(int index) {
+            NodeS[] nodeSArr = this.nodes;
+            int i = this.size - 1;
+            this.size = i;
+            nodeSArr[index] = nodeSArr[i];
+            nodeSArr[this.size] = null;
+        }
+    }
+
+    private static class Link<Node> {
+        public final Node dst;
+        public final NodeS srcS;
+
+        public Link(NodeS srcS2, Node dst2) {
+            this.srcS = srcS2;
+            this.dst = dst2;
+        }
+
+        public Link(NodeS srcS2) {
+            this.srcS = srcS2;
+            this.dst = null;
+        }
     }
 }

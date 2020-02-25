@@ -3,6 +3,7 @@ package android.support.p001v4.app;
 import android.annotation.SuppressLint;
 import android.os.Parcel;
 import android.os.Parcelable;
+
 import java.util.ArrayList;
 
 @SuppressLint({"BanParcelableUsage"})

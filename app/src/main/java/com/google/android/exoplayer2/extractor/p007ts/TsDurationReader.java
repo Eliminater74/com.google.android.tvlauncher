@@ -6,19 +6,20 @@ import com.google.android.exoplayer2.extractor.PositionHolder;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.TimestampAdjuster;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.IOException;
 
 /* renamed from: com.google.android.exoplayer2.extractor.ts.TsDurationReader */
 final class TsDurationReader {
     private static final int TIMESTAMP_SEARCH_BYTES = 112800;
+    private final ParsableByteArray packetBuffer = new ParsableByteArray();
+    private final TimestampAdjuster pcrTimestampAdjuster = new TimestampAdjuster(0);
     private long durationUs = C0841C.TIME_UNSET;
     private long firstPcrValue = C0841C.TIME_UNSET;
     private boolean isDurationRead;
     private boolean isFirstPcrValueRead;
     private boolean isLastPcrValueRead;
     private long lastPcrValue = C0841C.TIME_UNSET;
-    private final ParsableByteArray packetBuffer = new ParsableByteArray();
-    private final TimestampAdjuster pcrTimestampAdjuster = new TimestampAdjuster(0);
 
     TsDurationReader() {
     }

@@ -5,6 +5,7 @@ import android.arch.lifecycle.GenericLifecycleObserver;
 import android.support.annotation.MainThread;
 import android.support.annotation.RequiresApi;
 import android.view.inputmethod.InputMethodManager;
+
 import java.lang.reflect.Field;
 
 @RequiresApi(19)
@@ -20,6 +21,21 @@ final class ImmLeaksCleaner implements GenericLifecycleObserver {
 
     ImmLeaksCleaner(Activity activity) {
         this.mActivity = activity;
+    }
+
+    @MainThread
+    private static void initializeReflectiveFields() {
+        try {
+            sReflectedFieldsInitialized = 2;
+            sServedViewField = InputMethodManager.class.getDeclaredField("mServedView");
+            sServedViewField.setAccessible(true);
+            sNextServedViewField = InputMethodManager.class.getDeclaredField("mNextServedView");
+            sNextServedViewField.setAccessible(true);
+            sHField = InputMethodManager.class.getDeclaredField("mH");
+            sHField.setAccessible(true);
+            sReflectedFieldsInitialized = 1;
+        } catch (NoSuchFieldException e) {
+        }
     }
 
     /* JADX WARNING: Code restructure failed: missing block: B:32:0x0049, code lost:
@@ -100,20 +116,5 @@ final class ImmLeaksCleaner implements GenericLifecycleObserver {
             return
         */
         throw new UnsupportedOperationException("Method not decompiled: androidx.activity.ImmLeaksCleaner.onStateChanged(android.arch.lifecycle.LifecycleOwner, android.arch.lifecycle.Lifecycle$Event):void");
-    }
-
-    @MainThread
-    private static void initializeReflectiveFields() {
-        try {
-            sReflectedFieldsInitialized = 2;
-            sServedViewField = InputMethodManager.class.getDeclaredField("mServedView");
-            sServedViewField.setAccessible(true);
-            sNextServedViewField = InputMethodManager.class.getDeclaredField("mNextServedView");
-            sNextServedViewField.setAccessible(true);
-            sHField = InputMethodManager.class.getDeclaredField("mH");
-            sHField.setAccessible(true);
-            sReflectedFieldsInitialized = 1;
-        } catch (NoSuchFieldException e) {
-        }
     }
 }

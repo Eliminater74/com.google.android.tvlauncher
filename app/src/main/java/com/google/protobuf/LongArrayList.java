@@ -1,22 +1,18 @@
 package com.google.protobuf;
 
-import com.google.protobuf.Internal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.RandomAccess;
 
 final class LongArrayList extends AbstractProtobufList<Long> implements Internal.LongList, RandomAccess, PrimitiveNonBoxingCollection {
     private static final LongArrayList EMPTY_LIST = new LongArrayList(new long[0], 0);
-    private long[] array;
-    private int size;
 
     static {
         EMPTY_LIST.makeImmutable();
     }
 
-    public static LongArrayList emptyList() {
-        return EMPTY_LIST;
-    }
+    private long[] array;
+    private int size;
 
     LongArrayList() {
         this(new long[10], 0);
@@ -25,6 +21,10 @@ final class LongArrayList extends AbstractProtobufList<Long> implements Internal
     private LongArrayList(long[] other, int size2) {
         this.array = other;
         this.size = size2;
+    }
+
+    public static LongArrayList emptyList() {
+        return EMPTY_LIST;
     }
 
     /* access modifiers changed from: protected */

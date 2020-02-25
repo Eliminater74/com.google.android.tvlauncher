@@ -10,6 +10,7 @@ import android.os.Looper;
 import android.os.SystemClock;
 import android.support.annotation.CheckResult;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.BaseRenderer;
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -20,12 +21,12 @@ import com.google.android.exoplayer2.decoder.DecoderInputBuffer;
 import com.google.android.exoplayer2.drm.DrmSession;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
-import com.google.android.exoplayer2.mediacodec.MediaCodecUtil;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.NalUnitUtil;
 import com.google.android.exoplayer2.util.TimedValueQueue;
 import com.google.android.exoplayer2.util.Util;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -36,12 +37,16 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class MediaCodecRenderer extends BaseRenderer {
+    protected static final float CODEC_OPERATING_RATE_UNSET = -1.0f;
+    protected static final int KEEP_CODEC_RESULT_NO = 0;
+    protected static final int KEEP_CODEC_RESULT_YES_WITHOUT_RECONFIGURATION = 3;
+    protected static final int KEEP_CODEC_RESULT_YES_WITH_FLUSH = 1;
+    protected static final int KEEP_CODEC_RESULT_YES_WITH_RECONFIGURATION = 2;
     private static final byte[] ADAPTATION_WORKAROUND_BUFFER = Util.getBytesFromHexString("0000016742C00BDA259000000168CE0F13200000016588840DCE7118A0002FBF1C31C3275D78");
     private static final int ADAPTATION_WORKAROUND_MODE_ALWAYS = 2;
     private static final int ADAPTATION_WORKAROUND_MODE_NEVER = 0;
     private static final int ADAPTATION_WORKAROUND_MODE_SAME_RESOLUTION = 1;
     private static final int ADAPTATION_WORKAROUND_SLICE_WIDTH_HEIGHT = 32;
-    protected static final float CODEC_OPERATING_RATE_UNSET = -1.0f;
     private static final int DRAIN_ACTION_FLUSH = 1;
     private static final int DRAIN_ACTION_NONE = 0;
     private static final int DRAIN_ACTION_REINITIALIZE = 3;
@@ -49,19 +54,26 @@ public abstract class MediaCodecRenderer extends BaseRenderer {
     private static final int DRAIN_STATE_NONE = 0;
     private static final int DRAIN_STATE_SIGNAL_END_OF_STREAM = 1;
     private static final int DRAIN_STATE_WAIT_END_OF_STREAM = 2;
-    protected static final int KEEP_CODEC_RESULT_NO = 0;
-    protected static final int KEEP_CODEC_RESULT_YES_WITHOUT_RECONFIGURATION = 3;
-    protected static final int KEEP_CODEC_RESULT_YES_WITH_FLUSH = 1;
-    protected static final int KEEP_CODEC_RESULT_YES_WITH_RECONFIGURATION = 2;
     private static final long MAX_CODEC_HOTSWAP_TIME_MS = 1000;
     private static final int RECONFIGURATION_STATE_NONE = 0;
     private static final int RECONFIGURATION_STATE_QUEUE_PENDING = 2;
     private static final int RECONFIGURATION_STATE_WRITE_PENDING = 1;
     private static final String TAG = "MediaCodecRenderer";
     private final float assumedMinimumCodecOperatingRate;
+    private final DecoderInputBuffer buffer = new DecoderInputBuffer(0);
+    private final ArrayList<Long> decodeOnlyPresentationTimestamps = new ArrayList<>();
+    @Nullable
+    private final DrmSessionManager<FrameworkMediaCrypto> drmSessionManager;
+    private final boolean enableDecoderFallback;
+    private final DecoderInputBuffer flagsOnlyBuffer = DecoderInputBuffer.newFlagsOnlyInstance();
+    private final FormatHolder formatHolder = new FormatHolder();
+    private final TimedValueQueue<Format> formatQueue = new TimedValueQueue<>();
+    private final MediaCodecSelector mediaCodecSelector;
+    private final MediaCodec.BufferInfo outputBufferInfo = new MediaCodec.BufferInfo();
+    private final boolean playClearSamplesWithoutKeys;
+    protected DecoderCounters decoderCounters;
     @Nullable
     private ArrayDeque<MediaCodecInfo> availableCodecInfos;
-    private final DecoderInputBuffer buffer = new DecoderInputBuffer(0);
     @Nullable
     private MediaCodec codec;
     private int codecAdaptationWorkaroundMode;
@@ -87,30 +99,19 @@ public abstract class MediaCodecRenderer extends BaseRenderer {
     private boolean codecReceivedEos;
     private int codecReconfigurationState = 0;
     private boolean codecReconfigured;
-    private final ArrayList<Long> decodeOnlyPresentationTimestamps = new ArrayList<>();
-    protected DecoderCounters decoderCounters;
-    @Nullable
-    private final DrmSessionManager<FrameworkMediaCrypto> drmSessionManager;
-    private final boolean enableDecoderFallback;
-    private final DecoderInputBuffer flagsOnlyBuffer = DecoderInputBuffer.newFlagsOnlyInstance();
-    private final FormatHolder formatHolder = new FormatHolder();
-    private final TimedValueQueue<Format> formatQueue = new TimedValueQueue<>();
     private ByteBuffer[] inputBuffers;
     @Nullable
     private Format inputFormat;
     private int inputIndex;
     private boolean inputStreamEnded;
-    private final MediaCodecSelector mediaCodecSelector;
     @Nullable
     private MediaCrypto mediaCrypto;
     private boolean mediaCryptoRequiresSecureDecoder;
     private ByteBuffer outputBuffer;
-    private final MediaCodec.BufferInfo outputBufferInfo = new MediaCodec.BufferInfo();
     private ByteBuffer[] outputBuffers;
     private Format outputFormat;
     private int outputIndex;
     private boolean outputStreamEnded;
-    private final boolean playClearSamplesWithoutKeys;
     @Nullable
     private DecoderInitializationException preferredDecoderInitializationException;
     private long renderTimeLimitMs = C0841C.TIME_UNSET;
@@ -123,29 +124,58 @@ public abstract class MediaCodecRenderer extends BaseRenderer {
     private boolean waitingForFirstSyncSample;
     private boolean waitingForKeys;
 
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    private @interface AdaptationWorkaroundMode {
+    public MediaCodecRenderer(int trackType, MediaCodecSelector mediaCodecSelector2, @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager2, boolean playClearSamplesWithoutKeys2, boolean enableDecoderFallback2, float assumedMinimumCodecOperatingRate2) {
+        super(trackType);
+        this.mediaCodecSelector = (MediaCodecSelector) Assertions.checkNotNull(mediaCodecSelector2);
+        this.drmSessionManager = drmSessionManager2;
+        this.playClearSamplesWithoutKeys = playClearSamplesWithoutKeys2;
+        this.enableDecoderFallback = enableDecoderFallback2;
+        this.assumedMinimumCodecOperatingRate = assumedMinimumCodecOperatingRate2;
     }
 
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    private @interface DrainAction {
+    private static MediaCodec.CryptoInfo getFrameworkCryptoInfo(DecoderInputBuffer buffer2, int adaptiveReconfigurationBytes) {
+        MediaCodec.CryptoInfo cryptoInfo = buffer2.cryptoInfo.getFrameworkCryptoInfo();
+        if (adaptiveReconfigurationBytes == 0) {
+            return cryptoInfo;
+        }
+        if (cryptoInfo.numBytesOfClearData == null) {
+            cryptoInfo.numBytesOfClearData = new int[1];
+        }
+        int[] iArr = cryptoInfo.numBytesOfClearData;
+        iArr[0] = iArr[0] + adaptiveReconfigurationBytes;
+        return cryptoInfo;
     }
 
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    private @interface DrainState {
+    private static boolean codecNeedsFlushWorkaround(String name) {
+        return Util.SDK_INT < 18 || (Util.SDK_INT == 18 && ("OMX.SEC.avc.dec".equals(name) || "OMX.SEC.avc.dec.secure".equals(name))) || (Util.SDK_INT == 19 && Util.MODEL.startsWith("SM-G800") && ("OMX.Exynos.avc.dec".equals(name) || "OMX.Exynos.avc.dec.secure".equals(name)));
     }
 
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    protected @interface KeepCodecResult {
+    private static boolean codecNeedsReconfigureWorkaround(String name) {
+        return Util.MODEL.startsWith("SM-T230") && "OMX.MARVELL.VIDEO.HW.CODA7542DECODER".equals(name);
     }
 
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    private @interface ReconfigurationState {
+    private static boolean codecNeedsDiscardToSpsWorkaround(String name, Format format) {
+        return Util.SDK_INT < 21 && format.initializationData.isEmpty() && "OMX.MTK.VIDEO.DECODER.AVC".equals(name);
+    }
+
+    private static boolean codecNeedsEosPropagationWorkaround(MediaCodecInfo codecInfo2) {
+        String name = codecInfo2.name;
+        return (Util.SDK_INT <= 17 && ("OMX.rk.video_decoder.avc".equals(name) || "OMX.allwinner.video.decoder.avc".equals(name))) || ("Amazon".equals(Util.MANUFACTURER) && "AFTS".equals(Util.MODEL) && codecInfo2.secure);
+    }
+
+    private static boolean codecNeedsEosFlushWorkaround(String name) {
+        return (Util.SDK_INT <= 23 && "OMX.google.vorbis.decoder".equals(name)) || (Util.SDK_INT <= 19 && (("hb2000".equals(Util.DEVICE) || "stvm8".equals(Util.DEVICE)) && ("OMX.amlogic.avc.decoder.awesome".equals(name) || "OMX.amlogic.avc.decoder.awesome.secure".equals(name))));
+    }
+
+    private static boolean codecNeedsEosOutputExceptionWorkaround(String name) {
+        return Util.SDK_INT == 21 && "OMX.google.aac.decoder".equals(name);
+    }
+
+    private static boolean codecNeedsMonoChannelCountWorkaround(String name, Format format) {
+        if (Util.SDK_INT > 18 || format.channelCount != 1 || !"OMX.MTK.AUDIO.DECODER.MP3".equals(name)) {
+            return false;
+        }
+        return true;
     }
 
     /* access modifiers changed from: protected */
@@ -159,133 +189,6 @@ public abstract class MediaCodecRenderer extends BaseRenderer {
 
     /* access modifiers changed from: protected */
     public abstract int supportsFormat(MediaCodecSelector mediaCodecSelector2, DrmSessionManager<FrameworkMediaCrypto> drmSessionManager2, Format format) throws MediaCodecUtil.DecoderQueryException;
-
-    public static class DecoderInitializationException extends Exception {
-        private static final int CUSTOM_ERROR_CODE_BASE = -50000;
-        private static final int DECODER_QUERY_ERROR = -49998;
-        private static final int NO_SUITABLE_DECODER_ERROR = -49999;
-        public final String decoderName;
-        public final String diagnosticInfo;
-        @Nullable
-        public final DecoderInitializationException fallbackDecoderInitializationException;
-        public final String mimeType;
-        public final boolean secureDecoderRequired;
-
-        /* JADX WARNING: Illegal instructions before constructor call */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
-        public DecoderInitializationException(com.google.android.exoplayer2.Format r12, java.lang.Throwable r13, boolean r14, int r15) {
-            /*
-                r11 = this;
-                java.lang.String r0 = java.lang.String.valueOf(r12)
-                java.lang.String r1 = java.lang.String.valueOf(r0)
-                int r1 = r1.length()
-                int r1 = r1 + 36
-                java.lang.StringBuilder r2 = new java.lang.StringBuilder
-                r2.<init>(r1)
-                java.lang.String r1 = "Decoder init failed: ["
-                r2.append(r1)
-                r2.append(r15)
-                java.lang.String r1 = "], "
-                r2.append(r1)
-                r2.append(r0)
-                java.lang.String r4 = r2.toString()
-                java.lang.String r6 = r12.sampleMimeType
-                java.lang.String r9 = buildCustomDiagnosticInfo(r15)
-                r8 = 0
-                r10 = 0
-                r3 = r11
-                r5 = r13
-                r7 = r14
-                r3.<init>(r4, r5, r6, r7, r8, r9, r10)
-                return
-            */
-            throw new UnsupportedOperationException("Method not decompiled: com.google.android.exoplayer2.mediacodec.MediaCodecRenderer.DecoderInitializationException.<init>(com.google.android.exoplayer2.Format, java.lang.Throwable, boolean, int):void");
-        }
-
-        /* JADX WARNING: Illegal instructions before constructor call */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
-        public DecoderInitializationException(com.google.android.exoplayer2.Format r12, java.lang.Throwable r13, boolean r14, java.lang.String r15) {
-            /*
-                r11 = this;
-                java.lang.String r0 = java.lang.String.valueOf(r12)
-                java.lang.String r1 = java.lang.String.valueOf(r15)
-                int r1 = r1.length()
-                int r1 = r1 + 23
-                java.lang.String r2 = java.lang.String.valueOf(r0)
-                int r2 = r2.length()
-                int r1 = r1 + r2
-                java.lang.StringBuilder r2 = new java.lang.StringBuilder
-                r2.<init>(r1)
-                java.lang.String r1 = "Decoder init failed: "
-                r2.append(r1)
-                r2.append(r15)
-                java.lang.String r1 = ", "
-                r2.append(r1)
-                r2.append(r0)
-                java.lang.String r4 = r2.toString()
-                java.lang.String r6 = r12.sampleMimeType
-                int r0 = com.google.android.exoplayer2.util.Util.SDK_INT
-                r1 = 21
-                if (r0 < r1) goto L_0x003d
-                java.lang.String r0 = getDiagnosticInfoV21(r13)
-                goto L_0x003e
-            L_0x003d:
-                r0 = 0
-            L_0x003e:
-                r9 = r0
-                r10 = 0
-                r3 = r11
-                r5 = r13
-                r7 = r14
-                r8 = r15
-                r3.<init>(r4, r5, r6, r7, r8, r9, r10)
-                return
-            */
-            throw new UnsupportedOperationException("Method not decompiled: com.google.android.exoplayer2.mediacodec.MediaCodecRenderer.DecoderInitializationException.<init>(com.google.android.exoplayer2.Format, java.lang.Throwable, boolean, java.lang.String):void");
-        }
-
-        private DecoderInitializationException(String message, Throwable cause, String mimeType2, boolean secureDecoderRequired2, @Nullable String decoderName2, @Nullable String diagnosticInfo2, @Nullable DecoderInitializationException fallbackDecoderInitializationException2) {
-            super(message, cause);
-            this.mimeType = mimeType2;
-            this.secureDecoderRequired = secureDecoderRequired2;
-            this.decoderName = decoderName2;
-            this.diagnosticInfo = diagnosticInfo2;
-            this.fallbackDecoderInitializationException = fallbackDecoderInitializationException2;
-        }
-
-        /* access modifiers changed from: private */
-        @CheckResult
-        public DecoderInitializationException copyWithFallbackException(DecoderInitializationException fallbackException) {
-            return new DecoderInitializationException(getMessage(), getCause(), this.mimeType, this.secureDecoderRequired, this.decoderName, this.diagnosticInfo, fallbackException);
-        }
-
-        @TargetApi(21)
-        private static String getDiagnosticInfoV21(Throwable cause) {
-            if (cause instanceof MediaCodec.CodecException) {
-                return ((MediaCodec.CodecException) cause).getDiagnosticInfo();
-            }
-            return null;
-        }
-
-        private static String buildCustomDiagnosticInfo(int errorCode) {
-            String sign = errorCode < 0 ? "neg_" : "";
-            int abs = Math.abs(errorCode);
-            StringBuilder sb = new StringBuilder(String.valueOf(sign).length() + 64);
-            sb.append("com.google.android.exoplayer.MediaCodecTrackRenderer_");
-            sb.append(sign);
-            sb.append(abs);
-            return sb.toString();
-        }
-    }
-
-    public MediaCodecRenderer(int trackType, MediaCodecSelector mediaCodecSelector2, @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager2, boolean playClearSamplesWithoutKeys2, boolean enableDecoderFallback2, float assumedMinimumCodecOperatingRate2) {
-        super(trackType);
-        this.mediaCodecSelector = (MediaCodecSelector) Assertions.checkNotNull(mediaCodecSelector2);
-        this.drmSessionManager = drmSessionManager2;
-        this.playClearSamplesWithoutKeys = playClearSamplesWithoutKeys2;
-        this.enableDecoderFallback = enableDecoderFallback2;
-        this.assumedMinimumCodecOperatingRate = assumedMinimumCodecOperatingRate2;
-    }
 
     public void experimental_setRenderTimeLimitMs(long renderTimeLimitMs2) {
         this.renderTimeLimitMs = renderTimeLimitMs2;
@@ -1377,25 +1280,8 @@ public abstract class MediaCodecRenderer extends BaseRenderer {
         return false;
     }
 
-    private static MediaCodec.CryptoInfo getFrameworkCryptoInfo(DecoderInputBuffer buffer2, int adaptiveReconfigurationBytes) {
-        MediaCodec.CryptoInfo cryptoInfo = buffer2.cryptoInfo.getFrameworkCryptoInfo();
-        if (adaptiveReconfigurationBytes == 0) {
-            return cryptoInfo;
-        }
-        if (cryptoInfo.numBytesOfClearData == null) {
-            cryptoInfo.numBytesOfClearData = new int[1];
-        }
-        int[] iArr = cryptoInfo.numBytesOfClearData;
-        iArr[0] = iArr[0] + adaptiveReconfigurationBytes;
-        return cryptoInfo;
-    }
-
     private boolean deviceNeedsDrmKeysToConfigureCodecWorkaround() {
         return "Amazon".equals(Util.MANUFACTURER) && ("AFTM".equals(Util.MODEL) || "AFTB".equals(Util.MODEL));
-    }
-
-    private static boolean codecNeedsFlushWorkaround(String name) {
-        return Util.SDK_INT < 18 || (Util.SDK_INT == 18 && ("OMX.SEC.avc.dec".equals(name) || "OMX.SEC.avc.dec.secure".equals(name))) || (Util.SDK_INT == 19 && Util.MODEL.startsWith("SM-G800") && ("OMX.Exynos.avc.dec".equals(name) || "OMX.Exynos.avc.dec.secure".equals(name)));
     }
 
     private int codecAdaptationWorkaroundMode(String name) {
@@ -1414,31 +1300,146 @@ public abstract class MediaCodecRenderer extends BaseRenderer {
         return 0;
     }
 
-    private static boolean codecNeedsReconfigureWorkaround(String name) {
-        return Util.MODEL.startsWith("SM-T230") && "OMX.MARVELL.VIDEO.HW.CODA7542DECODER".equals(name);
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    private @interface AdaptationWorkaroundMode {
     }
 
-    private static boolean codecNeedsDiscardToSpsWorkaround(String name, Format format) {
-        return Util.SDK_INT < 21 && format.initializationData.isEmpty() && "OMX.MTK.VIDEO.DECODER.AVC".equals(name);
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    private @interface DrainAction {
     }
 
-    private static boolean codecNeedsEosPropagationWorkaround(MediaCodecInfo codecInfo2) {
-        String name = codecInfo2.name;
-        return (Util.SDK_INT <= 17 && ("OMX.rk.video_decoder.avc".equals(name) || "OMX.allwinner.video.decoder.avc".equals(name))) || ("Amazon".equals(Util.MANUFACTURER) && "AFTS".equals(Util.MODEL) && codecInfo2.secure);
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    private @interface DrainState {
     }
 
-    private static boolean codecNeedsEosFlushWorkaround(String name) {
-        return (Util.SDK_INT <= 23 && "OMX.google.vorbis.decoder".equals(name)) || (Util.SDK_INT <= 19 && (("hb2000".equals(Util.DEVICE) || "stvm8".equals(Util.DEVICE)) && ("OMX.amlogic.avc.decoder.awesome".equals(name) || "OMX.amlogic.avc.decoder.awesome.secure".equals(name))));
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    protected @interface KeepCodecResult {
     }
 
-    private static boolean codecNeedsEosOutputExceptionWorkaround(String name) {
-        return Util.SDK_INT == 21 && "OMX.google.aac.decoder".equals(name);
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    private @interface ReconfigurationState {
     }
 
-    private static boolean codecNeedsMonoChannelCountWorkaround(String name, Format format) {
-        if (Util.SDK_INT > 18 || format.channelCount != 1 || !"OMX.MTK.AUDIO.DECODER.MP3".equals(name)) {
-            return false;
+    public static class DecoderInitializationException extends Exception {
+        private static final int CUSTOM_ERROR_CODE_BASE = -50000;
+        private static final int DECODER_QUERY_ERROR = -49998;
+        private static final int NO_SUITABLE_DECODER_ERROR = -49999;
+        public final String decoderName;
+        public final String diagnosticInfo;
+        @Nullable
+        public final DecoderInitializationException fallbackDecoderInitializationException;
+        public final String mimeType;
+        public final boolean secureDecoderRequired;
+
+        /* JADX WARNING: Illegal instructions before constructor call */
+        /* Code decompiled incorrectly, please refer to instructions dump. */
+        public DecoderInitializationException(com.google.android.exoplayer2.Format r12, java.lang.Throwable r13, boolean r14, int r15) {
+            /*
+                r11 = this;
+                java.lang.String r0 = java.lang.String.valueOf(r12)
+                java.lang.String r1 = java.lang.String.valueOf(r0)
+                int r1 = r1.length()
+                int r1 = r1 + 36
+                java.lang.StringBuilder r2 = new java.lang.StringBuilder
+                r2.<init>(r1)
+                java.lang.String r1 = "Decoder init failed: ["
+                r2.append(r1)
+                r2.append(r15)
+                java.lang.String r1 = "], "
+                r2.append(r1)
+                r2.append(r0)
+                java.lang.String r4 = r2.toString()
+                java.lang.String r6 = r12.sampleMimeType
+                java.lang.String r9 = buildCustomDiagnosticInfo(r15)
+                r8 = 0
+                r10 = 0
+                r3 = r11
+                r5 = r13
+                r7 = r14
+                r3.<init>(r4, r5, r6, r7, r8, r9, r10)
+                return
+            */
+            throw new UnsupportedOperationException("Method not decompiled: com.google.android.exoplayer2.mediacodec.MediaCodecRenderer.DecoderInitializationException.<init>(com.google.android.exoplayer2.Format, java.lang.Throwable, boolean, int):void");
         }
-        return true;
+
+        /* JADX WARNING: Illegal instructions before constructor call */
+        /* Code decompiled incorrectly, please refer to instructions dump. */
+        public DecoderInitializationException(com.google.android.exoplayer2.Format r12, java.lang.Throwable r13, boolean r14, java.lang.String r15) {
+            /*
+                r11 = this;
+                java.lang.String r0 = java.lang.String.valueOf(r12)
+                java.lang.String r1 = java.lang.String.valueOf(r15)
+                int r1 = r1.length()
+                int r1 = r1 + 23
+                java.lang.String r2 = java.lang.String.valueOf(r0)
+                int r2 = r2.length()
+                int r1 = r1 + r2
+                java.lang.StringBuilder r2 = new java.lang.StringBuilder
+                r2.<init>(r1)
+                java.lang.String r1 = "Decoder init failed: "
+                r2.append(r1)
+                r2.append(r15)
+                java.lang.String r1 = ", "
+                r2.append(r1)
+                r2.append(r0)
+                java.lang.String r4 = r2.toString()
+                java.lang.String r6 = r12.sampleMimeType
+                int r0 = com.google.android.exoplayer2.util.Util.SDK_INT
+                r1 = 21
+                if (r0 < r1) goto L_0x003d
+                java.lang.String r0 = getDiagnosticInfoV21(r13)
+                goto L_0x003e
+            L_0x003d:
+                r0 = 0
+            L_0x003e:
+                r9 = r0
+                r10 = 0
+                r3 = r11
+                r5 = r13
+                r7 = r14
+                r8 = r15
+                r3.<init>(r4, r5, r6, r7, r8, r9, r10)
+                return
+            */
+            throw new UnsupportedOperationException("Method not decompiled: com.google.android.exoplayer2.mediacodec.MediaCodecRenderer.DecoderInitializationException.<init>(com.google.android.exoplayer2.Format, java.lang.Throwable, boolean, java.lang.String):void");
+        }
+
+        private DecoderInitializationException(String message, Throwable cause, String mimeType2, boolean secureDecoderRequired2, @Nullable String decoderName2, @Nullable String diagnosticInfo2, @Nullable DecoderInitializationException fallbackDecoderInitializationException2) {
+            super(message, cause);
+            this.mimeType = mimeType2;
+            this.secureDecoderRequired = secureDecoderRequired2;
+            this.decoderName = decoderName2;
+            this.diagnosticInfo = diagnosticInfo2;
+            this.fallbackDecoderInitializationException = fallbackDecoderInitializationException2;
+        }
+
+        @TargetApi(21)
+        private static String getDiagnosticInfoV21(Throwable cause) {
+            if (cause instanceof MediaCodec.CodecException) {
+                return ((MediaCodec.CodecException) cause).getDiagnosticInfo();
+            }
+            return null;
+        }
+
+        private static String buildCustomDiagnosticInfo(int errorCode) {
+            String sign = errorCode < 0 ? "neg_" : "";
+            int abs = Math.abs(errorCode);
+            StringBuilder sb = new StringBuilder(String.valueOf(sign).length() + 64);
+            sb.append("com.google.android.exoplayer.MediaCodecTrackRenderer_");
+            sb.append(sign);
+            sb.append(abs);
+            return sb.toString();
+        }
+
+        /* access modifiers changed from: private */
+        @CheckResult
+        public DecoderInitializationException copyWithFallbackException(DecoderInitializationException fallbackException) {
+            return new DecoderInitializationException(getMessage(), getCause(), this.mimeType, this.secureDecoderRequired, this.decoderName, this.diagnosticInfo, fallbackException);
+        }
     }
 }

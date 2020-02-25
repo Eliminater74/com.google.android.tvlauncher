@@ -22,11 +22,9 @@ import com.google.common.collect.Multiset;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.UnmodifiableIterator;
-import com.google.common.util.concurrent.ListenerCallQueue;
-import com.google.common.util.concurrent.Monitor;
-import com.google.common.util.concurrent.Service;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.concurrent.GuardedBy;
+
 import java.lang.ref.WeakReference;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -65,18 +63,6 @@ public final class ServiceManager {
     public static final Logger logger = Logger.getLogger(ServiceManager.class.getName());
     private final ImmutableList<Service> services;
     private final ServiceManagerState state;
-
-    @Beta
-    public static abstract class Listener {
-        public void healthy() {
-        }
-
-        public void stopped() {
-        }
-
-        public void failure(Service service) {
-        }
-    }
 
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
      method: ClspMth{java.util.logging.Logger.logp(java.util.logging.Level, java.lang.String, java.lang.String, java.lang.String, java.lang.Throwable):void}
@@ -195,13 +181,23 @@ public final class ServiceManager {
         return MoreObjects.toStringHelper((Class<?>) ServiceManager.class).add("services", Collections2.filter(this.services, Predicates.not(Predicates.instanceOf(NoOpService.class)))).toString();
     }
 
+    @Beta
+    public static abstract class Listener {
+        public void healthy() {
+        }
+
+        public void stopped() {
+        }
+
+        public void failure(Service service) {
+        }
+    }
+
     private static final class ServiceManagerState {
         final Monitor.Guard awaitHealthGuard = new AwaitHealthGuard();
         final ListenerCallQueue<Listener> listeners = new ListenerCallQueue<>();
         final Monitor monitor = new Monitor();
         final int numberOfServices;
-        @GuardedBy("monitor")
-        boolean ready;
         @GuardedBy("monitor")
         final SetMultimap<Service.State, Service> servicesByState = MultimapBuilder.enumKeys(Service.State.class).linkedHashSetValues().build();
         @GuardedBy("monitor")
@@ -210,29 +206,9 @@ public final class ServiceManager {
         final Multiset<Service.State> states = this.servicesByState.keys();
         final Monitor.Guard stoppedGuard = new StoppedGuard();
         @GuardedBy("monitor")
+        boolean ready;
+        @GuardedBy("monitor")
         boolean transitioned;
-
-        final class AwaitHealthGuard extends Monitor.Guard {
-            AwaitHealthGuard() {
-                super(ServiceManagerState.this.monitor);
-            }
-
-            @GuardedBy("ServiceManagerState.this.monitor")
-            public boolean isSatisfied() {
-                return ServiceManagerState.this.states.count(Service.State.RUNNING) == ServiceManagerState.this.numberOfServices || ServiceManagerState.this.states.contains(Service.State.STOPPING) || ServiceManagerState.this.states.contains(Service.State.TERMINATED) || ServiceManagerState.this.states.contains(Service.State.FAILED);
-            }
-        }
-
-        final class StoppedGuard extends Monitor.Guard {
-            StoppedGuard() {
-                super(ServiceManagerState.this.monitor);
-            }
-
-            @GuardedBy("ServiceManagerState.this.monitor")
-            public boolean isSatisfied() {
-                return ServiceManagerState.this.states.count(Service.State.TERMINATED) + ServiceManagerState.this.states.count(Service.State.FAILED) == ServiceManagerState.this.numberOfServices;
-            }
-        }
 
         ServiceManagerState(ImmutableCollection<Service> services) {
             this.numberOfServices = services.size();
@@ -483,6 +459,28 @@ public final class ServiceManager {
                 sb.append("Expected to be healthy after starting. The following services are not running: ");
                 sb.append(valueOf);
                 throw new IllegalStateException(sb.toString());
+            }
+        }
+
+        final class AwaitHealthGuard extends Monitor.Guard {
+            AwaitHealthGuard() {
+                super(ServiceManagerState.this.monitor);
+            }
+
+            @GuardedBy("ServiceManagerState.this.monitor")
+            public boolean isSatisfied() {
+                return ServiceManagerState.this.states.count(Service.State.RUNNING) == ServiceManagerState.this.numberOfServices || ServiceManagerState.this.states.contains(Service.State.STOPPING) || ServiceManagerState.this.states.contains(Service.State.TERMINATED) || ServiceManagerState.this.states.contains(Service.State.FAILED);
+            }
+        }
+
+        final class StoppedGuard extends Monitor.Guard {
+            StoppedGuard() {
+                super(ServiceManagerState.this.monitor);
+            }
+
+            @GuardedBy("ServiceManagerState.this.monitor")
+            public boolean isSatisfied() {
+                return ServiceManagerState.this.states.count(Service.State.TERMINATED) + ServiceManagerState.this.states.count(Service.State.FAILED) == ServiceManagerState.this.numberOfServices;
             }
         }
     }

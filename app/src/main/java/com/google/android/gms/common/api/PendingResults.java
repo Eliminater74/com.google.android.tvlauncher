@@ -1,6 +1,7 @@
 package com.google.android.gms.common.api;
 
 import android.os.Looper;
+
 import com.google.android.gms.common.api.internal.BasePendingResult;
 import com.google.android.gms.common.api.internal.zzcp;
 import com.google.android.gms.common.api.internal.zzdh;
@@ -8,53 +9,14 @@ import com.google.android.gms.common.internal.Hide;
 import com.google.android.gms.common.internal.zzau;
 
 public final class PendingResults {
+    private PendingResults() {
+    }
+
     public static PendingResult<Status> immediatePendingResult(Status status) {
         zzau.zza(status, "Result must not be null");
         zzdh zzdh = new zzdh(Looper.getMainLooper());
         zzdh.zza((Result) status);
         return zzdh;
-    }
-
-    static final class zzc<R extends Result> extends BasePendingResult<R> {
-        public zzc(GoogleApiClient googleApiClient) {
-            super(googleApiClient);
-        }
-
-        /* access modifiers changed from: protected */
-        public final R zza(Status status) {
-            throw new UnsupportedOperationException("Creating failed results is not supported");
-        }
-    }
-
-    static final class zza<R extends Result> extends BasePendingResult<R> {
-        private final R zza;
-
-        public zza(R r) {
-            super(Looper.getMainLooper());
-            this.zza = r;
-        }
-
-        /* access modifiers changed from: protected */
-        public final R zza(Status status) {
-            if (status.getStatusCode() == this.zza.getStatus().getStatusCode()) {
-                return this.zza;
-            }
-            throw new UnsupportedOperationException("Creating failed results is not supported");
-        }
-    }
-
-    static final class zzb<R extends Result> extends BasePendingResult<R> {
-        private final R zza;
-
-        public zzb(GoogleApiClient googleApiClient, R r) {
-            super(googleApiClient);
-            this.zza = r;
-        }
-
-        /* access modifiers changed from: protected */
-        public final R zza(Status status) {
-            return this.zza;
-        }
     }
 
     @Hide
@@ -130,6 +92,45 @@ public final class PendingResults {
         return zza2;
     }
 
-    private PendingResults() {
+    static final class zzc<R extends Result> extends BasePendingResult<R> {
+        public zzc(GoogleApiClient googleApiClient) {
+            super(googleApiClient);
+        }
+
+        /* access modifiers changed from: protected */
+        public final R zza(Status status) {
+            throw new UnsupportedOperationException("Creating failed results is not supported");
+        }
+    }
+
+    static final class zza<R extends Result> extends BasePendingResult<R> {
+        private final R zza;
+
+        public zza(R r) {
+            super(Looper.getMainLooper());
+            this.zza = r;
+        }
+
+        /* access modifiers changed from: protected */
+        public final R zza(Status status) {
+            if (status.getStatusCode() == this.zza.getStatus().getStatusCode()) {
+                return this.zza;
+            }
+            throw new UnsupportedOperationException("Creating failed results is not supported");
+        }
+    }
+
+    static final class zzb<R extends Result> extends BasePendingResult<R> {
+        private final R zza;
+
+        public zzb(GoogleApiClient googleApiClient, R r) {
+            super(googleApiClient);
+            this.zza = r;
+        }
+
+        /* access modifiers changed from: protected */
+        public final R zza(Status status) {
+            return this.zza;
+        }
     }
 }

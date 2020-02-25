@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.util.LongSparseArray;
+
 import java.lang.reflect.Field;
 import java.util.Map;
 
@@ -20,6 +21,9 @@ class ResourcesFlusher {
     private static boolean sThemedResourceCacheClazzFetched;
     private static Field sThemedResourceCache_mUnthemedEntriesField;
     private static boolean sThemedResourceCache_mUnthemedEntriesFieldFetched;
+
+    private ResourcesFlusher() {
+    }
 
     static void flush(@NonNull Resources resources) {
         if (Build.VERSION.SDK_INT < 28) {
@@ -162,8 +166,5 @@ class ResourcesFlusher {
                 }
             }
         }
-    }
-
-    private ResourcesFlusher() {
     }
 }

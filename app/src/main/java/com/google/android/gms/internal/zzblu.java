@@ -4,10 +4,12 @@ import android.content.Context;
 import android.os.IBinder;
 import android.os.IInterface;
 import android.os.RemoteException;
+
 import com.google.android.gms.common.internal.Hide;
 import com.google.android.gms.dynamic.zzn;
 import com.google.android.gms.dynamic.zzp;
 import com.google.android.gms.dynamic.zzq;
+
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
@@ -16,14 +18,6 @@ import javax.net.ssl.TrustManager;
 /* compiled from: SocketFactoryCreator */
 public final class zzblu extends zzp<zzblq> {
     private static zzblu zza;
-
-    public final SSLSocketFactory zza(Context context, KeyManager[] keyManagerArr, TrustManager[] trustManagerArr, boolean z) {
-        try {
-            return (SSLSocketFactory) zzn.zza(((zzblq) zzb(context)).zza(zzn.zza(context), zzn.zza((Object) null), zzn.zza(trustManagerArr), z));
-        } catch (RemoteException | zzq e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     protected zzblu() {
         super("com.google.android.gms.common.net.SocketFactoryCreatorImpl");
@@ -34,6 +28,14 @@ public final class zzblu extends zzp<zzblq> {
             zza = new zzblu();
         }
         return zza;
+    }
+
+    public final SSLSocketFactory zza(Context context, KeyManager[] keyManagerArr, TrustManager[] trustManagerArr, boolean z) {
+        try {
+            return (SSLSocketFactory) zzn.zza(((zzblq) zzb(context)).zza(zzn.zza(context), zzn.zza((Object) null), zzn.zza(trustManagerArr), z));
+        } catch (RemoteException | zzq e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /* access modifiers changed from: protected */

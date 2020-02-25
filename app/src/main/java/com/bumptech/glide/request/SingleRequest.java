@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.p001v4.util.Pools;
 import android.util.Log;
+
 import com.bumptech.glide.GlideContext;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.DataSource;
@@ -20,18 +21,22 @@ import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.request.transition.TransitionFactory;
 import com.bumptech.glide.util.pool.FactoryPools;
 import com.bumptech.glide.util.pool.StateVerifier;
+
 import java.util.List;
 import java.util.concurrent.Executor;
 
 public final class SingleRequest<R> implements Request, SizeReadyCallback, ResourceCallback, FactoryPools.Poolable {
     private static final String GLIDE_TAG = "Glide";
-    private static final boolean IS_VERBOSE_LOGGABLE = Log.isLoggable(TAG, 2);
     private static final Pools.Pool<SingleRequest<?>> POOL = FactoryPools.threadSafe(150, new FactoryPools.Factory<SingleRequest<?>>() {
         public SingleRequest<?> create() {
             return new SingleRequest<>();
         }
     });
     private static final String TAG = "Request";
+    private static final boolean IS_VERBOSE_LOGGABLE = Log.isLoggable(TAG, 2);
+    private final StateVerifier stateVerifier;
+    @Nullable
+    private final String tag;
     private TransitionFactory<? super R> animationFactory;
     private Executor callbackExecutor;
     private Context context;
@@ -56,24 +61,17 @@ public final class SingleRequest<R> implements Request, SizeReadyCallback, Resou
     private RuntimeException requestOrigin;
     private Resource<R> resource;
     private long startTime;
-    private final StateVerifier stateVerifier;
     @GuardedBy("this")
     private Status status;
-    @Nullable
-    private final String tag;
     private Target<R> target;
     @Nullable
     private RequestListener<R> targetListener;
     private Class<R> transcodeClass;
     private int width;
 
-    private enum Status {
-        PENDING,
-        RUNNING,
-        WAITING_FOR_SIZE,
-        COMPLETE,
-        FAILED,
-        CLEARED
+    SingleRequest() {
+        this.tag = IS_VERBOSE_LOGGABLE ? String.valueOf(super.hashCode()) : null;
+        this.stateVerifier = StateVerifier.newInstance();
     }
 
     public static <R> SingleRequest<R> obtain(Context context2, GlideContext glideContext2, Object model2, Class<R> transcodeClass2, BaseRequestOptions<?> requestOptions2, int overrideWidth2, int overrideHeight2, Priority priority2, Target<R> target2, RequestListener<R> targetListener2, @Nullable List<RequestListener<R>> requestListeners2, RequestCoordinator requestCoordinator2, Engine engine2, TransitionFactory<? super R> animationFactory2, Executor callbackExecutor2) {
@@ -85,9 +83,8 @@ public final class SingleRequest<R> implements Request, SizeReadyCallback, Resou
         return request;
     }
 
-    SingleRequest() {
-        this.tag = IS_VERBOSE_LOGGABLE ? String.valueOf(super.hashCode()) : null;
-        this.stateVerifier = StateVerifier.newInstance();
+    private static int maybeApplySizeMultiplier(int size, float sizeMultiplier) {
+        return size == Integer.MIN_VALUE ? size : Math.round(((float) size) * sizeMultiplier);
     }
 
     private synchronized void init(Context context2, GlideContext glideContext2, Object model2, Class<R> transcodeClass2, BaseRequestOptions<?> requestOptions2, int overrideWidth2, int overrideHeight2, Priority priority2, Target<R> target2, RequestListener<R> targetListener2, @Nullable List<RequestListener<R>> requestListeners2, RequestCoordinator requestCoordinator2, Engine engine2, TransitionFactory<? super R> animationFactory2, Executor callbackExecutor2) {
@@ -487,10 +484,6 @@ public final class SingleRequest<R> implements Request, SizeReadyCallback, Resou
         throw new UnsupportedOperationException("Method not decompiled: com.bumptech.glide.request.SingleRequest.onSizeReady(int, int):void");
     }
 
-    private static int maybeApplySizeMultiplier(int size, float sizeMultiplier) {
-        return size == Integer.MIN_VALUE ? size : Math.round(((float) size) * sizeMultiplier);
-    }
-
     private boolean canSetResource() {
         RequestCoordinator requestCoordinator2 = this.requestCoordinator;
         return requestCoordinator2 == null || requestCoordinator2.canSetImage(this);
@@ -862,5 +855,14 @@ public final class SingleRequest<R> implements Request, SizeReadyCallback, Resou
         sb.append(" this: ");
         sb.append(str);
         Log.v(TAG, sb.toString());
+    }
+
+    private enum Status {
+        PENDING,
+        RUNNING,
+        WAITING_FOR_SIZE,
+        COMPLETE,
+        FAILED,
+        CLEARED
     }
 }

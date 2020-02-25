@@ -13,11 +13,11 @@ final class zzgqr extends zzgqx {
         this.zza = zzgqo;
     }
 
-    public final Iterator<Map.Entry<K, V>> iterator() {
-        return new zzgqq(this.zza, null);
-    }
-
     /* synthetic */ zzgqr(zzgqo zzgqo, zzgqp zzgqp) {
         this(zzgqo);
+    }
+
+    public final Iterator<Map.Entry<K, V>> iterator() {
+        return new zzgqq(this.zza, null);
     }
 }

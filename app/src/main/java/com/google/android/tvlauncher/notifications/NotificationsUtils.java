@@ -6,7 +6,9 @@ import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.support.annotation.VisibleForTesting;
+
 import com.google.android.tvrecommendations.shared.util.Constants;
+
 import java.util.List;
 
 public class NotificationsUtils {

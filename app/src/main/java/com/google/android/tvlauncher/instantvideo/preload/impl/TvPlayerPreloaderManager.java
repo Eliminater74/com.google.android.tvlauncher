@@ -4,11 +4,13 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.media.tv.TvContract;
 import android.net.Uri;
+
 import com.google.android.tvlauncher.instantvideo.media.MediaPlayer;
 import com.google.android.tvlauncher.instantvideo.media.impl.TvPlayerImpl;
 import com.google.android.tvlauncher.instantvideo.preload.Preloader;
 import com.google.android.tvlauncher.instantvideo.preload.PreloaderManager;
 import com.google.android.tvlauncher.instantvideo.widget.CustomTvView;
+
 import java.util.Deque;
 import java.util.LinkedList;
 

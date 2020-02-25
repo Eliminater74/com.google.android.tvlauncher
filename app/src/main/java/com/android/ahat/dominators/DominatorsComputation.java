@@ -1,21 +1,10 @@
 package com.android.ahat.dominators;
 
-import com.android.ahat.dominators.Dominators;
 import com.android.ahat.progress.NullProgress;
 import com.android.ahat.progress.Progress;
 
 @Deprecated
 public class DominatorsComputation {
-
-    public interface Node {
-        Object getDominatorsComputationState();
-
-        Iterable<? extends Node> getReferencesForDominators();
-
-        void setDominator(Node node);
-
-        void setDominatorsComputationState(Object obj);
-    }
 
     private DominatorsComputation() {
     }
@@ -42,5 +31,15 @@ public class DominatorsComputation {
                 node.setDominator(dominator);
             }
         }).progress(progress, numNodes).computeDominators(root);
+    }
+
+    public interface Node {
+        Object getDominatorsComputationState();
+
+        void setDominatorsComputationState(Object obj);
+
+        Iterable<? extends Node> getReferencesForDominators();
+
+        void setDominator(Node node);
     }
 }

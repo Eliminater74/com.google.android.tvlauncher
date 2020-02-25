@@ -11,16 +11,6 @@ final class CpuWallTime {
         this.cpuNanos = cpuNanos2;
     }
 
-    /* access modifiers changed from: package-private */
-    public long wallMicros() {
-        return this.wallNanos / 1000;
-    }
-
-    /* access modifiers changed from: package-private */
-    public long cpuMicros() {
-        return this.cpuNanos / 1000;
-    }
-
     static CpuWallTime minus(CpuWallTime lhs, CpuWallTime rhs) {
         return new CpuWallTime(lhs.wallNanos - rhs.wallNanos, lhs.cpuNanos - rhs.cpuNanos);
     }
@@ -31,5 +21,15 @@ final class CpuWallTime {
 
     static CpuWallTime since(CpuWallTime startTime) {
         return minus(now(), startTime);
+    }
+
+    /* access modifiers changed from: package-private */
+    public long wallMicros() {
+        return this.wallNanos / 1000;
+    }
+
+    /* access modifiers changed from: package-private */
+    public long cpuMicros() {
+        return this.cpuNanos / 1000;
     }
 }

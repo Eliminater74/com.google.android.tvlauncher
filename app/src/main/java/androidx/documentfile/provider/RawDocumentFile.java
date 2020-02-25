@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,6 +15,32 @@ class RawDocumentFile extends DocumentFile {
     RawDocumentFile(@Nullable DocumentFile parent, File file) {
         super(parent);
         this.mFile = file;
+    }
+
+    private static String getTypeForName(String name) {
+        String mime;
+        int lastDot = name.lastIndexOf(46);
+        if (lastDot < 0 || (mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(name.substring(lastDot + 1).toLowerCase())) == null) {
+            return "application/octet-stream";
+        }
+        return mime;
+    }
+
+    private static boolean deleteContents(File dir) {
+        File[] files = dir.listFiles();
+        boolean success = true;
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    success &= deleteContents(file);
+                }
+                if (!file.delete()) {
+                    Log.w("DocumentFile", "Failed to delete " + file);
+                    success = false;
+                }
+            }
+        }
+        return success;
     }
 
     @Nullable
@@ -112,31 +139,5 @@ class RawDocumentFile extends DocumentFile {
         }
         this.mFile = target;
         return true;
-    }
-
-    private static String getTypeForName(String name) {
-        String mime;
-        int lastDot = name.lastIndexOf(46);
-        if (lastDot < 0 || (mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(name.substring(lastDot + 1).toLowerCase())) == null) {
-            return "application/octet-stream";
-        }
-        return mime;
-    }
-
-    private static boolean deleteContents(File dir) {
-        File[] files = dir.listFiles();
-        boolean success = true;
-        if (files != null) {
-            for (File file : files) {
-                if (file.isDirectory()) {
-                    success &= deleteContents(file);
-                }
-                if (!file.delete()) {
-                    Log.w("DocumentFile", "Failed to delete " + file);
-                    success = false;
-                }
-            }
-        }
-        return success;
     }
 }

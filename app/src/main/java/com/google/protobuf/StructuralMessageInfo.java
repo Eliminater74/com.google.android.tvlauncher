@@ -19,6 +19,14 @@ final class StructuralMessageInfo implements MessageInfo {
         this.defaultInstance = (MessageLite) Internal.checkNotNull(defaultInstance2, "defaultInstance");
     }
 
+    public static Builder newBuilder() {
+        return new Builder();
+    }
+
+    public static Builder newBuilder(int numFields) {
+        return new Builder(numFields);
+    }
+
     public ProtoSyntax getSyntax() {
         return this.syntax;
     }
@@ -39,18 +47,10 @@ final class StructuralMessageInfo implements MessageInfo {
         return this.defaultInstance;
     }
 
-    public static Builder newBuilder() {
-        return new Builder();
-    }
-
-    public static Builder newBuilder(int numFields) {
-        return new Builder(numFields);
-    }
-
     public static final class Builder {
+        private final List<FieldInfo> fields;
         private int[] checkInitialized;
         private Object defaultInstance;
-        private final List<FieldInfo> fields;
         private boolean messageSetWireFormat;
         private ProtoSyntax syntax;
         private boolean wasBuilt;

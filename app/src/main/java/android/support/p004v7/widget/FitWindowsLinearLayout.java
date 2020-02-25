@@ -3,7 +3,6 @@ package android.support.p004v7.widget;
 import android.content.Context;
 import android.graphics.Rect;
 import android.support.annotation.RestrictTo;
-import android.support.p004v7.widget.FitWindowsViewGroup;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;
 

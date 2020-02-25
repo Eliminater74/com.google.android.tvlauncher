@@ -10,7 +10,6 @@ public final class NotificationsContract {
     public static final String ACTION_OPEN_NOTIFICATIONS_PANEL = "com.android.tv.action.OPEN_NOTIFICATIONS_PANEL";
     public static final String ACTION_SHOW_UNSHOWN_NOTIFICATIONS = "com.android.tv.action.SHOW_UNSHOWN_NOTIFICATIONS";
     public static final String ACTION_SHOW_UNSHOWN_NOTIFICATIONS_ORIGINAL = "android.tvservice.action.SHOW_UNSHOWN_NOTIFICATIONS";
-    private static final String AUTHORITY = "com.google.android.tvrecommendations.NotificationContentProvider";
     public static final String COLUMN_AUTODISMISS = "is_auto_dismiss";
     public static final String COLUMN_BIG_PICTURE = "big_picture";
     public static final String COLUMN_CHANNEL = "channel";
@@ -34,15 +33,16 @@ public final class NotificationsContract {
     public static final String NOTIFICATION_KEY = "sbn_key";
     public static final Uri NOTIF_COUNT_CONTENT_URI = Uri.parse("content://com.google.android.tvrecommendations.NotificationContentProvider/notifications/count");
     public static final String NOW_PLAYING_NOTIF_TAG = "Notification.NowPlaying";
-    static final Uri PANEL_CONTENT_URI = Uri.parse("content://com.google.android.tvrecommendations.NotificationContentProvider/notifications/panel");
     public static final Uri PANEL_COUNT_CONTENT_URI = Uri.parse("content://com.google.android.tvrecommendations.NotificationContentProvider/notifications/panel_count");
+    public static final String PIP_NOTIF_TAG = "com.android.systemui.pip.tv.PipNotification";
+    public static final Uri TRAY_CONTENT_URI = Uri.parse("content://com.google.android.tvrecommendations.NotificationContentProvider/notifications/tray");
+    public static final Uri TRAY_COUNT_CONTENT_URI = Uri.parse("content://com.google.android.tvrecommendations.NotificationContentProvider/notifications/tray_count");
+    static final Uri PANEL_CONTENT_URI = Uri.parse("content://com.google.android.tvrecommendations.NotificationContentProvider/notifications/panel");
+    private static final String AUTHORITY = "com.google.android.tvrecommendations.NotificationContentProvider";
     private static final String PATH_NOTIFICATIONS = "notifications";
     private static final String PATH_NOTIFS_COUNT = "notifications/count";
     private static final String PATH_PANEL_COUNT = "notifications/panel_count";
     private static final String PATH_PANEL_NOTIFS = "notifications/panel";
     private static final String PATH_TRAY_COUNT = "notifications/tray_count";
     private static final String PATH_TRAY_NOTIFS = "notifications/tray";
-    public static final String PIP_NOTIF_TAG = "com.android.systemui.pip.tv.PipNotification";
-    public static final Uri TRAY_CONTENT_URI = Uri.parse("content://com.google.android.tvrecommendations.NotificationContentProvider/notifications/tray");
-    public static final Uri TRAY_COUNT_CONTENT_URI = Uri.parse("content://com.google.android.tvrecommendations.NotificationContentProvider/notifications/tray_count");
 }

@@ -15,16 +15,325 @@ import com.google.protobuf.ProtoMessage;
 import com.google.protobuf.ProtoPresenceBits;
 import com.google.protobuf.ProtoPresenceCheckedField;
 import com.google.protobuf.ProtoSyntax;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.Collections;
 import java.util.List;
-import logs.proto.wireless.performance.mobile.ExtensionMetric;
-import logs.proto.wireless.performance.mobile.PrimesScenarioProto;
-import logs.proto.wireless.performance.mobile.ProcessProto;
 
 public final class NetworkMetric {
+
+    private NetworkMetric() {
+    }
+
+    public static void registerAllExtensions(ExtensionRegistryLite registry) {
+    }
+
+    public enum RequestNegotiatedProtocol implements Internal.EnumLite {
+        REQUEST_NEGOTIATED_PROTOCOL_UNKNOWN(0),
+        REQUEST_NEGOTIATED_PROTOCOL_HTTP11(1),
+        REQUEST_NEGOTIATED_PROTOCOL_SPDY2(2),
+        REQUEST_NEGOTIATED_PROTOCOL_SPDY3(3),
+        REQUEST_NEGOTIATED_PROTOCOL_SPDY31(4),
+        REQUEST_NEGOTIATED_PROTOCOL_SPDY4(5),
+        REQUEST_NEGOTIATED_PROTOCOL_QUIC1_SPDY3(6);
+
+        public static final int REQUEST_NEGOTIATED_PROTOCOL_HTTP11_VALUE = 1;
+        public static final int REQUEST_NEGOTIATED_PROTOCOL_QUIC1_SPDY3_VALUE = 6;
+        public static final int REQUEST_NEGOTIATED_PROTOCOL_SPDY2_VALUE = 2;
+        public static final int REQUEST_NEGOTIATED_PROTOCOL_SPDY31_VALUE = 4;
+        public static final int REQUEST_NEGOTIATED_PROTOCOL_SPDY3_VALUE = 3;
+        public static final int REQUEST_NEGOTIATED_PROTOCOL_SPDY4_VALUE = 5;
+        public static final int REQUEST_NEGOTIATED_PROTOCOL_UNKNOWN_VALUE = 0;
+        private static final Internal.EnumLiteMap<RequestNegotiatedProtocol> internalValueMap = new Internal.EnumLiteMap<RequestNegotiatedProtocol>() {
+            public RequestNegotiatedProtocol findValueByNumber(int number) {
+                return RequestNegotiatedProtocol.forNumber(number);
+            }
+        };
+        private final int value;
+
+        private RequestNegotiatedProtocol(int value2) {
+            this.value = value2;
+        }
+
+        public static RequestNegotiatedProtocol forNumber(int value2) {
+            switch (value2) {
+                case 0:
+                    return REQUEST_NEGOTIATED_PROTOCOL_UNKNOWN;
+                case 1:
+                    return REQUEST_NEGOTIATED_PROTOCOL_HTTP11;
+                case 2:
+                    return REQUEST_NEGOTIATED_PROTOCOL_SPDY2;
+                case 3:
+                    return REQUEST_NEGOTIATED_PROTOCOL_SPDY3;
+                case 4:
+                    return REQUEST_NEGOTIATED_PROTOCOL_SPDY31;
+                case 5:
+                    return REQUEST_NEGOTIATED_PROTOCOL_SPDY4;
+                case 6:
+                    return REQUEST_NEGOTIATED_PROTOCOL_QUIC1_SPDY3;
+                default:
+                    return null;
+            }
+        }
+
+        public static Internal.EnumLiteMap<RequestNegotiatedProtocol> internalGetValueMap() {
+            return internalValueMap;
+        }
+
+        public static Internal.EnumVerifier internalGetVerifier() {
+            return RequestNegotiatedProtocolVerifier.INSTANCE;
+        }
+
+        public final int getNumber() {
+            return this.value;
+        }
+
+        private static final class RequestNegotiatedProtocolVerifier implements Internal.EnumVerifier {
+            static final Internal.EnumVerifier INSTANCE = new RequestNegotiatedProtocolVerifier();
+
+            private RequestNegotiatedProtocolVerifier() {
+            }
+
+            public boolean isInRange(int number) {
+                return RequestNegotiatedProtocol.forNumber(number) != null;
+            }
+        }
+    }
+
+    public enum RequestStatus implements Internal.EnumLite {
+        REQUEST_STATUS_UNSPECIFIED(0),
+        SUCCEEDED(1),
+        FAILED(2),
+        CANCELED(3);
+
+        public static final int CANCELED_VALUE = 3;
+        public static final int FAILED_VALUE = 2;
+        public static final int REQUEST_STATUS_UNSPECIFIED_VALUE = 0;
+        public static final int SUCCEEDED_VALUE = 1;
+        private static final Internal.EnumLiteMap<RequestStatus> internalValueMap = new Internal.EnumLiteMap<RequestStatus>() {
+            public RequestStatus findValueByNumber(int number) {
+                return RequestStatus.forNumber(number);
+            }
+        };
+        private final int value;
+
+        private RequestStatus(int value2) {
+            this.value = value2;
+        }
+
+        public static RequestStatus forNumber(int value2) {
+            if (value2 == 0) {
+                return REQUEST_STATUS_UNSPECIFIED;
+            }
+            if (value2 == 1) {
+                return SUCCEEDED;
+            }
+            if (value2 == 2) {
+                return FAILED;
+            }
+            if (value2 != 3) {
+                return null;
+            }
+            return CANCELED;
+        }
+
+        public static Internal.EnumLiteMap<RequestStatus> internalGetValueMap() {
+            return internalValueMap;
+        }
+
+        public static Internal.EnumVerifier internalGetVerifier() {
+            return RequestStatusVerifier.INSTANCE;
+        }
+
+        public final int getNumber() {
+            return this.value;
+        }
+
+        private static final class RequestStatusVerifier implements Internal.EnumVerifier {
+            static final Internal.EnumVerifier INSTANCE = new RequestStatusVerifier();
+
+            private RequestStatusVerifier() {
+            }
+
+            public boolean isInRange(int number) {
+                return RequestStatus.forNumber(number) != null;
+            }
+        }
+    }
+
+    public enum RequestFailedReason implements Internal.EnumLite {
+        REQUEST_FAILED_REASON_UNSPECIFIED(0),
+        LISTENER_EXCEPTION_THROWN(1),
+        HOSTNAME_NOT_RESOLVED(2),
+        INTERNET_DISCONNECTED(3),
+        NETWORK_CHANGED(4),
+        TIMED_OUT(5),
+        CONNECTION_CLOSED(6),
+        CONNECTION_TIMED_OUT(7),
+        CONNECTION_REFUSED(8),
+        CONNECTION_RESET(9),
+        ADDRESS_UNREACHABLE(10),
+        QUIC_PROTOCOL_FAILED(11),
+        OTHER(12);
+
+        public static final int ADDRESS_UNREACHABLE_VALUE = 10;
+        public static final int CONNECTION_CLOSED_VALUE = 6;
+        public static final int CONNECTION_REFUSED_VALUE = 8;
+        public static final int CONNECTION_RESET_VALUE = 9;
+        public static final int CONNECTION_TIMED_OUT_VALUE = 7;
+        public static final int HOSTNAME_NOT_RESOLVED_VALUE = 2;
+        public static final int INTERNET_DISCONNECTED_VALUE = 3;
+        public static final int LISTENER_EXCEPTION_THROWN_VALUE = 1;
+        public static final int NETWORK_CHANGED_VALUE = 4;
+        public static final int OTHER_VALUE = 12;
+        public static final int QUIC_PROTOCOL_FAILED_VALUE = 11;
+        public static final int REQUEST_FAILED_REASON_UNSPECIFIED_VALUE = 0;
+        public static final int TIMED_OUT_VALUE = 5;
+        private static final Internal.EnumLiteMap<RequestFailedReason> internalValueMap = new Internal.EnumLiteMap<RequestFailedReason>() {
+            public RequestFailedReason findValueByNumber(int number) {
+                return RequestFailedReason.forNumber(number);
+            }
+        };
+        private final int value;
+
+        private RequestFailedReason(int value2) {
+            this.value = value2;
+        }
+
+        public static RequestFailedReason forNumber(int value2) {
+            switch (value2) {
+                case 0:
+                    return REQUEST_FAILED_REASON_UNSPECIFIED;
+                case 1:
+                    return LISTENER_EXCEPTION_THROWN;
+                case 2:
+                    return HOSTNAME_NOT_RESOLVED;
+                case 3:
+                    return INTERNET_DISCONNECTED;
+                case 4:
+                    return NETWORK_CHANGED;
+                case 5:
+                    return TIMED_OUT;
+                case 6:
+                    return CONNECTION_CLOSED;
+                case 7:
+                    return CONNECTION_TIMED_OUT;
+                case 8:
+                    return CONNECTION_REFUSED;
+                case 9:
+                    return CONNECTION_RESET;
+                case 10:
+                    return ADDRESS_UNREACHABLE;
+                case 11:
+                    return QUIC_PROTOCOL_FAILED;
+                case 12:
+                    return OTHER;
+                default:
+                    return null;
+            }
+        }
+
+        public static Internal.EnumLiteMap<RequestFailedReason> internalGetValueMap() {
+            return internalValueMap;
+        }
+
+        public static Internal.EnumVerifier internalGetVerifier() {
+            return RequestFailedReasonVerifier.INSTANCE;
+        }
+
+        public final int getNumber() {
+            return this.value;
+        }
+
+        private static final class RequestFailedReasonVerifier implements Internal.EnumVerifier {
+            static final Internal.EnumVerifier INSTANCE = new RequestFailedReasonVerifier();
+
+            private RequestFailedReasonVerifier() {
+            }
+
+            public boolean isInRange(int number) {
+                return RequestFailedReason.forNumber(number) != null;
+            }
+        }
+    }
+
+    public enum HttpMethod implements Internal.EnumLite {
+        UNKNOWN_METHOD(0),
+        GET(1),
+        PUT(2),
+        DELETE(3),
+        POST(4),
+        OPTIONS(5),
+        HEAD(6),
+        PATCH(7);
+
+        public static final int DELETE_VALUE = 3;
+        public static final int GET_VALUE = 1;
+        public static final int HEAD_VALUE = 6;
+        public static final int OPTIONS_VALUE = 5;
+        public static final int PATCH_VALUE = 7;
+        public static final int POST_VALUE = 4;
+        public static final int PUT_VALUE = 2;
+        public static final int UNKNOWN_METHOD_VALUE = 0;
+        private static final Internal.EnumLiteMap<HttpMethod> internalValueMap = new Internal.EnumLiteMap<HttpMethod>() {
+            public HttpMethod findValueByNumber(int number) {
+                return HttpMethod.forNumber(number);
+            }
+        };
+        private final int value;
+
+        private HttpMethod(int value2) {
+            this.value = value2;
+        }
+
+        public static HttpMethod forNumber(int value2) {
+            switch (value2) {
+                case 0:
+                    return UNKNOWN_METHOD;
+                case 1:
+                    return GET;
+                case 2:
+                    return PUT;
+                case 3:
+                    return DELETE;
+                case 4:
+                    return POST;
+                case 5:
+                    return OPTIONS;
+                case 6:
+                    return HEAD;
+                case 7:
+                    return PATCH;
+                default:
+                    return null;
+            }
+        }
+
+        public static Internal.EnumLiteMap<HttpMethod> internalGetValueMap() {
+            return internalValueMap;
+        }
+
+        public static Internal.EnumVerifier internalGetVerifier() {
+            return HttpMethodVerifier.INSTANCE;
+        }
+
+        public final int getNumber() {
+            return this.value;
+        }
+
+        private static final class HttpMethodVerifier implements Internal.EnumVerifier {
+            static final Internal.EnumVerifier INSTANCE = new HttpMethodVerifier();
+
+            private HttpMethodVerifier() {
+            }
+
+            public boolean isInRange(int number) {
+                return HttpMethod.forNumber(number) != null;
+            }
+        }
+    }
 
     public interface CacheStatsOrBuilder extends MessageLiteOrBuilder {
         int getHitCount();
@@ -192,324 +501,18 @@ public final class NetworkMetric {
         boolean hasRequestPath();
     }
 
-    private NetworkMetric() {
-    }
-
-    public static void registerAllExtensions(ExtensionRegistryLite registry) {
-    }
-
-    public enum RequestNegotiatedProtocol implements Internal.EnumLite {
-        REQUEST_NEGOTIATED_PROTOCOL_UNKNOWN(0),
-        REQUEST_NEGOTIATED_PROTOCOL_HTTP11(1),
-        REQUEST_NEGOTIATED_PROTOCOL_SPDY2(2),
-        REQUEST_NEGOTIATED_PROTOCOL_SPDY3(3),
-        REQUEST_NEGOTIATED_PROTOCOL_SPDY31(4),
-        REQUEST_NEGOTIATED_PROTOCOL_SPDY4(5),
-        REQUEST_NEGOTIATED_PROTOCOL_QUIC1_SPDY3(6);
-        
-        public static final int REQUEST_NEGOTIATED_PROTOCOL_HTTP11_VALUE = 1;
-        public static final int REQUEST_NEGOTIATED_PROTOCOL_QUIC1_SPDY3_VALUE = 6;
-        public static final int REQUEST_NEGOTIATED_PROTOCOL_SPDY2_VALUE = 2;
-        public static final int REQUEST_NEGOTIATED_PROTOCOL_SPDY31_VALUE = 4;
-        public static final int REQUEST_NEGOTIATED_PROTOCOL_SPDY3_VALUE = 3;
-        public static final int REQUEST_NEGOTIATED_PROTOCOL_SPDY4_VALUE = 5;
-        public static final int REQUEST_NEGOTIATED_PROTOCOL_UNKNOWN_VALUE = 0;
-        private static final Internal.EnumLiteMap<RequestNegotiatedProtocol> internalValueMap = new Internal.EnumLiteMap<RequestNegotiatedProtocol>() {
-            public RequestNegotiatedProtocol findValueByNumber(int number) {
-                return RequestNegotiatedProtocol.forNumber(number);
-            }
-        };
-        private final int value;
-
-        public final int getNumber() {
-            return this.value;
-        }
-
-        public static RequestNegotiatedProtocol forNumber(int value2) {
-            switch (value2) {
-                case 0:
-                    return REQUEST_NEGOTIATED_PROTOCOL_UNKNOWN;
-                case 1:
-                    return REQUEST_NEGOTIATED_PROTOCOL_HTTP11;
-                case 2:
-                    return REQUEST_NEGOTIATED_PROTOCOL_SPDY2;
-                case 3:
-                    return REQUEST_NEGOTIATED_PROTOCOL_SPDY3;
-                case 4:
-                    return REQUEST_NEGOTIATED_PROTOCOL_SPDY31;
-                case 5:
-                    return REQUEST_NEGOTIATED_PROTOCOL_SPDY4;
-                case 6:
-                    return REQUEST_NEGOTIATED_PROTOCOL_QUIC1_SPDY3;
-                default:
-                    return null;
-            }
-        }
-
-        public static Internal.EnumLiteMap<RequestNegotiatedProtocol> internalGetValueMap() {
-            return internalValueMap;
-        }
-
-        public static Internal.EnumVerifier internalGetVerifier() {
-            return RequestNegotiatedProtocolVerifier.INSTANCE;
-        }
-
-        private static final class RequestNegotiatedProtocolVerifier implements Internal.EnumVerifier {
-            static final Internal.EnumVerifier INSTANCE = new RequestNegotiatedProtocolVerifier();
-
-            private RequestNegotiatedProtocolVerifier() {
-            }
-
-            public boolean isInRange(int number) {
-                return RequestNegotiatedProtocol.forNumber(number) != null;
-            }
-        }
-
-        private RequestNegotiatedProtocol(int value2) {
-            this.value = value2;
-        }
-    }
-
-    public enum RequestStatus implements Internal.EnumLite {
-        REQUEST_STATUS_UNSPECIFIED(0),
-        SUCCEEDED(1),
-        FAILED(2),
-        CANCELED(3);
-        
-        public static final int CANCELED_VALUE = 3;
-        public static final int FAILED_VALUE = 2;
-        public static final int REQUEST_STATUS_UNSPECIFIED_VALUE = 0;
-        public static final int SUCCEEDED_VALUE = 1;
-        private static final Internal.EnumLiteMap<RequestStatus> internalValueMap = new Internal.EnumLiteMap<RequestStatus>() {
-            public RequestStatus findValueByNumber(int number) {
-                return RequestStatus.forNumber(number);
-            }
-        };
-        private final int value;
-
-        public final int getNumber() {
-            return this.value;
-        }
-
-        public static RequestStatus forNumber(int value2) {
-            if (value2 == 0) {
-                return REQUEST_STATUS_UNSPECIFIED;
-            }
-            if (value2 == 1) {
-                return SUCCEEDED;
-            }
-            if (value2 == 2) {
-                return FAILED;
-            }
-            if (value2 != 3) {
-                return null;
-            }
-            return CANCELED;
-        }
-
-        public static Internal.EnumLiteMap<RequestStatus> internalGetValueMap() {
-            return internalValueMap;
-        }
-
-        public static Internal.EnumVerifier internalGetVerifier() {
-            return RequestStatusVerifier.INSTANCE;
-        }
-
-        private static final class RequestStatusVerifier implements Internal.EnumVerifier {
-            static final Internal.EnumVerifier INSTANCE = new RequestStatusVerifier();
-
-            private RequestStatusVerifier() {
-            }
-
-            public boolean isInRange(int number) {
-                return RequestStatus.forNumber(number) != null;
-            }
-        }
-
-        private RequestStatus(int value2) {
-            this.value = value2;
-        }
-    }
-
-    public enum RequestFailedReason implements Internal.EnumLite {
-        REQUEST_FAILED_REASON_UNSPECIFIED(0),
-        LISTENER_EXCEPTION_THROWN(1),
-        HOSTNAME_NOT_RESOLVED(2),
-        INTERNET_DISCONNECTED(3),
-        NETWORK_CHANGED(4),
-        TIMED_OUT(5),
-        CONNECTION_CLOSED(6),
-        CONNECTION_TIMED_OUT(7),
-        CONNECTION_REFUSED(8),
-        CONNECTION_RESET(9),
-        ADDRESS_UNREACHABLE(10),
-        QUIC_PROTOCOL_FAILED(11),
-        OTHER(12);
-        
-        public static final int ADDRESS_UNREACHABLE_VALUE = 10;
-        public static final int CONNECTION_CLOSED_VALUE = 6;
-        public static final int CONNECTION_REFUSED_VALUE = 8;
-        public static final int CONNECTION_RESET_VALUE = 9;
-        public static final int CONNECTION_TIMED_OUT_VALUE = 7;
-        public static final int HOSTNAME_NOT_RESOLVED_VALUE = 2;
-        public static final int INTERNET_DISCONNECTED_VALUE = 3;
-        public static final int LISTENER_EXCEPTION_THROWN_VALUE = 1;
-        public static final int NETWORK_CHANGED_VALUE = 4;
-        public static final int OTHER_VALUE = 12;
-        public static final int QUIC_PROTOCOL_FAILED_VALUE = 11;
-        public static final int REQUEST_FAILED_REASON_UNSPECIFIED_VALUE = 0;
-        public static final int TIMED_OUT_VALUE = 5;
-        private static final Internal.EnumLiteMap<RequestFailedReason> internalValueMap = new Internal.EnumLiteMap<RequestFailedReason>() {
-            public RequestFailedReason findValueByNumber(int number) {
-                return RequestFailedReason.forNumber(number);
-            }
-        };
-        private final int value;
-
-        public final int getNumber() {
-            return this.value;
-        }
-
-        public static RequestFailedReason forNumber(int value2) {
-            switch (value2) {
-                case 0:
-                    return REQUEST_FAILED_REASON_UNSPECIFIED;
-                case 1:
-                    return LISTENER_EXCEPTION_THROWN;
-                case 2:
-                    return HOSTNAME_NOT_RESOLVED;
-                case 3:
-                    return INTERNET_DISCONNECTED;
-                case 4:
-                    return NETWORK_CHANGED;
-                case 5:
-                    return TIMED_OUT;
-                case 6:
-                    return CONNECTION_CLOSED;
-                case 7:
-                    return CONNECTION_TIMED_OUT;
-                case 8:
-                    return CONNECTION_REFUSED;
-                case 9:
-                    return CONNECTION_RESET;
-                case 10:
-                    return ADDRESS_UNREACHABLE;
-                case 11:
-                    return QUIC_PROTOCOL_FAILED;
-                case 12:
-                    return OTHER;
-                default:
-                    return null;
-            }
-        }
-
-        public static Internal.EnumLiteMap<RequestFailedReason> internalGetValueMap() {
-            return internalValueMap;
-        }
-
-        public static Internal.EnumVerifier internalGetVerifier() {
-            return RequestFailedReasonVerifier.INSTANCE;
-        }
-
-        private static final class RequestFailedReasonVerifier implements Internal.EnumVerifier {
-            static final Internal.EnumVerifier INSTANCE = new RequestFailedReasonVerifier();
-
-            private RequestFailedReasonVerifier() {
-            }
-
-            public boolean isInRange(int number) {
-                return RequestFailedReason.forNumber(number) != null;
-            }
-        }
-
-        private RequestFailedReason(int value2) {
-            this.value = value2;
-        }
-    }
-
-    public enum HttpMethod implements Internal.EnumLite {
-        UNKNOWN_METHOD(0),
-        GET(1),
-        PUT(2),
-        DELETE(3),
-        POST(4),
-        OPTIONS(5),
-        HEAD(6),
-        PATCH(7);
-        
-        public static final int DELETE_VALUE = 3;
-        public static final int GET_VALUE = 1;
-        public static final int HEAD_VALUE = 6;
-        public static final int OPTIONS_VALUE = 5;
-        public static final int PATCH_VALUE = 7;
-        public static final int POST_VALUE = 4;
-        public static final int PUT_VALUE = 2;
-        public static final int UNKNOWN_METHOD_VALUE = 0;
-        private static final Internal.EnumLiteMap<HttpMethod> internalValueMap = new Internal.EnumLiteMap<HttpMethod>() {
-            public HttpMethod findValueByNumber(int number) {
-                return HttpMethod.forNumber(number);
-            }
-        };
-        private final int value;
-
-        public final int getNumber() {
-            return this.value;
-        }
-
-        public static HttpMethod forNumber(int value2) {
-            switch (value2) {
-                case 0:
-                    return UNKNOWN_METHOD;
-                case 1:
-                    return GET;
-                case 2:
-                    return PUT;
-                case 3:
-                    return DELETE;
-                case 4:
-                    return POST;
-                case 5:
-                    return OPTIONS;
-                case 6:
-                    return HEAD;
-                case 7:
-                    return PATCH;
-                default:
-                    return null;
-            }
-        }
-
-        public static Internal.EnumLiteMap<HttpMethod> internalGetValueMap() {
-            return internalValueMap;
-        }
-
-        public static Internal.EnumVerifier internalGetVerifier() {
-            return HttpMethodVerifier.INSTANCE;
-        }
-
-        private static final class HttpMethodVerifier implements Internal.EnumVerifier {
-            static final Internal.EnumVerifier INSTANCE = new HttpMethodVerifier();
-
-            private HttpMethodVerifier() {
-            }
-
-            public boolean isInRange(int number) {
-                return HttpMethod.forNumber(number) != null;
-            }
-        }
-
-        private HttpMethod(int value2) {
-            this.value = value2;
-        }
-    }
-
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
     public static final class NetworkUsageMetric extends GeneratedMessageLite<NetworkUsageMetric, Builder> implements NetworkUsageMetricOrBuilder {
         /* access modifiers changed from: private */
         public static final NetworkUsageMetric DEFAULT_INSTANCE = new NetworkUsageMetric();
         public static final int NETWORK_EVENT_USAGE_FIELD_NUMBER = 1;
-        private static volatile Parser<NetworkUsageMetric> PARSER = null;
         public static final int PROCESS_STATS_FIELD_NUMBER = 2;
+        private static volatile Parser<NetworkUsageMetric> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(NetworkUsageMetric.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 1, type = FieldType.MESSAGE_LIST)
@@ -519,6 +522,70 @@ public final class NetworkMetric {
         private ProcessProto.AndroidProcessStats processStats_;
 
         private NetworkUsageMetric() {
+        }
+
+        public static NetworkUsageMetric parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (NetworkUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static NetworkUsageMetric parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (NetworkUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static NetworkUsageMetric parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (NetworkUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static NetworkUsageMetric parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (NetworkUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static NetworkUsageMetric parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (NetworkUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static NetworkUsageMetric parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (NetworkUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static NetworkUsageMetric parseFrom(InputStream input) throws IOException {
+            return (NetworkUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static NetworkUsageMetric parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (NetworkUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static NetworkUsageMetric parseDelimitedFrom(InputStream input) throws IOException {
+            return (NetworkUsageMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static NetworkUsageMetric parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (NetworkUsageMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static NetworkUsageMetric parseFrom(CodedInputStream input) throws IOException {
+            return (NetworkUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static NetworkUsageMetric parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (NetworkUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(NetworkUsageMetric prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static NetworkUsageMetric getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<NetworkUsageMetric> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public List<NetworkEventUsage> getNetworkEventUsageList() {
@@ -666,60 +733,36 @@ public final class NetworkMetric {
             this.bitField0_ &= -2;
         }
 
-        public static NetworkUsageMetric parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (NetworkUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static NetworkUsageMetric parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (NetworkUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static NetworkUsageMetric parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (NetworkUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static NetworkUsageMetric parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (NetworkUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static NetworkUsageMetric parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (NetworkUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static NetworkUsageMetric parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (NetworkUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static NetworkUsageMetric parseFrom(InputStream input) throws IOException {
-            return (NetworkUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static NetworkUsageMetric parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (NetworkUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static NetworkUsageMetric parseDelimitedFrom(InputStream input) throws IOException {
-            return (NetworkUsageMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static NetworkUsageMetric parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (NetworkUsageMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static NetworkUsageMetric parseFrom(CodedInputStream input) throws IOException {
-            return (NetworkUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static NetworkUsageMetric parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (NetworkUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(NetworkUsageMetric prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new NetworkUsageMetric();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0001\u0000\u0001\u001b\u0002\t\u0000", new Object[]{"bitField0_", "networkEventUsage_", NetworkEventUsage.class, "processStats_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<NetworkUsageMetric> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (NetworkUsageMetric.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<NetworkUsageMetric, Builder> implements NetworkUsageMetricOrBuilder {
@@ -831,50 +874,6 @@ public final class NetworkMetric {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new NetworkUsageMetric();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0001\u0000\u0001\u001b\u0002\t\u0000", new Object[]{"bitField0_", "networkEventUsage_", NetworkEventUsage.class, "processStats_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<NetworkUsageMetric> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (NetworkUsageMetric.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(NetworkUsageMetric.class, DEFAULT_INSTANCE);
-        }
-
-        public static NetworkUsageMetric getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<NetworkUsageMetric> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -891,7 +890,6 @@ public final class NetworkMetric {
         public static final int METRIC_EXTENSION_FIELD_NUMBER = 12;
         public static final int NETWORKING_STACK_FIELD_NUMBER = 24;
         public static final int NETWORK_CONNECTION_INFO_FIELD_NUMBER = 11;
-        private static volatile Parser<NetworkEventUsage> PARSER = null;
         public static final int PRIMES_SCENARIO_FIELD_NUMBER = 23;
         public static final int PROCESS_STATS_FIELD_NUMBER = 10;
         public static final int QUIC_DETAILED_ERROR_CODE_FIELD_NUMBER = 19;
@@ -908,6 +906,12 @@ public final class NetworkMetric {
         public static final int SUB_REQUEST_FIELD_NUMBER = 9;
         public static final int TIME_TO_RESPONSE_DATA_FINISH_MS_FIELD_NUMBER = 3;
         public static final int TIME_TO_RESPONSE_HEADER_MS_FIELD_NUMBER = 4;
+        private static volatile Parser<NetworkEventUsage> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(NetworkEventUsage.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 26, isRequired = false, type = FieldType.MESSAGE)
@@ -989,55 +993,68 @@ public final class NetworkMetric {
         private NetworkEventUsage() {
         }
 
-        public enum NetworkingStack implements Internal.EnumLite {
-            UNKNOWN(0),
-            CRONET(1);
-            
-            public static final int CRONET_VALUE = 1;
-            public static final int UNKNOWN_VALUE = 0;
-            private static final Internal.EnumLiteMap<NetworkingStack> internalValueMap = new Internal.EnumLiteMap<NetworkingStack>() {
-                public NetworkingStack findValueByNumber(int number) {
-                    return NetworkingStack.forNumber(number);
-                }
-            };
-            private final int value;
+        public static NetworkEventUsage parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (NetworkEventUsage) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
 
-            public final int getNumber() {
-                return this.value;
-            }
+        public static NetworkEventUsage parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (NetworkEventUsage) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-            public static NetworkingStack forNumber(int value2) {
-                if (value2 == 0) {
-                    return UNKNOWN;
-                }
-                if (value2 != 1) {
-                    return null;
-                }
-                return CRONET;
-            }
+        public static NetworkEventUsage parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (NetworkEventUsage) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
 
-            public static Internal.EnumLiteMap<NetworkingStack> internalGetValueMap() {
-                return internalValueMap;
-            }
+        public static NetworkEventUsage parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (NetworkEventUsage) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-            public static Internal.EnumVerifier internalGetVerifier() {
-                return NetworkingStackVerifier.INSTANCE;
-            }
+        public static NetworkEventUsage parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (NetworkEventUsage) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
 
-            private static final class NetworkingStackVerifier implements Internal.EnumVerifier {
-                static final Internal.EnumVerifier INSTANCE = new NetworkingStackVerifier();
+        public static NetworkEventUsage parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (NetworkEventUsage) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-                private NetworkingStackVerifier() {
-                }
+        public static NetworkEventUsage parseFrom(InputStream input) throws IOException {
+            return (NetworkEventUsage) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
 
-                public boolean isInRange(int number) {
-                    return NetworkingStack.forNumber(number) != null;
-                }
-            }
+        public static NetworkEventUsage parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (NetworkEventUsage) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
 
-            private NetworkingStack(int value2) {
-                this.value = value2;
-            }
+        public static NetworkEventUsage parseDelimitedFrom(InputStream input) throws IOException {
+            return (NetworkEventUsage) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static NetworkEventUsage parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (NetworkEventUsage) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static NetworkEventUsage parseFrom(CodedInputStream input) throws IOException {
+            return (NetworkEventUsage) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static NetworkEventUsage parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (NetworkEventUsage) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(NetworkEventUsage prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static NetworkEventUsage getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<NetworkEventUsage> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasContentType() {
@@ -1046,10 +1063,6 @@ public final class NetworkMetric {
 
         public String getContentType() {
             return this.contentType_;
-        }
-
-        public ByteString getContentTypeBytes() {
-            return ByteString.copyFromUtf8(this.contentType_);
         }
 
         /* access modifiers changed from: private */
@@ -1062,10 +1075,8 @@ public final class NetworkMetric {
             throw new NullPointerException();
         }
 
-        /* access modifiers changed from: private */
-        public void clearContentType() {
-            this.bitField0_ &= -2;
-            this.contentType_ = getDefaultInstance().getContentType();
+        public ByteString getContentTypeBytes() {
+            return ByteString.copyFromUtf8(this.contentType_);
         }
 
         /* access modifiers changed from: private */
@@ -1078,16 +1089,18 @@ public final class NetworkMetric {
             throw new NullPointerException();
         }
 
+        /* access modifiers changed from: private */
+        public void clearContentType() {
+            this.bitField0_ &= -2;
+            this.contentType_ = getDefaultInstance().getContentType();
+        }
+
         public boolean hasRequestPath() {
             return (this.bitField0_ & 2) != 0;
         }
 
         public String getRequestPath() {
             return this.requestPath_;
-        }
-
-        public ByteString getRequestPathBytes() {
-            return ByteString.copyFromUtf8(this.requestPath_);
         }
 
         /* access modifiers changed from: private */
@@ -1100,10 +1113,8 @@ public final class NetworkMetric {
             throw new NullPointerException();
         }
 
-        /* access modifiers changed from: private */
-        public void clearRequestPath() {
-            this.bitField0_ &= -3;
-            this.requestPath_ = getDefaultInstance().getRequestPath();
+        public ByteString getRequestPathBytes() {
+            return ByteString.copyFromUtf8(this.requestPath_);
         }
 
         /* access modifiers changed from: private */
@@ -1116,16 +1127,18 @@ public final class NetworkMetric {
             throw new NullPointerException();
         }
 
+        /* access modifiers changed from: private */
+        public void clearRequestPath() {
+            this.bitField0_ &= -3;
+            this.requestPath_ = getDefaultInstance().getRequestPath();
+        }
+
         public boolean hasConstantRpcPath() {
             return (this.bitField0_ & 4) != 0;
         }
 
         public String getConstantRpcPath() {
             return this.constantRpcPath_;
-        }
-
-        public ByteString getConstantRpcPathBytes() {
-            return ByteString.copyFromUtf8(this.constantRpcPath_);
         }
 
         /* access modifiers changed from: private */
@@ -1138,10 +1151,8 @@ public final class NetworkMetric {
             throw new NullPointerException();
         }
 
-        /* access modifiers changed from: private */
-        public void clearConstantRpcPath() {
-            this.bitField0_ &= -5;
-            this.constantRpcPath_ = getDefaultInstance().getConstantRpcPath();
+        public ByteString getConstantRpcPathBytes() {
+            return ByteString.copyFromUtf8(this.constantRpcPath_);
         }
 
         /* access modifiers changed from: private */
@@ -1152,6 +1163,12 @@ public final class NetworkMetric {
                 return;
             }
             throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearConstantRpcPath() {
+            this.bitField0_ &= -5;
+            this.constantRpcPath_ = getDefaultInstance().getConstantRpcPath();
         }
 
         public boolean hasTimeToResponseDataFinishMs() {
@@ -1657,10 +1674,6 @@ public final class NetworkMetric {
             return this.rpcPath_;
         }
 
-        public ByteString getRpcPathBytes() {
-            return ByteString.copyFromUtf8(this.rpcPath_);
-        }
-
         /* access modifiers changed from: private */
         public void setRpcPath(String value) {
             if (value != null) {
@@ -1671,10 +1684,8 @@ public final class NetworkMetric {
             throw new NullPointerException();
         }
 
-        /* access modifiers changed from: private */
-        public void clearRpcPath() {
-            this.bitField0_ &= -262145;
-            this.rpcPath_ = getDefaultInstance().getRpcPath();
+        public ByteString getRpcPathBytes() {
+            return ByteString.copyFromUtf8(this.rpcPath_);
         }
 
         /* access modifiers changed from: private */
@@ -1685,6 +1696,12 @@ public final class NetworkMetric {
                 return;
             }
             throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearRpcPath() {
+            this.bitField0_ &= -262145;
+            this.rpcPath_ = getDefaultInstance().getRpcPath();
         }
 
         public List<Long> getHashedRpcPathList() {
@@ -1767,10 +1784,6 @@ public final class NetworkMetric {
             return this.domainPath_;
         }
 
-        public ByteString getDomainPathBytes() {
-            return ByteString.copyFromUtf8(this.domainPath_);
-        }
-
         /* access modifiers changed from: private */
         public void setDomainPath(String value) {
             if (value != null) {
@@ -1781,10 +1794,8 @@ public final class NetworkMetric {
             throw new NullPointerException();
         }
 
-        /* access modifiers changed from: private */
-        public void clearDomainPath() {
-            this.bitField0_ &= -1048577;
-            this.domainPath_ = getDefaultInstance().getDomainPath();
+        public ByteString getDomainPathBytes() {
+            return ByteString.copyFromUtf8(this.domainPath_);
         }
 
         /* access modifiers changed from: private */
@@ -1795,6 +1806,12 @@ public final class NetworkMetric {
                 return;
             }
             throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearDomainPath() {
+            this.bitField0_ &= -1048577;
+            this.domainPath_ = getDefaultInstance().getDomainPath();
         }
 
         public boolean hasRpcStats() {
@@ -1986,60 +2003,87 @@ public final class NetworkMetric {
             this.bitField0_ &= -4194305;
         }
 
-        public static NetworkEventUsage parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (NetworkEventUsage) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new NetworkEventUsage();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u001a\u0000\u0001\u0001\u001a\u001a\u0000\u0003\u0000\u0001\b\u0000\u0002\b\u0001\u0003\u0004\u0003\u0004\u0004\u0004\u0005\u0004\u0005\u0006\u000b\u0006\u0007\u000b\u0007\b\f\b\t\u001b\n\t\t\u000b\t\u000b\f\t\f\r\u0002\r\u000e\f\u000e\u000f\f\u000f\u0010\u0004\u0011\u0011\b\u0012\u0012\f\u0013\u0013\u0004\u0010\u0014\b\u0014\u0015\u0017\u0016\t\u0015\u0017\u001b\u0018\f\n\u0019\b\u0002\u001a\t\u0016", new Object[]{"bitField0_", "contentType_", "requestPath_", "timeToResponseDataFinishMs_", "timeToResponseHeaderMs_", "httpStatusCode_", "responseSizeBytes_", "requestSizeBytes_", "requestNegotiatedProtocol_", RequestNegotiatedProtocol.internalGetVerifier(), "subRequest_", SubRequestData.class, "processStats_", "networkConnectionInfo_", "metricExtension_", "startTimeMs_", "requestStatus_", RequestStatus.internalGetVerifier(), "requestFailedReason_", RequestFailedReason.internalGetVerifier(), "retryCount_", "rpcPath_", "httpMethod_", HttpMethod.internalGetVerifier(), "quicDetailedErrorCode_", "domainPath_", "hashedRpcPath_", "rpcStats_", "primesScenario_", PrimesScenarioProto.PrimesScenario.class, "networkingStack_", NetworkingStack.internalGetVerifier(), "constantRpcPath_", "cacheStats_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<NetworkEventUsage> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (NetworkEventUsage.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
-        public static NetworkEventUsage parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (NetworkEventUsage) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
+        public enum NetworkingStack implements Internal.EnumLite {
+            UNKNOWN(0),
+            CRONET(1);
 
-        public static NetworkEventUsage parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (NetworkEventUsage) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
+            public static final int CRONET_VALUE = 1;
+            public static final int UNKNOWN_VALUE = 0;
+            private static final Internal.EnumLiteMap<NetworkingStack> internalValueMap = new Internal.EnumLiteMap<NetworkingStack>() {
+                public NetworkingStack findValueByNumber(int number) {
+                    return NetworkingStack.forNumber(number);
+                }
+            };
+            private final int value;
 
-        public static NetworkEventUsage parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (NetworkEventUsage) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
+            private NetworkingStack(int value2) {
+                this.value = value2;
+            }
 
-        public static NetworkEventUsage parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (NetworkEventUsage) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
+            public static NetworkingStack forNumber(int value2) {
+                if (value2 == 0) {
+                    return UNKNOWN;
+                }
+                if (value2 != 1) {
+                    return null;
+                }
+                return CRONET;
+            }
 
-        public static NetworkEventUsage parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (NetworkEventUsage) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
+            public static Internal.EnumLiteMap<NetworkingStack> internalGetValueMap() {
+                return internalValueMap;
+            }
 
-        public static NetworkEventUsage parseFrom(InputStream input) throws IOException {
-            return (NetworkEventUsage) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
+            public static Internal.EnumVerifier internalGetVerifier() {
+                return NetworkingStackVerifier.INSTANCE;
+            }
 
-        public static NetworkEventUsage parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (NetworkEventUsage) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
+            public final int getNumber() {
+                return this.value;
+            }
 
-        public static NetworkEventUsage parseDelimitedFrom(InputStream input) throws IOException {
-            return (NetworkEventUsage) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
+            private static final class NetworkingStackVerifier implements Internal.EnumVerifier {
+                static final Internal.EnumVerifier INSTANCE = new NetworkingStackVerifier();
 
-        public static NetworkEventUsage parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (NetworkEventUsage) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
+                private NetworkingStackVerifier() {
+                }
 
-        public static NetworkEventUsage parseFrom(CodedInputStream input) throws IOException {
-            return (NetworkEventUsage) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static NetworkEventUsage parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (NetworkEventUsage) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(NetworkEventUsage prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+                public boolean isInRange(int number) {
+                    return NetworkingStack.forNumber(number) != null;
+                }
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<NetworkEventUsage, Builder> implements NetworkEventUsageOrBuilder {
@@ -2055,25 +2099,25 @@ public final class NetworkMetric {
                 return ((NetworkEventUsage) this.instance).getContentType();
             }
 
-            public ByteString getContentTypeBytes() {
-                return ((NetworkEventUsage) this.instance).getContentTypeBytes();
-            }
-
             public Builder setContentType(String value) {
                 copyOnWrite();
                 ((NetworkEventUsage) this.instance).setContentType(value);
                 return this;
             }
 
-            public Builder clearContentType() {
-                copyOnWrite();
-                ((NetworkEventUsage) this.instance).clearContentType();
-                return this;
+            public ByteString getContentTypeBytes() {
+                return ((NetworkEventUsage) this.instance).getContentTypeBytes();
             }
 
             public Builder setContentTypeBytes(ByteString value) {
                 copyOnWrite();
                 ((NetworkEventUsage) this.instance).setContentTypeBytes(value);
+                return this;
+            }
+
+            public Builder clearContentType() {
+                copyOnWrite();
+                ((NetworkEventUsage) this.instance).clearContentType();
                 return this;
             }
 
@@ -2085,25 +2129,25 @@ public final class NetworkMetric {
                 return ((NetworkEventUsage) this.instance).getRequestPath();
             }
 
-            public ByteString getRequestPathBytes() {
-                return ((NetworkEventUsage) this.instance).getRequestPathBytes();
-            }
-
             public Builder setRequestPath(String value) {
                 copyOnWrite();
                 ((NetworkEventUsage) this.instance).setRequestPath(value);
                 return this;
             }
 
-            public Builder clearRequestPath() {
-                copyOnWrite();
-                ((NetworkEventUsage) this.instance).clearRequestPath();
-                return this;
+            public ByteString getRequestPathBytes() {
+                return ((NetworkEventUsage) this.instance).getRequestPathBytes();
             }
 
             public Builder setRequestPathBytes(ByteString value) {
                 copyOnWrite();
                 ((NetworkEventUsage) this.instance).setRequestPathBytes(value);
+                return this;
+            }
+
+            public Builder clearRequestPath() {
+                copyOnWrite();
+                ((NetworkEventUsage) this.instance).clearRequestPath();
                 return this;
             }
 
@@ -2115,25 +2159,25 @@ public final class NetworkMetric {
                 return ((NetworkEventUsage) this.instance).getConstantRpcPath();
             }
 
-            public ByteString getConstantRpcPathBytes() {
-                return ((NetworkEventUsage) this.instance).getConstantRpcPathBytes();
-            }
-
             public Builder setConstantRpcPath(String value) {
                 copyOnWrite();
                 ((NetworkEventUsage) this.instance).setConstantRpcPath(value);
                 return this;
             }
 
-            public Builder clearConstantRpcPath() {
-                copyOnWrite();
-                ((NetworkEventUsage) this.instance).clearConstantRpcPath();
-                return this;
+            public ByteString getConstantRpcPathBytes() {
+                return ((NetworkEventUsage) this.instance).getConstantRpcPathBytes();
             }
 
             public Builder setConstantRpcPathBytes(ByteString value) {
                 copyOnWrite();
                 ((NetworkEventUsage) this.instance).setConstantRpcPathBytes(value);
+                return this;
+            }
+
+            public Builder clearConstantRpcPath() {
+                copyOnWrite();
+                ((NetworkEventUsage) this.instance).clearConstantRpcPath();
                 return this;
             }
 
@@ -2547,25 +2591,25 @@ public final class NetworkMetric {
                 return ((NetworkEventUsage) this.instance).getRpcPath();
             }
 
-            public ByteString getRpcPathBytes() {
-                return ((NetworkEventUsage) this.instance).getRpcPathBytes();
-            }
-
             public Builder setRpcPath(String value) {
                 copyOnWrite();
                 ((NetworkEventUsage) this.instance).setRpcPath(value);
                 return this;
             }
 
-            public Builder clearRpcPath() {
-                copyOnWrite();
-                ((NetworkEventUsage) this.instance).clearRpcPath();
-                return this;
+            public ByteString getRpcPathBytes() {
+                return ((NetworkEventUsage) this.instance).getRpcPathBytes();
             }
 
             public Builder setRpcPathBytes(ByteString value) {
                 copyOnWrite();
                 ((NetworkEventUsage) this.instance).setRpcPathBytes(value);
+                return this;
+            }
+
+            public Builder clearRpcPath() {
+                copyOnWrite();
+                ((NetworkEventUsage) this.instance).clearRpcPath();
                 return this;
             }
 
@@ -2633,25 +2677,25 @@ public final class NetworkMetric {
                 return ((NetworkEventUsage) this.instance).getDomainPath();
             }
 
-            public ByteString getDomainPathBytes() {
-                return ((NetworkEventUsage) this.instance).getDomainPathBytes();
-            }
-
             public Builder setDomainPath(String value) {
                 copyOnWrite();
                 ((NetworkEventUsage) this.instance).setDomainPath(value);
                 return this;
             }
 
-            public Builder clearDomainPath() {
-                copyOnWrite();
-                ((NetworkEventUsage) this.instance).clearDomainPath();
-                return this;
+            public ByteString getDomainPathBytes() {
+                return ((NetworkEventUsage) this.instance).getDomainPathBytes();
             }
 
             public Builder setDomainPathBytes(ByteString value) {
                 copyOnWrite();
                 ((NetworkEventUsage) this.instance).setDomainPathBytes(value);
+                return this;
+            }
+
+            public Builder clearDomainPath() {
+                copyOnWrite();
+                ((NetworkEventUsage) this.instance).clearDomainPath();
                 return this;
             }
 
@@ -2785,58 +2829,19 @@ public final class NetworkMetric {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new NetworkEventUsage();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u001a\u0000\u0001\u0001\u001a\u001a\u0000\u0003\u0000\u0001\b\u0000\u0002\b\u0001\u0003\u0004\u0003\u0004\u0004\u0004\u0005\u0004\u0005\u0006\u000b\u0006\u0007\u000b\u0007\b\f\b\t\u001b\n\t\t\u000b\t\u000b\f\t\f\r\u0002\r\u000e\f\u000e\u000f\f\u000f\u0010\u0004\u0011\u0011\b\u0012\u0012\f\u0013\u0013\u0004\u0010\u0014\b\u0014\u0015\u0017\u0016\t\u0015\u0017\u001b\u0018\f\n\u0019\b\u0002\u001a\t\u0016", new Object[]{"bitField0_", "contentType_", "requestPath_", "timeToResponseDataFinishMs_", "timeToResponseHeaderMs_", "httpStatusCode_", "responseSizeBytes_", "requestSizeBytes_", "requestNegotiatedProtocol_", RequestNegotiatedProtocol.internalGetVerifier(), "subRequest_", SubRequestData.class, "processStats_", "networkConnectionInfo_", "metricExtension_", "startTimeMs_", "requestStatus_", RequestStatus.internalGetVerifier(), "requestFailedReason_", RequestFailedReason.internalGetVerifier(), "retryCount_", "rpcPath_", "httpMethod_", HttpMethod.internalGetVerifier(), "quicDetailedErrorCode_", "domainPath_", "hashedRpcPath_", "rpcStats_", "primesScenario_", PrimesScenarioProto.PrimesScenario.class, "networkingStack_", NetworkingStack.internalGetVerifier(), "constantRpcPath_", "cacheStats_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<NetworkEventUsage> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (NetworkEventUsage.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(NetworkEventUsage.class, DEFAULT_INSTANCE);
-        }
-
-        public static NetworkEventUsage getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<NetworkEventUsage> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
     public static final class SubRequestData extends GeneratedMessageLite<SubRequestData, Builder> implements SubRequestDataOrBuilder {
         /* access modifiers changed from: private */
         public static final SubRequestData DEFAULT_INSTANCE = new SubRequestData();
-        private static volatile Parser<SubRequestData> PARSER = null;
         public static final int REQUEST_PATH_FIELD_NUMBER = 1;
+        private static volatile Parser<SubRequestData> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(SubRequestData.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 1, isEnforceUtf8 = false, isRequired = false, type = FieldType.STRING)
@@ -2844,44 +2849,6 @@ public final class NetworkMetric {
         private String requestPath_ = "";
 
         private SubRequestData() {
-        }
-
-        public boolean hasRequestPath() {
-            return (this.bitField0_ & 1) != 0;
-        }
-
-        public String getRequestPath() {
-            return this.requestPath_;
-        }
-
-        public ByteString getRequestPathBytes() {
-            return ByteString.copyFromUtf8(this.requestPath_);
-        }
-
-        /* access modifiers changed from: private */
-        public void setRequestPath(String value) {
-            if (value != null) {
-                this.bitField0_ |= 1;
-                this.requestPath_ = value;
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        /* access modifiers changed from: private */
-        public void clearRequestPath() {
-            this.bitField0_ &= -2;
-            this.requestPath_ = getDefaultInstance().getRequestPath();
-        }
-
-        /* access modifiers changed from: private */
-        public void setRequestPathBytes(ByteString value) {
-            if (value != null) {
-                this.bitField0_ |= 1;
-                this.requestPath_ = value.toStringUtf8();
-                return;
-            }
-            throw new NullPointerException();
         }
 
         public static SubRequestData parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
@@ -2940,40 +2907,50 @@ public final class NetworkMetric {
             return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
         }
 
-        public static final class Builder extends GeneratedMessageLite.Builder<SubRequestData, Builder> implements SubRequestDataOrBuilder {
-            private Builder() {
-                super(SubRequestData.DEFAULT_INSTANCE);
-            }
+        public static SubRequestData getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
 
-            public boolean hasRequestPath() {
-                return ((SubRequestData) this.instance).hasRequestPath();
-            }
+        public static Parser<SubRequestData> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
+        }
 
-            public String getRequestPath() {
-                return ((SubRequestData) this.instance).getRequestPath();
-            }
+        public boolean hasRequestPath() {
+            return (this.bitField0_ & 1) != 0;
+        }
 
-            public ByteString getRequestPathBytes() {
-                return ((SubRequestData) this.instance).getRequestPathBytes();
-            }
+        public String getRequestPath() {
+            return this.requestPath_;
+        }
 
-            public Builder setRequestPath(String value) {
-                copyOnWrite();
-                ((SubRequestData) this.instance).setRequestPath(value);
-                return this;
+        /* access modifiers changed from: private */
+        public void setRequestPath(String value) {
+            if (value != null) {
+                this.bitField0_ |= 1;
+                this.requestPath_ = value;
+                return;
             }
+            throw new NullPointerException();
+        }
 
-            public Builder clearRequestPath() {
-                copyOnWrite();
-                ((SubRequestData) this.instance).clearRequestPath();
-                return this;
-            }
+        public ByteString getRequestPathBytes() {
+            return ByteString.copyFromUtf8(this.requestPath_);
+        }
 
-            public Builder setRequestPathBytes(ByteString value) {
-                copyOnWrite();
-                ((SubRequestData) this.instance).setRequestPathBytes(value);
-                return this;
+        /* access modifiers changed from: private */
+        public void setRequestPathBytes(ByteString value) {
+            if (value != null) {
+                this.bitField0_ |= 1;
+                this.requestPath_ = value.toStringUtf8();
+                return;
             }
+            throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearRequestPath() {
+            this.bitField0_ &= -2;
+            this.requestPath_ = getDefaultInstance().getRequestPath();
         }
 
         /* access modifiers changed from: protected */
@@ -3008,16 +2985,40 @@ public final class NetworkMetric {
             }
         }
 
-        static {
-            GeneratedMessageLite.registerDefaultInstance(SubRequestData.class, DEFAULT_INSTANCE);
-        }
+        public static final class Builder extends GeneratedMessageLite.Builder<SubRequestData, Builder> implements SubRequestDataOrBuilder {
+            private Builder() {
+                super(SubRequestData.DEFAULT_INSTANCE);
+            }
 
-        public static SubRequestData getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
+            public boolean hasRequestPath() {
+                return ((SubRequestData) this.instance).hasRequestPath();
+            }
 
-        public static Parser<SubRequestData> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
+            public String getRequestPath() {
+                return ((SubRequestData) this.instance).getRequestPath();
+            }
+
+            public Builder setRequestPath(String value) {
+                copyOnWrite();
+                ((SubRequestData) this.instance).setRequestPath(value);
+                return this;
+            }
+
+            public ByteString getRequestPathBytes() {
+                return ((SubRequestData) this.instance).getRequestPathBytes();
+            }
+
+            public Builder setRequestPathBytes(ByteString value) {
+                copyOnWrite();
+                ((SubRequestData) this.instance).setRequestPathBytes(value);
+                return this;
+            }
+
+            public Builder clearRequestPath() {
+                copyOnWrite();
+                ((SubRequestData) this.instance).clearRequestPath();
+                return this;
+            }
         }
     }
 
@@ -3027,6 +3028,11 @@ public final class NetworkMetric {
         public static final NetworkConnectionInfo DEFAULT_INSTANCE = new NetworkConnectionInfo();
         public static final int NETWORK_TYPE_FIELD_NUMBER = 1;
         private static volatile Parser<NetworkConnectionInfo> PARSER;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(NetworkConnectionInfo.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.ENUM)
@@ -3034,151 +3040,6 @@ public final class NetworkMetric {
         private int networkType_ = -1;
 
         private NetworkConnectionInfo() {
-        }
-
-        public enum NetworkType implements Internal.EnumLite {
-            NONE(-1),
-            MOBILE(0),
-            WIFI(1),
-            MOBILE_MMS(2),
-            MOBILE_SUPL(3),
-            MOBILE_DUN(4),
-            MOBILE_HIPRI(5),
-            WIMAX(6),
-            BLUETOOTH(7),
-            DUMMY(8),
-            ETHERNET(9),
-            MOBILE_FOTA(10),
-            MOBILE_IMS(11),
-            MOBILE_CBS(12),
-            WIFI_P2P(13),
-            MOBILE_IA(14),
-            MOBILE_EMERGENCY(15),
-            PROXY(16),
-            VPN(17);
-            
-            public static final int BLUETOOTH_VALUE = 7;
-            public static final int DUMMY_VALUE = 8;
-            public static final int ETHERNET_VALUE = 9;
-            public static final int MOBILE_CBS_VALUE = 12;
-            public static final int MOBILE_DUN_VALUE = 4;
-            public static final int MOBILE_EMERGENCY_VALUE = 15;
-            public static final int MOBILE_FOTA_VALUE = 10;
-            public static final int MOBILE_HIPRI_VALUE = 5;
-            public static final int MOBILE_IA_VALUE = 14;
-            public static final int MOBILE_IMS_VALUE = 11;
-            public static final int MOBILE_MMS_VALUE = 2;
-            public static final int MOBILE_SUPL_VALUE = 3;
-            public static final int MOBILE_VALUE = 0;
-            public static final int NONE_VALUE = -1;
-            public static final int PROXY_VALUE = 16;
-            public static final int VPN_VALUE = 17;
-            public static final int WIFI_P2P_VALUE = 13;
-            public static final int WIFI_VALUE = 1;
-            public static final int WIMAX_VALUE = 6;
-            private static final Internal.EnumLiteMap<NetworkType> internalValueMap = new Internal.EnumLiteMap<NetworkType>() {
-                public NetworkType findValueByNumber(int number) {
-                    return NetworkType.forNumber(number);
-                }
-            };
-            private final int value;
-
-            public final int getNumber() {
-                return this.value;
-            }
-
-            public static NetworkType forNumber(int value2) {
-                switch (value2) {
-                    case -1:
-                        return NONE;
-                    case 0:
-                        return MOBILE;
-                    case 1:
-                        return WIFI;
-                    case 2:
-                        return MOBILE_MMS;
-                    case 3:
-                        return MOBILE_SUPL;
-                    case 4:
-                        return MOBILE_DUN;
-                    case 5:
-                        return MOBILE_HIPRI;
-                    case 6:
-                        return WIMAX;
-                    case 7:
-                        return BLUETOOTH;
-                    case 8:
-                        return DUMMY;
-                    case 9:
-                        return ETHERNET;
-                    case 10:
-                        return MOBILE_FOTA;
-                    case 11:
-                        return MOBILE_IMS;
-                    case 12:
-                        return MOBILE_CBS;
-                    case 13:
-                        return WIFI_P2P;
-                    case 14:
-                        return MOBILE_IA;
-                    case 15:
-                        return MOBILE_EMERGENCY;
-                    case 16:
-                        return PROXY;
-                    case 17:
-                        return VPN;
-                    default:
-                        return null;
-                }
-            }
-
-            public static Internal.EnumLiteMap<NetworkType> internalGetValueMap() {
-                return internalValueMap;
-            }
-
-            public static Internal.EnumVerifier internalGetVerifier() {
-                return NetworkTypeVerifier.INSTANCE;
-            }
-
-            private static final class NetworkTypeVerifier implements Internal.EnumVerifier {
-                static final Internal.EnumVerifier INSTANCE = new NetworkTypeVerifier();
-
-                private NetworkTypeVerifier() {
-                }
-
-                public boolean isInRange(int number) {
-                    return NetworkType.forNumber(number) != null;
-                }
-            }
-
-            private NetworkType(int value2) {
-                this.value = value2;
-            }
-        }
-
-        public boolean hasNetworkType() {
-            return (this.bitField0_ & 1) != 0;
-        }
-
-        public NetworkType getNetworkType() {
-            NetworkType result = NetworkType.forNumber(this.networkType_);
-            return result == null ? NetworkType.NONE : result;
-        }
-
-        /* access modifiers changed from: private */
-        public void setNetworkType(NetworkType value) {
-            if (value != null) {
-                this.bitField0_ |= 1;
-                this.networkType_ = value.getNumber();
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        /* access modifiers changed from: private */
-        public void clearNetworkType() {
-            this.bitField0_ &= -2;
-            this.networkType_ = -1;
         }
 
         public static NetworkConnectionInfo parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
@@ -3237,30 +3098,37 @@ public final class NetworkMetric {
             return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
         }
 
-        public static final class Builder extends GeneratedMessageLite.Builder<NetworkConnectionInfo, Builder> implements NetworkConnectionInfoOrBuilder {
-            private Builder() {
-                super(NetworkConnectionInfo.DEFAULT_INSTANCE);
-            }
+        public static NetworkConnectionInfo getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
 
-            public boolean hasNetworkType() {
-                return ((NetworkConnectionInfo) this.instance).hasNetworkType();
-            }
+        public static Parser<NetworkConnectionInfo> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
+        }
 
-            public NetworkType getNetworkType() {
-                return ((NetworkConnectionInfo) this.instance).getNetworkType();
-            }
+        public boolean hasNetworkType() {
+            return (this.bitField0_ & 1) != 0;
+        }
 
-            public Builder setNetworkType(NetworkType value) {
-                copyOnWrite();
-                ((NetworkConnectionInfo) this.instance).setNetworkType(value);
-                return this;
-            }
+        public NetworkType getNetworkType() {
+            NetworkType result = NetworkType.forNumber(this.networkType_);
+            return result == null ? NetworkType.NONE : result;
+        }
 
-            public Builder clearNetworkType() {
-                copyOnWrite();
-                ((NetworkConnectionInfo) this.instance).clearNetworkType();
-                return this;
+        /* access modifiers changed from: private */
+        public void setNetworkType(NetworkType value) {
+            if (value != null) {
+                this.bitField0_ |= 1;
+                this.networkType_ = value.getNumber();
+                return;
             }
+            throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearNetworkType() {
+            this.bitField0_ &= -2;
+            this.networkType_ = -1;
         }
 
         /* access modifiers changed from: protected */
@@ -3295,16 +3163,150 @@ public final class NetworkMetric {
             }
         }
 
-        static {
-            GeneratedMessageLite.registerDefaultInstance(NetworkConnectionInfo.class, DEFAULT_INSTANCE);
+        public enum NetworkType implements Internal.EnumLite {
+            NONE(-1),
+            MOBILE(0),
+            WIFI(1),
+            MOBILE_MMS(2),
+            MOBILE_SUPL(3),
+            MOBILE_DUN(4),
+            MOBILE_HIPRI(5),
+            WIMAX(6),
+            BLUETOOTH(7),
+            DUMMY(8),
+            ETHERNET(9),
+            MOBILE_FOTA(10),
+            MOBILE_IMS(11),
+            MOBILE_CBS(12),
+            WIFI_P2P(13),
+            MOBILE_IA(14),
+            MOBILE_EMERGENCY(15),
+            PROXY(16),
+            VPN(17);
+
+            public static final int BLUETOOTH_VALUE = 7;
+            public static final int DUMMY_VALUE = 8;
+            public static final int ETHERNET_VALUE = 9;
+            public static final int MOBILE_CBS_VALUE = 12;
+            public static final int MOBILE_DUN_VALUE = 4;
+            public static final int MOBILE_EMERGENCY_VALUE = 15;
+            public static final int MOBILE_FOTA_VALUE = 10;
+            public static final int MOBILE_HIPRI_VALUE = 5;
+            public static final int MOBILE_IA_VALUE = 14;
+            public static final int MOBILE_IMS_VALUE = 11;
+            public static final int MOBILE_MMS_VALUE = 2;
+            public static final int MOBILE_SUPL_VALUE = 3;
+            public static final int MOBILE_VALUE = 0;
+            public static final int NONE_VALUE = -1;
+            public static final int PROXY_VALUE = 16;
+            public static final int VPN_VALUE = 17;
+            public static final int WIFI_P2P_VALUE = 13;
+            public static final int WIFI_VALUE = 1;
+            public static final int WIMAX_VALUE = 6;
+            private static final Internal.EnumLiteMap<NetworkType> internalValueMap = new Internal.EnumLiteMap<NetworkType>() {
+                public NetworkType findValueByNumber(int number) {
+                    return NetworkType.forNumber(number);
+                }
+            };
+            private final int value;
+
+            private NetworkType(int value2) {
+                this.value = value2;
+            }
+
+            public static NetworkType forNumber(int value2) {
+                switch (value2) {
+                    case -1:
+                        return NONE;
+                    case 0:
+                        return MOBILE;
+                    case 1:
+                        return WIFI;
+                    case 2:
+                        return MOBILE_MMS;
+                    case 3:
+                        return MOBILE_SUPL;
+                    case 4:
+                        return MOBILE_DUN;
+                    case 5:
+                        return MOBILE_HIPRI;
+                    case 6:
+                        return WIMAX;
+                    case 7:
+                        return BLUETOOTH;
+                    case 8:
+                        return DUMMY;
+                    case 9:
+                        return ETHERNET;
+                    case 10:
+                        return MOBILE_FOTA;
+                    case 11:
+                        return MOBILE_IMS;
+                    case 12:
+                        return MOBILE_CBS;
+                    case 13:
+                        return WIFI_P2P;
+                    case 14:
+                        return MOBILE_IA;
+                    case 15:
+                        return MOBILE_EMERGENCY;
+                    case 16:
+                        return PROXY;
+                    case 17:
+                        return VPN;
+                    default:
+                        return null;
+                }
+            }
+
+            public static Internal.EnumLiteMap<NetworkType> internalGetValueMap() {
+                return internalValueMap;
+            }
+
+            public static Internal.EnumVerifier internalGetVerifier() {
+                return NetworkTypeVerifier.INSTANCE;
+            }
+
+            public final int getNumber() {
+                return this.value;
+            }
+
+            private static final class NetworkTypeVerifier implements Internal.EnumVerifier {
+                static final Internal.EnumVerifier INSTANCE = new NetworkTypeVerifier();
+
+                private NetworkTypeVerifier() {
+                }
+
+                public boolean isInRange(int number) {
+                    return NetworkType.forNumber(number) != null;
+                }
+            }
         }
 
-        public static NetworkConnectionInfo getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
+        public static final class Builder extends GeneratedMessageLite.Builder<NetworkConnectionInfo, Builder> implements NetworkConnectionInfoOrBuilder {
+            private Builder() {
+                super(NetworkConnectionInfo.DEFAULT_INSTANCE);
+            }
 
-        public static Parser<NetworkConnectionInfo> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
+            public boolean hasNetworkType() {
+                return ((NetworkConnectionInfo) this.instance).hasNetworkType();
+            }
+
+            public NetworkType getNetworkType() {
+                return ((NetworkConnectionInfo) this.instance).getNetworkType();
+            }
+
+            public Builder setNetworkType(NetworkType value) {
+                copyOnWrite();
+                ((NetworkConnectionInfo) this.instance).setNetworkType(value);
+                return this;
+            }
+
+            public Builder clearNetworkType() {
+                copyOnWrite();
+                ((NetworkConnectionInfo) this.instance).clearNetworkType();
+                return this;
+            }
         }
     }
 
@@ -3312,8 +3314,13 @@ public final class NetworkMetric {
     public static final class RpcStats extends GeneratedMessageLite<RpcStats, Builder> implements RpcStatsOrBuilder {
         /* access modifiers changed from: private */
         public static final RpcStats DEFAULT_INSTANCE = new RpcStats();
-        private static volatile Parser<RpcStats> PARSER = null;
         public static final int RPC_STATUS_CODE_FIELD_NUMBER = 1;
+        private static volatile Parser<RpcStats> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(RpcStats.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.INT32)
@@ -3321,26 +3328,6 @@ public final class NetworkMetric {
         private int rpcStatusCode_;
 
         private RpcStats() {
-        }
-
-        public boolean hasRpcStatusCode() {
-            return (this.bitField0_ & 1) != 0;
-        }
-
-        public int getRpcStatusCode() {
-            return this.rpcStatusCode_;
-        }
-
-        /* access modifiers changed from: private */
-        public void setRpcStatusCode(int value) {
-            this.bitField0_ |= 1;
-            this.rpcStatusCode_ = value;
-        }
-
-        /* access modifiers changed from: private */
-        public void clearRpcStatusCode() {
-            this.bitField0_ &= -2;
-            this.rpcStatusCode_ = 0;
         }
 
         public static RpcStats parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
@@ -3399,30 +3386,32 @@ public final class NetworkMetric {
             return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
         }
 
-        public static final class Builder extends GeneratedMessageLite.Builder<RpcStats, Builder> implements RpcStatsOrBuilder {
-            private Builder() {
-                super(RpcStats.DEFAULT_INSTANCE);
-            }
+        public static RpcStats getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
 
-            public boolean hasRpcStatusCode() {
-                return ((RpcStats) this.instance).hasRpcStatusCode();
-            }
+        public static Parser<RpcStats> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
+        }
 
-            public int getRpcStatusCode() {
-                return ((RpcStats) this.instance).getRpcStatusCode();
-            }
+        public boolean hasRpcStatusCode() {
+            return (this.bitField0_ & 1) != 0;
+        }
 
-            public Builder setRpcStatusCode(int value) {
-                copyOnWrite();
-                ((RpcStats) this.instance).setRpcStatusCode(value);
-                return this;
-            }
+        public int getRpcStatusCode() {
+            return this.rpcStatusCode_;
+        }
 
-            public Builder clearRpcStatusCode() {
-                copyOnWrite();
-                ((RpcStats) this.instance).clearRpcStatusCode();
-                return this;
-            }
+        /* access modifiers changed from: private */
+        public void setRpcStatusCode(int value) {
+            this.bitField0_ |= 1;
+            this.rpcStatusCode_ = value;
+        }
+
+        /* access modifiers changed from: private */
+        public void clearRpcStatusCode() {
+            this.bitField0_ &= -2;
+            this.rpcStatusCode_ = 0;
         }
 
         /* access modifiers changed from: protected */
@@ -3457,16 +3446,30 @@ public final class NetworkMetric {
             }
         }
 
-        static {
-            GeneratedMessageLite.registerDefaultInstance(RpcStats.class, DEFAULT_INSTANCE);
-        }
+        public static final class Builder extends GeneratedMessageLite.Builder<RpcStats, Builder> implements RpcStatsOrBuilder {
+            private Builder() {
+                super(RpcStats.DEFAULT_INSTANCE);
+            }
 
-        public static RpcStats getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
+            public boolean hasRpcStatusCode() {
+                return ((RpcStats) this.instance).hasRpcStatusCode();
+            }
 
-        public static Parser<RpcStats> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
+            public int getRpcStatusCode() {
+                return ((RpcStats) this.instance).getRpcStatusCode();
+            }
+
+            public Builder setRpcStatusCode(int value) {
+                copyOnWrite();
+                ((RpcStats) this.instance).setRpcStatusCode(value);
+                return this;
+            }
+
+            public Builder clearRpcStatusCode() {
+                copyOnWrite();
+                ((RpcStats) this.instance).clearRpcStatusCode();
+                return this;
+            }
         }
     }
 
@@ -3477,6 +3480,11 @@ public final class NetworkMetric {
         public static final int HIT_COUNT_FIELD_NUMBER = 2;
         public static final int LOOKUP_COUNT_FIELD_NUMBER = 1;
         private static volatile Parser<CacheStats> PARSER;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(CacheStats.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 2, isRequired = false, type = FieldType.INT32)
@@ -3487,46 +3495,6 @@ public final class NetworkMetric {
         private int lookupCount_;
 
         private CacheStats() {
-        }
-
-        public boolean hasLookupCount() {
-            return (this.bitField0_ & 1) != 0;
-        }
-
-        public int getLookupCount() {
-            return this.lookupCount_;
-        }
-
-        /* access modifiers changed from: private */
-        public void setLookupCount(int value) {
-            this.bitField0_ |= 1;
-            this.lookupCount_ = value;
-        }
-
-        /* access modifiers changed from: private */
-        public void clearLookupCount() {
-            this.bitField0_ &= -2;
-            this.lookupCount_ = 0;
-        }
-
-        public boolean hasHitCount() {
-            return (this.bitField0_ & 2) != 0;
-        }
-
-        public int getHitCount() {
-            return this.hitCount_;
-        }
-
-        /* access modifiers changed from: private */
-        public void setHitCount(int value) {
-            this.bitField0_ |= 2;
-            this.hitCount_ = value;
-        }
-
-        /* access modifiers changed from: private */
-        public void clearHitCount() {
-            this.bitField0_ &= -3;
-            this.hitCount_ = 0;
         }
 
         public static CacheStats parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
@@ -3585,6 +3553,86 @@ public final class NetworkMetric {
             return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
         }
 
+        public static CacheStats getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<CacheStats> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
+        }
+
+        public boolean hasLookupCount() {
+            return (this.bitField0_ & 1) != 0;
+        }
+
+        public int getLookupCount() {
+            return this.lookupCount_;
+        }
+
+        /* access modifiers changed from: private */
+        public void setLookupCount(int value) {
+            this.bitField0_ |= 1;
+            this.lookupCount_ = value;
+        }
+
+        /* access modifiers changed from: private */
+        public void clearLookupCount() {
+            this.bitField0_ &= -2;
+            this.lookupCount_ = 0;
+        }
+
+        public boolean hasHitCount() {
+            return (this.bitField0_ & 2) != 0;
+        }
+
+        public int getHitCount() {
+            return this.hitCount_;
+        }
+
+        /* access modifiers changed from: private */
+        public void setHitCount(int value) {
+            this.bitField0_ |= 2;
+            this.hitCount_ = value;
+        }
+
+        /* access modifiers changed from: private */
+        public void clearHitCount() {
+            this.bitField0_ &= -3;
+            this.hitCount_ = 0;
+        }
+
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new CacheStats();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0000\u0000\u0001\u0004\u0000\u0002\u0004\u0001", new Object[]{"bitField0_", "lookupCount_", "hitCount_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<CacheStats> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (CacheStats.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
+        }
+
         public static final class Builder extends GeneratedMessageLite.Builder<CacheStats, Builder> implements CacheStatsOrBuilder {
             private Builder() {
                 super(CacheStats.DEFAULT_INSTANCE);
@@ -3629,50 +3677,6 @@ public final class NetworkMetric {
                 ((CacheStats) this.instance).clearHitCount();
                 return this;
             }
-        }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new CacheStats();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0000\u0000\u0001\u0004\u0000\u0002\u0004\u0001", new Object[]{"bitField0_", "lookupCount_", "hitCount_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<CacheStats> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (CacheStats.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(CacheStats.class, DEFAULT_INSTANCE);
-        }
-
-        public static CacheStats getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<CacheStats> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
         }
     }
 }

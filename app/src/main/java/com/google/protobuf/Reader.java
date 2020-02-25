@@ -1,6 +1,5 @@
 package com.google.protobuf;
 
-import com.google.protobuf.MapEntryLite;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;

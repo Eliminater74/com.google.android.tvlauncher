@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Build;
 import android.os.PowerManager;
 import android.os.Process;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -13,8 +14,8 @@ import java.util.List;
 
 public class ProcessStats {
     private static final String TAG = "ProcessStats";
-    private static volatile ActivityManager activityManager = null;
     static volatile boolean callingProcessForegroundNotionEnabled;
+    private static volatile ActivityManager activityManager = null;
 
     public static ActivityManager getActivityManager(Context appContext) {
         if (activityManager == null) {

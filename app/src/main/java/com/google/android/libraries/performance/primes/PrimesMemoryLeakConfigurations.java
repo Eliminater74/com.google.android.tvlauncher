@@ -20,6 +20,10 @@ public final class PrimesMemoryLeakConfigurations {
         this.quantifyLeakSizeEnabled = quantifyLeakSizeEnabled2;
     }
 
+    public static Builder newBuilder() {
+        return new Builder();
+    }
+
     public boolean isEnabled() {
         return this.enabled;
     }
@@ -38,10 +42,6 @@ public final class PrimesMemoryLeakConfigurations {
         boolean unused2 = builder.heapDumpEnabled = this.heapDumpEnabled;
         boolean unused3 = builder.quantifyLeakSizeEnabled = this.quantifyLeakSizeEnabled;
         return builder;
-    }
-
-    public static Builder newBuilder() {
-        return new Builder();
     }
 
     public static final class Builder {

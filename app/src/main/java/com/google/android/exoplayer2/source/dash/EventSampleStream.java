@@ -8,17 +8,18 @@ import com.google.android.exoplayer2.metadata.emsg.EventMessageEncoder;
 import com.google.android.exoplayer2.source.SampleStream;
 import com.google.android.exoplayer2.source.dash.manifest.EventStream;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.IOException;
 
 final class EventSampleStream implements SampleStream {
-    private int currentIndex;
     private final EventMessageEncoder eventMessageEncoder = new EventMessageEncoder();
+    private final Format upstreamFormat;
+    private int currentIndex;
     private EventStream eventStream;
     private boolean eventStreamAppendable;
     private long[] eventTimesUs;
     private boolean isFormatSentDownstream;
     private long pendingSeekPositionUs = C0841C.TIME_UNSET;
-    private final Format upstreamFormat;
 
     public EventSampleStream(EventStream eventStream2, Format upstreamFormat2, boolean eventStreamAppendable2) {
         this.upstreamFormat = upstreamFormat2;

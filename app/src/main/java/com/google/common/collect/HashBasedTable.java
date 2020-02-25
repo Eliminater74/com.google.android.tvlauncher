@@ -3,16 +3,37 @@ package com.google.common.collect;
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.base.Supplier;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible(serializable = true)
 public class HashBasedTable<R, C, V> extends StandardTable<R, C, V> {
     private static final long serialVersionUID = 0;
+
+    HashBasedTable(Map<R, Map<C, V>> backingMap, Factory<C, V> factory) {
+        super(backingMap, factory);
+    }
+
+    public static <R, C, V> HashBasedTable<R, C, V> create() {
+        return new HashBasedTable<>(new LinkedHashMap(), new Factory(0));
+    }
+
+    public static <R, C, V> HashBasedTable<R, C, V> create(int expectedRows, int expectedCellsPerRow) {
+        CollectPreconditions.checkNonnegative(expectedCellsPerRow, "expectedCellsPerRow");
+        return new HashBasedTable<>(Maps.newLinkedHashMapWithExpectedSize(expectedRows), new Factory(expectedCellsPerRow));
+    }
+
+    public static <R, C, V> HashBasedTable<R, C, V> create(Table<? extends R, ? extends C, ? extends V> table) {
+        HashBasedTable<R, C, V> result = create();
+        result.putAll(table);
+        return result;
+    }
 
     public /* bridge */ /* synthetic */ Set cellSet() {
         return super.cellSet();
@@ -75,38 +96,6 @@ public class HashBasedTable<R, C, V> extends StandardTable<R, C, V> {
         return super.values();
     }
 
-    private static class Factory<C, V> implements Supplier<Map<C, V>>, Serializable {
-        private static final long serialVersionUID = 0;
-        final int expectedSize;
-
-        Factory(int expectedSize2) {
-            this.expectedSize = expectedSize2;
-        }
-
-        public Map<C, V> get() {
-            return Maps.newLinkedHashMapWithExpectedSize(this.expectedSize);
-        }
-    }
-
-    public static <R, C, V> HashBasedTable<R, C, V> create() {
-        return new HashBasedTable<>(new LinkedHashMap(), new Factory(0));
-    }
-
-    public static <R, C, V> HashBasedTable<R, C, V> create(int expectedRows, int expectedCellsPerRow) {
-        CollectPreconditions.checkNonnegative(expectedCellsPerRow, "expectedCellsPerRow");
-        return new HashBasedTable<>(Maps.newLinkedHashMapWithExpectedSize(expectedRows), new Factory(expectedCellsPerRow));
-    }
-
-    public static <R, C, V> HashBasedTable<R, C, V> create(Table<? extends R, ? extends C, ? extends V> table) {
-        HashBasedTable<R, C, V> result = create();
-        result.putAll(table);
-        return result;
-    }
-
-    HashBasedTable(Map<R, Map<C, V>> backingMap, Factory<C, V> factory) {
-        super(backingMap, factory);
-    }
-
     public boolean contains(@NullableDecl Object rowKey, @NullableDecl Object columnKey) {
         return super.contains(rowKey, columnKey);
     }
@@ -134,5 +123,18 @@ public class HashBasedTable<R, C, V> extends StandardTable<R, C, V> {
     @CanIgnoreReturnValue
     public V remove(@NullableDecl Object rowKey, @NullableDecl Object columnKey) {
         return super.remove(rowKey, columnKey);
+    }
+
+    private static class Factory<C, V> implements Supplier<Map<C, V>>, Serializable {
+        private static final long serialVersionUID = 0;
+        final int expectedSize;
+
+        Factory(int expectedSize2) {
+            this.expectedSize = expectedSize2;
+        }
+
+        public Map<C, V> get() {
+            return Maps.newLinkedHashMapWithExpectedSize(this.expectedSize);
+        }
     }
 }

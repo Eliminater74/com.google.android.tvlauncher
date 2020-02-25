@@ -8,10 +8,9 @@ import android.view.View;
 import android.view.ViewParent;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Interpolator;
+
 import androidx.leanback.C0364R;
 import androidx.leanback.graphics.ColorOverlayDimmer;
-import androidx.leanback.widget.ItemBridgeAdapter;
-import androidx.leanback.widget.RowHeaderPresenter;
 
 public class FocusHighlightHelper {
     static boolean isValidZoomIndex(int zoomIndex) {
@@ -32,149 +31,6 @@ public class FocusHighlightHelper {
             return 0;
         }
         return C0364R.fraction.lb_focus_zoom_factor_xsmall;
-    }
-
-    static class FocusAnimator implements TimeAnimator.TimeListener {
-        private final TimeAnimator mAnimator = new TimeAnimator();
-        private final ColorOverlayDimmer mDimmer;
-        private final int mDuration;
-        private float mFocusLevel = 0.0f;
-        private float mFocusLevelDelta;
-        private float mFocusLevelStart;
-        private final Interpolator mInterpolator = new AccelerateDecelerateInterpolator();
-        private final float mScaleDiff;
-        private final View mView;
-        private final ShadowOverlayContainer mWrapper;
-
-        /* access modifiers changed from: package-private */
-        public void animateFocus(boolean select, boolean immediate) {
-            endAnimation();
-            float end = select ? 1.0f : 0.0f;
-            if (immediate) {
-                setFocusLevel(end);
-                return;
-            }
-            float f = this.mFocusLevel;
-            if (f != end) {
-                this.mFocusLevelStart = f;
-                this.mFocusLevelDelta = end - this.mFocusLevelStart;
-                this.mAnimator.start();
-            }
-        }
-
-        FocusAnimator(View view, float scale, boolean useDimmer, int duration) {
-            this.mView = view;
-            this.mDuration = duration;
-            this.mScaleDiff = scale - 1.0f;
-            if (view instanceof ShadowOverlayContainer) {
-                this.mWrapper = (ShadowOverlayContainer) view;
-            } else {
-                this.mWrapper = null;
-            }
-            this.mAnimator.setTimeListener(this);
-            if (useDimmer) {
-                this.mDimmer = ColorOverlayDimmer.createDefault(view.getContext());
-            } else {
-                this.mDimmer = null;
-            }
-        }
-
-        /* access modifiers changed from: package-private */
-        public void setFocusLevel(float level) {
-            this.mFocusLevel = level;
-            float scale = (this.mScaleDiff * level) + 1.0f;
-            this.mView.setScaleX(scale);
-            this.mView.setScaleY(scale);
-            ShadowOverlayContainer shadowOverlayContainer = this.mWrapper;
-            if (shadowOverlayContainer != null) {
-                shadowOverlayContainer.setShadowFocusLevel(level);
-            } else {
-                ShadowOverlayHelper.setNoneWrapperShadowFocusLevel(this.mView, level);
-            }
-            ColorOverlayDimmer colorOverlayDimmer = this.mDimmer;
-            if (colorOverlayDimmer != null) {
-                colorOverlayDimmer.setActiveLevel(level);
-                int color = this.mDimmer.getPaint().getColor();
-                ShadowOverlayContainer shadowOverlayContainer2 = this.mWrapper;
-                if (shadowOverlayContainer2 != null) {
-                    shadowOverlayContainer2.setOverlayColor(color);
-                } else {
-                    ShadowOverlayHelper.setNoneWrapperOverlayColor(this.mView, color);
-                }
-            }
-        }
-
-        /* access modifiers changed from: package-private */
-        public float getFocusLevel() {
-            return this.mFocusLevel;
-        }
-
-        /* access modifiers changed from: package-private */
-        public void endAnimation() {
-            this.mAnimator.end();
-        }
-
-        public void onTimeUpdate(TimeAnimator animation, long totalTime, long deltaTime) {
-            float fraction;
-            int i = this.mDuration;
-            if (totalTime >= ((long) i)) {
-                fraction = 1.0f;
-                this.mAnimator.end();
-            } else {
-                double d = (double) totalTime;
-                double d2 = (double) i;
-                Double.isNaN(d);
-                Double.isNaN(d2);
-                fraction = (float) (d / d2);
-            }
-            Interpolator interpolator = this.mInterpolator;
-            if (interpolator != null) {
-                fraction = interpolator.getInterpolation(fraction);
-            }
-            setFocusLevel(this.mFocusLevelStart + (this.mFocusLevelDelta * fraction));
-        }
-    }
-
-    static class BrowseItemFocusHighlight implements FocusHighlightHandler {
-        private static final int DURATION_MS = 150;
-        private int mScaleIndex;
-        private final boolean mUseDimmer;
-
-        BrowseItemFocusHighlight(int zoomIndex, boolean useDimmer) {
-            if (FocusHighlightHelper.isValidZoomIndex(zoomIndex)) {
-                this.mScaleIndex = zoomIndex;
-                this.mUseDimmer = useDimmer;
-                return;
-            }
-            throw new IllegalArgumentException("Unhandled zoom index");
-        }
-
-        private float getScale(Resources res) {
-            int i = this.mScaleIndex;
-            if (i == 0) {
-                return 1.0f;
-            }
-            return res.getFraction(FocusHighlightHelper.getResId(i), 1, 1);
-        }
-
-        public void onItemFocused(View view, boolean hasFocus) {
-            view.setSelected(hasFocus);
-            getOrCreateAnimator(view).animateFocus(hasFocus, false);
-        }
-
-        public void onInitializeView(View view) {
-            getOrCreateAnimator(view).animateFocus(false, true);
-        }
-
-        private FocusAnimator getOrCreateAnimator(View view) {
-            FocusAnimator animator = (FocusAnimator) view.getTag(C0364R.C0366id.lb_focus_animator);
-            if (animator != null) {
-                return animator;
-            }
-            FocusAnimator animator2 = new FocusAnimator(view, getScale(view.getResources()), this.mUseDimmer, 150);
-            view.setTag(C0364R.C0366id.lb_focus_animator, animator2);
-            return animator2;
-        }
     }
 
     public static void setupBrowseItemFocusHighlight(ItemBridgeAdapter adapter, int zoomIndex, boolean useDimmer) {
@@ -217,6 +73,149 @@ public class FocusHighlightHelper {
         adapter.setFocusHighlight(scaleEnabled ? new HeaderItemFocusHighlight() : null);
     }
 
+    static class FocusAnimator implements TimeAnimator.TimeListener {
+        private final TimeAnimator mAnimator = new TimeAnimator();
+        private final ColorOverlayDimmer mDimmer;
+        private final int mDuration;
+        private final Interpolator mInterpolator = new AccelerateDecelerateInterpolator();
+        private final float mScaleDiff;
+        private final View mView;
+        private final ShadowOverlayContainer mWrapper;
+        private float mFocusLevel = 0.0f;
+        private float mFocusLevelDelta;
+        private float mFocusLevelStart;
+
+        FocusAnimator(View view, float scale, boolean useDimmer, int duration) {
+            this.mView = view;
+            this.mDuration = duration;
+            this.mScaleDiff = scale - 1.0f;
+            if (view instanceof ShadowOverlayContainer) {
+                this.mWrapper = (ShadowOverlayContainer) view;
+            } else {
+                this.mWrapper = null;
+            }
+            this.mAnimator.setTimeListener(this);
+            if (useDimmer) {
+                this.mDimmer = ColorOverlayDimmer.createDefault(view.getContext());
+            } else {
+                this.mDimmer = null;
+            }
+        }
+
+        /* access modifiers changed from: package-private */
+        public void animateFocus(boolean select, boolean immediate) {
+            endAnimation();
+            float end = select ? 1.0f : 0.0f;
+            if (immediate) {
+                setFocusLevel(end);
+                return;
+            }
+            float f = this.mFocusLevel;
+            if (f != end) {
+                this.mFocusLevelStart = f;
+                this.mFocusLevelDelta = end - this.mFocusLevelStart;
+                this.mAnimator.start();
+            }
+        }
+
+        /* access modifiers changed from: package-private */
+        public float getFocusLevel() {
+            return this.mFocusLevel;
+        }
+
+        /* access modifiers changed from: package-private */
+        public void setFocusLevel(float level) {
+            this.mFocusLevel = level;
+            float scale = (this.mScaleDiff * level) + 1.0f;
+            this.mView.setScaleX(scale);
+            this.mView.setScaleY(scale);
+            ShadowOverlayContainer shadowOverlayContainer = this.mWrapper;
+            if (shadowOverlayContainer != null) {
+                shadowOverlayContainer.setShadowFocusLevel(level);
+            } else {
+                ShadowOverlayHelper.setNoneWrapperShadowFocusLevel(this.mView, level);
+            }
+            ColorOverlayDimmer colorOverlayDimmer = this.mDimmer;
+            if (colorOverlayDimmer != null) {
+                colorOverlayDimmer.setActiveLevel(level);
+                int color = this.mDimmer.getPaint().getColor();
+                ShadowOverlayContainer shadowOverlayContainer2 = this.mWrapper;
+                if (shadowOverlayContainer2 != null) {
+                    shadowOverlayContainer2.setOverlayColor(color);
+                } else {
+                    ShadowOverlayHelper.setNoneWrapperOverlayColor(this.mView, color);
+                }
+            }
+        }
+
+        /* access modifiers changed from: package-private */
+        public void endAnimation() {
+            this.mAnimator.end();
+        }
+
+        public void onTimeUpdate(TimeAnimator animation, long totalTime, long deltaTime) {
+            float fraction;
+            int i = this.mDuration;
+            if (totalTime >= ((long) i)) {
+                fraction = 1.0f;
+                this.mAnimator.end();
+            } else {
+                double d = (double) totalTime;
+                double d2 = (double) i;
+                Double.isNaN(d);
+                Double.isNaN(d2);
+                fraction = (float) (d / d2);
+            }
+            Interpolator interpolator = this.mInterpolator;
+            if (interpolator != null) {
+                fraction = interpolator.getInterpolation(fraction);
+            }
+            setFocusLevel(this.mFocusLevelStart + (this.mFocusLevelDelta * fraction));
+        }
+    }
+
+    static class BrowseItemFocusHighlight implements FocusHighlightHandler {
+        private static final int DURATION_MS = 150;
+        private final boolean mUseDimmer;
+        private int mScaleIndex;
+
+        BrowseItemFocusHighlight(int zoomIndex, boolean useDimmer) {
+            if (FocusHighlightHelper.isValidZoomIndex(zoomIndex)) {
+                this.mScaleIndex = zoomIndex;
+                this.mUseDimmer = useDimmer;
+                return;
+            }
+            throw new IllegalArgumentException("Unhandled zoom index");
+        }
+
+        private float getScale(Resources res) {
+            int i = this.mScaleIndex;
+            if (i == 0) {
+                return 1.0f;
+            }
+            return res.getFraction(FocusHighlightHelper.getResId(i), 1, 1);
+        }
+
+        public void onItemFocused(View view, boolean hasFocus) {
+            view.setSelected(hasFocus);
+            getOrCreateAnimator(view).animateFocus(hasFocus, false);
+        }
+
+        public void onInitializeView(View view) {
+            getOrCreateAnimator(view).animateFocus(false, true);
+        }
+
+        private FocusAnimator getOrCreateAnimator(View view) {
+            FocusAnimator animator = (FocusAnimator) view.getTag(C0364R.C0366id.lb_focus_animator);
+            if (animator != null) {
+                return animator;
+            }
+            FocusAnimator animator2 = new FocusAnimator(view, getScale(view.getResources()), this.mUseDimmer, 150);
+            view.setTag(C0364R.C0366id.lb_focus_animator, animator2);
+            return animator2;
+        }
+    }
+
     static class HeaderItemFocusHighlight implements FocusHighlightHandler {
         private int mDuration;
         private boolean mInitialized;
@@ -244,6 +243,24 @@ public class FocusHighlightHelper {
             }
         }
 
+        private void viewFocused(View view, boolean hasFocus) {
+            lazyInit(view);
+            view.setSelected(hasFocus);
+            FocusAnimator animator = (FocusAnimator) view.getTag(C0364R.C0366id.lb_focus_animator);
+            if (animator == null) {
+                animator = new HeaderFocusAnimator(view, this.mSelectScale, this.mDuration);
+                view.setTag(C0364R.C0366id.lb_focus_animator, animator);
+            }
+            animator.animateFocus(hasFocus, false);
+        }
+
+        public void onItemFocused(View view, boolean hasFocus) {
+            viewFocused(view, hasFocus);
+        }
+
+        public void onInitializeView(View view) {
+        }
+
         static class HeaderFocusAnimator extends FocusAnimator {
             ItemBridgeAdapter.ViewHolder mViewHolder;
 
@@ -266,24 +283,6 @@ public class FocusHighlightHelper {
                 }
                 super.setFocusLevel(level);
             }
-        }
-
-        private void viewFocused(View view, boolean hasFocus) {
-            lazyInit(view);
-            view.setSelected(hasFocus);
-            FocusAnimator animator = (FocusAnimator) view.getTag(C0364R.C0366id.lb_focus_animator);
-            if (animator == null) {
-                animator = new HeaderFocusAnimator(view, this.mSelectScale, this.mDuration);
-                view.setTag(C0364R.C0366id.lb_focus_animator, animator);
-            }
-            animator.animateFocus(hasFocus, false);
-        }
-
-        public void onItemFocused(View view, boolean hasFocus) {
-            viewFocused(view, hasFocus);
-        }
-
-        public void onInitializeView(View view) {
         }
     }
 }

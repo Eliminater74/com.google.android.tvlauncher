@@ -1,7 +1,6 @@
 package com.google.android.exoplayer2.p008ui;
 
 import android.app.Notification;
-import com.google.android.exoplayer2.p008ui.PlayerNotificationManager;
 
 /* renamed from: com.google.android.exoplayer2.ui.PlayerNotificationManager$NotificationListener$$CC */
 public abstract /* synthetic */ class PlayerNotificationManager$NotificationListener$$CC {

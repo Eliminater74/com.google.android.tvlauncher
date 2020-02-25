@@ -5,10 +5,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
+
 import com.google.android.tvlauncher.doubleclick.TrackingUrl;
 import com.google.android.tvlauncher.doubleclick.proto.nano.AdConfig;
 import com.google.android.tvlauncher.doubleclick.proto.nano.VideoCreative;
-import com.google.android.tvlauncher.doubleclick.vast.VastVideoAd;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,6 +18,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.annotation.Nonnull;
 
 public class VastVideoAdFactory {

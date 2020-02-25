@@ -3,6 +3,7 @@ package com.google.android.exoplayer2.extractor.p007ts;
 import android.util.SparseArray;
 import android.util.SparseBooleanArray;
 import android.util.SparseIntArray;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.extractor.Extractor;
@@ -11,13 +12,13 @@ import com.google.android.exoplayer2.extractor.ExtractorOutput;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
 import com.google.android.exoplayer2.extractor.PositionHolder;
 import com.google.android.exoplayer2.extractor.SeekMap;
-import com.google.android.exoplayer2.extractor.p007ts.TsPayloadReader;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.ParsableBitArray;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.TimestampAdjuster;
 import com.google.android.exoplayer2.util.Util;
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.io.IOException;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -33,19 +34,15 @@ public final class TsExtractor implements Extractor {
     public static final long AC3_FORMAT_IDENTIFIER = ((long) Util.getIntegerCodeForString("AC-3"));
     /* access modifiers changed from: private */
     public static final long AC4_FORMAT_IDENTIFIER = ((long) Util.getIntegerCodeForString("AC-4"));
-    private static final int BUFFER_SIZE = 9400;
     /* access modifiers changed from: private */
     public static final long E_AC3_FORMAT_IDENTIFIER = ((long) Util.getIntegerCodeForString("EAC3"));
     public static final ExtractorsFactory FACTORY = TsExtractor$$Lambda$0.$instance;
     /* access modifiers changed from: private */
     public static final long HEVC_FORMAT_IDENTIFIER = ((long) Util.getIntegerCodeForString("HEVC"));
-    private static final int MAX_PID_PLUS_ONE = 8192;
     public static final int MODE_HLS = 2;
     public static final int MODE_MULTI_PMT = 0;
     public static final int MODE_SINGLE_PMT = 1;
-    private static final int SNIFF_TS_PACKET_COUNT = 5;
     public static final int TS_PACKET_SIZE = 188;
-    private static final int TS_PAT_PID = 0;
     public static final int TS_STREAM_TYPE_AAC_ADTS = 15;
     public static final int TS_STREAM_TYPE_AAC_LATM = 17;
     public static final int TS_STREAM_TYPE_AC3 = 129;
@@ -62,23 +59,14 @@ public final class TsExtractor implements Extractor {
     public static final int TS_STREAM_TYPE_MPA_LSF = 4;
     public static final int TS_STREAM_TYPE_SPLICE_INFO = 134;
     public static final int TS_SYNC_BYTE = 71;
-    private int bytesSinceLastSync;
-    private final SparseIntArray continuityCounters;
-    private final TsDurationReader durationReader;
-    private boolean hasOutputSeekMap;
-    /* access modifiers changed from: private */
-    public TsPayloadReader id3Reader;
+    private static final int BUFFER_SIZE = 9400;
+    private static final int MAX_PID_PLUS_ONE = 8192;
+    private static final int SNIFF_TS_PACKET_COUNT = 5;
+    private static final int TS_PAT_PID = 0;
     /* access modifiers changed from: private */
     public final int mode;
     /* access modifiers changed from: private */
-    public ExtractorOutput output;
-    /* access modifiers changed from: private */
     public final TsPayloadReader.Factory payloadReaderFactory;
-    /* access modifiers changed from: private */
-    public int pcrPid;
-    private boolean pendingSeekToStart;
-    /* access modifiers changed from: private */
-    public int remainingPmts;
     /* access modifiers changed from: private */
     public final List<TimestampAdjuster> timestampAdjusters;
     /* access modifiers changed from: private */
@@ -86,27 +74,24 @@ public final class TsExtractor implements Extractor {
     /* access modifiers changed from: private */
     public final SparseBooleanArray trackPids;
     /* access modifiers changed from: private */
-    public boolean tracksEnded;
-    private TsBinarySearchSeeker tsBinarySearchSeeker;
+    public final SparseArray<TsPayloadReader> tsPayloadReaders;
+    private final SparseIntArray continuityCounters;
+    private final TsDurationReader durationReader;
     private final ParsableByteArray tsPacketBuffer;
     /* access modifiers changed from: private */
-    public final SparseArray<TsPayloadReader> tsPayloadReaders;
-
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    /* renamed from: com.google.android.exoplayer2.extractor.ts.TsExtractor$Mode */
-    public @interface Mode {
-    }
-
-    static /* synthetic */ int access$108(TsExtractor x0) {
-        int i = x0.remainingPmts;
-        x0.remainingPmts = i + 1;
-        return i;
-    }
-
-    static final /* synthetic */ Extractor[] lambda$static$0$TsExtractor() {
-        return new Extractor[]{new TsExtractor()};
-    }
+    public TsPayloadReader id3Reader;
+    /* access modifiers changed from: private */
+    public ExtractorOutput output;
+    /* access modifiers changed from: private */
+    public int pcrPid;
+    /* access modifiers changed from: private */
+    public int remainingPmts;
+    /* access modifiers changed from: private */
+    public boolean tracksEnded;
+    private int bytesSinceLastSync;
+    private boolean hasOutputSeekMap;
+    private boolean pendingSeekToStart;
+    private TsBinarySearchSeeker tsBinarySearchSeeker;
 
     public TsExtractor() {
         this(0);
@@ -137,6 +122,16 @@ public final class TsExtractor implements Extractor {
         this.durationReader = new TsDurationReader();
         this.pcrPid = -1;
         resetPayloadReaders();
+    }
+
+    static /* synthetic */ int access$108(TsExtractor x0) {
+        int i = x0.remainingPmts;
+        x0.remainingPmts = i + 1;
+        return i;
+    }
+
+    static final /* synthetic */ Extractor[] lambda$static$0$TsExtractor() {
+        return new Extractor[]{new TsExtractor()};
     }
 
     public boolean sniff(ExtractorInput input) throws IOException, InterruptedException {
@@ -341,6 +336,12 @@ public final class TsExtractor implements Extractor {
         }
         this.tsPayloadReaders.put(0, new SectionReader(new PatReader()));
         this.id3Reader = null;
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    /* renamed from: com.google.android.exoplayer2.extractor.ts.TsExtractor$Mode */
+    public @interface Mode {
     }
 
     /* renamed from: com.google.android.exoplayer2.extractor.ts.TsExtractor$PatReader */

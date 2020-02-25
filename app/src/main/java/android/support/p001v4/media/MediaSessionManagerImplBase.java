@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
-import android.support.p001v4.media.MediaSessionManager;
 import android.support.p001v4.util.ObjectsCompat;
 import android.text.TextUtils;
 import android.util.Log;
@@ -18,8 +17,8 @@ class MediaSessionManagerImplBase implements MediaSessionManager.MediaSessionMan
     private static final String PERMISSION_MEDIA_CONTENT_CONTROL = "android.permission.MEDIA_CONTENT_CONTROL";
     private static final String PERMISSION_STATUS_BAR_SERVICE = "android.permission.STATUS_BAR_SERVICE";
     private static final String TAG = "MediaSessionManager";
-    ContentResolver mContentResolver = this.mContext.getContentResolver();
     Context mContext;
+    ContentResolver mContentResolver = this.mContext.getContentResolver();
 
     MediaSessionManagerImplBase(Context context) {
         this.mContext = context;

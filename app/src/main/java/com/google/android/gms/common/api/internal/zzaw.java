@@ -1,8 +1,10 @@
 package com.google.android.gms.common.api.internal;
 
 import android.support.annotation.BinderThread;
+
 import com.google.android.gms.internal.zzelx;
 import com.google.android.gms.internal.zzemf;
+
 import java.lang.ref.WeakReference;
 
 /* compiled from: GoogleApiClientConnecting */

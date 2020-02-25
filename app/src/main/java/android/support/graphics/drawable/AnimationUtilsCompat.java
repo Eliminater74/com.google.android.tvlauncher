@@ -18,15 +18,21 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.OvershootInterpolator;
+
 import androidx.interpolator.view.animation.FastOutLinearInInterpolator;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator;
-import java.io.IOException;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
+import java.io.IOException;
+
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
 public class AnimationUtilsCompat {
+    private AnimationUtilsCompat() {
+    }
+
     public static Interpolator loadInterpolator(Context context, int id) throws Resources.NotFoundException {
         if (Build.VERSION.SDK_INT >= 21) {
             return AnimationUtils.loadInterpolator(context, id);
@@ -112,8 +118,5 @@ public class AnimationUtilsCompat {
             }
         }
         return interpolator;
-    }
-
-    private AnimationUtilsCompat() {
     }
 }

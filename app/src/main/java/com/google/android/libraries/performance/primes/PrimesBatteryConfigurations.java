@@ -1,6 +1,7 @@
 package com.google.android.libraries.performance.primes;
 
 import android.support.annotation.Nullable;
+
 import logs.proto.wireless.performance.mobile.BatteryMetric;
 import logs.proto.wireless.performance.mobile.ExtensionMetric;
 
@@ -31,6 +32,10 @@ public final class PrimesBatteryConfigurations {
         this.metricExtensionProvider = metricExtensionProvider2;
     }
 
+    public static Builder newBuilder() {
+        return new Builder();
+    }
+
     public boolean isEnabled() {
         return this.enabled;
     }
@@ -49,10 +54,6 @@ public final class PrimesBatteryConfigurations {
         boolean unused2 = builder.deferredLogging = this.deferredLogging;
         BatteryMetricExtensionProvider unused3 = builder.metricExtensionProvider = this.metricExtensionProvider;
         return builder;
-    }
-
-    public static Builder newBuilder() {
-        return new Builder();
     }
 
     public static final class Builder {

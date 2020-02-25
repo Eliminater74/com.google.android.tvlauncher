@@ -14,10 +14,10 @@ public interface IRosterListener extends IInterface {
     void selfPresenceChanged() throws RemoteException;
 
     public static abstract class Stub extends Binder implements IRosterListener {
-        private static final String DESCRIPTOR = "com.google.android.gtalkservice.IRosterListener";
         static final int TRANSACTION_presenceChanged = 2;
         static final int TRANSACTION_rosterChanged = 1;
         static final int TRANSACTION_selfPresenceChanged = 3;
+        private static final String DESCRIPTOR = "com.google.android.gtalkservice.IRosterListener";
 
         public Stub() {
             attachInterface(this, DESCRIPTOR);

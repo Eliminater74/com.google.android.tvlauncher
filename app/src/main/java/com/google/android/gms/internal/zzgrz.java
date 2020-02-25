@@ -1,6 +1,7 @@
 package com.google.android.gms.internal;
 
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.io.IOException;
 import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
@@ -28,114 +29,6 @@ public final class zzgrz {
 
     public static zzgrz zza(byte[] bArr, int i, int i2) {
         return new zzgrz(bArr, i, i2);
-    }
-
-    private final zzgnp zzb() throws IOException {
-        if (this.zzb == null) {
-            this.zzb = zzgnp.zza(this.zza);
-            this.zzc = this.zza.position();
-        } else if (this.zzc != this.zza.position()) {
-            this.zzb.zzb(this.zza.array(), this.zzc, this.zza.position() - this.zzc);
-            this.zzc = this.zza.position();
-        }
-        return this.zzb;
-    }
-
-    public final void zza(int i, double d) throws IOException {
-        zzc(i, 1);
-        zzc(Double.doubleToLongBits(d));
-    }
-
-    public final void zza(int i, float f) throws IOException {
-        zzc(i, 5);
-        int floatToIntBits = Float.floatToIntBits(f);
-        if (this.zza.remaining() >= 4) {
-            this.zza.putInt(floatToIntBits);
-            return;
-        }
-        throw new zzgsa(this.zza.position(), this.zza.limit());
-    }
-
-    public final void zza(int i, long j) throws IOException {
-        zzc(i, 0);
-        zza(j);
-    }
-
-    public final void zzb(int i, long j) throws IOException {
-        zzc(i, 0);
-        zza(j);
-    }
-
-    public final void zza(int i, int i2) throws IOException {
-        zzc(i, 0);
-        if (i2 >= 0) {
-            zzc(i2);
-        } else {
-            zza((long) i2);
-        }
-    }
-
-    public final void zzc(int i, long j) throws IOException {
-        zzc(i, 1);
-        zzc(j);
-    }
-
-    public final void zza(int i, boolean z) throws IOException {
-        zzc(i, 0);
-        byte b = z ? (byte) 1 : 0;
-        if (this.zza.hasRemaining()) {
-            this.zza.put(b);
-            return;
-        }
-        throw new zzgsa(this.zza.position(), this.zza.limit());
-    }
-
-    public final void zza(int i, String str) throws IOException {
-        zzc(i, 2);
-        try {
-            int zzd = zzd(str.length());
-            if (zzd == zzd(str.length() * 3)) {
-                int position = this.zza.position();
-                if (this.zza.remaining() >= zzd) {
-                    this.zza.position(position + zzd);
-                    zza(str, this.zza);
-                    int position2 = this.zza.position();
-                    this.zza.position(position);
-                    zzc((position2 - position) - zzd);
-                    this.zza.position(position2);
-                    return;
-                }
-                throw new zzgsa(position + zzd, this.zza.limit());
-            }
-            zzc(zza((CharSequence) str));
-            zza(str, this.zza);
-        } catch (BufferOverflowException e) {
-            zzgsa zzgsa = new zzgsa(this.zza.position(), this.zza.limit());
-            zzgsa.initCause(e);
-            throw zzgsa;
-        }
-    }
-
-    public final void zza(int i, zzgsh zzgsh) throws IOException {
-        zzc(i, 2);
-        zza(zzgsh);
-    }
-
-    public final void zza(int i, zzgpt zzgpt) throws IOException {
-        zzgnp zzb2 = zzb();
-        zzb2.zza(i, zzgpt);
-        zzb2.zza();
-        this.zzc = this.zza.position();
-    }
-
-    public final void zza(int i, byte[] bArr) throws IOException {
-        zzc(i, 2);
-        zzb(bArr);
-    }
-
-    public final void zzd(int i, long j) throws IOException {
-        zzc(i, 0);
-        zza(zzd(j));
     }
 
     private static int zza(CharSequence charSequence) {
@@ -309,16 +202,6 @@ public final class zzgrz {
         }
     }
 
-    public final void zza(zzgsh zzgsh) throws IOException {
-        zzc(zzgsh.getCachedSize());
-        zzgsh.writeTo(this);
-    }
-
-    public final void zzb(byte[] bArr) throws IOException {
-        zzc(bArr.length);
-        zzd(bArr);
-    }
-
     public static int zze(int i, long j) {
         return zzb(i) + zzb(j);
     }
@@ -365,44 +248,8 @@ public final class zzgrz {
         return zzd(bArr.length) + bArr.length;
     }
 
-    public final void zza() {
-        if (this.zza.remaining() != 0) {
-            throw new IllegalStateException(String.format("Did not write as much data as expected, %s bytes remaining.", Integer.valueOf(this.zza.remaining())));
-        }
-    }
-
-    private final void zzf(int i) throws IOException {
-        byte b = (byte) i;
-        if (this.zza.hasRemaining()) {
-            this.zza.put(b);
-            return;
-        }
-        throw new zzgsa(this.zza.position(), this.zza.limit());
-    }
-
-    public final void zzd(byte[] bArr) throws IOException {
-        int length = bArr.length;
-        if (this.zza.remaining() >= length) {
-            this.zza.put(bArr, 0, length);
-            return;
-        }
-        throw new zzgsa(this.zza.position(), this.zza.limit());
-    }
-
-    public final void zzc(int i, int i2) throws IOException {
-        zzc((i << 3) | i2);
-    }
-
     public static int zzb(int i) {
         return zzd(i << 3);
-    }
-
-    public final void zzc(int i) throws IOException {
-        while ((i & -128) != 0) {
-            zzf((i & ClientAnalytics.LogRequest.LogSource.TAILORMADE_VALUE) | 128);
-            i >>>= 7;
-        }
-        zzf(i);
     }
 
     public static int zzd(int i) {
@@ -419,14 +266,6 @@ public final class zzgrz {
             return 4;
         }
         return 5;
-    }
-
-    public final void zza(long j) throws IOException {
-        while ((-128 & j) != 0) {
-            zzf((((int) j) & ClientAnalytics.LogRequest.LogSource.TAILORMADE_VALUE) | 128);
-            j >>>= 7;
-        }
-        zzf((int) j);
     }
 
     public static int zzb(long j) {
@@ -460,19 +299,181 @@ public final class zzgrz {
         return 10;
     }
 
-    private final void zzc(long j) throws IOException {
-        if (this.zza.remaining() >= 8) {
-            this.zza.putLong(j);
-            return;
-        }
-        throw new zzgsa(this.zza.position(), this.zza.limit());
-    }
-
     public static int zze(int i) {
         return (i >> 31) ^ (i << 1);
     }
 
     private static long zzd(long j) {
         return (j >> 63) ^ (j << 1);
+    }
+
+    private final zzgnp zzb() throws IOException {
+        if (this.zzb == null) {
+            this.zzb = zzgnp.zza(this.zza);
+            this.zzc = this.zza.position();
+        } else if (this.zzc != this.zza.position()) {
+            this.zzb.zzb(this.zza.array(), this.zzc, this.zza.position() - this.zzc);
+            this.zzc = this.zza.position();
+        }
+        return this.zzb;
+    }
+
+    public final void zza(int i, double d) throws IOException {
+        zzc(i, 1);
+        zzc(Double.doubleToLongBits(d));
+    }
+
+    public final void zza(int i, float f) throws IOException {
+        zzc(i, 5);
+        int floatToIntBits = Float.floatToIntBits(f);
+        if (this.zza.remaining() >= 4) {
+            this.zza.putInt(floatToIntBits);
+            return;
+        }
+        throw new zzgsa(this.zza.position(), this.zza.limit());
+    }
+
+    public final void zza(int i, long j) throws IOException {
+        zzc(i, 0);
+        zza(j);
+    }
+
+    public final void zzb(int i, long j) throws IOException {
+        zzc(i, 0);
+        zza(j);
+    }
+
+    public final void zza(int i, int i2) throws IOException {
+        zzc(i, 0);
+        if (i2 >= 0) {
+            zzc(i2);
+        } else {
+            zza((long) i2);
+        }
+    }
+
+    public final void zzc(int i, long j) throws IOException {
+        zzc(i, 1);
+        zzc(j);
+    }
+
+    public final void zza(int i, boolean z) throws IOException {
+        zzc(i, 0);
+        byte b = z ? (byte) 1 : 0;
+        if (this.zza.hasRemaining()) {
+            this.zza.put(b);
+            return;
+        }
+        throw new zzgsa(this.zza.position(), this.zza.limit());
+    }
+
+    public final void zza(int i, String str) throws IOException {
+        zzc(i, 2);
+        try {
+            int zzd = zzd(str.length());
+            if (zzd == zzd(str.length() * 3)) {
+                int position = this.zza.position();
+                if (this.zza.remaining() >= zzd) {
+                    this.zza.position(position + zzd);
+                    zza(str, this.zza);
+                    int position2 = this.zza.position();
+                    this.zza.position(position);
+                    zzc((position2 - position) - zzd);
+                    this.zza.position(position2);
+                    return;
+                }
+                throw new zzgsa(position + zzd, this.zza.limit());
+            }
+            zzc(zza((CharSequence) str));
+            zza(str, this.zza);
+        } catch (BufferOverflowException e) {
+            zzgsa zzgsa = new zzgsa(this.zza.position(), this.zza.limit());
+            zzgsa.initCause(e);
+            throw zzgsa;
+        }
+    }
+
+    public final void zza(int i, zzgsh zzgsh) throws IOException {
+        zzc(i, 2);
+        zza(zzgsh);
+    }
+
+    public final void zza(int i, zzgpt zzgpt) throws IOException {
+        zzgnp zzb2 = zzb();
+        zzb2.zza(i, zzgpt);
+        zzb2.zza();
+        this.zzc = this.zza.position();
+    }
+
+    public final void zza(int i, byte[] bArr) throws IOException {
+        zzc(i, 2);
+        zzb(bArr);
+    }
+
+    public final void zzd(int i, long j) throws IOException {
+        zzc(i, 0);
+        zza(zzd(j));
+    }
+
+    public final void zza(zzgsh zzgsh) throws IOException {
+        zzc(zzgsh.getCachedSize());
+        zzgsh.writeTo(this);
+    }
+
+    public final void zzb(byte[] bArr) throws IOException {
+        zzc(bArr.length);
+        zzd(bArr);
+    }
+
+    public final void zza() {
+        if (this.zza.remaining() != 0) {
+            throw new IllegalStateException(String.format("Did not write as much data as expected, %s bytes remaining.", Integer.valueOf(this.zza.remaining())));
+        }
+    }
+
+    private final void zzf(int i) throws IOException {
+        byte b = (byte) i;
+        if (this.zza.hasRemaining()) {
+            this.zza.put(b);
+            return;
+        }
+        throw new zzgsa(this.zza.position(), this.zza.limit());
+    }
+
+    public final void zzd(byte[] bArr) throws IOException {
+        int length = bArr.length;
+        if (this.zza.remaining() >= length) {
+            this.zza.put(bArr, 0, length);
+            return;
+        }
+        throw new zzgsa(this.zza.position(), this.zza.limit());
+    }
+
+    public final void zzc(int i, int i2) throws IOException {
+        zzc((i << 3) | i2);
+    }
+
+    public final void zzc(int i) throws IOException {
+        while ((i & -128) != 0) {
+            zzf((i & ClientAnalytics.LogRequest.LogSource.TAILORMADE_VALUE) | 128);
+            i >>>= 7;
+        }
+        zzf(i);
+    }
+
+    public final void zza(long j) throws IOException {
+        while ((-128 & j) != 0) {
+            zzf((((int) j) & ClientAnalytics.LogRequest.LogSource.TAILORMADE_VALUE) | 128);
+            j >>>= 7;
+        }
+        zzf((int) j);
+    }
+
+    private final void zzc(long j) throws IOException {
+        if (this.zza.remaining() >= 8) {
+            this.zza.putLong(j);
+            return;
+        }
+        throw new zzgsa(this.zza.position(), this.zza.limit());
     }
 }

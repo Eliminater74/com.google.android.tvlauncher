@@ -1,7 +1,7 @@
 package com.bumptech.glide.load.engine.bitmap_recycle;
 
 import android.support.annotation.Nullable;
-import com.bumptech.glide.load.engine.bitmap_recycle.Poolable;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,6 +12,16 @@ class GroupedLinkedMap<K extends Poolable, V> {
     private final Map<K, LinkedEntry<K, V>> keyToEntry = new HashMap();
 
     GroupedLinkedMap() {
+    }
+
+    private static <K, V> void updateEntry(LinkedEntry<K, V> entry) {
+        entry.next.prev = entry;
+        entry.prev.next = entry;
+    }
+
+    private static <K, V> void removeEntry(LinkedEntry<K, V> entry) {
+        entry.prev.next = entry.next;
+        entry.next.prev = entry.prev;
     }
 
     public void put(K key, V value) {
@@ -84,16 +94,6 @@ class GroupedLinkedMap<K extends Poolable, V> {
         entry.prev = this.head.prev;
         entry.next = this.head;
         updateEntry(entry);
-    }
-
-    private static <K, V> void updateEntry(LinkedEntry<K, V> entry) {
-        entry.next.prev = entry;
-        entry.prev.next = entry;
-    }
-
-    private static <K, V> void removeEntry(LinkedEntry<K, V> entry) {
-        entry.prev.next = entry.next;
-        entry.next.prev = entry.prev;
     }
 
     private static class LinkedEntry<K, V> {

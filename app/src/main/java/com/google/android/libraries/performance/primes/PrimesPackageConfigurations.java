@@ -26,6 +26,10 @@ public final class PrimesPackageConfigurations {
         this.dirStatsConfigs = dirStatsConfigs2;
     }
 
+    public static Builder newBuilder() {
+        return new Builder();
+    }
+
     public boolean isEnabled() {
         return this.enabled;
     }
@@ -36,10 +40,6 @@ public final class PrimesPackageConfigurations {
 
     public Optional<PrimesDirStatsConfigurations> getDirStatsConfigurations() {
         return this.dirStatsConfigs;
-    }
-
-    public static Builder newBuilder() {
-        return new Builder();
     }
 
     public static final class Builder {

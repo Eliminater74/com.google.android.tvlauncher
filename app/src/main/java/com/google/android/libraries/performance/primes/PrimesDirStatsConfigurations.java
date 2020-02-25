@@ -19,6 +19,10 @@ public final class PrimesDirStatsConfigurations {
         this.listFilesPatterns = listFilesPatterns2;
     }
 
+    public static Builder newBuilder() {
+        return new Builder();
+    }
+
     public boolean isEnabled() {
         return this.enabled;
     }
@@ -41,15 +45,11 @@ public final class PrimesDirStatsConfigurations {
         return builder;
     }
 
-    public static Builder newBuilder() {
-        return new Builder();
-    }
-
     public static final class Builder {
         /* access modifiers changed from: private */
-        public boolean enabled;
-        /* access modifiers changed from: private */
         public final ArrayList<Pattern> listFilesPatterns;
+        /* access modifiers changed from: private */
+        public boolean enabled;
         /* access modifiers changed from: private */
         public int maxFolderDepth;
 

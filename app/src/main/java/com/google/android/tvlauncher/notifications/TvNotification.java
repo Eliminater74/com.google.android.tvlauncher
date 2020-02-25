@@ -56,66 +56,6 @@ public class TvNotification {
         this.mTag = tag;
     }
 
-    public String getNotificationKey() {
-        return this.mNotificationKey;
-    }
-
-    public String getPackageName() {
-        return this.mPackageName;
-    }
-
-    public String getTitle() {
-        return this.mTitle;
-    }
-
-    public String getText() {
-        return this.mText;
-    }
-
-    public boolean isDismissible() {
-        return this.mDismissible;
-    }
-
-    public boolean isOngoing() {
-        return this.mIsOngoing;
-    }
-
-    public Icon getSmallIcon() {
-        return this.mSmallIcon;
-    }
-
-    public int getChannel() {
-        return this.mChannel;
-    }
-
-    public int getProgress() {
-        return this.mProgress;
-    }
-
-    public int getProgressMax() {
-        return this.mProgressMax;
-    }
-
-    public boolean hasContentIntent() {
-        return this.mHasContentIntent;
-    }
-
-    public Bitmap getBigPicture() {
-        return this.mBigPicture;
-    }
-
-    public String getContentButtonLabel() {
-        return this.mContentButtonLabel;
-    }
-
-    public String getDismissButtonLabel() {
-        return this.mDismissButtonLabel;
-    }
-
-    public String getTag() {
-        return this.mTag;
-    }
-
     /* JADX INFO: Multiple debug info for r1v1 java.lang.String: [D('index' int), D('key' java.lang.String)] */
     /* JADX INFO: Multiple debug info for r2v1 java.lang.String: [D('index' int), D('packageName' java.lang.String)] */
     public static TvNotification fromCursor(Cursor cursor) {
@@ -224,5 +164,65 @@ public class TvNotification {
         int index15 = index14 + 1;
         int index16 = index15 + 1;
         return new Object[]{key, packageName, title, text, Integer.valueOf(dismissible), Integer.valueOf(ongoing), smallIconData, Integer.valueOf(channel), Integer.valueOf(index10), Integer.valueOf(progressMax), Integer.valueOf(index13), cursor2.getBlob(index12), cursor2.getString(index14), cursor2.getString(index15), cursor2.getString(index16)};
+    }
+
+    public String getNotificationKey() {
+        return this.mNotificationKey;
+    }
+
+    public String getPackageName() {
+        return this.mPackageName;
+    }
+
+    public String getTitle() {
+        return this.mTitle;
+    }
+
+    public String getText() {
+        return this.mText;
+    }
+
+    public boolean isDismissible() {
+        return this.mDismissible;
+    }
+
+    public boolean isOngoing() {
+        return this.mIsOngoing;
+    }
+
+    public Icon getSmallIcon() {
+        return this.mSmallIcon;
+    }
+
+    public int getChannel() {
+        return this.mChannel;
+    }
+
+    public int getProgress() {
+        return this.mProgress;
+    }
+
+    public int getProgressMax() {
+        return this.mProgressMax;
+    }
+
+    public boolean hasContentIntent() {
+        return this.mHasContentIntent;
+    }
+
+    public Bitmap getBigPicture() {
+        return this.mBigPicture;
+    }
+
+    public String getContentButtonLabel() {
+        return this.mContentButtonLabel;
+    }
+
+    public String getDismissButtonLabel() {
+        return this.mDismissButtonLabel;
+    }
+
+    public String getTag() {
+        return this.mTag;
     }
 }

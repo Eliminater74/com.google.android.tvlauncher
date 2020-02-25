@@ -1,7 +1,9 @@
 package com.google.android.gms.common.api.internal;
 
 import android.os.IBinder;
+
 import com.google.android.gms.common.api.ResultStore;
+
 import java.lang.ref.WeakReference;
 import java.util.NoSuchElementException;
 
@@ -15,6 +17,10 @@ final class zzdt implements IBinder.DeathRecipient, zzdu {
         this.zzb = new WeakReference<>(resultStore);
         this.zza = new WeakReference<>(basePendingResult);
         this.zzc = new WeakReference<>(iBinder);
+    }
+
+    /* synthetic */ zzdt(BasePendingResult basePendingResult, ResultStore resultStore, IBinder iBinder, zzds zzds) {
+        this(basePendingResult, resultStore, iBinder);
     }
 
     public final void zza(BasePendingResult<?> basePendingResult) {
@@ -38,9 +44,5 @@ final class zzdt implements IBinder.DeathRecipient, zzdu {
             } catch (NoSuchElementException e) {
             }
         }
-    }
-
-    /* synthetic */ zzdt(BasePendingResult basePendingResult, ResultStore resultStore, IBinder iBinder, zzds zzds) {
-        this(basePendingResult, resultStore, iBinder);
     }
 }

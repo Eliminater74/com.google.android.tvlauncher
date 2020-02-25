@@ -12,21 +12,21 @@ import android.support.p001v4.view.accessibility.AccessibilityEventCompat;
 import android.support.p001v4.view.accessibility.AccessibilityNodeInfoCompat;
 import android.support.p001v4.view.accessibility.AccessibilityNodeProviderCompat;
 import android.support.p001v4.view.accessibility.AccessibilityRecordCompat;
-import android.support.p001v4.widget.FocusStrategy;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewParent;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /* renamed from: android.support.v4.widget.ExploreByTouchHelper */
 public abstract class ExploreByTouchHelper extends AccessibilityDelegateCompat {
-    private static final String DEFAULT_CLASS_NAME = "android.view.View";
     public static final int HOST_ID = -1;
     public static final int INVALID_ID = Integer.MIN_VALUE;
+    private static final String DEFAULT_CLASS_NAME = "android.view.View";
     private static final Rect INVALID_PARENT_BOUNDS = new Rect(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE);
     private static final FocusStrategy.BoundsAdapter<AccessibilityNodeInfoCompat> NODE_ADAPTER = new FocusStrategy.BoundsAdapter<AccessibilityNodeInfoCompat>() {
         public void obtainBounds(AccessibilityNodeInfoCompat node, Rect outBounds) {
@@ -50,28 +50,16 @@ public abstract class ExploreByTouchHelper extends AccessibilityDelegateCompat {
             return collection.size();
         }
     };
-    int mAccessibilityFocusedVirtualViewId = Integer.MIN_VALUE;
     private final View mHost;
-    private int mHoveredVirtualViewId = Integer.MIN_VALUE;
-    int mKeyboardFocusedVirtualViewId = Integer.MIN_VALUE;
     private final AccessibilityManager mManager;
-    private MyNodeProvider mNodeProvider;
     private final int[] mTempGlobalRect = new int[2];
     private final Rect mTempParentRect = new Rect();
     private final Rect mTempScreenRect = new Rect();
     private final Rect mTempVisibleRect = new Rect();
-
-    /* access modifiers changed from: protected */
-    public abstract int getVirtualViewAt(float f, float f2);
-
-    /* access modifiers changed from: protected */
-    public abstract void getVisibleVirtualViews(List<Integer> list);
-
-    /* access modifiers changed from: protected */
-    public abstract boolean onPerformActionForVirtualView(int i, int i2, @Nullable Bundle bundle);
-
-    /* access modifiers changed from: protected */
-    public abstract void onPopulateNodeForVirtualView(int i, @NonNull AccessibilityNodeInfoCompat accessibilityNodeInfoCompat);
+    int mAccessibilityFocusedVirtualViewId = Integer.MIN_VALUE;
+    int mKeyboardFocusedVirtualViewId = Integer.MIN_VALUE;
+    private int mHoveredVirtualViewId = Integer.MIN_VALUE;
+    private MyNodeProvider mNodeProvider;
 
     public ExploreByTouchHelper(@NonNull View host) {
         if (host != null) {
@@ -86,6 +74,48 @@ public abstract class ExploreByTouchHelper extends AccessibilityDelegateCompat {
         }
         throw new IllegalArgumentException("View may not be null");
     }
+
+    private static int keyToDirection(int keyCode) {
+        if (keyCode == 19) {
+            return 33;
+        }
+        if (keyCode == 21) {
+            return 17;
+        }
+        if (keyCode != 22) {
+            return 130;
+        }
+        return 66;
+    }
+
+    private static Rect guessPreviouslyFocusedRect(@NonNull View host, int direction, @NonNull Rect outBounds) {
+        int w = host.getWidth();
+        int h = host.getHeight();
+        if (direction == 17) {
+            outBounds.set(w, 0, w, h);
+        } else if (direction == 33) {
+            outBounds.set(0, h, w, h);
+        } else if (direction == 66) {
+            outBounds.set(-1, 0, -1, h);
+        } else if (direction == 130) {
+            outBounds.set(0, -1, w, -1);
+        } else {
+            throw new IllegalArgumentException("direction must be one of {FOCUS_UP, FOCUS_DOWN, FOCUS_LEFT, FOCUS_RIGHT}.");
+        }
+        return outBounds;
+    }
+
+    /* access modifiers changed from: protected */
+    public abstract int getVirtualViewAt(float f, float f2);
+
+    /* access modifiers changed from: protected */
+    public abstract void getVisibleVirtualViews(List<Integer> list);
+
+    /* access modifiers changed from: protected */
+    public abstract boolean onPerformActionForVirtualView(int i, int i2, @Nullable Bundle bundle);
+
+    /* access modifiers changed from: protected */
+    public abstract void onPopulateNodeForVirtualView(int i, @NonNull AccessibilityNodeInfoCompat accessibilityNodeInfoCompat);
 
     public AccessibilityNodeProviderCompat getAccessibilityNodeProvider(View host) {
         if (this.mNodeProvider == null) {
@@ -175,19 +205,6 @@ public abstract class ExploreByTouchHelper extends AccessibilityDelegateCompat {
         return this.mKeyboardFocusedVirtualViewId;
     }
 
-    private static int keyToDirection(int keyCode) {
-        if (keyCode == 19) {
-            return 33;
-        }
-        if (keyCode == 21) {
-            return 17;
-        }
-        if (keyCode != 22) {
-            return 130;
-        }
-        return 66;
-    }
-
     private void getBoundsInParent(int virtualViewId, Rect outBounds) {
         obtainAccessibilityNodeInfo(virtualViewId).getBoundsInParent(outBounds);
     }
@@ -236,23 +253,6 @@ public abstract class ExploreByTouchHelper extends AccessibilityDelegateCompat {
             allNodes.put(virtualViewId, createNodeForChild(virtualViewId));
         }
         return allNodes;
-    }
-
-    private static Rect guessPreviouslyFocusedRect(@NonNull View host, int direction, @NonNull Rect outBounds) {
-        int w = host.getWidth();
-        int h = host.getHeight();
-        if (direction == 17) {
-            outBounds.set(w, 0, w, h);
-        } else if (direction == 33) {
-            outBounds.set(0, h, w, h);
-        } else if (direction == 66) {
-            outBounds.set(-1, 0, -1, h);
-        } else if (direction == 130) {
-            outBounds.set(0, -1, w, -1);
-        } else {
-            throw new IllegalArgumentException("direction must be one of {FOCUS_UP, FOCUS_DOWN, FOCUS_LEFT, FOCUS_RIGHT}.");
-        }
-        return outBounds;
     }
 
     private boolean clickKeyboardFocusedVirtualView() {

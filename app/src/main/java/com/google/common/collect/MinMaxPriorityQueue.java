@@ -7,6 +7,10 @@ import com.google.common.base.Preconditions;
 import com.google.common.math.IntMath;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.j2objc.annotations.Weak;
+
+import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.util.AbstractQueue;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -18,8 +22,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Queue;
-import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible
 @Beta
@@ -27,9 +29,9 @@ public final class MinMaxPriorityQueue<E> extends AbstractQueue<E> {
     private static final int DEFAULT_CAPACITY = 11;
     private static final int EVEN_POWERS_OF_TWO = 1431655765;
     private static final int ODD_POWERS_OF_TWO = -1431655766;
-    private final MinMaxPriorityQueue<E>.Heap maxHeap;
     @VisibleForTesting
     final int maximumSize;
+    private final MinMaxPriorityQueue<E>.Heap maxHeap;
     private final MinMaxPriorityQueue<E>.Heap minHeap;
     /* access modifiers changed from: private */
     public int modCount;
@@ -37,6 +39,18 @@ public final class MinMaxPriorityQueue<E> extends AbstractQueue<E> {
     public Object[] queue;
     /* access modifiers changed from: private */
     public int size;
+
+    private MinMaxPriorityQueue(Builder<? super E> builder, int queueSize) {
+        Ordering<E> ordering = builder.ordering();
+        this.minHeap = new Heap(ordering);
+        this.maxHeap = new Heap(ordering.reverse());
+        MinMaxPriorityQueue<E>.Heap heap = this.minHeap;
+        MinMaxPriorityQueue<E>.Heap heap2 = this.maxHeap;
+        heap.otherHeap = heap2;
+        heap2.otherHeap = heap;
+        this.maximumSize = builder.maximumSize;
+        this.queue = new Object[queueSize];
+    }
 
     public static <E extends Comparable<E>> MinMaxPriorityQueue<E> create() {
         return new Builder(Ordering.natural()).create();
@@ -58,62 +72,32 @@ public final class MinMaxPriorityQueue<E> extends AbstractQueue<E> {
         return new Builder(Ordering.natural()).maximumSize(maximumSize2);
     }
 
-    @Beta
-    public static final class Builder<B> {
-        private static final int UNSET_EXPECTED_SIZE = -1;
-        private final Comparator<B> comparator;
-        private int expectedSize;
-        /* access modifiers changed from: private */
-        public int maximumSize;
-
-        private Builder(Comparator<B> comparator2) {
-            this.expectedSize = -1;
-            this.maximumSize = Integer.MAX_VALUE;
-            this.comparator = (Comparator) Preconditions.checkNotNull(comparator2);
+    @VisibleForTesting
+    static boolean isEvenLevel(int index) {
+        int oneBased = ((index + 1) ^ -1) ^ -1;
+        Preconditions.checkState(oneBased > 0, "negative index");
+        if ((EVEN_POWERS_OF_TWO & oneBased) > (ODD_POWERS_OF_TWO & oneBased)) {
+            return true;
         }
-
-        @CanIgnoreReturnValue
-        public Builder<B> expectedSize(int expectedSize2) {
-            Preconditions.checkArgument(expectedSize2 >= 0);
-            this.expectedSize = expectedSize2;
-            return this;
-        }
-
-        @CanIgnoreReturnValue
-        public Builder<B> maximumSize(int maximumSize2) {
-            Preconditions.checkArgument(maximumSize2 > 0);
-            this.maximumSize = maximumSize2;
-            return this;
-        }
-
-        public <T extends B> MinMaxPriorityQueue<T> create() {
-            return create(Collections.emptySet());
-        }
-
-        public <T extends B> MinMaxPriorityQueue<T> create(Iterable<? extends T> initialContents) {
-            MinMaxPriorityQueue<T> queue = new MinMaxPriorityQueue<>(this, MinMaxPriorityQueue.initialQueueSize(this.expectedSize, this.maximumSize, initialContents));
-            for (T element : initialContents) {
-                queue.offer(element);
-            }
-            return queue;
-        }
-
-        /* access modifiers changed from: private */
-        public <T extends B> Ordering<T> ordering() {
-            return Ordering.from(this.comparator);
-        }
+        return false;
     }
 
-    private MinMaxPriorityQueue(Builder<? super E> builder, int queueSize) {
-        Ordering<E> ordering = builder.ordering();
-        this.minHeap = new Heap(ordering);
-        this.maxHeap = new Heap(ordering.reverse());
-        MinMaxPriorityQueue<E>.Heap heap = this.minHeap;
-        MinMaxPriorityQueue<E>.Heap heap2 = this.maxHeap;
-        heap.otherHeap = heap2;
-        heap2.otherHeap = heap;
-        this.maximumSize = builder.maximumSize;
-        this.queue = new Object[queueSize];
+    @VisibleForTesting
+    static int initialQueueSize(int configuredExpectedSize, int maximumSize2, Iterable<?> initialContents) {
+        int result;
+        if (configuredExpectedSize == -1) {
+            result = 11;
+        } else {
+            result = configuredExpectedSize;
+        }
+        if (initialContents instanceof Collection) {
+            result = Math.max(result, ((Collection) initialContents).size());
+        }
+        return capAtMaximumSize(result, maximumSize2);
+    }
+
+    private static int capAtMaximumSize(int queueSize, int maximumSize2) {
+        return Math.min(queueSize - 1, maximumSize2) + 1;
     }
 
     public int size() {
@@ -261,16 +245,6 @@ public final class MinMaxPriorityQueue<E> extends AbstractQueue<E> {
         return null;
     }
 
-    static class MoveDesc<E> {
-        final E replaced;
-        final E toTrickle;
-
-        MoveDesc(E toTrickle2, E replaced2) {
-            this.toTrickle = toTrickle2;
-            this.replaced = replaced2;
-        }
-    }
-
     private E removeAndGet(int index) {
         E value = elementData(index);
         removeAt(index);
@@ -279,16 +253,6 @@ public final class MinMaxPriorityQueue<E> extends AbstractQueue<E> {
 
     private MinMaxPriorityQueue<E>.Heap heapForIndex(int i) {
         return isEvenLevel(i) ? this.minHeap : this.maxHeap;
-    }
-
-    @VisibleForTesting
-    static boolean isEvenLevel(int index) {
-        int oneBased = ((index + 1) ^ -1) ^ -1;
-        Preconditions.checkState(oneBased > 0, "negative index");
-        if ((EVEN_POWERS_OF_TWO & oneBased) > (ODD_POWERS_OF_TWO & oneBased)) {
-            return true;
-        }
-        return false;
     }
 
     /* access modifiers changed from: package-private */
@@ -300,6 +264,104 @@ public final class MinMaxPriorityQueue<E> extends AbstractQueue<E> {
             }
         }
         return true;
+    }
+
+    public Iterator<E> iterator() {
+        return new QueueIterator();
+    }
+
+    public void clear() {
+        for (int i = 0; i < this.size; i++) {
+            this.queue[i] = null;
+        }
+        this.size = 0;
+    }
+
+    public Object[] toArray() {
+        int i = this.size;
+        Object[] copyTo = new Object[i];
+        System.arraycopy(this.queue, 0, copyTo, 0, i);
+        return copyTo;
+    }
+
+    public Comparator<? super E> comparator() {
+        return this.minHeap.ordering;
+    }
+
+    /* access modifiers changed from: package-private */
+    @VisibleForTesting
+    public int capacity() {
+        return this.queue.length;
+    }
+
+    private void growIfNeeded() {
+        if (this.size > this.queue.length) {
+            Object[] newQueue = new Object[calculateNewCapacity()];
+            Object[] objArr = this.queue;
+            System.arraycopy(objArr, 0, newQueue, 0, objArr.length);
+            this.queue = newQueue;
+        }
+    }
+
+    private int calculateNewCapacity() {
+        int oldCapacity = this.queue.length;
+        return capAtMaximumSize(oldCapacity < 64 ? (oldCapacity + 1) * 2 : IntMath.checkedMultiply(oldCapacity / 2, 3), this.maximumSize);
+    }
+
+    @Beta
+    public static final class Builder<B> {
+        private static final int UNSET_EXPECTED_SIZE = -1;
+        private final Comparator<B> comparator;
+        /* access modifiers changed from: private */
+        public int maximumSize;
+        private int expectedSize;
+
+        private Builder(Comparator<B> comparator2) {
+            this.expectedSize = -1;
+            this.maximumSize = Integer.MAX_VALUE;
+            this.comparator = (Comparator) Preconditions.checkNotNull(comparator2);
+        }
+
+        @CanIgnoreReturnValue
+        public Builder<B> expectedSize(int expectedSize2) {
+            Preconditions.checkArgument(expectedSize2 >= 0);
+            this.expectedSize = expectedSize2;
+            return this;
+        }
+
+        @CanIgnoreReturnValue
+        public Builder<B> maximumSize(int maximumSize2) {
+            Preconditions.checkArgument(maximumSize2 > 0);
+            this.maximumSize = maximumSize2;
+            return this;
+        }
+
+        public <T extends B> MinMaxPriorityQueue<T> create() {
+            return create(Collections.emptySet());
+        }
+
+        public <T extends B> MinMaxPriorityQueue<T> create(Iterable<? extends T> initialContents) {
+            MinMaxPriorityQueue<T> queue = new MinMaxPriorityQueue<>(this, MinMaxPriorityQueue.initialQueueSize(this.expectedSize, this.maximumSize, initialContents));
+            for (T element : initialContents) {
+                queue.offer(element);
+            }
+            return queue;
+        }
+
+        /* access modifiers changed from: private */
+        public <T extends B> Ordering<T> ordering() {
+            return Ordering.from(this.comparator);
+        }
+    }
+
+    static class MoveDesc<E> {
+        final E replaced;
+        final E toTrickle;
+
+        MoveDesc(E toTrickle2, E replaced2) {
+            this.toTrickle = toTrickle2;
+            this.replaced = replaced2;
+        }
     }
 
     private class Heap {
@@ -631,65 +693,5 @@ public final class MinMaxPriorityQueue<E> extends AbstractQueue<E> {
                 this.nextCursor = c;
             }
         }
-    }
-
-    public Iterator<E> iterator() {
-        return new QueueIterator();
-    }
-
-    public void clear() {
-        for (int i = 0; i < this.size; i++) {
-            this.queue[i] = null;
-        }
-        this.size = 0;
-    }
-
-    public Object[] toArray() {
-        int i = this.size;
-        Object[] copyTo = new Object[i];
-        System.arraycopy(this.queue, 0, copyTo, 0, i);
-        return copyTo;
-    }
-
-    public Comparator<? super E> comparator() {
-        return this.minHeap.ordering;
-    }
-
-    /* access modifiers changed from: package-private */
-    @VisibleForTesting
-    public int capacity() {
-        return this.queue.length;
-    }
-
-    @VisibleForTesting
-    static int initialQueueSize(int configuredExpectedSize, int maximumSize2, Iterable<?> initialContents) {
-        int result;
-        if (configuredExpectedSize == -1) {
-            result = 11;
-        } else {
-            result = configuredExpectedSize;
-        }
-        if (initialContents instanceof Collection) {
-            result = Math.max(result, ((Collection) initialContents).size());
-        }
-        return capAtMaximumSize(result, maximumSize2);
-    }
-
-    private void growIfNeeded() {
-        if (this.size > this.queue.length) {
-            Object[] newQueue = new Object[calculateNewCapacity()];
-            Object[] objArr = this.queue;
-            System.arraycopy(objArr, 0, newQueue, 0, objArr.length);
-            this.queue = newQueue;
-        }
-    }
-
-    private int calculateNewCapacity() {
-        int oldCapacity = this.queue.length;
-        return capAtMaximumSize(oldCapacity < 64 ? (oldCapacity + 1) * 2 : IntMath.checkedMultiply(oldCapacity / 2, 3), this.maximumSize);
-    }
-
-    private static int capAtMaximumSize(int queueSize, int maximumSize2) {
-        return Math.min(queueSize - 1, maximumSize2) + 1;
     }
 }

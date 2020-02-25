@@ -1,7 +1,5 @@
 package androidx.leanback.widget;
 
-import androidx.leanback.widget.StaggeredGrid;
-
 final class StaggeredGridDefault extends StaggeredGrid {
     StaggeredGridDefault() {
     }

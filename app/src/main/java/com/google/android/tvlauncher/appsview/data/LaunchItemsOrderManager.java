@@ -4,8 +4,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.VisibleForTesting;
 import android.text.TextUtils;
+
 import com.google.android.tvlauncher.appsview.LaunchItem;
 import com.google.android.tvlauncher.util.OemConfiguration;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -18,61 +20,20 @@ class LaunchItemsOrderManager {
     private static final int MAX_OOB_GAMES = 10;
     private static final String PREF_FILE_NAME = "com.google.android.tvlauncher.appsview.PREFERENCE_FILE_KEY";
     private static LaunchItemsOrderManager sLaunchItemsOrderManager;
-    private LaunchItemComparator mComparator;
     /* access modifiers changed from: private */
     public final HashMap<String, Integer> mItemOrderMap = new HashMap<>();
     /* access modifiers changed from: private */
     public final HashMap<String, Integer> mOemOrderMap = new HashMap<>();
-    private SharedPreferences mPrefs;
     /* access modifiers changed from: private */
     public boolean mUseDefaultOrdering;
+    private LaunchItemComparator mComparator;
+    private SharedPreferences mPrefs;
 
-    private class LaunchItemComparator implements Comparator<LaunchItem> {
-        private LaunchItemComparator() {
-        }
-
-        public int compare(LaunchItem o1, LaunchItem o2) {
-            if (o1 == null || o2 == null) {
-                return 0;
-            }
-            if (LaunchItemsOrderManager.this.mUseDefaultOrdering) {
-                Integer o1Index = (Integer) LaunchItemsOrderManager.this.mOemOrderMap.get(o1.getPackageName());
-                Integer o2Index = (Integer) LaunchItemsOrderManager.this.mOemOrderMap.get(o2.getPackageName());
-                int returnVal = compareIndices(o1Index, o2Index);
-                if (returnVal != 0) {
-                    return returnVal;
-                }
-                if (!(o1Index == null || o2Index == null)) {
-                    return o1.compareTo(o2);
-                }
-            }
-            Integer o1Index2 = (Integer) LaunchItemsOrderManager.this.mItemOrderMap.get(o1.getPackageName());
-            Integer o2Index2 = (Integer) LaunchItemsOrderManager.this.mItemOrderMap.get(o2.getPackageName());
-            int returnVal2 = compareIndices(o1Index2, o2Index2);
-            if (returnVal2 != 0) {
-                return returnVal2;
-            }
-            if (o1Index2 == null || o2Index2 == null) {
-                return o1.compareTo(o2);
-            }
-            return o1.compareTo(o2);
-        }
-
-        private int compareIndices(Integer o1Index, Integer o2Index) {
-            if (o1Index == null && o2Index == null) {
-                return 0;
-            }
-            if (o1Index == null) {
-                return 1;
-            }
-            if (o2Index == null || o2Index.intValue() > o1Index.intValue()) {
-                return -1;
-            }
-            if (o2Index.intValue() < o1Index.intValue()) {
-                return 1;
-            }
-            return 0;
-        }
+    @VisibleForTesting
+    LaunchItemsOrderManager(Context context) {
+        this.mPrefs = context.getSharedPreferences(PREF_FILE_NAME, 0);
+        this.mComparator = new LaunchItemComparator();
+        this.mUseDefaultOrdering = this.mPrefs.getBoolean(KEY_USE_DEFAULT_ORDER, true);
     }
 
     public static LaunchItemsOrderManager getInstance(Context context) {
@@ -157,13 +118,6 @@ class LaunchItemsOrderManager {
         }
     }
 
-    @VisibleForTesting
-    LaunchItemsOrderManager(Context context) {
-        this.mPrefs = context.getSharedPreferences(PREF_FILE_NAME, 0);
-        this.mComparator = new LaunchItemComparator();
-        this.mUseDefaultOrdering = this.mPrefs.getBoolean(KEY_USE_DEFAULT_ORDER, true);
-    }
-
     private void addItemsToPreferences(List<LaunchItem> items, SharedPreferences.Editor editor) {
         for (int i = 0; i < items.size(); i++) {
             String pkgName = items.get(i).getPackageName();
@@ -200,5 +154,53 @@ class LaunchItemsOrderManager {
     @VisibleForTesting
     public HashMap<String, Integer> getItemOrderMap() {
         return this.mItemOrderMap;
+    }
+
+    private class LaunchItemComparator implements Comparator<LaunchItem> {
+        private LaunchItemComparator() {
+        }
+
+        public int compare(LaunchItem o1, LaunchItem o2) {
+            if (o1 == null || o2 == null) {
+                return 0;
+            }
+            if (LaunchItemsOrderManager.this.mUseDefaultOrdering) {
+                Integer o1Index = (Integer) LaunchItemsOrderManager.this.mOemOrderMap.get(o1.getPackageName());
+                Integer o2Index = (Integer) LaunchItemsOrderManager.this.mOemOrderMap.get(o2.getPackageName());
+                int returnVal = compareIndices(o1Index, o2Index);
+                if (returnVal != 0) {
+                    return returnVal;
+                }
+                if (!(o1Index == null || o2Index == null)) {
+                    return o1.compareTo(o2);
+                }
+            }
+            Integer o1Index2 = (Integer) LaunchItemsOrderManager.this.mItemOrderMap.get(o1.getPackageName());
+            Integer o2Index2 = (Integer) LaunchItemsOrderManager.this.mItemOrderMap.get(o2.getPackageName());
+            int returnVal2 = compareIndices(o1Index2, o2Index2);
+            if (returnVal2 != 0) {
+                return returnVal2;
+            }
+            if (o1Index2 == null || o2Index2 == null) {
+                return o1.compareTo(o2);
+            }
+            return o1.compareTo(o2);
+        }
+
+        private int compareIndices(Integer o1Index, Integer o2Index) {
+            if (o1Index == null && o2Index == null) {
+                return 0;
+            }
+            if (o1Index == null) {
+                return 1;
+            }
+            if (o2Index == null || o2Index.intValue() > o1Index.intValue()) {
+                return -1;
+            }
+            if (o2Index.intValue() < o1Index.intValue()) {
+                return 1;
+            }
+            return 0;
+        }
     }
 }

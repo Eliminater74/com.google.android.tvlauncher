@@ -2,16 +2,12 @@ package com.google.android.exoplayer2.source;
 
 import com.google.android.exoplayer2.SeekParameters;
 import com.google.android.exoplayer2.offline.StreamKey;
-import com.google.android.exoplayer2.source.SequenceableLoader;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
+
 import java.io.IOException;
 import java.util.List;
 
 public interface MediaPeriod extends SequenceableLoader {
-
-    public interface Callback extends SequenceableLoader.Callback<MediaPeriod> {
-        void onPrepared(MediaPeriod mediaPeriod);
-    }
 
     boolean continueLoading(long j);
 
@@ -38,4 +34,8 @@ public interface MediaPeriod extends SequenceableLoader {
     long seekToUs(long j);
 
     long selectTracks(TrackSelection[] trackSelectionArr, boolean[] zArr, SampleStream[] sampleStreamArr, boolean[] zArr2, long j);
+
+    public interface Callback extends SequenceableLoader.Callback<MediaPeriod> {
+        void onPrepared(MediaPeriod mediaPeriod);
+    }
 }

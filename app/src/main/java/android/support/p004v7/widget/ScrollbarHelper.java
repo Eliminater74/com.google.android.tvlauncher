@@ -1,10 +1,12 @@
 package android.support.p004v7.widget;
 
-import android.support.p004v7.widget.RecyclerView;
 import android.view.View;
 
 /* renamed from: android.support.v7.widget.ScrollbarHelper */
 class ScrollbarHelper {
+    private ScrollbarHelper() {
+    }
+
     static int computeScrollOffset(RecyclerView.State state, OrientationHelper orientation, View startChild, View endChild, RecyclerView.LayoutManager lm, boolean smoothScrollbarEnabled, boolean reverseLayout) {
         int itemsBefore;
         if (lm.getChildCount() == 0 || state.getItemCount() == 0 || startChild == null || endChild == null) {
@@ -41,8 +43,5 @@ class ScrollbarHelper {
             return state.getItemCount();
         }
         return (int) ((((float) (orientation.getDecoratedEnd(endChild) - orientation.getDecoratedStart(startChild))) / ((float) (Math.abs(lm.getPosition(startChild) - lm.getPosition(endChild)) + 1))) * ((float) state.getItemCount()));
-    }
-
-    private ScrollbarHelper() {
     }
 }

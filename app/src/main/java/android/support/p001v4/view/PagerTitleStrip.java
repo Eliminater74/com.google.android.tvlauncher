@@ -8,7 +8,6 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.p001v4.view.ViewPager;
 import android.support.p001v4.widget.TextViewCompat;
 import android.text.TextUtils;
 import android.text.method.SingleLineTransformationMethod;
@@ -17,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.TextView;
+
 import java.lang.ref.WeakReference;
 import java.util.Locale;
 
@@ -27,41 +27,20 @@ public class PagerTitleStrip extends ViewGroup {
     private static final float SIDE_ALPHA = 0.6f;
     private static final int[] TEXT_ATTRS = {16843660};
     private static final int TEXT_SPACING = 16;
+    private final PageListener mPageListener;
     TextView mCurrText;
-    private int mGravity;
-    private int mLastKnownCurrentPage;
     float mLastKnownPositionOffset;
     TextView mNextText;
-    private int mNonPrimaryAlpha;
-    private final PageListener mPageListener;
     ViewPager mPager;
     TextView mPrevText;
-    private int mScaledTextSpacing;
     int mTextColor;
+    private int mGravity;
+    private int mLastKnownCurrentPage;
+    private int mNonPrimaryAlpha;
+    private int mScaledTextSpacing;
     private boolean mUpdatingPositions;
     private boolean mUpdatingText;
     private WeakReference<PagerAdapter> mWatchingAdapter;
-
-    /* renamed from: android.support.v4.view.PagerTitleStrip$SingleLineAllCapsTransform */
-    private static class SingleLineAllCapsTransform extends SingleLineTransformationMethod {
-        private Locale mLocale;
-
-        SingleLineAllCapsTransform(Context context) {
-            this.mLocale = context.getResources().getConfiguration().locale;
-        }
-
-        public CharSequence getTransformation(CharSequence source, View view) {
-            CharSequence source2 = super.getTransformation(source, view);
-            if (source2 != null) {
-                return source2.toString().toUpperCase(this.mLocale);
-            }
-            return null;
-        }
-    }
-
-    private static void setSingleLineAllCaps(TextView text) {
-        text.setTransformationMethod(new SingleLineAllCapsTransform(text.getContext()));
-    }
 
     public PagerTitleStrip(@NonNull Context context) {
         this(context, null);
@@ -123,13 +102,17 @@ public class PagerTitleStrip extends ViewGroup {
         this.mScaledTextSpacing = (int) (16.0f * context.getResources().getDisplayMetrics().density);
     }
 
-    public void setTextSpacing(int spacingPixels) {
-        this.mScaledTextSpacing = spacingPixels;
-        requestLayout();
+    private static void setSingleLineAllCaps(TextView text) {
+        text.setTransformationMethod(new SingleLineAllCapsTransform(text.getContext()));
     }
 
     public int getTextSpacing() {
         return this.mScaledTextSpacing;
+    }
+
+    public void setTextSpacing(int spacingPixels) {
+        this.mScaledTextSpacing = spacingPixels;
+        requestLayout();
     }
 
     public void setNonPrimaryAlpha(@FloatRange(from = 0.0d, mo106to = 1.0d) float alpha) {
@@ -347,6 +330,23 @@ public class PagerTitleStrip extends ViewGroup {
             return bg.getIntrinsicHeight();
         }
         return 0;
+    }
+
+    /* renamed from: android.support.v4.view.PagerTitleStrip$SingleLineAllCapsTransform */
+    private static class SingleLineAllCapsTransform extends SingleLineTransformationMethod {
+        private Locale mLocale;
+
+        SingleLineAllCapsTransform(Context context) {
+            this.mLocale = context.getResources().getConfiguration().locale;
+        }
+
+        public CharSequence getTransformation(CharSequence source, View view) {
+            CharSequence source2 = super.getTransformation(source, view);
+            if (source2 != null) {
+                return source2.toString().toUpperCase(this.mLocale);
+            }
+            return null;
+        }
     }
 
     /* renamed from: android.support.v4.view.PagerTitleStrip$PageListener */

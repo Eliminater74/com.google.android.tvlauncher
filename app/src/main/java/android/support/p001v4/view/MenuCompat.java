@@ -8,6 +8,9 @@ import android.view.MenuItem;
 
 /* renamed from: android.support.v4.view.MenuCompat */
 public final class MenuCompat {
+    private MenuCompat() {
+    }
+
     @Deprecated
     public static void setShowAsAction(MenuItem item, int actionEnum) {
         item.setShowAsAction(actionEnum);
@@ -20,8 +23,5 @@ public final class MenuCompat {
         } else if (Build.VERSION.SDK_INT >= 28) {
             menu.setGroupDividerEnabled(enabled);
         }
-    }
-
-    private MenuCompat() {
     }
 }

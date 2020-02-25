@@ -1,12 +1,13 @@
 package com.google.android.exoplayer2.source;
 
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.Timeline;
-import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.upstream.Allocator;
 import com.google.android.exoplayer2.upstream.TransferListener;
 import com.google.android.exoplayer2.util.Assertions;
+
 import java.io.IOException;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -15,67 +16,19 @@ import java.util.ArrayList;
 
 public final class ClippingMediaSource extends CompositeMediaSource<Void> {
     private final boolean allowDynamicClippingUpdates;
-    private IllegalClippingException clippingError;
-    private ClippingTimeline clippingTimeline;
     private final boolean enableInitialDiscontinuity;
     private final long endUs;
-    @Nullable
-    private Object manifest;
     private final ArrayList<ClippingMediaPeriod> mediaPeriods;
     private final MediaSource mediaSource;
-    private long periodEndUs;
-    private long periodStartUs;
     private final boolean relativeToDefaultPosition;
     private final long startUs;
     private final Timeline.Window window;
-
-    public static final class IllegalClippingException extends IOException {
-        public static final int REASON_INVALID_PERIOD_COUNT = 0;
-        public static final int REASON_NOT_SEEKABLE_TO_START = 1;
-        public static final int REASON_START_EXCEEDS_END = 2;
-        public final int reason;
-
-        @Documented
-        @Retention(RetentionPolicy.SOURCE)
-        public @interface Reason {
-        }
-
-        /* JADX WARNING: Illegal instructions before constructor call */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
-        public IllegalClippingException(int r4) {
-            /*
-                r3 = this;
-                java.lang.String r0 = getReasonDescription(r4)
-                java.lang.String r0 = java.lang.String.valueOf(r0)
-                int r1 = r0.length()
-                java.lang.String r2 = "Illegal clipping: "
-                if (r1 == 0) goto L_0x0015
-                java.lang.String r0 = r2.concat(r0)
-                goto L_0x001a
-            L_0x0015:
-                java.lang.String r0 = new java.lang.String
-                r0.<init>(r2)
-            L_0x001a:
-                r3.<init>(r0)
-                r3.reason = r4
-                return
-            */
-            throw new UnsupportedOperationException("Method not decompiled: com.google.android.exoplayer2.source.ClippingMediaSource.IllegalClippingException.<init>(int):void");
-        }
-
-        private static String getReasonDescription(int reason2) {
-            if (reason2 == 0) {
-                return "invalid period count";
-            }
-            if (reason2 == 1) {
-                return "not seekable to start";
-            }
-            if (reason2 != 2) {
-                return "unknown";
-            }
-            return "start exceeds end";
-        }
-    }
+    private IllegalClippingException clippingError;
+    private ClippingTimeline clippingTimeline;
+    @Nullable
+    private Object manifest;
+    private long periodEndUs;
+    private long periodStartUs;
 
     public ClippingMediaSource(MediaSource mediaSource2, long startPositionUs, long endPositionUs) {
         this(mediaSource2, startPositionUs, endPositionUs, true, false, false);
@@ -205,6 +158,54 @@ public final class ClippingMediaSource extends CompositeMediaSource<Void> {
             return Math.min(C0841C.usToMs(j) - startMs, clippedTimeMs);
         }
         return clippedTimeMs;
+    }
+
+    public static final class IllegalClippingException extends IOException {
+        public static final int REASON_INVALID_PERIOD_COUNT = 0;
+        public static final int REASON_NOT_SEEKABLE_TO_START = 1;
+        public static final int REASON_START_EXCEEDS_END = 2;
+        public final int reason;
+
+        /* JADX WARNING: Illegal instructions before constructor call */
+        /* Code decompiled incorrectly, please refer to instructions dump. */
+        public IllegalClippingException(int r4) {
+            /*
+                r3 = this;
+                java.lang.String r0 = getReasonDescription(r4)
+                java.lang.String r0 = java.lang.String.valueOf(r0)
+                int r1 = r0.length()
+                java.lang.String r2 = "Illegal clipping: "
+                if (r1 == 0) goto L_0x0015
+                java.lang.String r0 = r2.concat(r0)
+                goto L_0x001a
+            L_0x0015:
+                java.lang.String r0 = new java.lang.String
+                r0.<init>(r2)
+            L_0x001a:
+                r3.<init>(r0)
+                r3.reason = r4
+                return
+            */
+            throw new UnsupportedOperationException("Method not decompiled: com.google.android.exoplayer2.source.ClippingMediaSource.IllegalClippingException.<init>(int):void");
+        }
+
+        private static String getReasonDescription(int reason2) {
+            if (reason2 == 0) {
+                return "invalid period count";
+            }
+            if (reason2 == 1) {
+                return "not seekable to start";
+            }
+            if (reason2 != 2) {
+                return "unknown";
+            }
+            return "start exceeds end";
+        }
+
+        @Documented
+        @Retention(RetentionPolicy.SOURCE)
+        public @interface Reason {
+        }
     }
 
     private static final class ClippingTimeline extends ForwardingTimeline {

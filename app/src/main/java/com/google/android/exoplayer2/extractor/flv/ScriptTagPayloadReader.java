@@ -3,6 +3,7 @@ package com.google.android.exoplayer2.extractor.flv;
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.util.ParsableByteArray;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -23,33 +24,6 @@ final class ScriptTagPayloadReader extends TagPayloadReader {
 
     public ScriptTagPayloadReader() {
         super(null);
-    }
-
-    public long getDurationUs() {
-        return this.durationUs;
-    }
-
-    public void seek() {
-    }
-
-    /* access modifiers changed from: protected */
-    public boolean parseHeader(ParsableByteArray data) {
-        return true;
-    }
-
-    /* access modifiers changed from: protected */
-    public void parsePayload(ParsableByteArray data, long timeUs) throws ParserException {
-        if (readAmfType(data) != 2) {
-            throw new ParserException();
-        } else if (NAME_METADATA.equals(readAmfString(data)) && readAmfType(data) == 8) {
-            Map<String, Object> metadata = readAmfEcmaArray(data);
-            if (metadata.containsKey(KEY_DURATION)) {
-                double durationSeconds = ((Double) metadata.get(KEY_DURATION)).doubleValue();
-                if (durationSeconds > 0.0d) {
-                    this.durationUs = (long) (1000000.0d * durationSeconds);
-                }
-            }
-        }
     }
 
     private static int readAmfType(ParsableByteArray data) {
@@ -134,5 +108,32 @@ final class ScriptTagPayloadReader extends TagPayloadReader {
             return null;
         }
         return readAmfDate(data);
+    }
+
+    public long getDurationUs() {
+        return this.durationUs;
+    }
+
+    public void seek() {
+    }
+
+    /* access modifiers changed from: protected */
+    public boolean parseHeader(ParsableByteArray data) {
+        return true;
+    }
+
+    /* access modifiers changed from: protected */
+    public void parsePayload(ParsableByteArray data, long timeUs) throws ParserException {
+        if (readAmfType(data) != 2) {
+            throw new ParserException();
+        } else if (NAME_METADATA.equals(readAmfString(data)) && readAmfType(data) == 8) {
+            Map<String, Object> metadata = readAmfEcmaArray(data);
+            if (metadata.containsKey(KEY_DURATION)) {
+                double durationSeconds = ((Double) metadata.get(KEY_DURATION)).doubleValue();
+                if (durationSeconds > 0.0d) {
+                    this.durationUs = (long) (1000000.0d * durationSeconds);
+                }
+            }
+        }
     }
 }

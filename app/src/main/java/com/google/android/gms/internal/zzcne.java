@@ -6,6 +6,14 @@ import com.google.android.gms.common.internal.Hide;
 /* compiled from: Singletons */
 public final class zzcne {
     private static zzcne zza;
+
+    static {
+        zzcne zzcne = new zzcne();
+        synchronized (zzcne.class) {
+            zza = zzcne;
+        }
+    }
+
     private final zzcmz zzb = new zzcmz();
     private final zzcna zzc = new zzcna();
 
@@ -26,12 +34,5 @@ public final class zzcne {
 
     public static zzcna zzb() {
         return zzc().zzc;
-    }
-
-    static {
-        zzcne zzcne = new zzcne();
-        synchronized (zzcne.class) {
-            zza = zzcne;
-        }
     }
 }

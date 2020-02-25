@@ -20,6 +20,7 @@ import android.support.annotation.VisibleForTesting;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
+
 import com.google.android.tvlauncher.appsview.LaunchItem;
 import com.google.android.tvlauncher.appsview.PackageChangedReceiver;
 import com.google.android.tvlauncher.settings.ProfilesManager;
@@ -28,6 +29,7 @@ import com.google.android.tvlauncher.util.OemAppBase;
 import com.google.android.tvlauncher.util.OemAppPromotions;
 import com.google.android.tvlauncher.util.OemConfiguration;
 import com.google.android.tvrecommendations.shared.util.Constants;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -37,81 +39,36 @@ import java.util.Locale;
 import java.util.Set;
 
 public abstract class LaunchItemsManager implements PackageChangedReceiver.Listener, InstallingLaunchItemListener {
+    static final long FLEX_TIME_OOB_ORDERING = 8640000;
+    static final long MAX_TIME_OOB_ORDERING = 172800000;
     private static final String APP_STORE_PACKAGE_NAME = "com.android.vending";
     private static final boolean DEBUG = false;
-    static final long FLEX_TIME_OOB_ORDERING = 8640000;
     private static final String GAME_STORE_PACKAGE_NAME = "com.google.android.play.games";
     private static final String KEY_SAVE_LAUNCH_ITEM_ORDER = "key_save_launch_item_order";
-    static final long MAX_TIME_OOB_ORDERING = 172800000;
     private static final String TAG = "LaunchItemsManager";
     /* access modifiers changed from: private */
     public final List<LaunchItem> mAllLaunchItems = new LinkedList();
-    private LaunchItem mAppStore;
     /* access modifiers changed from: private */
     public final List<AppsViewChangeListener> mAppsViewListeners = new LinkedList();
-    protected Context mContext;
-    private LocaleList mCurrentLocales;
     private final BroadcastReceiver mExternalAppsUpdateReceiver;
     private final FavoriteLaunchItemsManager mFavoriteLaunchItemsManager;
-    private LaunchItem mGameStore;
-    private boolean mHasPendingLoadRequest;
     private final List<LaunchItem> mInstallingLaunchItems = new LinkedList();
-    private InstallingLaunchItemsDataHelper mInstallingLaunchItemsDataHelper;
-    private boolean mIsInitialized;
+    private final PackageChangedReceiver mPackageChangedReceiver;
     /* access modifiers changed from: private */
     public boolean mItemsLoaded;
     /* access modifiers changed from: private */
     public LaunchItemsOrderManager mLaunchItemsOrderManager;
-    private final PackageChangedReceiver mPackageChangedReceiver;
-    private int mReceiversRegisteredRefCount;
     /* access modifiers changed from: private */
     public AsyncTask mRefreshTask;
+    protected Context mContext;
+    private LaunchItem mAppStore;
+    private LocaleList mCurrentLocales;
+    private LaunchItem mGameStore;
+    private boolean mHasPendingLoadRequest;
+    private InstallingLaunchItemsDataHelper mInstallingLaunchItemsDataHelper;
+    private boolean mIsInitialized;
+    private int mReceiversRegisteredRefCount;
     private List<SearchPackageChangeListener> mSearchChangeListeners = new LinkedList();
-
-    public interface AppsViewChangeListener {
-        void onEditModeItemOrderChange(ArrayList<LaunchItem> arrayList, boolean z, Pair<Integer, Integer> pair);
-
-        void onLaunchItemsAddedOrUpdated(ArrayList<LaunchItem> arrayList);
-
-        void onLaunchItemsLoaded();
-
-        void onLaunchItemsRemoved(ArrayList<LaunchItem> arrayList);
-    }
-
-    public interface HomeScreenItemsChangeListener {
-        void onHomeScreenItemsChanged(List<LaunchItem> list);
-
-        void onHomeScreenItemsLoaded();
-
-        void onHomeScreenItemsSwapped(int i, int i2);
-    }
-
-    public interface SearchPackageChangeListener {
-        void onSearchPackageChanged();
-    }
-
-    /* access modifiers changed from: package-private */
-    public abstract Intent createNativeAppIntent(ResolveInfo resolveInfo);
-
-    /* access modifiers changed from: package-private */
-    public abstract List<ResolveInfo> getRawLaunchItems();
-
-    /* access modifiers changed from: package-private */
-    public abstract List<ResolveInfo> getRawLaunchItemsForPackage(String str);
-
-    /* access modifiers changed from: package-private */
-    public abstract boolean shouldShowAppStoreLaunchItem();
-
-    /* access modifiers changed from: package-private */
-    public abstract boolean shouldShowGameStoreLaunchItem();
-
-    public static boolean checkIfAppStore(String pkgName) {
-        return "com.android.vending".equalsIgnoreCase(pkgName);
-    }
-
-    public static boolean checkIfGameStore(String pkgName) {
-        return GAME_STORE_PACKAGE_NAME.equalsIgnoreCase(pkgName);
-    }
 
     LaunchItemsManager(Context context) {
         this.mContext = context.getApplicationContext();
@@ -131,6 +88,50 @@ public abstract class LaunchItemsManager implements PackageChangedReceiver.Liste
         });
         this.mInstallingLaunchItemsDataHelper = InstallingLaunchItemsDataHelper.getInstance(this.mContext);
     }
+
+    public static boolean checkIfAppStore(String pkgName) {
+        return "com.android.vending".equalsIgnoreCase(pkgName);
+    }
+
+    public static boolean checkIfGameStore(String pkgName) {
+        return GAME_STORE_PACKAGE_NAME.equalsIgnoreCase(pkgName);
+    }
+
+    @VisibleForTesting
+    static LaunchItem createAppLinkLaunchItem(OemAppBase appLink) {
+        LaunchItem item = new LaunchItem();
+        changeToVirtualLaunchItem(item, appLink);
+        item.setInitialInstall(true);
+        return item;
+    }
+
+    private static LaunchItem changeToVirtualLaunchItem(LaunchItem item, OemAppBase appLink) {
+        item.recycle();
+        item.setLastUpdateTime(0);
+        item.setLabel(appLink.getAppName());
+        item.setPackageName(appLink.getId());
+        item.setIsGame(appLink.isGame());
+        item.setIntent(IntentUtil.createVirtualAppIntent(appLink.getPackageName(), appLink.getDataUri()));
+        item.setBannerUri(appLink.getBannerUri());
+        item.setDataUri(appLink.getDataUri());
+        item.setIsAppLink(true);
+        return item;
+    }
+
+    /* access modifiers changed from: package-private */
+    public abstract Intent createNativeAppIntent(ResolveInfo resolveInfo);
+
+    /* access modifiers changed from: package-private */
+    public abstract List<ResolveInfo> getRawLaunchItems();
+
+    /* access modifiers changed from: package-private */
+    public abstract List<ResolveInfo> getRawLaunchItemsForPackage(String str);
+
+    /* access modifiers changed from: package-private */
+    public abstract boolean shouldShowAppStoreLaunchItem();
+
+    /* access modifiers changed from: package-private */
+    public abstract boolean shouldShowGameStoreLaunchItem();
 
     public void initIfNeeded() {
         if (!this.mIsInitialized) {
@@ -695,14 +696,6 @@ public abstract class LaunchItemsManager implements PackageChangedReceiver.Liste
         return item;
     }
 
-    @VisibleForTesting
-    static LaunchItem createAppLinkLaunchItem(OemAppBase appLink) {
-        LaunchItem item = new LaunchItem();
-        changeToVirtualLaunchItem(item, appLink);
-        item.setInitialInstall(true);
-        return item;
-    }
-
     private LaunchItem changeToNativeLaunchItem(LaunchItem item, Context context, ResolveInfo info) {
         item.recycle();
         item.setLabel(info.loadLabel(context.getPackageManager()));
@@ -732,27 +725,84 @@ public abstract class LaunchItemsManager implements PackageChangedReceiver.Liste
         return item;
     }
 
-    private static LaunchItem changeToVirtualLaunchItem(LaunchItem item, OemAppBase appLink) {
-        item.recycle();
-        item.setLastUpdateTime(0);
-        item.setLabel(appLink.getAppName());
-        item.setPackageName(appLink.getId());
-        item.setIsGame(appLink.isGame());
-        item.setIntent(IntentUtil.createVirtualAppIntent(appLink.getPackageName(), appLink.getDataUri()));
-        item.setBannerUri(appLink.getBannerUri());
-        item.setDataUri(appLink.getDataUri());
-        item.setIsAppLink(true);
-        return item;
+    public interface AppsViewChangeListener {
+        void onEditModeItemOrderChange(ArrayList<LaunchItem> arrayList, boolean z, Pair<Integer, Integer> pair);
+
+        void onLaunchItemsAddedOrUpdated(ArrayList<LaunchItem> arrayList);
+
+        void onLaunchItemsLoaded();
+
+        void onLaunchItemsRemoved(ArrayList<LaunchItem> arrayList);
+    }
+
+    public interface HomeScreenItemsChangeListener {
+        void onHomeScreenItemsChanged(List<LaunchItem> list);
+
+        void onHomeScreenItemsLoaded();
+
+        void onHomeScreenItemsSwapped(int i, int i2);
+    }
+
+    public interface SearchPackageChangeListener {
+        void onSearchPackageChanged();
+    }
+
+    private static class StopOutOfBoxOrderingTask extends AsyncTask<Context, Void, Void> {
+        private StopOutOfBoxOrderingTask() {
+        }
+
+        /* access modifiers changed from: protected */
+        public Void doInBackground(Context... contexts) {
+            final Context context = contexts[0];
+            final OemConfiguration oemConfiguration = OemConfiguration.get(context);
+            if (!oemConfiguration.isDataLoaded()) {
+                oemConfiguration.registerOnDataLoadedListener(new OemConfiguration.OnDataLoadedListener() {
+                    public void onDataLoaded() {
+                        oemConfiguration.unregisterOnDataLoadedListener(this);
+                        StopOutOfBoxOrderingTask.this.checkItemsLoadedAndSwitchToUserCustomization(context);
+                    }
+                });
+                return null;
+            }
+            checkItemsLoadedAndSwitchToUserCustomization(context);
+            return null;
+        }
+
+        /* access modifiers changed from: private */
+        public void checkItemsLoadedAndSwitchToUserCustomization(Context context) {
+            final LaunchItemsManager launchItemsManager = LaunchItemsManagerProvider.getInstance(context);
+            launchItemsManager.initIfNeeded();
+            if (launchItemsManager.areItemsLoaded()) {
+                launchItemsManager.switchToUserCustomization();
+                return;
+            }
+            launchItemsManager.registerAppsViewChangeListener(new AppsViewChangeListener(this) {
+                public void onLaunchItemsLoaded() {
+                    launchItemsManager.unregisterAppsViewChangeListener(this);
+                    launchItemsManager.switchToUserCustomization();
+                }
+
+                public void onLaunchItemsAddedOrUpdated(ArrayList<LaunchItem> arrayList) {
+                }
+
+                public void onLaunchItemsRemoved(ArrayList<LaunchItem> arrayList) {
+                }
+
+                public void onEditModeItemOrderChange(ArrayList<LaunchItem> arrayList, boolean isGameItems, Pair<Integer, Integer> pair) {
+                }
+            });
+            launchItemsManager.refreshLaunchItems();
+        }
     }
 
     @VisibleForTesting
     class CreateLaunchItemsListTask extends AsyncTask<Void, Void, Set<LaunchItem>> {
+        CreateLaunchItemsListTask() {
+        }
+
         /* access modifiers changed from: protected */
         public /* bridge */ /* synthetic */ void onPostExecute(Object obj) {
             onPostExecute((Set<LaunchItem>) ((Set) obj));
-        }
-
-        CreateLaunchItemsListTask() {
         }
 
         /* access modifiers changed from: protected */
@@ -811,54 +861,6 @@ public abstract class LaunchItemsManager implements PackageChangedReceiver.Liste
                 cl.onLaunchItemsLoaded();
             }
             AsyncTask unused2 = LaunchItemsManager.this.mRefreshTask = null;
-        }
-    }
-
-    private static class StopOutOfBoxOrderingTask extends AsyncTask<Context, Void, Void> {
-        private StopOutOfBoxOrderingTask() {
-        }
-
-        /* access modifiers changed from: protected */
-        public Void doInBackground(Context... contexts) {
-            final Context context = contexts[0];
-            final OemConfiguration oemConfiguration = OemConfiguration.get(context);
-            if (!oemConfiguration.isDataLoaded()) {
-                oemConfiguration.registerOnDataLoadedListener(new OemConfiguration.OnDataLoadedListener() {
-                    public void onDataLoaded() {
-                        oemConfiguration.unregisterOnDataLoadedListener(this);
-                        StopOutOfBoxOrderingTask.this.checkItemsLoadedAndSwitchToUserCustomization(context);
-                    }
-                });
-                return null;
-            }
-            checkItemsLoadedAndSwitchToUserCustomization(context);
-            return null;
-        }
-
-        /* access modifiers changed from: private */
-        public void checkItemsLoadedAndSwitchToUserCustomization(Context context) {
-            final LaunchItemsManager launchItemsManager = LaunchItemsManagerProvider.getInstance(context);
-            launchItemsManager.initIfNeeded();
-            if (launchItemsManager.areItemsLoaded()) {
-                launchItemsManager.switchToUserCustomization();
-                return;
-            }
-            launchItemsManager.registerAppsViewChangeListener(new AppsViewChangeListener(this) {
-                public void onLaunchItemsLoaded() {
-                    launchItemsManager.unregisterAppsViewChangeListener(this);
-                    launchItemsManager.switchToUserCustomization();
-                }
-
-                public void onLaunchItemsAddedOrUpdated(ArrayList<LaunchItem> arrayList) {
-                }
-
-                public void onLaunchItemsRemoved(ArrayList<LaunchItem> arrayList) {
-                }
-
-                public void onEditModeItemOrderChange(ArrayList<LaunchItem> arrayList, boolean isGameItems, Pair<Integer, Integer> pair) {
-                }
-            });
-            launchItemsManager.refreshLaunchItems();
         }
     }
 }

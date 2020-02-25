@@ -2,8 +2,8 @@ package com.google.common.collect;
 
 import com.google.common.annotations.GwtCompatible;
 import com.google.errorprone.annotations.concurrent.LazyInit;
+
 import java.io.Serializable;
-import java.lang.Enum;
 import java.util.Collection;
 import java.util.EnumSet;
 
@@ -12,6 +12,10 @@ final class ImmutableEnumSet<E extends Enum<E>> extends ImmutableSet<E> {
     private final transient EnumSet<E> delegate;
     @LazyInit
     private transient int hashCode;
+
+    private ImmutableEnumSet(EnumSet<E> delegate2) {
+        this.delegate = delegate2;
+    }
 
     static ImmutableSet asImmutable(EnumSet set) {
         int size = set.size();
@@ -22,10 +26,6 @@ final class ImmutableEnumSet<E extends Enum<E>> extends ImmutableSet<E> {
             return new ImmutableEnumSet(set);
         }
         return ImmutableSet.m150of(Iterables.getOnlyElement(set));
-    }
-
-    private ImmutableEnumSet(EnumSet<E> delegate2) {
-        this.delegate = delegate2;
     }
 
     /* access modifiers changed from: package-private */

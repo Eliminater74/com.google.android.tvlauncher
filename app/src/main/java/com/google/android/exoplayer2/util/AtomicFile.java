@@ -1,6 +1,7 @@
 package com.google.android.exoplayer2.util;
 
 import android.support.annotation.NonNull;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -85,8 +86,8 @@ public final class AtomicFile {
     }
 
     private static final class AtomicFileOutputStream extends OutputStream {
-        private boolean closed = false;
         private final FileOutputStream fileOutputStream;
+        private boolean closed = false;
 
         public AtomicFileOutputStream(File file) throws FileNotFoundException {
             this.fileOutputStream = new FileOutputStream(file);

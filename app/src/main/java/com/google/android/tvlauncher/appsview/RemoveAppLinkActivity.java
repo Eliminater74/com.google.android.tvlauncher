@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.BaseRequestOptions;
@@ -33,11 +34,11 @@ import com.google.android.tvrecommendations.shared.util.Constants;
 
 public class RemoveAppLinkActivity extends LoggingActivity {
     private static final String TAG = "RemoveAppLinkActivity";
+    /* access modifiers changed from: private */
+    public EventLogger mEventLogger;
     private Button mAllowButton;
     private Button mDenyButton;
     private LinearLayout mDialogView;
-    /* access modifiers changed from: private */
-    public EventLogger mEventLogger;
     private ImageView mIconView;
     private TextView mMessageView;
     private RequestOptions mRequestOptions;

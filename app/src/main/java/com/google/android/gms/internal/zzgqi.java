@@ -4,21 +4,10 @@ import java.lang.reflect.Field;
 
 /* compiled from: RawMessageInfo */
 final class zzgqi {
-    private final zzgqj zza;
-    private int zzaa;
-    private int zzab;
-    private Field zzac;
-    private zzgol<Class<?>> zzad = zzgol.zza();
-    private zzgol<zzgop<?>> zzae = zzgol.zza();
-    private zzgol<Object> zzaf = zzgol.zza();
-    private final Object[] zzb;
-    private Class<?> zzc;
     /* access modifiers changed from: private */
     public final int zzd;
     /* access modifiers changed from: private */
     public final int zze;
-    private final int zzf;
-    private final int zzg;
     /* access modifiers changed from: private */
     public final int zzh;
     /* access modifiers changed from: private */
@@ -33,6 +22,17 @@ final class zzgqi {
     public final int zzm;
     /* access modifiers changed from: private */
     public final int[] zzn;
+    private final zzgqj zza;
+    private final Object[] zzb;
+    private final int zzf;
+    private final int zzg;
+    private int zzaa;
+    private int zzab;
+    private Field zzac;
+    private zzgol<Class<?>> zzad = zzgol.zza();
+    private zzgol<zzgop<?>> zzae = zzgol.zza();
+    private zzgol<Object> zzaf = zzgol.zza();
+    private Class<?> zzc;
     private int zzo;
     private int zzp;
     private int zzq = Integer.MAX_VALUE;
@@ -76,6 +76,14 @@ final class zzgqi {
         int zzb2 = this.zza.zzb();
         this.zzn = zzb2 != 0 ? new int[zzb2] : iArr;
         this.zzo = (this.zzf << 1) + this.zzg;
+    }
+
+    private static Field zza(Class<?> cls, String str) {
+        try {
+            return cls.getDeclaredField(str);
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private final Object zzp() {
@@ -376,13 +384,5 @@ final class zzgqi {
     public final zzgol<Object> zzo() {
         zzr();
         return this.zzaf;
-    }
-
-    private static Field zza(Class<?> cls, String str) {
-        try {
-            return cls.getDeclaredField(str);
-        } catch (NoSuchFieldException e) {
-            throw new RuntimeException(e);
-        }
     }
 }

@@ -1,7 +1,7 @@
 package com.google.common.collect;
 
 import com.google.common.annotations.GwtCompatible;
-import com.google.common.collect.Multiset;
+
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.NavigableSet;

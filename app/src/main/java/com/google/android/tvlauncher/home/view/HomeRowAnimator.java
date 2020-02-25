@@ -19,6 +19,7 @@ import android.view.animation.Interpolator;
 import android.widget.ImageView;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
+
 import com.google.android.tvlauncher.notifications.NotificationsTrayView;
 import com.google.android.tvlauncher.view.HomeTopRowView;
 import com.google.android.tvlauncher.view.SearchOrb;
@@ -26,6 +27,7 @@ import com.google.android.tvlauncher.view.SearchView;
 import com.google.android.tvrecommendations.shared.util.AnimUtil;
 import com.google.android.tvrecommendations.shared.util.ColorUtils;
 import com.google.android.tvrecommendations.shared.view.BoundsItemAnimator;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +37,10 @@ public class HomeRowAnimator extends BoundsItemAnimator {
     private static final float EPS = 0.001f;
     private static final String TAG = "HomeRowAnimator";
     private final Interpolator mMainInterpolator = new DecelerateInterpolator();
+
+    public HomeRowAnimator() {
+        setChangeDuration(175);
+    }
 
     public /* bridge */ /* synthetic */ boolean animateAdd(RecyclerView.ViewHolder viewHolder) {
         return super.animateAdd(viewHolder);
@@ -54,10 +60,6 @@ public class HomeRowAnimator extends BoundsItemAnimator {
 
     public /* bridge */ /* synthetic */ void runPendingAnimations() {
         super.runPendingAnimations();
-    }
-
-    public HomeRowAnimator() {
-        setChangeDuration(175);
     }
 
     /* access modifiers changed from: protected */
@@ -432,6 +434,9 @@ public class HomeRowAnimator extends BoundsItemAnimator {
     }
 
     private static class MyHolderInfo extends RecyclerView.ItemAnimator.ItemHolderInfo {
+        /* access modifiers changed from: private */
+        @ColorInt
+        public int logoTitleStateColor;
         float actionsHintAlpha;
         int actionsHintLeft;
         int actionsHintTop;
@@ -474,9 +479,6 @@ public class HomeRowAnimator extends BoundsItemAnimator {
         @ColorInt
         int logoTitleCurrentColor;
         int logoTitleLeft;
-        /* access modifiers changed from: private */
-        @ColorInt
-        public int logoTitleStateColor;
         int logoTitleTop;
         float logoTitleTranslationX;
         float logoTitleTranslationY;

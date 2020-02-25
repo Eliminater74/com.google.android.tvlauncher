@@ -6,7 +6,9 @@ import android.graphics.SurfaceTexture;
 import android.opengl.GLES20;
 import android.support.annotation.Nullable;
 import android.view.Surface;
+
 import com.google.android.exoplayer2.util.GlUtil;
+
 import java.nio.Buffer;
 import java.nio.FloatBuffer;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -25,6 +27,8 @@ public final class CanvasRenderer {
     private static final float WIDTH_UNIT = 0.8f;
     private static final float X_UNIT = -0.4f;
     private static final float Y_UNIT = -0.3f;
+    private final AtomicBoolean surfaceDirty = new AtomicBoolean();
+    private final FloatBuffer vertexBuffer = GlUtil.createBuffer(20);
     private Surface displaySurface;
     private SurfaceTexture displaySurfaceTexture;
     private int height;
@@ -32,12 +36,50 @@ public final class CanvasRenderer {
     private int mvpMatrixHandle;
     private int positionHandle;
     private int program = 0;
-    private final AtomicBoolean surfaceDirty = new AtomicBoolean();
     private int textureCoordsHandle;
     private int textureHandle;
     private int textureId;
-    private final FloatBuffer vertexBuffer = GlUtil.createBuffer(20);
     private int width;
+
+    @Nullable
+    static PointF internalTranslateClick(float yaw, float pitch, float xUnit, float yUnit, float widthUnit, float heightUnit2, int widthPixel, int heightPixel) {
+        float f = yaw;
+        float f2 = pitch;
+        float f3 = widthUnit;
+        float f4 = heightUnit2;
+        int i = widthPixel;
+        int i2 = heightPixel;
+        if (f < HALF_PI && f > -1.5707964f && f2 < HALF_PI) {
+            if (f2 > -1.5707964f) {
+                double d = (double) xUnit;
+                Double.isNaN(d);
+                double clickXUnit = (Math.tan((double) f) * 1.0d) - d;
+                double d2 = (double) yUnit;
+                Double.isNaN(d2);
+                double clickYUnit = (Math.tan((double) f2) * 1.0d) - d2;
+                if (clickXUnit >= 0.0d && clickXUnit <= ((double) f3) && clickYUnit >= 0.0d) {
+                    if (clickYUnit <= ((double) f4)) {
+                        double d3 = (double) i;
+                        double d4 = (double) i;
+                        Double.isNaN(d4);
+                        double d5 = (double) f3;
+                        Double.isNaN(d5);
+                        Double.isNaN(d3);
+                        float clickXPixel = (float) (d3 - ((d4 * clickXUnit) / d5));
+                        double d6 = (double) i2;
+                        double d7 = (double) i2;
+                        Double.isNaN(d7);
+                        double d8 = (double) f4;
+                        Double.isNaN(d8);
+                        Double.isNaN(d6);
+                        return new PointF(clickXPixel, (float) (d6 - ((d7 * clickYUnit) / d8)));
+                    }
+                }
+                return null;
+            }
+        }
+        return null;
+    }
 
     public void setSize(int width2, int height2) {
         this.width = width2;
@@ -155,45 +197,5 @@ public final class CanvasRenderer {
     @Nullable
     public PointF translateClick(float yaw, float pitch) {
         return internalTranslateClick(yaw, pitch, X_UNIT, Y_UNIT, WIDTH_UNIT, this.heightUnit, this.width, this.height);
-    }
-
-    @Nullable
-    static PointF internalTranslateClick(float yaw, float pitch, float xUnit, float yUnit, float widthUnit, float heightUnit2, int widthPixel, int heightPixel) {
-        float f = yaw;
-        float f2 = pitch;
-        float f3 = widthUnit;
-        float f4 = heightUnit2;
-        int i = widthPixel;
-        int i2 = heightPixel;
-        if (f < HALF_PI && f > -1.5707964f && f2 < HALF_PI) {
-            if (f2 > -1.5707964f) {
-                double d = (double) xUnit;
-                Double.isNaN(d);
-                double clickXUnit = (Math.tan((double) f) * 1.0d) - d;
-                double d2 = (double) yUnit;
-                Double.isNaN(d2);
-                double clickYUnit = (Math.tan((double) f2) * 1.0d) - d2;
-                if (clickXUnit >= 0.0d && clickXUnit <= ((double) f3) && clickYUnit >= 0.0d) {
-                    if (clickYUnit <= ((double) f4)) {
-                        double d3 = (double) i;
-                        double d4 = (double) i;
-                        Double.isNaN(d4);
-                        double d5 = (double) f3;
-                        Double.isNaN(d5);
-                        Double.isNaN(d3);
-                        float clickXPixel = (float) (d3 - ((d4 * clickXUnit) / d5));
-                        double d6 = (double) i2;
-                        double d7 = (double) i2;
-                        Double.isNaN(d7);
-                        double d8 = (double) f4;
-                        Double.isNaN(d8);
-                        Double.isNaN(d6);
-                        return new PointF(clickXPixel, (float) (d6 - ((d7 * clickYUnit) / d8)));
-                    }
-                }
-                return null;
-            }
-        }
-        return null;
     }
 }

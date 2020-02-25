@@ -2,10 +2,12 @@ package com.bumptech.glide.provider;
 
 import android.support.annotation.Nullable;
 import android.support.p001v4.util.ArrayMap;
+
 import com.bumptech.glide.load.engine.DecodePath;
 import com.bumptech.glide.load.engine.LoadPath;
 import com.bumptech.glide.load.resource.transcode.UnitTranscoder;
 import com.bumptech.glide.util.MultiClassKey;
+
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicReference;
 

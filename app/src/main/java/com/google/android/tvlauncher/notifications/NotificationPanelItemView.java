@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.google.android.tvlauncher.C1188R;
 import com.google.android.tvlauncher.TvlauncherLogEnum;
 import com.google.android.tvlauncher.analytics.ClickEvent;
@@ -22,19 +23,19 @@ import com.google.android.tvlauncher.util.Util;
 import com.google.logs.tvlauncher.config.TvLauncherConstants;
 
 public class NotificationPanelItemView extends LinearLayout {
+    protected EventLogger mEventLogger;
+    protected View mMainContainer;
+    protected String mNotificationKey;
     private boolean mAccessibilityEnabled;
     private int mDescriptionTextMaxWidth;
     private NotificationDismissButton mDismissButton;
-    protected EventLogger mEventLogger;
     private ImageView mIcon;
     private boolean mIsDismissible;
     private boolean mIsRtl;
     private View mItemContainer;
     private int mItemContainerDismissButtonFocusedMarginStart;
-    protected View mMainContainer;
     private int mMeasuredTextWidth;
     private TvNotification mNotification;
-    protected String mNotificationKey;
     private int mProgress;
     private RectF mProgressBounds;
     private int mProgressColor;

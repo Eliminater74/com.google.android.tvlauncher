@@ -2,10 +2,12 @@ package com.google.android.libraries.performance.primes;
 
 import android.app.Application;
 import android.support.annotation.Nullable;
-import com.google.android.libraries.performance.primes.MetricRecorder;
+
 import com.google.android.libraries.performance.primes.transmitter.MetricTransmitter;
 import com.google.android.libraries.stitch.util.Preconditions;
+
 import java.util.concurrent.ScheduledExecutorService;
+
 import logs.proto.wireless.performance.mobile.ExtensionMetric;
 import logs.proto.wireless.performance.mobile.SystemHealthProto;
 
@@ -14,9 +16,6 @@ abstract class AbstractMetricService implements ShutdownListener {
     private final Supplier<ScheduledExecutorService> executorServiceSupplier;
     private final MetricRecorder metricRecorder;
     private volatile boolean shutdown;
-
-    /* access modifiers changed from: package-private */
-    public abstract void shutdownService();
 
     protected AbstractMetricService(MetricTransmitter transmitter, Application application2, Supplier<MetricStamper> metricStamperSupplier, Supplier<ScheduledExecutorService> executorServiceSupplier2, MetricRecorder.RunIn whereToRun) {
         this(transmitter, application2, metricStamperSupplier, executorServiceSupplier2, whereToRun, Integer.MAX_VALUE);
@@ -29,6 +28,9 @@ abstract class AbstractMetricService implements ShutdownListener {
         this.executorServiceSupplier = executorServiceSupplier2;
         this.metricRecorder = new MetricRecorder(transmitter, metricStamperSupplier, executorServiceSupplier2, whereToRun, sampleRate);
     }
+
+    /* access modifiers changed from: package-private */
+    public abstract void shutdownService();
 
     public void onShutdown() {
         this.shutdown = true;

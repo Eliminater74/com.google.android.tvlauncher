@@ -4,7 +4,9 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.media.tv.TvContentRating;
 import android.text.TextUtils;
+
 import com.google.android.tvlauncher.C1188R;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -12,12 +14,12 @@ import java.util.List;
 import java.util.Locale;
 
 public class ContentRatingSystem {
-    private static final String DELIMITER = "/";
     public static final Comparator<ContentRatingSystem> DISPLAY_NAME_COMPARATOR = new Comparator<ContentRatingSystem>() {
         public int compare(ContentRatingSystem s1, ContentRatingSystem s2) {
             return s1.getDisplayName().compareTo(s2.getDisplayName());
         }
     };
+    private static final String DELIMITER = "/";
     private final List<String> mCountries;
     private final String mDescription;
     private final String mDisplayName;
@@ -28,6 +30,19 @@ public class ContentRatingSystem {
     private final List<Rating> mRatings;
     private final List<SubRating> mSubRatings;
     private final String mTitle;
+
+    private ContentRatingSystem(String name, String domain, String title, String description, List<String> countries, String displayName, List<Rating> ratings, List<SubRating> subRatings, List<Order> orders, boolean isCustom) {
+        this.mName = name;
+        this.mDomain = domain;
+        this.mTitle = title;
+        this.mDescription = description;
+        this.mCountries = countries;
+        this.mDisplayName = displayName;
+        this.mRatings = ratings;
+        this.mSubRatings = subRatings;
+        this.mOrders = orders;
+        this.mIsCustom = isCustom;
+    }
 
     public String getId() {
         String str = this.mDomain;
@@ -98,29 +113,16 @@ public class ContentRatingSystem {
         return (this.mName.hashCode() * 31) + this.mDomain.hashCode();
     }
 
-    private ContentRatingSystem(String name, String domain, String title, String description, List<String> countries, String displayName, List<Rating> ratings, List<SubRating> subRatings, List<Order> orders, boolean isCustom) {
-        this.mName = name;
-        this.mDomain = domain;
-        this.mTitle = title;
-        this.mDescription = description;
-        this.mCountries = countries;
-        this.mDisplayName = displayName;
-        this.mRatings = ratings;
-        this.mSubRatings = subRatings;
-        this.mOrders = orders;
-        this.mIsCustom = isCustom;
-    }
-
     public static class Builder {
         private final Context mContext;
+        private final List<Order.Builder> mOrderBuilders = new ArrayList();
+        private final List<Rating.Builder> mRatingBuilders = new ArrayList();
+        private final List<SubRating.Builder> mSubRatingBuilders = new ArrayList();
         private List<String> mCountries;
         private String mDescription;
         private String mDomain;
         private boolean mIsCustom;
         private String mName;
-        private final List<Order.Builder> mOrderBuilders = new ArrayList();
-        private final List<Rating.Builder> mRatingBuilders = new ArrayList();
-        private final List<SubRating.Builder> mSubRatingBuilders = new ArrayList();
         private String mTitle;
 
         public Builder(Context context) {
@@ -249,6 +251,15 @@ public class ContentRatingSystem {
         private final List<SubRating> mSubRatings;
         private final String mTitle;
 
+        private Rating(String name, String title, String description, Drawable icon, int contentAgeHint, List<SubRating> subRatings) {
+            this.mName = name;
+            this.mTitle = title;
+            this.mDescription = description;
+            this.mIcon = icon;
+            this.mContentAgeHint = contentAgeHint;
+            this.mSubRatings = subRatings;
+        }
+
         public String getName() {
             return this.mName;
         }
@@ -273,21 +284,12 @@ public class ContentRatingSystem {
             return this.mSubRatings;
         }
 
-        private Rating(String name, String title, String description, Drawable icon, int contentAgeHint, List<SubRating> subRatings) {
-            this.mName = name;
-            this.mTitle = title;
-            this.mDescription = description;
-            this.mIcon = icon;
-            this.mContentAgeHint = contentAgeHint;
-            this.mSubRatings = subRatings;
-        }
-
         public static class Builder {
+            private final List<String> mSubRatingNames = new ArrayList();
             private int mContentAgeHint = -1;
             private String mDescription;
             private Drawable mIcon;
             private String mName;
-            private final List<String> mSubRatingNames = new ArrayList();
             private String mTitle;
 
             public void setName(String name) {
@@ -367,6 +369,13 @@ public class ContentRatingSystem {
         private final String mName;
         private final String mTitle;
 
+        private SubRating(String name, String title, String description, Drawable icon) {
+            this.mName = name;
+            this.mTitle = title;
+            this.mDescription = description;
+            this.mIcon = icon;
+        }
+
         public String getName() {
             return this.mName;
         }
@@ -381,13 +390,6 @@ public class ContentRatingSystem {
 
         public Drawable getIcon() {
             return this.mIcon;
-        }
-
-        private SubRating(String name, String title, String description, Drawable icon) {
-            this.mName = name;
-            this.mTitle = title;
-            this.mDescription = description;
-            this.mIcon = icon;
         }
 
         public static class Builder {
@@ -425,12 +427,12 @@ public class ContentRatingSystem {
     public static class Order {
         private final List<Rating> mRatingOrder;
 
-        public List<Rating> getRatingOrder() {
-            return this.mRatingOrder;
-        }
-
         private Order(List<Rating> ratingOrder) {
             this.mRatingOrder = ratingOrder;
+        }
+
+        public List<Rating> getRatingOrder() {
+            return this.mRatingOrder;
         }
 
         public int getRatingIndex(Rating rating) {

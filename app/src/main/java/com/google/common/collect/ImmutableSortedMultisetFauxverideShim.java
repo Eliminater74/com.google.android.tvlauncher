@@ -1,7 +1,6 @@
 package com.google.common.collect;
 
 import com.google.common.annotations.GwtIncompatible;
-import com.google.common.collect.ImmutableSortedMultiset;
 
 @GwtIncompatible
 abstract class ImmutableSortedMultisetFauxverideShim<E> extends ImmutableMultiset<E> {

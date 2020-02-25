@@ -1,7 +1,6 @@
 package com.google.android.tvlauncher;
 
 import android.content.Context;
-import com.google.android.tvlauncher.BackHomeControllerListeners;
 
 public class MainBackHomeController implements BackHomeControllerListeners.OnHomePressedListener, BackHomeControllerListeners.OnBackPressedListener, BackHomeControllerListeners.OnBackNotHandledListener {
     private static MainBackHomeController sInstance = null;

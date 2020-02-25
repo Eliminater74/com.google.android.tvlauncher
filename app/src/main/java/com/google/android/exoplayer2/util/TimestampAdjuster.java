@@ -13,13 +13,21 @@ public final class TimestampAdjuster {
         setFirstSampleTimestampUs(firstSampleTimestampUs2);
     }
 
-    public synchronized void setFirstSampleTimestampUs(long firstSampleTimestampUs2) {
-        Assertions.checkState(this.lastSampleTimestampUs == C0841C.TIME_UNSET);
-        this.firstSampleTimestampUs = firstSampleTimestampUs2;
+    public static long ptsToUs(long pts) {
+        return (1000000 * pts) / 90000;
+    }
+
+    public static long usToPts(long us) {
+        return (90000 * us) / 1000000;
     }
 
     public long getFirstSampleTimestampUs() {
         return this.firstSampleTimestampUs;
+    }
+
+    public synchronized void setFirstSampleTimestampUs(long firstSampleTimestampUs2) {
+        Assertions.checkState(this.lastSampleTimestampUs == C0841C.TIME_UNSET);
+        this.firstSampleTimestampUs = firstSampleTimestampUs2;
     }
 
     public long getLastAdjustedTimestampUs() {
@@ -90,13 +98,5 @@ public final class TimestampAdjuster {
         while (this.lastSampleTimestampUs == C0841C.TIME_UNSET) {
             wait();
         }
-    }
-
-    public static long ptsToUs(long pts) {
-        return (1000000 * pts) / 90000;
-    }
-
-    public static long usToPts(long us) {
-        return (90000 * us) / 1000000;
     }
 }

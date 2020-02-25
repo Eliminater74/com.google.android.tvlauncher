@@ -2,6 +2,7 @@ package com.google.android.libraries.performance.primes;
 
 import android.app.Application;
 import android.content.SharedPreferences;
+
 import java.util.concurrent.Executor;
 
 final class ApiProviderCustomInitExecutor implements ApiProviderFactory {

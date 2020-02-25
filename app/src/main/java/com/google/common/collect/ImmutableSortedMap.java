@@ -3,27 +3,37 @@ package com.google.common.collect;
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableMap;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.SortedMap;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible(emulated = true, serializable = true)
 public final class ImmutableSortedMap<K, V> extends ImmutableSortedMapFauxverideShim<K, V> implements NavigableMap<K, V> {
     private static final ImmutableSortedMap<Comparable, Object> NATURAL_EMPTY_MAP = new ImmutableSortedMap<>(ImmutableSortedSet.emptySet(Ordering.natural()), ImmutableList.m107of());
     private static final Comparator<Comparable> NATURAL_ORDER = Ordering.natural();
     private static final long serialVersionUID = 0;
-    private transient ImmutableSortedMap<K, V> descendingMap;
     /* access modifiers changed from: private */
     public final transient RegularImmutableSortedSet<K> keySet;
     /* access modifiers changed from: private */
     public final transient ImmutableList<V> valueList;
+    private transient ImmutableSortedMap<K, V> descendingMap;
+
+    ImmutableSortedMap(RegularImmutableSortedSet<K> keySet2, ImmutableList<V> valueList2) {
+        this(keySet2, valueList2, null);
+    }
+
+    ImmutableSortedMap(RegularImmutableSortedSet<K> keySet2, ImmutableList<V> valueList2, ImmutableSortedMap<K, V> descendingMap2) {
+        this.keySet = keySet2;
+        this.valueList = valueList2;
+        this.descendingMap = descendingMap2;
+    }
 
     static <K, V> ImmutableSortedMap<K, V> emptyMap(Comparator<? super K> comparator) {
         if (Ordering.natural().equals(comparator)) {
@@ -174,107 +184,6 @@ public final class ImmutableSortedMap<K, V> extends ImmutableSortedMapFauxveride
 
     public static <K extends Comparable<?>, V> Builder<K, V> reverseOrder() {
         return new Builder<>(Ordering.natural().reverse());
-    }
-
-    public static class Builder<K, V> extends ImmutableMap.Builder<K, V> {
-        private final Comparator<? super K> comparator;
-        private transient Object[] keys;
-        private transient Object[] values;
-
-        public Builder(Comparator<? super K> comparator2) {
-            this(comparator2, 4);
-        }
-
-        private Builder(Comparator<? super K> comparator2, int initialCapacity) {
-            this.comparator = (Comparator) Preconditions.checkNotNull(comparator2);
-            this.keys = new Object[initialCapacity];
-            this.values = new Object[initialCapacity];
-        }
-
-        private void ensureCapacity(int minCapacity) {
-            Object[] objArr = this.keys;
-            if (minCapacity > objArr.length) {
-                int newCapacity = ImmutableCollection.Builder.expandedCapacity(objArr.length, minCapacity);
-                this.keys = Arrays.copyOf(this.keys, newCapacity);
-                this.values = Arrays.copyOf(this.values, newCapacity);
-            }
-        }
-
-        @CanIgnoreReturnValue
-        public Builder<K, V> put(K key, V value) {
-            ensureCapacity(this.size + 1);
-            CollectPreconditions.checkEntryNotNull(key, value);
-            this.keys[this.size] = key;
-            this.values[this.size] = value;
-            this.size++;
-            return this;
-        }
-
-        @CanIgnoreReturnValue
-        public Builder<K, V> put(Map.Entry<? extends K, ? extends V> entry) {
-            super.put((Map.Entry) entry);
-            return this;
-        }
-
-        @CanIgnoreReturnValue
-        public Builder<K, V> putAll(Map<? extends K, ? extends V> map) {
-            super.putAll((Map) map);
-            return this;
-        }
-
-        @CanIgnoreReturnValue
-        @Beta
-        public Builder<K, V> putAll(Iterable<? extends Map.Entry<? extends K, ? extends V>> entries) {
-            super.putAll((Iterable) entries);
-            return this;
-        }
-
-        @CanIgnoreReturnValue
-        @Deprecated
-        @Beta
-        public Builder<K, V> orderEntriesByValue(Comparator<? super V> comparator2) {
-            throw new UnsupportedOperationException("Not available on ImmutableSortedMap.Builder");
-        }
-
-        public ImmutableSortedMap<K, V> build() {
-            int i = this.size;
-            if (i == 0) {
-                return ImmutableSortedMap.emptyMap(this.comparator);
-            }
-            if (i == 1) {
-                return ImmutableSortedMap.m168of(this.comparator, this.keys[0], this.values[0]);
-            }
-            Object[] sortedKeys = Arrays.copyOf(this.keys, this.size);
-            Arrays.sort(sortedKeys, this.comparator);
-            Object[] sortedValues = new Object[this.size];
-            int i2 = 0;
-            while (i2 < this.size) {
-                if (i2 <= 0 || this.comparator.compare(sortedKeys[i2 - 1], sortedKeys[i2]) != 0) {
-                    sortedValues[Arrays.binarySearch(sortedKeys, this.keys[i2], this.comparator)] = this.values[i2];
-                    i2++;
-                } else {
-                    String valueOf = String.valueOf(sortedKeys[i2 - 1]);
-                    String valueOf2 = String.valueOf(sortedKeys[i2]);
-                    StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 57 + String.valueOf(valueOf2).length());
-                    sb.append("keys required to be distinct but compared as equal: ");
-                    sb.append(valueOf);
-                    sb.append(" and ");
-                    sb.append(valueOf2);
-                    throw new IllegalArgumentException(sb.toString());
-                }
-            }
-            return new ImmutableSortedMap<>(new RegularImmutableSortedSet(ImmutableList.asImmutableList(sortedKeys), this.comparator), ImmutableList.asImmutableList(sortedValues));
-        }
-    }
-
-    ImmutableSortedMap(RegularImmutableSortedSet<K> keySet2, ImmutableList<V> valueList2) {
-        this(keySet2, valueList2, null);
-    }
-
-    ImmutableSortedMap(RegularImmutableSortedSet<K> keySet2, ImmutableList<V> valueList2, ImmutableSortedMap<K, V> descendingMap2) {
-        this.keySet = keySet2;
-        this.valueList = valueList2;
-        this.descendingMap = descendingMap2;
     }
 
     public int size() {
@@ -544,6 +453,102 @@ public final class ImmutableSortedMap<K, V> extends ImmutableSortedMapFauxveride
         return this.keySet.descendingSet();
     }
 
+    /* access modifiers changed from: package-private */
+    public Object writeReplace() {
+        return new SerializedForm(this);
+    }
+
+    public static class Builder<K, V> extends ImmutableMap.Builder<K, V> {
+        private final Comparator<? super K> comparator;
+        private transient Object[] keys;
+        private transient Object[] values;
+
+        public Builder(Comparator<? super K> comparator2) {
+            this(comparator2, 4);
+        }
+
+        private Builder(Comparator<? super K> comparator2, int initialCapacity) {
+            this.comparator = (Comparator) Preconditions.checkNotNull(comparator2);
+            this.keys = new Object[initialCapacity];
+            this.values = new Object[initialCapacity];
+        }
+
+        private void ensureCapacity(int minCapacity) {
+            Object[] objArr = this.keys;
+            if (minCapacity > objArr.length) {
+                int newCapacity = ImmutableCollection.Builder.expandedCapacity(objArr.length, minCapacity);
+                this.keys = Arrays.copyOf(this.keys, newCapacity);
+                this.values = Arrays.copyOf(this.values, newCapacity);
+            }
+        }
+
+        @CanIgnoreReturnValue
+        public Builder<K, V> put(K key, V value) {
+            ensureCapacity(this.size + 1);
+            CollectPreconditions.checkEntryNotNull(key, value);
+            this.keys[this.size] = key;
+            this.values[this.size] = value;
+            this.size++;
+            return this;
+        }
+
+        @CanIgnoreReturnValue
+        public Builder<K, V> put(Map.Entry<? extends K, ? extends V> entry) {
+            super.put((Map.Entry) entry);
+            return this;
+        }
+
+        @CanIgnoreReturnValue
+        public Builder<K, V> putAll(Map<? extends K, ? extends V> map) {
+            super.putAll((Map) map);
+            return this;
+        }
+
+        @CanIgnoreReturnValue
+        @Beta
+        public Builder<K, V> putAll(Iterable<? extends Map.Entry<? extends K, ? extends V>> entries) {
+            super.putAll((Iterable) entries);
+            return this;
+        }
+
+        @CanIgnoreReturnValue
+        @Deprecated
+        @Beta
+        public Builder<K, V> orderEntriesByValue(Comparator<? super V> comparator2) {
+            throw new UnsupportedOperationException("Not available on ImmutableSortedMap.Builder");
+        }
+
+        public ImmutableSortedMap<K, V> build() {
+            int i = this.size;
+            if (i == 0) {
+                return ImmutableSortedMap.emptyMap(this.comparator);
+            }
+            if (i == 1) {
+                return ImmutableSortedMap.m168of(this.comparator, this.keys[0], this.values[0]);
+            }
+            Object[] sortedKeys = Arrays.copyOf(this.keys, this.size);
+            Arrays.sort(sortedKeys, this.comparator);
+            Object[] sortedValues = new Object[this.size];
+            int i2 = 0;
+            while (i2 < this.size) {
+                if (i2 <= 0 || this.comparator.compare(sortedKeys[i2 - 1], sortedKeys[i2]) != 0) {
+                    sortedValues[Arrays.binarySearch(sortedKeys, this.keys[i2], this.comparator)] = this.values[i2];
+                    i2++;
+                } else {
+                    String valueOf = String.valueOf(sortedKeys[i2 - 1]);
+                    String valueOf2 = String.valueOf(sortedKeys[i2]);
+                    StringBuilder sb = new StringBuilder(String.valueOf(valueOf).length() + 57 + String.valueOf(valueOf2).length());
+                    sb.append("keys required to be distinct but compared as equal: ");
+                    sb.append(valueOf);
+                    sb.append(" and ");
+                    sb.append(valueOf2);
+                    throw new IllegalArgumentException(sb.toString());
+                }
+            }
+            return new ImmutableSortedMap<>(new RegularImmutableSortedSet(ImmutableList.asImmutableList(sortedKeys), this.comparator), ImmutableList.asImmutableList(sortedValues));
+        }
+    }
+
     private static class SerializedForm extends ImmutableMap.SerializedForm {
         private static final long serialVersionUID = 0;
         private final Comparator<Object> comparator;
@@ -557,10 +562,5 @@ public final class ImmutableSortedMap<K, V> extends ImmutableSortedMapFauxveride
         public Object readResolve() {
             return createMap(new Builder<>(this.comparator));
         }
-    }
-
-    /* access modifiers changed from: package-private */
-    public Object writeReplace() {
-        return new SerializedForm(this);
     }
 }

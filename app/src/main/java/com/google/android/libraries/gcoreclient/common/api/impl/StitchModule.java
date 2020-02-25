@@ -1,9 +1,9 @@
 package com.google.android.libraries.gcoreclient.common.api.impl;
 
 import android.content.Context;
+
 import com.google.android.libraries.gcoreclient.common.api.GcoreGoogleApiClient;
 import com.google.android.libraries.gcoreclient.common.api.GcoreScope;
-import com.google.android.libraries.gcoreclient.common.api.impl.GcoreGoogleApiClientImpl;
 import com.google.android.libraries.gcoreclient.common.api.support.GcoreScopeImpl;
 import com.google.android.libraries.stitch.binder.Binder;
 import com.google.android.libraries.stitch.binder.BinderModule;
@@ -14,6 +14,16 @@ public class StitchModule {
     @Provides
     public GcoreGoogleApiClient.Builder gcoreGoogleApiClientBuilder(Context context) {
         return new GcoreGoogleApiClientImpl.Builder(context);
+    }
+
+    @Provides
+    public GcoreGoogleApiClient.BuilderFactory gcoreGoogleApiClientBuilderFactory() {
+        return new GcoreGoogleApiClientImpl.BuilderFactory();
+    }
+
+    @Provides
+    public GcoreScope.Builder gcoreScopeBuilder() {
+        return new GcoreScopeImpl.Builder();
     }
 
     public final class Adapter {
@@ -48,15 +58,5 @@ public class StitchModule {
             }
             binder.bind(GcoreScope.Builder.class, module.gcoreScopeBuilder());
         }
-    }
-
-    @Provides
-    public GcoreGoogleApiClient.BuilderFactory gcoreGoogleApiClientBuilderFactory() {
-        return new GcoreGoogleApiClientImpl.BuilderFactory();
-    }
-
-    @Provides
-    public GcoreScope.Builder gcoreScopeBuilder() {
-        return new GcoreScopeImpl.Builder();
     }
 }

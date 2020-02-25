@@ -1,12 +1,13 @@
 package com.google.android.gms.internal;
 
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
+import org.apache.http.conn.ConnectTimeoutException;
+
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Map;
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
-import org.apache.http.conn.ConnectTimeoutException;
 
 /* compiled from: AdaptedHttpStack */
 final class zzah extends zzai {

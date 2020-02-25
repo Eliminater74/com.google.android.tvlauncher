@@ -3,13 +3,15 @@ package com.google.common.base;
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.GwtIncompatible;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible(emulated = true)
 public final class Predicates {
@@ -101,6 +103,39 @@ public final class Predicates {
     @GwtIncompatible("java.util.regex.Pattern")
     public static Predicate<CharSequence> contains(Pattern pattern) {
         return new ContainsPatternPredicate(new JdkPattern(pattern));
+    }
+
+    /* access modifiers changed from: private */
+    public static String toStringHelper(String methodName, Iterable<?> components) {
+        StringBuilder sb = new StringBuilder("Predicates.");
+        sb.append(methodName);
+        StringBuilder builder = sb.append('(');
+        boolean first = true;
+        for (Object o : components) {
+            if (!first) {
+                builder.append(',');
+            }
+            builder.append(o);
+            first = false;
+        }
+        builder.append(')');
+        return builder.toString();
+    }
+
+    private static <T> List<Predicate<? super T>> asList(Predicate<? super T> first, Predicate<? super T> second) {
+        return Arrays.asList(first, second);
+    }
+
+    private static <T> List<T> defensiveCopy(T... array) {
+        return defensiveCopy(Arrays.asList(array));
+    }
+
+    static <T> List<T> defensiveCopy(Iterable<T> iterable) {
+        ArrayList<T> list = new ArrayList<>();
+        for (T element : iterable) {
+            list.add(Preconditions.checkNotNull(element));
+        }
+        return list;
     }
 
     enum ObjectPredicate implements Predicate<Object> {
@@ -246,23 +281,6 @@ public final class Predicates {
         }
     }
 
-    /* access modifiers changed from: private */
-    public static String toStringHelper(String methodName, Iterable<?> components) {
-        StringBuilder sb = new StringBuilder("Predicates.");
-        sb.append(methodName);
-        StringBuilder builder = sb.append('(');
-        boolean first = true;
-        for (Object o : components) {
-            if (!first) {
-                builder.append(',');
-            }
-            builder.append(o);
-            first = false;
-        }
-        builder.append(')');
-        return builder.toString();
-    }
-
     private static class IsEqualToPredicate<T> implements Predicate<T>, Serializable {
         private static final long serialVersionUID = 0;
         private final T target;
@@ -380,12 +398,12 @@ public final class Predicates {
         private static final long serialVersionUID = 0;
         private final Class<?> clazz;
 
-        public /* bridge */ /* synthetic */ boolean apply(Object obj) {
-            return apply((Class<?>) ((Class) obj));
-        }
-
         private SubtypeOfPredicate(Class<?> clazz2) {
             this.clazz = (Class) Preconditions.checkNotNull(clazz2);
+        }
+
+        public /* bridge */ /* synthetic */ boolean apply(Object obj) {
+            return apply((Class<?>) ((Class) obj));
         }
 
         public boolean apply(Class<?> input) {
@@ -549,21 +567,5 @@ public final class Predicates {
             sb.append(")");
             return sb.toString();
         }
-    }
-
-    private static <T> List<Predicate<? super T>> asList(Predicate<? super T> first, Predicate<? super T> second) {
-        return Arrays.asList(first, second);
-    }
-
-    private static <T> List<T> defensiveCopy(T... array) {
-        return defensiveCopy(Arrays.asList(array));
-    }
-
-    static <T> List<T> defensiveCopy(Iterable<T> iterable) {
-        ArrayList<T> list = new ArrayList<>();
-        for (T element : iterable) {
-            list.add(Preconditions.checkNotNull(element));
-        }
-        return list;
     }
 }

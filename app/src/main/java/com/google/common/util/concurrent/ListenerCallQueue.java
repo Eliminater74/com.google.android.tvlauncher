@@ -1,10 +1,12 @@
 package com.google.common.util.concurrent;
 
 import android.support.p001v4.app.NotificationCompat;
+
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Queues;
 import com.google.errorprone.annotations.concurrent.GuardedBy;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -18,10 +20,6 @@ final class ListenerCallQueue<L> {
     /* access modifiers changed from: private */
     public static final Logger logger = Logger.getLogger(ListenerCallQueue.class.getName());
     private final List<PerListenerQueue<L>> listeners = Collections.synchronizedList(new ArrayList());
-
-    interface Event<L> {
-        void call(Object obj);
-    }
 
     ListenerCallQueue() {
     }
@@ -56,15 +54,19 @@ final class ListenerCallQueue<L> {
         }
     }
 
+    interface Event<L> {
+        void call(Object obj);
+    }
+
     private static final class PerListenerQueue<L> implements Runnable {
         final Executor executor;
-        @GuardedBy("this")
-        boolean isThreadScheduled;
         @GuardedBy("this")
         final Queue<Object> labelQueue = Queues.newArrayDeque();
         final L listener;
         @GuardedBy("this")
         final Queue<Event<L>> waitQueue = Queues.newArrayDeque();
+        @GuardedBy("this")
+        boolean isThreadScheduled;
 
         PerListenerQueue(L listener2, Executor executor2) {
             this.listener = Preconditions.checkNotNull(listener2);

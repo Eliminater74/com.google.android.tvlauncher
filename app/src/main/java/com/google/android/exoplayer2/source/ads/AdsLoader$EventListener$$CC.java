@@ -1,7 +1,5 @@
 package com.google.android.exoplayer2.source.ads;
 
-import com.google.android.exoplayer2.source.ads.AdsLoader;
-import com.google.android.exoplayer2.source.ads.AdsMediaSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
 
 public abstract /* synthetic */ class AdsLoader$EventListener$$CC {

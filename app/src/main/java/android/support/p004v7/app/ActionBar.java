@@ -17,6 +17,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SpinnerAdapter;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -34,79 +35,6 @@ public abstract class ActionBar {
     @Deprecated
     public static final int NAVIGATION_MODE_TABS = 2;
 
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    @Retention(RetentionPolicy.SOURCE)
-    /* renamed from: android.support.v7.app.ActionBar$DisplayOptions */
-    public @interface DisplayOptions {
-    }
-
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    @Retention(RetentionPolicy.SOURCE)
-    /* renamed from: android.support.v7.app.ActionBar$NavigationMode */
-    public @interface NavigationMode {
-    }
-
-    /* renamed from: android.support.v7.app.ActionBar$OnMenuVisibilityListener */
-    public interface OnMenuVisibilityListener {
-        void onMenuVisibilityChanged(boolean z);
-    }
-
-    @Deprecated
-    /* renamed from: android.support.v7.app.ActionBar$OnNavigationListener */
-    public interface OnNavigationListener {
-        boolean onNavigationItemSelected(int i, long j);
-    }
-
-    @Deprecated
-    /* renamed from: android.support.v7.app.ActionBar$Tab */
-    public static abstract class Tab {
-        public static final int INVALID_POSITION = -1;
-
-        public abstract CharSequence getContentDescription();
-
-        public abstract View getCustomView();
-
-        public abstract Drawable getIcon();
-
-        public abstract int getPosition();
-
-        public abstract Object getTag();
-
-        public abstract CharSequence getText();
-
-        public abstract void select();
-
-        public abstract Tab setContentDescription(@StringRes int i);
-
-        public abstract Tab setContentDescription(CharSequence charSequence);
-
-        public abstract Tab setCustomView(int i);
-
-        public abstract Tab setCustomView(View view);
-
-        public abstract Tab setIcon(@DrawableRes int i);
-
-        public abstract Tab setIcon(Drawable drawable);
-
-        public abstract Tab setTabListener(TabListener tabListener);
-
-        public abstract Tab setTag(Object obj);
-
-        public abstract Tab setText(int i);
-
-        public abstract Tab setText(CharSequence charSequence);
-    }
-
-    @Deprecated
-    /* renamed from: android.support.v7.app.ActionBar$TabListener */
-    public interface TabListener {
-        void onTabReselected(Tab tab, FragmentTransaction fragmentTransaction);
-
-        void onTabSelected(Tab tab, FragmentTransaction fragmentTransaction);
-
-        void onTabUnselected(Tab tab, FragmentTransaction fragmentTransaction);
-    }
-
     public abstract void addOnMenuVisibilityListener(OnMenuVisibilityListener onMenuVisibilityListener);
 
     @Deprecated
@@ -123,7 +51,13 @@ public abstract class ActionBar {
 
     public abstract View getCustomView();
 
+    public abstract void setCustomView(int i);
+
+    public abstract void setCustomView(View view);
+
     public abstract int getDisplayOptions();
+
+    public abstract void setDisplayOptions(int i);
 
     public abstract int getHeight();
 
@@ -132,6 +66,9 @@ public abstract class ActionBar {
 
     @Deprecated
     public abstract int getNavigationMode();
+
+    @Deprecated
+    public abstract void setNavigationMode(int i);
 
     @Deprecated
     public abstract int getSelectedNavigationIndex();
@@ -143,6 +80,10 @@ public abstract class ActionBar {
     @Nullable
     public abstract CharSequence getSubtitle();
 
+    public abstract void setSubtitle(int i);
+
+    public abstract void setSubtitle(CharSequence charSequence);
+
     @Deprecated
     public abstract Tab getTabAt(int i);
 
@@ -151,6 +92,10 @@ public abstract class ActionBar {
 
     @Nullable
     public abstract CharSequence getTitle();
+
+    public abstract void setTitle(@StringRes int i);
+
+    public abstract void setTitle(CharSequence charSequence);
 
     public abstract void hide();
 
@@ -175,15 +120,9 @@ public abstract class ActionBar {
 
     public abstract void setBackgroundDrawable(@Nullable Drawable drawable);
 
-    public abstract void setCustomView(int i);
-
-    public abstract void setCustomView(View view);
-
     public abstract void setCustomView(View view, LayoutParams layoutParams);
 
     public abstract void setDisplayHomeAsUpEnabled(boolean z);
-
-    public abstract void setDisplayOptions(int i);
 
     public abstract void setDisplayOptions(int i, int i2);
 
@@ -207,18 +146,7 @@ public abstract class ActionBar {
     public abstract void setLogo(Drawable drawable);
 
     @Deprecated
-    public abstract void setNavigationMode(int i);
-
-    @Deprecated
     public abstract void setSelectedNavigationItem(int i);
-
-    public abstract void setSubtitle(int i);
-
-    public abstract void setSubtitle(CharSequence charSequence);
-
-    public abstract void setTitle(@StringRes int i);
-
-    public abstract void setTitle(CharSequence charSequence);
 
     public abstract void show();
 
@@ -252,14 +180,14 @@ public abstract class ActionBar {
     public void setHomeActionContentDescription(@StringRes int resId) {
     }
 
+    public boolean isHideOnContentScrollEnabled() {
+        return false;
+    }
+
     public void setHideOnContentScrollEnabled(boolean hideOnContentScroll) {
         if (hideOnContentScroll) {
             throw new UnsupportedOperationException("Hide on content scroll is not supported in this action bar configuration.");
         }
-    }
-
-    public boolean isHideOnContentScrollEnabled() {
-        return false;
     }
 
     public int getHideOffset() {
@@ -272,14 +200,14 @@ public abstract class ActionBar {
         }
     }
 
+    public float getElevation() {
+        return 0.0f;
+    }
+
     public void setElevation(float elevation) {
         if (elevation != 0.0f) {
             throw new UnsupportedOperationException("Setting a non-zero elevation is not supported in this action bar configuration.");
         }
-    }
-
-    public float getElevation() {
-        return 0.0f;
     }
 
     @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
@@ -345,6 +273,79 @@ public abstract class ActionBar {
 
     /* access modifiers changed from: package-private */
     public void onDestroy() {
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    @Retention(RetentionPolicy.SOURCE)
+    /* renamed from: android.support.v7.app.ActionBar$DisplayOptions */
+    public @interface DisplayOptions {
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    @Retention(RetentionPolicy.SOURCE)
+    /* renamed from: android.support.v7.app.ActionBar$NavigationMode */
+    public @interface NavigationMode {
+    }
+
+    /* renamed from: android.support.v7.app.ActionBar$OnMenuVisibilityListener */
+    public interface OnMenuVisibilityListener {
+        void onMenuVisibilityChanged(boolean z);
+    }
+
+    @Deprecated
+    /* renamed from: android.support.v7.app.ActionBar$OnNavigationListener */
+    public interface OnNavigationListener {
+        boolean onNavigationItemSelected(int i, long j);
+    }
+
+    @Deprecated
+    /* renamed from: android.support.v7.app.ActionBar$TabListener */
+    public interface TabListener {
+        void onTabReselected(Tab tab, FragmentTransaction fragmentTransaction);
+
+        void onTabSelected(Tab tab, FragmentTransaction fragmentTransaction);
+
+        void onTabUnselected(Tab tab, FragmentTransaction fragmentTransaction);
+    }
+
+    @Deprecated
+    /* renamed from: android.support.v7.app.ActionBar$Tab */
+    public static abstract class Tab {
+        public static final int INVALID_POSITION = -1;
+
+        public abstract CharSequence getContentDescription();
+
+        public abstract Tab setContentDescription(@StringRes int i);
+
+        public abstract Tab setContentDescription(CharSequence charSequence);
+
+        public abstract View getCustomView();
+
+        public abstract Tab setCustomView(int i);
+
+        public abstract Tab setCustomView(View view);
+
+        public abstract Drawable getIcon();
+
+        public abstract Tab setIcon(@DrawableRes int i);
+
+        public abstract Tab setIcon(Drawable drawable);
+
+        public abstract int getPosition();
+
+        public abstract Object getTag();
+
+        public abstract Tab setTag(Object obj);
+
+        public abstract CharSequence getText();
+
+        public abstract Tab setText(int i);
+
+        public abstract Tab setText(CharSequence charSequence);
+
+        public abstract void select();
+
+        public abstract Tab setTabListener(TabListener tabListener);
     }
 
     /* renamed from: android.support.v7.app.ActionBar$LayoutParams */

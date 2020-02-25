@@ -10,6 +10,7 @@ import android.view.accessibility.AccessibilityManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.google.android.tvlauncher.C1188R;
 import com.google.android.tvlauncher.TvlauncherLogEnum;
 import com.google.android.tvlauncher.analytics.ClickEvent;
@@ -18,9 +19,17 @@ import com.google.android.tvlauncher.analytics.LogEvent;
 import com.google.logs.tvlauncher.config.TvLauncherConstants;
 
 public class NotificationsTrayItemView extends LinearLayout {
-    private ImageView mBigPicture;
     /* access modifiers changed from: private */
     public NotificationTrayButton mDismissButton;
+    /* access modifiers changed from: private */
+    public String mNotificationKey;
+    /* access modifiers changed from: private */
+    public NotificationTrayButton mSeeMoreButton;
+    /* access modifiers changed from: private */
+    public TextView mText;
+    /* access modifiers changed from: private */
+    public TextView mTitle;
+    private ImageView mBigPicture;
     private EventLogger mEventLogger;
     private ViewTreeObserver.OnGlobalFocusChangeListener mGlobalFocusChangeListener = new ViewTreeObserver.OnGlobalFocusChangeListener() {
         public void onGlobalFocusChanged(View oldFocus, View newFocus) {
@@ -43,15 +52,7 @@ public class NotificationsTrayItemView extends LinearLayout {
     };
     private ImageView mIcon;
     private TvNotification mNotification;
-    /* access modifiers changed from: private */
-    public String mNotificationKey;
     private View mNowPlayingIndicator;
-    /* access modifiers changed from: private */
-    public NotificationTrayButton mSeeMoreButton;
-    /* access modifiers changed from: private */
-    public TextView mText;
-    /* access modifiers changed from: private */
-    public TextView mTitle;
 
     public NotificationsTrayItemView(Context context) {
         super(context);

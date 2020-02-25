@@ -5,10 +5,11 @@ import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Table;
-import com.google.common.collect.Tables;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.Arrays;
@@ -16,49 +17,24 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible(emulated = true)
 @Beta
 public final class ArrayTable<R, C, V> extends AbstractTable<R, C, V> implements Serializable {
     private static final long serialVersionUID = 0;
-    private final V[][] array;
     /* access modifiers changed from: private */
     public final ImmutableMap<C, Integer> columnKeyToIndex;
     /* access modifiers changed from: private */
     public final ImmutableList<C> columnList;
-    @MonotonicNonNullDecl
-    private transient ArrayTable<R, C, V>.ColumnMap columnMap;
     /* access modifiers changed from: private */
     public final ImmutableMap<R, Integer> rowKeyToIndex;
     /* access modifiers changed from: private */
     public final ImmutableList<R> rowList;
+    private final V[][] array;
+    @MonotonicNonNullDecl
+    private transient ArrayTable<R, C, V>.ColumnMap columnMap;
     @MonotonicNonNullDecl
     private transient ArrayTable<R, C, V>.RowMap rowMap;
-
-    public /* bridge */ /* synthetic */ boolean equals(@NullableDecl Object obj) {
-        return super.equals(obj);
-    }
-
-    public /* bridge */ /* synthetic */ int hashCode() {
-        return super.hashCode();
-    }
-
-    public /* bridge */ /* synthetic */ String toString() {
-        return super.toString();
-    }
-
-    public static <R, C, V> ArrayTable<R, C, V> create(Iterable<? extends R> rowKeys, Iterable<? extends C> columnKeys) {
-        return new ArrayTable<>(rowKeys, columnKeys);
-    }
-
-    public static <R, C, V> ArrayTable<R, C, V> create(Table<R, C, V> table) {
-        if (table instanceof ArrayTable) {
-            return new ArrayTable<>((ArrayTable) table);
-        }
-        return new ArrayTable<>(table);
-    }
 
     /* JADX WARN: Type inference failed for: r3v0, types: [java.lang.Iterable<? extends R>, java.lang.Iterable] */
     /* JADX WARN: Type inference failed for: r4v0, types: [java.lang.Iterable<? extends C>, java.lang.Iterable] */
@@ -122,105 +98,27 @@ public final class ArrayTable<R, C, V> extends AbstractTable<R, C, V> implements
         }
     }
 
-    private static abstract class ArrayMap<K, V> extends Maps.IteratorBasedAbstractMap<K, V> {
-        private final ImmutableMap<K, Integer> keyIndex;
+    public static <R, C, V> ArrayTable<R, C, V> create(Iterable<? extends R> rowKeys, Iterable<? extends C> columnKeys) {
+        return new ArrayTable<>(rowKeys, columnKeys);
+    }
 
-        /* access modifiers changed from: package-private */
-        public abstract String getKeyRole();
-
-        /* access modifiers changed from: package-private */
-        @NullableDecl
-        public abstract V getValue(int i);
-
-        /* access modifiers changed from: package-private */
-        @NullableDecl
-        public abstract V setValue(int i, V v);
-
-        private ArrayMap(ImmutableMap<K, Integer> keyIndex2) {
-            this.keyIndex = keyIndex2;
+    public static <R, C, V> ArrayTable<R, C, V> create(Table<R, C, V> table) {
+        if (table instanceof ArrayTable) {
+            return new ArrayTable<>((ArrayTable) table);
         }
+        return new ArrayTable<>(table);
+    }
 
-        public Set<K> keySet() {
-            return this.keyIndex.keySet();
-        }
+    public /* bridge */ /* synthetic */ boolean equals(@NullableDecl Object obj) {
+        return super.equals(obj);
+    }
 
-        /* access modifiers changed from: package-private */
-        public K getKey(int index) {
-            return this.keyIndex.keySet().asList().get(index);
-        }
+    public /* bridge */ /* synthetic */ int hashCode() {
+        return super.hashCode();
+    }
 
-        public int size() {
-            return this.keyIndex.size();
-        }
-
-        public boolean isEmpty() {
-            return this.keyIndex.isEmpty();
-        }
-
-        /* access modifiers changed from: package-private */
-        public Map.Entry<K, V> getEntry(final int index) {
-            Preconditions.checkElementIndex(index, size());
-            return new AbstractMapEntry<K, V>() {
-                public K getKey() {
-                    return ArrayMap.this.getKey(index);
-                }
-
-                public V getValue() {
-                    return ArrayMap.this.getValue(index);
-                }
-
-                public V setValue(V value) {
-                    return ArrayMap.this.setValue(index, value);
-                }
-            };
-        }
-
-        /* access modifiers changed from: package-private */
-        public Iterator<Map.Entry<K, V>> entryIterator() {
-            return new AbstractIndexedListIterator<Map.Entry<K, V>>(size()) {
-                /* access modifiers changed from: protected */
-                public Map.Entry<K, V> get(int index) {
-                    return ArrayMap.this.getEntry(index);
-                }
-            };
-        }
-
-        public boolean containsKey(@NullableDecl Object key) {
-            return this.keyIndex.containsKey(key);
-        }
-
-        public V get(@NullableDecl Object key) {
-            Integer index = this.keyIndex.get(key);
-            if (index == null) {
-                return null;
-            }
-            return getValue(index.intValue());
-        }
-
-        public V put(K key, V value) {
-            Integer index = this.keyIndex.get(key);
-            if (index != null) {
-                return setValue(index.intValue(), value);
-            }
-            String keyRole = getKeyRole();
-            String valueOf = String.valueOf(key);
-            String valueOf2 = String.valueOf(this.keyIndex.keySet());
-            StringBuilder sb = new StringBuilder(String.valueOf(keyRole).length() + 9 + String.valueOf(valueOf).length() + String.valueOf(valueOf2).length());
-            sb.append(keyRole);
-            sb.append(" ");
-            sb.append(valueOf);
-            sb.append(" not in ");
-            sb.append(valueOf2);
-            throw new IllegalArgumentException(sb.toString());
-        }
-
-        public V remove(Object key) {
-            throw new UnsupportedOperationException();
-        }
-
-        public void clear() {
-            throw new UnsupportedOperationException();
-        }
+    public /* bridge */ /* synthetic */ String toString() {
+        return super.toString();
     }
 
     public ImmutableList<R> rowKeyList() {
@@ -395,6 +293,155 @@ public final class ArrayTable<R, C, V> extends AbstractTable<R, C, V> implements
         return columnIndex == null ? ImmutableMap.m126of() : new Column(columnIndex.intValue());
     }
 
+    public ImmutableSet<C> columnKeySet() {
+        return this.columnKeyToIndex.keySet();
+    }
+
+    public Map<C, Map<R, V>> columnMap() {
+        ArrayTable<R, C, V>.ColumnMap map = this.columnMap;
+        if (map != null) {
+            return map;
+        }
+        ArrayTable<R, C, V>.ColumnMap columnMap2 = new ColumnMap();
+        this.columnMap = columnMap2;
+        return columnMap2;
+    }
+
+    public Map<C, V> row(R rowKey) {
+        Preconditions.checkNotNull(rowKey);
+        Integer rowIndex = this.rowKeyToIndex.get(rowKey);
+        return rowIndex == null ? ImmutableMap.m126of() : new Row(rowIndex.intValue());
+    }
+
+    public ImmutableSet<R> rowKeySet() {
+        return this.rowKeyToIndex.keySet();
+    }
+
+    public Map<R, Map<C, V>> rowMap() {
+        ArrayTable<R, C, V>.RowMap map = this.rowMap;
+        if (map != null) {
+            return map;
+        }
+        ArrayTable<R, C, V>.RowMap rowMap2 = new RowMap();
+        this.rowMap = rowMap2;
+        return rowMap2;
+    }
+
+    public Collection<V> values() {
+        return super.values();
+    }
+
+    /* access modifiers changed from: package-private */
+    public Iterator<V> valuesIterator() {
+        return new AbstractIndexedListIterator<V>(size()) {
+            /* access modifiers changed from: protected */
+            public V get(int index) {
+                return ArrayTable.this.getValue(index);
+            }
+        };
+    }
+
+    private static abstract class ArrayMap<K, V> extends Maps.IteratorBasedAbstractMap<K, V> {
+        private final ImmutableMap<K, Integer> keyIndex;
+
+        private ArrayMap(ImmutableMap<K, Integer> keyIndex2) {
+            this.keyIndex = keyIndex2;
+        }
+
+        /* access modifiers changed from: package-private */
+        public abstract String getKeyRole();
+
+        /* access modifiers changed from: package-private */
+        @NullableDecl
+        public abstract V getValue(int i);
+
+        /* access modifiers changed from: package-private */
+        @NullableDecl
+        public abstract V setValue(int i, V v);
+
+        public Set<K> keySet() {
+            return this.keyIndex.keySet();
+        }
+
+        /* access modifiers changed from: package-private */
+        public K getKey(int index) {
+            return this.keyIndex.keySet().asList().get(index);
+        }
+
+        public int size() {
+            return this.keyIndex.size();
+        }
+
+        public boolean isEmpty() {
+            return this.keyIndex.isEmpty();
+        }
+
+        /* access modifiers changed from: package-private */
+        public Map.Entry<K, V> getEntry(final int index) {
+            Preconditions.checkElementIndex(index, size());
+            return new AbstractMapEntry<K, V>() {
+                public K getKey() {
+                    return ArrayMap.this.getKey(index);
+                }
+
+                public V getValue() {
+                    return ArrayMap.this.getValue(index);
+                }
+
+                public V setValue(V value) {
+                    return ArrayMap.this.setValue(index, value);
+                }
+            };
+        }
+
+        /* access modifiers changed from: package-private */
+        public Iterator<Map.Entry<K, V>> entryIterator() {
+            return new AbstractIndexedListIterator<Map.Entry<K, V>>(size()) {
+                /* access modifiers changed from: protected */
+                public Map.Entry<K, V> get(int index) {
+                    return ArrayMap.this.getEntry(index);
+                }
+            };
+        }
+
+        public boolean containsKey(@NullableDecl Object key) {
+            return this.keyIndex.containsKey(key);
+        }
+
+        public V get(@NullableDecl Object key) {
+            Integer index = this.keyIndex.get(key);
+            if (index == null) {
+                return null;
+            }
+            return getValue(index.intValue());
+        }
+
+        public V put(K key, V value) {
+            Integer index = this.keyIndex.get(key);
+            if (index != null) {
+                return setValue(index.intValue(), value);
+            }
+            String keyRole = getKeyRole();
+            String valueOf = String.valueOf(key);
+            String valueOf2 = String.valueOf(this.keyIndex.keySet());
+            StringBuilder sb = new StringBuilder(String.valueOf(keyRole).length() + 9 + String.valueOf(valueOf).length() + String.valueOf(valueOf2).length());
+            sb.append(keyRole);
+            sb.append(" ");
+            sb.append(valueOf);
+            sb.append(" not in ");
+            sb.append(valueOf2);
+            throw new IllegalArgumentException(sb.toString());
+        }
+
+        public V remove(Object key) {
+            throw new UnsupportedOperationException();
+        }
+
+        public void clear() {
+            throw new UnsupportedOperationException();
+        }
+    }
+
     private class Column extends ArrayMap<R, V> {
         final int columnIndex;
 
@@ -417,20 +464,6 @@ public final class ArrayTable<R, C, V> extends AbstractTable<R, C, V> implements
         public V setValue(int index, V newValue) {
             return ArrayTable.this.set(index, this.columnIndex, newValue);
         }
-    }
-
-    public ImmutableSet<C> columnKeySet() {
-        return this.columnKeyToIndex.keySet();
-    }
-
-    public Map<C, Map<R, V>> columnMap() {
-        ArrayTable<R, C, V>.ColumnMap map = this.columnMap;
-        if (map != null) {
-            return map;
-        }
-        ArrayTable<R, C, V>.ColumnMap columnMap2 = new ColumnMap();
-        this.columnMap = columnMap2;
-        return columnMap2;
     }
 
     private class ColumnMap extends ArrayMap<C, Map<R, V>> {
@@ -458,12 +491,6 @@ public final class ArrayTable<R, C, V> extends AbstractTable<R, C, V> implements
         }
     }
 
-    public Map<C, V> row(R rowKey) {
-        Preconditions.checkNotNull(rowKey);
-        Integer rowIndex = this.rowKeyToIndex.get(rowKey);
-        return rowIndex == null ? ImmutableMap.m126of() : new Row(rowIndex.intValue());
-    }
-
     private class Row extends ArrayMap<C, V> {
         final int rowIndex;
 
@@ -486,20 +513,6 @@ public final class ArrayTable<R, C, V> extends AbstractTable<R, C, V> implements
         public V setValue(int index, V newValue) {
             return ArrayTable.this.set(this.rowIndex, index, newValue);
         }
-    }
-
-    public ImmutableSet<R> rowKeySet() {
-        return this.rowKeyToIndex.keySet();
-    }
-
-    public Map<R, Map<C, V>> rowMap() {
-        ArrayTable<R, C, V>.RowMap map = this.rowMap;
-        if (map != null) {
-            return map;
-        }
-        ArrayTable<R, C, V>.RowMap rowMap2 = new RowMap();
-        this.rowMap = rowMap2;
-        return rowMap2;
     }
 
     private class RowMap extends ArrayMap<R, Map<C, V>> {
@@ -525,19 +538,5 @@ public final class ArrayTable<R, C, V> extends AbstractTable<R, C, V> implements
         public Map<C, V> put(R r, Map<C, V> map) {
             throw new UnsupportedOperationException();
         }
-    }
-
-    public Collection<V> values() {
-        return super.values();
-    }
-
-    /* access modifiers changed from: package-private */
-    public Iterator<V> valuesIterator() {
-        return new AbstractIndexedListIterator<V>(size()) {
-            /* access modifiers changed from: protected */
-            public V get(int index) {
-                return ArrayTable.this.getValue(index);
-            }
-        };
     }
 }

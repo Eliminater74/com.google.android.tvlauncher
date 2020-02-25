@@ -3,6 +3,7 @@ package com.google.common.util.concurrent;
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.collect.ForwardingQueue;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
 import java.util.Collection;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -10,11 +11,11 @@ import java.util.concurrent.TimeUnit;
 @GwtIncompatible
 @CanIgnoreReturnValue
 public abstract class ForwardingBlockingQueue<E> extends ForwardingQueue<E> implements BlockingQueue<E> {
-    /* access modifiers changed from: protected */
-    public abstract BlockingQueue<E> delegate();
-
     protected ForwardingBlockingQueue() {
     }
+
+    /* access modifiers changed from: protected */
+    public abstract BlockingQueue<E> delegate();
 
     public int drainTo(Collection<? super E> c, int maxElements) {
         return delegate().drainTo(c, maxElements);

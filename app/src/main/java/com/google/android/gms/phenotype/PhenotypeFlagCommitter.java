@@ -4,12 +4,14 @@ import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.util.Base64;
 import android.util.Log;
+
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.internal.zzau;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskExecutors;
 import com.google.android.gms.tasks.Tasks;
+
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
@@ -22,17 +24,10 @@ public abstract class PhenotypeFlagCommitter {
     protected final String packageName;
     protected long timeoutMillis;
 
-    public interface Callback {
-        void onFinish(boolean z);
-    }
-
     @Deprecated
     public PhenotypeFlagCommitter(GoogleApiClient googleApiClient, String str) {
         this(Phenotype.getInstance(googleApiClient.zzb()), str);
     }
-
-    /* access modifiers changed from: protected */
-    public abstract void handleConfigurations(Configurations configurations);
 
     @Deprecated
     public PhenotypeFlagCommitter(GoogleApiClient googleApiClient, PhenotypeApi phenotypeApi, String str) {
@@ -44,6 +39,58 @@ public abstract class PhenotypeFlagCommitter {
         this.packageName = str;
         this.timeoutMillis = AdaptiveTrackSelection.DEFAULT_MIN_TIME_BETWEEN_BUFFER_REEVALUTATION_MS;
     }
+
+    @SuppressLint({"ApplySharedPref"})
+    public static void writeToSharedPrefs(SharedPreferences sharedPreferences, Configurations configurations) {
+        SharedPreferences.Editor edit = sharedPreferences.edit();
+        if (!configurations.isDelta) {
+            edit.clear();
+        }
+        for (Configuration zza : configurations.configurations) {
+            zza(edit, zza);
+        }
+        edit.putString("__phenotype_server_token", configurations.serverToken);
+        edit.putLong("__phenotype_configuration_version", configurations.configurationVersion);
+        edit.putString("__phenotype_snapshot_token", configurations.snapshotToken);
+        if (!edit.commit()) {
+            Log.w("PhenotypeFlagCommitter", "Failed to commit Phenotype configs to SharedPreferences!");
+        }
+    }
+
+    public static void writeToSharedPrefs(SharedPreferences sharedPreferences, Configuration... configurationArr) {
+        SharedPreferences.Editor edit = sharedPreferences.edit();
+        for (Configuration zza : configurationArr) {
+            zza(edit, zza);
+        }
+        if (!edit.commit()) {
+            Log.w("PhenotypeFlagCommitter", "Failed to commit Phenotype configs to SharedPreferences!");
+        }
+    }
+
+    private static void zza(SharedPreferences.Editor editor, Configuration configuration) {
+        if (configuration != null) {
+            for (String remove : configuration.deleteFlags) {
+                editor.remove(remove);
+            }
+            for (Flag flag : configuration.flags) {
+                int i = flag.flagValueType;
+                if (i == 1) {
+                    editor.putLong(flag.name, flag.getLong());
+                } else if (i == 2) {
+                    editor.putBoolean(flag.name, flag.getBoolean());
+                } else if (i == 3) {
+                    editor.putFloat(flag.name, (float) flag.getDouble());
+                } else if (i == 4) {
+                    editor.putString(flag.name, flag.getString());
+                } else if (i == 5) {
+                    editor.putString(flag.name, Base64.encodeToString(flag.getBytesValue(), 3));
+                }
+            }
+        }
+    }
+
+    /* access modifiers changed from: protected */
+    public abstract void handleConfigurations(Configurations configurations);
 
     public void setTimeoutMillis(long j) {
         this.timeoutMillis = j;
@@ -111,55 +158,6 @@ public abstract class PhenotypeFlagCommitter {
         this.client.getConfigurationSnapshot(this.packageName, str, getSnapshotToken()).addOnCompleteListener(executor, new zzau(this, callback, executor, i, str));
     }
 
-    @SuppressLint({"ApplySharedPref"})
-    public static void writeToSharedPrefs(SharedPreferences sharedPreferences, Configurations configurations) {
-        SharedPreferences.Editor edit = sharedPreferences.edit();
-        if (!configurations.isDelta) {
-            edit.clear();
-        }
-        for (Configuration zza : configurations.configurations) {
-            zza(edit, zza);
-        }
-        edit.putString("__phenotype_server_token", configurations.serverToken);
-        edit.putLong("__phenotype_configuration_version", configurations.configurationVersion);
-        edit.putString("__phenotype_snapshot_token", configurations.snapshotToken);
-        if (!edit.commit()) {
-            Log.w("PhenotypeFlagCommitter", "Failed to commit Phenotype configs to SharedPreferences!");
-        }
-    }
-
-    public static void writeToSharedPrefs(SharedPreferences sharedPreferences, Configuration... configurationArr) {
-        SharedPreferences.Editor edit = sharedPreferences.edit();
-        for (Configuration zza : configurationArr) {
-            zza(edit, zza);
-        }
-        if (!edit.commit()) {
-            Log.w("PhenotypeFlagCommitter", "Failed to commit Phenotype configs to SharedPreferences!");
-        }
-    }
-
-    private static void zza(SharedPreferences.Editor editor, Configuration configuration) {
-        if (configuration != null) {
-            for (String remove : configuration.deleteFlags) {
-                editor.remove(remove);
-            }
-            for (Flag flag : configuration.flags) {
-                int i = flag.flagValueType;
-                if (i == 1) {
-                    editor.putLong(flag.name, flag.getLong());
-                } else if (i == 2) {
-                    editor.putBoolean(flag.name, flag.getBoolean());
-                } else if (i == 3) {
-                    editor.putFloat(flag.name, (float) flag.getDouble());
-                } else if (i == 4) {
-                    editor.putString(flag.name, flag.getString());
-                } else if (i == 5) {
-                    editor.putString(flag.name, Base64.encodeToString(flag.getBytesValue(), 3));
-                }
-            }
-        }
-    }
-
     /* access modifiers changed from: package-private */
     public final /* synthetic */ void zza(int i, String str, Executor executor, Callback callback, Task task) {
         boolean isSuccessful = task.isSuccessful();
@@ -174,5 +172,9 @@ public abstract class PhenotypeFlagCommitter {
         } else if (callback != null) {
             callback.onFinish(isSuccessful);
         }
+    }
+
+    public interface Callback {
+        void onFinish(boolean z);
     }
 }

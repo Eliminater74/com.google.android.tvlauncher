@@ -1,6 +1,5 @@
 package com.google.protobuf;
 
-import com.google.protobuf.ArrayDecoders;
 import java.io.IOException;
 
 interface Schema<T> {

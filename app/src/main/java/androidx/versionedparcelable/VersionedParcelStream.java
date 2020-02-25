@@ -7,8 +7,9 @@ import android.os.Parcelable;
 import android.support.annotation.RestrictTo;
 import android.support.p001v4.internal.view.SupportMenu;
 import android.support.p001v4.util.ArrayMap;
-import androidx.versionedparcelable.VersionedParcel;
+
 import com.google.android.exoplayer2.C0841C;
+
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -38,15 +39,15 @@ class VersionedParcelStream extends VersionedParcel {
     private static final int TYPE_SUB_BUNDLE = 1;
     private static final int TYPE_SUB_PERSISTABLE_BUNDLE = 2;
     private static final Charset UTF_16 = Charset.forName(C0841C.UTF16_NAME);
+    private final DataInputStream mMasterInput;
+    private final DataOutputStream mMasterOutput;
     int mCount;
+    int mFieldSize;
     private DataInputStream mCurrentInput;
     private DataOutputStream mCurrentOutput;
     private FieldBuffer mFieldBuffer;
     private int mFieldId;
-    int mFieldSize;
     private boolean mIgnoreParcelables;
-    private final DataInputStream mMasterInput;
-    private final DataOutputStream mMasterOutput;
 
     public VersionedParcelStream(InputStream input, OutputStream output) {
         this(input, output, new ArrayMap(), new ArrayMap(), new ArrayMap());
@@ -472,9 +473,9 @@ class VersionedParcelStream extends VersionedParcel {
     }
 
     private static class FieldBuffer {
+        final ByteArrayOutputStream mOutput = new ByteArrayOutputStream();
         final DataOutputStream mDataStream = new DataOutputStream(this.mOutput);
         private final int mFieldId;
-        final ByteArrayOutputStream mOutput = new ByteArrayOutputStream();
         private final DataOutputStream mTarget;
 
         FieldBuffer(int fieldId, DataOutputStream target) {

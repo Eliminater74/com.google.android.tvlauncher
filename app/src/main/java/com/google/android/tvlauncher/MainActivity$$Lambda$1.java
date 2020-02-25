@@ -1,6 +1,7 @@
 package com.google.android.tvlauncher;
 
 import android.os.ConditionVariable;
+
 import com.google.android.tvlauncher.util.LaunchOnBootCompletedHelper;
 
 final /* synthetic */ class MainActivity$$Lambda$1 implements LaunchOnBootCompletedHelper.OnDataLoadCompleteListener {

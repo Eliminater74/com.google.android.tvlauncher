@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.ViewTreeObserver;
+
 import androidx.leanback.transition.TransitionHelper;
 import androidx.leanback.transition.TransitionListener;
 import androidx.leanback.util.StateMachine;
@@ -28,26 +29,26 @@ public class BaseSupportFragment extends BrandedSupportFragment {
             BaseSupportFragment.this.onEntranceTransitionEnd();
         }
     };
-    final StateMachine.State STATE_ENTRANCE_ON_PREPARED = new StateMachine.State("ENTRANCE_ON_PREPARED", true, false) {
-        public void run() {
-            BaseSupportFragment.this.mProgressBarManager.show();
-        }
-    };
     final StateMachine.State STATE_ENTRANCE_ON_PREPARED_ON_CREATEVIEW = new StateMachine.State("ENTRANCE_ON_PREPARED_ON_CREATEVIEW") {
         public void run() {
             BaseSupportFragment.this.onEntranceTransitionPrepare();
         }
     };
+    final StateMachine.State STATE_START = new StateMachine.State("START", true, false);
+    final ProgressBarManager mProgressBarManager = new ProgressBarManager();
+    final StateMachine.State STATE_ENTRANCE_ON_PREPARED = new StateMachine.State("ENTRANCE_ON_PREPARED", true, false) {
+        public void run() {
+            BaseSupportFragment.this.mProgressBarManager.show();
+        }
+    };
+    final StateMachine mStateMachine = new StateMachine();
+    Object mEntranceTransition;
     final StateMachine.State STATE_ENTRANCE_PERFORM = new StateMachine.State("STATE_ENTRANCE_PERFORM") {
         public void run() {
             BaseSupportFragment.this.mProgressBarManager.hide();
             BaseSupportFragment.this.onExecuteEntranceTransition();
         }
     };
-    final StateMachine.State STATE_START = new StateMachine.State("START", true, false);
-    Object mEntranceTransition;
-    final ProgressBarManager mProgressBarManager = new ProgressBarManager();
-    final StateMachine mStateMachine = new StateMachine();
 
     @SuppressLint({"ValidFragment"})
     BaseSupportFragment() {

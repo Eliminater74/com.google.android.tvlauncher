@@ -6,11 +6,13 @@ import android.os.IBinder;
 import android.os.IInterface;
 import android.os.Parcel;
 import android.os.Parcelable;
+
 import com.google.android.gms.common.Feature;
 import com.google.android.gms.common.GoogleApiAvailabilityLight;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.internal.zzbkv;
 import com.google.android.gms.internal.zzbky;
+
 import java.util.Collection;
 
 public class GetServiceRequest extends zzbkv {
@@ -49,6 +51,24 @@ public class GetServiceRequest extends zzbkv {
         this.zzf = scopeArr;
         this.zzg = bundle;
         this.zzi = featureArr;
+    }
+
+    public static Parcelable.Creator<GetServiceRequest> getCreator() {
+        return CREATOR;
+    }
+
+    private static Account zza(IBinder iBinder) {
+        IAccountAccessor iAccountAccessor;
+        if (iBinder == null) {
+            return null;
+        }
+        IInterface queryLocalInterface = iBinder.queryLocalInterface("com.google.android.gms.common.internal.IAccountAccessor");
+        if (queryLocalInterface instanceof IAccountAccessor) {
+            iAccountAccessor = (IAccountAccessor) queryLocalInterface;
+        } else {
+            iAccountAccessor = new zzw(iBinder);
+        }
+        return zza.zza(iAccountAccessor);
     }
 
     public int getClientLibraryVersion() {
@@ -118,10 +138,6 @@ public class GetServiceRequest extends zzbkv {
     public GetServiceRequest setExtraArgs(Bundle bundle) {
         this.zzg = bundle;
         return this;
-    }
-
-    public static Parcelable.Creator<GetServiceRequest> getCreator() {
-        return CREATOR;
     }
 
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
@@ -235,19 +251,5 @@ public class GetServiceRequest extends zzbkv {
         zzbky.zza(parcel, 8, (Parcelable) this.zzh, i, false);
         zzbky.zza(parcel, 10, (Parcelable[]) this.zzi, i, false);
         zzbky.zza(parcel, zza2);
-    }
-
-    private static Account zza(IBinder iBinder) {
-        IAccountAccessor iAccountAccessor;
-        if (iBinder == null) {
-            return null;
-        }
-        IInterface queryLocalInterface = iBinder.queryLocalInterface("com.google.android.gms.common.internal.IAccountAccessor");
-        if (queryLocalInterface instanceof IAccountAccessor) {
-            iAccountAccessor = (IAccountAccessor) queryLocalInterface;
-        } else {
-            iAccountAccessor = new zzw(iBinder);
-        }
-        return zza.zza(iAccountAccessor);
     }
 }

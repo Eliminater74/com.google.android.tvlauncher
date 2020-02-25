@@ -17,25 +17,18 @@ import android.support.annotation.Nullable;
 import android.support.p001v4.app.SupportActivity;
 import android.view.View;
 import android.view.Window;
+
 import androidx.savedstate.SavedStateRegistry;
 import androidx.savedstate.SavedStateRegistryController;
 import androidx.savedstate.SavedStateRegistryOwner;
 
 public class ComponentActivity extends SupportActivity implements LifecycleOwner, ViewModelStoreOwner, SavedStateRegistryOwner {
-    @LayoutRes
-    private int mContentLayoutId;
     private final LifecycleRegistry mLifecycleRegistry;
     private final OnBackPressedDispatcher mOnBackPressedDispatcher;
     private final SavedStateRegistryController mSavedStateRegistryController;
+    @LayoutRes
+    private int mContentLayoutId;
     private ViewModelStore mViewModelStore;
-
-    static final class NonConfigurationInstances {
-        Object custom;
-        ViewModelStore viewModelStore;
-
-        NonConfigurationInstances() {
-        }
-    }
 
     public ComponentActivity() {
         this.mLifecycleRegistry = new LifecycleRegistry(this);
@@ -185,5 +178,13 @@ public class ComponentActivity extends SupportActivity implements LifecycleOwner
     @NonNull
     public final SavedStateRegistry getSavedStateRegistry() {
         return this.mSavedStateRegistryController.getSavedStateRegistry();
+    }
+
+    static final class NonConfigurationInstances {
+        Object custom;
+        ViewModelStore viewModelStore;
+
+        NonConfigurationInstances() {
+        }
     }
 }

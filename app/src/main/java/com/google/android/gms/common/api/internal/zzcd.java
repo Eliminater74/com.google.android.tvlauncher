@@ -1,6 +1,7 @@
 package com.google.android.gms.common.api.internal;
 
 import android.os.Bundle;
+
 import com.google.android.gms.common.ConnectionResult;
 
 /* compiled from: InternalGoogleApiClient */

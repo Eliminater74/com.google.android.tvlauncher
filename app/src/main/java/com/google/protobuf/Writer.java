@@ -1,16 +1,10 @@
 package com.google.protobuf;
 
-import com.google.protobuf.MapEntryLite;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 interface Writer {
-
-    public enum FieldOrder {
-        ASCENDING,
-        DESCENDING
-    }
 
     FieldOrder fieldOrder();
 
@@ -107,4 +101,9 @@ interface Writer {
     void writeUInt64(int i, long j) throws IOException;
 
     void writeUInt64List(int i, List<Long> list, boolean z) throws IOException;
+
+    public enum FieldOrder {
+        ASCENDING,
+        DESCENDING
+    }
 }

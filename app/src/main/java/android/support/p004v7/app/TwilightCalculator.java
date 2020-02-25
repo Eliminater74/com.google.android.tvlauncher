@@ -2,22 +2,18 @@ package android.support.p004v7.app;
 
 /* renamed from: android.support.v7.app.TwilightCalculator */
 class TwilightCalculator {
+    public static final int DAY = 0;
+    public static final int NIGHT = 1;
     private static final float ALTIDUTE_CORRECTION_CIVIL_TWILIGHT = -0.10471976f;
-
     /* renamed from: C1 */
     private static final float f17C1 = 0.0334196f;
-
     /* renamed from: C2 */
     private static final float f18C2 = 3.49066E-4f;
-
     /* renamed from: C3 */
     private static final float f19C3 = 5.236E-6f;
-    public static final int DAY = 0;
     private static final float DEGREES_TO_RADIANS = 0.017453292f;
-
     /* renamed from: J0 */
     private static final float f20J0 = 9.0E-4f;
-    public static final int NIGHT = 1;
     private static final float OBLIQUITY = 0.4092797f;
     private static final long UTC_2000 = 946728000000L;
     private static TwilightCalculator sInstance;

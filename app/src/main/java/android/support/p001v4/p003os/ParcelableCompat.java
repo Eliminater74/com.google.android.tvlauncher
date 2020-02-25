@@ -6,6 +6,9 @@ import android.os.Parcelable;
 @Deprecated
 /* renamed from: android.support.v4.os.ParcelableCompat */
 public final class ParcelableCompat {
+    private ParcelableCompat() {
+    }
+
     @Deprecated
     public static <T> Parcelable.Creator<T> newCreator(ParcelableCompatCreatorCallbacks<T> callbacks) {
         return new ParcelableCompatCreatorHoneycombMR2(callbacks);
@@ -30,8 +33,5 @@ public final class ParcelableCompat {
         public T[] newArray(int size) {
             return this.mCallbacks.newArray(size);
         }
-    }
-
-    private ParcelableCompat() {
     }
 }

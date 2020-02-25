@@ -28,7 +28,6 @@ import android.support.p004v7.view.menu.MenuItemImpl;
 import android.support.p004v7.view.menu.MenuPresenter;
 import android.support.p004v7.view.menu.MenuView;
 import android.support.p004v7.view.menu.SubMenuBuilder;
-import android.support.p004v7.widget.ActionMenuView;
 import android.text.Layout;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -43,15 +42,23 @@ import android.view.ViewParent;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /* renamed from: android.support.v7.widget.Toolbar */
 public class Toolbar extends ViewGroup {
     private static final String TAG = "Toolbar";
-    private MenuPresenter.Callback mActionMenuPresenterCallback;
+    private final ArrayList<View> mHiddenViews;
+    private final ActionMenuView.OnMenuItemClickListener mMenuViewItemClickListener;
+    private final Runnable mShowOverflowMenuRunnable;
+    private final int[] mTempMargins;
+    private final ArrayList<View> mTempViews;
     int mButtonGravity;
     ImageButton mCollapseButtonView;
+    View mExpandedActionView;
+    OnMenuItemClickListener mOnMenuItemClickListener;
+    private MenuPresenter.Callback mActionMenuPresenterCallback;
     private CharSequence mCollapseDescription;
     private Drawable mCollapseIcon;
     private boolean mCollapsible;
@@ -60,27 +67,20 @@ public class Toolbar extends ViewGroup {
     private RtlSpacingHelper mContentInsets;
     private boolean mEatingHover;
     private boolean mEatingTouch;
-    View mExpandedActionView;
     private ExpandedActionViewMenuPresenter mExpandedMenuPresenter;
     private int mGravity;
-    private final ArrayList<View> mHiddenViews;
     private ImageView mLogoView;
     private int mMaxButtonHeight;
     private MenuBuilder.Callback mMenuBuilderCallback;
     private ActionMenuView mMenuView;
-    private final ActionMenuView.OnMenuItemClickListener mMenuViewItemClickListener;
     private ImageButton mNavButtonView;
-    OnMenuItemClickListener mOnMenuItemClickListener;
     private ActionMenuPresenter mOuterActionMenuPresenter;
     private Context mPopupContext;
     private int mPopupTheme;
-    private final Runnable mShowOverflowMenuRunnable;
     private CharSequence mSubtitleText;
     private int mSubtitleTextAppearance;
     private ColorStateList mSubtitleTextColor;
     private TextView mSubtitleTextView;
-    private final int[] mTempMargins;
-    private final ArrayList<View> mTempViews;
     private int mTitleMarginBottom;
     private int mTitleMarginEnd;
     private int mTitleMarginStart;
@@ -90,11 +90,6 @@ public class Toolbar extends ViewGroup {
     private ColorStateList mTitleTextColor;
     private TextView mTitleTextView;
     private ToolbarWidgetWrapper mWrapper;
-
-    /* renamed from: android.support.v7.widget.Toolbar$OnMenuItemClickListener */
-    public interface OnMenuItemClickListener {
-        boolean onMenuItemClick(MenuItem menuItem);
-    }
 
     public Toolbar(Context context) {
         this(context, null);
@@ -202,6 +197,14 @@ public class Toolbar extends ViewGroup {
         a.recycle();
     }
 
+    private static boolean isCustomView(View child) {
+        return ((LayoutParams) child.getLayoutParams()).mViewType == 0;
+    }
+
+    public int getPopupTheme() {
+        return this.mPopupTheme;
+    }
+
     public void setPopupTheme(@StyleRes int resId) {
         if (this.mPopupTheme != resId) {
             this.mPopupTheme = resId;
@@ -211,10 +214,6 @@ public class Toolbar extends ViewGroup {
                 this.mPopupContext = new ContextThemeWrapper(getContext(), resId);
             }
         }
-    }
-
-    public int getPopupTheme() {
-        return this.mPopupTheme;
     }
 
     public void setTitleMargin(int start, int top, int end, int bottom) {
@@ -272,10 +271,6 @@ public class Toolbar extends ViewGroup {
             z = false;
         }
         rtlSpacingHelper.setDirection(z);
-    }
-
-    public void setLogo(@DrawableRes int resId) {
-        setLogo(AppCompatResources.getDrawable(getContext(), resId));
     }
 
     @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
@@ -358,6 +353,18 @@ public class Toolbar extends ViewGroup {
         return false;
     }
 
+    public Drawable getLogo() {
+        ImageView imageView = this.mLogoView;
+        if (imageView != null) {
+            return imageView.getDrawable();
+        }
+        return null;
+    }
+
+    public void setLogo(@DrawableRes int resId) {
+        setLogo(AppCompatResources.getDrawable(getContext(), resId));
+    }
+
     public void setLogo(Drawable drawable) {
         if (drawable != null) {
             ensureLogoView();
@@ -377,10 +384,10 @@ public class Toolbar extends ViewGroup {
         }
     }
 
-    public Drawable getLogo() {
+    public CharSequence getLogoDescription() {
         ImageView imageView = this.mLogoView;
         if (imageView != null) {
-            return imageView.getDrawable();
+            return imageView.getContentDescription();
         }
         return null;
     }
@@ -397,14 +404,6 @@ public class Toolbar extends ViewGroup {
         if (imageView != null) {
             imageView.setContentDescription(description);
         }
-    }
-
-    public CharSequence getLogoDescription() {
-        ImageView imageView = this.mLogoView;
-        if (imageView != null) {
-            return imageView.getContentDescription();
-        }
-        return null;
     }
 
     private void ensureLogoView() {
@@ -571,6 +570,15 @@ public class Toolbar extends ViewGroup {
         }
     }
 
+    @Nullable
+    public Drawable getNavigationIcon() {
+        ImageButton imageButton = this.mNavButtonView;
+        if (imageButton != null) {
+            return imageButton.getDrawable();
+        }
+        return null;
+    }
+
     public void setNavigationIcon(@DrawableRes int resId) {
         setNavigationIcon(AppCompatResources.getDrawable(getContext(), resId));
     }
@@ -592,15 +600,6 @@ public class Toolbar extends ViewGroup {
         if (imageButton2 != null) {
             imageButton2.setImageDrawable(icon);
         }
-    }
-
-    @Nullable
-    public Drawable getNavigationIcon() {
-        ImageButton imageButton = this.mNavButtonView;
-        if (imageButton != null) {
-            return imageButton.getDrawable();
-        }
-        return null;
     }
 
     public void setNavigationOnClickListener(View.OnClickListener listener) {
@@ -661,15 +660,15 @@ public class Toolbar extends ViewGroup {
         return this.mMenuView.getMenu();
     }
 
-    public void setOverflowIcon(@Nullable Drawable icon) {
-        ensureMenu();
-        this.mMenuView.setOverflowIcon(icon);
-    }
-
     @Nullable
     public Drawable getOverflowIcon() {
         ensureMenu();
         return this.mMenuView.getOverflowIcon();
+    }
+
+    public void setOverflowIcon(@Nullable Drawable icon) {
+        ensureMenu();
+        this.mMenuView.setOverflowIcon(icon);
     }
 
     private void ensureMenu() {
@@ -1735,10 +1734,6 @@ public class Toolbar extends ViewGroup {
         return super.checkLayoutParams(p) && (p instanceof LayoutParams);
     }
 
-    private static boolean isCustomView(View child) {
-        return ((LayoutParams) child.getLayoutParams()).mViewType == 0;
-    }
-
     @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
     public DecorToolbar getWrapper() {
         if (this.mWrapper == null) {
@@ -1814,6 +1809,11 @@ public class Toolbar extends ViewGroup {
     /* access modifiers changed from: package-private */
     public Context getPopupContext() {
         return this.mPopupContext;
+    }
+
+    /* renamed from: android.support.v7.widget.Toolbar$OnMenuItemClickListener */
+    public interface OnMenuItemClickListener {
+        boolean onMenuItemClick(MenuItem menuItem);
     }
 
     /* renamed from: android.support.v7.widget.Toolbar$LayoutParams */

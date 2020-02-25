@@ -1,8 +1,8 @@
 package com.google.android.exoplayer2.source;
 
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.upstream.TransferListener;
 
 public abstract /* synthetic */ class MediaSource$$CC {

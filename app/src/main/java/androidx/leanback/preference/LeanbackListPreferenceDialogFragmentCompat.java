@@ -12,10 +12,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Checkable;
 import android.widget.TextView;
+
 import androidx.leanback.widget.VerticalGridView;
 import androidx.preference.DialogPreference;
 import androidx.preference.ListPreference;
 import androidx.preference.MultiSelectListPreference;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -28,17 +30,13 @@ public class LeanbackListPreferenceDialogFragmentCompat extends LeanbackPreferen
     private static final String SAVE_STATE_IS_MULTI = "LeanbackListPreferenceDialogFragment.isMulti";
     private static final String SAVE_STATE_MESSAGE = "LeanbackListPreferenceDialogFragment.message";
     private static final String SAVE_STATE_TITLE = "LeanbackListPreferenceDialogFragment.title";
+    Set<String> mInitialSelections;
     private CharSequence mDialogMessage;
     private CharSequence mDialogTitle;
     private CharSequence[] mEntries;
     private CharSequence[] mEntryValues;
     private String mInitialSelection;
-    Set<String> mInitialSelections;
     private boolean mMulti;
-
-    private interface OnItemClickListener {
-        void onItemClick(ViewHolder viewHolder);
-    }
 
     public static LeanbackListPreferenceDialogFragmentCompat newInstanceSingle(String key) {
         Bundle args = new Bundle(1);
@@ -154,6 +152,42 @@ public class LeanbackListPreferenceDialogFragmentCompat extends LeanbackPreferen
         return new AdapterSingle(this.mEntries, this.mEntryValues, this.mInitialSelection);
     }
 
+    private interface OnItemClickListener {
+        void onItemClick(ViewHolder viewHolder);
+    }
+
+    public static final class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        private final ViewGroup mContainer;
+        private final OnItemClickListener mListener;
+        private final TextView mTitleView;
+        private final Checkable mWidgetView;
+
+        ViewHolder(@NonNull View view, @NonNull OnItemClickListener listener) {
+            super(view);
+            this.mWidgetView = (Checkable) view.findViewById(C0572R.C0574id.button);
+            this.mContainer = (ViewGroup) view.findViewById(C0572R.C0574id.container);
+            this.mTitleView = (TextView) view.findViewById(16908310);
+            this.mContainer.setOnClickListener(this);
+            this.mListener = listener;
+        }
+
+        public Checkable getWidgetView() {
+            return this.mWidgetView;
+        }
+
+        public TextView getTitleView() {
+            return this.mTitleView;
+        }
+
+        public ViewGroup getContainer() {
+            return this.mContainer;
+        }
+
+        public void onClick(View v) {
+            this.mListener.onItemClick(this);
+        }
+    }
+
     final class AdapterSingle extends RecyclerView.Adapter<ViewHolder> implements OnItemClickListener {
         private final CharSequence[] mEntries;
         private final CharSequence[] mEntryValues;
@@ -252,38 +286,6 @@ public class LeanbackListPreferenceDialogFragmentCompat extends LeanbackPreferen
                 }
                 notifyDataSetChanged();
             }
-        }
-    }
-
-    public static final class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        private final ViewGroup mContainer;
-        private final OnItemClickListener mListener;
-        private final TextView mTitleView;
-        private final Checkable mWidgetView;
-
-        ViewHolder(@NonNull View view, @NonNull OnItemClickListener listener) {
-            super(view);
-            this.mWidgetView = (Checkable) view.findViewById(C0572R.C0574id.button);
-            this.mContainer = (ViewGroup) view.findViewById(C0572R.C0574id.container);
-            this.mTitleView = (TextView) view.findViewById(16908310);
-            this.mContainer.setOnClickListener(this);
-            this.mListener = listener;
-        }
-
-        public Checkable getWidgetView() {
-            return this.mWidgetView;
-        }
-
-        public TextView getTitleView() {
-            return this.mTitleView;
-        }
-
-        public ViewGroup getContainer() {
-            return this.mContainer;
-        }
-
-        public void onClick(View v) {
-            this.mListener.onItemClick(this);
         }
     }
 }

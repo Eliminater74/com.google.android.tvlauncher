@@ -4,10 +4,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.support.p001v4.util.Pools;
+
 import com.bumptech.glide.Registry;
 import com.bumptech.glide.load.Options;
-import com.bumptech.glide.load.model.ModelLoader;
 import com.bumptech.glide.util.Preconditions;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -32,6 +33,11 @@ public class MultiModelLoaderFactory {
         this.alreadyUsedEntries = new HashSet();
         this.throwableListPool = throwableListPool2;
         this.factory = factory2;
+    }
+
+    @NonNull
+    private static <Model, Data> ModelLoader<Model, Data> emptyModelLoader() {
+        return EMPTY_MODEL_LOADER;
     }
 
     /* access modifiers changed from: package-private */
@@ -147,11 +153,6 @@ public class MultiModelLoaderFactory {
     @NonNull
     private <Model, Data> ModelLoader<Model, Data> build(@NonNull Entry<?, ?> entry) {
         return (ModelLoader) Preconditions.checkNotNull(entry.factory.build(this));
-    }
-
-    @NonNull
-    private static <Model, Data> ModelLoader<Model, Data> emptyModelLoader() {
-        return EMPTY_MODEL_LOADER;
     }
 
     private static class Entry<Model, Data> {

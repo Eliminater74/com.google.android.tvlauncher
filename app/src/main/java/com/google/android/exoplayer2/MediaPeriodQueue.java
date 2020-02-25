@@ -2,7 +2,7 @@ package com.google.android.exoplayer2;
 
 import android.support.annotation.Nullable;
 import android.util.Pair;
-import com.google.android.exoplayer2.Timeline;
+
 import com.google.android.exoplayer2.source.MediaPeriod;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
@@ -11,6 +11,8 @@ import com.google.android.exoplayer2.util.Assertions;
 
 final class MediaPeriodQueue {
     private static final int MAXIMUM_BUFFER_AHEAD_PERIODS = 100;
+    private final Timeline.Period period = new Timeline.Period();
+    private final Timeline.Window window = new Timeline.Window();
     private int length;
     @Nullable
     private MediaPeriodHolder loading;
@@ -18,7 +20,6 @@ final class MediaPeriodQueue {
     @Nullable
     private Object oldFrontPeriodUid;
     private long oldFrontPeriodWindowSequenceNumber;
-    private final Timeline.Period period = new Timeline.Period();
     @Nullable
     private MediaPeriodHolder playing;
     @Nullable
@@ -26,7 +27,6 @@ final class MediaPeriodQueue {
     private int repeatMode;
     private boolean shuffleModeEnabled;
     private Timeline timeline = Timeline.EMPTY;
-    private final Timeline.Window window = new Timeline.Window();
 
     public void setTimeline(Timeline timeline2) {
         this.timeline = timeline2;

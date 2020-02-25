@@ -1,6 +1,7 @@
 package android.support.p001v4.util;
 
 import android.support.annotation.Nullable;
+
 import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Iterator;
@@ -16,6 +17,57 @@ abstract class MapCollections<K, V> {
     MapCollections<K, V>.KeySet mKeySet;
     @Nullable
     MapCollections<K, V>.ValuesCollection mValues;
+
+    MapCollections() {
+    }
+
+    public static <K, V> boolean containsAllHelper(Map<K, V> map, Collection<?> collection) {
+        for (Object containsKey : collection) {
+            if (!map.containsKey(containsKey)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static <K, V> boolean removeAllHelper(Map<K, V> map, Collection<?> collection) {
+        int oldSize = map.size();
+        for (Object remove : collection) {
+            map.remove(remove);
+        }
+        return oldSize != map.size();
+    }
+
+    public static <K, V> boolean retainAllHelper(Map<K, V> map, Collection<?> collection) {
+        int oldSize = map.size();
+        Iterator<K> it = map.keySet().iterator();
+        while (it.hasNext()) {
+            if (!collection.contains(it.next())) {
+                it.remove();
+            }
+        }
+        return oldSize != map.size();
+    }
+
+    public static <T> boolean equalsSetHelper(Set<T> set, Object object) {
+        if (set == object) {
+            return true;
+        }
+        if (!(object instanceof Set)) {
+            return false;
+        }
+        Set<?> s = (Set) object;
+        try {
+            if (set.size() != s.size() || !set.containsAll(s)) {
+                return false;
+            }
+            return true;
+        } catch (NullPointerException e) {
+            return false;
+        } catch (ClassCastException e2) {
+            return false;
+        }
+    }
 
     /* access modifiers changed from: protected */
     public abstract void colClear();
@@ -44,14 +96,55 @@ abstract class MapCollections<K, V> {
     /* access modifiers changed from: protected */
     public abstract V colSetValue(int i, V v);
 
-    MapCollections() {
+    public Object[] toArrayHelper(int offset) {
+        int N = colGetSize();
+        Object[] result = new Object[N];
+        for (int i = 0; i < N; i++) {
+            result[i] = colGetEntry(i, offset);
+        }
+        return result;
+    }
+
+    public <T> T[] toArrayHelper(T[] array, int offset) {
+        int N = colGetSize();
+        if (array.length < N) {
+            array = (Object[]) Array.newInstance(array.getClass().getComponentType(), N);
+        }
+        for (int i = 0; i < N; i++) {
+            array[i] = colGetEntry(i, offset);
+        }
+        if (array.length > N) {
+            array[N] = null;
+        }
+        return array;
+    }
+
+    public Set<Map.Entry<K, V>> getEntrySet() {
+        if (this.mEntrySet == null) {
+            this.mEntrySet = new EntrySet();
+        }
+        return this.mEntrySet;
+    }
+
+    public Set<K> getKeySet() {
+        if (this.mKeySet == null) {
+            this.mKeySet = new KeySet();
+        }
+        return this.mKeySet;
+    }
+
+    public Collection<V> getValues() {
+        if (this.mValues == null) {
+            this.mValues = new ValuesCollection();
+        }
+        return this.mValues;
     }
 
     /* renamed from: android.support.v4.util.MapCollections$ArrayIterator */
     final class ArrayIterator<T> implements Iterator<T> {
+        final int mOffset;
         boolean mCanRemove = false;
         int mIndex;
-        final int mOffset;
         int mSize;
 
         ArrayIterator(int offset) {
@@ -438,97 +531,5 @@ abstract class MapCollections<K, V> {
         public <T> T[] toArray(T[] array) {
             return MapCollections.this.toArrayHelper(array, 1);
         }
-    }
-
-    public static <K, V> boolean containsAllHelper(Map<K, V> map, Collection<?> collection) {
-        for (Object containsKey : collection) {
-            if (!map.containsKey(containsKey)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public static <K, V> boolean removeAllHelper(Map<K, V> map, Collection<?> collection) {
-        int oldSize = map.size();
-        for (Object remove : collection) {
-            map.remove(remove);
-        }
-        return oldSize != map.size();
-    }
-
-    public static <K, V> boolean retainAllHelper(Map<K, V> map, Collection<?> collection) {
-        int oldSize = map.size();
-        Iterator<K> it = map.keySet().iterator();
-        while (it.hasNext()) {
-            if (!collection.contains(it.next())) {
-                it.remove();
-            }
-        }
-        return oldSize != map.size();
-    }
-
-    public Object[] toArrayHelper(int offset) {
-        int N = colGetSize();
-        Object[] result = new Object[N];
-        for (int i = 0; i < N; i++) {
-            result[i] = colGetEntry(i, offset);
-        }
-        return result;
-    }
-
-    public <T> T[] toArrayHelper(T[] array, int offset) {
-        int N = colGetSize();
-        if (array.length < N) {
-            array = (Object[]) Array.newInstance(array.getClass().getComponentType(), N);
-        }
-        for (int i = 0; i < N; i++) {
-            array[i] = colGetEntry(i, offset);
-        }
-        if (array.length > N) {
-            array[N] = null;
-        }
-        return array;
-    }
-
-    public static <T> boolean equalsSetHelper(Set<T> set, Object object) {
-        if (set == object) {
-            return true;
-        }
-        if (!(object instanceof Set)) {
-            return false;
-        }
-        Set<?> s = (Set) object;
-        try {
-            if (set.size() != s.size() || !set.containsAll(s)) {
-                return false;
-            }
-            return true;
-        } catch (NullPointerException e) {
-            return false;
-        } catch (ClassCastException e2) {
-            return false;
-        }
-    }
-
-    public Set<Map.Entry<K, V>> getEntrySet() {
-        if (this.mEntrySet == null) {
-            this.mEntrySet = new EntrySet();
-        }
-        return this.mEntrySet;
-    }
-
-    public Set<K> getKeySet() {
-        if (this.mKeySet == null) {
-            this.mKeySet = new KeySet();
-        }
-        return this.mKeySet;
-    }
-
-    public Collection<V> getValues() {
-        if (this.mValues == null) {
-            this.mValues = new ValuesCollection();
-        }
-        return this.mValues;
     }
 }

@@ -4,28 +4,17 @@ import com.google.common.annotations.Beta;
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableSortedSet;
-import java.lang.Comparable;
+
 import java.util.NoSuchElementException;
 
 @GwtCompatible(emulated = true)
 public abstract class ContiguousSet<C extends Comparable> extends ImmutableSortedSet<C> {
     final DiscreteDomain<C> domain;
 
-    /* access modifiers changed from: package-private */
-    public abstract ContiguousSet<C> headSetImpl(C c, boolean z);
-
-    public abstract ContiguousSet<C> intersection(ContiguousSet<C> contiguousSet);
-
-    public abstract Range<C> range();
-
-    public abstract Range<C> range(BoundType boundType, BoundType boundType2);
-
-    /* access modifiers changed from: package-private */
-    public abstract ContiguousSet<C> subSetImpl(C c, boolean z, C c2, boolean z2);
-
-    /* access modifiers changed from: package-private */
-    public abstract ContiguousSet<C> tailSetImpl(C c, boolean z);
+    ContiguousSet(DiscreteDomain<C> domain2) {
+        super(Ordering.natural());
+        this.domain = domain2;
+    }
 
     public static <C extends Comparable> ContiguousSet<C> create(Range<C> range, DiscreteDomain<C> domain2) {
         Preconditions.checkNotNull(range);
@@ -67,10 +56,25 @@ public abstract class ContiguousSet<C extends Comparable> extends ImmutableSorte
         return create(Range.closedOpen(Long.valueOf(lower), Long.valueOf(upper)), DiscreteDomain.longs());
     }
 
-    ContiguousSet(DiscreteDomain<C> domain2) {
-        super(Ordering.natural());
-        this.domain = domain2;
+    @Deprecated
+    public static <E> ImmutableSortedSet.Builder<E> builder() {
+        throw new UnsupportedOperationException();
     }
+
+    /* access modifiers changed from: package-private */
+    public abstract ContiguousSet<C> headSetImpl(C c, boolean z);
+
+    public abstract ContiguousSet<C> intersection(ContiguousSet<C> contiguousSet);
+
+    public abstract Range<C> range();
+
+    public abstract Range<C> range(BoundType boundType, BoundType boundType2);
+
+    /* access modifiers changed from: package-private */
+    public abstract ContiguousSet<C> subSetImpl(C c, boolean z, C c2, boolean z2);
+
+    /* access modifiers changed from: package-private */
+    public abstract ContiguousSet<C> tailSetImpl(C c, boolean z);
 
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
      method: com.google.common.collect.ContiguousSet.headSetImpl(java.lang.Comparable, boolean):com.google.common.collect.ContiguousSet<C>
@@ -141,10 +145,5 @@ public abstract class ContiguousSet<C extends Comparable> extends ImmutableSorte
 
     public String toString() {
         return range().toString();
-    }
-
-    @Deprecated
-    public static <E> ImmutableSortedSet.Builder<E> builder() {
-        throw new UnsupportedOperationException();
     }
 }

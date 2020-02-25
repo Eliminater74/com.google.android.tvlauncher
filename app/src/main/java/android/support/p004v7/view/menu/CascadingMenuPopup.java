@@ -13,7 +13,6 @@ import android.support.annotation.StyleRes;
 import android.support.p001v4.view.GravityCompat;
 import android.support.p001v4.view.ViewCompat;
 import android.support.p004v7.appcompat.C0233R;
-import android.support.p004v7.view.menu.MenuPresenter;
 import android.support.p004v7.widget.MenuItemHoverListener;
 import android.support.p004v7.widget.MenuPopupWindow;
 import android.view.KeyEvent;
@@ -26,6 +25,7 @@ import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
@@ -35,43 +35,17 @@ import java.util.List;
 final class CascadingMenuPopup extends MenuPopup implements MenuPresenter, View.OnKeyListener, PopupWindow.OnDismissListener {
     static final int HORIZ_POSITION_LEFT = 0;
     static final int HORIZ_POSITION_RIGHT = 1;
-    private static final int ITEM_LAYOUT = C0233R.layout.abc_cascading_menu_item_layout;
     static final int SUBMENU_TIMEOUT_MS = 200;
-    private View mAnchorView;
-    private final View.OnAttachStateChangeListener mAttachStateChangeListener = new View.OnAttachStateChangeListener() {
-        public void onViewAttachedToWindow(View v) {
-        }
-
-        public void onViewDetachedFromWindow(View v) {
-            if (CascadingMenuPopup.this.mTreeObserver != null) {
-                if (!CascadingMenuPopup.this.mTreeObserver.isAlive()) {
-                    CascadingMenuPopup.this.mTreeObserver = v.getViewTreeObserver();
-                }
-                CascadingMenuPopup.this.mTreeObserver.removeGlobalOnLayoutListener(CascadingMenuPopup.this.mGlobalLayoutListener);
-            }
-            v.removeOnAttachStateChangeListener(this);
-        }
-    };
+    private static final int ITEM_LAYOUT = C0233R.layout.abc_cascading_menu_item_layout;
+    final List<CascadingMenuInfo> mShowingMenus = new ArrayList();
+    final Handler mSubMenuHoverHandler;
     private final Context mContext;
-    private int mDropDownGravity = 0;
-    private boolean mForceShowIcon;
-    final ViewTreeObserver.OnGlobalLayoutListener mGlobalLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
-        public void onGlobalLayout() {
-            if (CascadingMenuPopup.this.isShowing() && CascadingMenuPopup.this.mShowingMenus.size() > 0 && !CascadingMenuPopup.this.mShowingMenus.get(0).window.isModal()) {
-                View anchor = CascadingMenuPopup.this.mShownAnchorView;
-                if (anchor == null || !anchor.isShown()) {
-                    CascadingMenuPopup.this.dismiss();
-                    return;
-                }
-                for (CascadingMenuInfo info : CascadingMenuPopup.this.mShowingMenus) {
-                    info.window.show();
-                }
-            }
-        }
-    };
-    private boolean mHasXOffset;
-    private boolean mHasYOffset;
-    private int mLastPosition;
+    private final int mMenuMaxWidth;
+    private final boolean mOverflowOnly;
+    private final List<MenuBuilder> mPendingMenus = new ArrayList();
+    private final int mPopupStyleAttr;
+    private final int mPopupStyleRes;
+    boolean mShouldCloseImmediately;
     private final MenuItemHoverListener mMenuItemHoverListener = new MenuItemHoverListener() {
         public void onItemHoverExit(@NonNull MenuBuilder menu, @NonNull MenuItem item) {
             CascadingMenuPopup.this.mSubMenuHoverHandler.removeCallbacksAndMessages(menu);
@@ -115,27 +89,48 @@ final class CascadingMenuPopup extends MenuPopup implements MenuPresenter, View.
             }
         }
     };
-    private final int mMenuMaxWidth;
+    View mShownAnchorView;
+    final ViewTreeObserver.OnGlobalLayoutListener mGlobalLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
+        public void onGlobalLayout() {
+            if (CascadingMenuPopup.this.isShowing() && CascadingMenuPopup.this.mShowingMenus.size() > 0 && !CascadingMenuPopup.this.mShowingMenus.get(0).window.isModal()) {
+                View anchor = CascadingMenuPopup.this.mShownAnchorView;
+                if (anchor == null || !anchor.isShown()) {
+                    CascadingMenuPopup.this.dismiss();
+                    return;
+                }
+                for (CascadingMenuInfo info : CascadingMenuPopup.this.mShowingMenus) {
+                    info.window.show();
+                }
+            }
+        }
+    };
+    ViewTreeObserver mTreeObserver;
+    private final View.OnAttachStateChangeListener mAttachStateChangeListener = new View.OnAttachStateChangeListener() {
+        public void onViewAttachedToWindow(View v) {
+        }
+
+        public void onViewDetachedFromWindow(View v) {
+            if (CascadingMenuPopup.this.mTreeObserver != null) {
+                if (!CascadingMenuPopup.this.mTreeObserver.isAlive()) {
+                    CascadingMenuPopup.this.mTreeObserver = v.getViewTreeObserver();
+                }
+                CascadingMenuPopup.this.mTreeObserver.removeGlobalOnLayoutListener(CascadingMenuPopup.this.mGlobalLayoutListener);
+            }
+            v.removeOnAttachStateChangeListener(this);
+        }
+    };
+    private View mAnchorView;
+    private int mDropDownGravity = 0;
+    private boolean mForceShowIcon;
+    private boolean mHasXOffset;
+    private boolean mHasYOffset;
+    private int mLastPosition;
     private PopupWindow.OnDismissListener mOnDismissListener;
-    private final boolean mOverflowOnly;
-    private final List<MenuBuilder> mPendingMenus = new ArrayList();
-    private final int mPopupStyleAttr;
-    private final int mPopupStyleRes;
     private MenuPresenter.Callback mPresenterCallback;
     private int mRawDropDownGravity = 0;
-    boolean mShouldCloseImmediately;
     private boolean mShowTitle;
-    final List<CascadingMenuInfo> mShowingMenus = new ArrayList();
-    View mShownAnchorView;
-    final Handler mSubMenuHoverHandler;
-    ViewTreeObserver mTreeObserver;
     private int mXOffset;
     private int mYOffset;
-
-    @Retention(RetentionPolicy.SOURCE)
-    /* renamed from: android.support.v7.view.menu.CascadingMenuPopup$HorizPosition */
-    public @interface HorizPosition {
-    }
 
     public CascadingMenuPopup(@NonNull Context context, @NonNull View anchor, @AttrRes int popupStyleAttr, @StyleRes int popupStyleRes, boolean overflowOnly) {
         this.mContext = context;
@@ -558,6 +553,11 @@ final class CascadingMenuPopup extends MenuPopup implements MenuPresenter, View.
     /* access modifiers changed from: protected */
     public boolean closeMenuOnSubMenuOpened() {
         return false;
+    }
+
+    @Retention(RetentionPolicy.SOURCE)
+    /* renamed from: android.support.v7.view.menu.CascadingMenuPopup$HorizPosition */
+    public @interface HorizPosition {
     }
 
     /* renamed from: android.support.v7.view.menu.CascadingMenuPopup$CascadingMenuInfo */

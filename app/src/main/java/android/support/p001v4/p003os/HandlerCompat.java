@@ -7,11 +7,15 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
+
 import java.lang.reflect.InvocationTargetException;
 
 /* renamed from: android.support.v4.os.HandlerCompat */
 public final class HandlerCompat {
     private static final String TAG = "HandlerCompat";
+
+    private HandlerCompat() {
+    }
 
     @NonNull
     public static Handler createAsync(@NonNull Looper looper) {
@@ -70,8 +74,5 @@ public final class HandlerCompat {
         Message message = Message.obtain(handler, r);
         message.obj = token;
         return handler.sendMessageDelayed(message, delayMillis);
-    }
-
-    private HandlerCompat() {
     }
 }

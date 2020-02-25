@@ -8,6 +8,7 @@ import android.support.p004v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewOutlineProvider;
+
 import com.google.android.tvlauncher.C1188R;
 import com.google.android.tvlauncher.util.ScaleFocusHandler;
 

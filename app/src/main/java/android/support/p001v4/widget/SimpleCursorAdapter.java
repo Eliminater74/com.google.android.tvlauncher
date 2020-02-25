@@ -10,24 +10,14 @@ import android.widget.TextView;
 
 /* renamed from: android.support.v4.widget.SimpleCursorAdapter */
 public class SimpleCursorAdapter extends ResourceCursorAdapter {
-    private CursorToStringConverter mCursorToStringConverter;
     @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
     protected int[] mFrom;
-    String[] mOriginalFrom;
-    private int mStringConversionColumn = -1;
     @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
     protected int[] mTo;
+    String[] mOriginalFrom;
+    private CursorToStringConverter mCursorToStringConverter;
+    private int mStringConversionColumn = -1;
     private ViewBinder mViewBinder;
-
-    /* renamed from: android.support.v4.widget.SimpleCursorAdapter$CursorToStringConverter */
-    public interface CursorToStringConverter {
-        CharSequence convertToString(Cursor cursor);
-    }
-
-    /* renamed from: android.support.v4.widget.SimpleCursorAdapter$ViewBinder */
-    public interface ViewBinder {
-        boolean setViewValue(View view, Cursor cursor, int i);
-    }
 
     @Deprecated
     public SimpleCursorAdapter(Context context, int layout, Cursor c, String[] from, int[] to) {
@@ -148,5 +138,15 @@ public class SimpleCursorAdapter extends ResourceCursorAdapter {
         this.mTo = to;
         findColumns(c, this.mOriginalFrom);
         super.changeCursor(c);
+    }
+
+    /* renamed from: android.support.v4.widget.SimpleCursorAdapter$CursorToStringConverter */
+    public interface CursorToStringConverter {
+        CharSequence convertToString(Cursor cursor);
+    }
+
+    /* renamed from: android.support.v4.widget.SimpleCursorAdapter$ViewBinder */
+    public interface ViewBinder {
+        boolean setViewValue(View view, Cursor cursor, int i);
     }
 }

@@ -8,13 +8,13 @@ public final class BackgroundFragment extends Fragment {
     private BackgroundManager mBackgroundManager;
 
     /* access modifiers changed from: package-private */
-    public void setBackgroundManager(BackgroundManager backgroundManager) {
-        this.mBackgroundManager = backgroundManager;
+    public BackgroundManager getBackgroundManager() {
+        return this.mBackgroundManager;
     }
 
     /* access modifiers changed from: package-private */
-    public BackgroundManager getBackgroundManager() {
-        return this.mBackgroundManager;
+    public void setBackgroundManager(BackgroundManager backgroundManager) {
+        this.mBackgroundManager = backgroundManager;
     }
 
     public void onStart() {

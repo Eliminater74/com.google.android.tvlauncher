@@ -4,6 +4,7 @@ import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.util.CodecSpecificDataUtil;
 import com.google.android.exoplayer2.util.NalUnitUtil;
 import com.google.android.exoplayer2.util.ParsableByteArray;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +14,14 @@ public final class AvcConfig {
     public final int nalUnitLengthFieldLength;
     public final float pixelWidthAspectRatio;
     public final int width;
+
+    private AvcConfig(List<byte[]> initializationData2, int nalUnitLengthFieldLength2, int width2, int height2, float pixelWidthAspectRatio2) {
+        this.initializationData = initializationData2;
+        this.nalUnitLengthFieldLength = nalUnitLengthFieldLength2;
+        this.width = width2;
+        this.height = height2;
+        this.pixelWidthAspectRatio = pixelWidthAspectRatio2;
+    }
 
     public static AvcConfig parse(ParsableByteArray data) throws ParserException {
         float pixelWidthAspectRatio2;
@@ -47,14 +56,6 @@ public final class AvcConfig {
         } catch (ArrayIndexOutOfBoundsException e) {
             throw new ParserException("Error parsing AVC config", e);
         }
-    }
-
-    private AvcConfig(List<byte[]> initializationData2, int nalUnitLengthFieldLength2, int width2, int height2, float pixelWidthAspectRatio2) {
-        this.initializationData = initializationData2;
-        this.nalUnitLengthFieldLength = nalUnitLengthFieldLength2;
-        this.width = width2;
-        this.height = height2;
-        this.pixelWidthAspectRatio = pixelWidthAspectRatio2;
     }
 
     private static byte[] buildNalUnitForChild(ParsableByteArray data) {

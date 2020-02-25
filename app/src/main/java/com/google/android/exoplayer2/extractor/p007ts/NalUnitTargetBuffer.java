@@ -1,15 +1,16 @@
 package com.google.android.exoplayer2.extractor.p007ts;
 
 import com.google.android.exoplayer2.util.Assertions;
+
 import java.util.Arrays;
 
 /* renamed from: com.google.android.exoplayer2.extractor.ts.NalUnitTargetBuffer */
 final class NalUnitTargetBuffer {
-    private boolean isCompleted;
-    private boolean isFilling;
+    private final int targetType;
     public byte[] nalData;
     public int nalLength;
-    private final int targetType;
+    private boolean isCompleted;
+    private boolean isFilling;
 
     public NalUnitTargetBuffer(int targetType2, int initialCapacity) {
         this.targetType = targetType2;

@@ -1,6 +1,7 @@
 package com.google.android.gms.internal;
 
 import android.util.Log;
+
 import com.google.android.gms.common.internal.Hide;
 import com.google.android.gsf.Gservices;
 
@@ -15,27 +16,15 @@ public class zzbjw<T> {
     private final T zzf;
     private T zzg = null;
 
-    private static boolean zzb() {
-        synchronized (zza) {
-        }
-        return false;
-    }
-
     protected zzbjw(String str, T t) {
         this.zze = str;
         this.zzf = t;
     }
 
-    public final void zza(T t) {
-        Log.w("GservicesValue", "GservicesValue.override(): test should probably call initForTests() first");
-        this.zzg = t;
+    private static boolean zzb() {
         synchronized (zza) {
-            zzb();
         }
-    }
-
-    public final void zza() {
-        this.zzg = null;
+        return false;
     }
 
     public static zzbjw<Boolean> zza(String str, boolean z) {
@@ -56,5 +45,17 @@ public class zzbjw<T> {
 
     public static zzbjw<String> zza(String str, String str2) {
         return new zzbkb(str, str2);
+    }
+
+    public final void zza(T t) {
+        Log.w("GservicesValue", "GservicesValue.override(): test should probably call initForTests() first");
+        this.zzg = t;
+        synchronized (zza) {
+            zzb();
+        }
+    }
+
+    public final void zza() {
+        this.zzg = null;
     }
 }

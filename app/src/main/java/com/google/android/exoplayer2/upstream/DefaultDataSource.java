@@ -3,9 +3,11 @@ package com.google.android.exoplayer2.upstream;
 import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,12 +20,13 @@ public final class DefaultDataSource implements DataSource {
     private static final String SCHEME_RAW = "rawresource";
     private static final String SCHEME_RTMP = "rtmp";
     private static final String TAG = "DefaultDataSource";
+    private final DataSource baseDataSource;
+    private final Context context;
+    private final List<TransferListener> transferListeners;
     @Nullable
     private DataSource assetDataSource;
-    private final DataSource baseDataSource;
     @Nullable
     private DataSource contentDataSource;
-    private final Context context;
     @Nullable
     private DataSource dataSchemeDataSource;
     @Nullable
@@ -34,7 +37,6 @@ public final class DefaultDataSource implements DataSource {
     private DataSource rawResourceDataSource;
     @Nullable
     private DataSource rtmpDataSource;
-    private final List<TransferListener> transferListeners;
 
     public DefaultDataSource(Context context2, String userAgent, boolean allowCrossProtocolRedirects) {
         this(context2, userAgent, 8000, 8000, allowCrossProtocolRedirects);

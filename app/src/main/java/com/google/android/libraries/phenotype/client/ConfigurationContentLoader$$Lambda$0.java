@@ -1,7 +1,5 @@
 package com.google.android.libraries.phenotype.client;
 
-import com.google.android.libraries.phenotype.client.FlagLoader;
-
 final /* synthetic */ class ConfigurationContentLoader$$Lambda$0 implements FlagLoader.BinderAwareFunction {
     private final ConfigurationContentLoader arg$1;
 

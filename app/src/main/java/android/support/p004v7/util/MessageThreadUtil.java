@@ -3,9 +3,8 @@ package android.support.p004v7.util;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.p004v7.util.ThreadUtil;
-import android.support.p004v7.util.TileList;
 import android.util.Log;
+
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -19,6 +18,7 @@ class MessageThreadUtil<T> implements ThreadUtil<T> {
             static final int ADD_TILE = 2;
             static final int REMOVE_TILE = 3;
             static final int UPDATE_ITEM_COUNT = 1;
+            final MessageQueue mQueue = new MessageQueue();
             private final Handler mMainThreadHandler = new Handler(Looper.getMainLooper());
             private Runnable mMainThreadRunnable = new Runnable() {
                 public void run() {
@@ -38,7 +38,6 @@ class MessageThreadUtil<T> implements ThreadUtil<T> {
                     }
                 }
             };
-            final MessageQueue mQueue = new MessageQueue();
 
             public void updateItemCount(int generation, int itemCount) {
                 sendMessage(SyncQueueItem.obtainMessage(1, generation, itemCount));
@@ -65,6 +64,9 @@ class MessageThreadUtil<T> implements ThreadUtil<T> {
             static final int RECYCLE_TILE = 4;
             static final int REFRESH = 1;
             static final int UPDATE_RANGE = 2;
+            final MessageQueue mQueue = new MessageQueue();
+            private final Executor mExecutor = AsyncTask.THREAD_POOL_EXECUTOR;
+            AtomicBoolean mBackgroundRunning = new AtomicBoolean(false);
             private Runnable mBackgroundRunnable = new Runnable() {
                 public void run() {
                     while (true) {
@@ -91,9 +93,6 @@ class MessageThreadUtil<T> implements ThreadUtil<T> {
                     }
                 }
             };
-            AtomicBoolean mBackgroundRunning = new AtomicBoolean(false);
-            private final Executor mExecutor = AsyncTask.THREAD_POOL_EXECUTOR;
-            final MessageQueue mQueue = new MessageQueue();
 
             public void refresh(int generation) {
                 sendMessageAtFrontOfQueue(SyncQueueItem.obtainMessage(1, generation, (Object) null));
@@ -131,36 +130,18 @@ class MessageThreadUtil<T> implements ThreadUtil<T> {
 
     /* renamed from: android.support.v7.util.MessageThreadUtil$SyncQueueItem */
     static class SyncQueueItem {
-        private static SyncQueueItem sPool;
         private static final Object sPoolLock = new Object();
+        private static SyncQueueItem sPool;
         public int arg1;
         public int arg2;
         public int arg3;
         public int arg4;
         public int arg5;
         public Object data;
-        SyncQueueItem next;
         public int what;
+        SyncQueueItem next;
 
         SyncQueueItem() {
-        }
-
-        /* access modifiers changed from: package-private */
-        public void recycle() {
-            this.next = null;
-            this.arg5 = 0;
-            this.arg4 = 0;
-            this.arg3 = 0;
-            this.arg2 = 0;
-            this.arg1 = 0;
-            this.what = 0;
-            this.data = null;
-            synchronized (sPoolLock) {
-                if (sPool != null) {
-                    this.next = sPool;
-                }
-                sPool = this;
-            }
         }
 
         static SyncQueueItem obtainMessage(int what2, int arg12, int arg22, int arg32, int arg42, int arg52, Object data2) {
@@ -190,6 +171,24 @@ class MessageThreadUtil<T> implements ThreadUtil<T> {
 
         static SyncQueueItem obtainMessage(int what2, int arg12, Object data2) {
             return obtainMessage(what2, arg12, 0, 0, 0, 0, data2);
+        }
+
+        /* access modifiers changed from: package-private */
+        public void recycle() {
+            this.next = null;
+            this.arg5 = 0;
+            this.arg4 = 0;
+            this.arg3 = 0;
+            this.arg2 = 0;
+            this.arg1 = 0;
+            this.what = 0;
+            this.data = null;
+            synchronized (sPoolLock) {
+                if (sPool != null) {
+                    this.next = sPool;
+                }
+                sPool = this;
+            }
         }
     }
 

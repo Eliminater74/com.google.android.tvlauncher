@@ -13,11 +13,18 @@ import com.google.protobuf.ProtoMessage;
 import com.google.protobuf.ProtoPresenceBits;
 import com.google.protobuf.ProtoPresenceCheckedField;
 import com.google.protobuf.ProtoSyntax;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 public final class PrimesScenarioProto {
+
+    private PrimesScenarioProto() {
+    }
+
+    public static void registerAllExtensions(ExtensionRegistryLite registry) {
+    }
 
     public interface PrimesScenarioOrBuilder extends MessageLiteOrBuilder {
         String getEnd();
@@ -39,20 +46,19 @@ public final class PrimesScenarioProto {
         boolean hasStart();
     }
 
-    private PrimesScenarioProto() {
-    }
-
-    public static void registerAllExtensions(ExtensionRegistryLite registry) {
-    }
-
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
     public static final class PrimesScenario extends GeneratedMessageLite<PrimesScenario, Builder> implements PrimesScenarioOrBuilder {
         /* access modifiers changed from: private */
         public static final PrimesScenario DEFAULT_INSTANCE = new PrimesScenario();
         public static final int END_FIELD_NUMBER = 3;
         public static final int NAME_FIELD_NUMBER = 1;
-        private static volatile Parser<PrimesScenario> PARSER = null;
         public static final int START_FIELD_NUMBER = 2;
+        private static volatile Parser<PrimesScenario> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(PrimesScenario.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 3, isEnforceUtf8 = false, isRequired = false, type = FieldType.STRING)
@@ -66,120 +72,6 @@ public final class PrimesScenarioProto {
         private String start_ = "";
 
         private PrimesScenario() {
-        }
-
-        public boolean hasName() {
-            return (this.bitField0_ & 1) != 0;
-        }
-
-        public String getName() {
-            return this.name_;
-        }
-
-        public ByteString getNameBytes() {
-            return ByteString.copyFromUtf8(this.name_);
-        }
-
-        /* access modifiers changed from: private */
-        public void setName(String value) {
-            if (value != null) {
-                this.bitField0_ |= 1;
-                this.name_ = value;
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        /* access modifiers changed from: private */
-        public void clearName() {
-            this.bitField0_ &= -2;
-            this.name_ = getDefaultInstance().getName();
-        }
-
-        /* access modifiers changed from: private */
-        public void setNameBytes(ByteString value) {
-            if (value != null) {
-                this.bitField0_ |= 1;
-                this.name_ = value.toStringUtf8();
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        public boolean hasStart() {
-            return (this.bitField0_ & 2) != 0;
-        }
-
-        public String getStart() {
-            return this.start_;
-        }
-
-        public ByteString getStartBytes() {
-            return ByteString.copyFromUtf8(this.start_);
-        }
-
-        /* access modifiers changed from: private */
-        public void setStart(String value) {
-            if (value != null) {
-                this.bitField0_ |= 2;
-                this.start_ = value;
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        /* access modifiers changed from: private */
-        public void clearStart() {
-            this.bitField0_ &= -3;
-            this.start_ = getDefaultInstance().getStart();
-        }
-
-        /* access modifiers changed from: private */
-        public void setStartBytes(ByteString value) {
-            if (value != null) {
-                this.bitField0_ |= 2;
-                this.start_ = value.toStringUtf8();
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        public boolean hasEnd() {
-            return (this.bitField0_ & 4) != 0;
-        }
-
-        public String getEnd() {
-            return this.end_;
-        }
-
-        public ByteString getEndBytes() {
-            return ByteString.copyFromUtf8(this.end_);
-        }
-
-        /* access modifiers changed from: private */
-        public void setEnd(String value) {
-            if (value != null) {
-                this.bitField0_ |= 4;
-                this.end_ = value;
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        /* access modifiers changed from: private */
-        public void clearEnd() {
-            this.bitField0_ &= -5;
-            this.end_ = getDefaultInstance().getEnd();
-        }
-
-        /* access modifiers changed from: private */
-        public void setEndBytes(ByteString value) {
-            if (value != null) {
-                this.bitField0_ |= 4;
-                this.end_ = value.toStringUtf8();
-                return;
-            }
-            throw new NullPointerException();
         }
 
         public static PrimesScenario parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
@@ -238,100 +130,126 @@ public final class PrimesScenarioProto {
             return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
         }
 
-        public static final class Builder extends GeneratedMessageLite.Builder<PrimesScenario, Builder> implements PrimesScenarioOrBuilder {
-            private Builder() {
-                super(PrimesScenario.DEFAULT_INSTANCE);
-            }
+        public static PrimesScenario getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
 
-            public boolean hasName() {
-                return ((PrimesScenario) this.instance).hasName();
-            }
+        public static Parser<PrimesScenario> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
+        }
 
-            public String getName() {
-                return ((PrimesScenario) this.instance).getName();
-            }
+        public boolean hasName() {
+            return (this.bitField0_ & 1) != 0;
+        }
 
-            public ByteString getNameBytes() {
-                return ((PrimesScenario) this.instance).getNameBytes();
-            }
+        public String getName() {
+            return this.name_;
+        }
 
-            public Builder setName(String value) {
-                copyOnWrite();
-                ((PrimesScenario) this.instance).setName(value);
-                return this;
+        /* access modifiers changed from: private */
+        public void setName(String value) {
+            if (value != null) {
+                this.bitField0_ |= 1;
+                this.name_ = value;
+                return;
             }
+            throw new NullPointerException();
+        }
 
-            public Builder clearName() {
-                copyOnWrite();
-                ((PrimesScenario) this.instance).clearName();
-                return this;
-            }
+        public ByteString getNameBytes() {
+            return ByteString.copyFromUtf8(this.name_);
+        }
 
-            public Builder setNameBytes(ByteString value) {
-                copyOnWrite();
-                ((PrimesScenario) this.instance).setNameBytes(value);
-                return this;
+        /* access modifiers changed from: private */
+        public void setNameBytes(ByteString value) {
+            if (value != null) {
+                this.bitField0_ |= 1;
+                this.name_ = value.toStringUtf8();
+                return;
             }
+            throw new NullPointerException();
+        }
 
-            public boolean hasStart() {
-                return ((PrimesScenario) this.instance).hasStart();
-            }
+        /* access modifiers changed from: private */
+        public void clearName() {
+            this.bitField0_ &= -2;
+            this.name_ = getDefaultInstance().getName();
+        }
 
-            public String getStart() {
-                return ((PrimesScenario) this.instance).getStart();
-            }
+        public boolean hasStart() {
+            return (this.bitField0_ & 2) != 0;
+        }
 
-            public ByteString getStartBytes() {
-                return ((PrimesScenario) this.instance).getStartBytes();
-            }
+        public String getStart() {
+            return this.start_;
+        }
 
-            public Builder setStart(String value) {
-                copyOnWrite();
-                ((PrimesScenario) this.instance).setStart(value);
-                return this;
+        /* access modifiers changed from: private */
+        public void setStart(String value) {
+            if (value != null) {
+                this.bitField0_ |= 2;
+                this.start_ = value;
+                return;
             }
+            throw new NullPointerException();
+        }
 
-            public Builder clearStart() {
-                copyOnWrite();
-                ((PrimesScenario) this.instance).clearStart();
-                return this;
-            }
+        public ByteString getStartBytes() {
+            return ByteString.copyFromUtf8(this.start_);
+        }
 
-            public Builder setStartBytes(ByteString value) {
-                copyOnWrite();
-                ((PrimesScenario) this.instance).setStartBytes(value);
-                return this;
+        /* access modifiers changed from: private */
+        public void setStartBytes(ByteString value) {
+            if (value != null) {
+                this.bitField0_ |= 2;
+                this.start_ = value.toStringUtf8();
+                return;
             }
+            throw new NullPointerException();
+        }
 
-            public boolean hasEnd() {
-                return ((PrimesScenario) this.instance).hasEnd();
-            }
+        /* access modifiers changed from: private */
+        public void clearStart() {
+            this.bitField0_ &= -3;
+            this.start_ = getDefaultInstance().getStart();
+        }
 
-            public String getEnd() {
-                return ((PrimesScenario) this.instance).getEnd();
-            }
+        public boolean hasEnd() {
+            return (this.bitField0_ & 4) != 0;
+        }
 
-            public ByteString getEndBytes() {
-                return ((PrimesScenario) this.instance).getEndBytes();
-            }
+        public String getEnd() {
+            return this.end_;
+        }
 
-            public Builder setEnd(String value) {
-                copyOnWrite();
-                ((PrimesScenario) this.instance).setEnd(value);
-                return this;
+        /* access modifiers changed from: private */
+        public void setEnd(String value) {
+            if (value != null) {
+                this.bitField0_ |= 4;
+                this.end_ = value;
+                return;
             }
+            throw new NullPointerException();
+        }
 
-            public Builder clearEnd() {
-                copyOnWrite();
-                ((PrimesScenario) this.instance).clearEnd();
-                return this;
-            }
+        public ByteString getEndBytes() {
+            return ByteString.copyFromUtf8(this.end_);
+        }
 
-            public Builder setEndBytes(ByteString value) {
-                copyOnWrite();
-                ((PrimesScenario) this.instance).setEndBytes(value);
-                return this;
+        /* access modifiers changed from: private */
+        public void setEndBytes(ByteString value) {
+            if (value != null) {
+                this.bitField0_ |= 4;
+                this.end_ = value.toStringUtf8();
+                return;
             }
+            throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearEnd() {
+            this.bitField0_ &= -5;
+            this.end_ = getDefaultInstance().getEnd();
         }
 
         /* access modifiers changed from: protected */
@@ -366,16 +284,100 @@ public final class PrimesScenarioProto {
             }
         }
 
-        static {
-            GeneratedMessageLite.registerDefaultInstance(PrimesScenario.class, DEFAULT_INSTANCE);
-        }
+        public static final class Builder extends GeneratedMessageLite.Builder<PrimesScenario, Builder> implements PrimesScenarioOrBuilder {
+            private Builder() {
+                super(PrimesScenario.DEFAULT_INSTANCE);
+            }
 
-        public static PrimesScenario getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
+            public boolean hasName() {
+                return ((PrimesScenario) this.instance).hasName();
+            }
 
-        public static Parser<PrimesScenario> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
+            public String getName() {
+                return ((PrimesScenario) this.instance).getName();
+            }
+
+            public Builder setName(String value) {
+                copyOnWrite();
+                ((PrimesScenario) this.instance).setName(value);
+                return this;
+            }
+
+            public ByteString getNameBytes() {
+                return ((PrimesScenario) this.instance).getNameBytes();
+            }
+
+            public Builder setNameBytes(ByteString value) {
+                copyOnWrite();
+                ((PrimesScenario) this.instance).setNameBytes(value);
+                return this;
+            }
+
+            public Builder clearName() {
+                copyOnWrite();
+                ((PrimesScenario) this.instance).clearName();
+                return this;
+            }
+
+            public boolean hasStart() {
+                return ((PrimesScenario) this.instance).hasStart();
+            }
+
+            public String getStart() {
+                return ((PrimesScenario) this.instance).getStart();
+            }
+
+            public Builder setStart(String value) {
+                copyOnWrite();
+                ((PrimesScenario) this.instance).setStart(value);
+                return this;
+            }
+
+            public ByteString getStartBytes() {
+                return ((PrimesScenario) this.instance).getStartBytes();
+            }
+
+            public Builder setStartBytes(ByteString value) {
+                copyOnWrite();
+                ((PrimesScenario) this.instance).setStartBytes(value);
+                return this;
+            }
+
+            public Builder clearStart() {
+                copyOnWrite();
+                ((PrimesScenario) this.instance).clearStart();
+                return this;
+            }
+
+            public boolean hasEnd() {
+                return ((PrimesScenario) this.instance).hasEnd();
+            }
+
+            public String getEnd() {
+                return ((PrimesScenario) this.instance).getEnd();
+            }
+
+            public Builder setEnd(String value) {
+                copyOnWrite();
+                ((PrimesScenario) this.instance).setEnd(value);
+                return this;
+            }
+
+            public ByteString getEndBytes() {
+                return ((PrimesScenario) this.instance).getEndBytes();
+            }
+
+            public Builder setEndBytes(ByteString value) {
+                copyOnWrite();
+                ((PrimesScenario) this.instance).setEndBytes(value);
+                return this;
+            }
+
+            public Builder clearEnd() {
+                copyOnWrite();
+                ((PrimesScenario) this.instance).clearEnd();
+                return this;
+            }
         }
     }
 }

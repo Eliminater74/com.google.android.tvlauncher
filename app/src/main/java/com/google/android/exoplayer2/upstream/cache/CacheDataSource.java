@@ -2,6 +2,7 @@ package com.google.android.exoplayer2.upstream.cache;
 
 import android.net.Uri;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.upstream.DataSink;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSourceException;
@@ -9,8 +10,8 @@ import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.FileDataSource;
 import com.google.android.exoplayer2.upstream.TeeDataSource;
 import com.google.android.exoplayer2.upstream.TransferListener;
-import com.google.android.exoplayer2.upstream.cache.Cache;
 import com.google.android.exoplayer2.util.Assertions;
+
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.lang.annotation.Documented;
@@ -23,20 +24,25 @@ import java.util.Map;
 public final class CacheDataSource implements DataSource {
     public static final int CACHE_IGNORED_REASON_ERROR = 0;
     public static final int CACHE_IGNORED_REASON_UNSET_LENGTH = 1;
-    private static final int CACHE_NOT_IGNORED = -1;
     public static final int FLAG_BLOCK_ON_CACHE = 1;
     public static final int FLAG_IGNORE_CACHE_FOR_UNSET_LENGTH_REQUESTS = 4;
     public static final int FLAG_IGNORE_CACHE_ON_ERROR = 2;
+    private static final int CACHE_NOT_IGNORED = -1;
     private static final long MIN_READ_BEFORE_CHECKING_CACHE = 102400;
-    @Nullable
-    private Uri actualUri;
     private final boolean blockOnCache;
-    private long bytesRemaining;
     private final Cache cache;
     private final CacheKeyFactory cacheKeyFactory;
     private final DataSource cacheReadDataSource;
     @Nullable
     private final DataSource cacheWriteDataSource;
+    @Nullable
+    private final EventListener eventListener;
+    private final boolean ignoreCacheForUnsetLengthRequests;
+    private final boolean ignoreCacheOnError;
+    private final DataSource upstreamDataSource;
+    @Nullable
+    private Uri actualUri;
+    private long bytesRemaining;
     private long checkCachePosition;
     @Nullable
     private DataSource currentDataSource;
@@ -44,36 +50,15 @@ public final class CacheDataSource implements DataSource {
     @Nullable
     private CacheSpan currentHoleSpan;
     private boolean currentRequestIgnoresCache;
-    @Nullable
-    private final EventListener eventListener;
     private int flags;
     private int httpMethod;
-    private final boolean ignoreCacheForUnsetLengthRequests;
-    private final boolean ignoreCacheOnError;
     @Nullable
     private String key;
     private long readPosition;
     private boolean seenCacheError;
     private long totalCachedBytesRead;
-    private final DataSource upstreamDataSource;
     @Nullable
     private Uri uri;
-
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface CacheIgnoredReason {
-    }
-
-    public interface EventListener {
-        void onCacheIgnored(int i);
-
-        void onCachedBytesRead(long j, long j2);
-    }
-
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface Flags {
-    }
 
     public CacheDataSource(Cache cache2, DataSource upstream) {
         this(cache2, upstream, 0);
@@ -102,6 +87,20 @@ public final class CacheDataSource implements DataSource {
             this.cacheWriteDataSource = null;
         }
         this.eventListener = eventListener2;
+    }
+
+    private static Uri getRedirectedUriOrDefault(Cache cache2, String key2, Uri defaultUri) {
+        Uri redirectedUri = ContentMetadata$$CC.getRedirectedUri$$STATIC$$(cache2.getContentMetadata(key2));
+        return redirectedUri != null ? redirectedUri : defaultUri;
+    }
+
+    private static boolean isCausedByPositionOutOfRange(IOException e) {
+        for (Throwable cause = e; cause != null; cause = cause.getCause()) {
+            if ((cause instanceof DataSourceException) && ((DataSourceException) cause).reason == 0) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void addTransferListener(TransferListener transferListener) {
@@ -327,20 +326,6 @@ public final class CacheDataSource implements DataSource {
         }
     }
 
-    private static Uri getRedirectedUriOrDefault(Cache cache2, String key2, Uri defaultUri) {
-        Uri redirectedUri = ContentMetadata$$CC.getRedirectedUri$$STATIC$$(cache2.getContentMetadata(key2));
-        return redirectedUri != null ? redirectedUri : defaultUri;
-    }
-
-    private static boolean isCausedByPositionOutOfRange(IOException e) {
-        for (Throwable cause = e; cause != null; cause = cause.getCause()) {
-            if ((cause instanceof DataSourceException) && ((DataSourceException) cause).reason == 0) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     private boolean isReadingFromUpstream() {
         return !isReadingFromCache();
     }
@@ -403,5 +388,21 @@ public final class CacheDataSource implements DataSource {
             eventListener2.onCachedBytesRead(this.cache.getCacheSpace(), this.totalCachedBytesRead);
             this.totalCachedBytesRead = 0;
         }
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface CacheIgnoredReason {
+    }
+
+    public interface EventListener {
+        void onCacheIgnored(int i);
+
+        void onCachedBytesRead(long j, long j2);
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface Flags {
     }
 }

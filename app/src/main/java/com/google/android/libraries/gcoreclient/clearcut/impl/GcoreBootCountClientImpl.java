@@ -1,6 +1,7 @@
 package com.google.android.libraries.gcoreclient.clearcut.impl;
 
 import android.content.Context;
+
 import com.google.android.gms.clearcut.BootCount;
 import com.google.android.gms.clearcut.BootCountClient;
 import com.google.android.libraries.gcoreclient.clearcut.GcoreBootCountClient;

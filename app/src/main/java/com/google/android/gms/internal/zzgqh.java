@@ -1,7 +1,5 @@
 package com.google.android.gms.internal;
 
-import com.google.android.gms.internal.zzgoj;
-
 /* compiled from: RawMessageInfo */
 final class zzgqh implements zzgpr {
     private final zzgpt zza;

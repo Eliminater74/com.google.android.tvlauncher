@@ -9,13 +9,14 @@ import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.p001v4.media.session.PlaybackStateCompat;
 import android.util.SparseArray;
+
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
-import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Clock;
 import com.google.android.exoplayer2.util.EventDispatcher;
 import com.google.android.exoplayer2.util.SlidingPercentile;
 import com.google.android.exoplayer2.util.Util;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,7 +24,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class DefaultBandwidthMeter implements BandwidthMeter, TransferListener {
-    private static final int BYTES_TRANSFERRED_FOR_ESTIMATE = 524288;
     public static final Map<String, int[]> DEFAULT_INITIAL_BITRATE_COUNTRY_GROUPS = createInitialBitrateCountryGroupAssignment();
     public static final long DEFAULT_INITIAL_BITRATE_ESTIMATE = 1000000;
     public static final long[] DEFAULT_INITIAL_BITRATE_ESTIMATES_2G = {170000, 139000, 122000, 107000, 90000};
@@ -31,92 +31,24 @@ public final class DefaultBandwidthMeter implements BandwidthMeter, TransferList
     public static final long[] DEFAULT_INITIAL_BITRATE_ESTIMATES_4G = {6000000, 3400000, 2100000, 1400000, 570000};
     public static final long[] DEFAULT_INITIAL_BITRATE_ESTIMATES_WIFI = {5400000, 3400000, 1900000, 1100000, 400000};
     public static final int DEFAULT_SLIDING_WINDOW_MAX_WEIGHT = 2000;
+    private static final int BYTES_TRANSFERRED_FOR_ESTIMATE = 524288;
     private static final int ELAPSED_MILLIS_FOR_ESTIMATE = 2000;
-    private long bitrateEstimate;
     private final Clock clock;
     @Nullable
     private final Context context;
     private final EventDispatcher<BandwidthMeter.EventListener> eventDispatcher;
     private final SparseArray<Long> initialBitrateEstimates;
+    private final SlidingPercentile slidingPercentile;
+    private long bitrateEstimate;
     private long lastReportedBitrateEstimate;
     private int networkType;
     private int networkTypeOverride;
     private boolean networkTypeOverrideSet;
     private long sampleBytesTransferred;
     private long sampleStartTimeMs;
-    private final SlidingPercentile slidingPercentile;
     private int streamCount;
     private long totalBytesTransferred;
     private long totalElapsedTimeMs;
-
-    public static final class Builder {
-        private Clock clock;
-        @Nullable
-        private final Context context;
-        private SparseArray<Long> initialBitrateEstimates;
-        private boolean resetOnNetworkTypeChange;
-        private int slidingWindowMaxWeight;
-
-        public Builder(Context context2) {
-            this.context = context2 == null ? null : context2.getApplicationContext();
-            this.initialBitrateEstimates = getInitialBitrateEstimatesForCountry(Util.getCountryCode(context2));
-            this.slidingWindowMaxWeight = 2000;
-            this.clock = Clock.DEFAULT;
-        }
-
-        public Builder setSlidingWindowMaxWeight(int slidingWindowMaxWeight2) {
-            this.slidingWindowMaxWeight = slidingWindowMaxWeight2;
-            return this;
-        }
-
-        public Builder setInitialBitrateEstimate(long initialBitrateEstimate) {
-            for (int i = 0; i < this.initialBitrateEstimates.size(); i++) {
-                this.initialBitrateEstimates.setValueAt(i, Long.valueOf(initialBitrateEstimate));
-            }
-            return this;
-        }
-
-        public Builder setInitialBitrateEstimate(int networkType, long initialBitrateEstimate) {
-            this.initialBitrateEstimates.put(networkType, Long.valueOf(initialBitrateEstimate));
-            return this;
-        }
-
-        public Builder setInitialBitrateEstimate(String countryCode) {
-            this.initialBitrateEstimates = getInitialBitrateEstimatesForCountry(Util.toUpperInvariant(countryCode));
-            return this;
-        }
-
-        public Builder setClock(Clock clock2) {
-            this.clock = clock2;
-            return this;
-        }
-
-        public Builder experimental_resetOnNetworkTypeChange(boolean resetOnNetworkTypeChange2) {
-            this.resetOnNetworkTypeChange = resetOnNetworkTypeChange2;
-            return this;
-        }
-
-        public DefaultBandwidthMeter build() {
-            return new DefaultBandwidthMeter(this.context, this.initialBitrateEstimates, this.slidingWindowMaxWeight, this.clock, this.resetOnNetworkTypeChange);
-        }
-
-        private static SparseArray<Long> getInitialBitrateEstimatesForCountry(String countryCode) {
-            int[] groupIndices = getCountryGroupIndices(countryCode);
-            SparseArray<Long> result = new SparseArray<>(6);
-            result.append(0, 1000000L);
-            result.append(2, Long.valueOf(DefaultBandwidthMeter.DEFAULT_INITIAL_BITRATE_ESTIMATES_WIFI[groupIndices[0]]));
-            result.append(3, Long.valueOf(DefaultBandwidthMeter.DEFAULT_INITIAL_BITRATE_ESTIMATES_2G[groupIndices[1]]));
-            result.append(4, Long.valueOf(DefaultBandwidthMeter.DEFAULT_INITIAL_BITRATE_ESTIMATES_3G[groupIndices[2]]));
-            result.append(5, Long.valueOf(DefaultBandwidthMeter.DEFAULT_INITIAL_BITRATE_ESTIMATES_4G[groupIndices[3]]));
-            result.append(7, Long.valueOf(DefaultBandwidthMeter.DEFAULT_INITIAL_BITRATE_ESTIMATES_WIFI[groupIndices[0]]));
-            return result;
-        }
-
-        private static int[] getCountryGroupIndices(String countryCode) {
-            int[] groupIndices = DefaultBandwidthMeter.DEFAULT_INITIAL_BITRATE_COUNTRY_GROUPS.get(countryCode);
-            return groupIndices == null ? new int[]{2, 2, 2, 2} : groupIndices;
-        }
-    }
 
     @Deprecated
     public DefaultBandwidthMeter() {
@@ -133,214 +65,6 @@ public final class DefaultBandwidthMeter implements BandwidthMeter, TransferList
         this.bitrateEstimate = getInitialBitrateEstimateForNetworkType(this.networkType);
         if (context2 != null && resetOnNetworkTypeChange) {
             ConnectivityActionReceiver.getInstance(context2).register(this);
-        }
-    }
-
-    public synchronized void setNetworkTypeOverride(int networkType2) {
-        this.networkTypeOverride = networkType2;
-        this.networkTypeOverrideSet = true;
-        onConnectivityAction();
-    }
-
-    public synchronized long getBitrateEstimate() {
-        return this.bitrateEstimate;
-    }
-
-    @Nullable
-    public TransferListener getTransferListener() {
-        return this;
-    }
-
-    public void addEventListener(Handler eventHandler, BandwidthMeter.EventListener eventListener) {
-        this.eventDispatcher.addListener(eventHandler, eventListener);
-    }
-
-    public void removeEventListener(BandwidthMeter.EventListener eventListener) {
-        this.eventDispatcher.removeListener(eventListener);
-    }
-
-    public void onTransferInitializing(DataSource source, DataSpec dataSpec, boolean isNetwork) {
-    }
-
-    public synchronized void onTransferStart(DataSource source, DataSpec dataSpec, boolean isNetwork) {
-        if (isNetwork) {
-            if (this.streamCount == 0) {
-                this.sampleStartTimeMs = this.clock.elapsedRealtime();
-            }
-            this.streamCount++;
-        }
-    }
-
-    public synchronized void onBytesTransferred(DataSource source, DataSpec dataSpec, boolean isNetwork, int bytes) {
-        if (isNetwork) {
-            this.sampleBytesTransferred += (long) bytes;
-        }
-    }
-
-    public synchronized void onTransferEnd(DataSource source, DataSpec dataSpec, boolean isNetwork) {
-        if (isNetwork) {
-            Assertions.checkState(this.streamCount > 0);
-            long nowMs = this.clock.elapsedRealtime();
-            int sampleElapsedTimeMs = (int) (nowMs - this.sampleStartTimeMs);
-            this.totalElapsedTimeMs += (long) sampleElapsedTimeMs;
-            this.totalBytesTransferred += this.sampleBytesTransferred;
-            if (sampleElapsedTimeMs > 0) {
-                this.slidingPercentile.addSample((int) Math.sqrt((double) this.sampleBytesTransferred), (float) ((this.sampleBytesTransferred * 8000) / ((long) sampleElapsedTimeMs)));
-                if (this.totalElapsedTimeMs >= AdaptiveTrackSelection.DEFAULT_MIN_TIME_BETWEEN_BUFFER_REEVALUTATION_MS || this.totalBytesTransferred >= PlaybackStateCompat.ACTION_SET_SHUFFLE_MODE_ENABLED) {
-                    this.bitrateEstimate = (long) this.slidingPercentile.getPercentile(0.5f);
-                }
-                maybeNotifyBandwidthSample(sampleElapsedTimeMs, this.sampleBytesTransferred, this.bitrateEstimate);
-                this.sampleStartTimeMs = nowMs;
-                this.sampleBytesTransferred = 0;
-            }
-            this.streamCount--;
-        }
-    }
-
-    /* access modifiers changed from: private */
-    /* JADX WARNING: Code restructure failed: missing block: B:28:0x005a, code lost:
-        return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
-    public synchronized void onConnectivityAction() {
-        /*
-            r10 = this;
-            monitor-enter(r10)
-            boolean r0 = r10.networkTypeOverrideSet     // Catch:{ all -> 0x005b }
-            r1 = 0
-            if (r0 == 0) goto L_0x0009
-            int r0 = r10.networkTypeOverride     // Catch:{ all -> 0x005b }
-            goto L_0x0015
-        L_0x0009:
-            android.content.Context r0 = r10.context     // Catch:{ all -> 0x005b }
-            if (r0 != 0) goto L_0x000f
-            r0 = 0
-            goto L_0x0015
-        L_0x000f:
-            android.content.Context r0 = r10.context     // Catch:{ all -> 0x005b }
-            int r0 = com.google.android.exoplayer2.util.Util.getNetworkType(r0)     // Catch:{ all -> 0x005b }
-        L_0x0015:
-            int r2 = r10.networkType     // Catch:{ all -> 0x005b }
-            if (r2 != r0) goto L_0x001c
-            monitor-exit(r10)
-            return
-        L_0x001c:
-            r10.networkType = r0     // Catch:{ all -> 0x005b }
-            r2 = 1
-            if (r0 == r2) goto L_0x0059
-            if (r0 == 0) goto L_0x0059
-            r2 = 8
-            if (r0 != r2) goto L_0x0028
-            goto L_0x0059
-        L_0x0028:
-            long r2 = r10.getInitialBitrateEstimateForNetworkType(r0)     // Catch:{ all -> 0x005b }
-            r10.bitrateEstimate = r2     // Catch:{ all -> 0x005b }
-            com.google.android.exoplayer2.util.Clock r2 = r10.clock     // Catch:{ all -> 0x005b }
-            long r2 = r2.elapsedRealtime()     // Catch:{ all -> 0x005b }
-            int r4 = r10.streamCount     // Catch:{ all -> 0x005b }
-            if (r4 <= 0) goto L_0x003f
-            long r4 = r10.sampleStartTimeMs     // Catch:{ all -> 0x005b }
-            long r4 = r2 - r4
-            int r1 = (int) r4     // Catch:{ all -> 0x005b }
-            r5 = r1
-            goto L_0x0040
-        L_0x003f:
-            r5 = 0
-        L_0x0040:
-            long r6 = r10.sampleBytesTransferred     // Catch:{ all -> 0x005b }
-            long r8 = r10.bitrateEstimate     // Catch:{ all -> 0x005b }
-            r4 = r10
-            r4.maybeNotifyBandwidthSample(r5, r6, r8)     // Catch:{ all -> 0x005b }
-            r10.sampleStartTimeMs = r2     // Catch:{ all -> 0x005b }
-            r6 = 0
-            r10.sampleBytesTransferred = r6     // Catch:{ all -> 0x005b }
-            r10.totalBytesTransferred = r6     // Catch:{ all -> 0x005b }
-            r10.totalElapsedTimeMs = r6     // Catch:{ all -> 0x005b }
-            com.google.android.exoplayer2.util.SlidingPercentile r1 = r10.slidingPercentile     // Catch:{ all -> 0x005b }
-            r1.reset()     // Catch:{ all -> 0x005b }
-            monitor-exit(r10)
-            return
-        L_0x0059:
-            monitor-exit(r10)
-            return
-        L_0x005b:
-            r0 = move-exception
-            monitor-exit(r10)
-            throw r0
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.google.android.exoplayer2.upstream.DefaultBandwidthMeter.onConnectivityAction():void");
-    }
-
-    private void maybeNotifyBandwidthSample(int elapsedMs, long bytesTransferred, long bitrateEstimate2) {
-        if (elapsedMs != 0 || bytesTransferred != 0 || bitrateEstimate2 != this.lastReportedBitrateEstimate) {
-            this.lastReportedBitrateEstimate = bitrateEstimate2;
-            this.eventDispatcher.dispatch(new DefaultBandwidthMeter$$Lambda$0(elapsedMs, bytesTransferred, bitrateEstimate2));
-        }
-    }
-
-    private long getInitialBitrateEstimateForNetworkType(int networkType2) {
-        Long initialBitrateEstimate = this.initialBitrateEstimates.get(networkType2);
-        if (initialBitrateEstimate == null) {
-            initialBitrateEstimate = this.initialBitrateEstimates.get(0);
-        }
-        if (initialBitrateEstimate == null) {
-            initialBitrateEstimate = 1000000L;
-        }
-        return initialBitrateEstimate.longValue();
-    }
-
-    private static class ConnectivityActionReceiver extends BroadcastReceiver {
-        private static ConnectivityActionReceiver staticInstance;
-        private final ArrayList<WeakReference<DefaultBandwidthMeter>> bandwidthMeters = new ArrayList<>();
-        private final Handler mainHandler = new Handler(Looper.getMainLooper());
-
-        public static synchronized ConnectivityActionReceiver getInstance(Context context) {
-            ConnectivityActionReceiver connectivityActionReceiver;
-            synchronized (ConnectivityActionReceiver.class) {
-                if (staticInstance == null) {
-                    staticInstance = new ConnectivityActionReceiver();
-                    IntentFilter filter = new IntentFilter();
-                    filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
-                    context.registerReceiver(staticInstance, filter);
-                }
-                connectivityActionReceiver = staticInstance;
-            }
-            return connectivityActionReceiver;
-        }
-
-        private ConnectivityActionReceiver() {
-        }
-
-        public synchronized void register(DefaultBandwidthMeter bandwidthMeter) {
-            removeClearedReferences();
-            this.bandwidthMeters.add(new WeakReference(bandwidthMeter));
-            this.mainHandler.post(new DefaultBandwidthMeter$ConnectivityActionReceiver$$Lambda$0(this, bandwidthMeter));
-        }
-
-        public synchronized void onReceive(Context context, Intent intent) {
-            if (!isInitialStickyBroadcast()) {
-                removeClearedReferences();
-                for (int i = 0; i < this.bandwidthMeters.size(); i++) {
-                    DefaultBandwidthMeter bandwidthMeter = (DefaultBandwidthMeter) this.bandwidthMeters.get(i).get();
-                    if (bandwidthMeter != null) {
-                        mo15526xc0d413df(bandwidthMeter);
-                    }
-                }
-            }
-        }
-
-        /* access modifiers changed from: private */
-        /* renamed from: updateBandwidthMeter */
-        public void mo15526xc0d413df(DefaultBandwidthMeter bandwidthMeter) {
-            bandwidthMeter.onConnectivityAction();
-        }
-
-        private void removeClearedReferences() {
-            for (int i = this.bandwidthMeters.size() - 1; i >= 0; i--) {
-                if (((DefaultBandwidthMeter) this.bandwidthMeters.get(i).get()) == null) {
-                    this.bandwidthMeters.remove(i);
-                }
-            }
         }
     }
 
@@ -588,5 +312,282 @@ public final class DefaultBandwidthMeter implements BandwidthMeter, TransferList
         countryGroupAssignment.put("ZM", new int[]{3, 3, 2, 1});
         countryGroupAssignment.put("ZW", new int[]{3, 3, 3, 1});
         return Collections.unmodifiableMap(countryGroupAssignment);
+    }
+
+    public synchronized void setNetworkTypeOverride(int networkType2) {
+        this.networkTypeOverride = networkType2;
+        this.networkTypeOverrideSet = true;
+        onConnectivityAction();
+    }
+
+    public synchronized long getBitrateEstimate() {
+        return this.bitrateEstimate;
+    }
+
+    @Nullable
+    public TransferListener getTransferListener() {
+        return this;
+    }
+
+    public void addEventListener(Handler eventHandler, BandwidthMeter.EventListener eventListener) {
+        this.eventDispatcher.addListener(eventHandler, eventListener);
+    }
+
+    public void removeEventListener(BandwidthMeter.EventListener eventListener) {
+        this.eventDispatcher.removeListener(eventListener);
+    }
+
+    public void onTransferInitializing(DataSource source, DataSpec dataSpec, boolean isNetwork) {
+    }
+
+    public synchronized void onTransferStart(DataSource source, DataSpec dataSpec, boolean isNetwork) {
+        if (isNetwork) {
+            if (this.streamCount == 0) {
+                this.sampleStartTimeMs = this.clock.elapsedRealtime();
+            }
+            this.streamCount++;
+        }
+    }
+
+    public synchronized void onBytesTransferred(DataSource source, DataSpec dataSpec, boolean isNetwork, int bytes) {
+        if (isNetwork) {
+            this.sampleBytesTransferred += (long) bytes;
+        }
+    }
+
+    public synchronized void onTransferEnd(DataSource source, DataSpec dataSpec, boolean isNetwork) {
+        if (isNetwork) {
+            Assertions.checkState(this.streamCount > 0);
+            long nowMs = this.clock.elapsedRealtime();
+            int sampleElapsedTimeMs = (int) (nowMs - this.sampleStartTimeMs);
+            this.totalElapsedTimeMs += (long) sampleElapsedTimeMs;
+            this.totalBytesTransferred += this.sampleBytesTransferred;
+            if (sampleElapsedTimeMs > 0) {
+                this.slidingPercentile.addSample((int) Math.sqrt((double) this.sampleBytesTransferred), (float) ((this.sampleBytesTransferred * 8000) / ((long) sampleElapsedTimeMs)));
+                if (this.totalElapsedTimeMs >= AdaptiveTrackSelection.DEFAULT_MIN_TIME_BETWEEN_BUFFER_REEVALUTATION_MS || this.totalBytesTransferred >= PlaybackStateCompat.ACTION_SET_SHUFFLE_MODE_ENABLED) {
+                    this.bitrateEstimate = (long) this.slidingPercentile.getPercentile(0.5f);
+                }
+                maybeNotifyBandwidthSample(sampleElapsedTimeMs, this.sampleBytesTransferred, this.bitrateEstimate);
+                this.sampleStartTimeMs = nowMs;
+                this.sampleBytesTransferred = 0;
+            }
+            this.streamCount--;
+        }
+    }
+
+    /* access modifiers changed from: private */
+    /* JADX WARNING: Code restructure failed: missing block: B:28:0x005a, code lost:
+        return;
+     */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    public synchronized void onConnectivityAction() {
+        /*
+            r10 = this;
+            monitor-enter(r10)
+            boolean r0 = r10.networkTypeOverrideSet     // Catch:{ all -> 0x005b }
+            r1 = 0
+            if (r0 == 0) goto L_0x0009
+            int r0 = r10.networkTypeOverride     // Catch:{ all -> 0x005b }
+            goto L_0x0015
+        L_0x0009:
+            android.content.Context r0 = r10.context     // Catch:{ all -> 0x005b }
+            if (r0 != 0) goto L_0x000f
+            r0 = 0
+            goto L_0x0015
+        L_0x000f:
+            android.content.Context r0 = r10.context     // Catch:{ all -> 0x005b }
+            int r0 = com.google.android.exoplayer2.util.Util.getNetworkType(r0)     // Catch:{ all -> 0x005b }
+        L_0x0015:
+            int r2 = r10.networkType     // Catch:{ all -> 0x005b }
+            if (r2 != r0) goto L_0x001c
+            monitor-exit(r10)
+            return
+        L_0x001c:
+            r10.networkType = r0     // Catch:{ all -> 0x005b }
+            r2 = 1
+            if (r0 == r2) goto L_0x0059
+            if (r0 == 0) goto L_0x0059
+            r2 = 8
+            if (r0 != r2) goto L_0x0028
+            goto L_0x0059
+        L_0x0028:
+            long r2 = r10.getInitialBitrateEstimateForNetworkType(r0)     // Catch:{ all -> 0x005b }
+            r10.bitrateEstimate = r2     // Catch:{ all -> 0x005b }
+            com.google.android.exoplayer2.util.Clock r2 = r10.clock     // Catch:{ all -> 0x005b }
+            long r2 = r2.elapsedRealtime()     // Catch:{ all -> 0x005b }
+            int r4 = r10.streamCount     // Catch:{ all -> 0x005b }
+            if (r4 <= 0) goto L_0x003f
+            long r4 = r10.sampleStartTimeMs     // Catch:{ all -> 0x005b }
+            long r4 = r2 - r4
+            int r1 = (int) r4     // Catch:{ all -> 0x005b }
+            r5 = r1
+            goto L_0x0040
+        L_0x003f:
+            r5 = 0
+        L_0x0040:
+            long r6 = r10.sampleBytesTransferred     // Catch:{ all -> 0x005b }
+            long r8 = r10.bitrateEstimate     // Catch:{ all -> 0x005b }
+            r4 = r10
+            r4.maybeNotifyBandwidthSample(r5, r6, r8)     // Catch:{ all -> 0x005b }
+            r10.sampleStartTimeMs = r2     // Catch:{ all -> 0x005b }
+            r6 = 0
+            r10.sampleBytesTransferred = r6     // Catch:{ all -> 0x005b }
+            r10.totalBytesTransferred = r6     // Catch:{ all -> 0x005b }
+            r10.totalElapsedTimeMs = r6     // Catch:{ all -> 0x005b }
+            com.google.android.exoplayer2.util.SlidingPercentile r1 = r10.slidingPercentile     // Catch:{ all -> 0x005b }
+            r1.reset()     // Catch:{ all -> 0x005b }
+            monitor-exit(r10)
+            return
+        L_0x0059:
+            monitor-exit(r10)
+            return
+        L_0x005b:
+            r0 = move-exception
+            monitor-exit(r10)
+            throw r0
+        */
+        throw new UnsupportedOperationException("Method not decompiled: com.google.android.exoplayer2.upstream.DefaultBandwidthMeter.onConnectivityAction():void");
+    }
+
+    private void maybeNotifyBandwidthSample(int elapsedMs, long bytesTransferred, long bitrateEstimate2) {
+        if (elapsedMs != 0 || bytesTransferred != 0 || bitrateEstimate2 != this.lastReportedBitrateEstimate) {
+            this.lastReportedBitrateEstimate = bitrateEstimate2;
+            this.eventDispatcher.dispatch(new DefaultBandwidthMeter$$Lambda$0(elapsedMs, bytesTransferred, bitrateEstimate2));
+        }
+    }
+
+    private long getInitialBitrateEstimateForNetworkType(int networkType2) {
+        Long initialBitrateEstimate = this.initialBitrateEstimates.get(networkType2);
+        if (initialBitrateEstimate == null) {
+            initialBitrateEstimate = this.initialBitrateEstimates.get(0);
+        }
+        if (initialBitrateEstimate == null) {
+            initialBitrateEstimate = 1000000L;
+        }
+        return initialBitrateEstimate.longValue();
+    }
+
+    public static final class Builder {
+        @Nullable
+        private final Context context;
+        private Clock clock;
+        private SparseArray<Long> initialBitrateEstimates;
+        private boolean resetOnNetworkTypeChange;
+        private int slidingWindowMaxWeight;
+
+        public Builder(Context context2) {
+            this.context = context2 == null ? null : context2.getApplicationContext();
+            this.initialBitrateEstimates = getInitialBitrateEstimatesForCountry(Util.getCountryCode(context2));
+            this.slidingWindowMaxWeight = 2000;
+            this.clock = Clock.DEFAULT;
+        }
+
+        private static SparseArray<Long> getInitialBitrateEstimatesForCountry(String countryCode) {
+            int[] groupIndices = getCountryGroupIndices(countryCode);
+            SparseArray<Long> result = new SparseArray<>(6);
+            result.append(0, 1000000L);
+            result.append(2, Long.valueOf(DefaultBandwidthMeter.DEFAULT_INITIAL_BITRATE_ESTIMATES_WIFI[groupIndices[0]]));
+            result.append(3, Long.valueOf(DefaultBandwidthMeter.DEFAULT_INITIAL_BITRATE_ESTIMATES_2G[groupIndices[1]]));
+            result.append(4, Long.valueOf(DefaultBandwidthMeter.DEFAULT_INITIAL_BITRATE_ESTIMATES_3G[groupIndices[2]]));
+            result.append(5, Long.valueOf(DefaultBandwidthMeter.DEFAULT_INITIAL_BITRATE_ESTIMATES_4G[groupIndices[3]]));
+            result.append(7, Long.valueOf(DefaultBandwidthMeter.DEFAULT_INITIAL_BITRATE_ESTIMATES_WIFI[groupIndices[0]]));
+            return result;
+        }
+
+        private static int[] getCountryGroupIndices(String countryCode) {
+            int[] groupIndices = DefaultBandwidthMeter.DEFAULT_INITIAL_BITRATE_COUNTRY_GROUPS.get(countryCode);
+            return groupIndices == null ? new int[]{2, 2, 2, 2} : groupIndices;
+        }
+
+        public Builder setSlidingWindowMaxWeight(int slidingWindowMaxWeight2) {
+            this.slidingWindowMaxWeight = slidingWindowMaxWeight2;
+            return this;
+        }
+
+        public Builder setInitialBitrateEstimate(long initialBitrateEstimate) {
+            for (int i = 0; i < this.initialBitrateEstimates.size(); i++) {
+                this.initialBitrateEstimates.setValueAt(i, Long.valueOf(initialBitrateEstimate));
+            }
+            return this;
+        }
+
+        public Builder setInitialBitrateEstimate(int networkType, long initialBitrateEstimate) {
+            this.initialBitrateEstimates.put(networkType, Long.valueOf(initialBitrateEstimate));
+            return this;
+        }
+
+        public Builder setInitialBitrateEstimate(String countryCode) {
+            this.initialBitrateEstimates = getInitialBitrateEstimatesForCountry(Util.toUpperInvariant(countryCode));
+            return this;
+        }
+
+        public Builder setClock(Clock clock2) {
+            this.clock = clock2;
+            return this;
+        }
+
+        public Builder experimental_resetOnNetworkTypeChange(boolean resetOnNetworkTypeChange2) {
+            this.resetOnNetworkTypeChange = resetOnNetworkTypeChange2;
+            return this;
+        }
+
+        public DefaultBandwidthMeter build() {
+            return new DefaultBandwidthMeter(this.context, this.initialBitrateEstimates, this.slidingWindowMaxWeight, this.clock, this.resetOnNetworkTypeChange);
+        }
+    }
+
+    private static class ConnectivityActionReceiver extends BroadcastReceiver {
+        private static ConnectivityActionReceiver staticInstance;
+        private final ArrayList<WeakReference<DefaultBandwidthMeter>> bandwidthMeters = new ArrayList<>();
+        private final Handler mainHandler = new Handler(Looper.getMainLooper());
+
+        private ConnectivityActionReceiver() {
+        }
+
+        public static synchronized ConnectivityActionReceiver getInstance(Context context) {
+            ConnectivityActionReceiver connectivityActionReceiver;
+            synchronized (ConnectivityActionReceiver.class) {
+                if (staticInstance == null) {
+                    staticInstance = new ConnectivityActionReceiver();
+                    IntentFilter filter = new IntentFilter();
+                    filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+                    context.registerReceiver(staticInstance, filter);
+                }
+                connectivityActionReceiver = staticInstance;
+            }
+            return connectivityActionReceiver;
+        }
+
+        public synchronized void register(DefaultBandwidthMeter bandwidthMeter) {
+            removeClearedReferences();
+            this.bandwidthMeters.add(new WeakReference(bandwidthMeter));
+            this.mainHandler.post(new DefaultBandwidthMeter$ConnectivityActionReceiver$$Lambda$0(this, bandwidthMeter));
+        }
+
+        public synchronized void onReceive(Context context, Intent intent) {
+            if (!isInitialStickyBroadcast()) {
+                removeClearedReferences();
+                for (int i = 0; i < this.bandwidthMeters.size(); i++) {
+                    DefaultBandwidthMeter bandwidthMeter = (DefaultBandwidthMeter) this.bandwidthMeters.get(i).get();
+                    if (bandwidthMeter != null) {
+                        mo15526xc0d413df(bandwidthMeter);
+                    }
+                }
+            }
+        }
+
+        /* access modifiers changed from: private */
+        /* renamed from: updateBandwidthMeter */
+        public void mo15526xc0d413df(DefaultBandwidthMeter bandwidthMeter) {
+            bandwidthMeter.onConnectivityAction();
+        }
+
+        private void removeClearedReferences() {
+            for (int i = this.bandwidthMeters.size() - 1; i >= 0; i--) {
+                if (((DefaultBandwidthMeter) this.bandwidthMeters.get(i).get()) == null) {
+                    this.bandwidthMeters.remove(i);
+                }
+            }
+        }
     }
 }

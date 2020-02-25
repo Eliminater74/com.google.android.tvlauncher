@@ -3,6 +3,7 @@ package com.bumptech.glide.load.engine.prefill;
 import android.graphics.Bitmap;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
+
 import com.bumptech.glide.util.Preconditions;
 
 public final class PreFillType {
@@ -74,10 +75,10 @@ public final class PreFillType {
     }
 
     public static class Builder {
-        private Bitmap.Config config;
         private final int height;
-        private int weight;
         private final int width;
+        private Bitmap.Config config;
+        private int weight;
 
         public Builder(int size) {
             this(size, size);
@@ -95,14 +96,14 @@ public final class PreFillType {
             }
         }
 
-        public Builder setConfig(@Nullable Bitmap.Config config2) {
-            this.config = config2;
-            return this;
-        }
-
         /* access modifiers changed from: package-private */
         public Bitmap.Config getConfig() {
             return this.config;
+        }
+
+        public Builder setConfig(@Nullable Bitmap.Config config2) {
+            this.config = config2;
+            return this;
         }
 
         public Builder setWeight(int weight2) {

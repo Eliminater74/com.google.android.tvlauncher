@@ -1,6 +1,7 @@
 package com.google.android.exoplayer2.source.chunk;
 
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.FormatHolder;
@@ -9,13 +10,13 @@ import com.google.android.exoplayer2.source.MediaSourceEventListener;
 import com.google.android.exoplayer2.source.SampleQueue;
 import com.google.android.exoplayer2.source.SampleStream;
 import com.google.android.exoplayer2.source.SequenceableLoader;
-import com.google.android.exoplayer2.source.chunk.ChunkSource;
 import com.google.android.exoplayer2.upstream.Allocator;
 import com.google.android.exoplayer2.upstream.DefaultLoadErrorHandlingPolicy;
 import com.google.android.exoplayer2.upstream.LoadErrorHandlingPolicy;
 import com.google.android.exoplayer2.upstream.Loader;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,10 +24,6 @@ import java.util.List;
 
 public class ChunkSampleStream<T extends ChunkSource> implements SampleStream, SequenceableLoader, Loader.Callback<Chunk>, Loader.ReleaseCallback {
     private static final String TAG = "ChunkSampleStream";
-    private final SequenceableLoader.Callback<ChunkSampleStream<T>> callback;
-    private final T chunkSource;
-    long decodeOnlyUntilPositionUs;
-    private final SampleQueue[] embeddedSampleQueues;
     /* access modifiers changed from: private */
     public final Format[] embeddedTrackFormats;
     /* access modifiers changed from: private */
@@ -35,26 +32,26 @@ public class ChunkSampleStream<T extends ChunkSource> implements SampleStream, S
     public final boolean[] embeddedTracksSelected;
     /* access modifiers changed from: private */
     public final MediaSourceEventListener.EventDispatcher eventDispatcher;
-    /* access modifiers changed from: private */
-    public long lastSeekPositionUs;
+    public final int primaryTrackType;
+    private final SequenceableLoader.Callback<ChunkSampleStream<T>> callback;
+    private final T chunkSource;
+    private final SampleQueue[] embeddedSampleQueues;
     private final LoadErrorHandlingPolicy loadErrorHandlingPolicy;
     private final Loader loader;
-    boolean loadingFinished;
     private final BaseMediaChunkOutput mediaChunkOutput;
     private final ArrayList<BaseMediaChunk> mediaChunks;
     private final ChunkHolder nextChunkHolder;
+    private final SampleQueue primarySampleQueue;
+    private final List<BaseMediaChunk> readOnlyMediaChunks;
+    /* access modifiers changed from: private */
+    public long lastSeekPositionUs;
+    long decodeOnlyUntilPositionUs;
+    boolean loadingFinished;
     private int nextNotifyPrimaryFormatMediaChunkIndex;
     private long pendingResetPositionUs;
     private Format primaryDownstreamTrackFormat;
-    private final SampleQueue primarySampleQueue;
-    public final int primaryTrackType;
-    private final List<BaseMediaChunk> readOnlyMediaChunks;
     @Nullable
     private ReleaseCallback<T> releaseCallback;
-
-    public interface ReleaseCallback<T extends ChunkSource> {
-        void onSampleStreamReleased(ChunkSampleStream<T> chunkSampleStream);
-    }
 
     @Deprecated
     public ChunkSampleStream(int primaryTrackType2, int[] embeddedTrackTypes2, Format[] embeddedTrackFormats2, T chunkSource2, SequenceableLoader.Callback<ChunkSampleStream<T>> callback2, Allocator allocator, long positionUs, int minLoadableRetryCount, MediaSourceEventListener.EventDispatcher eventDispatcher2) {
@@ -770,11 +767,15 @@ public class ChunkSampleStream<T extends ChunkSource> implements SampleStream, S
         }
     }
 
+    public interface ReleaseCallback<T extends ChunkSource> {
+        void onSampleStreamReleased(ChunkSampleStream<T> chunkSampleStream);
+    }
+
     public final class EmbeddedSampleStream implements SampleStream {
-        private final int index;
-        private boolean notifiedDownstreamFormat;
         public final ChunkSampleStream<T> parent;
+        private final int index;
         private final SampleQueue sampleQueue;
+        private boolean notifiedDownstreamFormat;
 
         public EmbeddedSampleStream(ChunkSampleStream<T> parent2, SampleQueue sampleQueue2, int index2) {
             this.parent = parent2;

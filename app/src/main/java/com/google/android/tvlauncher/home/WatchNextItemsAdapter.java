@@ -10,8 +10,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.leanback.widget.FacetProvider;
 import androidx.leanback.widget.ItemAlignmentFacet;
+
 import com.google.android.tvlauncher.BackHomeControllerListeners;
 import com.google.android.tvlauncher.C1188R;
 import com.google.android.tvlauncher.TvlauncherLogEnum;
@@ -28,13 +30,14 @@ import com.google.android.tvlauncher.home.view.WatchNextInfoView;
 import com.google.android.tvlauncher.model.Program;
 import com.google.android.tvlauncher.util.Util;
 import com.google.logs.tvlauncher.config.TvLauncherConstants;
+
 import java.util.List;
 
 class WatchNextItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    static final int TYPE_INFO = 1;
     private static final boolean DEBUG = false;
     private static final int INFO_CARD_ID = -2;
     private static final String TAG = "WatchNextItemsAdapter";
-    static final int TYPE_INFO = 1;
     private static final int TYPE_INFO_ADAPTER_POSITION = 1;
     private static final int TYPE_PROGRAM = 0;
     /* access modifiers changed from: private */
@@ -48,13 +51,16 @@ class WatchNextItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public int mLastUnfocusedAdapterPosition = -1;
     /* access modifiers changed from: private */
     public RecyclerViewStateProvider mListStateProvider;
-    private BackHomeControllerListeners.OnHomeNotHandledListener mOnHomeNotHandledListener;
     /* access modifiers changed from: private */
     public OnProgramSelectedListener mOnProgramSelectedListener;
     /* access modifiers changed from: private */
     public SharedPreferences mPreferences;
     /* access modifiers changed from: private */
     public int mProgramState = 0;
+    /* access modifiers changed from: private */
+    public RecyclerView mRecyclerView;
+    /* access modifiers changed from: private */
+    public boolean mShowInfo;
     private final WatchNextProgramsObserver mProgramsObserver = new WatchNextProgramsObserver() {
         public void onProgramsChange() {
             WatchNextItemsAdapter.this.logDataLoaded();
@@ -62,10 +68,7 @@ class WatchNextItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             WatchNextItemsAdapter.this.notifyDataSetChanged();
         }
     };
-    /* access modifiers changed from: private */
-    public RecyclerView mRecyclerView;
-    /* access modifiers changed from: private */
-    public boolean mShowInfo;
+    private BackHomeControllerListeners.OnHomeNotHandledListener mOnHomeNotHandledListener;
     private boolean mStarted;
 
     WatchNextItemsAdapter(Context context, EventLogger eventLogger) {
@@ -262,18 +265,8 @@ class WatchNextItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @VisibleForTesting
     class ProgramViewHolder extends RecyclerView.ViewHolder implements OnProgramViewFocusChangedListener, BackHomeControllerListeners.OnHomePressedListener, EventLogger {
         private final EventLogger mEventLogger;
-        private Runnable mNotifyFocusChangedRunnable = new WatchNextItemsAdapter$ProgramViewHolder$$Lambda$0(this);
         private final ProgramController mProgramController;
-
-        /* access modifiers changed from: package-private */
-        public final /* synthetic */ void lambda$new$0$WatchNextItemsAdapter$ProgramViewHolder() {
-            WatchNextItemsAdapter.this.notifyItemChanged(getAdapterPosition(), ProgramBindPayloads.FOCUS_CHANGED);
-            if (WatchNextItemsAdapter.this.mLastUnfocusedAdapterPosition != -1) {
-                WatchNextItemsAdapter watchNextItemsAdapter = WatchNextItemsAdapter.this;
-                watchNextItemsAdapter.notifyItemChanged(watchNextItemsAdapter.mLastUnfocusedAdapterPosition, ProgramBindPayloads.FOCUS_CHANGED);
-                int unused = WatchNextItemsAdapter.this.mLastUnfocusedAdapterPosition = -1;
-            }
-        }
+        private Runnable mNotifyFocusChangedRunnable = new WatchNextItemsAdapter$ProgramViewHolder$$Lambda$0(this);
 
         ProgramViewHolder(ProgramView v, EventLogger eventLogger) {
             super(v);
@@ -283,6 +276,16 @@ class WatchNextItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             this.mProgramController.setIsWatchNextProgram(true);
             this.mProgramController.setListStateProvider(WatchNextItemsAdapter.this.mListStateProvider);
             this.mProgramController.setHomeListStateProvider(WatchNextItemsAdapter.this.mHomeListStateProvider);
+        }
+
+        /* access modifiers changed from: package-private */
+        public final /* synthetic */ void lambda$new$0$WatchNextItemsAdapter$ProgramViewHolder() {
+            WatchNextItemsAdapter.this.notifyItemChanged(getAdapterPosition(), ProgramBindPayloads.FOCUS_CHANGED);
+            if (WatchNextItemsAdapter.this.mLastUnfocusedAdapterPosition != -1) {
+                WatchNextItemsAdapter watchNextItemsAdapter = WatchNextItemsAdapter.this;
+                watchNextItemsAdapter.notifyItemChanged(watchNextItemsAdapter.mLastUnfocusedAdapterPosition, ProgramBindPayloads.FOCUS_CHANGED);
+                int unused = WatchNextItemsAdapter.this.mLastUnfocusedAdapterPosition = -1;
+            }
         }
 
         public void onProgramViewFocusChanged(boolean hasFocus) {
@@ -344,6 +347,20 @@ class WatchNextItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         private View.OnFocusChangeListener mOnFocusChangeListener = new WatchNextItemsAdapter$InfoCardViewHolder$$Lambda$1(this);
         private ProgramSettings mProgramSettings;
 
+        InfoCardViewHolder(WatchNextInfoView v) {
+            super(v);
+            this.mProgramSettings = ProgramUtil.getProgramSettings(v.getContext());
+            this.mInfoController = new WatchNextInfoController(v, this.mProgramSettings);
+            if (Util.areHomeScreenAnimationsEnabled(v.getContext())) {
+                v.setOnFocusChangeListener(this.mOnFocusChangeListener);
+            }
+            v.setOnClickListener(new WatchNextItemsAdapter$InfoCardViewHolder$$Lambda$2(this));
+            this.mItemAlignmentDef = new ItemAlignmentFacet.ItemAlignmentDef();
+            this.mItemAlignmentDef.setItemAlignmentOffsetPercent(-1.0f);
+            this.mFacet = new ItemAlignmentFacet();
+            this.mFacet.setAlignmentDefs(new ItemAlignmentFacet.ItemAlignmentDef[]{this.mItemAlignmentDef});
+        }
+
         /* access modifiers changed from: package-private */
         public final /* synthetic */ void lambda$new$0$WatchNextItemsAdapter$InfoCardViewHolder() {
             WatchNextItemsAdapter.this.notifyItemChanged(getAdapterPosition(), ProgramBindPayloads.FOCUS_CHANGED);
@@ -380,20 +397,6 @@ class WatchNextItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 return;
             }
             this.mNotifyFocusChangedRunnable.run();
-        }
-
-        InfoCardViewHolder(WatchNextInfoView v) {
-            super(v);
-            this.mProgramSettings = ProgramUtil.getProgramSettings(v.getContext());
-            this.mInfoController = new WatchNextInfoController(v, this.mProgramSettings);
-            if (Util.areHomeScreenAnimationsEnabled(v.getContext())) {
-                v.setOnFocusChangeListener(this.mOnFocusChangeListener);
-            }
-            v.setOnClickListener(new WatchNextItemsAdapter$InfoCardViewHolder$$Lambda$2(this));
-            this.mItemAlignmentDef = new ItemAlignmentFacet.ItemAlignmentDef();
-            this.mItemAlignmentDef.setItemAlignmentOffsetPercent(-1.0f);
-            this.mFacet = new ItemAlignmentFacet();
-            this.mFacet.setAlignmentDefs(new ItemAlignmentFacet.ItemAlignmentDef[]{this.mItemAlignmentDef});
         }
 
         /* access modifiers changed from: package-private */

@@ -4,33 +4,31 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.BaseRenderer;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.FormatHolder;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Util;
+
 import java.util.Arrays;
 
 public final class MetadataRenderer extends BaseRenderer implements Handler.Callback {
     private static final int MAX_PENDING_METADATA_COUNT = 5;
     private static final int MSG_INVOKE_RENDERER = 0;
     private final MetadataInputBuffer buffer;
-    private MetadataDecoder decoder;
     private final MetadataDecoderFactory decoderFactory;
     private final FormatHolder formatHolder;
-    private boolean inputStreamEnded;
     private final MetadataOutput output;
     @Nullable
     private final Handler outputHandler;
     private final Metadata[] pendingMetadata;
+    private final long[] pendingMetadataTimestamps;
+    private MetadataDecoder decoder;
+    private boolean inputStreamEnded;
     private int pendingMetadataCount;
     private int pendingMetadataIndex;
-    private final long[] pendingMetadataTimestamps;
-
-    @Deprecated
-    public interface Output extends MetadataOutput {
-    }
 
     public MetadataRenderer(MetadataOutput output2, @Nullable Looper outputLooper) {
         this(output2, outputLooper, MetadataDecoderFactory.DEFAULT);
@@ -137,5 +135,9 @@ public final class MetadataRenderer extends BaseRenderer implements Handler.Call
 
     private void invokeRendererInternal(Metadata metadata) {
         this.output.onMetadata(metadata);
+    }
+
+    @Deprecated
+    public interface Output extends MetadataOutput {
     }
 }

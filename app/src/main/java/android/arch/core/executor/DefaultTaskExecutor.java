@@ -6,6 +6,7 @@ import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RestrictTo;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -28,6 +29,22 @@ public class DefaultTaskExecutor extends TaskExecutor {
     @Nullable
     private volatile Handler mMainHandler;
 
+    private static Handler createAsync(@NonNull Looper looper) {
+        if (Build.VERSION.SDK_INT >= 28) {
+            return Handler.createAsync(looper);
+        }
+        if (Build.VERSION.SDK_INT >= 16) {
+            Class<Handler> cls = Handler.class;
+            try {
+                return cls.getDeclaredConstructor(Looper.class, Handler.Callback.class, Boolean.TYPE).newInstance(looper, null, true);
+            } catch (IllegalAccessException | InstantiationException | NoSuchMethodException e) {
+            } catch (InvocationTargetException e2) {
+                return new Handler(looper);
+            }
+        }
+        return new Handler(looper);
+    }
+
     public void executeOnDiskIO(Runnable runnable) {
         this.mDiskIO.execute(runnable);
     }
@@ -45,21 +62,5 @@ public class DefaultTaskExecutor extends TaskExecutor {
 
     public boolean isMainThread() {
         return Looper.getMainLooper().getThread() == Thread.currentThread();
-    }
-
-    private static Handler createAsync(@NonNull Looper looper) {
-        if (Build.VERSION.SDK_INT >= 28) {
-            return Handler.createAsync(looper);
-        }
-        if (Build.VERSION.SDK_INT >= 16) {
-            Class<Handler> cls = Handler.class;
-            try {
-                return cls.getDeclaredConstructor(Looper.class, Handler.Callback.class, Boolean.TYPE).newInstance(looper, null, true);
-            } catch (IllegalAccessException | InstantiationException | NoSuchMethodException e) {
-            } catch (InvocationTargetException e2) {
-                return new Handler(looper);
-            }
-        }
-        return new Handler(looper);
     }
 }

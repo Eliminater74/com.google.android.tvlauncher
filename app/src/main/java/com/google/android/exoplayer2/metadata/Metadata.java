@@ -3,7 +3,9 @@ package com.google.android.exoplayer2.metadata;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.util.Util;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,9 +20,6 @@ public final class Metadata implements Parcelable {
         }
     };
     private final Entry[] entries;
-
-    public interface Entry extends Parcelable {
-    }
 
     public Metadata(Entry... entries2) {
         this.entries = entries2 == null ? new Entry[0] : entries2;
@@ -94,5 +93,8 @@ public final class Metadata implements Parcelable {
         for (Entry entry : this.entries) {
             dest.writeParcelable(entry, 0);
         }
+    }
+
+    public interface Entry extends Parcelable {
     }
 }

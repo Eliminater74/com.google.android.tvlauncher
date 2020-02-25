@@ -1,6 +1,7 @@
 package com.google.common.base;
 
 import com.google.common.annotations.GwtIncompatible;
+
 import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

@@ -1,6 +1,7 @@
 package com.google.android.exoplayer2.upstream.cache;
 
 import android.support.annotation.Nullable;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.NavigableSet;
@@ -8,14 +9,6 @@ import java.util.Set;
 
 public interface Cache {
     public static final long UID_UNSET = -1;
-
-    public interface Listener {
-        void onSpanAdded(Cache cache, CacheSpan cacheSpan);
-
-        void onSpanRemoved(Cache cache, CacheSpan cacheSpan);
-
-        void onSpanTouched(Cache cache, CacheSpan cacheSpan, CacheSpan cacheSpan2);
-    }
 
     NavigableSet<CacheSpan> addListener(String str, Listener listener);
 
@@ -51,6 +44,14 @@ public interface Cache {
 
     @Nullable
     CacheSpan startReadWriteNonBlocking(String str, long j) throws CacheException;
+
+    public interface Listener {
+        void onSpanAdded(Cache cache, CacheSpan cacheSpan);
+
+        void onSpanRemoved(Cache cache, CacheSpan cacheSpan);
+
+        void onSpanTouched(Cache cache, CacheSpan cacheSpan, CacheSpan cacheSpan2);
+    }
 
     public static class CacheException extends IOException {
         public CacheException(String message) {

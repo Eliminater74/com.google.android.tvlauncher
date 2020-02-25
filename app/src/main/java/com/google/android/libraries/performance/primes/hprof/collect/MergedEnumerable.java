@@ -1,19 +1,18 @@
 package com.google.android.libraries.performance.primes.hprof.collect;
 
-import com.google.android.libraries.performance.primes.hprof.collect.IntObjectMap;
 import java.util.Arrays;
 import java.util.Iterator;
 
 public final class MergedEnumerable<E> implements IntObjectMap.Enumerable<E> {
-    private IntObjectMap.Enumerable<? extends E> activeEnumerator = nextEnumerator();
     private final Iterator<IntObjectMap.Enumerable<? extends E>> enumerators;
-
-    public static <E> MergedEnumerable<E> merge(IntObjectMap.Enumerable<? extends E>... enumerators2) {
-        return new MergedEnumerable<>(Arrays.asList(enumerators2).iterator());
-    }
+    private IntObjectMap.Enumerable<? extends E> activeEnumerator = nextEnumerator();
 
     private MergedEnumerable(Iterator<IntObjectMap.Enumerable<? extends E>> enumerators2) {
         this.enumerators = enumerators2;
+    }
+
+    public static <E> MergedEnumerable<E> merge(IntObjectMap.Enumerable<? extends E>... enumerators2) {
+        return new MergedEnumerable<>(Arrays.asList(enumerators2).iterator());
     }
 
     public boolean next() {

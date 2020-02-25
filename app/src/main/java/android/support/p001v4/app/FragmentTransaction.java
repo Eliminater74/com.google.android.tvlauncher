@@ -10,11 +10,19 @@ import android.support.annotation.StringRes;
 import android.support.annotation.StyleRes;
 import android.support.p001v4.view.ViewCompat;
 import android.view.View;
+
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 
 /* renamed from: android.support.v4.app.FragmentTransaction */
 public abstract class FragmentTransaction {
+    public static final int TRANSIT_ENTER_MASK = 4096;
+    public static final int TRANSIT_EXIT_MASK = 8192;
+    public static final int TRANSIT_FRAGMENT_CLOSE = 8194;
+    public static final int TRANSIT_FRAGMENT_FADE = 4099;
+    public static final int TRANSIT_FRAGMENT_OPEN = 4097;
+    public static final int TRANSIT_NONE = 0;
+    public static final int TRANSIT_UNSET = -1;
     static final int OP_ADD = 1;
     static final int OP_ATTACH = 7;
     static final int OP_DETACH = 6;
@@ -27,13 +35,6 @@ public abstract class FragmentTransaction {
     static final int OP_SHOW = 5;
     static final int OP_UNSET_MAX_LIFECYCLE = 11;
     static final int OP_UNSET_PRIMARY_NAV = 9;
-    public static final int TRANSIT_ENTER_MASK = 4096;
-    public static final int TRANSIT_EXIT_MASK = 8192;
-    public static final int TRANSIT_FRAGMENT_CLOSE = 8194;
-    public static final int TRANSIT_FRAGMENT_FADE = 4099;
-    public static final int TRANSIT_FRAGMENT_OPEN = 4097;
-    public static final int TRANSIT_NONE = 0;
-    public static final int TRANSIT_UNSET = -1;
     boolean mAddToBackStack;
     boolean mAllowAddToBackStack = true;
     int mBreadCrumbShortTitleRes;
@@ -61,32 +62,6 @@ public abstract class FragmentTransaction {
     public abstract void commitNow();
 
     public abstract void commitNowAllowingStateLoss();
-
-    /* renamed from: android.support.v4.app.FragmentTransaction$Op */
-    static final class C0075Op {
-        int mCmd;
-        int mEnterAnim;
-        int mExitAnim;
-        Fragment mFragment;
-        int mPopEnterAnim;
-        int mPopExitAnim;
-        Lifecycle.State mState;
-
-        C0075Op() {
-        }
-
-        C0075Op(int cmd, Fragment fragment) {
-            this.mCmd = cmd;
-            this.mFragment = fragment;
-            this.mState = Lifecycle.State.RESUMED;
-        }
-
-        C0075Op(int cmd, Fragment fragment, Lifecycle.State state) {
-            this.mCmd = cmd;
-            this.mFragment = fragment;
-            this.mState = state;
-        }
-    }
 
     /* access modifiers changed from: package-private */
     public void addOp(C0075Op op) {
@@ -321,5 +296,31 @@ public abstract class FragmentTransaction {
         }
         this.mCommitRunnables.add(runnable);
         return this;
+    }
+
+    /* renamed from: android.support.v4.app.FragmentTransaction$Op */
+    static final class C0075Op {
+        int mCmd;
+        int mEnterAnim;
+        int mExitAnim;
+        Fragment mFragment;
+        int mPopEnterAnim;
+        int mPopExitAnim;
+        Lifecycle.State mState;
+
+        C0075Op() {
+        }
+
+        C0075Op(int cmd, Fragment fragment) {
+            this.mCmd = cmd;
+            this.mFragment = fragment;
+            this.mState = Lifecycle.State.RESUMED;
+        }
+
+        C0075Op(int cmd, Fragment fragment, Lifecycle.State state) {
+            this.mCmd = cmd;
+            this.mFragment = fragment;
+            this.mState = state;
+        }
     }
 }

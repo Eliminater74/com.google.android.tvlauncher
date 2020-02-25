@@ -1,6 +1,7 @@
 package com.google.android.libraries.gcoreclient.clearcut;
 
 import android.content.Context;
+
 import javax.annotation.Nullable;
 
 public interface GcoreClearcutLoggerFactory {

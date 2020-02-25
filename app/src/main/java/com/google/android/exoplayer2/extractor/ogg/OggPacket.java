@@ -3,13 +3,14 @@ package com.google.android.exoplayer2.extractor.ogg;
 import com.google.android.exoplayer2.extractor.ExtractorInput;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.ParsableByteArray;
+
 import java.io.IOException;
 import java.util.Arrays;
 
 final class OggPacket {
-    private int currentSegmentIndex = -1;
     private final ParsableByteArray packetArray = new ParsableByteArray(new byte[OggPageHeader.MAX_PAGE_PAYLOAD], 0);
     private final OggPageHeader pageHeader = new OggPageHeader();
+    private int currentSegmentIndex = -1;
     private boolean populated;
     private int segmentCount;
 

@@ -2,12 +2,6 @@ package com.google.protobuf;
 
 final class TextFormatEscaper {
 
-    private interface ByteSequence {
-        byte byteAt(int i);
-
-        int size();
-    }
-
     private TextFormatEscaper() {
     }
 
@@ -92,5 +86,11 @@ final class TextFormatEscaper {
 
     static String escapeDoubleQuotesAndBackslashes(String input) {
         return input.replace("\\", "\\\\").replace("\"", "\\\"");
+    }
+
+    private interface ByteSequence {
+        byte byteAt(int i);
+
+        int size();
     }
 }

@@ -7,7 +7,7 @@ import android.os.Message;
 import android.support.annotation.RestrictTo;
 import android.view.KeyEvent;
 import android.view.View;
-import androidx.leanback.media.PlaybackGlue;
+
 import androidx.leanback.widget.AbstractDetailsDescriptionPresenter;
 import androidx.leanback.widget.Action;
 import androidx.leanback.widget.ArrayObjectAdapter;
@@ -19,9 +19,11 @@ import androidx.leanback.widget.PlaybackRowPresenter;
 import androidx.leanback.widget.PresenterSelector;
 import androidx.leanback.widget.RowPresenter;
 import androidx.leanback.widget.SparseArrayObjectAdapter;
+
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.tvlauncher.inputs.InputsManagerUtil;
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.lang.ref.WeakReference;
 import java.util.List;
 
@@ -33,9 +35,6 @@ public abstract class PlaybackControlGlue extends PlaybackGlue implements OnActi
     public static final int ACTION_REWIND = 32;
     public static final int ACTION_SKIP_TO_NEXT = 256;
     public static final int ACTION_SKIP_TO_PREVIOUS = 16;
-    static final boolean DEBUG = false;
-    static final int MSG_UPDATE_PLAYBACK_STATE = 100;
-    private static final int NUMBER_OF_SEEK_SPEEDS = 5;
     public static final int PLAYBACK_SPEED_FAST_L0 = 10;
     public static final int PLAYBACK_SPEED_FAST_L1 = 11;
     public static final int PLAYBACK_SPEED_FAST_L2 = 12;
@@ -44,51 +43,24 @@ public abstract class PlaybackControlGlue extends PlaybackGlue implements OnActi
     public static final int PLAYBACK_SPEED_INVALID = -1;
     public static final int PLAYBACK_SPEED_NORMAL = 1;
     public static final int PLAYBACK_SPEED_PAUSED = 0;
+    static final boolean DEBUG = false;
+    static final int MSG_UPDATE_PLAYBACK_STATE = 100;
     static final String TAG = "PlaybackControlGlue";
-    private static final int UPDATE_PLAYBACK_STATE_DELAY_MS = 2000;
     static final Handler sHandler = new UpdatePlaybackStateHandler();
+    private static final int NUMBER_OF_SEEK_SPEEDS = 5;
+    private static final int UPDATE_PLAYBACK_STATE_DELAY_MS = 2000;
+    final WeakReference<PlaybackControlGlue> mGlueWeakReference;
+    private final int[] mFastForwardSpeeds;
+    private final int[] mRewindSpeeds;
     private PlaybackControlsRow mControlsRow;
     private PlaybackRowPresenter mControlsRowPresenter;
     private boolean mFadeWhenPlaying;
     private PlaybackControlsRow.FastForwardAction mFastForwardAction;
-    private final int[] mFastForwardSpeeds;
-    final WeakReference<PlaybackControlGlue> mGlueWeakReference;
     private PlaybackControlsRow.PlayPauseAction mPlayPauseAction;
     private int mPlaybackSpeed;
     private PlaybackControlsRow.RewindAction mRewindAction;
-    private final int[] mRewindSpeeds;
     private PlaybackControlsRow.SkipNextAction mSkipNextAction;
     private PlaybackControlsRow.SkipPreviousAction mSkipPreviousAction;
-
-    public abstract int getCurrentPosition();
-
-    public abstract int getCurrentSpeedId();
-
-    public abstract Drawable getMediaArt();
-
-    public abstract int getMediaDuration();
-
-    public abstract CharSequence getMediaSubtitle();
-
-    public abstract CharSequence getMediaTitle();
-
-    public abstract long getSupportedActions();
-
-    public abstract boolean hasValidMedia();
-
-    public abstract boolean isMediaPlaying();
-
-    static class UpdatePlaybackStateHandler extends Handler {
-        UpdatePlaybackStateHandler() {
-        }
-
-        public void handleMessage(Message msg) {
-            PlaybackControlGlue glue;
-            if (msg.what == 100 && (glue = (PlaybackControlGlue) ((WeakReference) msg.obj).get()) != null) {
-                glue.updatePlaybackState();
-            }
-        }
-    }
 
     public PlaybackControlGlue(Context context, int[] seekSpeeds) {
         this(context, seekSpeeds, seekSpeeds);
@@ -108,6 +80,70 @@ public abstract class PlaybackControlGlue extends PlaybackGlue implements OnActi
         }
         this.mRewindSpeeds = rewindSpeeds;
     }
+
+    private static void notifyItemChanged(SparseArrayObjectAdapter adapter, Object object) {
+        int index = adapter.indexOf(object);
+        if (index >= 0) {
+            adapter.notifyArrayItemRangeChanged(index, 1);
+        }
+    }
+
+    private static String getSpeedString(int speed) {
+        if (speed == -1) {
+            return "PLAYBACK_SPEED_INVALID";
+        }
+        if (speed == 0) {
+            return "PLAYBACK_SPEED_PAUSED";
+        }
+        if (speed == 1) {
+            return "PLAYBACK_SPEED_NORMAL";
+        }
+        switch (speed) {
+            case -14:
+                return "-PLAYBACK_SPEED_FAST_L4";
+            case -13:
+                return "-PLAYBACK_SPEED_FAST_L3";
+            case -12:
+                return "-PLAYBACK_SPEED_FAST_L2";
+            case -11:
+                return "-PLAYBACK_SPEED_FAST_L1";
+            case InputsManagerUtil.TYPE_CEC_TUNER /*-10*/:
+                return "-PLAYBACK_SPEED_FAST_L0";
+            default:
+                switch (speed) {
+                    case 10:
+                        return "PLAYBACK_SPEED_FAST_L0";
+                    case 11:
+                        return "PLAYBACK_SPEED_FAST_L1";
+                    case 12:
+                        return "PLAYBACK_SPEED_FAST_L2";
+                    case 13:
+                        return "PLAYBACK_SPEED_FAST_L3";
+                    case 14:
+                        return "PLAYBACK_SPEED_FAST_L4";
+                    default:
+                        return null;
+                }
+        }
+    }
+
+    public abstract int getCurrentPosition();
+
+    public abstract int getCurrentSpeedId();
+
+    public abstract Drawable getMediaArt();
+
+    public abstract int getMediaDuration();
+
+    public abstract CharSequence getMediaSubtitle();
+
+    public abstract CharSequence getMediaTitle();
+
+    public abstract long getSupportedActions();
+
+    public abstract boolean hasValidMedia();
+
+    public abstract boolean isMediaPlaying();
 
     /* access modifiers changed from: protected */
     public void onAttachedToHost(PlaybackGlueHost host) {
@@ -179,6 +215,10 @@ public abstract class PlaybackControlGlue extends PlaybackGlue implements OnActi
         return this.mRewindSpeeds;
     }
 
+    public boolean isFadingEnabled() {
+        return this.mFadeWhenPlaying;
+    }
+
     public void setFadingEnabled(boolean enable) {
         this.mFadeWhenPlaying = enable;
         if (!this.mFadeWhenPlaying && getHost() != null) {
@@ -186,8 +226,16 @@ public abstract class PlaybackControlGlue extends PlaybackGlue implements OnActi
         }
     }
 
-    public boolean isFadingEnabled() {
-        return this.mFadeWhenPlaying;
+    /* access modifiers changed from: protected */
+    @RestrictTo({RestrictTo.Scope.LIBRARY})
+    public SparseArrayObjectAdapter createPrimaryActionsAdapter(PresenterSelector presenterSelector) {
+        SparseArrayObjectAdapter adapter = new SparseArrayObjectAdapter(presenterSelector);
+        onCreatePrimaryActions(adapter);
+        return adapter;
+    }
+
+    public PlaybackControlsRow getControlsRow() {
+        return this.mControlsRow;
     }
 
     public void setControlsRow(PlaybackControlsRow controlsRow) {
@@ -199,23 +247,6 @@ public abstract class PlaybackControlGlue extends PlaybackGlue implements OnActi
         updateControlsRow();
     }
 
-    /* access modifiers changed from: protected */
-    @RestrictTo({RestrictTo.Scope.LIBRARY})
-    public SparseArrayObjectAdapter createPrimaryActionsAdapter(PresenterSelector presenterSelector) {
-        SparseArrayObjectAdapter adapter = new SparseArrayObjectAdapter(presenterSelector);
-        onCreatePrimaryActions(adapter);
-        return adapter;
-    }
-
-    @Deprecated
-    public void setControlsRowPresenter(PlaybackControlsRowPresenter presenter) {
-        this.mControlsRowPresenter = presenter;
-    }
-
-    public PlaybackControlsRow getControlsRow() {
-        return this.mControlsRow;
-    }
-
     @Deprecated
     public PlaybackControlsRowPresenter getControlsRowPresenter() {
         PlaybackRowPresenter playbackRowPresenter = this.mControlsRowPresenter;
@@ -225,12 +256,17 @@ public abstract class PlaybackControlGlue extends PlaybackGlue implements OnActi
         return null;
     }
 
-    public void setPlaybackRowPresenter(PlaybackRowPresenter presenter) {
+    @Deprecated
+    public void setControlsRowPresenter(PlaybackControlsRowPresenter presenter) {
         this.mControlsRowPresenter = presenter;
     }
 
     public PlaybackRowPresenter getPlaybackRowPresenter() {
         return this.mControlsRowPresenter;
+    }
+
+    public void setPlaybackRowPresenter(PlaybackRowPresenter presenter) {
+        this.mControlsRowPresenter = presenter;
     }
 
     public void enableProgressUpdating(boolean enable) {
@@ -499,52 +535,6 @@ public abstract class PlaybackControlGlue extends PlaybackGlue implements OnActi
         }
     }
 
-    private static void notifyItemChanged(SparseArrayObjectAdapter adapter, Object object) {
-        int index = adapter.indexOf(object);
-        if (index >= 0) {
-            adapter.notifyArrayItemRangeChanged(index, 1);
-        }
-    }
-
-    private static String getSpeedString(int speed) {
-        if (speed == -1) {
-            return "PLAYBACK_SPEED_INVALID";
-        }
-        if (speed == 0) {
-            return "PLAYBACK_SPEED_PAUSED";
-        }
-        if (speed == 1) {
-            return "PLAYBACK_SPEED_NORMAL";
-        }
-        switch (speed) {
-            case -14:
-                return "-PLAYBACK_SPEED_FAST_L4";
-            case -13:
-                return "-PLAYBACK_SPEED_FAST_L3";
-            case -12:
-                return "-PLAYBACK_SPEED_FAST_L2";
-            case -11:
-                return "-PLAYBACK_SPEED_FAST_L1";
-            case InputsManagerUtil.TYPE_CEC_TUNER /*-10*/:
-                return "-PLAYBACK_SPEED_FAST_L0";
-            default:
-                switch (speed) {
-                    case 10:
-                        return "PLAYBACK_SPEED_FAST_L0";
-                    case 11:
-                        return "PLAYBACK_SPEED_FAST_L1";
-                    case 12:
-                        return "PLAYBACK_SPEED_FAST_L2";
-                    case 13:
-                        return "PLAYBACK_SPEED_FAST_L3";
-                    case 14:
-                        return "PLAYBACK_SPEED_FAST_L4";
-                    default:
-                        return null;
-                }
-        }
-    }
-
     public boolean isPlaying() {
         return isMediaPlaying();
     }
@@ -577,5 +567,17 @@ public abstract class PlaybackControlGlue extends PlaybackGlue implements OnActi
     /* access modifiers changed from: protected */
     public void onMetadataChanged() {
         updateRowMetadata();
+    }
+
+    static class UpdatePlaybackStateHandler extends Handler {
+        UpdatePlaybackStateHandler() {
+        }
+
+        public void handleMessage(Message msg) {
+            PlaybackControlGlue glue;
+            if (msg.what == 100 && (glue = (PlaybackControlGlue) ((WeakReference) msg.obj).get()) != null) {
+                glue.updatePlaybackState();
+            }
+        }
     }
 }

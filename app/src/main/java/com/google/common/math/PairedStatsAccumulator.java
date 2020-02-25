@@ -8,9 +8,19 @@ import com.google.common.primitives.Doubles;
 @GwtIncompatible
 @Beta
 public final class PairedStatsAccumulator {
-    private double sumOfProductsOfDeltas = 0.0d;
     private final StatsAccumulator xStats = new StatsAccumulator();
     private final StatsAccumulator yStats = new StatsAccumulator();
+    private double sumOfProductsOfDeltas = 0.0d;
+
+    private static double ensureInUnitRange(double value) {
+        if (value >= 1.0d) {
+            return 1.0d;
+        }
+        if (value <= -1.0d) {
+            return -1.0d;
+        }
+        return value;
+    }
 
     public void add(double x, double y) {
         this.xStats.add(x);
@@ -112,15 +122,5 @@ public final class PairedStatsAccumulator {
             return value;
         }
         return Double.MIN_VALUE;
-    }
-
-    private static double ensureInUnitRange(double value) {
-        if (value >= 1.0d) {
-            return 1.0d;
-        }
-        if (value <= -1.0d) {
-            return -1.0d;
-        }
-        return value;
     }
 }

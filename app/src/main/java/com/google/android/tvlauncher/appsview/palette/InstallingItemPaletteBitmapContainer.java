@@ -2,6 +2,7 @@ package com.google.android.tvlauncher.appsview.palette;
 
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
+
 import androidx.palette.graphics.Palette;
 
 public class InstallingItemPaletteBitmapContainer {

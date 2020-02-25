@@ -1,7 +1,9 @@
 package com.google.android.libraries.performance.primes;
 
 import android.app.Activity;
+
 import com.google.android.libraries.stitch.util.Preconditions;
+
 import java.util.concurrent.ScheduledExecutorService;
 
 public final class PrimesThreadsConfigurations {
@@ -22,14 +24,6 @@ public final class PrimesThreadsConfigurations {
     /* access modifiers changed from: private */
     public final int primesMetricExecutorPriority;
 
-    public interface ActivityResumedCallback {
-        void onActivityResumed(Activity activity, Runnable runnable);
-    }
-
-    public interface InitAfterResumedFlag {
-        boolean isEnabled();
-    }
-
     private PrimesThreadsConfigurations(ScheduledExecutorService primesExecutorService2, int primesInitializationPriority2, int primesMetricExecutorPriority2, int primesMetricExecutorPoolSize2, InitAfterResumedFlag initAfterResumed2, ActivityResumedCallback activityResumedCallback2, boolean enableEarlyTimers2) {
         this.primesExecutorService = primesExecutorService2;
         this.primesInitializationPriority = primesInitializationPriority2;
@@ -38,6 +32,10 @@ public final class PrimesThreadsConfigurations {
         this.initAfterResumed = initAfterResumed2;
         this.activityResumedCallback = activityResumedCallback2;
         this.enableEarlyTimers = enableEarlyTimers2;
+    }
+
+    public static Builder newBuilder() {
+        return new Builder();
     }
 
     public ScheduledExecutorService getPrimesExecutorService() {
@@ -68,8 +66,12 @@ public final class PrimesThreadsConfigurations {
         return this.enableEarlyTimers;
     }
 
-    public static Builder newBuilder() {
-        return new Builder();
+    public interface ActivityResumedCallback {
+        void onActivityResumed(Activity activity, Runnable runnable);
+    }
+
+    public interface InitAfterResumedFlag {
+        boolean isEnabled();
     }
 
     public static final class Builder {

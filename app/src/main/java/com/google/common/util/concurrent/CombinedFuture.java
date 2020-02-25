@@ -3,12 +3,14 @@ package com.google.common.util.concurrent;
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableCollection;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.RejectedExecutionException;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible
 final class CombinedFuture<V> extends AggregateFuture<Object, V> {
@@ -61,12 +63,12 @@ final class CombinedFuture<V> extends AggregateFuture<Object, V> {
         private final Executor listenerExecutor;
         boolean thrownByExecute = true;
 
-        /* access modifiers changed from: package-private */
-        public abstract void setValue(T t);
-
         public CombinedFutureInterruptibleTask(Executor listenerExecutor2) {
             this.listenerExecutor = (Executor) Preconditions.checkNotNull(listenerExecutor2);
         }
+
+        /* access modifiers changed from: package-private */
+        public abstract void setValue(T t);
 
         /* access modifiers changed from: package-private */
         public final boolean isDone() {

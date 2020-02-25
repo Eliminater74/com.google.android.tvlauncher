@@ -1,6 +1,5 @@
 package com.google.android.libraries.gcoreclient.common.api;
 
-import com.google.android.libraries.gcoreclient.common.api.GcoreResult;
 import java.util.concurrent.TimeUnit;
 
 public interface GcorePendingResult<GR extends GcoreResult> {

@@ -3,24 +3,34 @@ package com.google.common.collect;
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.base.Preconditions;
 import com.google.common.math.IntMath;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible
 final class TopKSelector<T> {
     private final T[] buffer;
-    private int bufferSize;
     private final Comparator<? super T> comparator;
-
     /* renamed from: k */
     private final int f174k;
+    private int bufferSize;
     @NullableDecl
     private T threshold;
+
+    private TopKSelector(Comparator<? super T> comparator2, int k) {
+        this.comparator = (Comparator) Preconditions.checkNotNull(comparator2, "comparator");
+        this.f174k = k;
+        Preconditions.checkArgument(k >= 0, "k must be nonnegative, was %s", k);
+        this.buffer = new Object[(k * 2)];
+        this.bufferSize = 0;
+        this.threshold = null;
+    }
 
     public static <T extends Comparable<? super T>> TopKSelector<T> least(int k) {
         return least(k, Ordering.natural());
@@ -36,15 +46,6 @@ final class TopKSelector<T> {
 
     public static <T> TopKSelector<T> greatest(int k, Comparator<? super T> comparator2) {
         return new TopKSelector<>(Ordering.from(comparator2).reverse(), k);
-    }
-
-    private TopKSelector(Comparator<? super T> comparator2, int k) {
-        this.comparator = (Comparator) Preconditions.checkNotNull(comparator2, "comparator");
-        this.f174k = k;
-        Preconditions.checkArgument(k >= 0, "k must be nonnegative, was %s", k);
-        this.buffer = new Object[(k * 2)];
-        this.bufferSize = 0;
-        this.threshold = null;
     }
 
     public void offer(@NullableDecl T elem) {

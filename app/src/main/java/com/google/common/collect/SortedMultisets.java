@@ -2,19 +2,35 @@ package com.google.common.collect;
 
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.GwtIncompatible;
-import com.google.common.collect.Multiset;
-import com.google.common.collect.Multisets;
 import com.google.j2objc.annotations.Weak;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.NavigableSet;
 import java.util.NoSuchElementException;
 import java.util.SortedSet;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible(emulated = true)
 final class SortedMultisets {
     private SortedMultisets() {
+    }
+
+    /* access modifiers changed from: private */
+    public static <E> E getElementOrThrow(Multiset.Entry<E> entry) {
+        if (entry != null) {
+            return entry.getElement();
+        }
+        throw new NoSuchElementException();
+    }
+
+    /* access modifiers changed from: private */
+    public static <E> E getElementOrNull(@NullableDecl Multiset.Entry<E> entry) {
+        if (entry == null) {
+            return null;
+        }
+        return entry.getElement();
     }
 
     static class ElementSet<E> extends Multisets.ElementSet<E> implements SortedSet<E> {
@@ -108,21 +124,5 @@ final class SortedMultisets {
         public NavigableSet<E> tailSet(E fromElement, boolean inclusive) {
             return new NavigableElementSet(multiset().tailMultiset(fromElement, BoundType.forBoolean(inclusive)));
         }
-    }
-
-    /* access modifiers changed from: private */
-    public static <E> E getElementOrThrow(Multiset.Entry<E> entry) {
-        if (entry != null) {
-            return entry.getElement();
-        }
-        throw new NoSuchElementException();
-    }
-
-    /* access modifiers changed from: private */
-    public static <E> E getElementOrNull(@NullableDecl Multiset.Entry<E> entry) {
-        if (entry == null) {
-            return null;
-        }
-        return entry.getElement();
     }
 }

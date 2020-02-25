@@ -1,9 +1,11 @@
 package com.google.android.exoplayer2.extractor.mp4;
 
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.source.hls.DefaultHlsExtractorFactory;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.Util;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -130,6 +132,23 @@ abstract class Atom {
         this.type = type2;
     }
 
+    public static int parseFullAtomVersion(int fullAtomInt) {
+        return (fullAtomInt >> 24) & 255;
+    }
+
+    public static int parseFullAtomFlags(int fullAtomInt) {
+        return 16777215 & fullAtomInt;
+    }
+
+    public static String getAtomTypeString(int type2) {
+        StringBuilder sb = new StringBuilder(4);
+        sb.append((char) ((type2 >> 24) & 255));
+        sb.append((char) ((type2 >> 16) & 255));
+        sb.append((char) ((type2 >> 8) & 255));
+        sb.append((char) (type2 & 255));
+        return sb.toString();
+    }
+
     public String toString() {
         return getAtomTypeString(this.type);
     }
@@ -214,22 +233,5 @@ abstract class Atom {
             sb.append(arrays2);
             return sb.toString();
         }
-    }
-
-    public static int parseFullAtomVersion(int fullAtomInt) {
-        return (fullAtomInt >> 24) & 255;
-    }
-
-    public static int parseFullAtomFlags(int fullAtomInt) {
-        return 16777215 & fullAtomInt;
-    }
-
-    public static String getAtomTypeString(int type2) {
-        StringBuilder sb = new StringBuilder(4);
-        sb.append((char) ((type2 >> 24) & 255));
-        sb.append((char) ((type2 >> 16) & 255));
-        sb.append((char) ((type2 >> 8) & 255));
-        sb.append((char) (type2 & 255));
-        return sb.toString();
     }
 }

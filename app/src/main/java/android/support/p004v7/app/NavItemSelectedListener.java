@@ -1,6 +1,5 @@
 package android.support.p004v7.app;
 
-import android.support.p004v7.app.ActionBar;
 import android.view.View;
 import android.widget.AdapterView;
 

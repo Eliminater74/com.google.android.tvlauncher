@@ -15,11 +15,11 @@ import android.support.annotation.VisibleForTesting;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.tvlauncher.C1188R;
-import com.google.android.tvlauncher.inputs.RefreshTifInputsTask;
-import com.google.android.tvlauncher.inputs.TvInputEntry;
 import com.google.android.tvlauncher.util.OemConfiguration;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,31 +30,38 @@ import java.util.List;
 import java.util.Map;
 
 public class TifInputsManager implements InputsManager {
-    private static final boolean DEBUG = false;
     static final String META_LABEL_SORT_KEY = "input_sort_key";
+    static final String PERMISSION_ACCESS_ALL_EPG_DATA = "com.android.providers.tv.permission.ACCESS_ALL_EPG_DATA";
+    private static final boolean DEBUG = false;
     private static final int MSG_INPUT_ADDED = 2;
     private static final int MSG_INPUT_MODIFIED = 4;
     private static final int MSG_INPUT_REMOVED = 3;
     private static final int MSG_INPUT_UPDATED = 1;
-    static final String PERMISSION_ACCESS_ALL_EPG_DATA = "com.android.providers.tv.permission.ACCESS_ALL_EPG_DATA";
     private static final String TAG = "TifInputsManager";
     private static final String[] mPhysicalTunerBlackList = {"com.google.android.videos", "com.google.android.youtube.tv"};
     @SuppressLint({"StaticFieldLeak"})
     private static TifInputsManager sInputsManager = null;
-    private final TvInputEntry.InputsComparator mComp;
     /* access modifiers changed from: private */
     public final Context mContext;
-    private boolean mDisableDisconnectedInputs;
-    private boolean mGetStateIconFromTVInput;
     /* access modifiers changed from: private */
     public final InputsHandler mHandler = new InputsHandler(this);
+    private final TvInputEntry.InputsComparator mComp;
+    private final InputCallback mInputsCallback = new InputCallback();
+    private final TvInputManager mTvManager;
     /* access modifiers changed from: private */
     public Map<String, TvInputEntry> mInputs = new HashMap();
-    private final InputCallback mInputsCallback = new InputCallback();
     /* access modifiers changed from: private */
     public boolean mInputsLoaded;
     /* access modifiers changed from: private */
     public boolean mIsBundledTunerVisible;
+    /* access modifiers changed from: private */
+    public Map<String, TvInputInfo> mPhysicalTunerInputs = new LinkedHashMap();
+    /* access modifiers changed from: private */
+    public Map<String, TvInputInfo> mVirtualTunerInputs = new HashMap();
+    /* access modifiers changed from: private */
+    public List<TvInputEntry> mVisibleInputs = new ArrayList();
+    private boolean mDisableDisconnectedInputs;
+    private boolean mGetStateIconFromTVInput;
     private List<OnInputsChangedListener> mListeners = new ArrayList(2);
     private RefreshTifInputsTask.LoadedDataCallback mLoadedDataCallback = new RefreshTifInputsTask.LoadedDataCallback() {
         public void onDataLoaded(Map<String, TvInputInfo> physicalTunerInputs, Map<String, TvInputInfo> virtualTunerInputs, List<TvInputEntry> visibleInputs, Map<String, TvInputEntry> inputs, boolean isBundledTunerVisible) {
@@ -70,68 +77,9 @@ public class TifInputsManager implements InputsManager {
             boolean unused6 = TifInputsManager.this.mInputsLoaded = true;
         }
     };
-    /* access modifiers changed from: private */
-    public Map<String, TvInputInfo> mPhysicalTunerInputs = new LinkedHashMap();
     private AsyncTask mRefreshTask;
     private boolean mShowPhysicalTunersSeparately;
-    private final TvInputManager mTvManager;
     private Map<Integer, Integer> mTypePriorities;
-    /* access modifiers changed from: private */
-    public Map<String, TvInputInfo> mVirtualTunerInputs = new HashMap();
-    /* access modifiers changed from: private */
-    public List<TvInputEntry> mVisibleInputs = new ArrayList();
-
-    private static class InputsHandler extends Handler {
-        private final WeakReference<TifInputsManager> mTifInputsManager;
-
-        InputsHandler(TifInputsManager tifInputsManager) {
-            this.mTifInputsManager = new WeakReference<>(tifInputsManager);
-        }
-
-        public void handleMessage(Message msg) {
-            TifInputsManager tifInputsManager = this.mTifInputsManager.get();
-            if (tifInputsManager != null) {
-                int i = msg.what;
-                if (i != 1) {
-                    if (i != 2) {
-                        if (i != 3) {
-                            if (i == 4) {
-                                if (tifInputsManager.isRefreshTaskRunning()) {
-                                    tifInputsManager.refreshInputs();
-                                } else {
-                                    tifInputsManager.inputEntryModified((TvInputInfo) msg.obj);
-                                }
-                            }
-                        } else if (tifInputsManager.isRefreshTaskRunning()) {
-                            tifInputsManager.refreshInputs();
-                        } else {
-                            tifInputsManager.inputRemoved((String) msg.obj);
-                        }
-                    } else if (tifInputsManager.isRefreshTaskRunning()) {
-                        tifInputsManager.refreshInputs();
-                    } else {
-                        tifInputsManager.inputAdded((String) msg.obj);
-                    }
-                } else if (tifInputsManager.isRefreshTaskRunning()) {
-                    tifInputsManager.refreshInputs();
-                } else {
-                    tifInputsManager.inputStateUpdated((String) msg.obj, msg.arg1);
-                }
-            }
-        }
-    }
-
-    public static TifInputsManager getInstance(Context context) {
-        if (sInputsManager == null) {
-            sInputsManager = new TifInputsManager(context.getApplicationContext());
-        }
-        return sInputsManager;
-    }
-
-    @VisibleForTesting
-    static void setInstance(TifInputsManager inputsManager) {
-        sInputsManager = inputsManager;
-    }
 
     @VisibleForTesting
     TifInputsManager(Context context) {
@@ -152,6 +100,35 @@ public class TifInputsManager implements InputsManager {
             }
         });
         setupDeviceTypePriorities();
+    }
+
+    public static TifInputsManager getInstance(Context context) {
+        if (sInputsManager == null) {
+            sInputsManager = new TifInputsManager(context.getApplicationContext());
+        }
+        return sInputsManager;
+    }
+
+    @VisibleForTesting
+    static void setInstance(TifInputsManager inputsManager) {
+        sInputsManager = inputsManager;
+    }
+
+    static boolean isPhysicalTuner(PackageManager pkgMan, TvInputInfo input) {
+        if (Arrays.asList(mPhysicalTunerBlackList).contains(input.getServiceInfo().packageName) || input.createSetupIntent() == null) {
+            return false;
+        }
+        if (pkgMan.checkPermission(PERMISSION_ACCESS_ALL_EPG_DATA, input.getServiceInfo().packageName) == 0) {
+            return true;
+        }
+        try {
+            if ((pkgMan.getApplicationInfo(input.getServiceInfo().packageName, 0).flags & 129) == 0) {
+                return false;
+            }
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
     }
 
     /* access modifiers changed from: private */
@@ -522,6 +499,61 @@ public class TifInputsManager implements InputsManager {
         }
     }
 
+    /* access modifiers changed from: package-private */
+    @VisibleForTesting
+    public int getPriorityForType(int type) {
+        Integer priority;
+        Map<Integer, Integer> map = this.mTypePriorities;
+        if (map == null || (priority = map.get(Integer.valueOf(type))) == null) {
+            return Integer.MAX_VALUE;
+        }
+        return priority.intValue();
+    }
+
+    private void setupDeviceTypePriorities() {
+        this.mTypePriorities = InputsManagerUtil.getInputsOrderMap(OemConfiguration.get(this.mContext).getHomeScreenInputsOrdering());
+    }
+
+    private static class InputsHandler extends Handler {
+        private final WeakReference<TifInputsManager> mTifInputsManager;
+
+        InputsHandler(TifInputsManager tifInputsManager) {
+            this.mTifInputsManager = new WeakReference<>(tifInputsManager);
+        }
+
+        public void handleMessage(Message msg) {
+            TifInputsManager tifInputsManager = this.mTifInputsManager.get();
+            if (tifInputsManager != null) {
+                int i = msg.what;
+                if (i != 1) {
+                    if (i != 2) {
+                        if (i != 3) {
+                            if (i == 4) {
+                                if (tifInputsManager.isRefreshTaskRunning()) {
+                                    tifInputsManager.refreshInputs();
+                                } else {
+                                    tifInputsManager.inputEntryModified((TvInputInfo) msg.obj);
+                                }
+                            }
+                        } else if (tifInputsManager.isRefreshTaskRunning()) {
+                            tifInputsManager.refreshInputs();
+                        } else {
+                            tifInputsManager.inputRemoved((String) msg.obj);
+                        }
+                    } else if (tifInputsManager.isRefreshTaskRunning()) {
+                        tifInputsManager.refreshInputs();
+                    } else {
+                        tifInputsManager.inputAdded((String) msg.obj);
+                    }
+                } else if (tifInputsManager.isRefreshTaskRunning()) {
+                    tifInputsManager.refreshInputs();
+                } else {
+                    tifInputsManager.inputStateUpdated((String) msg.obj, msg.arg1);
+                }
+            }
+        }
+    }
+
     private class InputCallback extends TvInputManager.TvInputCallback {
         private InputCallback() {
         }
@@ -541,37 +573,5 @@ public class TifInputsManager implements InputsManager {
         public void onTvInputInfoUpdated(TvInputInfo inputInfo) {
             TifInputsManager.this.mHandler.sendMessage(TifInputsManager.this.mHandler.obtainMessage(4, inputInfo));
         }
-    }
-
-    static boolean isPhysicalTuner(PackageManager pkgMan, TvInputInfo input) {
-        if (Arrays.asList(mPhysicalTunerBlackList).contains(input.getServiceInfo().packageName) || input.createSetupIntent() == null) {
-            return false;
-        }
-        if (pkgMan.checkPermission(PERMISSION_ACCESS_ALL_EPG_DATA, input.getServiceInfo().packageName) == 0) {
-            return true;
-        }
-        try {
-            if ((pkgMan.getApplicationInfo(input.getServiceInfo().packageName, 0).flags & 129) == 0) {
-                return false;
-            }
-            return true;
-        } catch (PackageManager.NameNotFoundException e) {
-            return false;
-        }
-    }
-
-    /* access modifiers changed from: package-private */
-    @VisibleForTesting
-    public int getPriorityForType(int type) {
-        Integer priority;
-        Map<Integer, Integer> map = this.mTypePriorities;
-        if (map == null || (priority = map.get(Integer.valueOf(type))) == null) {
-            return Integer.MAX_VALUE;
-        }
-        return priority.intValue();
-    }
-
-    private void setupDeviceTypePriorities() {
-        this.mTypePriorities = InputsManagerUtil.getInputsOrderMap(OemConfiguration.get(this.mContext).getHomeScreenInputsOrdering());
     }
 }

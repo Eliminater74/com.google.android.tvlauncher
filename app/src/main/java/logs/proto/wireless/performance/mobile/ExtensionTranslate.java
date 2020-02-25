@@ -15,11 +15,18 @@ import com.google.protobuf.ProtoPresenceBits;
 import com.google.protobuf.ProtoPresenceCheckedField;
 import com.google.protobuf.ProtoSyntax;
 import com.google.protos.translating.offline.service.CommonEnums;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 public final class ExtensionTranslate {
+
+    private ExtensionTranslate() {
+    }
+
+    public static void registerAllExtensions(ExtensionRegistryLite registry) {
+    }
 
     public interface TranslateExtensionOrBuilder extends MessageLiteOrBuilder {
         TranslationStats getTranslationStats();
@@ -59,18 +66,17 @@ public final class ExtensionTranslate {
         boolean hasTranslationSource();
     }
 
-    private ExtensionTranslate() {
-    }
-
-    public static void registerAllExtensions(ExtensionRegistryLite registry) {
-    }
-
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
     public static final class TranslateExtension extends GeneratedMessageLite<TranslateExtension, Builder> implements TranslateExtensionOrBuilder {
         /* access modifiers changed from: private */
         public static final TranslateExtension DEFAULT_INSTANCE = new TranslateExtension();
-        private static volatile Parser<TranslateExtension> PARSER = null;
         public static final int TRANSLATION_STATS_FIELD_NUMBER = 1;
+        private static volatile Parser<TranslateExtension> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(TranslateExtension.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.MESSAGE)
@@ -78,52 +84,6 @@ public final class ExtensionTranslate {
         private TranslationStats translationStats_;
 
         private TranslateExtension() {
-        }
-
-        public boolean hasTranslationStats() {
-            return (this.bitField0_ & 1) != 0;
-        }
-
-        public TranslationStats getTranslationStats() {
-            TranslationStats translationStats = this.translationStats_;
-            return translationStats == null ? TranslationStats.getDefaultInstance() : translationStats;
-        }
-
-        /* access modifiers changed from: private */
-        public void setTranslationStats(TranslationStats value) {
-            if (value != null) {
-                this.translationStats_ = value;
-                this.bitField0_ |= 1;
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        /* access modifiers changed from: private */
-        public void setTranslationStats(TranslationStats.Builder builderForValue) {
-            this.translationStats_ = (TranslationStats) builderForValue.build();
-            this.bitField0_ |= 1;
-        }
-
-        /* access modifiers changed from: private */
-        public void mergeTranslationStats(TranslationStats value) {
-            if (value != null) {
-                TranslationStats translationStats = this.translationStats_;
-                if (translationStats == null || translationStats == TranslationStats.getDefaultInstance()) {
-                    this.translationStats_ = value;
-                } else {
-                    this.translationStats_ = (TranslationStats) ((TranslationStats.Builder) TranslationStats.newBuilder(this.translationStats_).mergeFrom((GeneratedMessageLite) value)).buildPartial();
-                }
-                this.bitField0_ |= 1;
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        /* access modifiers changed from: private */
-        public void clearTranslationStats() {
-            this.translationStats_ = null;
-            this.bitField0_ &= -2;
         }
 
         public static TranslateExtension parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
@@ -182,6 +142,92 @@ public final class ExtensionTranslate {
             return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
         }
 
+        public static TranslateExtension getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<TranslateExtension> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
+        }
+
+        public boolean hasTranslationStats() {
+            return (this.bitField0_ & 1) != 0;
+        }
+
+        public TranslationStats getTranslationStats() {
+            TranslationStats translationStats = this.translationStats_;
+            return translationStats == null ? TranslationStats.getDefaultInstance() : translationStats;
+        }
+
+        /* access modifiers changed from: private */
+        public void setTranslationStats(TranslationStats value) {
+            if (value != null) {
+                this.translationStats_ = value;
+                this.bitField0_ |= 1;
+                return;
+            }
+            throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void setTranslationStats(TranslationStats.Builder builderForValue) {
+            this.translationStats_ = (TranslationStats) builderForValue.build();
+            this.bitField0_ |= 1;
+        }
+
+        /* access modifiers changed from: private */
+        public void mergeTranslationStats(TranslationStats value) {
+            if (value != null) {
+                TranslationStats translationStats = this.translationStats_;
+                if (translationStats == null || translationStats == TranslationStats.getDefaultInstance()) {
+                    this.translationStats_ = value;
+                } else {
+                    this.translationStats_ = (TranslationStats) ((TranslationStats.Builder) TranslationStats.newBuilder(this.translationStats_).mergeFrom((GeneratedMessageLite) value)).buildPartial();
+                }
+                this.bitField0_ |= 1;
+                return;
+            }
+            throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearTranslationStats() {
+            this.translationStats_ = null;
+            this.bitField0_ &= -2;
+        }
+
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new TranslateExtension();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0001\u0000\u0001\u0001\u0001\u0001\u0000\u0000\u0000\u0001\t\u0000", new Object[]{"bitField0_", "translationStats_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<TranslateExtension> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (TranslateExtension.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
+        }
+
         public static final class Builder extends GeneratedMessageLite.Builder<TranslateExtension, Builder> implements TranslateExtensionOrBuilder {
             private Builder() {
                 super(TranslateExtension.DEFAULT_INSTANCE);
@@ -219,50 +265,6 @@ public final class ExtensionTranslate {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new TranslateExtension();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0001\u0000\u0001\u0001\u0001\u0001\u0000\u0000\u0000\u0001\t\u0000", new Object[]{"bitField0_", "translationStats_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<TranslateExtension> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (TranslateExtension.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(TranslateExtension.class, DEFAULT_INSTANCE);
-        }
-
-        public static TranslateExtension getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<TranslateExtension> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -271,11 +273,16 @@ public final class ExtensionTranslate {
         public static final TranslationStats DEFAULT_INSTANCE = new TranslationStats();
         public static final int ENGINE_FIELD_NUMBER = 4;
         public static final int PACKAGE_VERSION_CODE_FIELD_NUMBER = 6;
-        private static volatile Parser<TranslationStats> PARSER = null;
         public static final int QUERY_LENGTH_FIELD_NUMBER = 3;
         public static final int SOURCE_LANG_FIELD_NUMBER = 1;
         public static final int TARGET_LANG_FIELD_NUMBER = 2;
         public static final int TRANSLATION_SOURCE_FIELD_NUMBER = 5;
+        private static volatile Parser<TranslationStats> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(TranslationStats.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 4, isRequired = false, type = FieldType.ENUM)
@@ -300,60 +307,68 @@ public final class ExtensionTranslate {
         private TranslationStats() {
         }
 
-        public enum TranslationEngine implements Internal.EnumLite {
-            TRANSLATION_ENGINE_UNKNOWN(0),
-            TRANSLATION_ENGINE_MOBILE(1),
-            TRANSLATION_ENGINE_ONLINE(2);
-            
-            public static final int TRANSLATION_ENGINE_MOBILE_VALUE = 1;
-            public static final int TRANSLATION_ENGINE_ONLINE_VALUE = 2;
-            public static final int TRANSLATION_ENGINE_UNKNOWN_VALUE = 0;
-            private static final Internal.EnumLiteMap<TranslationEngine> internalValueMap = new Internal.EnumLiteMap<TranslationEngine>() {
-                public TranslationEngine findValueByNumber(int number) {
-                    return TranslationEngine.forNumber(number);
-                }
-            };
-            private final int value;
+        public static TranslationStats parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (TranslationStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
 
-            public final int getNumber() {
-                return this.value;
-            }
+        public static TranslationStats parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (TranslationStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-            public static TranslationEngine forNumber(int value2) {
-                if (value2 == 0) {
-                    return TRANSLATION_ENGINE_UNKNOWN;
-                }
-                if (value2 == 1) {
-                    return TRANSLATION_ENGINE_MOBILE;
-                }
-                if (value2 != 2) {
-                    return null;
-                }
-                return TRANSLATION_ENGINE_ONLINE;
-            }
+        public static TranslationStats parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (TranslationStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
 
-            public static Internal.EnumLiteMap<TranslationEngine> internalGetValueMap() {
-                return internalValueMap;
-            }
+        public static TranslationStats parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (TranslationStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-            public static Internal.EnumVerifier internalGetVerifier() {
-                return TranslationEngineVerifier.INSTANCE;
-            }
+        public static TranslationStats parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (TranslationStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
 
-            private static final class TranslationEngineVerifier implements Internal.EnumVerifier {
-                static final Internal.EnumVerifier INSTANCE = new TranslationEngineVerifier();
+        public static TranslationStats parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (TranslationStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-                private TranslationEngineVerifier() {
-                }
+        public static TranslationStats parseFrom(InputStream input) throws IOException {
+            return (TranslationStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
 
-                public boolean isInRange(int number) {
-                    return TranslationEngine.forNumber(number) != null;
-                }
-            }
+        public static TranslationStats parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (TranslationStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
 
-            private TranslationEngine(int value2) {
-                this.value = value2;
-            }
+        public static TranslationStats parseDelimitedFrom(InputStream input) throws IOException {
+            return (TranslationStats) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static TranslationStats parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (TranslationStats) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static TranslationStats parseFrom(CodedInputStream input) throws IOException {
+            return (TranslationStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static TranslationStats parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (TranslationStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(TranslationStats prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static TranslationStats getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<TranslationStats> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasSourceLang() {
@@ -362,10 +377,6 @@ public final class ExtensionTranslate {
 
         public String getSourceLang() {
             return this.sourceLang_;
-        }
-
-        public ByteString getSourceLangBytes() {
-            return ByteString.copyFromUtf8(this.sourceLang_);
         }
 
         /* access modifiers changed from: private */
@@ -378,10 +389,8 @@ public final class ExtensionTranslate {
             throw new NullPointerException();
         }
 
-        /* access modifiers changed from: private */
-        public void clearSourceLang() {
-            this.bitField0_ &= -2;
-            this.sourceLang_ = getDefaultInstance().getSourceLang();
+        public ByteString getSourceLangBytes() {
+            return ByteString.copyFromUtf8(this.sourceLang_);
         }
 
         /* access modifiers changed from: private */
@@ -394,16 +403,18 @@ public final class ExtensionTranslate {
             throw new NullPointerException();
         }
 
+        /* access modifiers changed from: private */
+        public void clearSourceLang() {
+            this.bitField0_ &= -2;
+            this.sourceLang_ = getDefaultInstance().getSourceLang();
+        }
+
         public boolean hasTargetLang() {
             return (this.bitField0_ & 2) != 0;
         }
 
         public String getTargetLang() {
             return this.targetLang_;
-        }
-
-        public ByteString getTargetLangBytes() {
-            return ByteString.copyFromUtf8(this.targetLang_);
         }
 
         /* access modifiers changed from: private */
@@ -416,10 +427,8 @@ public final class ExtensionTranslate {
             throw new NullPointerException();
         }
 
-        /* access modifiers changed from: private */
-        public void clearTargetLang() {
-            this.bitField0_ &= -3;
-            this.targetLang_ = getDefaultInstance().getTargetLang();
+        public ByteString getTargetLangBytes() {
+            return ByteString.copyFromUtf8(this.targetLang_);
         }
 
         /* access modifiers changed from: private */
@@ -430,6 +439,12 @@ public final class ExtensionTranslate {
                 return;
             }
             throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearTargetLang() {
+            this.bitField0_ &= -3;
+            this.targetLang_ = getDefaultInstance().getTargetLang();
         }
 
         public boolean hasQueryLength() {
@@ -510,10 +525,6 @@ public final class ExtensionTranslate {
             return this.packageVersionCode_;
         }
 
-        public ByteString getPackageVersionCodeBytes() {
-            return ByteString.copyFromUtf8(this.packageVersionCode_);
-        }
-
         /* access modifiers changed from: private */
         public void setPackageVersionCode(String value) {
             if (value != null) {
@@ -524,10 +535,8 @@ public final class ExtensionTranslate {
             throw new NullPointerException();
         }
 
-        /* access modifiers changed from: private */
-        public void clearPackageVersionCode() {
-            this.bitField0_ &= -33;
-            this.packageVersionCode_ = getDefaultInstance().getPackageVersionCode();
+        public ByteString getPackageVersionCodeBytes() {
+            return ByteString.copyFromUtf8(this.packageVersionCode_);
         }
 
         /* access modifiers changed from: private */
@@ -540,60 +549,98 @@ public final class ExtensionTranslate {
             throw new NullPointerException();
         }
 
-        public static TranslationStats parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (TranslationStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        /* access modifiers changed from: private */
+        public void clearPackageVersionCode() {
+            this.bitField0_ &= -33;
+            this.packageVersionCode_ = getDefaultInstance().getPackageVersionCode();
         }
 
-        public static TranslationStats parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (TranslationStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new TranslationStats();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0006\u0000\u0001\u0001\u0006\u0006\u0000\u0000\u0000\u0001\b\u0000\u0002\b\u0001\u0003\u0004\u0002\u0004\f\u0003\u0005\f\u0004\u0006\b\u0005", new Object[]{"bitField0_", "sourceLang_", "targetLang_", "queryLength_", "engine_", TranslationEngine.internalGetVerifier(), "translationSource_", CommonEnums.Source.internalGetVerifier(), "packageVersionCode_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<TranslationStats> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (TranslationStats.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
-        public static TranslationStats parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (TranslationStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
+        public enum TranslationEngine implements Internal.EnumLite {
+            TRANSLATION_ENGINE_UNKNOWN(0),
+            TRANSLATION_ENGINE_MOBILE(1),
+            TRANSLATION_ENGINE_ONLINE(2);
 
-        public static TranslationStats parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (TranslationStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
+            public static final int TRANSLATION_ENGINE_MOBILE_VALUE = 1;
+            public static final int TRANSLATION_ENGINE_ONLINE_VALUE = 2;
+            public static final int TRANSLATION_ENGINE_UNKNOWN_VALUE = 0;
+            private static final Internal.EnumLiteMap<TranslationEngine> internalValueMap = new Internal.EnumLiteMap<TranslationEngine>() {
+                public TranslationEngine findValueByNumber(int number) {
+                    return TranslationEngine.forNumber(number);
+                }
+            };
+            private final int value;
 
-        public static TranslationStats parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (TranslationStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
+            private TranslationEngine(int value2) {
+                this.value = value2;
+            }
 
-        public static TranslationStats parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (TranslationStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
+            public static TranslationEngine forNumber(int value2) {
+                if (value2 == 0) {
+                    return TRANSLATION_ENGINE_UNKNOWN;
+                }
+                if (value2 == 1) {
+                    return TRANSLATION_ENGINE_MOBILE;
+                }
+                if (value2 != 2) {
+                    return null;
+                }
+                return TRANSLATION_ENGINE_ONLINE;
+            }
 
-        public static TranslationStats parseFrom(InputStream input) throws IOException {
-            return (TranslationStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
+            public static Internal.EnumLiteMap<TranslationEngine> internalGetValueMap() {
+                return internalValueMap;
+            }
 
-        public static TranslationStats parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (TranslationStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
+            public static Internal.EnumVerifier internalGetVerifier() {
+                return TranslationEngineVerifier.INSTANCE;
+            }
 
-        public static TranslationStats parseDelimitedFrom(InputStream input) throws IOException {
-            return (TranslationStats) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
+            public final int getNumber() {
+                return this.value;
+            }
 
-        public static TranslationStats parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (TranslationStats) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
+            private static final class TranslationEngineVerifier implements Internal.EnumVerifier {
+                static final Internal.EnumVerifier INSTANCE = new TranslationEngineVerifier();
 
-        public static TranslationStats parseFrom(CodedInputStream input) throws IOException {
-            return (TranslationStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
+                private TranslationEngineVerifier() {
+                }
 
-        public static TranslationStats parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (TranslationStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(TranslationStats prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+                public boolean isInRange(int number) {
+                    return TranslationEngine.forNumber(number) != null;
+                }
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<TranslationStats, Builder> implements TranslationStatsOrBuilder {
@@ -609,25 +656,25 @@ public final class ExtensionTranslate {
                 return ((TranslationStats) this.instance).getSourceLang();
             }
 
-            public ByteString getSourceLangBytes() {
-                return ((TranslationStats) this.instance).getSourceLangBytes();
-            }
-
             public Builder setSourceLang(String value) {
                 copyOnWrite();
                 ((TranslationStats) this.instance).setSourceLang(value);
                 return this;
             }
 
-            public Builder clearSourceLang() {
-                copyOnWrite();
-                ((TranslationStats) this.instance).clearSourceLang();
-                return this;
+            public ByteString getSourceLangBytes() {
+                return ((TranslationStats) this.instance).getSourceLangBytes();
             }
 
             public Builder setSourceLangBytes(ByteString value) {
                 copyOnWrite();
                 ((TranslationStats) this.instance).setSourceLangBytes(value);
+                return this;
+            }
+
+            public Builder clearSourceLang() {
+                copyOnWrite();
+                ((TranslationStats) this.instance).clearSourceLang();
                 return this;
             }
 
@@ -639,25 +686,25 @@ public final class ExtensionTranslate {
                 return ((TranslationStats) this.instance).getTargetLang();
             }
 
-            public ByteString getTargetLangBytes() {
-                return ((TranslationStats) this.instance).getTargetLangBytes();
-            }
-
             public Builder setTargetLang(String value) {
                 copyOnWrite();
                 ((TranslationStats) this.instance).setTargetLang(value);
                 return this;
             }
 
-            public Builder clearTargetLang() {
-                copyOnWrite();
-                ((TranslationStats) this.instance).clearTargetLang();
-                return this;
+            public ByteString getTargetLangBytes() {
+                return ((TranslationStats) this.instance).getTargetLangBytes();
             }
 
             public Builder setTargetLangBytes(ByteString value) {
                 copyOnWrite();
                 ((TranslationStats) this.instance).setTargetLangBytes(value);
+                return this;
+            }
+
+            public Builder clearTargetLang() {
+                copyOnWrite();
+                ((TranslationStats) this.instance).clearTargetLang();
                 return this;
             }
 
@@ -729,13 +776,19 @@ public final class ExtensionTranslate {
                 return ((TranslationStats) this.instance).getPackageVersionCode();
             }
 
+            public Builder setPackageVersionCode(String value) {
+                copyOnWrite();
+                ((TranslationStats) this.instance).setPackageVersionCode(value);
+                return this;
+            }
+
             public ByteString getPackageVersionCodeBytes() {
                 return ((TranslationStats) this.instance).getPackageVersionCodeBytes();
             }
 
-            public Builder setPackageVersionCode(String value) {
+            public Builder setPackageVersionCodeBytes(ByteString value) {
                 copyOnWrite();
-                ((TranslationStats) this.instance).setPackageVersionCode(value);
+                ((TranslationStats) this.instance).setPackageVersionCodeBytes(value);
                 return this;
             }
 
@@ -744,56 +797,6 @@ public final class ExtensionTranslate {
                 ((TranslationStats) this.instance).clearPackageVersionCode();
                 return this;
             }
-
-            public Builder setPackageVersionCodeBytes(ByteString value) {
-                copyOnWrite();
-                ((TranslationStats) this.instance).setPackageVersionCodeBytes(value);
-                return this;
-            }
-        }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new TranslationStats();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0006\u0000\u0001\u0001\u0006\u0006\u0000\u0000\u0000\u0001\b\u0000\u0002\b\u0001\u0003\u0004\u0002\u0004\f\u0003\u0005\f\u0004\u0006\b\u0005", new Object[]{"bitField0_", "sourceLang_", "targetLang_", "queryLength_", "engine_", TranslationEngine.internalGetVerifier(), "translationSource_", CommonEnums.Source.internalGetVerifier(), "packageVersionCode_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<TranslationStats> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (TranslationStats.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(TranslationStats.class, DEFAULT_INSTANCE);
-        }
-
-        public static TranslationStats getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<TranslationStats> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
         }
     }
 }

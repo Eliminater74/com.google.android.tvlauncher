@@ -3,70 +3,10 @@ package com.google.android.libraries.gcoreclient.clearcut;
 import com.google.android.libraries.gcoreclient.common.api.GcoreGoogleApiClient;
 import com.google.android.libraries.gcoreclient.common.api.GcorePendingResult;
 import com.google.android.libraries.gcoreclient.common.api.GcoreStatus;
+
 import java.util.Collection;
 
 public interface GcoreCounters {
-
-    public interface GcoreBooleanHistogram {
-        long getCount(boolean z);
-
-        String getName();
-
-        void increment(boolean z);
-    }
-
-    public interface GcoreCounter {
-        long getCount();
-
-        String getName();
-
-        void increment();
-
-        void incrementBy(long j);
-    }
-
-    public interface GcoreIntegerHistogram {
-        long getCount(int i);
-
-        String getName();
-
-        void increment(int i);
-    }
-
-    public interface GcoreLongHistogram {
-        long getCount(long j);
-
-        String getName();
-
-        void increment(long j);
-
-        void incrementBy(long j, long j2);
-    }
-
-    public interface GcoreTimer {
-        long getMilliseconds();
-
-        void incrementTo(GcoreTimerHistogram gcoreTimerHistogram);
-
-        long reset();
-    }
-
-    public interface GcoreTimerHistogram {
-
-        public interface BoundTimer {
-            long getMilliseconds();
-
-            void incrementTo();
-
-            void reset();
-        }
-
-        long getCount(long j);
-
-        String getName();
-
-        BoundTimer newTimer();
-    }
 
     GcoreBooleanHistogram getBooleanHistogram(String str);
 
@@ -118,4 +58,65 @@ public interface GcoreCounters {
     GcoreCounters snapshot();
 
     GcoreCounters snapshotAndReset();
+
+    public interface GcoreBooleanHistogram {
+        long getCount(boolean z);
+
+        String getName();
+
+        void increment(boolean z);
+    }
+
+    public interface GcoreCounter {
+        long getCount();
+
+        String getName();
+
+        void increment();
+
+        void incrementBy(long j);
+    }
+
+    public interface GcoreIntegerHistogram {
+        long getCount(int i);
+
+        String getName();
+
+        void increment(int i);
+    }
+
+    public interface GcoreLongHistogram {
+        long getCount(long j);
+
+        String getName();
+
+        void increment(long j);
+
+        void incrementBy(long j, long j2);
+    }
+
+    public interface GcoreTimer {
+        long getMilliseconds();
+
+        void incrementTo(GcoreTimerHistogram gcoreTimerHistogram);
+
+        long reset();
+    }
+
+    public interface GcoreTimerHistogram {
+
+        long getCount(long j);
+
+        String getName();
+
+        BoundTimer newTimer();
+
+        public interface BoundTimer {
+            long getMilliseconds();
+
+            void incrementTo();
+
+            void reset();
+        }
+    }
 }

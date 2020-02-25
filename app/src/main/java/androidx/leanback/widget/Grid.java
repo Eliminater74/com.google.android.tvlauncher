@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.p001v4.util.CircularIntArray;
 import android.support.p004v7.widget.RecyclerView;
 import android.util.SparseIntArray;
+
 import java.io.PrintWriter;
 import java.util.Arrays;
 
@@ -17,23 +18,19 @@ abstract class Grid {
     protected boolean mReversedFlow;
     protected int mSpacing;
     protected int mStartIndex = -1;
-    Object[] mTmpItem = new Object[1];
     protected CircularIntArray[] mTmpItemPositionsInRows;
+    Object[] mTmpItem = new Object[1];
 
-    public interface Provider {
-        void addItem(Object obj, int i, int i2, int i3, int i4);
+    Grid() {
+    }
 
-        int createItem(int i, boolean z, Object[] objArr, boolean z2);
-
-        int getCount();
-
-        int getEdge(int i);
-
-        int getMinIndex();
-
-        int getSize(int i);
-
-        void removeItem(int i);
+    public static Grid createGrid(int rows) {
+        if (rows == 1) {
+            return new SingleRow();
+        }
+        Grid grid = new StaggeredGridDefault();
+        grid.setNumRows(rows);
+        return grid;
     }
 
     /* access modifiers changed from: protected */
@@ -54,36 +51,16 @@ abstract class Grid {
     /* access modifiers changed from: protected */
     public abstract boolean prependVisibleItems(int i, boolean z);
 
-    Grid() {
-    }
-
-    public static class Location {
-        public int row;
-
-        public Location(int row2) {
-            this.row = row2;
-        }
-    }
-
-    public static Grid createGrid(int rows) {
-        if (rows == 1) {
-            return new SingleRow();
-        }
-        Grid grid = new StaggeredGridDefault();
-        grid.setNumRows(rows);
-        return grid;
-    }
-
     public final void setSpacing(int spacing) {
         this.mSpacing = spacing;
     }
 
-    public final void setReversedFlow(boolean reversedFlow) {
-        this.mReversedFlow = reversedFlow;
-    }
-
     public boolean isReversedFlow() {
         return this.mReversedFlow;
+    }
+
+    public final void setReversedFlow(boolean reversedFlow) {
+        this.mReversedFlow = reversedFlow;
     }
 
     public void setProvider(Provider provider) {
@@ -329,5 +306,29 @@ abstract class Grid {
     }
 
     public void collectAdjacentPrefetchPositions(int fromLimit, int da, @NonNull RecyclerView.LayoutManager.LayoutPrefetchRegistry layoutPrefetchRegistry) {
+    }
+
+    public interface Provider {
+        void addItem(Object obj, int i, int i2, int i3, int i4);
+
+        int createItem(int i, boolean z, Object[] objArr, boolean z2);
+
+        int getCount();
+
+        int getEdge(int i);
+
+        int getMinIndex();
+
+        int getSize(int i);
+
+        void removeItem(int i);
+    }
+
+    public static class Location {
+        public int row;
+
+        public Location(int row2) {
+            this.row = row2;
+        }
     }
 }

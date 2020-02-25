@@ -6,6 +6,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.leanback.C0364R;
 
 public final class ShadowOverlayHelper {
@@ -20,6 +21,138 @@ public final class ShadowOverlayHelper {
     int mRoundedCornerRadius;
     int mShadowType = 1;
     float mUnfocusedZ;
+
+    ShadowOverlayHelper() {
+    }
+
+    public static boolean supportsShadow() {
+        return StaticShadowHelper.supportsShadow();
+    }
+
+    public static boolean supportsDynamicShadow() {
+        return ShadowHelper.supportsDynamicShadow();
+    }
+
+    public static boolean supportsRoundedCorner() {
+        return RoundedRectHelper.supportsRoundedCorner();
+    }
+
+    public static boolean supportsForeground() {
+        return ForegroundHelper.supportsForeground();
+    }
+
+    public static void setNoneWrapperOverlayColor(View view, int color) {
+        Drawable d = ForegroundHelper.getForeground(view);
+        if (d instanceof ColorDrawable) {
+            ((ColorDrawable) d).setColor(color);
+        } else {
+            ForegroundHelper.setForeground(view, new ColorDrawable(color));
+        }
+    }
+
+    public static void setNoneWrapperShadowFocusLevel(View view, float level) {
+        setShadowFocusLevel(getNoneWrapperDynamicShadowImpl(view), 3, level);
+    }
+
+    static Object getNoneWrapperDynamicShadowImpl(View view) {
+        return view.getTag(C0364R.C0366id.lb_shadow_impl);
+    }
+
+    static void setShadowFocusLevel(Object impl, int shadowType, float level) {
+        if (impl != null) {
+            if (level < 0.0f) {
+                level = 0.0f;
+            } else if (level > 1.0f) {
+                level = 1.0f;
+            }
+            if (shadowType == 2) {
+                StaticShadowHelper.setShadowFocusLevel(impl, level);
+            } else if (shadowType == 3) {
+                ShadowHelper.setShadowFocusLevel(impl, level);
+            }
+        }
+    }
+
+    public void prepareParentForShadow(ViewGroup parent) {
+        if (this.mShadowType == 2) {
+            StaticShadowHelper.prepareParent(parent);
+        }
+    }
+
+    public int getShadowType() {
+        return this.mShadowType;
+    }
+
+    public boolean needsOverlay() {
+        return this.mNeedsOverlay;
+    }
+
+    public boolean needsRoundedCorner() {
+        return this.mNeedsRoundedCorner;
+    }
+
+    public boolean needsWrapper() {
+        return this.mNeedsWrapper;
+    }
+
+    public ShadowOverlayContainer createShadowOverlayContainer(Context context) {
+        if (needsWrapper()) {
+            return new ShadowOverlayContainer(context, this.mShadowType, this.mNeedsOverlay, this.mUnfocusedZ, this.mFocusedZ, this.mRoundedCornerRadius);
+        }
+        throw new IllegalArgumentException();
+    }
+
+    public void setOverlayColor(View view, int color) {
+        if (needsWrapper()) {
+            ((ShadowOverlayContainer) view).setOverlayColor(color);
+        } else {
+            setNoneWrapperOverlayColor(view, color);
+        }
+    }
+
+    public void onViewCreated(View view) {
+        if (needsWrapper()) {
+            return;
+        }
+        if (!this.mNeedsShadow) {
+            if (this.mNeedsRoundedCorner) {
+                RoundedRectHelper.setClipToRoundedOutline(view, true, this.mRoundedCornerRadius);
+            }
+        } else if (this.mShadowType == 3) {
+            view.setTag(C0364R.C0366id.lb_shadow_impl, ShadowHelper.addDynamicShadow(view, this.mUnfocusedZ, this.mFocusedZ, this.mRoundedCornerRadius));
+        } else if (this.mNeedsRoundedCorner) {
+            RoundedRectHelper.setClipToRoundedOutline(view, true, this.mRoundedCornerRadius);
+        }
+    }
+
+    public void setShadowFocusLevel(View view, float level) {
+        if (needsWrapper()) {
+            ((ShadowOverlayContainer) view).setShadowFocusLevel(level);
+        } else {
+            setShadowFocusLevel(getNoneWrapperDynamicShadowImpl(view), 3, level);
+        }
+    }
+
+    /* access modifiers changed from: package-private */
+    public void setupDynamicShadowZ(Options options, Context context) {
+        if (options.getDynamicShadowUnfocusedZ() < 0.0f) {
+            Resources res = context.getResources();
+            this.mFocusedZ = res.getDimension(C0364R.dimen.lb_material_shadow_focused_z);
+            this.mUnfocusedZ = res.getDimension(C0364R.dimen.lb_material_shadow_normal_z);
+            return;
+        }
+        this.mFocusedZ = options.getDynamicShadowFocusedZ();
+        this.mUnfocusedZ = options.getDynamicShadowUnfocusedZ();
+    }
+
+    /* access modifiers changed from: package-private */
+    public void setupRoundedCornerRadius(Options options, Context context) {
+        if (options.getRoundedCornerRadius() == 0) {
+            this.mRoundedCornerRadius = context.getResources().getDimensionPixelSize(C0364R.dimen.lb_rounded_rect_corner_radius);
+        } else {
+            this.mRoundedCornerRadius = options.getRoundedCornerRadius();
+        }
+    }
 
     public static final class Builder {
         private boolean keepForegroundDrawable;
@@ -116,138 +249,6 @@ public final class ShadowOverlayHelper {
 
         public final float getDynamicShadowFocusedZ() {
             return this.dynamicShadowFocusedZ;
-        }
-    }
-
-    public static boolean supportsShadow() {
-        return StaticShadowHelper.supportsShadow();
-    }
-
-    public static boolean supportsDynamicShadow() {
-        return ShadowHelper.supportsDynamicShadow();
-    }
-
-    public static boolean supportsRoundedCorner() {
-        return RoundedRectHelper.supportsRoundedCorner();
-    }
-
-    public static boolean supportsForeground() {
-        return ForegroundHelper.supportsForeground();
-    }
-
-    ShadowOverlayHelper() {
-    }
-
-    public void prepareParentForShadow(ViewGroup parent) {
-        if (this.mShadowType == 2) {
-            StaticShadowHelper.prepareParent(parent);
-        }
-    }
-
-    public int getShadowType() {
-        return this.mShadowType;
-    }
-
-    public boolean needsOverlay() {
-        return this.mNeedsOverlay;
-    }
-
-    public boolean needsRoundedCorner() {
-        return this.mNeedsRoundedCorner;
-    }
-
-    public boolean needsWrapper() {
-        return this.mNeedsWrapper;
-    }
-
-    public ShadowOverlayContainer createShadowOverlayContainer(Context context) {
-        if (needsWrapper()) {
-            return new ShadowOverlayContainer(context, this.mShadowType, this.mNeedsOverlay, this.mUnfocusedZ, this.mFocusedZ, this.mRoundedCornerRadius);
-        }
-        throw new IllegalArgumentException();
-    }
-
-    public static void setNoneWrapperOverlayColor(View view, int color) {
-        Drawable d = ForegroundHelper.getForeground(view);
-        if (d instanceof ColorDrawable) {
-            ((ColorDrawable) d).setColor(color);
-        } else {
-            ForegroundHelper.setForeground(view, new ColorDrawable(color));
-        }
-    }
-
-    public void setOverlayColor(View view, int color) {
-        if (needsWrapper()) {
-            ((ShadowOverlayContainer) view).setOverlayColor(color);
-        } else {
-            setNoneWrapperOverlayColor(view, color);
-        }
-    }
-
-    public void onViewCreated(View view) {
-        if (needsWrapper()) {
-            return;
-        }
-        if (!this.mNeedsShadow) {
-            if (this.mNeedsRoundedCorner) {
-                RoundedRectHelper.setClipToRoundedOutline(view, true, this.mRoundedCornerRadius);
-            }
-        } else if (this.mShadowType == 3) {
-            view.setTag(C0364R.C0366id.lb_shadow_impl, ShadowHelper.addDynamicShadow(view, this.mUnfocusedZ, this.mFocusedZ, this.mRoundedCornerRadius));
-        } else if (this.mNeedsRoundedCorner) {
-            RoundedRectHelper.setClipToRoundedOutline(view, true, this.mRoundedCornerRadius);
-        }
-    }
-
-    public static void setNoneWrapperShadowFocusLevel(View view, float level) {
-        setShadowFocusLevel(getNoneWrapperDynamicShadowImpl(view), 3, level);
-    }
-
-    public void setShadowFocusLevel(View view, float level) {
-        if (needsWrapper()) {
-            ((ShadowOverlayContainer) view).setShadowFocusLevel(level);
-        } else {
-            setShadowFocusLevel(getNoneWrapperDynamicShadowImpl(view), 3, level);
-        }
-    }
-
-    /* access modifiers changed from: package-private */
-    public void setupDynamicShadowZ(Options options, Context context) {
-        if (options.getDynamicShadowUnfocusedZ() < 0.0f) {
-            Resources res = context.getResources();
-            this.mFocusedZ = res.getDimension(C0364R.dimen.lb_material_shadow_focused_z);
-            this.mUnfocusedZ = res.getDimension(C0364R.dimen.lb_material_shadow_normal_z);
-            return;
-        }
-        this.mFocusedZ = options.getDynamicShadowFocusedZ();
-        this.mUnfocusedZ = options.getDynamicShadowUnfocusedZ();
-    }
-
-    /* access modifiers changed from: package-private */
-    public void setupRoundedCornerRadius(Options options, Context context) {
-        if (options.getRoundedCornerRadius() == 0) {
-            this.mRoundedCornerRadius = context.getResources().getDimensionPixelSize(C0364R.dimen.lb_rounded_rect_corner_radius);
-        } else {
-            this.mRoundedCornerRadius = options.getRoundedCornerRadius();
-        }
-    }
-
-    static Object getNoneWrapperDynamicShadowImpl(View view) {
-        return view.getTag(C0364R.C0366id.lb_shadow_impl);
-    }
-
-    static void setShadowFocusLevel(Object impl, int shadowType, float level) {
-        if (impl != null) {
-            if (level < 0.0f) {
-                level = 0.0f;
-            } else if (level > 1.0f) {
-                level = 1.0f;
-            }
-            if (shadowType == 2) {
-                StaticShadowHelper.setShadowFocusLevel(impl, level);
-            } else if (shadowType == 3) {
-                ShadowHelper.setShadowFocusLevel(impl, level);
-            }
         }
     }
 }

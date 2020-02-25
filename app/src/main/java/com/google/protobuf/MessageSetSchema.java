@@ -1,8 +1,5 @@
 package com.google.protobuf;
 
-import com.google.protobuf.FieldSet;
-import com.google.protobuf.LazyField;
-import com.google.protobuf.WireFormat;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;

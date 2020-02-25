@@ -6,6 +6,9 @@ import com.google.common.annotations.GwtCompatible;
 @GwtCompatible(emulated = true)
 @Beta
 public final class Utf8 {
+    private Utf8() {
+    }
+
     public static int encodedLength(CharSequence sequence) {
         int utf16Length = sequence.length();
         int utf8Length = utf16Length;
@@ -129,8 +132,5 @@ public final class Utf8 {
         sb.append("Unpaired surrogate at index ");
         sb.append(i);
         return sb.toString();
-    }
-
-    private Utf8() {
     }
 }

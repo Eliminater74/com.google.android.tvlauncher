@@ -7,9 +7,10 @@ import android.media.tv.TvInputManager;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
+
 import com.google.android.tvlauncher.C1188R;
-import com.google.android.tvlauncher.inputs.TvInputEntry;
 import com.google.android.tvlauncher.util.OemConfiguration;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -23,22 +24,22 @@ class RefreshTifInputsTask extends AsyncTask<Void, Void, Void> {
     @SuppressLint({"StaticFieldLeak"})
     private final Context mContext;
     private final Map<String, TvInputEntry> mInputs = new HashMap();
-    private boolean mIsBundledTunerVisible;
     private final LoadedDataCallback mLoadedDataCallback;
     private final Map<String, TvInputInfo> mPhysicalTunerInputs = new LinkedHashMap();
     private final TvInputManager mTvManager;
     private final Map<String, TvInputInfo> mVirtualTunerInputs = new HashMap();
     private final List<TvInputEntry> mVisibleInputs = new ArrayList();
-
-    interface LoadedDataCallback {
-        void onDataLoaded(Map<String, TvInputInfo> map, Map<String, TvInputInfo> map2, List<TvInputEntry> list, Map<String, TvInputEntry> map3, boolean z);
-    }
+    private boolean mIsBundledTunerVisible;
 
     RefreshTifInputsTask(TvInputManager tvInputManager, Context context, LoadedDataCallback loadedDataCallback) {
         this.mTvManager = tvInputManager;
         this.mContext = context;
         this.mLoadedDataCallback = loadedDataCallback;
         this.mComp = new TvInputEntry.InputsComparator(this.mContext);
+    }
+
+    static final /* synthetic */ boolean lambda$doInBackground$0$RefreshTifInputsTask(TvInputEntry input) {
+        return input.getNumChildren() > 0;
     }
 
     /* access modifiers changed from: protected */
@@ -53,10 +54,6 @@ class RefreshTifInputsTask extends AsyncTask<Void, Void, Void> {
             this.mVisibleInputs.sort(this.mComp);
         }
         return null;
-    }
-
-    static final /* synthetic */ boolean lambda$doInBackground$0$RefreshTifInputsTask(TvInputEntry input) {
-        return input.getNumChildren() > 0;
     }
 
     private void inputAddedInternal(TvInputInfo info) {
@@ -136,5 +133,9 @@ class RefreshTifInputsTask extends AsyncTask<Void, Void, Void> {
         if (loadedDataCallback != null) {
             loadedDataCallback.onDataLoaded(this.mPhysicalTunerInputs, this.mVirtualTunerInputs, this.mVisibleInputs, this.mInputs, this.mIsBundledTunerVisible);
         }
+    }
+
+    interface LoadedDataCallback {
+        void onDataLoaded(Map<String, TvInputInfo> map, Map<String, TvInputInfo> map2, List<TvInputEntry> list, Map<String, TvInputEntry> map3, boolean z);
     }
 }

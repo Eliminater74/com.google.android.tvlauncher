@@ -3,10 +3,14 @@ package com.google.android.exoplayer2.extractor.ogg;
 import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.ParsableByteArray;
+
 import java.util.Arrays;
 
 final class VorbisUtil {
     private static final String TAG = "VorbisUtil";
+
+    private VorbisUtil() {
+    }
 
     public static int iLog(int x) {
         int val = 0;
@@ -302,9 +306,6 @@ final class VorbisUtil {
         double d = (double) dimension;
         Double.isNaN(d);
         return (long) Math.floor(Math.pow((double) entries, 1.0d / d));
-    }
-
-    private VorbisUtil() {
     }
 
     public static final class CodeBook {

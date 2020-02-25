@@ -2,6 +2,7 @@ package com.google.common.primitives;
 
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.base.Preconditions;
+
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -11,9 +12,6 @@ import java.util.Set;
 public final class Primitives {
     private static final Map<Class<?>, Class<?>> PRIMITIVE_TO_WRAPPER_TYPE;
     private static final Map<Class<?>, Class<?>> WRAPPER_TO_PRIMITIVE_TYPE;
-
-    private Primitives() {
-    }
 
     static {
         Map<Class<?>, Class<?>> primToWrap = new LinkedHashMap<>(16);
@@ -29,6 +27,9 @@ public final class Primitives {
         add(primToWrap, wrapToPrim, Void.TYPE, Void.class);
         PRIMITIVE_TO_WRAPPER_TYPE = Collections.unmodifiableMap(primToWrap);
         WRAPPER_TO_PRIMITIVE_TYPE = Collections.unmodifiableMap(wrapToPrim);
+    }
+
+    private Primitives() {
     }
 
     private static void add(Map<Class<?>, Class<?>> forward, Map<Class<?>, Class<?>> backward, Class<?> key, Class<?> value) {

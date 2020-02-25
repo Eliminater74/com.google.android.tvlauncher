@@ -3,6 +3,7 @@ package com.google.android.exoplayer2.util;
 import android.opengl.GLES20;
 import android.opengl.GLU;
 import android.text.TextUtils;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;

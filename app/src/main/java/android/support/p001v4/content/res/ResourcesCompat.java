@@ -23,6 +23,9 @@ import android.util.TypedValue;
 public final class ResourcesCompat {
     private static final String TAG = "ResourcesCompat";
 
+    private ResourcesCompat() {
+    }
+
     @Nullable
     public static Drawable getDrawable(@NonNull Resources res, @DrawableRes int id, @Nullable Resources.Theme theme) throws Resources.NotFoundException {
         if (Build.VERSION.SDK_INT >= 21) {
@@ -79,37 +82,6 @@ public final class ResourcesCompat {
             return null;
         }
         return loadFont(context, id, new TypedValue(), 0, null, null, false);
-    }
-
-    /* renamed from: android.support.v4.content.res.ResourcesCompat$FontCallback */
-    public static abstract class FontCallback {
-        public abstract void onFontRetrievalFailed(int i);
-
-        public abstract void onFontRetrieved(@NonNull Typeface typeface);
-
-        @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-        public final void callbackSuccessAsync(final Typeface typeface, @Nullable Handler handler) {
-            if (handler == null) {
-                handler = new Handler(Looper.getMainLooper());
-            }
-            handler.post(new Runnable() {
-                public void run() {
-                    FontCallback.this.onFontRetrieved(typeface);
-                }
-            });
-        }
-
-        @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-        public final void callbackFailAsync(final int reason, @Nullable Handler handler) {
-            if (handler == null) {
-                handler = new Handler(Looper.getMainLooper());
-            }
-            handler.post(new Runnable() {
-                public void run() {
-                    FontCallback.this.onFontRetrievalFailed(reason);
-                }
-            });
-        }
     }
 
     public static void getFont(@NonNull Context context, @FontRes int id, @NonNull FontCallback fontCallback, @Nullable Handler handler) throws Resources.NotFoundException {
@@ -324,6 +296,34 @@ public final class ResourcesCompat {
         throw new UnsupportedOperationException("Method not decompiled: android.support.p001v4.content.res.ResourcesCompat.loadFont(android.content.Context, android.content.res.Resources, android.util.TypedValue, int, int, android.support.v4.content.res.ResourcesCompat$FontCallback, android.os.Handler, boolean):android.graphics.Typeface");
     }
 
-    private ResourcesCompat() {
+    /* renamed from: android.support.v4.content.res.ResourcesCompat$FontCallback */
+    public static abstract class FontCallback {
+        public abstract void onFontRetrievalFailed(int i);
+
+        public abstract void onFontRetrieved(@NonNull Typeface typeface);
+
+        @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+        public final void callbackSuccessAsync(final Typeface typeface, @Nullable Handler handler) {
+            if (handler == null) {
+                handler = new Handler(Looper.getMainLooper());
+            }
+            handler.post(new Runnable() {
+                public void run() {
+                    FontCallback.this.onFontRetrieved(typeface);
+                }
+            });
+        }
+
+        @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+        public final void callbackFailAsync(final int reason, @Nullable Handler handler) {
+            if (handler == null) {
+                handler = new Handler(Looper.getMainLooper());
+            }
+            handler.post(new Runnable() {
+                public void run() {
+                    FontCallback.this.onFontRetrievalFailed(reason);
+                }
+            });
+        }
     }
 }

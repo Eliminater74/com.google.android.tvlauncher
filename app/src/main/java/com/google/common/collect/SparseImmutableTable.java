@@ -1,10 +1,8 @@
 package com.google.common.collect;
 
 import com.google.common.annotations.GwtCompatible;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableTable;
-import com.google.common.collect.Table;
 import com.google.errorprone.annotations.Immutable;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 

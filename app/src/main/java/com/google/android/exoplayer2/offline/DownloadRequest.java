@@ -4,8 +4,10 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,9 +37,6 @@ public final class DownloadRequest implements Parcelable {
     public final List<StreamKey> streamKeys;
     public final String type;
     public final Uri uri;
-
-    public static class UnsupportedRequestException extends IOException {
-    }
 
     public DownloadRequest(String id, String type2, Uri uri2, List<StreamKey> streamKeys2, @Nullable String customCacheKey2, @Nullable byte[] data2) {
         if (TYPE_DASH.equals(type2) || TYPE_HLS.equals(type2) || TYPE_SS.equals(type2)) {
@@ -134,5 +133,8 @@ public final class DownloadRequest implements Parcelable {
         dest.writeString(this.customCacheKey);
         dest.writeInt(this.data.length);
         dest.writeByteArray(this.data);
+    }
+
+    public static class UnsupportedRequestException extends IOException {
     }
 }

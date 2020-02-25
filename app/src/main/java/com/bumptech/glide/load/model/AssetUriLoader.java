@@ -4,12 +4,13 @@ import android.content.res.AssetManager;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 import android.support.annotation.NonNull;
+
 import com.bumptech.glide.load.Options;
 import com.bumptech.glide.load.data.DataFetcher;
 import com.bumptech.glide.load.data.FileDescriptorAssetPathFetcher;
 import com.bumptech.glide.load.data.StreamAssetPathFetcher;
-import com.bumptech.glide.load.model.ModelLoader;
 import com.bumptech.glide.signature.ObjectKey;
+
 import java.io.InputStream;
 
 public class AssetUriLoader<Data> implements ModelLoader<Uri, Data> {
@@ -18,10 +19,6 @@ public class AssetUriLoader<Data> implements ModelLoader<Uri, Data> {
     private static final int ASSET_PREFIX_LENGTH = ASSET_PREFIX.length();
     private final AssetManager assetManager;
     private final AssetFetcherFactory<Data> factory;
-
-    public interface AssetFetcherFactory<Data> {
-        DataFetcher<Data> buildFetcher(AssetManager assetManager, String str);
-    }
 
     public AssetUriLoader(AssetManager assetManager2, AssetFetcherFactory<Data> factory2) {
         this.assetManager = assetManager2;
@@ -37,6 +34,10 @@ public class AssetUriLoader<Data> implements ModelLoader<Uri, Data> {
             return false;
         }
         return true;
+    }
+
+    public interface AssetFetcherFactory<Data> {
+        DataFetcher<Data> buildFetcher(AssetManager assetManager, String str);
     }
 
     public static class StreamFactory implements ModelLoaderFactory<Uri, InputStream>, AssetFetcherFactory<InputStream> {

@@ -8,6 +8,7 @@ import android.support.annotation.RequiresApi;
 import android.support.annotation.RestrictTo;
 import android.support.p001v4.graphics.drawable.IconCompat;
 import android.support.p001v4.util.Preconditions;
+
 import androidx.versionedparcelable.VersionedParcelable;
 
 /* renamed from: android.support.v4.app.RemoteActionCompat */
@@ -60,12 +61,12 @@ public final class RemoteActionCompat implements VersionedParcelable {
         return action;
     }
 
-    public void setEnabled(boolean enabled) {
-        this.mEnabled = enabled;
-    }
-
     public boolean isEnabled() {
         return this.mEnabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.mEnabled = enabled;
     }
 
     public void setShouldShowIcon(boolean shouldShowIcon) {

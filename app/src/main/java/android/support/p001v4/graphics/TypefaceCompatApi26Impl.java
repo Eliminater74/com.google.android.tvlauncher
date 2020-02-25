@@ -15,7 +15,9 @@ import android.support.annotation.RestrictTo;
 import android.support.p001v4.content.res.FontResourcesParserCompat;
 import android.support.p001v4.provider.FontsContractCompat;
 import android.util.Log;
+
 import com.google.devtools.build.android.desugar.runtime.ThrowableExtension;
+
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;

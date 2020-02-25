@@ -7,11 +7,14 @@ import android.os.Debug;
 import android.os.Process;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
+
 import com.google.android.libraries.performance.primes.PrimesLog;
 import com.google.android.libraries.stitch.util.Preconditions;
 import com.google.android.libraries.stitch.util.ThreadUtil;
+
 import java.lang.reflect.Method;
 import java.util.Map;
+
 import logs.proto.wireless.performance.mobile.MemoryMetric;
 import logs.proto.wireless.performance.mobile.ProcessProto;
 
@@ -26,6 +29,9 @@ public final class MemoryUsageCapture {
     private static final String TAG = "PrimesMemoryCapture";
     private static Method otherPssGetter;
     private static volatile boolean otherPssGetterInitialized;
+
+    private MemoryUsageCapture() {
+    }
 
     private static Method getOtherPssGetter() {
         if (!otherPssGetterInitialized) {
@@ -58,9 +64,6 @@ public final class MemoryUsageCapture {
             PrimesLog.m47e(TAG, "MemoryInfo.getOtherPss(which) invocation failure", e, new Object[0]);
             return -1;
         }
-    }
-
-    private MemoryUsageCapture() {
     }
 
     public static MemoryMetric.MemoryUsageMetric getMemoryUsageMetric(MemoryMetric.MemoryUsageMetric.MemoryEventCode eventCode, Context appContext, String activityName, boolean skipMemorySummaryStats) {

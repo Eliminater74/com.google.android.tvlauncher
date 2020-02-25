@@ -3,15 +3,17 @@ package com.google.android.tvlauncher.util;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class ChannelConfigurationInfo {
     private static final String CAN_HIDE = "canHideChannel";
@@ -221,17 +223,12 @@ public class ChannelConfigurationInfo {
         /* access modifiers changed from: private */
         public String mSystemChannelKey;
 
-        public Builder setPackageName(String packageName) {
-            this.mPackageName = packageName;
-            return this;
-        }
-
         public String getPackageName() {
             return this.mPackageName;
         }
 
-        public Builder setSystemChannelKey(String systemChannelKey) {
-            this.mSystemChannelKey = systemChannelKey;
+        public Builder setPackageName(String packageName) {
+            this.mPackageName = packageName;
             return this;
         }
 
@@ -239,8 +236,8 @@ public class ChannelConfigurationInfo {
             return this.mSystemChannelKey;
         }
 
-        public Builder setChannelPosition(int channelPosition) {
-            this.mChannelPosition = channelPosition;
+        public Builder setSystemChannelKey(String systemChannelKey) {
+            this.mSystemChannelKey = systemChannelKey;
             return this;
         }
 
@@ -248,13 +245,18 @@ public class ChannelConfigurationInfo {
             return this.mChannelPosition;
         }
 
-        public Builder setSponsored(boolean sponsored) {
-            this.mIsSponsored = sponsored;
+        public Builder setChannelPosition(int channelPosition) {
+            this.mChannelPosition = channelPosition;
             return this;
         }
 
         public boolean isSponsored() {
             return this.mIsSponsored;
+        }
+
+        public Builder setSponsored(boolean sponsored) {
+            this.mIsSponsored = sponsored;
+            return this;
         }
 
         public Builder setIsGoogleConfig(boolean isGoogleConfig) {

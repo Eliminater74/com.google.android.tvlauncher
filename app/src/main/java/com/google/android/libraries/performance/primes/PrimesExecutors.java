@@ -2,10 +2,7 @@ package com.google.android.libraries.performance.primes;
 
 import android.app.Activity;
 import android.os.Process;
-import com.google.android.libraries.performance.primes.AppLifecycleListener;
-import com.google.android.libraries.performance.primes.PrimesScheduledExecutorService;
-import com.google.android.libraries.performance.primes.PrimesThreadsConfigurations;
-import com.google.android.libraries.performance.primes.Supplier;
+
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -36,56 +33,6 @@ public class PrimesExecutors {
                 return PrimesExecutors.wrap(scheduledExecutorService);
             }
         });
-    }
-
-    private static final class OnResumeListener implements Executor, AppLifecycleListener.OnActivityResumed {
-        private volatile Activity activity;
-        private final PrimesThreadsConfigurations.ActivityResumedCallback activityResumedCallback;
-        private boolean done;
-        private final AppLifecycleMonitor lifecycleMonitor;
-        private boolean resumed;
-        private Runnable task;
-
-        OnResumeListener(AppLifecycleMonitor lifecycleMonitor2, PrimesThreadsConfigurations.ActivityResumedCallback activityResumedCallback2) {
-            this.lifecycleMonitor = lifecycleMonitor2;
-            this.activityResumedCallback = activityResumedCallback2;
-        }
-
-        public void onActivityResumed(Activity activity2) {
-            this.lifecycleMonitor.unregister(this);
-            synchronized (this) {
-                this.activity = activity2;
-                if (this.task != null) {
-                    runTask(this.task);
-                    this.task = null;
-                } else {
-                    this.resumed = true;
-                }
-            }
-        }
-
-        public void execute(Runnable task2) {
-            synchronized (this) {
-                if (!this.resumed) {
-                    if (this.lifecycleMonitor.getActivityResumedCount() <= 0) {
-                        this.task = task2;
-                    }
-                }
-                runTask(task2);
-            }
-        }
-
-        private void runTask(Runnable task2) {
-            if (!this.done) {
-                this.done = true;
-                PrimesThreadsConfigurations.ActivityResumedCallback activityResumedCallback2 = this.activityResumedCallback;
-                if (activityResumedCallback2 == null) {
-                    task2.run();
-                } else {
-                    activityResumedCallback2.onActivityResumed(this.activity, task2);
-                }
-            }
-        }
     }
 
     static Executor onActivityResumedTrigger(AppLifecycleMonitor lifecycleMonitor, PrimesThreadsConfigurations.ActivityResumedCallback activityResumedCallback) {
@@ -132,6 +79,56 @@ public class PrimesExecutors {
         return Executors.newSingleThreadExecutor(new PrimesThreadFactory("Primes-backgroundJob", 1));
     }
 
+    private static final class OnResumeListener implements Executor, AppLifecycleListener.OnActivityResumed {
+        private final PrimesThreadsConfigurations.ActivityResumedCallback activityResumedCallback;
+        private final AppLifecycleMonitor lifecycleMonitor;
+        private volatile Activity activity;
+        private boolean done;
+        private boolean resumed;
+        private Runnable task;
+
+        OnResumeListener(AppLifecycleMonitor lifecycleMonitor2, PrimesThreadsConfigurations.ActivityResumedCallback activityResumedCallback2) {
+            this.lifecycleMonitor = lifecycleMonitor2;
+            this.activityResumedCallback = activityResumedCallback2;
+        }
+
+        public void onActivityResumed(Activity activity2) {
+            this.lifecycleMonitor.unregister(this);
+            synchronized (this) {
+                this.activity = activity2;
+                if (this.task != null) {
+                    runTask(this.task);
+                    this.task = null;
+                } else {
+                    this.resumed = true;
+                }
+            }
+        }
+
+        public void execute(Runnable task2) {
+            synchronized (this) {
+                if (!this.resumed) {
+                    if (this.lifecycleMonitor.getActivityResumedCount() <= 0) {
+                        this.task = task2;
+                    }
+                }
+                runTask(task2);
+            }
+        }
+
+        private void runTask(Runnable task2) {
+            if (!this.done) {
+                this.done = true;
+                PrimesThreadsConfigurations.ActivityResumedCallback activityResumedCallback2 = this.activityResumedCallback;
+                if (activityResumedCallback2 == null) {
+                    task2.run();
+                } else {
+                    activityResumedCallback2.onActivityResumed(this.activity, task2);
+                }
+            }
+        }
+    }
+
     private static final class DefaultFailureCallback implements PrimesScheduledExecutorService.FailureCallback {
         private DefaultFailureCallback() {
         }
@@ -155,10 +152,10 @@ public class PrimesExecutors {
     }
 
     private static final class PrimesThreadFactory implements ThreadFactory {
-        private final AtomicInteger count;
-        private final String prefix;
         /* access modifiers changed from: private */
         public final int priority;
+        private final AtomicInteger count;
+        private final String prefix;
 
         PrimesThreadFactory(int priority2) {
             this("Primes", priority2);

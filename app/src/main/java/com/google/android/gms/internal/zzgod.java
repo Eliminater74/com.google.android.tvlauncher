@@ -55,9 +55,18 @@ public enum zzgod {
     SINT64_LIST_PACKED(48, zzgof.PACKED_VECTOR, zzgov.LONG),
     GROUP_LIST(49, zzgof.VECTOR, zzgov.MESSAGE),
     MAP(50, zzgof.MAP, zzgov.VOID);
-    
+
     private static final zzgod[] zzbe;
     private static final Type[] zzbf = new Type[0];
+
+    static {
+        zzgod[] values = values();
+        zzbe = new zzgod[values.length];
+        for (zzgod zzgod : values) {
+            zzbe[zzgod.zzba] = zzgod;
+        }
+    }
+
     private final zzgov zzaz;
     private final int zzba;
     private final zzgof zzbb;
@@ -86,13 +95,5 @@ public enum zzgod {
 
     public final int zza() {
         return this.zzba;
-    }
-
-    static {
-        zzgod[] values = values();
-        zzbe = new zzgod[values.length];
-        for (zzgod zzgod : values) {
-            zzbe[zzgod.zzba] = zzgod;
-        }
     }
 }

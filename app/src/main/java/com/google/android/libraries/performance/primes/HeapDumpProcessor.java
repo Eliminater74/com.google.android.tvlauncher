@@ -1,63 +1,26 @@
 package com.google.android.libraries.performance.primes;
 
 import com.google.android.libraries.performance.primes.hprof.HprofSerializer;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
+
 import logs.proto.wireless.performance.mobile.PrimesHeapDumpProto;
 import logs.proto.wireless.performance.mobile.SystemHealthProto;
 
 final class HeapDumpProcessor {
     static final int MAX_SERIALIZED_SIZE_KB = 10000;
     private static final String TAG = "HeapDumpProcessor";
-    private final MetricStamper metricStamper;
     /* access modifiers changed from: private */
     public final HprofSerializer serializer;
+    private final MetricStamper metricStamper;
 
     HeapDumpProcessor(HprofSerializer serializer2, MetricStamper metricStamper2) {
         this.serializer = serializer2;
         this.metricStamper = metricStamper2;
-    }
-
-    /* access modifiers changed from: package-private */
-    public List<SystemHealthProto.PrimesHeapDumpEvent> process(final File hprofFile, PrimesHeapDumpProto.HeapDumpContext heapDumpContext, File serializedHeapDumpFile) {
-        if (!hprofFile.exists()) {
-            return Collections.emptyList();
-        }
-        List<SystemHealthProto.PrimesHeapDumpEvent> events = new ArrayList<>(2);
-        SystemHealthProto.PrimesHeapDumpEvent event = executeSerializer(new Callable<PrimesHeapDumpProto.PrimesHeapDump>() {
-            public PrimesHeapDumpProto.PrimesHeapDump call() throws Exception {
-                return HeapDumpProcessor.this.serializer.serialize(hprofFile);
-            }
-        }, heapDumpContext, serializedHeapDumpFile);
-        events.add(event);
-        if (event.getError() == SystemHealthProto.PrimesHeapDumpEvent.PrimesHeapDumpError.SERIALIZED_HEAP_DUMP_TOO_LARGE) {
-            events.add(executeSerializer(new Callable<PrimesHeapDumpProto.PrimesHeapDump>() {
-                public PrimesHeapDumpProto.PrimesHeapDump call() throws Exception {
-                    return HeapDumpProcessor.this.serializer.serializeTopRooted(hprofFile);
-                }
-            }, heapDumpContext, serializedHeapDumpFile));
-        }
-        return events;
-    }
-
-    private SystemHealthProto.PrimesHeapDumpEvent executeSerializer(Callable<PrimesHeapDumpProto.PrimesHeapDump> serializeCallable, PrimesHeapDumpProto.HeapDumpContext heapDumpContext, File serializedHeapDumpFile) {
-        SystemHealthProto.PrimesHeapDumpEvent.Builder event = SystemHealthProto.PrimesHeapDumpEvent.newBuilder().setError(SystemHealthProto.PrimesHeapDumpEvent.PrimesHeapDumpError.NONE);
-        try {
-            SystemHealthProto.SystemHealthMetric primesHeapDumpWireFormat = wireFormat(this.metricStamper, (PrimesHeapDumpProto.PrimesHeapDump) ((PrimesHeapDumpProto.PrimesHeapDump.Builder) serializeCallable.call().toBuilder()).setContext(heapDumpContext).build());
-            event.setSerializedSizeKb(primesHeapDumpWireFormat.getSerializedSize() / 1024);
-            if (event.getSerializedSizeKb() > 10000) {
-                return (SystemHealthProto.PrimesHeapDumpEvent) event.setError(SystemHealthProto.PrimesHeapDumpEvent.PrimesHeapDumpError.SERIALIZED_HEAP_DUMP_TOO_LARGE).build();
-            }
-            writeToFile(serializedHeapDumpFile, primesHeapDumpWireFormat);
-            return (SystemHealthProto.PrimesHeapDumpEvent) event.build();
-        } catch (OutOfMemoryError e) {
-            event.setError(SystemHealthProto.PrimesHeapDumpEvent.PrimesHeapDumpError.OUT_OF_MEMORY_SERIALIZING);
-        } catch (Exception e2) {
-            event.setError(SystemHealthProto.PrimesHeapDumpEvent.PrimesHeapDumpError.UNKNOWN);
-        }
     }
 
     private static SystemHealthProto.SystemHealthMetric wireFormat(MetricStamper metricStamper2, PrimesHeapDumpProto.PrimesHeapDump primesHeapDump) {
@@ -107,5 +70,44 @@ final class HeapDumpProcessor {
             return
         */
         throw new UnsupportedOperationException("Method not decompiled: com.google.android.libraries.performance.primes.HeapDumpProcessor.writeToFile(java.io.File, logs.proto.wireless.performance.mobile.SystemHealthProto$SystemHealthMetric):void");
+    }
+
+    /* access modifiers changed from: package-private */
+    public List<SystemHealthProto.PrimesHeapDumpEvent> process(final File hprofFile, PrimesHeapDumpProto.HeapDumpContext heapDumpContext, File serializedHeapDumpFile) {
+        if (!hprofFile.exists()) {
+            return Collections.emptyList();
+        }
+        List<SystemHealthProto.PrimesHeapDumpEvent> events = new ArrayList<>(2);
+        SystemHealthProto.PrimesHeapDumpEvent event = executeSerializer(new Callable<PrimesHeapDumpProto.PrimesHeapDump>() {
+            public PrimesHeapDumpProto.PrimesHeapDump call() throws Exception {
+                return HeapDumpProcessor.this.serializer.serialize(hprofFile);
+            }
+        }, heapDumpContext, serializedHeapDumpFile);
+        events.add(event);
+        if (event.getError() == SystemHealthProto.PrimesHeapDumpEvent.PrimesHeapDumpError.SERIALIZED_HEAP_DUMP_TOO_LARGE) {
+            events.add(executeSerializer(new Callable<PrimesHeapDumpProto.PrimesHeapDump>() {
+                public PrimesHeapDumpProto.PrimesHeapDump call() throws Exception {
+                    return HeapDumpProcessor.this.serializer.serializeTopRooted(hprofFile);
+                }
+            }, heapDumpContext, serializedHeapDumpFile));
+        }
+        return events;
+    }
+
+    private SystemHealthProto.PrimesHeapDumpEvent executeSerializer(Callable<PrimesHeapDumpProto.PrimesHeapDump> serializeCallable, PrimesHeapDumpProto.HeapDumpContext heapDumpContext, File serializedHeapDumpFile) {
+        SystemHealthProto.PrimesHeapDumpEvent.Builder event = SystemHealthProto.PrimesHeapDumpEvent.newBuilder().setError(SystemHealthProto.PrimesHeapDumpEvent.PrimesHeapDumpError.NONE);
+        try {
+            SystemHealthProto.SystemHealthMetric primesHeapDumpWireFormat = wireFormat(this.metricStamper, (PrimesHeapDumpProto.PrimesHeapDump) ((PrimesHeapDumpProto.PrimesHeapDump.Builder) serializeCallable.call().toBuilder()).setContext(heapDumpContext).build());
+            event.setSerializedSizeKb(primesHeapDumpWireFormat.getSerializedSize() / 1024);
+            if (event.getSerializedSizeKb() > 10000) {
+                return (SystemHealthProto.PrimesHeapDumpEvent) event.setError(SystemHealthProto.PrimesHeapDumpEvent.PrimesHeapDumpError.SERIALIZED_HEAP_DUMP_TOO_LARGE).build();
+            }
+            writeToFile(serializedHeapDumpFile, primesHeapDumpWireFormat);
+            return (SystemHealthProto.PrimesHeapDumpEvent) event.build();
+        } catch (OutOfMemoryError e) {
+            event.setError(SystemHealthProto.PrimesHeapDumpEvent.PrimesHeapDumpError.OUT_OF_MEMORY_SERIALIZING);
+        } catch (Exception e2) {
+            event.setError(SystemHealthProto.PrimesHeapDumpEvent.PrimesHeapDumpError.UNKNOWN);
+        }
     }
 }

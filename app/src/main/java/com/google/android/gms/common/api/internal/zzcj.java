@@ -2,13 +2,14 @@ package com.google.android.gms.common.api.internal;
 
 import android.os.Looper;
 import android.support.annotation.NonNull;
+
 import com.google.android.gms.common.internal.zzau;
 
 /* compiled from: ListenerHolder */
 public final class zzcj<L> {
     private final zzck zza;
-    private volatile L zzb;
     private final zzcl<L> zzc;
+    private volatile L zzb;
 
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
      method: com.google.android.gms.common.internal.zzau.zza(java.lang.Object, java.lang.Object):T

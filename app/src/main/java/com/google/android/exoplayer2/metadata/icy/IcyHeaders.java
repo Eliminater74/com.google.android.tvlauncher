@@ -3,6 +3,7 @@ package com.google.android.exoplayer2.metadata.icy;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.metadata.Metadata;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Util;
@@ -35,6 +36,25 @@ public final class IcyHeaders implements Metadata.Entry {
     public final String name;
     @Nullable
     public final String url;
+
+    public IcyHeaders(int bitrate2, @Nullable String genre2, @Nullable String name2, @Nullable String url2, boolean isPublic2, int metadataInterval2) {
+        Assertions.checkArgument(metadataInterval2 == -1 || metadataInterval2 > 0);
+        this.bitrate = bitrate2;
+        this.genre = genre2;
+        this.name = name2;
+        this.url = url2;
+        this.isPublic = isPublic2;
+        this.metadataInterval = metadataInterval2;
+    }
+
+    IcyHeaders(Parcel in) {
+        this.bitrate = in.readInt();
+        this.genre = in.readString();
+        this.name = in.readString();
+        this.url = in.readString();
+        this.isPublic = Util.readBoolean(in);
+        this.metadataInterval = in.readInt();
+    }
 
     /* JADX DEBUG: Multi-variable search result rejected for TypeSearchVarInfo{r10v13, resolved type: java.lang.Object} */
     /* JADX DEBUG: Multi-variable search result rejected for TypeSearchVarInfo{r7v2, resolved type: java.lang.String} */
@@ -203,25 +223,6 @@ public final class IcyHeaders implements Metadata.Entry {
             return r0
         */
         throw new UnsupportedOperationException("Method not decompiled: com.google.android.exoplayer2.metadata.icy.IcyHeaders.parse(java.util.Map):com.google.android.exoplayer2.metadata.icy.IcyHeaders");
-    }
-
-    public IcyHeaders(int bitrate2, @Nullable String genre2, @Nullable String name2, @Nullable String url2, boolean isPublic2, int metadataInterval2) {
-        Assertions.checkArgument(metadataInterval2 == -1 || metadataInterval2 > 0);
-        this.bitrate = bitrate2;
-        this.genre = genre2;
-        this.name = name2;
-        this.url = url2;
-        this.isPublic = isPublic2;
-        this.metadataInterval = metadataInterval2;
-    }
-
-    IcyHeaders(Parcel in) {
-        this.bitrate = in.readInt();
-        this.genre = in.readString();
-        this.name = in.readString();
-        this.url = in.readString();
-        this.isPublic = Util.readBoolean(in);
-        this.metadataInterval = in.readInt();
     }
 
     public boolean equals(@Nullable Object obj) {

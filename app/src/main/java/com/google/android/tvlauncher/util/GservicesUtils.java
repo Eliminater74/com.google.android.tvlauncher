@@ -1,7 +1,9 @@
 package com.google.android.tvlauncher.util;
 
 import android.content.ContentResolver;
+
 import com.google.android.gsf.Gservices;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;

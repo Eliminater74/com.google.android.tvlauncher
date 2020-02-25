@@ -6,12 +6,28 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Equivalence;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.MapMaker;
 
 @GwtIncompatible
 @Beta
 public final class Interners {
     private Interners() {
+    }
+
+    public static InternerBuilder newBuilder() {
+        return new InternerBuilder();
+    }
+
+    public static <E> Interner<E> newStrongInterner() {
+        return newBuilder().strong().build();
+    }
+
+    @GwtIncompatible("java.lang.ref.WeakReference")
+    public static <E> Interner<E> newWeakInterner() {
+        return newBuilder().weak().build();
+    }
+
+    public static <E> Function<E, E> asFunction(Interner<E> interner) {
+        return new InternerFunction((Interner) Preconditions.checkNotNull(interner));
     }
 
     public static class InternerBuilder {
@@ -45,19 +61,6 @@ public final class Interners {
             }
             return new InternerImpl(this.mapMaker);
         }
-    }
-
-    public static InternerBuilder newBuilder() {
-        return new InternerBuilder();
-    }
-
-    public static <E> Interner<E> newStrongInterner() {
-        return newBuilder().strong().build();
-    }
-
-    @GwtIncompatible("java.lang.ref.WeakReference")
-    public static <E> Interner<E> newWeakInterner() {
-        return newBuilder().weak().build();
     }
 
     @VisibleForTesting
@@ -105,10 +108,6 @@ public final class Interners {
             */
             throw new UnsupportedOperationException("Method not decompiled: com.google.common.collect.Interners.InternerImpl.intern(java.lang.Object):java.lang.Object");
         }
-    }
-
-    public static <E> Function<E, E> asFunction(Interner<E> interner) {
-        return new InternerFunction((Interner) Preconditions.checkNotNull(interner));
     }
 
     private static class InternerFunction<E> implements Function<E, E> {

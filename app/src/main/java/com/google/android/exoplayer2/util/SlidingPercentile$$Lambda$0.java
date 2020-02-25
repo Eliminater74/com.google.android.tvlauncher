@@ -1,6 +1,5 @@
 package com.google.android.exoplayer2.util;
 
-import com.google.android.exoplayer2.util.SlidingPercentile;
 import java.util.Comparator;
 
 final /* synthetic */ class SlidingPercentile$$Lambda$0 implements Comparator {

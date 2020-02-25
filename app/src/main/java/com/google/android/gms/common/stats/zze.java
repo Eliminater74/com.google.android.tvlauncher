@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.os.SystemClock;
 import android.text.TextUtils;
 import android.util.Log;
+
 import com.google.android.gms.common.util.zzj;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -17,11 +19,6 @@ public final class zze {
 
     public static zze zza() {
         return zza;
-    }
-
-    public final void zza(Context context, Intent intent, String str, String str2, String str3, int i, String str4) {
-        Context context2 = context;
-        zza(context2, intent.getStringExtra("WAKE_LOCK_KEY"), 7, str, str2, null, 1, Arrays.asList(str4));
     }
 
     public static void zza(Context context, String str, int i, String str2, String str3, String str4, int i2, List<String> list) {
@@ -70,5 +67,10 @@ public final class zze {
                 }
             }
         }
+    }
+
+    public final void zza(Context context, Intent intent, String str, String str2, String str3, int i, String str4) {
+        Context context2 = context;
+        zza(context2, intent.getStringExtra("WAKE_LOCK_KEY"), 7, str, str2, null, 1, Arrays.asList(str4));
     }
 }

@@ -11,22 +11,48 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.internal.Hide;
 import com.google.android.gms.common.internal.zzf;
-import com.google.android.gms.dynamic.LifecycleDelegate;
+
 import java.util.LinkedList;
 
 @Hide
 /* compiled from: DeferredLifecycleHelper */
 public abstract class zza<T extends LifecycleDelegate> {
+    private final zzo<T> zzd = new zzb(this);
     /* access modifiers changed from: private */
     public T zza;
     /* access modifiers changed from: private */
     public Bundle zzb;
     /* access modifiers changed from: private */
     public LinkedList<zzi> zzc;
-    private final zzo<T> zzd = new zzb(this);
+
+    public static void zzb(FrameLayout frameLayout) {
+        GoogleApiAvailability instance = GoogleApiAvailability.getInstance();
+        Context context = frameLayout.getContext();
+        int isGooglePlayServicesAvailable = instance.isGooglePlayServicesAvailable(context);
+        String zzc2 = zzf.zzc(context, isGooglePlayServicesAvailable);
+        String zze = zzf.zze(context, isGooglePlayServicesAvailable);
+        LinearLayout linearLayout = new LinearLayout(frameLayout.getContext());
+        linearLayout.setOrientation(1);
+        linearLayout.setLayoutParams(new FrameLayout.LayoutParams(-2, -2));
+        frameLayout.addView(linearLayout);
+        TextView textView = new TextView(frameLayout.getContext());
+        textView.setLayoutParams(new FrameLayout.LayoutParams(-2, -2));
+        textView.setText(zzc2);
+        linearLayout.addView(textView);
+        Intent errorResolutionIntent = instance.getErrorResolutionIntent(context, isGooglePlayServicesAvailable, null);
+        if (errorResolutionIntent != null) {
+            Button button = new Button(context);
+            button.setId(16908313);
+            button.setLayoutParams(new FrameLayout.LayoutParams(-2, -2));
+            button.setText(zze);
+            linearLayout.addView(button);
+            button.setOnClickListener(new zzf(context, errorResolutionIntent));
+        }
+    }
 
     /* access modifiers changed from: protected */
     public abstract void zza(zzo<T> zzo);
@@ -81,31 +107,6 @@ public abstract class zza<T extends LifecycleDelegate> {
 
     /* access modifiers changed from: protected */
     public void zza(FrameLayout frameLayout) {
-        GoogleApiAvailability instance = GoogleApiAvailability.getInstance();
-        Context context = frameLayout.getContext();
-        int isGooglePlayServicesAvailable = instance.isGooglePlayServicesAvailable(context);
-        String zzc2 = zzf.zzc(context, isGooglePlayServicesAvailable);
-        String zze = zzf.zze(context, isGooglePlayServicesAvailable);
-        LinearLayout linearLayout = new LinearLayout(frameLayout.getContext());
-        linearLayout.setOrientation(1);
-        linearLayout.setLayoutParams(new FrameLayout.LayoutParams(-2, -2));
-        frameLayout.addView(linearLayout);
-        TextView textView = new TextView(frameLayout.getContext());
-        textView.setLayoutParams(new FrameLayout.LayoutParams(-2, -2));
-        textView.setText(zzc2);
-        linearLayout.addView(textView);
-        Intent errorResolutionIntent = instance.getErrorResolutionIntent(context, isGooglePlayServicesAvailable, null);
-        if (errorResolutionIntent != null) {
-            Button button = new Button(context);
-            button.setId(16908313);
-            button.setLayoutParams(new FrameLayout.LayoutParams(-2, -2));
-            button.setText(zze);
-            linearLayout.addView(button);
-            button.setOnClickListener(new zzf(context, errorResolutionIntent));
-        }
-    }
-
-    public static void zzb(FrameLayout frameLayout) {
         GoogleApiAvailability instance = GoogleApiAvailability.getInstance();
         Context context = frameLayout.getContext();
         int isGooglePlayServicesAvailable = instance.isGooglePlayServicesAvailable(context);

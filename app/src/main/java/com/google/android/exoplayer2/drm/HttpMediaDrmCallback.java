@@ -3,11 +3,12 @@ package com.google.android.exoplayer2.drm;
 import android.annotation.TargetApi;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+
 import com.google.android.exoplayer2.C0841C;
-import com.google.android.exoplayer2.drm.ExoMediaDrm;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -31,59 +32,6 @@ public final class HttpMediaDrmCallback implements MediaDrmCallback {
         this.defaultLicenseUrl = defaultLicenseUrl2;
         this.forceDefaultLicenseUrl = forceDefaultLicenseUrl2;
         this.keyRequestProperties = new HashMap();
-    }
-
-    public void setKeyRequestProperty(String name, String value) {
-        Assertions.checkNotNull(name);
-        Assertions.checkNotNull(value);
-        synchronized (this.keyRequestProperties) {
-            this.keyRequestProperties.put(name, value);
-        }
-    }
-
-    public void clearKeyRequestProperty(String name) {
-        Assertions.checkNotNull(name);
-        synchronized (this.keyRequestProperties) {
-            this.keyRequestProperties.remove(name);
-        }
-    }
-
-    public void clearAllKeyRequestProperties() {
-        synchronized (this.keyRequestProperties) {
-            this.keyRequestProperties.clear();
-        }
-    }
-
-    public byte[] executeProvisionRequest(UUID uuid, ExoMediaDrm.ProvisionRequest request) throws IOException {
-        String defaultUrl = request.getDefaultUrl();
-        String fromUtf8Bytes = Util.fromUtf8Bytes(request.getData());
-        StringBuilder sb = new StringBuilder(String.valueOf(defaultUrl).length() + 15 + String.valueOf(fromUtf8Bytes).length());
-        sb.append(defaultUrl);
-        sb.append("&signedRequest=");
-        sb.append(fromUtf8Bytes);
-        return executePost(this.dataSourceFactory, sb.toString(), Util.EMPTY_BYTE_ARRAY, null);
-    }
-
-    public byte[] executeKeyRequest(UUID uuid, ExoMediaDrm.KeyRequest request) throws Exception {
-        String contentType;
-        String url = request.getLicenseServerUrl();
-        if (this.forceDefaultLicenseUrl || TextUtils.isEmpty(url)) {
-            url = this.defaultLicenseUrl;
-        }
-        Map<String, String> requestProperties = new HashMap<>();
-        if (C0841C.PLAYREADY_UUID.equals(uuid)) {
-            contentType = "text/xml";
-        } else {
-            contentType = C0841C.CLEARKEY_UUID.equals(uuid) ? "application/json" : "application/octet-stream";
-        }
-        requestProperties.put("Content-Type", contentType);
-        if (C0841C.PLAYREADY_UUID.equals(uuid)) {
-            requestProperties.put("SOAPAction", "http://schemas.microsoft.com/DRM/2007/03/protocols/AcquireLicense");
-        }
-        synchronized (this.keyRequestProperties) {
-            requestProperties.putAll(this.keyRequestProperties);
-        }
-        return executePost(this.dataSourceFactory, url, request.getData(), requestProperties);
     }
 
     /* JADX WARNING: Removed duplicated region for block: B:27:0x006e A[SYNTHETIC, Splitter:B:27:0x006e] */
@@ -188,5 +136,58 @@ public final class HttpMediaDrmCallback implements MediaDrmCallback {
             return null;
         }
         return (String) locationHeaders.get(0);
+    }
+
+    public void setKeyRequestProperty(String name, String value) {
+        Assertions.checkNotNull(name);
+        Assertions.checkNotNull(value);
+        synchronized (this.keyRequestProperties) {
+            this.keyRequestProperties.put(name, value);
+        }
+    }
+
+    public void clearKeyRequestProperty(String name) {
+        Assertions.checkNotNull(name);
+        synchronized (this.keyRequestProperties) {
+            this.keyRequestProperties.remove(name);
+        }
+    }
+
+    public void clearAllKeyRequestProperties() {
+        synchronized (this.keyRequestProperties) {
+            this.keyRequestProperties.clear();
+        }
+    }
+
+    public byte[] executeProvisionRequest(UUID uuid, ExoMediaDrm.ProvisionRequest request) throws IOException {
+        String defaultUrl = request.getDefaultUrl();
+        String fromUtf8Bytes = Util.fromUtf8Bytes(request.getData());
+        StringBuilder sb = new StringBuilder(String.valueOf(defaultUrl).length() + 15 + String.valueOf(fromUtf8Bytes).length());
+        sb.append(defaultUrl);
+        sb.append("&signedRequest=");
+        sb.append(fromUtf8Bytes);
+        return executePost(this.dataSourceFactory, sb.toString(), Util.EMPTY_BYTE_ARRAY, null);
+    }
+
+    public byte[] executeKeyRequest(UUID uuid, ExoMediaDrm.KeyRequest request) throws Exception {
+        String contentType;
+        String url = request.getLicenseServerUrl();
+        if (this.forceDefaultLicenseUrl || TextUtils.isEmpty(url)) {
+            url = this.defaultLicenseUrl;
+        }
+        Map<String, String> requestProperties = new HashMap<>();
+        if (C0841C.PLAYREADY_UUID.equals(uuid)) {
+            contentType = "text/xml";
+        } else {
+            contentType = C0841C.CLEARKEY_UUID.equals(uuid) ? "application/json" : "application/octet-stream";
+        }
+        requestProperties.put("Content-Type", contentType);
+        if (C0841C.PLAYREADY_UUID.equals(uuid)) {
+            requestProperties.put("SOAPAction", "http://schemas.microsoft.com/DRM/2007/03/protocols/AcquireLicense");
+        }
+        synchronized (this.keyRequestProperties) {
+            requestProperties.putAll(this.keyRequestProperties);
+        }
+        return executePost(this.dataSourceFactory, url, request.getData(), requestProperties);
     }
 }

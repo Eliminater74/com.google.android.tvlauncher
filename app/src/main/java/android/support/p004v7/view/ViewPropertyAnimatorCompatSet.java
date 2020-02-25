@@ -6,6 +6,7 @@ import android.support.p001v4.view.ViewPropertyAnimatorListener;
 import android.support.p001v4.view.ViewPropertyAnimatorListenerAdapter;
 import android.view.View;
 import android.view.animation.Interpolator;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -13,10 +14,10 @@ import java.util.Iterator;
 /* renamed from: android.support.v7.view.ViewPropertyAnimatorCompatSet */
 public class ViewPropertyAnimatorCompatSet {
     final ArrayList<ViewPropertyAnimatorCompat> mAnimators = new ArrayList<>();
+    ViewPropertyAnimatorListener mListener;
     private long mDuration = -1;
     private Interpolator mInterpolator;
     private boolean mIsStarted;
-    ViewPropertyAnimatorListener mListener;
     private final ViewPropertyAnimatorListenerAdapter mProxyListener = new ViewPropertyAnimatorListenerAdapter() {
         private int mProxyEndCount = 0;
         private boolean mProxyStarted = false;

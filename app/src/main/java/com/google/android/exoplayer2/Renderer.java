@@ -1,8 +1,8 @@
 package com.google.android.exoplayer2;
 
-import com.google.android.exoplayer2.PlayerMessage;
 import com.google.android.exoplayer2.source.SampleStream;
 import com.google.android.exoplayer2.util.MediaClock;
+
 import java.io.IOException;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -12,11 +12,6 @@ public interface Renderer extends PlayerMessage.Target {
     public static final int STATE_DISABLED = 0;
     public static final int STATE_ENABLED = 1;
     public static final int STATE_STARTED = 2;
-
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface State {
-    }
 
     void disable();
 
@@ -61,4 +56,9 @@ public interface Renderer extends PlayerMessage.Target {
     void start() throws ExoPlaybackException;
 
     void stop() throws ExoPlaybackException;
+
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface State {
+    }
 }

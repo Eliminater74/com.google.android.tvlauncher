@@ -2,14 +2,16 @@ package com.bumptech.glide.load.resource.bitmap;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
+
 import com.bumptech.glide.load.engine.bitmap_recycle.ArrayPool;
+
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 public class RecyclableBufferedInputStream extends FilterInputStream {
-    private volatile byte[] buf;
     private final ArrayPool byteArrayPool;
+    private volatile byte[] buf;
     private int count;
     private int marklimit;
     private int markpos;
@@ -27,6 +29,10 @@ public class RecyclableBufferedInputStream extends FilterInputStream {
         this.buf = (byte[]) byteArrayPool2.get(bufferSize, byte[].class);
     }
 
+    private static IOException streamClosed() throws IOException {
+        throw new IOException("BufferedInputStream is closed");
+    }
+
     public synchronized int available() throws IOException {
         InputStream localIn;
         localIn = this.in;
@@ -34,10 +40,6 @@ public class RecyclableBufferedInputStream extends FilterInputStream {
             throw streamClosed();
         }
         return (this.count - this.pos) + localIn.available();
-    }
-
-    private static IOException streamClosed() throws IOException {
-        throw new IOException("BufferedInputStream is closed");
     }
 
     public synchronized void fixMarkLimit() {

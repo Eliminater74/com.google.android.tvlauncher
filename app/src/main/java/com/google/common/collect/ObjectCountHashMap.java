@@ -5,37 +5,29 @@ import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Multiset;
-import com.google.common.collect.Multisets;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import java.util.Arrays;
+
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
+import java.util.Arrays;
 
 @GwtCompatible(emulated = true, serializable = true)
 class ObjectCountHashMap<K> {
     static final float DEFAULT_LOAD_FACTOR = 1.0f;
     static final int DEFAULT_SIZE = 3;
+    static final int UNSET = -1;
     private static final long HASH_MASK = -4294967296L;
     private static final int MAXIMUM_CAPACITY = 1073741824;
     private static final long NEXT_MASK = 4294967295L;
-    static final int UNSET = -1;
     @VisibleForTesting
     transient long[] entries;
     transient Object[] keys;
-    private transient float loadFactor;
     transient int modCount;
     transient int size;
+    transient int[] values;
+    private transient float loadFactor;
     private transient int[] table;
     private transient int threshold;
-    transient int[] values;
-
-    public static <K> ObjectCountHashMap<K> create() {
-        return new ObjectCountHashMap<>();
-    }
-
-    public static <K> ObjectCountHashMap<K> createWithExpectedSize(int expectedSize) {
-        return new ObjectCountHashMap<>(expectedSize);
-    }
 
     ObjectCountHashMap() {
         init(3, DEFAULT_LOAD_FACTOR);
@@ -58,21 +50,12 @@ class ObjectCountHashMap<K> {
         init(expectedSize, loadFactor2);
     }
 
-    /* access modifiers changed from: package-private */
-    public void init(int expectedSize, float loadFactor2) {
-        boolean z = false;
-        Preconditions.checkArgument(expectedSize >= 0, "Initial capacity must be non-negative");
-        if (loadFactor2 > 0.0f) {
-            z = true;
-        }
-        Preconditions.checkArgument(z, "Illegal load factor");
-        int buckets = Hashing.closedTableSize(expectedSize, (double) loadFactor2);
-        this.table = newTable(buckets);
-        this.loadFactor = loadFactor2;
-        this.keys = new Object[expectedSize];
-        this.values = new int[expectedSize];
-        this.entries = newEntries(expectedSize);
-        this.threshold = Math.max(1, (int) (((float) buckets) * loadFactor2));
+    public static <K> ObjectCountHashMap<K> create() {
+        return new ObjectCountHashMap<>();
+    }
+
+    public static <K> ObjectCountHashMap<K> createWithExpectedSize(int expectedSize) {
+        return new ObjectCountHashMap<>(expectedSize);
     }
 
     private static int[] newTable(int size2) {
@@ -98,6 +81,35 @@ class ObjectCountHashMap<K> {
         long[] array = new long[size2];
         Arrays.fill(array, -1L);
         return array;
+    }
+
+    private static int getHash(long entry) {
+        return (int) (entry >>> 32);
+    }
+
+    private static int getNext(long entry) {
+        return (int) entry;
+    }
+
+    private static long swapNext(long entry, int newNext) {
+        return (HASH_MASK & entry) | (((long) newNext) & NEXT_MASK);
+    }
+
+    /* access modifiers changed from: package-private */
+    public void init(int expectedSize, float loadFactor2) {
+        boolean z = false;
+        Preconditions.checkArgument(expectedSize >= 0, "Initial capacity must be non-negative");
+        if (loadFactor2 > 0.0f) {
+            z = true;
+        }
+        Preconditions.checkArgument(z, "Illegal load factor");
+        int buckets = Hashing.closedTableSize(expectedSize, (double) loadFactor2);
+        this.table = newTable(buckets);
+        this.loadFactor = loadFactor2;
+        this.keys = new Object[expectedSize];
+        this.values = new int[expectedSize];
+        this.entries = newEntries(expectedSize);
+        this.threshold = Math.max(1, (int) (((float) buckets) * loadFactor2));
     }
 
     private int hashTableMask() {
@@ -149,61 +161,6 @@ class ObjectCountHashMap<K> {
     public Multiset.Entry<K> getEntry(int index) {
         Preconditions.checkElementIndex(index, this.size);
         return new MapEntry(index);
-    }
-
-    class MapEntry extends Multisets.AbstractEntry<K> {
-        @NullableDecl
-        final K key;
-        int lastKnownIndex;
-
-        MapEntry(int index) {
-            this.key = ObjectCountHashMap.this.keys[index];
-            this.lastKnownIndex = index;
-        }
-
-        public K getElement() {
-            return this.key;
-        }
-
-        /* access modifiers changed from: package-private */
-        public void updateLastKnownIndex() {
-            int i = this.lastKnownIndex;
-            if (i == -1 || i >= ObjectCountHashMap.this.size() || !Objects.equal(this.key, ObjectCountHashMap.this.keys[this.lastKnownIndex])) {
-                this.lastKnownIndex = ObjectCountHashMap.this.indexOf(this.key);
-            }
-        }
-
-        public int getCount() {
-            updateLastKnownIndex();
-            if (this.lastKnownIndex == -1) {
-                return 0;
-            }
-            return ObjectCountHashMap.this.values[this.lastKnownIndex];
-        }
-
-        @CanIgnoreReturnValue
-        public int setCount(int count) {
-            updateLastKnownIndex();
-            if (this.lastKnownIndex == -1) {
-                ObjectCountHashMap.this.put(this.key, count);
-                return 0;
-            }
-            int old = ObjectCountHashMap.this.values[this.lastKnownIndex];
-            ObjectCountHashMap.this.values[this.lastKnownIndex] = count;
-            return old;
-        }
-    }
-
-    private static int getHash(long entry) {
-        return (int) (entry >>> 32);
-    }
-
-    private static int getNext(long entry) {
-        return (int) entry;
-    }
-
-    private static long swapNext(long entry, int newNext) {
-        return (HASH_MASK & entry) | (((long) newNext) & NEXT_MASK);
     }
 
     /* access modifiers changed from: package-private */
@@ -453,5 +410,48 @@ class ObjectCountHashMap<K> {
         Arrays.fill(this.table, -1);
         Arrays.fill(this.entries, -1L);
         this.size = 0;
+    }
+
+    class MapEntry extends Multisets.AbstractEntry<K> {
+        @NullableDecl
+        final K key;
+        int lastKnownIndex;
+
+        MapEntry(int index) {
+            this.key = ObjectCountHashMap.this.keys[index];
+            this.lastKnownIndex = index;
+        }
+
+        public K getElement() {
+            return this.key;
+        }
+
+        /* access modifiers changed from: package-private */
+        public void updateLastKnownIndex() {
+            int i = this.lastKnownIndex;
+            if (i == -1 || i >= ObjectCountHashMap.this.size() || !Objects.equal(this.key, ObjectCountHashMap.this.keys[this.lastKnownIndex])) {
+                this.lastKnownIndex = ObjectCountHashMap.this.indexOf(this.key);
+            }
+        }
+
+        public int getCount() {
+            updateLastKnownIndex();
+            if (this.lastKnownIndex == -1) {
+                return 0;
+            }
+            return ObjectCountHashMap.this.values[this.lastKnownIndex];
+        }
+
+        @CanIgnoreReturnValue
+        public int setCount(int count) {
+            updateLastKnownIndex();
+            if (this.lastKnownIndex == -1) {
+                ObjectCountHashMap.this.put(this.key, count);
+                return 0;
+            }
+            int old = ObjectCountHashMap.this.values[this.lastKnownIndex];
+            ObjectCountHashMap.this.values[this.lastKnownIndex] = count;
+            return old;
+        }
     }
 }

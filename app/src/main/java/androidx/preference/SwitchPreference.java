@@ -46,18 +46,13 @@ public class SwitchPreference extends TwoStatePreference {
         syncSummaryView(holder);
     }
 
+    public CharSequence getSwitchTextOn() {
+        return this.mSwitchOn;
+    }
+
     public void setSwitchTextOn(CharSequence onText) {
         this.mSwitchOn = onText;
         notifyChanged();
-    }
-
-    public void setSwitchTextOff(CharSequence offText) {
-        this.mSwitchOff = offText;
-        notifyChanged();
-    }
-
-    public CharSequence getSwitchTextOn() {
-        return this.mSwitchOn;
     }
 
     public void setSwitchTextOn(int resId) {
@@ -66,6 +61,11 @@ public class SwitchPreference extends TwoStatePreference {
 
     public CharSequence getSwitchTextOff() {
         return this.mSwitchOff;
+    }
+
+    public void setSwitchTextOff(CharSequence offText) {
+        this.mSwitchOff = offText;
+        notifyChanged();
     }
 
     public void setSwitchTextOff(int resId) {

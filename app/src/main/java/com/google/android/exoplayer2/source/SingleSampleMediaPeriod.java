@@ -1,13 +1,12 @@
 package com.google.android.exoplayer2.source;
 
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.FormatHolder;
 import com.google.android.exoplayer2.SeekParameters;
 import com.google.android.exoplayer2.decoder.DecoderInputBuffer;
-import com.google.android.exoplayer2.source.MediaPeriod;
-import com.google.android.exoplayer2.source.MediaSourceEventListener;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
@@ -17,6 +16,7 @@ import com.google.android.exoplayer2.upstream.StatsDataSource;
 import com.google.android.exoplayer2.upstream.TransferListener;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,28 +24,24 @@ import java.util.List;
 
 final class SingleSampleMediaPeriod implements MediaPeriod, Loader.Callback<SourceLoadable> {
     private static final int INITIAL_SAMPLE_SIZE = 1024;
-    private final DataSource.Factory dataSourceFactory;
-    private final DataSpec dataSpec;
-    private final long durationUs;
     /* access modifiers changed from: private */
     public final MediaSourceEventListener.EventDispatcher eventDispatcher;
     final Format format;
-    private final LoadErrorHandlingPolicy loadErrorHandlingPolicy;
     final Loader loader = new Loader("Loader:SingleSampleMediaPeriod");
+    final boolean treatLoadErrorsAsEndOfStream;
+    private final DataSource.Factory dataSourceFactory;
+    private final DataSpec dataSpec;
+    private final long durationUs;
+    private final LoadErrorHandlingPolicy loadErrorHandlingPolicy;
+    private final ArrayList<SampleStreamImpl> sampleStreams = new ArrayList<>();
+    private final TrackGroupArray tracks;
+    @Nullable
+    private final TransferListener transferListener;
     boolean loadingFinished;
     boolean loadingSucceeded;
     boolean notifiedReadingStarted;
     byte[] sampleData;
     int sampleSize;
-    private final ArrayList<SampleStreamImpl> sampleStreams = new ArrayList<>();
-    private final TrackGroupArray tracks;
-    @Nullable
-    private final TransferListener transferListener;
-    final boolean treatLoadErrorsAsEndOfStream;
-
-    public List getStreamKeys(List list) {
-        return MediaPeriod$$CC.getStreamKeys$$dflt$$(this, list);
-    }
 
     public SingleSampleMediaPeriod(DataSpec dataSpec2, DataSource.Factory dataSourceFactory2, @Nullable TransferListener transferListener2, Format format2, long durationUs2, LoadErrorHandlingPolicy loadErrorHandlingPolicy2, MediaSourceEventListener.EventDispatcher eventDispatcher2, boolean treatLoadErrorsAsEndOfStream2) {
         this.dataSpec = dataSpec2;
@@ -58,6 +54,10 @@ final class SingleSampleMediaPeriod implements MediaPeriod, Loader.Callback<Sour
         this.treatLoadErrorsAsEndOfStream = treatLoadErrorsAsEndOfStream2;
         this.tracks = new TrackGroupArray(new TrackGroup(format2));
         eventDispatcher2.mediaPeriodCreated();
+    }
+
+    public List getStreamKeys(List list) {
+        return MediaPeriod$$CC.getStreamKeys$$dflt$$(this, list);
     }
 
     public void release() {
@@ -229,6 +229,41 @@ final class SingleSampleMediaPeriod implements MediaPeriod, Loader.Callback<Sour
         throw new UnsupportedOperationException("Method not decompiled: com.google.android.exoplayer2.source.SingleSampleMediaPeriod.onLoadError(com.google.android.exoplayer2.source.SingleSampleMediaPeriod$SourceLoadable, long, long, java.io.IOException, int):com.google.android.exoplayer2.upstream.Loader$LoadErrorAction");
     }
 
+    static final class SourceLoadable implements Loader.Loadable {
+        /* access modifiers changed from: private */
+        public final StatsDataSource dataSource;
+        public final DataSpec dataSpec;
+        /* access modifiers changed from: private */
+        public byte[] sampleData;
+
+        public SourceLoadable(DataSpec dataSpec2, DataSource dataSource2) {
+            this.dataSpec = dataSpec2;
+            this.dataSource = new StatsDataSource(dataSource2);
+        }
+
+        public void cancelLoad() {
+        }
+
+        public void load() throws IOException, InterruptedException {
+            this.dataSource.resetBytesRead();
+            try {
+                this.dataSource.open(this.dataSpec);
+                int result = 0;
+                while (result != -1) {
+                    int sampleSize = (int) this.dataSource.getBytesRead();
+                    if (this.sampleData == null) {
+                        this.sampleData = new byte[1024];
+                    } else if (sampleSize == this.sampleData.length) {
+                        this.sampleData = Arrays.copyOf(this.sampleData, this.sampleData.length * 2);
+                    }
+                    result = this.dataSource.read(this.sampleData, sampleSize, this.sampleData.length - sampleSize);
+                }
+            } finally {
+                Util.closeQuietly(this.dataSource);
+            }
+        }
+    }
+
     private final class SampleStreamImpl implements SampleStream {
         private static final int STREAM_STATE_END_OF_STREAM = 2;
         private static final int STREAM_STATE_SEND_FORMAT = 0;
@@ -297,41 +332,6 @@ final class SingleSampleMediaPeriod implements MediaPeriod, Loader.Callback<Sour
             if (!this.notifiedDownstreamFormat) {
                 SingleSampleMediaPeriod.this.eventDispatcher.downstreamFormatChanged(MimeTypes.getTrackType(SingleSampleMediaPeriod.this.format.sampleMimeType), SingleSampleMediaPeriod.this.format, 0, null, 0);
                 this.notifiedDownstreamFormat = true;
-            }
-        }
-    }
-
-    static final class SourceLoadable implements Loader.Loadable {
-        /* access modifiers changed from: private */
-        public final StatsDataSource dataSource;
-        public final DataSpec dataSpec;
-        /* access modifiers changed from: private */
-        public byte[] sampleData;
-
-        public SourceLoadable(DataSpec dataSpec2, DataSource dataSource2) {
-            this.dataSpec = dataSpec2;
-            this.dataSource = new StatsDataSource(dataSource2);
-        }
-
-        public void cancelLoad() {
-        }
-
-        public void load() throws IOException, InterruptedException {
-            this.dataSource.resetBytesRead();
-            try {
-                this.dataSource.open(this.dataSpec);
-                int result = 0;
-                while (result != -1) {
-                    int sampleSize = (int) this.dataSource.getBytesRead();
-                    if (this.sampleData == null) {
-                        this.sampleData = new byte[1024];
-                    } else if (sampleSize == this.sampleData.length) {
-                        this.sampleData = Arrays.copyOf(this.sampleData, this.sampleData.length * 2);
-                    }
-                    result = this.dataSource.read(this.sampleData, sampleSize, this.sampleData.length - sampleSize);
-                }
-            } finally {
-                Util.closeQuietly(this.dataSource);
             }
         }
     }

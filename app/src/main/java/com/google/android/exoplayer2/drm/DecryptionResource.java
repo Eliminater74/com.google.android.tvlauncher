@@ -1,14 +1,8 @@
 package com.google.android.exoplayer2.drm;
 
-import com.google.android.exoplayer2.drm.DecryptionResource;
-
 public abstract class DecryptionResource<T extends DecryptionResource<T>> {
     private final Owner<T> owner;
     private int referenceCount = 0;
-
-    public interface Owner<T extends DecryptionResource<T>> {
-        void onLastReferenceReleased(T t);
-    }
 
     public DecryptionResource(Owner<T> owner2) {
         this.owner = owner2;
@@ -26,5 +20,9 @@ public abstract class DecryptionResource<T extends DecryptionResource<T>> {
         } else if (this.referenceCount < 0) {
             throw new IllegalStateException("Illegal release of resource.");
         }
+    }
+
+    public interface Owner<T extends DecryptionResource<T>> {
+        void onLastReferenceReleased(T t);
     }
 }

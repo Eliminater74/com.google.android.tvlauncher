@@ -1,8 +1,8 @@
 package com.google.android.tvlauncher.home;
 
 import android.view.View;
+
 import com.google.android.tvlauncher.appsview.LaunchItem;
-import com.google.android.tvlauncher.home.FavoriteLaunchItemsAdapter;
 import com.google.android.tvlauncher.util.ContextMenu;
 import com.google.android.tvlauncher.util.ContextMenuItem;
 

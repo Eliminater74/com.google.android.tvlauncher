@@ -30,51 +30,36 @@ import android.widget.OverScroller;
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
 /* renamed from: android.support.v7.widget.ActionBarOverlayLayout */
 public class ActionBarOverlayLayout extends ViewGroup implements DecorContentParent, NestedScrollingParent, NestedScrollingParent2, NestedScrollingParent3 {
-    private static final int ACTION_BAR_ANIMATE_DELAY = 600;
     static final int[] ATTRS = {C0233R.attr.actionBarSize, 16842841};
+    private static final int ACTION_BAR_ANIMATE_DELAY = 600;
     private static final String TAG = "ActionBarOverlayLayout";
-    private int mActionBarHeight;
-    ActionBarContainer mActionBarTop;
-    private ActionBarVisibilityCallback mActionBarVisibilityCallback;
+    final AnimatorListenerAdapter mTopAnimatorListener;
     private final Runnable mAddActionBarHideOffset;
-    boolean mAnimatingForFling;
     private final Rect mBaseContentInsets;
     private final Rect mBaseInnerInsets;
-    private ContentFrameLayout mContent;
     private final Rect mContentInsets;
+    private final Rect mInnerInsets;
+    private final Rect mLastBaseContentInsets;
+    private final Rect mLastBaseInnerInsets;
+    private final Rect mLastInnerInsets;
+    private final NestedScrollingParentHelper mParentHelper;
+    private final Runnable mRemoveActionBarHideOffset;
+    ActionBarContainer mActionBarTop;
+    boolean mAnimatingForFling;
     ViewPropertyAnimator mCurrentActionBarTopAnimator;
+    private int mActionBarHeight;
+    private ActionBarVisibilityCallback mActionBarVisibilityCallback;
+    private ContentFrameLayout mContent;
     private DecorToolbar mDecorToolbar;
     private OverScroller mFlingEstimator;
     private boolean mHasNonEmbeddedTabs;
     private boolean mHideOnContentScroll;
     private int mHideOnContentScrollReference;
     private boolean mIgnoreWindowContentOverlay;
-    private final Rect mInnerInsets;
-    private final Rect mLastBaseContentInsets;
-    private final Rect mLastBaseInnerInsets;
-    private final Rect mLastInnerInsets;
     private int mLastSystemUiVisibility;
     private boolean mOverlayMode;
-    private final NestedScrollingParentHelper mParentHelper;
-    private final Runnable mRemoveActionBarHideOffset;
-    final AnimatorListenerAdapter mTopAnimatorListener;
     private Drawable mWindowContentOverlay;
     private int mWindowVisibility;
-
-    /* renamed from: android.support.v7.widget.ActionBarOverlayLayout$ActionBarVisibilityCallback */
-    public interface ActionBarVisibilityCallback {
-        void enableContentAnimations(boolean z);
-
-        void hideForSystem();
-
-        void onContentScrollStarted();
-
-        void onContentScrollStopped();
-
-        void onWindowVisibilityChanged(int i);
-
-        void showForSystem();
-    }
 
     public ActionBarOverlayLayout(Context context) {
         this(context, null);
@@ -460,6 +445,10 @@ public class ActionBarOverlayLayout extends ViewGroup implements DecorContentPar
         throw new IllegalStateException("Can't make a decor toolbar out of " + view.getClass().getSimpleName());
     }
 
+    public boolean isHideOnContentScrollEnabled() {
+        return this.mHideOnContentScroll;
+    }
+
     public void setHideOnContentScrollEnabled(boolean hideOnContentScroll) {
         if (hideOnContentScroll != this.mHideOnContentScroll) {
             this.mHideOnContentScroll = hideOnContentScroll;
@@ -468,10 +457,6 @@ public class ActionBarOverlayLayout extends ViewGroup implements DecorContentPar
                 setActionBarHideOffset(0);
             }
         }
-    }
-
-    public boolean isHideOnContentScrollEnabled() {
-        return this.mHideOnContentScroll;
     }
 
     public int getActionBarHideOffset() {
@@ -624,6 +609,21 @@ public class ActionBarOverlayLayout extends ViewGroup implements DecorContentPar
     public void dismissPopups() {
         pullChildren();
         this.mDecorToolbar.dismissPopupMenus();
+    }
+
+    /* renamed from: android.support.v7.widget.ActionBarOverlayLayout$ActionBarVisibilityCallback */
+    public interface ActionBarVisibilityCallback {
+        void enableContentAnimations(boolean z);
+
+        void hideForSystem();
+
+        void onContentScrollStarted();
+
+        void onContentScrollStopped();
+
+        void onWindowVisibilityChanged(int i);
+
+        void showForSystem();
     }
 
     /* renamed from: android.support.v7.widget.ActionBarOverlayLayout$LayoutParams */

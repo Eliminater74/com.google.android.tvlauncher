@@ -23,31 +23,31 @@ import android.support.p004v7.view.menu.MenuPresenter;
 import android.support.p004v7.view.menu.MenuView;
 import android.support.p004v7.view.menu.ShowableListMenu;
 import android.support.p004v7.view.menu.SubMenuBuilder;
-import android.support.p004v7.widget.ActionMenuView;
 import android.util.SparseBooleanArray;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+
 import java.util.ArrayList;
 
 /* renamed from: android.support.v7.widget.ActionMenuPresenter */
 class ActionMenuPresenter extends BaseMenuPresenter implements ActionProvider.SubUiVisibilityListener {
     private static final String TAG = "ActionMenuPresenter";
+    final PopupPresenterCallback mPopupPresenterCallback = new PopupPresenterCallback();
     private final SparseBooleanArray mActionButtonGroups = new SparseBooleanArray();
     ActionButtonSubmenu mActionButtonPopup;
+    int mOpenSubMenuId;
+    OverflowMenuButton mOverflowButton;
+    OverflowPopup mOverflowPopup;
+    OpenOverflowRunnable mPostedOpenRunnable;
     private int mActionItemWidthLimit;
     private boolean mExpandedActionViewsExclusive;
     private int mMaxItems;
     private boolean mMaxItemsSet;
     private int mMinCellSize;
-    int mOpenSubMenuId;
-    OverflowMenuButton mOverflowButton;
-    OverflowPopup mOverflowPopup;
     private Drawable mPendingOverflowIcon;
     private boolean mPendingOverflowIconSet;
     private ActionMenuPopupCallback mPopupCallback;
-    final PopupPresenterCallback mPopupPresenterCallback = new PopupPresenterCallback();
-    OpenOverflowRunnable mPostedOpenRunnable;
     private boolean mReserveOverflow;
     private boolean mReserveOverflowSet;
     private View mScrapActionButtonView;
@@ -122,16 +122,6 @@ class ActionMenuPresenter extends BaseMenuPresenter implements ActionProvider.Su
         this.mExpandedActionViewsExclusive = isExclusive;
     }
 
-    public void setOverflowIcon(Drawable icon) {
-        OverflowMenuButton overflowMenuButton = this.mOverflowButton;
-        if (overflowMenuButton != null) {
-            overflowMenuButton.setImageDrawable(icon);
-            return;
-        }
-        this.mPendingOverflowIconSet = true;
-        this.mPendingOverflowIcon = icon;
-    }
-
     public Drawable getOverflowIcon() {
         OverflowMenuButton overflowMenuButton = this.mOverflowButton;
         if (overflowMenuButton != null) {
@@ -141,6 +131,16 @@ class ActionMenuPresenter extends BaseMenuPresenter implements ActionProvider.Su
             return this.mPendingOverflowIcon;
         }
         return null;
+    }
+
+    public void setOverflowIcon(Drawable icon) {
+        OverflowMenuButton overflowMenuButton = this.mOverflowButton;
+        if (overflowMenuButton != null) {
+            overflowMenuButton.setImageDrawable(icon);
+            return;
+        }
+        this.mPendingOverflowIconSet = true;
+        this.mPendingOverflowIcon = icon;
     }
 
     public MenuView getMenuView(ViewGroup root) {

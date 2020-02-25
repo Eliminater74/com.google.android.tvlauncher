@@ -7,33 +7,30 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelectionUtil;
 import com.google.android.exoplayer2.util.Assertions;
+
 import java.util.Collections;
 import java.util.List;
 
 /* renamed from: com.google.android.exoplayer2.ui.TrackSelectionDialogBuilder */
 public final class TrackSelectionDialogBuilder {
-    private boolean allowAdaptiveSelections;
-    private boolean allowMultipleOverrides;
     private final DialogCallback callback;
     private final Context context;
-    private boolean isDisabled;
     private final MappingTrackSelector.MappedTrackInfo mappedTrackInfo;
-    private List<DefaultTrackSelector.SelectionOverride> overrides;
     private final int rendererIndex;
-    private boolean showDisableOption;
     private final CharSequence title;
+    private boolean allowAdaptiveSelections;
+    private boolean allowMultipleOverrides;
+    private boolean isDisabled;
+    private List<DefaultTrackSelector.SelectionOverride> overrides;
+    private boolean showDisableOption;
     @Nullable
     private TrackNameProvider trackNameProvider;
-
-    /* renamed from: com.google.android.exoplayer2.ui.TrackSelectionDialogBuilder$DialogCallback */
-    public interface DialogCallback {
-        void onTracksSelected(boolean z, List<DefaultTrackSelector.SelectionOverride> list);
-    }
 
     public TrackSelectionDialogBuilder(Context context2, CharSequence title2, MappingTrackSelector.MappedTrackInfo mappedTrackInfo2, int rendererIndex2, DialogCallback callback2) {
         this.context = context2;
@@ -113,5 +110,10 @@ public final class TrackSelectionDialogBuilder {
     /* access modifiers changed from: package-private */
     public final /* synthetic */ void lambda$build$1$TrackSelectionDialogBuilder(TrackSelectionView selectionView, DialogInterface dialog, int which) {
         this.callback.onTracksSelected(selectionView.getIsDisabled(), selectionView.getOverrides());
+    }
+
+    /* renamed from: com.google.android.exoplayer2.ui.TrackSelectionDialogBuilder$DialogCallback */
+    public interface DialogCallback {
+        void onTracksSelected(boolean z, List<DefaultTrackSelector.SelectionOverride> list);
     }
 }

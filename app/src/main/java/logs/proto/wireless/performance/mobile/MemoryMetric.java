@@ -14,12 +14,18 @@ import com.google.protobuf.ProtoMessage;
 import com.google.protobuf.ProtoPresenceBits;
 import com.google.protobuf.ProtoPresenceCheckedField;
 import com.google.protobuf.ProtoSyntax;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import logs.proto.wireless.performance.mobile.ProcessProto;
 
 public final class MemoryMetric {
+
+    private MemoryMetric() {
+    }
+
+    public static void registerAllExtensions(ExtensionRegistryLite registry) {
+    }
 
     public interface AndroidMemoryStatsOrBuilder extends MessageLiteOrBuilder {
         int getAvailableMemoryKb();
@@ -153,12 +159,6 @@ public final class MemoryMetric {
         boolean hasProcessStats();
     }
 
-    private MemoryMetric() {
-    }
-
-    public static void registerAllExtensions(ExtensionRegistryLite registry) {
-    }
-
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
     public static final class MemoryUsageMetric extends GeneratedMessageLite.ExtendableMessage<MemoryUsageMetric, Builder> implements MemoryUsageMetricOrBuilder {
         public static final int ACTIVITY_NAME_FIELD_NUMBER = 5;
@@ -167,8 +167,13 @@ public final class MemoryMetric {
         public static final int DEVICE_STATS_FIELD_NUMBER = 4;
         public static final int MEMORY_EVENT_CODE_FIELD_NUMBER = 3;
         public static final int MEMORY_STATS_FIELD_NUMBER = 1;
-        private static volatile Parser<MemoryUsageMetric> PARSER = null;
         public static final int PROCESS_STATS_FIELD_NUMBER = 2;
+        private static volatile Parser<MemoryUsageMetric> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(MemoryUsageMetric.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoField(fieldNumber = 5, isEnforceUtf8 = false, isRequired = false, type = FieldType.STRING)
         @ProtoPresenceCheckedField(mask = 16, presenceBitsId = 0)
         private String activityName_ = "";
@@ -191,76 +196,68 @@ public final class MemoryMetric {
         private MemoryUsageMetric() {
         }
 
-        public enum MemoryEventCode implements Internal.EnumLite {
-            UNKNOWN(0),
-            APP_CREATED(1),
-            APP_TO_BACKGROUND(2),
-            APP_TO_FOREGROUND(3),
-            APP_IN_BACKGROUND_FOR_SECONDS(4),
-            APP_IN_FOREGROUND_FOR_SECONDS(5),
-            DELTA_OF_MEMORY(6);
-            
-            public static final int APP_CREATED_VALUE = 1;
-            public static final int APP_IN_BACKGROUND_FOR_SECONDS_VALUE = 4;
-            public static final int APP_IN_FOREGROUND_FOR_SECONDS_VALUE = 5;
-            public static final int APP_TO_BACKGROUND_VALUE = 2;
-            public static final int APP_TO_FOREGROUND_VALUE = 3;
-            public static final int DELTA_OF_MEMORY_VALUE = 6;
-            public static final int UNKNOWN_VALUE = 0;
-            private static final Internal.EnumLiteMap<MemoryEventCode> internalValueMap = new Internal.EnumLiteMap<MemoryEventCode>() {
-                public MemoryEventCode findValueByNumber(int number) {
-                    return MemoryEventCode.forNumber(number);
-                }
-            };
-            private final int value;
+        public static MemoryUsageMetric parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (MemoryUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
 
-            public final int getNumber() {
-                return this.value;
-            }
+        public static MemoryUsageMetric parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (MemoryUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-            public static MemoryEventCode forNumber(int value2) {
-                switch (value2) {
-                    case 0:
-                        return UNKNOWN;
-                    case 1:
-                        return APP_CREATED;
-                    case 2:
-                        return APP_TO_BACKGROUND;
-                    case 3:
-                        return APP_TO_FOREGROUND;
-                    case 4:
-                        return APP_IN_BACKGROUND_FOR_SECONDS;
-                    case 5:
-                        return APP_IN_FOREGROUND_FOR_SECONDS;
-                    case 6:
-                        return DELTA_OF_MEMORY;
-                    default:
-                        return null;
-                }
-            }
+        public static MemoryUsageMetric parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (MemoryUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
 
-            public static Internal.EnumLiteMap<MemoryEventCode> internalGetValueMap() {
-                return internalValueMap;
-            }
+        public static MemoryUsageMetric parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (MemoryUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-            public static Internal.EnumVerifier internalGetVerifier() {
-                return MemoryEventCodeVerifier.INSTANCE;
-            }
+        public static MemoryUsageMetric parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (MemoryUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
 
-            private static final class MemoryEventCodeVerifier implements Internal.EnumVerifier {
-                static final Internal.EnumVerifier INSTANCE = new MemoryEventCodeVerifier();
+        public static MemoryUsageMetric parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (MemoryUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-                private MemoryEventCodeVerifier() {
-                }
+        public static MemoryUsageMetric parseFrom(InputStream input) throws IOException {
+            return (MemoryUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
 
-                public boolean isInRange(int number) {
-                    return MemoryEventCode.forNumber(number) != null;
-                }
-            }
+        public static MemoryUsageMetric parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (MemoryUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
 
-            private MemoryEventCode(int value2) {
-                this.value = value2;
-            }
+        public static MemoryUsageMetric parseDelimitedFrom(InputStream input) throws IOException {
+            return (MemoryUsageMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static MemoryUsageMetric parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (MemoryUsageMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static MemoryUsageMetric parseFrom(CodedInputStream input) throws IOException {
+            return (MemoryUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static MemoryUsageMetric parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (MemoryUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(MemoryUsageMetric prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static MemoryUsageMetric getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<MemoryUsageMetric> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasMemoryStats() {
@@ -434,10 +431,6 @@ public final class MemoryMetric {
             return this.activityName_;
         }
 
-        public ByteString getActivityNameBytes() {
-            return ByteString.copyFromUtf8(this.activityName_);
-        }
-
         /* access modifiers changed from: private */
         public void setActivityName(String value) {
             if (value != null) {
@@ -448,10 +441,8 @@ public final class MemoryMetric {
             throw new NullPointerException();
         }
 
-        /* access modifiers changed from: private */
-        public void clearActivityName() {
-            this.bitField0_ &= -17;
-            this.activityName_ = getDefaultInstance().getActivityName();
+        public ByteString getActivityNameBytes() {
+            return ByteString.copyFromUtf8(this.activityName_);
         }
 
         /* access modifiers changed from: private */
@@ -464,60 +455,119 @@ public final class MemoryMetric {
             throw new NullPointerException();
         }
 
-        public static MemoryUsageMetric parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (MemoryUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        /* access modifiers changed from: private */
+        public void clearActivityName() {
+            this.bitField0_ &= -17;
+            this.activityName_ = getDefaultInstance().getActivityName();
         }
 
-        public static MemoryUsageMetric parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (MemoryUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            int i = 1;
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new MemoryUsageMetric();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0005\u0000\u0001\u0001\u0005\u0005\u0000\u0000\u0000\u0001\t\u0000\u0002\t\u0001\u0003\f\u0002\u0004\t\u0003\u0005\b\u0004", new Object[]{"bitField0_", "memoryStats_", "processStats_", "memoryEventCode_", MemoryEventCode.internalGetVerifier(), "deviceStats_", "activityName_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<MemoryUsageMetric> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (MemoryUsageMetric.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return Byte.valueOf(this.memoizedIsInitialized);
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    if (arg0 == null) {
+                        i = 0;
+                    }
+                    this.memoizedIsInitialized = (byte) i;
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
-        public static MemoryUsageMetric parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (MemoryUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
+        public enum MemoryEventCode implements Internal.EnumLite {
+            UNKNOWN(0),
+            APP_CREATED(1),
+            APP_TO_BACKGROUND(2),
+            APP_TO_FOREGROUND(3),
+            APP_IN_BACKGROUND_FOR_SECONDS(4),
+            APP_IN_FOREGROUND_FOR_SECONDS(5),
+            DELTA_OF_MEMORY(6);
 
-        public static MemoryUsageMetric parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (MemoryUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
+            public static final int APP_CREATED_VALUE = 1;
+            public static final int APP_IN_BACKGROUND_FOR_SECONDS_VALUE = 4;
+            public static final int APP_IN_FOREGROUND_FOR_SECONDS_VALUE = 5;
+            public static final int APP_TO_BACKGROUND_VALUE = 2;
+            public static final int APP_TO_FOREGROUND_VALUE = 3;
+            public static final int DELTA_OF_MEMORY_VALUE = 6;
+            public static final int UNKNOWN_VALUE = 0;
+            private static final Internal.EnumLiteMap<MemoryEventCode> internalValueMap = new Internal.EnumLiteMap<MemoryEventCode>() {
+                public MemoryEventCode findValueByNumber(int number) {
+                    return MemoryEventCode.forNumber(number);
+                }
+            };
+            private final int value;
 
-        public static MemoryUsageMetric parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (MemoryUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
+            private MemoryEventCode(int value2) {
+                this.value = value2;
+            }
 
-        public static MemoryUsageMetric parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (MemoryUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
+            public static MemoryEventCode forNumber(int value2) {
+                switch (value2) {
+                    case 0:
+                        return UNKNOWN;
+                    case 1:
+                        return APP_CREATED;
+                    case 2:
+                        return APP_TO_BACKGROUND;
+                    case 3:
+                        return APP_TO_FOREGROUND;
+                    case 4:
+                        return APP_IN_BACKGROUND_FOR_SECONDS;
+                    case 5:
+                        return APP_IN_FOREGROUND_FOR_SECONDS;
+                    case 6:
+                        return DELTA_OF_MEMORY;
+                    default:
+                        return null;
+                }
+            }
 
-        public static MemoryUsageMetric parseFrom(InputStream input) throws IOException {
-            return (MemoryUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
+            public static Internal.EnumLiteMap<MemoryEventCode> internalGetValueMap() {
+                return internalValueMap;
+            }
 
-        public static MemoryUsageMetric parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (MemoryUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
+            public static Internal.EnumVerifier internalGetVerifier() {
+                return MemoryEventCodeVerifier.INSTANCE;
+            }
 
-        public static MemoryUsageMetric parseDelimitedFrom(InputStream input) throws IOException {
-            return (MemoryUsageMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
+            public final int getNumber() {
+                return this.value;
+            }
 
-        public static MemoryUsageMetric parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (MemoryUsageMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
+            private static final class MemoryEventCodeVerifier implements Internal.EnumVerifier {
+                static final Internal.EnumVerifier INSTANCE = new MemoryEventCodeVerifier();
 
-        public static MemoryUsageMetric parseFrom(CodedInputStream input) throws IOException {
-            return (MemoryUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
+                private MemoryEventCodeVerifier() {
+                }
 
-        public static MemoryUsageMetric parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (MemoryUsageMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(MemoryUsageMetric prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+                public boolean isInRange(int number) {
+                    return MemoryEventCode.forNumber(number) != null;
+                }
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.ExtendableBuilder<MemoryUsageMetric, Builder> implements MemoryUsageMetricOrBuilder {
@@ -649,13 +699,19 @@ public final class MemoryMetric {
                 return ((MemoryUsageMetric) this.instance).getActivityName();
             }
 
+            public Builder setActivityName(String value) {
+                copyOnWrite();
+                ((MemoryUsageMetric) this.instance).setActivityName(value);
+                return this;
+            }
+
             public ByteString getActivityNameBytes() {
                 return ((MemoryUsageMetric) this.instance).getActivityNameBytes();
             }
 
-            public Builder setActivityName(String value) {
+            public Builder setActivityNameBytes(ByteString value) {
                 copyOnWrite();
-                ((MemoryUsageMetric) this.instance).setActivityName(value);
+                ((MemoryUsageMetric) this.instance).setActivityNameBytes(value);
                 return this;
             }
 
@@ -664,61 +720,6 @@ public final class MemoryMetric {
                 ((MemoryUsageMetric) this.instance).clearActivityName();
                 return this;
             }
-
-            public Builder setActivityNameBytes(ByteString value) {
-                copyOnWrite();
-                ((MemoryUsageMetric) this.instance).setActivityNameBytes(value);
-                return this;
-            }
-        }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            int i = 1;
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new MemoryUsageMetric();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0005\u0000\u0001\u0001\u0005\u0005\u0000\u0000\u0000\u0001\t\u0000\u0002\t\u0001\u0003\f\u0002\u0004\t\u0003\u0005\b\u0004", new Object[]{"bitField0_", "memoryStats_", "processStats_", "memoryEventCode_", MemoryEventCode.internalGetVerifier(), "deviceStats_", "activityName_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<MemoryUsageMetric> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (MemoryUsageMetric.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return Byte.valueOf(this.memoizedIsInitialized);
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    if (arg0 == null) {
-                        i = 0;
-                    }
-                    this.memoizedIsInitialized = (byte) i;
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(MemoryUsageMetric.class, DEFAULT_INSTANCE);
-        }
-
-        public static MemoryUsageMetric getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<MemoryUsageMetric> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
         }
     }
 
@@ -729,6 +730,11 @@ public final class MemoryMetric {
         public static final MemoryStats DEFAULT_INSTANCE = new MemoryStats();
         public static final int IOS_MEMORY_STATS_FIELD_NUMBER = 2;
         private static volatile Parser<MemoryStats> PARSER;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(MemoryStats.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.MESSAGE)
         @ProtoPresenceCheckedField(mask = 1, presenceBitsId = 0)
         private AndroidMemoryStats androidMemoryStats_;
@@ -739,6 +745,70 @@ public final class MemoryMetric {
         private IosMemoryStats iosMemoryStats_;
 
         private MemoryStats() {
+        }
+
+        public static MemoryStats parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (MemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static MemoryStats parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (MemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static MemoryStats parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (MemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static MemoryStats parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (MemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static MemoryStats parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (MemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static MemoryStats parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (MemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static MemoryStats parseFrom(InputStream input) throws IOException {
+            return (MemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static MemoryStats parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (MemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static MemoryStats parseDelimitedFrom(InputStream input) throws IOException {
+            return (MemoryStats) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static MemoryStats parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (MemoryStats) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static MemoryStats parseFrom(CodedInputStream input) throws IOException {
+            return (MemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static MemoryStats parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (MemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(MemoryStats prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static MemoryStats getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<MemoryStats> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasAndroidMemoryStats() {
@@ -833,60 +903,36 @@ public final class MemoryMetric {
             this.bitField0_ &= -3;
         }
 
-        public static MemoryStats parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (MemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static MemoryStats parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (MemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static MemoryStats parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (MemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static MemoryStats parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (MemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static MemoryStats parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (MemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static MemoryStats parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (MemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static MemoryStats parseFrom(InputStream input) throws IOException {
-            return (MemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static MemoryStats parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (MemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static MemoryStats parseDelimitedFrom(InputStream input) throws IOException {
-            return (MemoryStats) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static MemoryStats parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (MemoryStats) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static MemoryStats parseFrom(CodedInputStream input) throws IOException {
-            return (MemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static MemoryStats parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (MemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(MemoryStats prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new MemoryStats();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0000\u0000\u0001\t\u0000\u0002\t\u0001", new Object[]{"bitField0_", "androidMemoryStats_", "iosMemoryStats_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<MemoryStats> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (MemoryStats.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<MemoryStats, Builder> implements MemoryStatsOrBuilder {
@@ -958,50 +1004,6 @@ public final class MemoryMetric {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new MemoryStats();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0000\u0000\u0001\t\u0000\u0002\t\u0001", new Object[]{"bitField0_", "androidMemoryStats_", "iosMemoryStats_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<MemoryStats> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (MemoryStats.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(MemoryStats.class, DEFAULT_INSTANCE);
-        }
-
-        public static MemoryStats getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<MemoryStats> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -1016,7 +1018,6 @@ public final class MemoryMetric {
         public static final int OTHER_GRAPHICS_PSS_KB_FIELD_NUMBER = 10;
         public static final int OTHER_PRIVATE_DIRTY_KB_FIELD_NUMBER = 6;
         public static final int OTHER_PSS_KB_FIELD_NUMBER = 3;
-        private static volatile Parser<AndroidMemoryStats> PARSER = null;
         public static final int SUMMARY_CODE_KB_FIELD_NUMBER = 12;
         public static final int SUMMARY_GRAPHICS_KB_FIELD_NUMBER = 14;
         public static final int SUMMARY_JAVA_HEAP_KB_FIELD_NUMBER = 11;
@@ -1028,6 +1029,12 @@ public final class MemoryMetric {
         public static final int TOTAL_PSS_BY_MEM_INFO_KB_FIELD_NUMBER = 19;
         public static final int TOTAL_SHARED_DIRTY_KB_FIELD_NUMBER = 8;
         public static final int TOTAL_SWAPPABLE_PSS_KB_FIELD_NUMBER = 9;
+        private static volatile Parser<AndroidMemoryStats> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(AndroidMemoryStats.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoField(fieldNumber = 17, isRequired = false, type = FieldType.INT32)
         @ProtoPresenceCheckedField(mask = 131072, presenceBitsId = 0)
         private int availableMemoryKb_;
@@ -1089,6 +1096,70 @@ public final class MemoryMetric {
         private int totalSwappablePssKb_;
 
         private AndroidMemoryStats() {
+        }
+
+        public static AndroidMemoryStats parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (AndroidMemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static AndroidMemoryStats parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (AndroidMemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static AndroidMemoryStats parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (AndroidMemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static AndroidMemoryStats parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (AndroidMemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static AndroidMemoryStats parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (AndroidMemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static AndroidMemoryStats parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (AndroidMemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static AndroidMemoryStats parseFrom(InputStream input) throws IOException {
+            return (AndroidMemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static AndroidMemoryStats parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (AndroidMemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static AndroidMemoryStats parseDelimitedFrom(InputStream input) throws IOException {
+            return (AndroidMemoryStats) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static AndroidMemoryStats parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (AndroidMemoryStats) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static AndroidMemoryStats parseFrom(CodedInputStream input) throws IOException {
+            return (AndroidMemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static AndroidMemoryStats parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (AndroidMemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(AndroidMemoryStats prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static AndroidMemoryStats getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<AndroidMemoryStats> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasDalvikPssKb() {
@@ -1471,60 +1542,36 @@ public final class MemoryMetric {
             this.totalMemoryMb_ = 0;
         }
 
-        public static AndroidMemoryStats parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (AndroidMemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static AndroidMemoryStats parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (AndroidMemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static AndroidMemoryStats parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (AndroidMemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static AndroidMemoryStats parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (AndroidMemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static AndroidMemoryStats parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (AndroidMemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static AndroidMemoryStats parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (AndroidMemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static AndroidMemoryStats parseFrom(InputStream input) throws IOException {
-            return (AndroidMemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static AndroidMemoryStats parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (AndroidMemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static AndroidMemoryStats parseDelimitedFrom(InputStream input) throws IOException {
-            return (AndroidMemoryStats) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static AndroidMemoryStats parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (AndroidMemoryStats) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static AndroidMemoryStats parseFrom(CodedInputStream input) throws IOException {
-            return (AndroidMemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static AndroidMemoryStats parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (AndroidMemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(AndroidMemoryStats prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new AndroidMemoryStats();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0013\u0000\u0001\u0001\u0013\u0013\u0000\u0000\u0000\u0001\u0004\u0000\u0002\u0004\u0001\u0003\u0004\u0002\u0004\u0004\u0003\u0005\u0004\u0004\u0006\u0004\u0005\u0007\u0004\u0007\b\u0004\b\t\u0004\t\n\u0004\n\u000b\u0004\u000b\f\u0004\f\r\u0004\r\u000e\u0004\u000e\u000f\u0004\u000f\u0010\u0004\u0010\u0011\u0004\u0011\u0012\u0004\u0012\u0013\u0004\u0006", new Object[]{"bitField0_", "dalvikPssKb_", "nativePssKb_", "otherPssKb_", "dalvikPrivateDirtyKb_", "nativePrivateDirtyKb_", "otherPrivateDirtyKb_", "totalPrivateCleanKb_", "totalSharedDirtyKb_", "totalSwappablePssKb_", "otherGraphicsPssKb_", "summaryJavaHeapKb_", "summaryCodeKb_", "summaryStackKb_", "summaryGraphicsKb_", "summaryPrivateOtherKb_", "summarySystemKb_", "availableMemoryKb_", "totalMemoryMb_", "totalPssByMemInfoKb_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<AndroidMemoryStats> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (AndroidMemoryStats.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<AndroidMemoryStats, Builder> implements AndroidMemoryStatsOrBuilder {
@@ -1912,50 +1959,6 @@ public final class MemoryMetric {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new AndroidMemoryStats();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0013\u0000\u0001\u0001\u0013\u0013\u0000\u0000\u0000\u0001\u0004\u0000\u0002\u0004\u0001\u0003\u0004\u0002\u0004\u0004\u0003\u0005\u0004\u0004\u0006\u0004\u0005\u0007\u0004\u0007\b\u0004\b\t\u0004\t\n\u0004\n\u000b\u0004\u000b\f\u0004\f\r\u0004\r\u000e\u0004\u000e\u000f\u0004\u000f\u0010\u0004\u0010\u0011\u0004\u0011\u0012\u0004\u0012\u0013\u0004\u0006", new Object[]{"bitField0_", "dalvikPssKb_", "nativePssKb_", "otherPssKb_", "dalvikPrivateDirtyKb_", "nativePrivateDirtyKb_", "otherPrivateDirtyKb_", "totalPrivateCleanKb_", "totalSharedDirtyKb_", "totalSwappablePssKb_", "otherGraphicsPssKb_", "summaryJavaHeapKb_", "summaryCodeKb_", "summaryStackKb_", "summaryGraphicsKb_", "summaryPrivateOtherKb_", "summarySystemKb_", "availableMemoryKb_", "totalMemoryMb_", "totalPssByMemInfoKb_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<AndroidMemoryStats> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (AndroidMemoryStats.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(AndroidMemoryStats.class, DEFAULT_INSTANCE);
-        }
-
-        public static AndroidMemoryStats getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<AndroidMemoryStats> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -1963,9 +1966,14 @@ public final class MemoryMetric {
         /* access modifiers changed from: private */
         public static final IosMemoryStats DEFAULT_INSTANCE = new IosMemoryStats();
         public static final int FREE_KB_FIELD_NUMBER = 2;
-        private static volatile Parser<IosMemoryStats> PARSER = null;
         public static final int TOTAL_MEMORY_MB_FIELD_NUMBER = 3;
         public static final int USED_KB_FIELD_NUMBER = 1;
+        private static volatile Parser<IosMemoryStats> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(IosMemoryStats.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 2, isRequired = false, type = FieldType.INT32)
@@ -1979,6 +1987,70 @@ public final class MemoryMetric {
         private int usedKb_;
 
         private IosMemoryStats() {
+        }
+
+        public static IosMemoryStats parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (IosMemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static IosMemoryStats parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (IosMemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static IosMemoryStats parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (IosMemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static IosMemoryStats parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (IosMemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static IosMemoryStats parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (IosMemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static IosMemoryStats parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (IosMemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static IosMemoryStats parseFrom(InputStream input) throws IOException {
+            return (IosMemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static IosMemoryStats parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (IosMemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static IosMemoryStats parseDelimitedFrom(InputStream input) throws IOException {
+            return (IosMemoryStats) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static IosMemoryStats parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (IosMemoryStats) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static IosMemoryStats parseFrom(CodedInputStream input) throws IOException {
+            return (IosMemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static IosMemoryStats parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (IosMemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(IosMemoryStats prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static IosMemoryStats getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<IosMemoryStats> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasUsedKb() {
@@ -2041,60 +2113,36 @@ public final class MemoryMetric {
             this.totalMemoryMb_ = 0;
         }
 
-        public static IosMemoryStats parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (IosMemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static IosMemoryStats parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (IosMemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static IosMemoryStats parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (IosMemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static IosMemoryStats parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (IosMemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static IosMemoryStats parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (IosMemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static IosMemoryStats parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (IosMemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static IosMemoryStats parseFrom(InputStream input) throws IOException {
-            return (IosMemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static IosMemoryStats parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (IosMemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static IosMemoryStats parseDelimitedFrom(InputStream input) throws IOException {
-            return (IosMemoryStats) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static IosMemoryStats parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (IosMemoryStats) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static IosMemoryStats parseFrom(CodedInputStream input) throws IOException {
-            return (IosMemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static IosMemoryStats parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (IosMemoryStats) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(IosMemoryStats prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new IosMemoryStats();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0003\u0000\u0001\u0001\u0003\u0003\u0000\u0000\u0000\u0001\u0004\u0000\u0002\u0004\u0001\u0003\u0004\u0002", new Object[]{"bitField0_", "usedKb_", "freeKb_", "totalMemoryMb_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<IosMemoryStats> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (IosMemoryStats.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<IosMemoryStats, Builder> implements IosMemoryStatsOrBuilder {
@@ -2162,50 +2210,6 @@ public final class MemoryMetric {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new IosMemoryStats();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0003\u0000\u0001\u0001\u0003\u0003\u0000\u0000\u0000\u0001\u0004\u0000\u0002\u0004\u0001\u0003\u0004\u0002", new Object[]{"bitField0_", "usedKb_", "freeKb_", "totalMemoryMb_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<IosMemoryStats> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (IosMemoryStats.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(IosMemoryStats.class, DEFAULT_INSTANCE);
-        }
-
-        public static IosMemoryStats getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<IosMemoryStats> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -2214,6 +2218,11 @@ public final class MemoryMetric {
         public static final DeviceStats DEFAULT_INSTANCE = new DeviceStats();
         public static final int IS_SCREEN_ON_FIELD_NUMBER = 1;
         private static volatile Parser<DeviceStats> PARSER;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(DeviceStats.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.BOOL)
@@ -2221,26 +2230,6 @@ public final class MemoryMetric {
         private boolean isScreenOn_;
 
         private DeviceStats() {
-        }
-
-        public boolean hasIsScreenOn() {
-            return (this.bitField0_ & 1) != 0;
-        }
-
-        public boolean getIsScreenOn() {
-            return this.isScreenOn_;
-        }
-
-        /* access modifiers changed from: private */
-        public void setIsScreenOn(boolean value) {
-            this.bitField0_ |= 1;
-            this.isScreenOn_ = value;
-        }
-
-        /* access modifiers changed from: private */
-        public void clearIsScreenOn() {
-            this.bitField0_ &= -2;
-            this.isScreenOn_ = false;
         }
 
         public static DeviceStats parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
@@ -2299,30 +2288,32 @@ public final class MemoryMetric {
             return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
         }
 
-        public static final class Builder extends GeneratedMessageLite.Builder<DeviceStats, Builder> implements DeviceStatsOrBuilder {
-            private Builder() {
-                super(DeviceStats.DEFAULT_INSTANCE);
-            }
+        public static DeviceStats getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
 
-            public boolean hasIsScreenOn() {
-                return ((DeviceStats) this.instance).hasIsScreenOn();
-            }
+        public static Parser<DeviceStats> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
+        }
 
-            public boolean getIsScreenOn() {
-                return ((DeviceStats) this.instance).getIsScreenOn();
-            }
+        public boolean hasIsScreenOn() {
+            return (this.bitField0_ & 1) != 0;
+        }
 
-            public Builder setIsScreenOn(boolean value) {
-                copyOnWrite();
-                ((DeviceStats) this.instance).setIsScreenOn(value);
-                return this;
-            }
+        public boolean getIsScreenOn() {
+            return this.isScreenOn_;
+        }
 
-            public Builder clearIsScreenOn() {
-                copyOnWrite();
-                ((DeviceStats) this.instance).clearIsScreenOn();
-                return this;
-            }
+        /* access modifiers changed from: private */
+        public void setIsScreenOn(boolean value) {
+            this.bitField0_ |= 1;
+            this.isScreenOn_ = value;
+        }
+
+        /* access modifiers changed from: private */
+        public void clearIsScreenOn() {
+            this.bitField0_ &= -2;
+            this.isScreenOn_ = false;
         }
 
         /* access modifiers changed from: protected */
@@ -2357,16 +2348,30 @@ public final class MemoryMetric {
             }
         }
 
-        static {
-            GeneratedMessageLite.registerDefaultInstance(DeviceStats.class, DEFAULT_INSTANCE);
-        }
+        public static final class Builder extends GeneratedMessageLite.Builder<DeviceStats, Builder> implements DeviceStatsOrBuilder {
+            private Builder() {
+                super(DeviceStats.DEFAULT_INSTANCE);
+            }
 
-        public static DeviceStats getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
+            public boolean hasIsScreenOn() {
+                return ((DeviceStats) this.instance).hasIsScreenOn();
+            }
 
-        public static Parser<DeviceStats> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
+            public boolean getIsScreenOn() {
+                return ((DeviceStats) this.instance).getIsScreenOn();
+            }
+
+            public Builder setIsScreenOn(boolean value) {
+                copyOnWrite();
+                ((DeviceStats) this.instance).setIsScreenOn(value);
+                return this;
+            }
+
+            public Builder clearIsScreenOn() {
+                copyOnWrite();
+                ((DeviceStats) this.instance).clearIsScreenOn();
+                return this;
+            }
         }
     }
 }

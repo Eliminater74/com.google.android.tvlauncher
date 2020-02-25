@@ -2,7 +2,9 @@ package com.google.android.libraries.performance.primes.sampling;
 
 import android.content.Context;
 import android.provider.Settings;
+
 import com.google.android.gsf.GservicesKeys;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

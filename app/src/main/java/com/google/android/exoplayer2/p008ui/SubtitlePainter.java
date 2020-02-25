@@ -16,6 +16,7 @@ import android.text.TextUtils;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.BackgroundColorSpan;
 import android.text.style.RelativeSizeSpan;
+
 import com.google.android.exoplayer2.text.CaptionStyleCompat;
 import com.google.android.exoplayer2.text.Cue;
 import com.google.android.exoplayer2.util.Log;
@@ -25,6 +26,13 @@ import com.google.android.exoplayer2.util.Util;
 final class SubtitlePainter {
     private static final float INNER_PADDING_RATIO = 0.125f;
     private static final String TAG = "SubtitlePainter";
+    private final float outlineWidth;
+    private final Paint paint;
+    private final float shadowOffset;
+    private final float shadowRadius;
+    private final float spacingAdd;
+    private final float spacingMult;
+    private final TextPaint textPaint = new TextPaint();
     private boolean applyEmbeddedFontSizes;
     private boolean applyEmbeddedStyles;
     private int backgroundColor;
@@ -45,20 +53,13 @@ final class SubtitlePainter {
     private int edgeColor;
     private int edgeType;
     private int foregroundColor;
-    private final float outlineWidth;
-    private final Paint paint;
     private int parentBottom;
     private int parentLeft;
     private int parentRight;
     private int parentTop;
-    private final float shadowOffset;
-    private final float shadowRadius;
-    private final float spacingAdd;
-    private final float spacingMult;
     private StaticLayout textLayout;
     private int textLeft;
     private int textPaddingX;
-    private final TextPaint textPaint = new TextPaint();
     private int textTop;
     private int windowColor;
 
@@ -76,6 +77,10 @@ final class SubtitlePainter {
         this.paint = new Paint();
         this.paint.setAntiAlias(true);
         this.paint.setStyle(Paint.Style.FILL);
+    }
+
+    private static boolean areCharSequencesEqual(CharSequence first, CharSequence second) {
+        return first == second || (first != null && first.equals(second));
     }
 
     public void draw(Cue cue, boolean applyEmbeddedStyles2, boolean applyEmbeddedFontSizes2, CaptionStyleCompat style, float defaultTextSizePx2, float cueTextSizePx2, float bottomPaddingFraction2, Canvas canvas, int cueBoxLeft, int cueBoxTop, int cueBoxRight, int cueBoxBottom) {
@@ -372,9 +377,5 @@ final class SubtitlePainter {
 
     private void drawBitmapLayout(Canvas canvas) {
         canvas.drawBitmap(this.cueBitmap, (Rect) null, this.bitmapRect, (Paint) null);
-    }
-
-    private static boolean areCharSequencesEqual(CharSequence first, CharSequence second) {
-        return first == second || (first != null && first.equals(second));
     }
 }

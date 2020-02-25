@@ -11,16 +11,20 @@ import android.view.ViewGroup;
 public abstract class FragmentPagerAdapter extends PagerAdapter {
     private static final boolean DEBUG = false;
     private static final String TAG = "FragmentPagerAdapter";
+    private final FragmentManager mFragmentManager;
     private FragmentTransaction mCurTransaction = null;
     private Fragment mCurrentPrimaryItem = null;
-    private final FragmentManager mFragmentManager;
-
-    @NonNull
-    public abstract Fragment getItem(int i);
 
     public FragmentPagerAdapter(@NonNull FragmentManager fm) {
         this.mFragmentManager = fm;
     }
+
+    private static String makeFragmentName(int viewId, long id) {
+        return "android:switcher:" + viewId + ":" + id;
+    }
+
+    @NonNull
+    public abstract Fragment getItem(int i);
 
     public void startUpdate(@NonNull ViewGroup container) {
         if (container.getId() == -1) {
@@ -91,9 +95,5 @@ public abstract class FragmentPagerAdapter extends PagerAdapter {
 
     public long getItemId(int position) {
         return (long) position;
-    }
-
-    private static String makeFragmentName(int viewId, long id) {
-        return "android:switcher:" + viewId + ":" + id;
     }
 }

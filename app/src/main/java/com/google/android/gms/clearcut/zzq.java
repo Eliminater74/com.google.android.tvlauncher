@@ -1,6 +1,7 @@
 package com.google.android.gms.clearcut;
 
 import android.os.Parcelable;
+
 import com.google.android.gms.common.internal.Hide;
 
 @Hide

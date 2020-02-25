@@ -3,6 +3,7 @@ package com.bumptech.glide.gifdecoder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
+
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -10,6 +11,7 @@ import java.util.Arrays;
 
 public class GifHeaderParser {
     static final int DEFAULT_FRAME_DELAY = 10;
+    static final int MIN_FRAME_DELAY = 2;
     private static final int DESCRIPTOR_MASK_INTERLACE_FLAG = 64;
     private static final int DESCRIPTOR_MASK_LCT_FLAG = 128;
     private static final int DESCRIPTOR_MASK_LCT_SIZE = 7;
@@ -26,7 +28,6 @@ public class GifHeaderParser {
     private static final int LSD_MASK_GCT_SIZE = 7;
     private static final int MASK_INT_LOWEST_BYTE = 255;
     private static final int MAX_BLOCK_SIZE = 256;
-    static final int MIN_FRAME_DELAY = 2;
     private static final String TAG = "GifHeaderParser";
     private static final int TRAILER = 59;
     private final byte[] block = new byte[256];

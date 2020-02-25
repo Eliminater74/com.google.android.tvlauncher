@@ -15,6 +15,11 @@ public final class SavedStateRegistryController {
     }
 
     @NonNull
+    public static SavedStateRegistryController create(@NonNull SavedStateRegistryOwner owner) {
+        return new SavedStateRegistryController(owner);
+    }
+
+    @NonNull
     public SavedStateRegistry getSavedStateRegistry() {
         return this.mRegistry;
     }
@@ -33,10 +38,5 @@ public final class SavedStateRegistryController {
     @MainThread
     public void performSave(@NonNull Bundle outBundle) {
         this.mRegistry.performSave(outBundle);
-    }
-
-    @NonNull
-    public static SavedStateRegistryController create(@NonNull SavedStateRegistryOwner owner) {
-        return new SavedStateRegistryController(owner);
     }
 }

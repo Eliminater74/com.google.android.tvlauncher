@@ -2,16 +2,18 @@ package com.bumptech.glide.load.data;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
+
 import com.bumptech.glide.load.engine.bitmap_recycle.ArrayPool;
+
 import java.io.IOException;
 import java.io.OutputStream;
 
 public final class BufferedOutputStream extends OutputStream {
+    @NonNull
+    private final OutputStream out;
     private ArrayPool arrayPool;
     private byte[] buffer;
     private int index;
-    @NonNull
-    private final OutputStream out;
 
     public BufferedOutputStream(@NonNull OutputStream out2, @NonNull ArrayPool arrayPool2) {
         this(out2, arrayPool2, 65536);

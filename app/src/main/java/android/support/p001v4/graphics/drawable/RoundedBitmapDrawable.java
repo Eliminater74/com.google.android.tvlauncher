@@ -14,24 +14,44 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
+
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
 
 /* renamed from: android.support.v4.graphics.drawable.RoundedBitmapDrawable */
 public abstract class RoundedBitmapDrawable extends Drawable {
     private static final int DEFAULT_PAINT_FLAGS = 3;
-    private boolean mApplyGravity = true;
     final Bitmap mBitmap;
-    private int mBitmapHeight;
-    private final BitmapShader mBitmapShader;
-    private int mBitmapWidth;
-    private float mCornerRadius;
     final Rect mDstRect = new Rect();
+    private final BitmapShader mBitmapShader;
     private final RectF mDstRectF = new RectF();
-    private int mGravity = 119;
-    private boolean mIsCircular;
     private final Paint mPaint = new Paint(3);
     private final Matrix mShaderMatrix = new Matrix();
+    private boolean mApplyGravity = true;
+    private int mBitmapHeight;
+    private int mBitmapWidth;
+    private float mCornerRadius;
+    private int mGravity = 119;
+    private boolean mIsCircular;
     private int mTargetDensity = ClientAnalytics.LogRequest.LogSource.JAM_KIOSK_ANDROID_PRIMES_VALUE;
+
+    RoundedBitmapDrawable(Resources res, Bitmap bitmap) {
+        if (res != null) {
+            this.mTargetDensity = res.getDisplayMetrics().densityDpi;
+        }
+        this.mBitmap = bitmap;
+        if (this.mBitmap != null) {
+            computeBitmapSize();
+            this.mBitmapShader = new BitmapShader(this.mBitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
+            return;
+        }
+        this.mBitmapHeight = -1;
+        this.mBitmapWidth = -1;
+        this.mBitmapShader = null;
+    }
+
+    private static boolean isGreaterThanZero(float toCompare) {
+        return toCompare > 0.05f;
+    }
 
     @NonNull
     public final Paint getPaint() {
@@ -147,6 +167,10 @@ public abstract class RoundedBitmapDrawable extends Drawable {
         }
     }
 
+    public int getAlpha() {
+        return this.mPaint.getAlpha();
+    }
+
     public void setAlpha(int alpha) {
         if (alpha != this.mPaint.getAlpha()) {
             this.mPaint.setAlpha(alpha);
@@ -154,8 +178,8 @@ public abstract class RoundedBitmapDrawable extends Drawable {
         }
     }
 
-    public int getAlpha() {
-        return this.mPaint.getAlpha();
+    public ColorFilter getColorFilter() {
+        return this.mPaint.getColorFilter();
     }
 
     public void setColorFilter(ColorFilter cf) {
@@ -163,8 +187,12 @@ public abstract class RoundedBitmapDrawable extends Drawable {
         invalidateSelf();
     }
 
-    public ColorFilter getColorFilter() {
-        return this.mPaint.getColorFilter();
+    private void updateCircularCornerRadius() {
+        this.mCornerRadius = (float) (Math.min(this.mBitmapHeight, this.mBitmapWidth) / 2);
+    }
+
+    public boolean isCircular() {
+        return this.mIsCircular;
     }
 
     public void setCircular(boolean circular) {
@@ -179,12 +207,17 @@ public abstract class RoundedBitmapDrawable extends Drawable {
         setCornerRadius(0.0f);
     }
 
-    private void updateCircularCornerRadius() {
-        this.mCornerRadius = (float) (Math.min(this.mBitmapHeight, this.mBitmapWidth) / 2);
+    /* access modifiers changed from: protected */
+    public void onBoundsChange(Rect bounds) {
+        super.onBoundsChange(bounds);
+        if (this.mIsCircular) {
+            updateCircularCornerRadius();
+        }
+        this.mApplyGravity = true;
     }
 
-    public boolean isCircular() {
-        return this.mIsCircular;
+    public float getCornerRadius() {
+        return this.mCornerRadius;
     }
 
     public void setCornerRadius(float cornerRadius) {
@@ -198,19 +231,6 @@ public abstract class RoundedBitmapDrawable extends Drawable {
             this.mCornerRadius = cornerRadius;
             invalidateSelf();
         }
-    }
-
-    /* access modifiers changed from: protected */
-    public void onBoundsChange(Rect bounds) {
-        super.onBoundsChange(bounds);
-        if (this.mIsCircular) {
-            updateCircularCornerRadius();
-        }
-        this.mApplyGravity = true;
-    }
-
-    public float getCornerRadius() {
-        return this.mCornerRadius;
     }
 
     public int getIntrinsicWidth() {
@@ -227,24 +247,5 @@ public abstract class RoundedBitmapDrawable extends Drawable {
             return -3;
         }
         return -1;
-    }
-
-    RoundedBitmapDrawable(Resources res, Bitmap bitmap) {
-        if (res != null) {
-            this.mTargetDensity = res.getDisplayMetrics().densityDpi;
-        }
-        this.mBitmap = bitmap;
-        if (this.mBitmap != null) {
-            computeBitmapSize();
-            this.mBitmapShader = new BitmapShader(this.mBitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
-            return;
-        }
-        this.mBitmapHeight = -1;
-        this.mBitmapWidth = -1;
-        this.mBitmapShader = null;
-    }
-
-    private static boolean isGreaterThanZero(float toCompare) {
-        return toCompare > 0.05f;
     }
 }

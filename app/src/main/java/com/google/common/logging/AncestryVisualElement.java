@@ -16,6 +16,7 @@ import com.google.protobuf.ProtoMessage;
 import com.google.protobuf.ProtoPresenceBits;
 import com.google.protobuf.ProtoPresenceCheckedField;
 import com.google.protobuf.ProtoSyntax;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -23,6 +24,12 @@ import java.util.Collections;
 import java.util.List;
 
 public final class AncestryVisualElement {
+
+    private AncestryVisualElement() {
+    }
+
+    public static void registerAllExtensions(ExtensionRegistryLite registry) {
+    }
 
     public interface AncestryVisualElementProtoOrBuilder extends MessageLiteOrBuilder {
         UserActionEnum.CardinalDirection getCardinalDirection();
@@ -48,12 +55,6 @@ public final class AncestryVisualElement {
         boolean hasUserAction();
     }
 
-    private AncestryVisualElement() {
-    }
-
-    public static void registerAllExtensions(ExtensionRegistryLite registry) {
-    }
-
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
     public static final class AncestryVisualElementProto extends GeneratedMessageLite<AncestryVisualElementProto, Builder> implements AncestryVisualElementProtoOrBuilder {
         public static final int CARDINAL_DIRECTION_FIELD_NUMBER = 7;
@@ -61,9 +62,14 @@ public final class AncestryVisualElement {
         public static final AncestryVisualElementProto DEFAULT_INSTANCE = new AncestryVisualElementProto();
         public static final int ELEMENT_ID_FIELD_NUMBER = 1;
         public static final int ELEMENT_INDEX_FIELD_NUMBER = 2;
-        private static volatile Parser<AncestryVisualElementProto> PARSER = null;
         public static final int PATH_TO_ROOT_ELEMENT_ID_FIELD_NUMBER = 3;
         public static final int USER_ACTION_FIELD_NUMBER = 4;
+        private static volatile Parser<AncestryVisualElementProto> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(AncestryVisualElementProto.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 7, isRequired = false, type = FieldType.ENUM)
@@ -82,6 +88,70 @@ public final class AncestryVisualElement {
         private int userAction_;
 
         private AncestryVisualElementProto() {
+        }
+
+        public static AncestryVisualElementProto parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (AncestryVisualElementProto) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static AncestryVisualElementProto parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (AncestryVisualElementProto) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static AncestryVisualElementProto parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (AncestryVisualElementProto) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static AncestryVisualElementProto parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (AncestryVisualElementProto) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static AncestryVisualElementProto parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (AncestryVisualElementProto) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static AncestryVisualElementProto parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (AncestryVisualElementProto) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static AncestryVisualElementProto parseFrom(InputStream input) throws IOException {
+            return (AncestryVisualElementProto) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static AncestryVisualElementProto parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (AncestryVisualElementProto) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static AncestryVisualElementProto parseDelimitedFrom(InputStream input) throws IOException {
+            return (AncestryVisualElementProto) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static AncestryVisualElementProto parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (AncestryVisualElementProto) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static AncestryVisualElementProto parseFrom(CodedInputStream input) throws IOException {
+            return (AncestryVisualElementProto) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static AncestryVisualElementProto parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (AncestryVisualElementProto) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(AncestryVisualElementProto prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static AncestryVisualElementProto getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<AncestryVisualElementProto> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasElementId() {
@@ -221,60 +291,36 @@ public final class AncestryVisualElement {
             this.cardinalDirection_ = 0;
         }
 
-        public static AncestryVisualElementProto parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (AncestryVisualElementProto) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static AncestryVisualElementProto parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (AncestryVisualElementProto) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static AncestryVisualElementProto parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (AncestryVisualElementProto) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static AncestryVisualElementProto parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (AncestryVisualElementProto) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static AncestryVisualElementProto parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (AncestryVisualElementProto) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static AncestryVisualElementProto parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (AncestryVisualElementProto) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static AncestryVisualElementProto parseFrom(InputStream input) throws IOException {
-            return (AncestryVisualElementProto) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static AncestryVisualElementProto parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (AncestryVisualElementProto) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static AncestryVisualElementProto parseDelimitedFrom(InputStream input) throws IOException {
-            return (AncestryVisualElementProto) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static AncestryVisualElementProto parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (AncestryVisualElementProto) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static AncestryVisualElementProto parseFrom(CodedInputStream input) throws IOException {
-            return (AncestryVisualElementProto) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static AncestryVisualElementProto parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (AncestryVisualElementProto) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(AncestryVisualElementProto prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new AncestryVisualElementProto();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0005\u0000\u0001\u0001\u0007\u0005\u0000\u0001\u0000\u0001\u0004\u0000\u0002\u0004\u0001\u0003\u0016\u0004\f\u0002\u0007\f\u0003", new Object[]{"bitField0_", "elementId_", "elementIndex_", "pathToRootElementId_", "userAction_", UserActionEnum.UserAction.internalGetVerifier(), "cardinalDirection_", UserActionEnum.CardinalDirection.internalGetVerifier()});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<AncestryVisualElementProto> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (AncestryVisualElementProto.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<AncestryVisualElementProto, Builder> implements AncestryVisualElementProtoOrBuilder {
@@ -397,50 +443,6 @@ public final class AncestryVisualElement {
                 ((AncestryVisualElementProto) this.instance).clearCardinalDirection();
                 return this;
             }
-        }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new AncestryVisualElementProto();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0005\u0000\u0001\u0001\u0007\u0005\u0000\u0001\u0000\u0001\u0004\u0000\u0002\u0004\u0001\u0003\u0016\u0004\f\u0002\u0007\f\u0003", new Object[]{"bitField0_", "elementId_", "elementIndex_", "pathToRootElementId_", "userAction_", UserActionEnum.UserAction.internalGetVerifier(), "cardinalDirection_", UserActionEnum.CardinalDirection.internalGetVerifier()});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<AncestryVisualElementProto> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (AncestryVisualElementProto.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(AncestryVisualElementProto.class, DEFAULT_INSTANCE);
-        }
-
-        public static AncestryVisualElementProto getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<AncestryVisualElementProto> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
         }
     }
 }

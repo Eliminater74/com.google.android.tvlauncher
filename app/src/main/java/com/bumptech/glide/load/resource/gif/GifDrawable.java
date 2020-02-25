@@ -13,20 +13,22 @@ import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 import android.support.graphics.drawable.Animatable2Compat;
 import android.view.Gravity;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.gifdecoder.GifDecoder;
 import com.bumptech.glide.load.Transformation;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
-import com.bumptech.glide.load.resource.gif.GifFrameLoader;
 import com.bumptech.glide.util.Preconditions;
+
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
 public class GifDrawable extends Drawable implements GifFrameLoader.FrameCallback, Animatable, Animatable2Compat {
-    private static final int GRAVITY = 119;
     public static final int LOOP_FOREVER = -1;
     public static final int LOOP_INTRINSIC = 0;
+    private static final int GRAVITY = 119;
+    private final GifState state;
     private List<Animatable2Compat.AnimationCallback> animationCallbacks;
     private boolean applyGravity;
     private Rect destRect;
@@ -37,7 +39,6 @@ public class GifDrawable extends Drawable implements GifFrameLoader.FrameCallbac
     private int loopCount;
     private int maxLoopCount;
     private Paint paint;
-    private final GifState state;
 
     @Deprecated
     public GifDrawable(Context context, GifDecoder gifDecoder, BitmapPool bitmapPool, Transformation<Bitmap> frameTransformation, int targetFrameWidth, int targetFrameHeight, Bitmap firstFrame) {

@@ -1,6 +1,7 @@
 package com.google.android.gms.feedback;
 
 import android.util.Pair;
+
 import java.util.List;
 
 public class BaseFeedbackProductSpecificData {

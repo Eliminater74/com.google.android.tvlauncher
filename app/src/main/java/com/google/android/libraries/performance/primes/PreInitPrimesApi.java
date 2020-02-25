@@ -2,11 +2,11 @@ package com.google.android.libraries.performance.primes;
 
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
-import com.google.android.libraries.performance.primes.TimerEvent;
+
 import com.google.android.libraries.performance.primes.scenario.ScenarioEvent;
 import com.google.android.libraries.performance.primes.transmitter.MetricTransmitter;
 import com.google.common.base.Optional;
-import java.lang.Thread;
+
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -15,20 +15,17 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+
 import logs.proto.wireless.performance.mobile.ExtensionMetric;
 import logs.proto.wireless.performance.mobile.PrimesTraceOuterClass;
 
 final class PreInitPrimesApi implements PrimesApi {
     private static final String TAG = "Primes";
-    private volatile ConfiguredPrimesApi initializedPrimesApi;
     private final AtomicReference<CountDownLatch> primesInitDoneRef = new AtomicReference<>();
     private final AtomicReference<Runnable> primesInitTaskRef = new AtomicReference<>();
     private final Queue<ScheduledApiCall> scheduledApiCalls = new ConcurrentLinkedQueue();
     private final Optional<ConcurrentHashMap<String, TimerEvent>> timerEvents;
-
-    interface ScheduledApiCall {
-        void callApi(ConfiguredPrimesApi configuredPrimesApi);
-    }
+    private volatile ConfiguredPrimesApi initializedPrimesApi;
 
     PreInitPrimesApi(boolean earlyTimerSupport) {
         Optional<ConcurrentHashMap<String, TimerEvent>> optional;
@@ -349,19 +346,28 @@ final class PreInitPrimesApi implements PrimesApi {
         });
     }
 
+    interface ScheduledApiCall {
+        void callApi(ConfiguredPrimesApi configuredPrimesApi);
+    }
+
     @VisibleForTesting
     static final class EarlyUncaughtExceptionHandler implements Thread.UncaughtExceptionHandler, ScheduledApiCall {
         private static final int AWAIT_INITIALIZATION_TIMEOUT_MS = 1000;
         private static final int WAIT_FOR_INITIALIZATION_MS = 100;
-        private volatile PrimesApi initializedPrimesApi;
         private final Thread.UncaughtExceptionHandler prevHandler;
         private final AtomicReference<CountDownLatch> primesInitDoneRef;
         private final AtomicReference<Runnable> primesInitTaskRef;
+        private volatile PrimesApi initializedPrimesApi;
 
         private EarlyUncaughtExceptionHandler(Thread.UncaughtExceptionHandler prevHandler2, AtomicReference<Runnable> primesInitTaskRef2, AtomicReference<CountDownLatch> primesInitDoneRef2) {
             this.prevHandler = prevHandler2;
             this.primesInitTaskRef = primesInitTaskRef2;
             this.primesInitDoneRef = primesInitDoneRef2;
+        }
+
+        /* renamed from: lambda$uncaughtException$0$PreInitPrimesApi$EarlyUncaughtExceptionHandler */
+        static final /* synthetic */ Thread m44xf391977d(Runnable runnable) {
+            return new Thread(runnable, "Primes-preInit");
         }
 
         public void callApi(ConfiguredPrimesApi primesApi) {
@@ -392,11 +398,6 @@ final class PreInitPrimesApi implements PrimesApi {
             if (uncaughtExceptionHandler != null) {
                 uncaughtExceptionHandler.uncaughtException(thread, throwable);
             }
-        }
-
-        /* renamed from: lambda$uncaughtException$0$PreInitPrimesApi$EarlyUncaughtExceptionHandler */
-        static final /* synthetic */ Thread m44xf391977d(Runnable runnable) {
-            return new Thread(runnable, "Primes-preInit");
         }
     }
 }

@@ -1,36 +1,38 @@
 package com.bumptech.glide.gifencoder;
 
 import android.support.p001v4.internal.view.SupportMenu;
+
 import com.google.common.primitives.UnsignedBytes;
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.io.IOException;
 import java.io.OutputStream;
 
 class LZWEncoder {
     static final int BITS = 12;
-    private static final int EOF = -1;
     static final int HSIZE = 5003;
+    private static final int EOF = -1;
     int ClearCode;
     int EOFCode;
     int a_count;
     byte[] accum = new byte[256];
     boolean clear_flg = false;
     int[] codetab = new int[HSIZE];
-    private int curPixel;
     int cur_accum = 0;
     int cur_bits = 0;
     int free_ent = 0;
     int g_init_bits;
     int hsize = HSIZE;
     int[] htab = new int[HSIZE];
-    private int imgH;
-    private int imgW;
-    private int initCodeSize;
     int[] masks = {0, 1, 3, 7, 15, 31, 63, ClientAnalytics.LogRequest.LogSource.TAILORMADE_VALUE, 255, 511, ClientAnalytics.LogRequest.LogSource.G_SUITE_ADD_ONS_COUNTERS_VALUE, 2047, 4095, 8191, 16383, 32767, SupportMenu.USER_MASK};
     int maxbits = 12;
     int maxcode;
     int maxmaxcode = 4096;
     int n_bits;
+    private int curPixel;
+    private int imgH;
+    private int imgW;
+    private int initCodeSize;
     private byte[] pixAry;
     private int remaining;
 

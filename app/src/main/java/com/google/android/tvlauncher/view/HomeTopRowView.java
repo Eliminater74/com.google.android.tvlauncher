@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
 import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.request.target.ImageViewTarget;
@@ -37,29 +38,40 @@ import com.google.android.tvlauncher.notifications.NotificationsTrayView;
 import com.google.android.tvlauncher.settings.ProfilesManager;
 import com.google.android.tvlauncher.util.IntentLaunchDispatcher;
 import com.google.android.tvlauncher.util.OemConfiguration;
-import com.google.android.tvlauncher.view.SearchView;
 import com.google.android.tvlauncher.widget.PartnerWidgetInfo;
 import com.google.logs.tvlauncher.config.TvLauncherConstants;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 
 public class HomeTopRowView extends LinearLayout implements View.OnFocusChangeListener, HomeRow, PackageChangedReceiver.Listener {
-    private static final String SETTINGS_PACKAGE_NAME = "com.android.tv.settings";
     public static final int STATE_DEFAULT = 0;
     public static final int STATE_TOP_BAR_SELECTED = 1;
     public static final int STATE_TRAY_SELECTED = 2;
+    private static final String SETTINGS_PACKAGE_NAME = "com.android.tv.settings";
     private static final String TAG = "HomeTopRowView";
-    private Context mContext;
-    private int mDefaultItemsContainerBottomMargin;
-    private int mDefaultItemsContainerTopMargin;
-    private int mDuration;
     /* access modifiers changed from: private */
     public EventLogger mEventLogger;
+    private final SearchView.ActionCallbacks mSearchViewActionCallbacks = new SearchView.ActionCallbacks() {
+        public void onStartedVoiceSearch() {
+            HomeTopRowView.this.mEventLogger.log(new ClickEvent(TvlauncherLogEnum.TvLauncherEventCode.START_VOICE_SEARCH).setVisualElementTag(TvLauncherConstants.VOICE_SEARCH_BUTTON));
+        }
+
+        public void onStartedKeyboardSearch() {
+            HomeTopRowView.this.mEventLogger.log(new ClickEvent(TvlauncherLogEnum.TvLauncherEventCode.START_KEYBOARD_SEARCH).setVisualElementTag(TvLauncherConstants.KEYBOARD_SEARCH_BUTTON));
+        }
+    };
     /* access modifiers changed from: private */
     public OnHomeTopRowFocusChangedListener mFocusChangeListener;
-    private float mFocusedElevation;
-    private float mFocusedZoom;
+    /* access modifiers changed from: private */
+    public ViewGroup mItemsContainer;
+    /* access modifiers changed from: private */
+    public NotificationsTrayView mNotificationsTray;
+    /* access modifiers changed from: private */
+    public OnHomeRowSelectedListener mOnHomeRowSelectedListener;
+    /* access modifiers changed from: private */
+    public int mState = 0;
     private final ViewTreeObserver.OnGlobalFocusChangeListener mGlobalFocusChangeListener = new ViewTreeObserver.OnGlobalFocusChangeListener() {
         public void onGlobalFocusChanged(View oldFocus, View newFocus) {
             if (HomeTopRowView.this.findFocus() == newFocus) {
@@ -74,55 +86,24 @@ public class HomeTopRowView extends LinearLayout implements View.OnFocusChangeLi
             }
         }
     };
+    private Context mContext;
+    private int mDefaultItemsContainerBottomMargin;
+    private int mDefaultItemsContainerTopMargin;
+    private int mDuration;
+    private float mFocusedElevation;
+    private float mFocusedZoom;
     private HomeTopRowButton mInputs;
     private IntentLaunchDispatcher mIntentLauncher;
-    /* access modifiers changed from: private */
-    public ViewGroup mItemsContainer;
-    /* access modifiers changed from: private */
-    public NotificationsTrayView mNotificationsTray;
     private OnActionListener mOnActionListener;
-    /* access modifiers changed from: private */
-    public OnHomeRowSelectedListener mOnHomeRowSelectedListener;
     private PackageChangedReceiver mPackageChangedReceiver;
     private NotificationsPanelController mPanelController = null;
     private HomeTopRowButton mPartnerWidget;
     private PartnerWidgetInfo mPartnerWidgetInfo = null;
     private HomeTopRowButton mProfiles;
     private SearchView mSearch;
-    private final SearchView.ActionCallbacks mSearchViewActionCallbacks = new SearchView.ActionCallbacks() {
-        public void onStartedVoiceSearch() {
-            HomeTopRowView.this.mEventLogger.log(new ClickEvent(TvlauncherLogEnum.TvLauncherEventCode.START_VOICE_SEARCH).setVisualElementTag(TvLauncherConstants.VOICE_SEARCH_BUTTON));
-        }
-
-        public void onStartedKeyboardSearch() {
-            HomeTopRowView.this.mEventLogger.log(new ClickEvent(TvlauncherLogEnum.TvLauncherEventCode.START_KEYBOARD_SEARCH).setVisualElementTag(TvLauncherConstants.KEYBOARD_SEARCH_BUTTON));
-        }
-    };
     private int mSelectedItemsContainerBottomMargin;
     private int mSelectedItemsContainerTopMargin;
-    /* access modifiers changed from: private */
-    public int mState = 0;
     private float mUnfocusedElevation;
-
-    public interface OnActionListener {
-        void onShowInputs();
-
-        void onStartSettings();
-    }
-
-    public interface OnHomeTopRowFocusChangedListener {
-        void onHomeTopRowFocusChanged();
-    }
-
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface State {
-    }
-
-    /* access modifiers changed from: package-private */
-    @VisibleForTesting
-    public SearchView.ActionCallbacks getSearchViewActionCallbacks() {
-        return this.mSearchViewActionCallbacks;
-    }
 
     public HomeTopRowView(Context context) {
         super(context);
@@ -137,6 +118,12 @@ public class HomeTopRowView extends LinearLayout implements View.OnFocusChangeLi
     public HomeTopRowView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context);
+    }
+
+    /* access modifiers changed from: package-private */
+    @VisibleForTesting
+    public SearchView.ActionCallbacks getSearchViewActionCallbacks() {
+        return this.mSearchViewActionCallbacks;
     }
 
     public void addFocusables(ArrayList<View> views, int direction, int focusableMode) {
@@ -173,10 +160,6 @@ public class HomeTopRowView extends LinearLayout implements View.OnFocusChangeLi
         this.mFocusChangeListener = focusChangeListener;
     }
 
-    public void setNotificationsTrayAdapter(NotificationsTrayAdapter adapter) {
-        this.mNotificationsTray.setTrayAdapter(adapter);
-    }
-
     public void updateNotificationsTrayVisibility() {
         this.mNotificationsTray.updateVisibility();
         updateMargins();
@@ -189,17 +172,21 @@ public class HomeTopRowView extends LinearLayout implements View.OnFocusChangeLi
         }
     }
 
-    public void setNotificationsPanelController(NotificationsPanelController controller) {
-        this.mPanelController = controller;
-        this.mPanelController.setView((NotificationsPanelButtonView) findViewById(C1188R.C1191id.notification_panel_button));
-    }
-
     public NotificationsTrayAdapter getNotificationsTrayAdapter() {
         return this.mNotificationsTray.getTrayAdapter();
     }
 
+    public void setNotificationsTrayAdapter(NotificationsTrayAdapter adapter) {
+        this.mNotificationsTray.setTrayAdapter(adapter);
+    }
+
     public NotificationsPanelController getNotificationsPanelController() {
         return this.mPanelController;
+    }
+
+    public void setNotificationsPanelController(NotificationsPanelController controller) {
+        this.mPanelController = controller;
+        this.mPanelController.setView((NotificationsPanelButtonView) findViewById(C1188R.C1191id.notification_panel_button));
     }
 
     public SearchView getSearchWidget() {
@@ -427,5 +414,19 @@ public class HomeTopRowView extends LinearLayout implements View.OnFocusChangeLi
 
     public void onPackageReplaced(String packageName) {
         updateProfiles(packageName);
+    }
+
+    public interface OnActionListener {
+        void onShowInputs();
+
+        void onStartSettings();
+    }
+
+    public interface OnHomeTopRowFocusChangedListener {
+        void onHomeTopRowFocusChanged();
+    }
+
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface State {
     }
 }

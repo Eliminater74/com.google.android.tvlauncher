@@ -9,6 +9,9 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -17,7 +20,6 @@ import java.util.NoSuchElementException;
 import java.util.Queue;
 import java.util.RandomAccess;
 import java.util.Set;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible(emulated = true)
 public final class Iterables {
@@ -35,22 +37,6 @@ public final class Iterables {
     @Deprecated
     public static <E> Iterable<E> unmodifiableIterable(ImmutableCollection<E> iterable) {
         return (Iterable) Preconditions.checkNotNull(iterable);
-    }
-
-    private static final class UnmodifiableIterable<T> extends FluentIterable<T> {
-        private final Iterable<? extends T> iterable;
-
-        private UnmodifiableIterable(Iterable<? extends T> iterable2) {
-            this.iterable = iterable2;
-        }
-
-        public Iterator<T> iterator() {
-            return Iterators.unmodifiableIterator(this.iterable.iterator());
-        }
-
-        public String toString() {
-            return this.iterable.toString();
-        }
     }
 
     public static int size(Iterable<?> iterable) {
@@ -454,5 +440,21 @@ public final class Iterables {
                 return iterable.iterator();
             }
         };
+    }
+
+    private static final class UnmodifiableIterable<T> extends FluentIterable<T> {
+        private final Iterable<? extends T> iterable;
+
+        private UnmodifiableIterable(Iterable<? extends T> iterable2) {
+            this.iterable = iterable2;
+        }
+
+        public Iterator<T> iterator() {
+            return Iterators.unmodifiableIterator(this.iterable.iterator());
+        }
+
+        public String toString() {
+            return this.iterable.toString();
+        }
     }
 }

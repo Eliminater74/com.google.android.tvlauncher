@@ -7,7 +7,9 @@ import android.os.Bundle;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.StringRes;
 import android.support.p001v4.content.ContextCompat;
+
 import androidx.leanback.C0364R;
+
 import java.util.List;
 
 public class GuidedAction extends Action {
@@ -21,11 +23,11 @@ public class GuidedAction extends Action {
     public static final long ACTION_ID_YES = -8;
     public static final int CHECKBOX_CHECK_SET_ID = -1;
     public static final int DEFAULT_CHECK_SET_ID = 1;
+    public static final int NO_CHECK_SET = 0;
     static final int EDITING_ACTIVATOR_VIEW = 3;
     static final int EDITING_DESCRIPTION = 2;
     static final int EDITING_NONE = 0;
     static final int EDITING_TITLE = 1;
-    public static final int NO_CHECK_SET = 0;
     static final int PF_AUTORESTORE = 64;
     static final int PF_CHECKED = 1;
     static final int PF_ENABLED = 16;
@@ -39,13 +41,199 @@ public class GuidedAction extends Action {
     int mCheckSetId;
     int mDescriptionEditInputType;
     int mDescriptionInputType;
-    private CharSequence mEditDescription;
     int mEditInputType;
-    private CharSequence mEditTitle;
     int mEditable;
     int mInputType;
     Intent mIntent;
     List<GuidedAction> mSubActions;
+    private CharSequence mEditDescription;
+    private CharSequence mEditTitle;
+
+    protected GuidedAction() {
+        super(0);
+    }
+
+    static boolean isPasswordVariant(int inputType) {
+        int variation = inputType & 4080;
+        return variation == 128 || variation == 144 || variation == 224;
+    }
+
+    private void setFlags(int flag, int mask) {
+        this.mActionFlags = (this.mActionFlags & (mask ^ -1)) | (flag & mask);
+    }
+
+    public CharSequence getTitle() {
+        return getLabel1();
+    }
+
+    public void setTitle(CharSequence title) {
+        setLabel1(title);
+    }
+
+    public CharSequence getEditTitle() {
+        return this.mEditTitle;
+    }
+
+    public void setEditTitle(CharSequence editTitle) {
+        this.mEditTitle = editTitle;
+    }
+
+    public CharSequence getEditDescription() {
+        return this.mEditDescription;
+    }
+
+    public void setEditDescription(CharSequence editDescription) {
+        this.mEditDescription = editDescription;
+    }
+
+    public boolean isEditTitleUsed() {
+        return this.mEditTitle != null;
+    }
+
+    public CharSequence getDescription() {
+        return getLabel2();
+    }
+
+    public void setDescription(CharSequence description) {
+        setLabel2(description);
+    }
+
+    public Intent getIntent() {
+        return this.mIntent;
+    }
+
+    public void setIntent(Intent intent) {
+        this.mIntent = intent;
+    }
+
+    public boolean isEditable() {
+        return this.mEditable == 1;
+    }
+
+    public boolean isDescriptionEditable() {
+        return this.mEditable == 2;
+    }
+
+    public boolean hasTextEditable() {
+        int i = this.mEditable;
+        return i == 1 || i == 2;
+    }
+
+    public boolean hasEditableActivatorView() {
+        return this.mEditable == 3;
+    }
+
+    public int getEditInputType() {
+        return this.mEditInputType;
+    }
+
+    public int getDescriptionEditInputType() {
+        return this.mDescriptionEditInputType;
+    }
+
+    public int getInputType() {
+        return this.mInputType;
+    }
+
+    public int getDescriptionInputType() {
+        return this.mDescriptionInputType;
+    }
+
+    public boolean isChecked() {
+        return (this.mActionFlags & 1) == 1;
+    }
+
+    public void setChecked(boolean checked) {
+        setFlags(checked, 1);
+    }
+
+    public int getCheckSetId() {
+        return this.mCheckSetId;
+    }
+
+    public boolean hasMultilineDescription() {
+        return (this.mActionFlags & 2) == 2;
+    }
+
+    public boolean isEnabled() {
+        return (this.mActionFlags & 16) == 16;
+    }
+
+    public void setEnabled(boolean enabled) {
+        setFlags(enabled ? 16 : 0, 16);
+    }
+
+    public boolean isFocusable() {
+        return (this.mActionFlags & 32) == 32;
+    }
+
+    public void setFocusable(boolean focusable) {
+        setFlags(focusable ? 32 : 0, 32);
+    }
+
+    public String[] getAutofillHints() {
+        return this.mAutofillHints;
+    }
+
+    public boolean hasNext() {
+        return (this.mActionFlags & 4) == 4;
+    }
+
+    public boolean infoOnly() {
+        return (this.mActionFlags & 8) == 8;
+    }
+
+    public List<GuidedAction> getSubActions() {
+        return this.mSubActions;
+    }
+
+    public void setSubActions(List<GuidedAction> actions) {
+        this.mSubActions = actions;
+    }
+
+    public boolean hasSubActions() {
+        return this.mSubActions != null;
+    }
+
+    public final boolean isAutoSaveRestoreEnabled() {
+        return (this.mActionFlags & 64) == 64;
+    }
+
+    public void onSaveInstanceState(Bundle bundle, String key) {
+        if (needAutoSaveTitle() && getTitle() != null) {
+            bundle.putString(key, getTitle().toString());
+        } else if (needAutoSaveDescription() && getDescription() != null) {
+            bundle.putString(key, getDescription().toString());
+        } else if (getCheckSetId() != 0) {
+            bundle.putBoolean(key, isChecked());
+        }
+    }
+
+    public void onRestoreInstanceState(Bundle bundle, String key) {
+        if (needAutoSaveTitle()) {
+            String title = bundle.getString(key);
+            if (title != null) {
+                setTitle(title);
+            }
+        } else if (needAutoSaveDescription()) {
+            String description = bundle.getString(key);
+            if (description != null) {
+                setDescription(description);
+            }
+        } else if (getCheckSetId() != 0) {
+            setChecked(bundle.getBoolean(key, isChecked()));
+        }
+    }
+
+    /* access modifiers changed from: package-private */
+    public final boolean needAutoSaveTitle() {
+        return isEditable() && !isPasswordVariant(getEditInputType());
+    }
+
+    /* access modifiers changed from: package-private */
+    public final boolean needAutoSaveDescription() {
+        return isDescriptionEditable() && !isPasswordVariant(getDescriptionEditInputType());
+    }
 
     public static abstract class BuilderBase<B extends BuilderBase> {
         private int mActionFlags;
@@ -325,191 +513,5 @@ public class GuidedAction extends Action {
             applyValues(action);
             return action;
         }
-    }
-
-    protected GuidedAction() {
-        super(0);
-    }
-
-    private void setFlags(int flag, int mask) {
-        this.mActionFlags = (this.mActionFlags & (mask ^ -1)) | (flag & mask);
-    }
-
-    public CharSequence getTitle() {
-        return getLabel1();
-    }
-
-    public void setTitle(CharSequence title) {
-        setLabel1(title);
-    }
-
-    public CharSequence getEditTitle() {
-        return this.mEditTitle;
-    }
-
-    public void setEditTitle(CharSequence editTitle) {
-        this.mEditTitle = editTitle;
-    }
-
-    public CharSequence getEditDescription() {
-        return this.mEditDescription;
-    }
-
-    public void setEditDescription(CharSequence editDescription) {
-        this.mEditDescription = editDescription;
-    }
-
-    public boolean isEditTitleUsed() {
-        return this.mEditTitle != null;
-    }
-
-    public CharSequence getDescription() {
-        return getLabel2();
-    }
-
-    public void setDescription(CharSequence description) {
-        setLabel2(description);
-    }
-
-    public Intent getIntent() {
-        return this.mIntent;
-    }
-
-    public void setIntent(Intent intent) {
-        this.mIntent = intent;
-    }
-
-    public boolean isEditable() {
-        return this.mEditable == 1;
-    }
-
-    public boolean isDescriptionEditable() {
-        return this.mEditable == 2;
-    }
-
-    public boolean hasTextEditable() {
-        int i = this.mEditable;
-        return i == 1 || i == 2;
-    }
-
-    public boolean hasEditableActivatorView() {
-        return this.mEditable == 3;
-    }
-
-    public int getEditInputType() {
-        return this.mEditInputType;
-    }
-
-    public int getDescriptionEditInputType() {
-        return this.mDescriptionEditInputType;
-    }
-
-    public int getInputType() {
-        return this.mInputType;
-    }
-
-    public int getDescriptionInputType() {
-        return this.mDescriptionInputType;
-    }
-
-    public boolean isChecked() {
-        return (this.mActionFlags & 1) == 1;
-    }
-
-    public void setChecked(boolean checked) {
-        setFlags(checked, 1);
-    }
-
-    public int getCheckSetId() {
-        return this.mCheckSetId;
-    }
-
-    public boolean hasMultilineDescription() {
-        return (this.mActionFlags & 2) == 2;
-    }
-
-    public boolean isEnabled() {
-        return (this.mActionFlags & 16) == 16;
-    }
-
-    public void setEnabled(boolean enabled) {
-        setFlags(enabled ? 16 : 0, 16);
-    }
-
-    public boolean isFocusable() {
-        return (this.mActionFlags & 32) == 32;
-    }
-
-    public void setFocusable(boolean focusable) {
-        setFlags(focusable ? 32 : 0, 32);
-    }
-
-    public String[] getAutofillHints() {
-        return this.mAutofillHints;
-    }
-
-    public boolean hasNext() {
-        return (this.mActionFlags & 4) == 4;
-    }
-
-    public boolean infoOnly() {
-        return (this.mActionFlags & 8) == 8;
-    }
-
-    public void setSubActions(List<GuidedAction> actions) {
-        this.mSubActions = actions;
-    }
-
-    public List<GuidedAction> getSubActions() {
-        return this.mSubActions;
-    }
-
-    public boolean hasSubActions() {
-        return this.mSubActions != null;
-    }
-
-    public final boolean isAutoSaveRestoreEnabled() {
-        return (this.mActionFlags & 64) == 64;
-    }
-
-    public void onSaveInstanceState(Bundle bundle, String key) {
-        if (needAutoSaveTitle() && getTitle() != null) {
-            bundle.putString(key, getTitle().toString());
-        } else if (needAutoSaveDescription() && getDescription() != null) {
-            bundle.putString(key, getDescription().toString());
-        } else if (getCheckSetId() != 0) {
-            bundle.putBoolean(key, isChecked());
-        }
-    }
-
-    public void onRestoreInstanceState(Bundle bundle, String key) {
-        if (needAutoSaveTitle()) {
-            String title = bundle.getString(key);
-            if (title != null) {
-                setTitle(title);
-            }
-        } else if (needAutoSaveDescription()) {
-            String description = bundle.getString(key);
-            if (description != null) {
-                setDescription(description);
-            }
-        } else if (getCheckSetId() != 0) {
-            setChecked(bundle.getBoolean(key, isChecked()));
-        }
-    }
-
-    static boolean isPasswordVariant(int inputType) {
-        int variation = inputType & 4080;
-        return variation == 128 || variation == 144 || variation == 224;
-    }
-
-    /* access modifiers changed from: package-private */
-    public final boolean needAutoSaveTitle() {
-        return isEditable() && !isPasswordVariant(getEditInputType());
-    }
-
-    /* access modifiers changed from: package-private */
-    public final boolean needAutoSaveDescription() {
-        return isDescriptionEditable() && !isPasswordVariant(getDescriptionEditInputType());
     }
 }

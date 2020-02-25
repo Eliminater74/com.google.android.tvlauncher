@@ -2,8 +2,8 @@ package com.google.android.gms.common.internal;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.internal.BaseGmsClient;
 
 /* compiled from: GmsClient */
 final class zzm implements BaseGmsClient.BaseConnectionCallbacks {

@@ -6,7 +6,9 @@ import android.content.pm.ResolveInfo;
 import android.support.annotation.NonNull;
 import android.support.p001v4.content.IntentCompat;
 import android.util.Log;
+
 import com.google.android.exoplayer2.C0841C;
+
 import java.util.List;
 
 public class FlavorSpecificLaunchItemsManager extends LaunchItemsManager {

@@ -2,6 +2,7 @@ package androidx.activity;
 
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -9,21 +10,21 @@ public abstract class OnBackPressedCallback {
     private ArrayList<Cancellable> mCancellables = new ArrayList<>();
     private boolean mEnabled;
 
-    @MainThread
-    public abstract void handleOnBackPressed();
-
     public OnBackPressedCallback(boolean enabled) {
         this.mEnabled = enabled;
     }
 
     @MainThread
-    public void setEnabled(boolean enabled) {
-        this.mEnabled = enabled;
-    }
+    public abstract void handleOnBackPressed();
 
     @MainThread
     public boolean isEnabled() {
         return this.mEnabled;
+    }
+
+    @MainThread
+    public void setEnabled(boolean enabled) {
+        this.mEnabled = enabled;
     }
 
     @MainThread

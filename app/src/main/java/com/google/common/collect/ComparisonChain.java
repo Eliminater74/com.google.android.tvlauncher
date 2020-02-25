@@ -4,11 +4,17 @@ import com.google.common.annotations.GwtCompatible;
 import com.google.common.primitives.Booleans;
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
-import java.util.Comparator;
+
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
+import java.util.Comparator;
 
 @GwtCompatible
 public abstract class ComparisonChain {
+    /* access modifiers changed from: private */
+    public static final ComparisonChain GREATER = new InactiveComparisonChain(1);
+    /* access modifiers changed from: private */
+    public static final ComparisonChain LESS = new InactiveComparisonChain(-1);
     /* access modifiers changed from: private */
     public static final ComparisonChain ACTIVE = new ComparisonChain() {
         public ComparisonChain compare(Comparable left, Comparable right) {
@@ -55,10 +61,13 @@ public abstract class ComparisonChain {
             return 0;
         }
     };
-    /* access modifiers changed from: private */
-    public static final ComparisonChain GREATER = new InactiveComparisonChain(1);
-    /* access modifiers changed from: private */
-    public static final ComparisonChain LESS = new InactiveComparisonChain(-1);
+
+    private ComparisonChain() {
+    }
+
+    public static ComparisonChain start() {
+        return ACTIVE;
+    }
 
     public abstract ComparisonChain compare(double d, double d2);
 
@@ -78,11 +87,9 @@ public abstract class ComparisonChain {
 
     public abstract int result();
 
-    private ComparisonChain() {
-    }
-
-    public static ComparisonChain start() {
-        return ACTIVE;
+    @Deprecated
+    public final ComparisonChain compare(Boolean left, Boolean right) {
+        return compareFalseFirst(left.booleanValue(), right.booleanValue());
     }
 
     private static final class InactiveComparisonChain extends ComparisonChain {
@@ -128,10 +135,5 @@ public abstract class ComparisonChain {
         public int result() {
             return this.result;
         }
-    }
-
-    @Deprecated
-    public final ComparisonChain compare(Boolean left, Boolean right) {
-        return compareFalseFirst(left.booleanValue(), right.booleanValue());
     }
 }

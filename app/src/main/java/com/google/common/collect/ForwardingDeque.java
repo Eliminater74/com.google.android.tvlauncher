@@ -2,16 +2,17 @@ package com.google.common.collect;
 
 import com.google.common.annotations.GwtIncompatible;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
 import java.util.Deque;
 import java.util.Iterator;
 
 @GwtIncompatible
 public abstract class ForwardingDeque<E> extends ForwardingQueue<E> implements Deque<E> {
-    /* access modifiers changed from: protected */
-    public abstract Deque<E> delegate();
-
     protected ForwardingDeque() {
     }
+
+    /* access modifiers changed from: protected */
+    public abstract Deque<E> delegate();
 
     public void addFirst(E e) {
         delegate().addFirst(e);

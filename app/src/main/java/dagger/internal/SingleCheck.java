@@ -12,6 +12,13 @@ public final class SingleCheck<T> implements Provider<T> {
         this.provider = provider2;
     }
 
+    public static <P extends Provider<T>, T> Provider<T> provider(P provider2) {
+        if ((provider2 instanceof SingleCheck) || (provider2 instanceof DoubleCheck)) {
+            return provider2;
+        }
+        return new SingleCheck((Provider) Preconditions.checkNotNull(provider2));
+    }
+
     public T get() {
         Object local = this.instance;
         if (local != UNINITIALIZED) {
@@ -25,12 +32,5 @@ public final class SingleCheck<T> implements Provider<T> {
         this.instance = local2;
         this.provider = null;
         return local2;
-    }
-
-    public static <P extends Provider<T>, T> Provider<T> provider(P provider2) {
-        if ((provider2 instanceof SingleCheck) || (provider2 instanceof DoubleCheck)) {
-            return provider2;
-        }
-        return new SingleCheck((Provider) Preconditions.checkNotNull(provider2));
     }
 }

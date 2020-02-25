@@ -1,7 +1,7 @@
 package com.google.android.gms.internal;
 
-import com.google.android.gms.internal.zzgoj;
 import com.google.android.gms.internal.zzgoj.zza;
+
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -14,479 +14,6 @@ public abstract class zzgoj<MessageType extends zzgoj<MessageType, BuilderType>,
     private static Map<Object, zzgoj<?, ?>> zzd = new ConcurrentHashMap();
     protected zzgre zzb = zzgre.zza();
     protected int zzc = -1;
-
-    /* compiled from: GeneratedMessageLite */
-    public static class zzf<ContainingType extends zzgpt, Type> extends zzgnt<ContainingType, Type> {
-        final zzgpt zza;
-        final zze zzb;
-        private final ContainingType zzc;
-        private final Type zzd;
-
-        zzf(ContainingType containingtype, Type type, zzgpt zzgpt, zze zze, Class cls) {
-            if (containingtype == null) {
-                throw new IllegalArgumentException("Null containingTypeDefaultInstance");
-            } else if (zze.zzc == zzgrr.MESSAGE && zzgpt == null) {
-                throw new IllegalArgumentException("Null messageDefaultInstance");
-            } else {
-                this.zzc = containingtype;
-                this.zzd = type;
-                this.zza = zzgpt;
-                this.zzb = zze;
-            }
-        }
-    }
-
-    /* JADX INFO: Failed to restore enum class, 'enum' modifier removed */
-    /* compiled from: GeneratedMessageLite */
-    public static final class zzg {
-        public static final int zza = 1;
-        public static final int zzb = 2;
-        public static final int zzc = 3;
-        public static final int zzd = 4;
-        public static final int zze = 5;
-        public static final int zzf = 6;
-        public static final int zzg = 7;
-        public static final int zzh = 8;
-        public static final int zzi = 1;
-        public static final int zzj = 2;
-        public static final int zzk = 1;
-        public static final int zzl = 2;
-        private static final /* synthetic */ int[] zzm = {zza, zzb, zzc, zzd, zze, zzf, zzg, zzh};
-        private static final /* synthetic */ int[] zzn = {zzi, zzj};
-        private static final /* synthetic */ int[] zzo = {zzk, zzl};
-
-        /* renamed from: values$50KLMJ33DTMIUPRFDTJMOP9FE1P6UT3FC9QMCBQ7CLN6ASJ1EHIM8JB5EDPM2PR59HKN8P949LIN8Q3FCHA6UIBEEPNMMP9R0 */
-        public static int[] m43x126d66cb() {
-            return (int[]) zzm.clone();
-        }
-    }
-
-    /* access modifiers changed from: protected */
-    public abstract Object zza(int i, Object obj, Object obj2);
-
-    /* access modifiers changed from: protected */
-    public abstract Object zzb() throws Exception;
-
-    /* compiled from: GeneratedMessageLite */
-    public static abstract class zzc<MessageType extends zzd<MessageType, BuilderType>, BuilderType extends zzc<MessageType, BuilderType>> extends zza<MessageType, BuilderType> implements zzgpv {
-        protected zzc(MessageType messagetype) {
-            super(messagetype);
-        }
-
-        /* access modifiers changed from: protected */
-        public final void zzb() {
-            if (this.zzb) {
-                super.zzb();
-                ((zzd) this.zza).zzd = (zzgoa) ((zzd) this.zza).zzd.clone();
-            }
-        }
-
-        public final /* synthetic */ zzgoj zzc() {
-            return (zzd) zze();
-        }
-
-        public final /* synthetic */ zzgpt zze() {
-            if (this.zzb) {
-                return (zzd) this.zza;
-            }
-            ((zzd) this.zza).zzd.zzc();
-            return (zzd) super.zze();
-        }
-    }
-
-    /* compiled from: GeneratedMessageLite */
-    public static abstract class zzd<MessageType extends zzd<MessageType, BuilderType>, BuilderType extends zzc<MessageType, BuilderType>> extends zzgoj<MessageType, BuilderType> implements zzgpv {
-        protected zzgoa<zze> zzd = zzgoa.zza();
-
-        /* access modifiers changed from: protected */
-        public final boolean zze() {
-            return this.zzd.zzg();
-        }
-
-        /* access modifiers changed from: protected */
-        public final void zzl() {
-            zzgoj.super.zzl();
-            this.zzd.zzc();
-        }
-
-        /* compiled from: GeneratedMessageLite */
-        public class zza {
-            private final Iterator<Map.Entry<zze, Object>> zza;
-            private Map.Entry<zze, Object> zzb;
-            private final boolean zzc;
-
-            private zza(boolean z) {
-                this.zza = zzd.this.zzd.zze();
-                if (this.zza.hasNext()) {
-                    this.zzb = this.zza.next();
-                }
-                this.zzc = false;
-            }
-
-            public final void zza(int i, zzgnp zzgnp) throws IOException {
-                while (true) {
-                    Map.Entry<zze, Object> entry = this.zzb;
-                    if (entry != null && entry.getKey().zzb < 536870912) {
-                        zze key = this.zzb.getKey();
-                        if (!this.zzc || key.zzc.zza() != zzgrw.MESSAGE) {
-                            zzgoa.zza(key, this.zzb.getValue(), zzgnp);
-                        } else {
-                            zzgnp.zzb(key.zzb, (zzgpt) this.zzb.getValue());
-                        }
-                        if (this.zza.hasNext()) {
-                            this.zzb = this.zza.next();
-                        } else {
-                            this.zzb = null;
-                        }
-                    } else {
-                        return;
-                    }
-                }
-            }
-
-            /* synthetic */ zza(zzd zzd2, boolean z, zzgok zzgok) {
-                this(false);
-            }
-        }
-
-        /* access modifiers changed from: protected */
-        public final zza zzf() {
-            return new zza(this, false, null);
-        }
-
-        /* access modifiers changed from: protected */
-        public final int zzg() {
-            return this.zzd.zzh();
-        }
-    }
-
-    /* compiled from: GeneratedMessageLite */
-    public static class zzb<T extends zzgoj<T, ?>> extends zzgmr<T> {
-        private T zza;
-
-        public zzb(T t) {
-            this.zza = t;
-        }
-
-        public final /* synthetic */ Object zza(zzgnk zzgnk, zzgnv zzgnv) throws zzgot {
-            return zzgoj.zza(this.zza, zzgnk, zzgnv);
-        }
-    }
-
-    public String toString() {
-        return zzgpw.zza(this, super.toString());
-    }
-
-    public int hashCode() {
-        if (this.zza != 0) {
-            return this.zza;
-        }
-        this.zza = zzgqf.zza().zza(this).zza(this);
-        return this.zza;
-    }
-
-    /* compiled from: GeneratedMessageLite */
-    static final class zze implements zzgoc<zze> {
-        final zzgop<?> zza = null;
-        final int zzb = 77815057;
-        final zzgrr zzc;
-        final boolean zzd;
-        final boolean zze;
-
-        zze(zzgop<?> zzgop, int i, zzgrr zzgrr, boolean z, boolean z2) {
-            this.zzc = zzgrr;
-            this.zzd = false;
-            this.zze = false;
-        }
-
-        public final int zza() {
-            return this.zzb;
-        }
-
-        public final zzgrr zzb() {
-            return this.zzc;
-        }
-
-        public final zzgrw zzc() {
-            return this.zzc.zza();
-        }
-
-        public final boolean zzd() {
-            return false;
-        }
-
-        public final boolean zze() {
-            return false;
-        }
-
-        public final zzgpu zza(zzgpu zzgpu, zzgpt zzgpt) {
-            return ((zza) zzgpu).zza((zzgoj) zzgpt);
-        }
-
-        public final zzgqa zza(zzgqa zzgqa, zzgqa zzgqa2) {
-            throw new UnsupportedOperationException();
-        }
-
-        public final /* synthetic */ int compareTo(Object obj) {
-            return this.zzb - ((zze) obj).zzb;
-        }
-    }
-
-    /* compiled from: GeneratedMessageLite */
-    public static abstract class zza<MessageType extends zzgoj<MessageType, BuilderType>, BuilderType extends zza<MessageType, BuilderType>> extends zzgmq<MessageType, BuilderType> {
-        protected MessageType zza;
-        protected boolean zzb = false;
-        private final MessageType zzc;
-
-        /*  JADX ERROR: JadxRuntimeException in pass: MethodInvokeVisitor
-            jadx.core.utils.exceptions.JadxRuntimeException: Not class type: MessageType
-            	at jadx.core.dex.info.ClassInfo.checkClassType(ClassInfo.java:60)
-            	at jadx.core.dex.info.ClassInfo.fromType(ClassInfo.java:31)
-            	at jadx.core.dex.nodes.DexNode.resolveClass(DexNode.java:143)
-            	at jadx.core.dex.nodes.RootNode.resolveClass(RootNode.java:183)
-            	at jadx.core.dex.nodes.utils.MethodUtils.processMethodArgsOverloaded(MethodUtils.java:75)
-            	at jadx.core.dex.nodes.utils.MethodUtils.collectOverloadedMethods(MethodUtils.java:54)
-            	at jadx.core.dex.visitors.MethodInvokeVisitor.processOverloaded(MethodInvokeVisitor.java:106)
-            	at jadx.core.dex.visitors.MethodInvokeVisitor.processInvoke(MethodInvokeVisitor.java:99)
-            	at jadx.core.dex.visitors.MethodInvokeVisitor.processInsn(MethodInvokeVisitor.java:70)
-            	at jadx.core.dex.visitors.MethodInvokeVisitor.processInsn(MethodInvokeVisitor.java:75)
-            	at jadx.core.dex.visitors.MethodInvokeVisitor.processInsn(MethodInvokeVisitor.java:75)
-            	at jadx.core.dex.visitors.MethodInvokeVisitor.visit(MethodInvokeVisitor.java:63)
-            */
-        protected zza(MessageType r3) {
-            /*
-                r2 = this;
-                r2.<init>()
-                r2.zzc = r3
-                int r0 = com.google.android.gms.internal.zzgoj.zzg.zze
-                r1 = 0
-                java.lang.Object r3 = r3.zza(r0, r1, r1)
-                com.google.android.gms.internal.zzgoj r3 = (com.google.android.gms.internal.zzgoj) r3
-                r2.zza = r3
-                r3 = 0
-                r2.zzb = r3
-                return
-            */
-            throw new UnsupportedOperationException("Method not decompiled: com.google.android.gms.internal.zzgoj.zza.<init>(com.google.android.gms.internal.zzgoj):void");
-        }
-
-        /*  JADX ERROR: JadxRuntimeException in pass: MethodInvokeVisitor
-            jadx.core.utils.exceptions.JadxRuntimeException: Not class type: MessageType
-            	at jadx.core.dex.info.ClassInfo.checkClassType(ClassInfo.java:60)
-            	at jadx.core.dex.info.ClassInfo.fromType(ClassInfo.java:31)
-            	at jadx.core.dex.nodes.DexNode.resolveClass(DexNode.java:143)
-            	at jadx.core.dex.nodes.RootNode.resolveClass(RootNode.java:183)
-            	at jadx.core.dex.nodes.utils.MethodUtils.processMethodArgsOverloaded(MethodUtils.java:75)
-            	at jadx.core.dex.nodes.utils.MethodUtils.collectOverloadedMethods(MethodUtils.java:54)
-            	at jadx.core.dex.visitors.MethodInvokeVisitor.processOverloaded(MethodInvokeVisitor.java:106)
-            	at jadx.core.dex.visitors.MethodInvokeVisitor.processInvoke(MethodInvokeVisitor.java:99)
-            	at jadx.core.dex.visitors.MethodInvokeVisitor.processInsn(MethodInvokeVisitor.java:70)
-            	at jadx.core.dex.visitors.MethodInvokeVisitor.processInsn(MethodInvokeVisitor.java:75)
-            	at jadx.core.dex.visitors.MethodInvokeVisitor.visit(MethodInvokeVisitor.java:63)
-            */
-        protected void zzb() {
-            /*
-                r3 = this;
-                boolean r0 = r3.zzb
-                if (r0 == 0) goto L_0x001a
-                MessageType r0 = r3.zza
-                int r1 = com.google.android.gms.internal.zzgoj.zzg.zze
-                r2 = 0
-                java.lang.Object r0 = r0.zza(r1, r2, r2)
-                com.google.android.gms.internal.zzgoj r0 = (com.google.android.gms.internal.zzgoj) r0
-                MessageType r1 = r3.zza
-                zza(r0, r1)
-                r3.zza = r0
-                r0 = 0
-                r3.zzb = r0
-            L_0x001a:
-                return
-            */
-            throw new UnsupportedOperationException("Method not decompiled: com.google.android.gms.internal.zzgoj.zza.zzb():void");
-        }
-
-        /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-         method: com.google.android.gms.internal.zzgoj.zza(com.google.android.gms.internal.zzgoj, boolean):boolean
-         arg types: [MessageType, int]
-         candidates:
-          com.google.android.gms.internal.zzgoj.zza(com.google.android.gms.internal.zzgoj, com.google.android.gms.internal.zzgnb):T
-          com.google.android.gms.internal.zzgoj.zza(com.google.android.gms.internal.zzgoj, byte[]):T
-          com.google.android.gms.internal.zzgoj.zza(java.lang.Class, com.google.android.gms.internal.zzgoj):void
-          com.google.android.gms.internal.zzgoj.zza(com.google.android.gms.internal.zzgoj, boolean):boolean */
-        public final boolean zzm() {
-            return zzgoj.zza((zzgoj) this.zza, false);
-        }
-
-        /* renamed from: zzc */
-        public MessageType zze() {
-            if (this.zzb) {
-                return this.zza;
-            }
-            this.zza.zzl();
-            this.zzb = true;
-            return this.zza;
-        }
-
-        /*  JADX ERROR: JadxRuntimeException in pass: MethodInvokeVisitor
-            jadx.core.utils.exceptions.JadxRuntimeException: Not class type: MessageType
-            	at jadx.core.dex.info.ClassInfo.checkClassType(ClassInfo.java:60)
-            	at jadx.core.dex.info.ClassInfo.fromType(ClassInfo.java:31)
-            	at jadx.core.dex.nodes.DexNode.resolveClass(DexNode.java:143)
-            	at jadx.core.dex.nodes.RootNode.resolveClass(RootNode.java:183)
-            	at jadx.core.dex.nodes.utils.MethodUtils.processMethodArgsOverloaded(MethodUtils.java:75)
-            	at jadx.core.dex.nodes.utils.MethodUtils.collectOverloadedMethods(MethodUtils.java:54)
-            	at jadx.core.dex.visitors.MethodInvokeVisitor.processOverloaded(MethodInvokeVisitor.java:106)
-            	at jadx.core.dex.visitors.MethodInvokeVisitor.processInvoke(MethodInvokeVisitor.java:99)
-            	at jadx.core.dex.visitors.MethodInvokeVisitor.processInsn(MethodInvokeVisitor.java:70)
-            	at jadx.core.dex.visitors.MethodInvokeVisitor.processInsn(MethodInvokeVisitor.java:75)
-            	at jadx.core.dex.visitors.MethodInvokeVisitor.processInsn(MethodInvokeVisitor.java:75)
-            	at jadx.core.dex.visitors.MethodInvokeVisitor.visit(MethodInvokeVisitor.java:63)
-            */
-        public final MessageType zzd() {
-            /*
-                r7 = this;
-                com.google.android.gms.internal.zzgpt r0 = r7.zze()
-                com.google.android.gms.internal.zzgoj r0 = (com.google.android.gms.internal.zzgoj) r0
-                java.lang.Boolean r1 = java.lang.Boolean.TRUE
-                boolean r1 = r1.booleanValue()
-                int r2 = com.google.android.gms.internal.zzgoj.zzg.zzb
-                r3 = 0
-                java.lang.Object r2 = r0.zza(r2, r3, r3)
-                java.lang.Byte r2 = (java.lang.Byte) r2
-                byte r2 = r2.byteValue()
-                r4 = 0
-                r5 = 1
-                if (r2 != r5) goto L_0x0021
-                r4 = 1
-                goto L_0x003e
-            L_0x0021:
-                if (r2 != 0) goto L_0x0024
-                goto L_0x003e
-            L_0x0024:
-                int r2 = com.google.android.gms.internal.zzgoj.zzg.zza
-                java.lang.Boolean r6 = java.lang.Boolean.FALSE
-                java.lang.Object r2 = r0.zza(r2, r6, r3)
-                if (r2 == 0) goto L_0x0030
-                r4 = 1
-            L_0x0030:
-                if (r1 == 0) goto L_0x003d
-                int r1 = com.google.android.gms.internal.zzgoj.zzg.zzc
-                if (r4 == 0) goto L_0x0038
-                r2 = r0
-                goto L_0x0039
-            L_0x0038:
-                r2 = r3
-            L_0x0039:
-                r0.zza(r1, r2, r3)
-            L_0x003d:
-            L_0x003e:
-                if (r4 == 0) goto L_0x0041
-                return r0
-            L_0x0041:
-                com.google.android.gms.internal.zzgrc r1 = new com.google.android.gms.internal.zzgrc
-                r1.<init>(r0)
-                throw r1
-            */
-            throw new UnsupportedOperationException("Method not decompiled: com.google.android.gms.internal.zzgoj.zza.zzd():com.google.android.gms.internal.zzgoj");
-        }
-
-        public final BuilderType zza(MessageType messagetype) {
-            zzb();
-            zza(this.zza, messagetype);
-            return this;
-        }
-
-        private static void zza(MessageType messagetype, MessageType messagetype2) {
-            zzgqf.zza().zza((Object) messagetype).zzb(messagetype, messagetype2);
-        }
-
-        public final /* synthetic */ zzgmq zza() {
-            return (zza) clone();
-        }
-
-        public final /* synthetic */ zzgpt zzf() {
-            zzgoj zzgoj = (zzgoj) zze();
-            boolean booleanValue = Boolean.TRUE.booleanValue();
-            byte byteValue = ((Byte) zzgoj.zza(zzg.zzb, (Object) null, (Object) null)).byteValue();
-            boolean z = false;
-            if (byteValue == 1) {
-                z = true;
-            } else if (byteValue != 0) {
-                if (zzgoj.zza(zzg.zza, Boolean.FALSE, (Object) null) != null) {
-                    z = true;
-                }
-                if (booleanValue) {
-                    zzgoj.zza(zzg.zzc, z ? zzgoj : null, (Object) null);
-                }
-            }
-            if (z) {
-                return zzgoj;
-            }
-            throw new zzgrc(zzgoj);
-        }
-
-        public final /* synthetic */ zzgpt zzr() {
-            return this.zzc;
-        }
-
-        public /* synthetic */ Object clone() throws CloneNotSupportedException {
-            zza zza2 = (zza) ((zzgoj) this.zzc).zza(zzg.zzf, (Object) null, (Object) null);
-            zza2.zza((zzgoj) zze());
-            return zza2;
-        }
-    }
-
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!((zzgoj) zza(zzg.zzg, (Object) null, (Object) null)).getClass().isInstance(obj)) {
-            return false;
-        }
-        return zzgqf.zza().zza(this).zza(this, (zzgoj) obj);
-    }
-
-    /* access modifiers changed from: protected */
-    public void zzl() {
-        zza(zzg.zzd, (Object) null, (Object) null);
-        this.zzb.zzc();
-    }
-
-    public final boolean zzm() {
-        boolean booleanValue = Boolean.TRUE.booleanValue();
-        byte byteValue = ((Byte) zza(zzg.zzb, (Object) null, (Object) null)).byteValue();
-        boolean z = true;
-        if (byteValue == 1) {
-            return true;
-        }
-        if (byteValue == 0) {
-            return false;
-        }
-        if (zza(zzg.zza, Boolean.FALSE, (Object) null) == null) {
-            z = false;
-        }
-        if (booleanValue) {
-            zza(zzg.zzc, z ? this : null, (Object) null);
-        }
-        return z;
-    }
-
-    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
-     method: com.google.android.gms.internal.zzgql.zza(java.lang.Object, com.google.android.gms.internal.zzgrx):void
-     arg types: [com.google.android.gms.internal.zzgoj, com.google.android.gms.internal.zzgnr]
-     candidates:
-      com.google.android.gms.internal.zzgql.zza(java.lang.Object, java.lang.Object):boolean
-      com.google.android.gms.internal.zzgql.zza(java.lang.Object, com.google.android.gms.internal.zzgrx):void */
-    public void zza(zzgnp zzgnp) throws IOException {
-        zzgqf.zza().zza((Class) getClass()).zza((Object) this, (zzgrx) zzgnr.zza(zzgnp));
-    }
-
-    public int zza() {
-        if (this.zzc == -1) {
-            this.zzc = zzgqf.zza().zza(this).zzb(this);
-        }
-        return this.zzc;
-    }
 
     static <T extends zzgoj<?, ?>> T zza(Class<T> cls) {
         T t = (zzgoj) zzd.get(cls);
@@ -890,6 +417,76 @@ public abstract class zzgoj<MessageType extends zzgoj<MessageType, BuilderType>,
         throw new UnsupportedOperationException("Method not decompiled: com.google.android.gms.internal.zzgoj.zza(com.google.android.gms.internal.zzgoj, byte[]):com.google.android.gms.internal.zzgoj");
     }
 
+    /* access modifiers changed from: protected */
+    public abstract Object zza(int i, Object obj, Object obj2);
+
+    /* access modifiers changed from: protected */
+    public abstract Object zzb() throws Exception;
+
+    public String toString() {
+        return zzgpw.zza(this, super.toString());
+    }
+
+    public int hashCode() {
+        if (this.zza != 0) {
+            return this.zza;
+        }
+        this.zza = zzgqf.zza().zza(this).zza(this);
+        return this.zza;
+    }
+
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!((zzgoj) zza(zzg.zzg, (Object) null, (Object) null)).getClass().isInstance(obj)) {
+            return false;
+        }
+        return zzgqf.zza().zza(this).zza(this, (zzgoj) obj);
+    }
+
+    /* access modifiers changed from: protected */
+    public void zzl() {
+        zza(zzg.zzd, (Object) null, (Object) null);
+        this.zzb.zzc();
+    }
+
+    public final boolean zzm() {
+        boolean booleanValue = Boolean.TRUE.booleanValue();
+        byte byteValue = ((Byte) zza(zzg.zzb, (Object) null, (Object) null)).byteValue();
+        boolean z = true;
+        if (byteValue == 1) {
+            return true;
+        }
+        if (byteValue == 0) {
+            return false;
+        }
+        if (zza(zzg.zza, Boolean.FALSE, (Object) null) == null) {
+            z = false;
+        }
+        if (booleanValue) {
+            zza(zzg.zzc, z ? this : null, (Object) null);
+        }
+        return z;
+    }
+
+    /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+     method: com.google.android.gms.internal.zzgql.zza(java.lang.Object, com.google.android.gms.internal.zzgrx):void
+     arg types: [com.google.android.gms.internal.zzgoj, com.google.android.gms.internal.zzgnr]
+     candidates:
+      com.google.android.gms.internal.zzgql.zza(java.lang.Object, java.lang.Object):boolean
+      com.google.android.gms.internal.zzgql.zza(java.lang.Object, com.google.android.gms.internal.zzgrx):void */
+    public void zza(zzgnp zzgnp) throws IOException {
+        zzgqf.zza().zza((Class) getClass()).zza((Object) this, (zzgrx) zzgnr.zza(zzgnp));
+    }
+
+    public int zza() {
+        if (this.zzc == -1) {
+            this.zzc = zzgqf.zza().zza(this).zzb(this);
+        }
+        return this.zzc;
+    }
+
     public final /* synthetic */ zzgpu zzp() {
         zza zza2 = (zza) zza(zzg.zzf, (Object) null, (Object) null);
         zza2.zza(this);
@@ -902,5 +499,408 @@ public abstract class zzgoj<MessageType extends zzgoj<MessageType, BuilderType>,
 
     public final /* synthetic */ zzgpt zzr() {
         return (zzgoj) zza(zzg.zzg, (Object) null, (Object) null);
+    }
+
+    /* compiled from: GeneratedMessageLite */
+    public static class zzf<ContainingType extends zzgpt, Type> extends zzgnt<ContainingType, Type> {
+        final zzgpt zza;
+        final zze zzb;
+        private final ContainingType zzc;
+        private final Type zzd;
+
+        zzf(ContainingType containingtype, Type type, zzgpt zzgpt, zze zze, Class cls) {
+            if (containingtype == null) {
+                throw new IllegalArgumentException("Null containingTypeDefaultInstance");
+            } else if (zze.zzc == zzgrr.MESSAGE && zzgpt == null) {
+                throw new IllegalArgumentException("Null messageDefaultInstance");
+            } else {
+                this.zzc = containingtype;
+                this.zzd = type;
+                this.zza = zzgpt;
+                this.zzb = zze;
+            }
+        }
+    }
+
+    /* JADX INFO: Failed to restore enum class, 'enum' modifier removed */
+    /* compiled from: GeneratedMessageLite */
+    public static final class zzg {
+        public static final int zza = 1;
+        public static final int zzb = 2;
+        public static final int zzc = 3;
+        public static final int zzd = 4;
+        public static final int zze = 5;
+        public static final int zzf = 6;
+        public static final int zzg = 7;
+        public static final int zzh = 8;
+        public static final int zzi = 1;
+        public static final int zzj = 2;
+        public static final int zzk = 1;
+        public static final int zzl = 2;
+        private static final /* synthetic */ int[] zzm = {zza, zzb, zzc, zzd, zze, zzf, zzg, zzh};
+        private static final /* synthetic */ int[] zzn = {zzi, zzj};
+        private static final /* synthetic */ int[] zzo = {zzk, zzl};
+
+        /* renamed from: values$50KLMJ33DTMIUPRFDTJMOP9FE1P6UT3FC9QMCBQ7CLN6ASJ1EHIM8JB5EDPM2PR59HKN8P949LIN8Q3FCHA6UIBEEPNMMP9R0 */
+        public static int[] m43x126d66cb() {
+            return (int[]) zzm.clone();
+        }
+    }
+
+    /* compiled from: GeneratedMessageLite */
+    public static abstract class zzc<MessageType extends zzd<MessageType, BuilderType>, BuilderType extends zzc<MessageType, BuilderType>> extends zza<MessageType, BuilderType> implements zzgpv {
+        protected zzc(MessageType messagetype) {
+            super(messagetype);
+        }
+
+        /* access modifiers changed from: protected */
+        public final void zzb() {
+            if (this.zzb) {
+                super.zzb();
+                ((zzd) this.zza).zzd = (zzgoa) ((zzd) this.zza).zzd.clone();
+            }
+        }
+
+        public final /* synthetic */ zzgoj zzc() {
+            return (zzd) zze();
+        }
+
+        public final /* synthetic */ zzgpt zze() {
+            if (this.zzb) {
+                return (zzd) this.zza;
+            }
+            ((zzd) this.zza).zzd.zzc();
+            return (zzd) super.zze();
+        }
+    }
+
+    /* compiled from: GeneratedMessageLite */
+    public static abstract class zzd<MessageType extends zzd<MessageType, BuilderType>, BuilderType extends zzc<MessageType, BuilderType>> extends zzgoj<MessageType, BuilderType> implements zzgpv {
+        protected zzgoa<zze> zzd = zzgoa.zza();
+
+        /* access modifiers changed from: protected */
+        public final boolean zze() {
+            return this.zzd.zzg();
+        }
+
+        /* access modifiers changed from: protected */
+        public final void zzl() {
+            zzgoj.super.zzl();
+            this.zzd.zzc();
+        }
+
+        /* access modifiers changed from: protected */
+        public final zza zzf() {
+            return new zza(this, false, null);
+        }
+
+        /* access modifiers changed from: protected */
+        public final int zzg() {
+            return this.zzd.zzh();
+        }
+
+        /* compiled from: GeneratedMessageLite */
+        public class zza {
+            private final Iterator<Map.Entry<zze, Object>> zza;
+            private final boolean zzc;
+            private Map.Entry<zze, Object> zzb;
+
+            private zza(boolean z) {
+                this.zza = zzd.this.zzd.zze();
+                if (this.zza.hasNext()) {
+                    this.zzb = this.zza.next();
+                }
+                this.zzc = false;
+            }
+
+            /* synthetic */ zza(zzd zzd2, boolean z, zzgok zzgok) {
+                this(false);
+            }
+
+            public final void zza(int i, zzgnp zzgnp) throws IOException {
+                while (true) {
+                    Map.Entry<zze, Object> entry = this.zzb;
+                    if (entry != null && entry.getKey().zzb < 536870912) {
+                        zze key = this.zzb.getKey();
+                        if (!this.zzc || key.zzc.zza() != zzgrw.MESSAGE) {
+                            zzgoa.zza(key, this.zzb.getValue(), zzgnp);
+                        } else {
+                            zzgnp.zzb(key.zzb, (zzgpt) this.zzb.getValue());
+                        }
+                        if (this.zza.hasNext()) {
+                            this.zzb = this.zza.next();
+                        } else {
+                            this.zzb = null;
+                        }
+                    } else {
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+    /* compiled from: GeneratedMessageLite */
+    public static class zzb<T extends zzgoj<T, ?>> extends zzgmr<T> {
+        private T zza;
+
+        public zzb(T t) {
+            this.zza = t;
+        }
+
+        public final /* synthetic */ Object zza(zzgnk zzgnk, zzgnv zzgnv) throws zzgot {
+            return zzgoj.zza(this.zza, zzgnk, zzgnv);
+        }
+    }
+
+    /* compiled from: GeneratedMessageLite */
+    static final class zze implements zzgoc<zze> {
+        final zzgop<?> zza = null;
+        final int zzb = 77815057;
+        final zzgrr zzc;
+        final boolean zzd;
+        final boolean zze;
+
+        zze(zzgop<?> zzgop, int i, zzgrr zzgrr, boolean z, boolean z2) {
+            this.zzc = zzgrr;
+            this.zzd = false;
+            this.zze = false;
+        }
+
+        public final int zza() {
+            return this.zzb;
+        }
+
+        public final zzgrr zzb() {
+            return this.zzc;
+        }
+
+        public final zzgrw zzc() {
+            return this.zzc.zza();
+        }
+
+        public final boolean zzd() {
+            return false;
+        }
+
+        public final boolean zze() {
+            return false;
+        }
+
+        public final zzgpu zza(zzgpu zzgpu, zzgpt zzgpt) {
+            return ((zza) zzgpu).zza((zzgoj) zzgpt);
+        }
+
+        public final zzgqa zza(zzgqa zzgqa, zzgqa zzgqa2) {
+            throw new UnsupportedOperationException();
+        }
+
+        public final /* synthetic */ int compareTo(Object obj) {
+            return this.zzb - ((zze) obj).zzb;
+        }
+    }
+
+    /* compiled from: GeneratedMessageLite */
+    public static abstract class zza<MessageType extends zzgoj<MessageType, BuilderType>, BuilderType extends zza<MessageType, BuilderType>> extends zzgmq<MessageType, BuilderType> {
+        private final MessageType zzc;
+        protected MessageType zza;
+        protected boolean zzb = false;
+
+        /*  JADX ERROR: JadxRuntimeException in pass: MethodInvokeVisitor
+            jadx.core.utils.exceptions.JadxRuntimeException: Not class type: MessageType
+            	at jadx.core.dex.info.ClassInfo.checkClassType(ClassInfo.java:60)
+            	at jadx.core.dex.info.ClassInfo.fromType(ClassInfo.java:31)
+            	at jadx.core.dex.nodes.DexNode.resolveClass(DexNode.java:143)
+            	at jadx.core.dex.nodes.RootNode.resolveClass(RootNode.java:183)
+            	at jadx.core.dex.nodes.utils.MethodUtils.processMethodArgsOverloaded(MethodUtils.java:75)
+            	at jadx.core.dex.nodes.utils.MethodUtils.collectOverloadedMethods(MethodUtils.java:54)
+            	at jadx.core.dex.visitors.MethodInvokeVisitor.processOverloaded(MethodInvokeVisitor.java:106)
+            	at jadx.core.dex.visitors.MethodInvokeVisitor.processInvoke(MethodInvokeVisitor.java:99)
+            	at jadx.core.dex.visitors.MethodInvokeVisitor.processInsn(MethodInvokeVisitor.java:70)
+            	at jadx.core.dex.visitors.MethodInvokeVisitor.processInsn(MethodInvokeVisitor.java:75)
+            	at jadx.core.dex.visitors.MethodInvokeVisitor.processInsn(MethodInvokeVisitor.java:75)
+            	at jadx.core.dex.visitors.MethodInvokeVisitor.visit(MethodInvokeVisitor.java:63)
+            */
+        protected zza(MessageType r3) {
+            /*
+                r2 = this;
+                r2.<init>()
+                r2.zzc = r3
+                int r0 = com.google.android.gms.internal.zzgoj.zzg.zze
+                r1 = 0
+                java.lang.Object r3 = r3.zza(r0, r1, r1)
+                com.google.android.gms.internal.zzgoj r3 = (com.google.android.gms.internal.zzgoj) r3
+                r2.zza = r3
+                r3 = 0
+                r2.zzb = r3
+                return
+            */
+            throw new UnsupportedOperationException("Method not decompiled: com.google.android.gms.internal.zzgoj.zza.<init>(com.google.android.gms.internal.zzgoj):void");
+        }
+
+        private static void zza(MessageType messagetype, MessageType messagetype2) {
+            zzgqf.zza().zza((Object) messagetype).zzb(messagetype, messagetype2);
+        }
+
+        /*  JADX ERROR: JadxRuntimeException in pass: MethodInvokeVisitor
+            jadx.core.utils.exceptions.JadxRuntimeException: Not class type: MessageType
+            	at jadx.core.dex.info.ClassInfo.checkClassType(ClassInfo.java:60)
+            	at jadx.core.dex.info.ClassInfo.fromType(ClassInfo.java:31)
+            	at jadx.core.dex.nodes.DexNode.resolveClass(DexNode.java:143)
+            	at jadx.core.dex.nodes.RootNode.resolveClass(RootNode.java:183)
+            	at jadx.core.dex.nodes.utils.MethodUtils.processMethodArgsOverloaded(MethodUtils.java:75)
+            	at jadx.core.dex.nodes.utils.MethodUtils.collectOverloadedMethods(MethodUtils.java:54)
+            	at jadx.core.dex.visitors.MethodInvokeVisitor.processOverloaded(MethodInvokeVisitor.java:106)
+            	at jadx.core.dex.visitors.MethodInvokeVisitor.processInvoke(MethodInvokeVisitor.java:99)
+            	at jadx.core.dex.visitors.MethodInvokeVisitor.processInsn(MethodInvokeVisitor.java:70)
+            	at jadx.core.dex.visitors.MethodInvokeVisitor.processInsn(MethodInvokeVisitor.java:75)
+            	at jadx.core.dex.visitors.MethodInvokeVisitor.visit(MethodInvokeVisitor.java:63)
+            */
+        protected void zzb() {
+            /*
+                r3 = this;
+                boolean r0 = r3.zzb
+                if (r0 == 0) goto L_0x001a
+                MessageType r0 = r3.zza
+                int r1 = com.google.android.gms.internal.zzgoj.zzg.zze
+                r2 = 0
+                java.lang.Object r0 = r0.zza(r1, r2, r2)
+                com.google.android.gms.internal.zzgoj r0 = (com.google.android.gms.internal.zzgoj) r0
+                MessageType r1 = r3.zza
+                zza(r0, r1)
+                r3.zza = r0
+                r0 = 0
+                r3.zzb = r0
+            L_0x001a:
+                return
+            */
+            throw new UnsupportedOperationException("Method not decompiled: com.google.android.gms.internal.zzgoj.zza.zzb():void");
+        }
+
+        /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
+         method: com.google.android.gms.internal.zzgoj.zza(com.google.android.gms.internal.zzgoj, boolean):boolean
+         arg types: [MessageType, int]
+         candidates:
+          com.google.android.gms.internal.zzgoj.zza(com.google.android.gms.internal.zzgoj, com.google.android.gms.internal.zzgnb):T
+          com.google.android.gms.internal.zzgoj.zza(com.google.android.gms.internal.zzgoj, byte[]):T
+          com.google.android.gms.internal.zzgoj.zza(java.lang.Class, com.google.android.gms.internal.zzgoj):void
+          com.google.android.gms.internal.zzgoj.zza(com.google.android.gms.internal.zzgoj, boolean):boolean */
+        public final boolean zzm() {
+            return zzgoj.zza((zzgoj) this.zza, false);
+        }
+
+        /* renamed from: zzc */
+        public MessageType zze() {
+            if (this.zzb) {
+                return this.zza;
+            }
+            this.zza.zzl();
+            this.zzb = true;
+            return this.zza;
+        }
+
+        /*  JADX ERROR: JadxRuntimeException in pass: MethodInvokeVisitor
+            jadx.core.utils.exceptions.JadxRuntimeException: Not class type: MessageType
+            	at jadx.core.dex.info.ClassInfo.checkClassType(ClassInfo.java:60)
+            	at jadx.core.dex.info.ClassInfo.fromType(ClassInfo.java:31)
+            	at jadx.core.dex.nodes.DexNode.resolveClass(DexNode.java:143)
+            	at jadx.core.dex.nodes.RootNode.resolveClass(RootNode.java:183)
+            	at jadx.core.dex.nodes.utils.MethodUtils.processMethodArgsOverloaded(MethodUtils.java:75)
+            	at jadx.core.dex.nodes.utils.MethodUtils.collectOverloadedMethods(MethodUtils.java:54)
+            	at jadx.core.dex.visitors.MethodInvokeVisitor.processOverloaded(MethodInvokeVisitor.java:106)
+            	at jadx.core.dex.visitors.MethodInvokeVisitor.processInvoke(MethodInvokeVisitor.java:99)
+            	at jadx.core.dex.visitors.MethodInvokeVisitor.processInsn(MethodInvokeVisitor.java:70)
+            	at jadx.core.dex.visitors.MethodInvokeVisitor.processInsn(MethodInvokeVisitor.java:75)
+            	at jadx.core.dex.visitors.MethodInvokeVisitor.processInsn(MethodInvokeVisitor.java:75)
+            	at jadx.core.dex.visitors.MethodInvokeVisitor.visit(MethodInvokeVisitor.java:63)
+            */
+        public final MessageType zzd() {
+            /*
+                r7 = this;
+                com.google.android.gms.internal.zzgpt r0 = r7.zze()
+                com.google.android.gms.internal.zzgoj r0 = (com.google.android.gms.internal.zzgoj) r0
+                java.lang.Boolean r1 = java.lang.Boolean.TRUE
+                boolean r1 = r1.booleanValue()
+                int r2 = com.google.android.gms.internal.zzgoj.zzg.zzb
+                r3 = 0
+                java.lang.Object r2 = r0.zza(r2, r3, r3)
+                java.lang.Byte r2 = (java.lang.Byte) r2
+                byte r2 = r2.byteValue()
+                r4 = 0
+                r5 = 1
+                if (r2 != r5) goto L_0x0021
+                r4 = 1
+                goto L_0x003e
+            L_0x0021:
+                if (r2 != 0) goto L_0x0024
+                goto L_0x003e
+            L_0x0024:
+                int r2 = com.google.android.gms.internal.zzgoj.zzg.zza
+                java.lang.Boolean r6 = java.lang.Boolean.FALSE
+                java.lang.Object r2 = r0.zza(r2, r6, r3)
+                if (r2 == 0) goto L_0x0030
+                r4 = 1
+            L_0x0030:
+                if (r1 == 0) goto L_0x003d
+                int r1 = com.google.android.gms.internal.zzgoj.zzg.zzc
+                if (r4 == 0) goto L_0x0038
+                r2 = r0
+                goto L_0x0039
+            L_0x0038:
+                r2 = r3
+            L_0x0039:
+                r0.zza(r1, r2, r3)
+            L_0x003d:
+            L_0x003e:
+                if (r4 == 0) goto L_0x0041
+                return r0
+            L_0x0041:
+                com.google.android.gms.internal.zzgrc r1 = new com.google.android.gms.internal.zzgrc
+                r1.<init>(r0)
+                throw r1
+            */
+            throw new UnsupportedOperationException("Method not decompiled: com.google.android.gms.internal.zzgoj.zza.zzd():com.google.android.gms.internal.zzgoj");
+        }
+
+        public final BuilderType zza(MessageType messagetype) {
+            zzb();
+            zza(this.zza, messagetype);
+            return this;
+        }
+
+        public final /* synthetic */ zzgmq zza() {
+            return (zza) clone();
+        }
+
+        public final /* synthetic */ zzgpt zzf() {
+            zzgoj zzgoj = (zzgoj) zze();
+            boolean booleanValue = Boolean.TRUE.booleanValue();
+            byte byteValue = ((Byte) zzgoj.zza(zzg.zzb, (Object) null, (Object) null)).byteValue();
+            boolean z = false;
+            if (byteValue == 1) {
+                z = true;
+            } else if (byteValue != 0) {
+                if (zzgoj.zza(zzg.zza, Boolean.FALSE, (Object) null) != null) {
+                    z = true;
+                }
+                if (booleanValue) {
+                    zzgoj.zza(zzg.zzc, z ? zzgoj : null, (Object) null);
+                }
+            }
+            if (z) {
+                return zzgoj;
+            }
+            throw new zzgrc(zzgoj);
+        }
+
+        public final /* synthetic */ zzgpt zzr() {
+            return this.zzc;
+        }
+
+        public /* synthetic */ Object clone() throws CloneNotSupportedException {
+            zza zza2 = (zza) ((zzgoj) this.zzc).zza(zzg.zzf, (Object) null, (Object) null);
+            zza2.zza((zzgoj) zze());
+            return zza2;
+        }
     }
 }

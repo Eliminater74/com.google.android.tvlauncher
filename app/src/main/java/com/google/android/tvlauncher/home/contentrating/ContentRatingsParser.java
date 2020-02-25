@@ -5,13 +5,15 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.content.res.XmlResourceParser;
 import android.util.Log;
-import com.google.android.tvlauncher.home.contentrating.ContentRatingSystem;
+
+import org.xmlpull.v1.XmlPullParserException;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.xmlpull.v1.XmlPullParserException;
 
 public class ContentRatingsParser {
+    public static final String DOMAIN_SYSTEM_RATINGS = "com.android.tv";
     private static final String ATTR_CONTENT_AGE_HINT = "contentAgeHint";
     private static final String ATTR_COUNTRY = "country";
     private static final String ATTR_DESCRIPTION = "description";
@@ -20,7 +22,6 @@ public class ContentRatingsParser {
     private static final String ATTR_TITLE = "title";
     private static final String ATTR_VERSION_CODE = "versionCode";
     private static final boolean DEBUG = false;
-    public static final String DOMAIN_SYSTEM_RATINGS = "com.android.tv";
     private static final String LIVE_TV_APP_DOMAIN = "com.google.android.tv";
     private static final String TAG = "ContentRatingsParser";
     private static final String TAG_RATING = "rating";
@@ -37,6 +38,18 @@ public class ContentRatingsParser {
 
     public ContentRatingsParser(Context context) {
         this.mContext = context;
+    }
+
+    private static void assertEquals(int a, int b, String msg) throws XmlPullParserException {
+        if (a != b) {
+            throw new XmlPullParserException(msg);
+        }
+    }
+
+    private static void assertEquals(String a, String b, String msg) throws XmlPullParserException {
+        if (!b.equals(a)) {
+            throw new XmlPullParserException(msg);
+        }
     }
 
     /* JADX WARNING: Code restructure failed: missing block: B:19:0x0056, code lost:
@@ -169,18 +182,6 @@ public class ContentRatingsParser {
             throw new XmlPullParserException("rating-system-definitions section is incomplete or section ending tag is missing");
         }
         throw new XmlPullParserException("Malformed XML: Should contains a version attribute in rating-system-definitions");
-    }
-
-    private static void assertEquals(int a, int b, String msg) throws XmlPullParserException {
-        if (a != b) {
-            throw new XmlPullParserException(msg);
-        }
-    }
-
-    private static void assertEquals(String a, String b, String msg) throws XmlPullParserException {
-        if (!b.equals(a)) {
-            throw new XmlPullParserException(msg);
-        }
     }
 
     private void checkVersion(String msg) throws XmlPullParserException {

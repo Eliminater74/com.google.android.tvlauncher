@@ -6,6 +6,7 @@ import com.google.protobuf.ExtensionRegistryLite;
 import com.google.protobuf.GeneratedMessageLite;
 import com.google.protobuf.Internal;
 import com.google.protobuf.WireFormat;
+
 import java.util.List;
 
 public final class NanoDescriptor {
@@ -66,7 +67,7 @@ public final class NanoDescriptor {
         NANO(1),
         LITE(2),
         OMIT(3);
-        
+
         public static final int INVALID_VALUE = 0;
         public static final int LITE_VALUE = 2;
         public static final int NANO_VALUE = 1;
@@ -78,8 +79,8 @@ public final class NanoDescriptor {
         };
         private final int value;
 
-        public final int getNumber() {
-            return this.value;
+        private GenerateAs(int value2) {
+            this.value = value2;
         }
 
         public static GenerateAs forNumber(int value2) {
@@ -106,6 +107,10 @@ public final class NanoDescriptor {
             return GenerateAsVerifier.INSTANCE;
         }
 
+        public final int getNumber() {
+            return this.value;
+        }
+
         private static final class GenerateAsVerifier implements Internal.EnumVerifier {
             static final Internal.EnumVerifier INSTANCE = new GenerateAsVerifier();
 
@@ -115,10 +120,6 @@ public final class NanoDescriptor {
             public boolean isInRange(int number) {
                 return GenerateAs.forNumber(number) != null;
             }
-        }
-
-        private GenerateAs(int value2) {
-            this.value = value2;
         }
     }
 
@@ -144,7 +145,7 @@ public final class NanoDescriptor {
         DOTS(18),
         TESTING_NOT_WATERMARK_COMPLIANT(100),
         TESTING_WATERMARK_COMPLIANT(101);
-        
+
         public static final int ADS_EXPRESS_MOBILEAPP_VALUE = 10;
         public static final int AGSA_PROTO_VALUE = 2;
         public static final int ANDROID_UTIL_CONVERT_TO_NANO_PROTOS_VALUE = 7;
@@ -173,8 +174,8 @@ public final class NanoDescriptor {
         };
         private final int value;
 
-        public final int getNumber() {
-            return this.value;
+        private Munger(int value2) {
+            this.value = value2;
         }
 
         public static Munger forNumber(int value2) {
@@ -236,6 +237,10 @@ public final class NanoDescriptor {
             return MungerVerifier.INSTANCE;
         }
 
+        public final int getNumber() {
+            return this.value;
+        }
+
         private static final class MungerVerifier implements Internal.EnumVerifier {
             static final Internal.EnumVerifier INSTANCE = new MungerVerifier();
 
@@ -245,10 +250,6 @@ public final class NanoDescriptor {
             public boolean isInRange(int number) {
                 return Munger.forNumber(number) != null;
             }
-        }
-
-        private Munger(int value2) {
-            this.value = value2;
         }
     }
 }

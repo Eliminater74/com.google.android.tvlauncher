@@ -1,6 +1,7 @@
 package com.google.android.libraries.stitch.flags;
 
 import android.support.annotation.Size;
+
 import com.google.common.annotations.VisibleForTesting;
 
 public final class DefaultTrueFlag extends Flag {

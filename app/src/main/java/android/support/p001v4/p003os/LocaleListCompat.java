@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.annotation.Size;
 import android.support.p001v4.media.MediaDescriptionCompat;
+
 import java.util.Locale;
 
 /* renamed from: android.support.v4.os.LocaleListCompat */
@@ -31,45 +32,12 @@ public final class LocaleListCompat {
         return new LocaleListCompat(new LocaleListPlatformWrapper(localeList));
     }
 
-    @Nullable
-    public Object unwrap() {
-        return this.mImpl.getLocaleList();
-    }
-
     @NonNull
     public static LocaleListCompat create(@NonNull Locale... localeList) {
         if (Build.VERSION.SDK_INT >= 24) {
             return wrap(new LocaleList(localeList));
         }
         return new LocaleListCompat(new LocaleListCompatWrapper(localeList));
-    }
-
-    public Locale get(int index) {
-        return this.mImpl.get(index);
-    }
-
-    public boolean isEmpty() {
-        return this.mImpl.isEmpty();
-    }
-
-    @IntRange(from = MediaDescriptionCompat.BT_FOLDER_TYPE_MIXED)
-    public int size() {
-        return this.mImpl.size();
-    }
-
-    @IntRange(from = -1)
-    public int indexOf(Locale locale) {
-        return this.mImpl.indexOf(locale);
-    }
-
-    @NonNull
-    public String toLanguageTags() {
-        return this.mImpl.toLanguageTags();
-    }
-
-    @Nullable
-    public Locale getFirstMatch(@NonNull String[] supportedLocales) {
-        return this.mImpl.getFirstMatch(supportedLocales);
     }
 
     @NonNull
@@ -141,6 +109,39 @@ public final class LocaleListCompat {
             return wrap(LocaleList.getDefault());
         }
         return create(Locale.getDefault());
+    }
+
+    @Nullable
+    public Object unwrap() {
+        return this.mImpl.getLocaleList();
+    }
+
+    public Locale get(int index) {
+        return this.mImpl.get(index);
+    }
+
+    public boolean isEmpty() {
+        return this.mImpl.isEmpty();
+    }
+
+    @IntRange(from = MediaDescriptionCompat.BT_FOLDER_TYPE_MIXED)
+    public int size() {
+        return this.mImpl.size();
+    }
+
+    @IntRange(from = -1)
+    public int indexOf(Locale locale) {
+        return this.mImpl.indexOf(locale);
+    }
+
+    @NonNull
+    public String toLanguageTags() {
+        return this.mImpl.toLanguageTags();
+    }
+
+    @Nullable
+    public Locale getFirstMatch(@NonNull String[] supportedLocales) {
+        return this.mImpl.getFirstMatch(supportedLocales);
     }
 
     public boolean equals(Object other) {

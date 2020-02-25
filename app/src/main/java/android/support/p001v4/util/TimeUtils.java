@@ -1,6 +1,7 @@
 package android.support.p001v4.util;
 
 import android.support.annotation.RestrictTo;
+
 import java.io.PrintWriter;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
@@ -11,8 +12,11 @@ public final class TimeUtils {
     private static final int SECONDS_PER_DAY = 86400;
     private static final int SECONDS_PER_HOUR = 3600;
     private static final int SECONDS_PER_MINUTE = 60;
-    private static char[] sFormatStr = new char[24];
     private static final Object sFormatSync = new Object();
+    private static char[] sFormatStr = new char[24];
+
+    private TimeUtils() {
+    }
 
     private static int accumField(int amt, int suffix, boolean always, int zeropad) {
         if (amt > 99 || (always && zeropad >= 3)) {
@@ -316,8 +320,5 @@ public final class TimeUtils {
         } else {
             formatDuration(time - now, pw, 0);
         }
-    }
-
-    private TimeUtils() {
     }
 }

@@ -7,7 +7,6 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.RestrictTo;
 import android.support.p001v4.view.ViewCompat;
 import android.support.p004v7.appcompat.C0233R;
-import android.support.p004v7.view.menu.MenuView;
 import android.support.p004v7.widget.TintTypedArray;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;

@@ -2,19 +2,20 @@ package com.google.android.exoplayer2.text;
 
 import com.google.android.exoplayer2.decoder.OutputBuffer;
 import com.google.android.exoplayer2.decoder.SimpleDecoder;
+
 import java.nio.ByteBuffer;
 
 public abstract class SimpleSubtitleDecoder extends SimpleDecoder<SubtitleInputBuffer, SubtitleOutputBuffer, SubtitleDecoderException> implements SubtitleDecoder {
     private final String name;
-
-    /* access modifiers changed from: protected */
-    public abstract Subtitle decode(byte[] bArr, int i, boolean z) throws SubtitleDecoderException;
 
     protected SimpleSubtitleDecoder(String name2) {
         super(new SubtitleInputBuffer[2], new SubtitleOutputBuffer[2]);
         this.name = name2;
         setInitialInputBufferSize(1024);
     }
+
+    /* access modifiers changed from: protected */
+    public abstract Subtitle decode(byte[] bArr, int i, boolean z) throws SubtitleDecoderException;
 
     public final String getName() {
         return this.name;

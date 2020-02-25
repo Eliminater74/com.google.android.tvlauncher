@@ -4,9 +4,9 @@ import android.annotation.SuppressLint;
 import android.arch.lifecycle.Lifecycle;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.p001v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.util.Log;
+
 import java.util.ArrayList;
 
 @SuppressLint({"BanParcelableUsage"})

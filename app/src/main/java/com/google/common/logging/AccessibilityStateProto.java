@@ -14,11 +14,18 @@ import com.google.protobuf.ProtoMessage;
 import com.google.protobuf.ProtoPresenceBits;
 import com.google.protobuf.ProtoPresenceCheckedField;
 import com.google.protobuf.ProtoSyntax;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 public final class AccessibilityStateProto {
+
+    private AccessibilityStateProto() {
+    }
+
+    public static void registerAllExtensions(ExtensionRegistryLite registry) {
+    }
 
     public interface AccessibilityStateOrBuilder extends MessageLiteOrBuilder {
         AccessibilityState.OnOff getBraillebackEnabled();
@@ -50,12 +57,6 @@ public final class AccessibilityStateProto {
         boolean hasTalkbackEnabled();
     }
 
-    private AccessibilityStateProto() {
-    }
-
-    public static void registerAllExtensions(ExtensionRegistryLite registry) {
-    }
-
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
     public static final class AccessibilityState extends GeneratedMessageLite<AccessibilityState, Builder> implements AccessibilityStateOrBuilder {
         public static final int BRAILLEBACK_ENABLED_FIELD_NUMBER = 2;
@@ -65,9 +66,14 @@ public final class AccessibilityStateProto {
         public static final int JUSTSPEAK_ENABLED_FIELD_NUMBER = 4;
         public static final int LARGE_TEXT_ENABLED_FIELD_NUMBER = 5;
         public static final int MAGNIFICATION_ENABLED_FIELD_NUMBER = 6;
-        private static volatile Parser<AccessibilityState> PARSER = null;
         public static final int SWITCHACCESS_ENABLED_FIELD_NUMBER = 3;
         public static final int TALKBACK_ENABLED_FIELD_NUMBER = 1;
+        private static volatile Parser<AccessibilityState> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(AccessibilityState.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 2, isRequired = false, type = FieldType.ENUM)
@@ -95,60 +101,68 @@ public final class AccessibilityStateProto {
         private AccessibilityState() {
         }
 
-        public enum OnOff implements Internal.EnumLite {
-            UNKNOWN(0),
-            ON(1),
-            OFF(2);
-            
-            public static final int OFF_VALUE = 2;
-            public static final int ON_VALUE = 1;
-            public static final int UNKNOWN_VALUE = 0;
-            private static final Internal.EnumLiteMap<OnOff> internalValueMap = new Internal.EnumLiteMap<OnOff>() {
-                public OnOff findValueByNumber(int number) {
-                    return OnOff.forNumber(number);
-                }
-            };
-            private final int value;
+        public static AccessibilityState parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (AccessibilityState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
 
-            public final int getNumber() {
-                return this.value;
-            }
+        public static AccessibilityState parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (AccessibilityState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-            public static OnOff forNumber(int value2) {
-                if (value2 == 0) {
-                    return UNKNOWN;
-                }
-                if (value2 == 1) {
-                    return ON;
-                }
-                if (value2 != 2) {
-                    return null;
-                }
-                return OFF;
-            }
+        public static AccessibilityState parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (AccessibilityState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
 
-            public static Internal.EnumLiteMap<OnOff> internalGetValueMap() {
-                return internalValueMap;
-            }
+        public static AccessibilityState parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (AccessibilityState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-            public static Internal.EnumVerifier internalGetVerifier() {
-                return OnOffVerifier.INSTANCE;
-            }
+        public static AccessibilityState parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (AccessibilityState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
 
-            private static final class OnOffVerifier implements Internal.EnumVerifier {
-                static final Internal.EnumVerifier INSTANCE = new OnOffVerifier();
+        public static AccessibilityState parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (AccessibilityState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
 
-                private OnOffVerifier() {
-                }
+        public static AccessibilityState parseFrom(InputStream input) throws IOException {
+            return (AccessibilityState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
 
-                public boolean isInRange(int number) {
-                    return OnOff.forNumber(number) != null;
-                }
-            }
+        public static AccessibilityState parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (AccessibilityState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
 
-            private OnOff(int value2) {
-                this.value = value2;
-            }
+        public static AccessibilityState parseDelimitedFrom(InputStream input) throws IOException {
+            return (AccessibilityState) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static AccessibilityState parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (AccessibilityState) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static AccessibilityState parseFrom(CodedInputStream input) throws IOException {
+            return (AccessibilityState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static AccessibilityState parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (AccessibilityState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(AccessibilityState prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static AccessibilityState getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<AccessibilityState> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         public boolean hasTalkbackEnabled() {
@@ -326,60 +340,92 @@ public final class AccessibilityStateProto {
             this.highContrastTextEnabled_ = 0;
         }
 
-        public static AccessibilityState parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (AccessibilityState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new AccessibilityState();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0007\u0000\u0001\u0001\u0007\u0007\u0000\u0000\u0000\u0001\f\u0000\u0002\f\u0001\u0003\f\u0002\u0004\f\u0003\u0005\f\u0004\u0006\f\u0005\u0007\f\u0006", new Object[]{"bitField0_", "talkbackEnabled_", OnOff.internalGetVerifier(), "braillebackEnabled_", OnOff.internalGetVerifier(), "switchaccessEnabled_", OnOff.internalGetVerifier(), "justspeakEnabled_", OnOff.internalGetVerifier(), "largeTextEnabled_", OnOff.internalGetVerifier(), "magnificationEnabled_", OnOff.internalGetVerifier(), "highContrastTextEnabled_", OnOff.internalGetVerifier()});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<AccessibilityState> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (AccessibilityState.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
-        public static AccessibilityState parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (AccessibilityState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
+        public enum OnOff implements Internal.EnumLite {
+            UNKNOWN(0),
+            ON(1),
+            OFF(2);
 
-        public static AccessibilityState parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (AccessibilityState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
+            public static final int OFF_VALUE = 2;
+            public static final int ON_VALUE = 1;
+            public static final int UNKNOWN_VALUE = 0;
+            private static final Internal.EnumLiteMap<OnOff> internalValueMap = new Internal.EnumLiteMap<OnOff>() {
+                public OnOff findValueByNumber(int number) {
+                    return OnOff.forNumber(number);
+                }
+            };
+            private final int value;
 
-        public static AccessibilityState parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (AccessibilityState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
+            private OnOff(int value2) {
+                this.value = value2;
+            }
 
-        public static AccessibilityState parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (AccessibilityState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
+            public static OnOff forNumber(int value2) {
+                if (value2 == 0) {
+                    return UNKNOWN;
+                }
+                if (value2 == 1) {
+                    return ON;
+                }
+                if (value2 != 2) {
+                    return null;
+                }
+                return OFF;
+            }
 
-        public static AccessibilityState parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (AccessibilityState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
+            public static Internal.EnumLiteMap<OnOff> internalGetValueMap() {
+                return internalValueMap;
+            }
 
-        public static AccessibilityState parseFrom(InputStream input) throws IOException {
-            return (AccessibilityState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
+            public static Internal.EnumVerifier internalGetVerifier() {
+                return OnOffVerifier.INSTANCE;
+            }
 
-        public static AccessibilityState parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (AccessibilityState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
+            public final int getNumber() {
+                return this.value;
+            }
 
-        public static AccessibilityState parseDelimitedFrom(InputStream input) throws IOException {
-            return (AccessibilityState) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
+            private static final class OnOffVerifier implements Internal.EnumVerifier {
+                static final Internal.EnumVerifier INSTANCE = new OnOffVerifier();
 
-        public static AccessibilityState parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (AccessibilityState) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
+                private OnOffVerifier() {
+                }
 
-        public static AccessibilityState parseFrom(CodedInputStream input) throws IOException {
-            return (AccessibilityState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static AccessibilityState parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (AccessibilityState) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(AccessibilityState prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+                public boolean isInRange(int number) {
+                    return OnOff.forNumber(number) != null;
+                }
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<AccessibilityState, Builder> implements AccessibilityStateOrBuilder {
@@ -526,50 +572,6 @@ public final class AccessibilityStateProto {
                 ((AccessibilityState) this.instance).clearHighContrastTextEnabled();
                 return this;
             }
-        }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new AccessibilityState();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0007\u0000\u0001\u0001\u0007\u0007\u0000\u0000\u0000\u0001\f\u0000\u0002\f\u0001\u0003\f\u0002\u0004\f\u0003\u0005\f\u0004\u0006\f\u0005\u0007\f\u0006", new Object[]{"bitField0_", "talkbackEnabled_", OnOff.internalGetVerifier(), "braillebackEnabled_", OnOff.internalGetVerifier(), "switchaccessEnabled_", OnOff.internalGetVerifier(), "justspeakEnabled_", OnOff.internalGetVerifier(), "largeTextEnabled_", OnOff.internalGetVerifier(), "magnificationEnabled_", OnOff.internalGetVerifier(), "highContrastTextEnabled_", OnOff.internalGetVerifier()});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<AccessibilityState> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (AccessibilityState.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(AccessibilityState.class, DEFAULT_INSTANCE);
-        }
-
-        public static AccessibilityState getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<AccessibilityState> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
         }
     }
 }

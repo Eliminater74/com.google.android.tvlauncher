@@ -25,9 +25,11 @@ import android.support.p004v7.resources.C0245R;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
+
+import org.xmlpull.v1.XmlPullParser;
+
 import java.lang.ref.WeakReference;
 import java.util.WeakHashMap;
-import org.xmlpull.v1.XmlPullParser;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
 /* renamed from: android.support.v7.widget.ResourceManagerInternal */
@@ -35,36 +37,17 @@ public final class ResourceManagerInternal {
     private static final ColorFilterLruCache COLOR_FILTER_CACHE = new ColorFilterLruCache(6);
     private static final boolean DEBUG = false;
     private static final PorterDuff.Mode DEFAULT_MODE = PorterDuff.Mode.SRC_IN;
-    private static ResourceManagerInternal INSTANCE = null;
     private static final String PLATFORM_VD_CLAZZ = "android.graphics.drawable.VectorDrawable";
     private static final String SKIP_DRAWABLE_TAG = "appcompat_skip_skip";
     private static final String TAG = "ResourceManagerInternal";
-    private ArrayMap<String, InflateDelegate> mDelegates;
+    private static ResourceManagerInternal INSTANCE = null;
     private final WeakHashMap<Context, LongSparseArray<WeakReference<Drawable.ConstantState>>> mDrawableCaches = new WeakHashMap<>(0);
+    private ArrayMap<String, InflateDelegate> mDelegates;
     private boolean mHasCheckedVectorDrawableSetup;
     private ResourceManagerHooks mHooks;
     private SparseArrayCompat<String> mKnownDrawableIdTags;
     private WeakHashMap<Context, SparseArrayCompat<ColorStateList>> mTintLists;
     private TypedValue mTypedValue;
-
-    /* renamed from: android.support.v7.widget.ResourceManagerInternal$InflateDelegate */
-    private interface InflateDelegate {
-        Drawable createFromXmlInner(@NonNull Context context, @NonNull XmlPullParser xmlPullParser, @NonNull AttributeSet attributeSet, @Nullable Resources.Theme theme);
-    }
-
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    /* renamed from: android.support.v7.widget.ResourceManagerInternal$ResourceManagerHooks */
-    interface ResourceManagerHooks {
-        Drawable createDrawableFor(@NonNull ResourceManagerInternal resourceManagerInternal, @NonNull Context context, @DrawableRes int i);
-
-        ColorStateList getTintListForDrawableRes(@NonNull Context context, @DrawableRes int i);
-
-        PorterDuff.Mode getTintModeForDrawableRes(int i);
-
-        boolean tintDrawable(@NonNull Context context, @DrawableRes int i, @NonNull Drawable drawable);
-
-        boolean tintDrawableUsingColorFilter(@NonNull Context context, @DrawableRes int i, @NonNull Drawable drawable);
-    }
 
     public static synchronized ResourceManagerInternal get() {
         ResourceManagerInternal resourceManagerInternal;
@@ -84,6 +67,58 @@ public final class ResourceManagerInternal {
             manager.addDelegate("animated-vector", new AvdcInflateDelegate());
             manager.addDelegate("animated-selector", new AsldcInflateDelegate());
         }
+    }
+
+    private static long createCacheKey(TypedValue tv) {
+        return (((long) tv.assetCookie) << 32) | ((long) tv.data);
+    }
+
+    private static boolean arrayContains(int[] array, int value) {
+        for (int id : array) {
+            if (id == value) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static void tintDrawable(Drawable drawable, TintInfo tint, int[] state) {
+        if (!DrawableUtils.canSafelyMutateDrawable(drawable) || drawable.mutate() == drawable) {
+            if (tint.mHasTintList || tint.mHasTintMode) {
+                drawable.setColorFilter(createTintFilter(tint.mHasTintList ? tint.mTintList : null, tint.mHasTintMode ? tint.mTintMode : DEFAULT_MODE, state));
+            } else {
+                drawable.clearColorFilter();
+            }
+            if (Build.VERSION.SDK_INT <= 23) {
+                drawable.invalidateSelf();
+                return;
+            }
+            return;
+        }
+        Log.d(TAG, "Mutated drawable is not the same instance as the input.");
+    }
+
+    private static PorterDuffColorFilter createTintFilter(ColorStateList tint, PorterDuff.Mode tintMode, int[] state) {
+        if (tint == null || tintMode == null) {
+            return null;
+        }
+        return getPorterDuffColorFilter(tint.getColorForState(state, 0), tintMode);
+    }
+
+    public static synchronized PorterDuffColorFilter getPorterDuffColorFilter(int color, PorterDuff.Mode mode) {
+        PorterDuffColorFilter filter;
+        synchronized (ResourceManagerInternal.class) {
+            filter = COLOR_FILTER_CACHE.get(color, mode);
+            if (filter == null) {
+                filter = new PorterDuffColorFilter(color, mode);
+                COLOR_FILTER_CACHE.put(color, mode, filter);
+            }
+        }
+        return filter;
+    }
+
+    private static boolean isVectorDrawable(@NonNull Drawable d) {
+        return (d instanceof VectorDrawableCompat) || PLATFORM_VD_CLAZZ.equals(d.getClass().getName());
     }
 
     public synchronized void setHooks(ResourceManagerHooks hooks) {
@@ -119,10 +154,6 @@ public final class ResourceManagerInternal {
         if (cache != null) {
             cache.clear();
         }
-    }
-
-    private static long createCacheKey(TypedValue tv) {
-        return (((long) tv.assetCookie) << 32) | ((long) tv.data);
     }
 
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
@@ -374,15 +405,6 @@ public final class ResourceManagerInternal {
         }
     }
 
-    private static boolean arrayContains(int[] array, int value) {
-        for (int id : array) {
-            if (id == value) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     /* access modifiers changed from: package-private */
     public PorterDuff.Mode getTintMode(int resId) {
         ResourceManagerHooks resourceManagerHooks = this.mHooks;
@@ -426,62 +448,6 @@ public final class ResourceManagerInternal {
         themeTints.append(resId, tintList);
     }
 
-    /* renamed from: android.support.v7.widget.ResourceManagerInternal$ColorFilterLruCache */
-    private static class ColorFilterLruCache extends LruCache<Integer, PorterDuffColorFilter> {
-        public ColorFilterLruCache(int maxSize) {
-            super(maxSize);
-        }
-
-        /* access modifiers changed from: package-private */
-        public PorterDuffColorFilter get(int color, PorterDuff.Mode mode) {
-            return (PorterDuffColorFilter) get(Integer.valueOf(generateCacheKey(color, mode)));
-        }
-
-        /* access modifiers changed from: package-private */
-        public PorterDuffColorFilter put(int color, PorterDuff.Mode mode, PorterDuffColorFilter filter) {
-            return (PorterDuffColorFilter) put(Integer.valueOf(generateCacheKey(color, mode)), filter);
-        }
-
-        private static int generateCacheKey(int color, PorterDuff.Mode mode) {
-            return (((1 * 31) + color) * 31) + mode.hashCode();
-        }
-    }
-
-    static void tintDrawable(Drawable drawable, TintInfo tint, int[] state) {
-        if (!DrawableUtils.canSafelyMutateDrawable(drawable) || drawable.mutate() == drawable) {
-            if (tint.mHasTintList || tint.mHasTintMode) {
-                drawable.setColorFilter(createTintFilter(tint.mHasTintList ? tint.mTintList : null, tint.mHasTintMode ? tint.mTintMode : DEFAULT_MODE, state));
-            } else {
-                drawable.clearColorFilter();
-            }
-            if (Build.VERSION.SDK_INT <= 23) {
-                drawable.invalidateSelf();
-                return;
-            }
-            return;
-        }
-        Log.d(TAG, "Mutated drawable is not the same instance as the input.");
-    }
-
-    private static PorterDuffColorFilter createTintFilter(ColorStateList tint, PorterDuff.Mode tintMode, int[] state) {
-        if (tint == null || tintMode == null) {
-            return null;
-        }
-        return getPorterDuffColorFilter(tint.getColorForState(state, 0), tintMode);
-    }
-
-    public static synchronized PorterDuffColorFilter getPorterDuffColorFilter(int color, PorterDuff.Mode mode) {
-        PorterDuffColorFilter filter;
-        synchronized (ResourceManagerInternal.class) {
-            filter = COLOR_FILTER_CACHE.get(color, mode);
-            if (filter == null) {
-                filter = new PorterDuffColorFilter(color, mode);
-                COLOR_FILTER_CACHE.put(color, mode, filter);
-            }
-        }
-        return filter;
-    }
-
     private void checkVectorDrawableSetup(@NonNull Context context) {
         if (!this.mHasCheckedVectorDrawableSetup) {
             this.mHasCheckedVectorDrawableSetup = true;
@@ -493,8 +459,44 @@ public final class ResourceManagerInternal {
         }
     }
 
-    private static boolean isVectorDrawable(@NonNull Drawable d) {
-        return (d instanceof VectorDrawableCompat) || PLATFORM_VD_CLAZZ.equals(d.getClass().getName());
+    /* renamed from: android.support.v7.widget.ResourceManagerInternal$InflateDelegate */
+    private interface InflateDelegate {
+        Drawable createFromXmlInner(@NonNull Context context, @NonNull XmlPullParser xmlPullParser, @NonNull AttributeSet attributeSet, @Nullable Resources.Theme theme);
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+            /* renamed from: android.support.v7.widget.ResourceManagerInternal$ResourceManagerHooks */
+    interface ResourceManagerHooks {
+        Drawable createDrawableFor(@NonNull ResourceManagerInternal resourceManagerInternal, @NonNull Context context, @DrawableRes int i);
+
+        ColorStateList getTintListForDrawableRes(@NonNull Context context, @DrawableRes int i);
+
+        PorterDuff.Mode getTintModeForDrawableRes(int i);
+
+        boolean tintDrawable(@NonNull Context context, @DrawableRes int i, @NonNull Drawable drawable);
+
+        boolean tintDrawableUsingColorFilter(@NonNull Context context, @DrawableRes int i, @NonNull Drawable drawable);
+    }
+
+    /* renamed from: android.support.v7.widget.ResourceManagerInternal$ColorFilterLruCache */
+    private static class ColorFilterLruCache extends LruCache<Integer, PorterDuffColorFilter> {
+        public ColorFilterLruCache(int maxSize) {
+            super(maxSize);
+        }
+
+        private static int generateCacheKey(int color, PorterDuff.Mode mode) {
+            return (((1 * 31) + color) * 31) + mode.hashCode();
+        }
+
+        /* access modifiers changed from: package-private */
+        public PorterDuffColorFilter get(int color, PorterDuff.Mode mode) {
+            return (PorterDuffColorFilter) get(Integer.valueOf(generateCacheKey(color, mode)));
+        }
+
+        /* access modifiers changed from: package-private */
+        public PorterDuffColorFilter put(int color, PorterDuff.Mode mode, PorterDuffColorFilter filter) {
+            return (PorterDuffColorFilter) put(Integer.valueOf(generateCacheKey(color, mode)), filter);
+        }
     }
 
     /* renamed from: android.support.v7.widget.ResourceManagerInternal$VdcInflateDelegate */

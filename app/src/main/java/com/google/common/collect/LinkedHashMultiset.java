@@ -1,25 +1,15 @@
 package com.google.common.collect;
 
 import com.google.common.annotations.GwtCompatible;
-import java.util.Set;
+
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
+import java.util.Set;
 
 @GwtCompatible(emulated = true, serializable = true)
 public final class LinkedHashMultiset<E> extends AbstractMapBasedMultiset<E> {
-    public /* bridge */ /* synthetic */ boolean contains(@NullableDecl Object obj) {
-        return super.contains(obj);
-    }
-
-    public /* bridge */ /* synthetic */ Set elementSet() {
-        return super.elementSet();
-    }
-
-    public /* bridge */ /* synthetic */ Set entrySet() {
-        return super.entrySet();
-    }
-
-    public /* bridge */ /* synthetic */ boolean isEmpty() {
-        return super.isEmpty();
+    LinkedHashMultiset(int distinctElements) {
+        super(distinctElements);
     }
 
     public static <E> LinkedHashMultiset<E> create() {
@@ -36,8 +26,20 @@ public final class LinkedHashMultiset<E> extends AbstractMapBasedMultiset<E> {
         return multiset;
     }
 
-    LinkedHashMultiset(int distinctElements) {
-        super(distinctElements);
+    public /* bridge */ /* synthetic */ boolean contains(@NullableDecl Object obj) {
+        return super.contains(obj);
+    }
+
+    public /* bridge */ /* synthetic */ Set elementSet() {
+        return super.elementSet();
+    }
+
+    public /* bridge */ /* synthetic */ Set entrySet() {
+        return super.entrySet();
+    }
+
+    public /* bridge */ /* synthetic */ boolean isEmpty() {
+        return super.isEmpty();
     }
 
     /* access modifiers changed from: package-private */

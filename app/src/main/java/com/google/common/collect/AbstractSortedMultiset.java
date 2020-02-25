@@ -2,13 +2,13 @@ package com.google.common.collect;
 
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Multiset;
-import com.google.common.collect.SortedMultisets;
+
+import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.NavigableSet;
-import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible(emulated = true)
 abstract class AbstractSortedMultiset<E> extends AbstractMultiset<E> implements SortedMultiset<E> {
@@ -17,9 +17,6 @@ abstract class AbstractSortedMultiset<E> extends AbstractMultiset<E> implements 
     @MonotonicNonNullDecl
     private transient SortedMultiset<E> descendingMultiset;
 
-    /* access modifiers changed from: package-private */
-    public abstract Iterator<Multiset.Entry<E>> descendingEntryIterator();
-
     AbstractSortedMultiset() {
         this(Ordering.natural());
     }
@@ -27,6 +24,9 @@ abstract class AbstractSortedMultiset<E> extends AbstractMultiset<E> implements 
     AbstractSortedMultiset(Comparator<? super E> comparator2) {
         this.comparator = (Comparator) Preconditions.checkNotNull(comparator2);
     }
+
+    /* access modifiers changed from: package-private */
+    public abstract Iterator<Multiset.Entry<E>> descendingEntryIterator();
 
     public NavigableSet<E> elementSet() {
         return (NavigableSet) super.elementSet();

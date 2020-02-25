@@ -8,21 +8,47 @@ import com.google.android.exoplayer2.util.TimestampAdjuster;
 import com.google.android.exoplayer2.util.Util;
 import com.google.common.base.Ascii;
 import com.google.common.primitives.UnsignedBytes;
+
 import java.io.IOException;
 
 /* renamed from: com.google.android.exoplayer2.extractor.ts.PsDurationReader */
 final class PsDurationReader {
     private static final int TIMESTAMP_SEARCH_BYTES = 20000;
+    private final ParsableByteArray packetBuffer = new ParsableByteArray();
+    private final TimestampAdjuster scrTimestampAdjuster = new TimestampAdjuster(0);
     private long durationUs = C0841C.TIME_UNSET;
     private long firstScrValue = C0841C.TIME_UNSET;
     private boolean isDurationRead;
     private boolean isFirstScrValueRead;
     private boolean isLastScrValueRead;
     private long lastScrValue = C0841C.TIME_UNSET;
-    private final ParsableByteArray packetBuffer = new ParsableByteArray();
-    private final TimestampAdjuster scrTimestampAdjuster = new TimestampAdjuster(0);
 
     PsDurationReader() {
+    }
+
+    public static long readScrValueFromPack(ParsableByteArray packetBuffer2) {
+        int originalPosition = packetBuffer2.getPosition();
+        if (packetBuffer2.bytesLeft() < 9) {
+            return C0841C.TIME_UNSET;
+        }
+        byte[] scrBytes = new byte[9];
+        packetBuffer2.readBytes(scrBytes, 0, scrBytes.length);
+        packetBuffer2.setPosition(originalPosition);
+        if (!checkMarkerBits(scrBytes)) {
+            return C0841C.TIME_UNSET;
+        }
+        return readScrValueFromPackHeader(scrBytes);
+    }
+
+    private static boolean checkMarkerBits(byte[] scrBytes) {
+        if ((scrBytes[0] & 196) == 68 && (scrBytes[2] & 4) == 4 && (scrBytes[4] & 4) == 4 && (scrBytes[5] & 1) == 1 && (scrBytes[8] & 3) == 3) {
+            return true;
+        }
+        return false;
+    }
+
+    private static long readScrValueFromPackHeader(byte[] scrBytes) {
+        return (((((long) scrBytes[0]) & 56) >> 3) << 30) | ((((long) scrBytes[0]) & 3) << 28) | ((((long) scrBytes[1]) & 255) << 20) | (((((long) scrBytes[2]) & 248) >> 3) << 15) | ((((long) scrBytes[2]) & 3) << 13) | ((((long) scrBytes[3]) & 255) << 5) | ((((long) scrBytes[4]) & 248) >> 3);
     }
 
     public boolean isDurationReadFinished() {
@@ -53,20 +79,6 @@ final class PsDurationReader {
 
     public long getDurationUs() {
         return this.durationUs;
-    }
-
-    public static long readScrValueFromPack(ParsableByteArray packetBuffer2) {
-        int originalPosition = packetBuffer2.getPosition();
-        if (packetBuffer2.bytesLeft() < 9) {
-            return C0841C.TIME_UNSET;
-        }
-        byte[] scrBytes = new byte[9];
-        packetBuffer2.readBytes(scrBytes, 0, scrBytes.length);
-        packetBuffer2.setPosition(originalPosition);
-        if (!checkMarkerBits(scrBytes)) {
-            return C0841C.TIME_UNSET;
-        }
-        return readScrValueFromPackHeader(scrBytes);
     }
 
     private int finishReadDuration(ExtractorInput input) {
@@ -153,16 +165,5 @@ final class PsDurationReader {
 
     private int peekIntAtPosition(byte[] data, int position) {
         return ((data[position] & UnsignedBytes.MAX_VALUE) << Ascii.CAN) | ((data[position + 1] & UnsignedBytes.MAX_VALUE) << Ascii.DLE) | ((data[position + 2] & UnsignedBytes.MAX_VALUE) << 8) | (data[position + 3] & UnsignedBytes.MAX_VALUE);
-    }
-
-    private static boolean checkMarkerBits(byte[] scrBytes) {
-        if ((scrBytes[0] & 196) == 68 && (scrBytes[2] & 4) == 4 && (scrBytes[4] & 4) == 4 && (scrBytes[5] & 1) == 1 && (scrBytes[8] & 3) == 3) {
-            return true;
-        }
-        return false;
-    }
-
-    private static long readScrValueFromPackHeader(byte[] scrBytes) {
-        return (((((long) scrBytes[0]) & 56) >> 3) << 30) | ((((long) scrBytes[0]) & 3) << 28) | ((((long) scrBytes[1]) & 255) << 20) | (((((long) scrBytes[2]) & 248) >> 3) << 15) | ((((long) scrBytes[2]) & 3) << 13) | ((((long) scrBytes[3]) & 255) << 5) | ((((long) scrBytes[4]) & 248) >> 3);
     }
 }

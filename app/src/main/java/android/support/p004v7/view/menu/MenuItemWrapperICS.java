@@ -11,21 +11,21 @@ import android.support.annotation.RestrictTo;
 import android.support.p001v4.internal.view.SupportMenuItem;
 import android.support.p001v4.view.ActionProvider;
 import android.util.Log;
-import android.view.ActionProvider;
 import android.view.CollapsibleActionView;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.widget.FrameLayout;
+
 import java.lang.reflect.Method;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
 /* renamed from: android.support.v7.view.menu.MenuItemWrapperICS */
 public class MenuItemWrapperICS extends BaseMenuWrapper implements MenuItem {
     static final String LOG_TAG = "MenuItemWrapper";
-    private Method mSetExclusiveCheckableMethod;
     private final SupportMenuItem mWrappedObject;
+    private Method mSetExclusiveCheckableMethod;
 
     public MenuItemWrapperICS(Context context, SupportMenuItem object) {
         super(context);
@@ -309,6 +309,30 @@ public class MenuItemWrapperICS extends BaseMenuWrapper implements MenuItem {
         }
     }
 
+    /* renamed from: android.support.v7.view.menu.MenuItemWrapperICS$CollapsibleActionViewWrapper */
+    static class CollapsibleActionViewWrapper extends FrameLayout implements android.support.p004v7.view.CollapsibleActionView {
+        final CollapsibleActionView mWrappedView;
+
+        CollapsibleActionViewWrapper(View actionView) {
+            super(actionView.getContext());
+            this.mWrappedView = (CollapsibleActionView) actionView;
+            addView(actionView);
+        }
+
+        public void onActionViewExpanded() {
+            this.mWrappedView.onActionViewExpanded();
+        }
+
+        public void onActionViewCollapsed() {
+            this.mWrappedView.onActionViewCollapsed();
+        }
+
+        /* access modifiers changed from: package-private */
+        public View getWrappedView() {
+            return (View) this.mWrappedView;
+        }
+    }
+
     /* renamed from: android.support.v7.view.menu.MenuItemWrapperICS$OnMenuItemClickListenerWrapper */
     private class OnMenuItemClickListenerWrapper implements MenuItem.OnMenuItemClickListener {
         private final MenuItem.OnMenuItemClickListener mObject;
@@ -400,30 +424,6 @@ public class MenuItemWrapperICS extends BaseMenuWrapper implements MenuItem {
             if (visibilityListener != null) {
                 visibilityListener.onActionProviderVisibilityChanged(isVisible);
             }
-        }
-    }
-
-    /* renamed from: android.support.v7.view.menu.MenuItemWrapperICS$CollapsibleActionViewWrapper */
-    static class CollapsibleActionViewWrapper extends FrameLayout implements android.support.p004v7.view.CollapsibleActionView {
-        final CollapsibleActionView mWrappedView;
-
-        CollapsibleActionViewWrapper(View actionView) {
-            super(actionView.getContext());
-            this.mWrappedView = (CollapsibleActionView) actionView;
-            addView(actionView);
-        }
-
-        public void onActionViewExpanded() {
-            this.mWrappedView.onActionViewExpanded();
-        }
-
-        public void onActionViewCollapsed() {
-            this.mWrappedView.onActionViewCollapsed();
-        }
-
-        /* access modifiers changed from: package-private */
-        public View getWrappedView() {
-            return (View) this.mWrappedView;
         }
     }
 }

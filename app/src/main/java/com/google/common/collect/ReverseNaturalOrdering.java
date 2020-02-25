@@ -2,6 +2,7 @@ package com.google.common.collect;
 
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.base.Preconditions;
+
 import java.io.Serializable;
 import java.util.Iterator;
 
@@ -9,6 +10,9 @@ import java.util.Iterator;
 final class ReverseNaturalOrdering extends Ordering<Comparable> implements Serializable {
     static final ReverseNaturalOrdering INSTANCE = new ReverseNaturalOrdering();
     private static final long serialVersionUID = 0;
+
+    private ReverseNaturalOrdering() {
+    }
 
     public int compare(Comparable left, Comparable right) {
         Preconditions.checkNotNull(left);
@@ -60,8 +64,5 @@ final class ReverseNaturalOrdering extends Ordering<Comparable> implements Seria
 
     public String toString() {
         return "Ordering.natural().reverse()";
-    }
-
-    private ReverseNaturalOrdering() {
     }
 }

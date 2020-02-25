@@ -10,9 +10,11 @@ import android.support.p004v7.widget.RecyclerView;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
+
 import com.google.android.tvrecommendations.shared.util.AnimUtil;
 import com.google.android.tvrecommendations.shared.view.BoundsItemAnimator;
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +23,10 @@ public class NotificationPanelItemAnimator extends BoundsItemAnimator {
     private static final boolean DEBUG = false;
     private static final String TAG = "NotifPanelItemAnimator";
     private final Interpolator mMainInterpolator = new DecelerateInterpolator();
+
+    public NotificationPanelItemAnimator() {
+        setChangeDuration(175);
+    }
 
     public /* bridge */ /* synthetic */ boolean animateAdd(RecyclerView.ViewHolder viewHolder) {
         return super.animateAdd(viewHolder);
@@ -40,10 +46,6 @@ public class NotificationPanelItemAnimator extends BoundsItemAnimator {
 
     public /* bridge */ /* synthetic */ void runPendingAnimations() {
         super.runPendingAnimations();
-    }
-
-    public NotificationPanelItemAnimator() {
-        setChangeDuration(175);
     }
 
     /* access modifiers changed from: protected */

@@ -13,22 +13,23 @@ import com.google.protobuf.ProtoMessage;
 import com.google.protobuf.ProtoPresenceBits;
 import com.google.protobuf.ProtoPresenceCheckedField;
 import com.google.protobuf.ProtoSyntax;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 public final class ExtensionPhotosScanner {
 
-    public interface PhotosScannerExtensionOrBuilder extends MessageLiteOrBuilder {
-        int getNumPhotosOnExport();
-
-        boolean hasNumPhotosOnExport();
-    }
-
     private ExtensionPhotosScanner() {
     }
 
     public static void registerAllExtensions(ExtensionRegistryLite registry) {
+    }
+
+    public interface PhotosScannerExtensionOrBuilder extends MessageLiteOrBuilder {
+        int getNumPhotosOnExport();
+
+        boolean hasNumPhotosOnExport();
     }
 
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
@@ -37,6 +38,11 @@ public final class ExtensionPhotosScanner {
         public static final PhotosScannerExtension DEFAULT_INSTANCE = new PhotosScannerExtension();
         public static final int NUM_PHOTOS_ON_EXPORT_FIELD_NUMBER = 1;
         private static volatile Parser<PhotosScannerExtension> PARSER;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(PhotosScannerExtension.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 1, isRequired = false, type = FieldType.INT32)
@@ -44,26 +50,6 @@ public final class ExtensionPhotosScanner {
         private int numPhotosOnExport_;
 
         private PhotosScannerExtension() {
-        }
-
-        public boolean hasNumPhotosOnExport() {
-            return (this.bitField0_ & 1) != 0;
-        }
-
-        public int getNumPhotosOnExport() {
-            return this.numPhotosOnExport_;
-        }
-
-        /* access modifiers changed from: private */
-        public void setNumPhotosOnExport(int value) {
-            this.bitField0_ |= 1;
-            this.numPhotosOnExport_ = value;
-        }
-
-        /* access modifiers changed from: private */
-        public void clearNumPhotosOnExport() {
-            this.bitField0_ &= -2;
-            this.numPhotosOnExport_ = 0;
         }
 
         public static PhotosScannerExtension parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
@@ -122,30 +108,32 @@ public final class ExtensionPhotosScanner {
             return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
         }
 
-        public static final class Builder extends GeneratedMessageLite.Builder<PhotosScannerExtension, Builder> implements PhotosScannerExtensionOrBuilder {
-            private Builder() {
-                super(PhotosScannerExtension.DEFAULT_INSTANCE);
-            }
+        public static PhotosScannerExtension getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
 
-            public boolean hasNumPhotosOnExport() {
-                return ((PhotosScannerExtension) this.instance).hasNumPhotosOnExport();
-            }
+        public static Parser<PhotosScannerExtension> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
+        }
 
-            public int getNumPhotosOnExport() {
-                return ((PhotosScannerExtension) this.instance).getNumPhotosOnExport();
-            }
+        public boolean hasNumPhotosOnExport() {
+            return (this.bitField0_ & 1) != 0;
+        }
 
-            public Builder setNumPhotosOnExport(int value) {
-                copyOnWrite();
-                ((PhotosScannerExtension) this.instance).setNumPhotosOnExport(value);
-                return this;
-            }
+        public int getNumPhotosOnExport() {
+            return this.numPhotosOnExport_;
+        }
 
-            public Builder clearNumPhotosOnExport() {
-                copyOnWrite();
-                ((PhotosScannerExtension) this.instance).clearNumPhotosOnExport();
-                return this;
-            }
+        /* access modifiers changed from: private */
+        public void setNumPhotosOnExport(int value) {
+            this.bitField0_ |= 1;
+            this.numPhotosOnExport_ = value;
+        }
+
+        /* access modifiers changed from: private */
+        public void clearNumPhotosOnExport() {
+            this.bitField0_ &= -2;
+            this.numPhotosOnExport_ = 0;
         }
 
         /* access modifiers changed from: protected */
@@ -180,16 +168,30 @@ public final class ExtensionPhotosScanner {
             }
         }
 
-        static {
-            GeneratedMessageLite.registerDefaultInstance(PhotosScannerExtension.class, DEFAULT_INSTANCE);
-        }
+        public static final class Builder extends GeneratedMessageLite.Builder<PhotosScannerExtension, Builder> implements PhotosScannerExtensionOrBuilder {
+            private Builder() {
+                super(PhotosScannerExtension.DEFAULT_INSTANCE);
+            }
 
-        public static PhotosScannerExtension getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
+            public boolean hasNumPhotosOnExport() {
+                return ((PhotosScannerExtension) this.instance).hasNumPhotosOnExport();
+            }
 
-        public static Parser<PhotosScannerExtension> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
+            public int getNumPhotosOnExport() {
+                return ((PhotosScannerExtension) this.instance).getNumPhotosOnExport();
+            }
+
+            public Builder setNumPhotosOnExport(int value) {
+                copyOnWrite();
+                ((PhotosScannerExtension) this.instance).setNumPhotosOnExport(value);
+                return this;
+            }
+
+            public Builder clearNumPhotosOnExport() {
+                copyOnWrite();
+                ((PhotosScannerExtension) this.instance).clearNumPhotosOnExport();
+                return this;
+            }
         }
     }
 }

@@ -22,6 +22,20 @@ public class WindowInsetsCompat {
         }
     }
 
+    static WindowInsetsCompat wrap(Object insets) {
+        if (insets == null) {
+            return null;
+        }
+        return new WindowInsetsCompat(insets);
+    }
+
+    static Object unwrap(WindowInsetsCompat insets) {
+        if (insets == null) {
+            return null;
+        }
+        return insets.mInsets;
+    }
+
     public int getSystemWindowInsetLeft() {
         if (Build.VERSION.SDK_INT >= 20) {
             return ((WindowInsets) this.mInsets).getSystemWindowInsetLeft();
@@ -180,19 +194,5 @@ public class WindowInsetsCompat {
             return 0;
         }
         return obj.hashCode();
-    }
-
-    static WindowInsetsCompat wrap(Object insets) {
-        if (insets == null) {
-            return null;
-        }
-        return new WindowInsetsCompat(insets);
-    }
-
-    static Object unwrap(WindowInsetsCompat insets) {
-        if (insets == null) {
-            return null;
-        }
-        return insets.mInsets;
     }
 }

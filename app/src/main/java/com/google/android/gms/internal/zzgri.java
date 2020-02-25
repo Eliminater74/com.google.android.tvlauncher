@@ -4,8 +4,8 @@ import java.util.Iterator;
 
 /* compiled from: UnmodifiableLazyStringList */
 final class zzgri implements Iterator<String> {
-    private Iterator<String> zza = this.zzb.zza.iterator();
     private final /* synthetic */ zzgrg zzb;
+    private Iterator<String> zza = this.zzb.zza.iterator();
 
     zzgri(zzgrg zzgrg) {
         this.zzb = zzgrg;

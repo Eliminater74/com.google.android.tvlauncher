@@ -22,12 +22,7 @@ public final class MenuItemCompat {
     public static final int SHOW_AS_ACTION_WITH_TEXT = 4;
     private static final String TAG = "MenuItemCompat";
 
-    @Deprecated
-    /* renamed from: android.support.v4.view.MenuItemCompat$OnActionExpandListener */
-    public interface OnActionExpandListener {
-        boolean onMenuItemActionCollapse(MenuItem menuItem);
-
-        boolean onMenuItemActionExpand(MenuItem menuItem);
+    private MenuItemCompat() {
     }
 
     @Deprecated
@@ -210,6 +205,11 @@ public final class MenuItemCompat {
         return null;
     }
 
-    private MenuItemCompat() {
+    @Deprecated
+    /* renamed from: android.support.v4.view.MenuItemCompat$OnActionExpandListener */
+    public interface OnActionExpandListener {
+        boolean onMenuItemActionCollapse(MenuItem menuItem);
+
+        boolean onMenuItemActionExpand(MenuItem menuItem);
     }
 }

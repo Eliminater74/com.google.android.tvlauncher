@@ -1,9 +1,11 @@
 package com.google.android.exoplayer2.video;
 
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.util.NalUnitUtil;
 import com.google.android.exoplayer2.util.ParsableByteArray;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -11,6 +13,11 @@ public final class HevcConfig {
     @Nullable
     public final List<byte[]> initializationData;
     public final int nalUnitLengthFieldLength;
+
+    private HevcConfig(@Nullable List<byte[]> initializationData2, int nalUnitLengthFieldLength2) {
+        this.initializationData = initializationData2;
+        this.nalUnitLengthFieldLength = nalUnitLengthFieldLength2;
+    }
 
     public static HevcConfig parse(ParsableByteArray data) throws ParserException {
         try {
@@ -47,10 +54,5 @@ public final class HevcConfig {
         } catch (ArrayIndexOutOfBoundsException e) {
             throw new ParserException("Error parsing HEVC config", e);
         }
-    }
-
-    private HevcConfig(@Nullable List<byte[]> initializationData2, int nalUnitLengthFieldLength2) {
-        this.initializationData = initializationData2;
-        this.nalUnitLengthFieldLength = nalUnitLengthFieldLength2;
     }
 }

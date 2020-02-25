@@ -1,7 +1,5 @@
 package com.google.android.exoplayer2.trackselection;
 
-import com.google.android.exoplayer2.trackselection.TrackSelection;
-import com.google.android.exoplayer2.trackselection.TrackSelectionUtil;
 import com.google.android.exoplayer2.upstream.BandwidthMeter;
 
 final /* synthetic */ class TrackSelection$Factory$$Lambda$0 implements TrackSelectionUtil.AdaptiveTrackSelectionFactory {

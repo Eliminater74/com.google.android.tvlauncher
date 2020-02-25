@@ -6,13 +6,17 @@ import java.util.Map;
 
 /* compiled from: SmallSortedMap */
 final class zzgqq implements Iterator<Map.Entry<K, V>> {
+    private final /* synthetic */ zzgqo zzc;
     private int zza;
     private Iterator<Map.Entry<K, V>> zzb;
-    private final /* synthetic */ zzgqo zzc;
 
     private zzgqq(zzgqo zzgqo) {
         this.zzc = zzgqo;
         this.zza = this.zzc.zzb.size();
+    }
+
+    /* synthetic */ zzgqq(zzgqo zzgqo, zzgqp zzgqp) {
+        this(zzgqo);
     }
 
     public final boolean hasNext() {
@@ -39,9 +43,5 @@ final class zzgqq implements Iterator<Map.Entry<K, V>> {
         int i = this.zza - 1;
         this.zza = i;
         return (Map.Entry) zzb2.get(i);
-    }
-
-    /* synthetic */ zzgqq(zzgqo zzgqo, zzgqp zzgqp) {
-        this(zzgqo);
     }
 }

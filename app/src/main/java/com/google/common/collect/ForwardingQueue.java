@@ -2,16 +2,17 @@ package com.google.common.collect;
 
 import com.google.common.annotations.GwtCompatible;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
 import java.util.NoSuchElementException;
 import java.util.Queue;
 
 @GwtCompatible
 public abstract class ForwardingQueue<E> extends ForwardingCollection<E> implements Queue<E> {
-    /* access modifiers changed from: protected */
-    public abstract Queue<E> delegate();
-
     protected ForwardingQueue() {
     }
+
+    /* access modifiers changed from: protected */
+    public abstract Queue<E> delegate();
 
     @CanIgnoreReturnValue
     public boolean offer(E o) {

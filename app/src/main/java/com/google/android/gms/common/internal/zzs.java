@@ -12,6 +12,12 @@ public final class zzs {
     private static final Uri zza;
     private static final Uri zzb;
 
+    static {
+        Uri parse = Uri.parse("https://plus.google.com/");
+        zza = parse;
+        zzb = parse.buildUpon().appendPath("circles").appendPath("find").build();
+    }
+
     public static Intent zza(String str) {
         Uri fromParts = Uri.fromParts("package", str, null);
         Intent intent = new Intent("android.settings.APPLICATION_DETAILS_SETTINGS");
@@ -39,11 +45,5 @@ public final class zzs {
 
     public static boolean zza(PackageManager packageManager, Intent intent) {
         return packageManager.resolveActivity(intent, 65536) != null;
-    }
-
-    static {
-        Uri parse = Uri.parse("https://plus.google.com/");
-        zza = parse;
-        zzb = parse.buildUpon().appendPath("circles").appendPath("find").build();
     }
 }

@@ -2,16 +2,20 @@ package com.google.android.libraries.performance.primes;
 
 import android.support.annotation.GuardedBy;
 import android.support.annotation.VisibleForTesting;
+
 import com.google.android.libraries.performance.primes.scenario.PrimesScenarioConfigurations;
 import com.google.android.libraries.performance.primes.scenario.ScenarioEvent;
 import com.google.android.libraries.performance.primes.scenario.ScenarioStructureProvider;
 import com.google.common.base.Optional;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
 import javax.annotation.concurrent.ThreadSafe;
+
 import logs.proto.wireless.performance.mobile.PrimesTraceOuterClass;
 
 @ThreadSafe
@@ -23,11 +27,19 @@ final class ScenarioMetricService {
     final ConcurrentHashMap<String, ScenarioData> activeScenarios = new ConcurrentHashMap<>();
     @VisibleForTesting
     final int maxActiveScenarios;
-    private final PrimesApi primesApi;
     @VisibleForTesting
     final ScenarioStructureProvider scenarioStructureProvider;
     @VisibleForTesting
     final int timeoutMs;
+    private final PrimesApi primesApi;
+
+    @VisibleForTesting
+    ScenarioMetricService(PrimesApi primesApi2, int maxActiveScenarios2, int timeoutMs2, ScenarioStructureProvider scenarioStructureProvider2) {
+        this.primesApi = primesApi2;
+        this.maxActiveScenarios = maxActiveScenarios2;
+        this.timeoutMs = timeoutMs2;
+        this.scenarioStructureProvider = scenarioStructureProvider2;
+    }
 
     static ScenarioMetricService createService(PrimesApi primesApi2, PrimesScenarioConfigurations configs) {
         return new ScenarioMetricService(primesApi2, configs.getMaxActiveScenarios(), configs.getTimeoutMs(), configs.getScenarioStructureProvider());
@@ -41,14 +53,6 @@ final class ScenarioMetricService {
             spans[i + 1] = (PrimesTraceOuterClass.Span) PrimesTraceOuterClass.Span.newBuilder().setConstantName(event.getEventName()).setStartTimeMs(event.getTimestampMs()).setId((long) (i + 2)).setParentId(1).build();
         }
         return (PrimesTraceOuterClass.PrimesTrace) PrimesTraceOuterClass.PrimesTrace.newBuilder().addAllSpans(Arrays.asList(spans)).build();
-    }
-
-    @VisibleForTesting
-    ScenarioMetricService(PrimesApi primesApi2, int maxActiveScenarios2, int timeoutMs2, ScenarioStructureProvider scenarioStructureProvider2) {
-        this.primesApi = primesApi2;
-        this.maxActiveScenarios = maxActiveScenarios2;
-        this.timeoutMs = timeoutMs2;
-        this.scenarioStructureProvider = scenarioStructureProvider2;
     }
 
     private static Set<String> validEvents(Set<NoPiiString> noPiiEvents) {

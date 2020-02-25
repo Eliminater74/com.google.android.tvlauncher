@@ -2,9 +2,10 @@ package com.google.android.exoplayer2.offline;
 
 import android.net.Uri;
 import android.support.annotation.Nullable;
-import com.google.android.exoplayer2.offline.DownloadRequest;
+
 import com.google.android.exoplayer2.util.AtomicFile;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -19,43 +20,6 @@ final class ActionFile {
 
     public ActionFile(File actionFile) {
         this.atomicFile = new AtomicFile(actionFile);
-    }
-
-    public boolean exists() {
-        return this.atomicFile.exists();
-    }
-
-    public void delete() {
-        this.atomicFile.delete();
-    }
-
-    public DownloadRequest[] load() throws IOException {
-        if (!exists()) {
-            return new DownloadRequest[0];
-        }
-        InputStream inputStream = null;
-        try {
-            inputStream = this.atomicFile.openRead();
-            DataInputStream dataInputStream = new DataInputStream(inputStream);
-            int version = dataInputStream.readInt();
-            if (version <= 0) {
-                int actionCount = dataInputStream.readInt();
-                ArrayList<DownloadRequest> actions = new ArrayList<>();
-                for (int i = 0; i < actionCount; i++) {
-                    try {
-                        actions.add(readDownloadRequest(dataInputStream));
-                    } catch (DownloadRequest.UnsupportedRequestException e) {
-                    }
-                }
-                return (DownloadRequest[]) actions.toArray(new DownloadRequest[0]);
-            }
-            StringBuilder sb = new StringBuilder(44);
-            sb.append("Unsupported action file version: ");
-            sb.append(version);
-            throw new IOException(sb.toString());
-        } finally {
-            Util.closeQuietly(inputStream);
-        }
     }
 
     private static DownloadRequest readDownloadRequest(DataInputStream input) throws IOException {
@@ -116,5 +80,42 @@ final class ActionFile {
 
     private static String generateDownloadId(Uri uri, @Nullable String customCacheKey) {
         return customCacheKey != null ? customCacheKey : uri.toString();
+    }
+
+    public boolean exists() {
+        return this.atomicFile.exists();
+    }
+
+    public void delete() {
+        this.atomicFile.delete();
+    }
+
+    public DownloadRequest[] load() throws IOException {
+        if (!exists()) {
+            return new DownloadRequest[0];
+        }
+        InputStream inputStream = null;
+        try {
+            inputStream = this.atomicFile.openRead();
+            DataInputStream dataInputStream = new DataInputStream(inputStream);
+            int version = dataInputStream.readInt();
+            if (version <= 0) {
+                int actionCount = dataInputStream.readInt();
+                ArrayList<DownloadRequest> actions = new ArrayList<>();
+                for (int i = 0; i < actionCount; i++) {
+                    try {
+                        actions.add(readDownloadRequest(dataInputStream));
+                    } catch (DownloadRequest.UnsupportedRequestException e) {
+                    }
+                }
+                return (DownloadRequest[]) actions.toArray(new DownloadRequest[0]);
+            }
+            StringBuilder sb = new StringBuilder(44);
+            sb.append("Unsupported action file version: ");
+            sb.append(version);
+            throw new IOException(sb.toString());
+        } finally {
+            Util.closeQuietly(inputStream);
+        }
     }
 }

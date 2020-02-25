@@ -12,22 +12,20 @@ import android.support.annotation.Nullable;
 import android.support.p001v4.util.Preconditions;
 import android.view.LayoutInflater;
 import android.view.View;
+
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 
 /* renamed from: android.support.v4.app.FragmentHostCallback */
 public abstract class FragmentHostCallback<E> extends FragmentContainer {
+    final FragmentManagerImpl mFragmentManager;
     @Nullable
     private final Activity mActivity;
     @NonNull
     private final Context mContext;
-    final FragmentManagerImpl mFragmentManager;
     @NonNull
     private final Handler mHandler;
     private final int mWindowAnimations;
-
-    @Nullable
-    public abstract E onGetHost();
 
     /* JADX INFO: this call moved to the top of the method (can break code semantics) */
     public FragmentHostCallback(@NonNull Context context, @NonNull Handler handler, int windowAnimations) {
@@ -45,6 +43,9 @@ public abstract class FragmentHostCallback<E> extends FragmentContainer {
         this.mHandler = (Handler) Preconditions.checkNotNull(handler, "handler == null");
         this.mWindowAnimations = windowAnimations;
     }
+
+    @Nullable
+    public abstract E onGetHost();
 
     public void onDump(@NonNull String prefix, @Nullable FileDescriptor fd, @NonNull PrintWriter writer, @Nullable String[] args) {
     }

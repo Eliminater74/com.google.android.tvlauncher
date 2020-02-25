@@ -6,30 +6,29 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.google.common.collect.Table;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
-import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible
 class StandardTable<R, C, V> extends AbstractTable<R, C, V> implements Serializable {
     private static final long serialVersionUID = 0;
     @GwtTransient
     final Map<R, Map<C, V>> backingMap;
+    @GwtTransient
+    final Supplier<? extends Map<C, V>> factory;
     @MonotonicNonNullDecl
     private transient Set<C> columnKeySet;
     @MonotonicNonNullDecl
     private transient StandardTable<R, C, V>.ColumnMap columnMap;
-    @GwtTransient
-    final Supplier<? extends Map<C, V>> factory;
     @MonotonicNonNullDecl
     private transient Map<R, Map<C, V>> rowMap;
 
@@ -148,6 +147,71 @@ class StandardTable<R, C, V> extends AbstractTable<R, C, V> implements Serializa
         return true;
     }
 
+    public Set<Table.Cell<R, C, V>> cellSet() {
+        return super.cellSet();
+    }
+
+    /* access modifiers changed from: package-private */
+    public Iterator<Table.Cell<R, C, V>> cellIterator() {
+        return new CellIterator();
+    }
+
+    public Map<C, V> row(R rowKey) {
+        return new Row(rowKey);
+    }
+
+    public Map<R, V> column(C columnKey) {
+        return new Column(columnKey);
+    }
+
+    public Set<R> rowKeySet() {
+        return rowMap().keySet();
+    }
+
+    public Set<C> columnKeySet() {
+        Set<C> result = this.columnKeySet;
+        if (result != null) {
+            return result;
+        }
+        ColumnKeySet columnKeySet2 = new ColumnKeySet();
+        this.columnKeySet = columnKeySet2;
+        return columnKeySet2;
+    }
+
+    /* access modifiers changed from: package-private */
+    public Iterator<C> createColumnKeyIterator() {
+        return new ColumnKeyIterator();
+    }
+
+    public Collection<V> values() {
+        return super.values();
+    }
+
+    public Map<R, Map<C, V>> rowMap() {
+        Map<R, Map<C, V>> result = this.rowMap;
+        if (result != null) {
+            return result;
+        }
+        Map<R, Map<C, V>> createRowMap = createRowMap();
+        this.rowMap = createRowMap;
+        return createRowMap;
+    }
+
+    /* access modifiers changed from: package-private */
+    public Map<R, Map<C, V>> createRowMap() {
+        return new RowMap();
+    }
+
+    public Map<C, Map<R, V>> columnMap() {
+        StandardTable<R, C, V>.ColumnMap result = this.columnMap;
+        if (result != null) {
+            return result;
+        }
+        StandardTable<R, C, V>.ColumnMap columnMap2 = new ColumnMap();
+        this.columnMap = columnMap2;
+        return columnMap2;
+    }
+
     private abstract class TableSet<T> extends Sets.ImprovedAbstractSet<T> {
         private TableSet() {
         }
@@ -161,20 +225,11 @@ class StandardTable<R, C, V> extends AbstractTable<R, C, V> implements Serializa
         }
     }
 
-    public Set<Table.Cell<R, C, V>> cellSet() {
-        return super.cellSet();
-    }
-
-    /* access modifiers changed from: package-private */
-    public Iterator<Table.Cell<R, C, V>> cellIterator() {
-        return new CellIterator();
-    }
-
     private class CellIterator implements Iterator<Table.Cell<R, C, V>> {
+        final Iterator<Map.Entry<R, Map<C, V>>> rowIterator;
         Iterator<Map.Entry<C, V>> columnIterator;
         @NullableDecl
         Map.Entry<R, Map<C, V>> rowEntry;
-        final Iterator<Map.Entry<R, Map<C, V>>> rowIterator;
 
         private CellIterator() {
             this.rowIterator = StandardTable.this.backingMap.entrySet().iterator();
@@ -203,14 +258,10 @@ class StandardTable<R, C, V> extends AbstractTable<R, C, V> implements Serializa
         }
     }
 
-    public Map<C, V> row(R rowKey) {
-        return new Row(rowKey);
-    }
-
     class Row extends Maps.IteratorBasedAbstractMap<C, V> {
+        final R rowKey;
         @NullableDecl
         Map<C, V> backingRowMap;
-        final R rowKey;
 
         Row(R rowKey2) {
             this.rowKey = Preconditions.checkNotNull(rowKey2);
@@ -331,10 +382,6 @@ class StandardTable<R, C, V> extends AbstractTable<R, C, V> implements Serializa
         }
     }
 
-    public Map<R, V> column(C columnKey) {
-        return new Column(columnKey);
-    }
-
     private class Column extends Maps.ViewCachingAbstractMap<R, V> {
         final C columnKey;
 
@@ -381,6 +428,16 @@ class StandardTable<R, C, V> extends AbstractTable<R, C, V> implements Serializa
         /* access modifiers changed from: package-private */
         public Set<Map.Entry<R, V>> createEntrySet() {
             return new EntrySet();
+        }
+
+        /* access modifiers changed from: package-private */
+        public Set<R> createKeySet() {
+            return new KeySet();
+        }
+
+        /* access modifiers changed from: package-private */
+        public Collection<V> createValues() {
+            return new Values();
         }
 
         private class EntrySet extends Sets.ImprovedAbstractSet<Map.Entry<R, V>> {
@@ -461,11 +518,6 @@ class StandardTable<R, C, V> extends AbstractTable<R, C, V> implements Serializa
             }
         }
 
-        /* access modifiers changed from: package-private */
-        public Set<R> createKeySet() {
-            return new KeySet();
-        }
-
         private class KeySet extends Maps.KeySet<R, V> {
             KeySet() {
                 super(Column.this);
@@ -482,11 +534,6 @@ class StandardTable<R, C, V> extends AbstractTable<R, C, V> implements Serializa
             public boolean retainAll(Collection<?> c) {
                 return Column.this.removeFromColumnIf(Maps.keyPredicateOnEntries(Predicates.not(Predicates.m84in(c))));
             }
-        }
-
-        /* access modifiers changed from: package-private */
-        public Collection<V> createValues() {
-            return new Values();
         }
 
         private class Values extends Maps.Values<R, V> {
@@ -506,20 +553,6 @@ class StandardTable<R, C, V> extends AbstractTable<R, C, V> implements Serializa
                 return Column.this.removeFromColumnIf(Maps.valuePredicateOnEntries(Predicates.not(Predicates.m84in(c))));
             }
         }
-    }
-
-    public Set<R> rowKeySet() {
-        return rowMap().keySet();
-    }
-
-    public Set<C> columnKeySet() {
-        Set<C> result = this.columnKeySet;
-        if (result != null) {
-            return result;
-        }
-        ColumnKeySet columnKeySet2 = new ColumnKeySet();
-        this.columnKeySet = columnKeySet2;
-        return columnKeySet2;
     }
 
     private class ColumnKeySet extends StandardTable<R, C, V>.TableSet<C> {
@@ -590,15 +623,10 @@ class StandardTable<R, C, V> extends AbstractTable<R, C, V> implements Serializa
         }
     }
 
-    /* access modifiers changed from: package-private */
-    public Iterator<C> createColumnKeyIterator() {
-        return new ColumnKeyIterator();
-    }
-
     private class ColumnKeyIterator extends AbstractIterator<C> {
-        Iterator<Map.Entry<C, V>> entryIterator;
         final Iterator<Map<C, V>> mapIterator;
         final Map<C, V> seen;
+        Iterator<Map.Entry<C, V>> entryIterator;
 
         private ColumnKeyIterator() {
             this.seen = (Map) StandardTable.this.factory.get();
@@ -622,25 +650,6 @@ class StandardTable<R, C, V> extends AbstractTable<R, C, V> implements Serializa
                 }
             }
         }
-    }
-
-    public Collection<V> values() {
-        return super.values();
-    }
-
-    public Map<R, Map<C, V>> rowMap() {
-        Map<R, Map<C, V>> result = this.rowMap;
-        if (result != null) {
-            return result;
-        }
-        Map<R, Map<C, V>> createRowMap = createRowMap();
-        this.rowMap = createRowMap;
-        return createRowMap;
-    }
-
-    /* access modifiers changed from: package-private */
-    public Map<R, Map<C, V>> createRowMap() {
-        return new RowMap();
     }
 
     class RowMap extends Maps.ViewCachingAbstractMap<R, Map<C, V>> {
@@ -709,16 +718,6 @@ class StandardTable<R, C, V> extends AbstractTable<R, C, V> implements Serializa
                 return true;
             }
         }
-    }
-
-    public Map<C, Map<R, V>> columnMap() {
-        StandardTable<R, C, V>.ColumnMap result = this.columnMap;
-        if (result != null) {
-            return result;
-        }
-        StandardTable<R, C, V>.ColumnMap columnMap2 = new ColumnMap();
-        this.columnMap = columnMap2;
-        return columnMap2;
     }
 
     private class ColumnMap extends Maps.ViewCachingAbstractMap<C, Map<R, V>> {

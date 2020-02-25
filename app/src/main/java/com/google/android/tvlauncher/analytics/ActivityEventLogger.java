@@ -1,6 +1,7 @@
 package com.google.android.tvlauncher.analytics;
 
 import android.app.Activity;
+
 import com.google.android.libraries.social.analytics.visualelement.VisualElementTag;
 
 class ActivityEventLogger implements EventLogger {

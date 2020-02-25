@@ -3,16 +3,18 @@ package com.google.android.libraries.performance.primes;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.libraries.clock.Clock;
 import com.google.android.libraries.performance.primes.sampling.SamplingUtils;
+
 import java.util.Objects;
 import java.util.Random;
 import java.util.TreeSet;
 
 final class CpuProfilingServiceScheduler {
-    private static final long ALLOWED_MECHANICAL_DELAY = 100;
     static final long AVERAGE_MILLIS_PER_YEAR = 31557600000L;
+    private static final long ALLOWED_MECHANICAL_DELAY = 100;
     private static final String TAG = "CpuProfilingServiceScheduler";
     private final String androidId;
     private final Clock clock;
@@ -26,6 +28,10 @@ final class CpuProfilingServiceScheduler {
         this.sampleDurationMs = sampleDurationMs2;
         this.processName = processName2;
         this.androidId = SamplingUtils.getAndroidId(context);
+    }
+
+    private static long getFirstDayOfYear(long millis) {
+        return millis - (millis % AVERAGE_MILLIS_PER_YEAR);
     }
 
     /* access modifiers changed from: package-private */
@@ -91,9 +97,5 @@ final class CpuProfilingServiceScheduler {
 
     private long getFirstDayOfYear() {
         return getFirstDayOfYear(this.clock.currentTimeMillis());
-    }
-
-    private static long getFirstDayOfYear(long millis) {
-        return millis - (millis % AVERAGE_MILLIS_PER_YEAR);
     }
 }

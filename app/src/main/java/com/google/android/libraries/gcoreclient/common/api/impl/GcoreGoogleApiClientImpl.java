@@ -3,12 +3,20 @@ package com.google.android.libraries.gcoreclient.common.api.impl;
 import android.accounts.Account;
 import android.content.Context;
 import android.support.p001v4.app.FragmentActivity;
+
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.libraries.gcoreclient.common.api.GcoreGoogleApiClient;
-import com.google.android.libraries.gcoreclient.common.api.impl.BaseGcoreGoogleApiClientImpl;
 import com.google.android.libraries.gcoreclient.common.api.support.GcoreWrapper;
 
 public class GcoreGoogleApiClientImpl extends BaseGcoreGoogleApiClientImpl {
+
+    public GcoreGoogleApiClientImpl(Context context, GoogleApiClient client, GcoreWrapper wrapper) {
+        super(context, client, wrapper);
+    }
+
+    public void stopAutoManage(FragmentActivity lifecycleActivity) {
+        this.client.stopAutoManage(lifecycleActivity);
+    }
 
     public static class Builder extends BaseGcoreGoogleApiClientImpl.Builder {
         public Builder(Context context) {
@@ -42,13 +50,5 @@ public class GcoreGoogleApiClientImpl extends BaseGcoreGoogleApiClientImpl {
         public GcoreGoogleApiClient.Builder newBuilder(Context context) {
             return new Builder(context);
         }
-    }
-
-    public void stopAutoManage(FragmentActivity lifecycleActivity) {
-        this.client.stopAutoManage(lifecycleActivity);
-    }
-
-    public GcoreGoogleApiClientImpl(Context context, GoogleApiClient client, GcoreWrapper wrapper) {
-        super(context, client, wrapper);
     }
 }

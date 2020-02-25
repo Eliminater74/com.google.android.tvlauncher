@@ -7,19 +7,20 @@ import android.database.ContentObserver;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
+
 import com.google.android.exoplayer2.C0841C;
-import com.google.android.gsf.GoogleSettingsContract;
+
 import java.util.Collection;
 import java.util.HashSet;
 
 public class UseLocationForServices {
     public static final String ACTION_SET_USE_LOCATION_FOR_SERVICES = "com.google.android.gsf.action.SET_USE_LOCATION_FOR_SERVICES";
     public static final String EXTRA_DISABLE_USE_LOCATION_FOR_SERVICES = "disable";
-    private static final String[] GOOGLE_GEOLOCATION_ORIGINS = {"http://www.google.com", "http://www.google.co.uk"};
-    private static final String TAG = "UseLocationForServices";
     public static final int USE_LOCATION_FOR_SERVICES_NOT_SET = 2;
     public static final int USE_LOCATION_FOR_SERVICES_OFF = 0;
     public static final int USE_LOCATION_FOR_SERVICES_ON = 1;
+    private static final String[] GOOGLE_GEOLOCATION_ORIGINS = {"http://www.google.com", "http://www.google.co.uk"};
+    private static final String TAG = "UseLocationForServices";
 
     public static int getUseLocationForServices(Context context) {
         return GoogleSettingsContract.Partner.getInt(context.getContentResolver(), GoogleSettingsContract.Partner.USE_LOCATION_FOR_SERVICES, 2);

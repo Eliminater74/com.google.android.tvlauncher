@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+
 import java.io.EOFException;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -13,32 +14,15 @@ import java.io.InputStream;
 
 public final class RawResourceDataSource extends BaseDataSource {
     public static final String RAW_RESOURCE_SCHEME = "rawresource";
+    private final Resources resources;
     @Nullable
     private AssetFileDescriptor assetFileDescriptor;
     private long bytesRemaining;
     @Nullable
     private InputStream inputStream;
     private boolean opened;
-    private final Resources resources;
     @Nullable
     private Uri uri;
-
-    public static class RawResourceDataSourceException extends IOException {
-        public RawResourceDataSourceException(String message) {
-            super(message);
-        }
-
-        public RawResourceDataSourceException(IOException e) {
-            super(e);
-        }
-    }
-
-    public static Uri buildRawResourceUri(int rawResourceId) {
-        StringBuilder sb = new StringBuilder(26);
-        sb.append("rawresource:///");
-        sb.append(rawResourceId);
-        return Uri.parse(sb.toString());
-    }
 
     public RawResourceDataSource(Context context) {
         super(false);
@@ -51,6 +35,13 @@ public final class RawResourceDataSource extends BaseDataSource {
         if (listener != null) {
             addTransferListener(listener);
         }
+    }
+
+    public static Uri buildRawResourceUri(int rawResourceId) {
+        StringBuilder sb = new StringBuilder(26);
+        sb.append("rawresource:///");
+        sb.append(rawResourceId);
+        return Uri.parse(sb.toString());
     }
 
     public long open(DataSpec dataSpec) throws RawResourceDataSourceException {
@@ -176,6 +167,16 @@ public final class RawResourceDataSource extends BaseDataSource {
                 }
                 throw th3;
             }
+        }
+    }
+
+    public static class RawResourceDataSourceException extends IOException {
+        public RawResourceDataSourceException(String message) {
+            super(message);
+        }
+
+        public RawResourceDataSourceException(IOException e) {
+            super(e);
         }
     }
 }

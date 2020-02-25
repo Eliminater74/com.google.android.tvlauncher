@@ -3,6 +3,7 @@ package com.google.common.math;
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
+
 import java.math.BigInteger;
 
 @GwtIncompatible

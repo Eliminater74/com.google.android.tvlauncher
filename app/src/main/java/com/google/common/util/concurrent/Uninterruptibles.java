@@ -4,6 +4,7 @@ import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
@@ -15,6 +16,9 @@ import java.util.concurrent.locks.Condition;
 
 @GwtCompatible(emulated = true)
 public final class Uninterruptibles {
+    private Uninterruptibles() {
+    }
+
     @GwtIncompatible
     public static void awaitUninterruptibly(CountDownLatch latch) {
         boolean interrupted = false;
@@ -286,8 +290,5 @@ public final class Uninterruptibles {
             }
             throw th;
         }
-    }
-
-    private Uninterruptibles() {
     }
 }

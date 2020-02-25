@@ -2,18 +2,20 @@ package com.google.common.collect;
 
 import com.google.common.annotations.GwtCompatible;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible
 public abstract class ForwardingMultimap<K, V> extends ForwardingObject implements Multimap<K, V> {
-    /* access modifiers changed from: protected */
-    public abstract Multimap<K, V> delegate();
-
     protected ForwardingMultimap() {
     }
+
+    /* access modifiers changed from: protected */
+    public abstract Multimap<K, V> delegate();
 
     public Map<K, Collection<V>> asMap() {
         return delegate().asMap();

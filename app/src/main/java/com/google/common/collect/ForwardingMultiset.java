@@ -3,21 +3,21 @@ package com.google.common.collect;
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.base.Objects;
-import com.google.common.collect.Multiset;
-import com.google.common.collect.Multisets;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible
 public abstract class ForwardingMultiset<E> extends ForwardingCollection<E> implements Multiset<E> {
-    /* access modifiers changed from: protected */
-    public abstract Multiset<E> delegate();
-
     protected ForwardingMultiset() {
     }
+
+    /* access modifiers changed from: protected */
+    public abstract Multiset<E> delegate();
 
     public int count(Object element) {
         return delegate().count(element);
@@ -117,21 +117,6 @@ public abstract class ForwardingMultiset<E> extends ForwardingCollection<E> impl
         return Multisets.setCountImpl(this, element, oldCount, newCount);
     }
 
-    @Beta
-    protected class StandardElementSet extends Multisets.ElementSet<E> {
-        public StandardElementSet() {
-        }
-
-        /* access modifiers changed from: package-private */
-        public Multiset<E> multiset() {
-            return ForwardingMultiset.this;
-        }
-
-        public Iterator<E> iterator() {
-            return Multisets.elementIterator(multiset().entrySet().iterator());
-        }
-    }
-
     /* access modifiers changed from: protected */
     public Iterator<E> standardIterator() {
         return Multisets.iteratorImpl(this);
@@ -155,5 +140,20 @@ public abstract class ForwardingMultiset<E> extends ForwardingCollection<E> impl
     /* access modifiers changed from: protected */
     public String standardToString() {
         return entrySet().toString();
+    }
+
+    @Beta
+    protected class StandardElementSet extends Multisets.ElementSet<E> {
+        public StandardElementSet() {
+        }
+
+        /* access modifiers changed from: package-private */
+        public Multiset<E> multiset() {
+            return ForwardingMultiset.this;
+        }
+
+        public Iterator<E> iterator() {
+            return Multisets.elementIterator(multiset().entrySet().iterator());
+        }
     }
 }

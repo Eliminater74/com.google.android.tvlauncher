@@ -1,16 +1,17 @@
 package com.google.common.collect;
 
 import com.google.common.annotations.GwtCompatible;
-import com.google.common.collect.Table;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.util.AbstractCollection;
 import java.util.AbstractSet;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtCompatible
 abstract class AbstractTable<R, C, V> implements Table<R, C, V> {
@@ -19,11 +20,11 @@ abstract class AbstractTable<R, C, V> implements Table<R, C, V> {
     @MonotonicNonNullDecl
     private transient Collection<V> values;
 
-    /* access modifiers changed from: package-private */
-    public abstract Iterator<Table.Cell<R, C, V>> cellIterator();
-
     AbstractTable() {
     }
+
+    /* access modifiers changed from: package-private */
+    public abstract Iterator<Table.Cell<R, C, V>> cellIterator();
 
     public boolean containsRow(@NullableDecl Object rowKey) {
         return Maps.safeContainsKey(rowMap(), rowKey);
@@ -106,6 +107,43 @@ abstract class AbstractTable<R, C, V> implements Table<R, C, V> {
         return new CellSet();
     }
 
+    public Collection<V> values() {
+        Collection<V> result = this.values;
+        if (result != null) {
+            return result;
+        }
+        Collection<V> createValues = createValues();
+        this.values = createValues;
+        return createValues;
+    }
+
+    /* access modifiers changed from: package-private */
+    public Collection<V> createValues() {
+        return new Values();
+    }
+
+    /* access modifiers changed from: package-private */
+    public Iterator<V> valuesIterator() {
+        return new TransformedIterator<Table.Cell<R, C, V>, V>(this, cellSet().iterator()) {
+            /* access modifiers changed from: package-private */
+            public V transform(Table.Cell<R, C, V> cell) {
+                return cell.getValue();
+            }
+        };
+    }
+
+    public boolean equals(@NullableDecl Object obj) {
+        return Tables.equalsImpl(this, obj);
+    }
+
+    public int hashCode() {
+        return cellSet().hashCode();
+    }
+
+    public String toString() {
+        return rowMap().toString();
+    }
+
     class CellSet extends AbstractSet<Table.Cell<R, C, V>> {
         CellSet() {
         }
@@ -147,31 +185,6 @@ abstract class AbstractTable<R, C, V> implements Table<R, C, V> {
         }
     }
 
-    public Collection<V> values() {
-        Collection<V> result = this.values;
-        if (result != null) {
-            return result;
-        }
-        Collection<V> createValues = createValues();
-        this.values = createValues;
-        return createValues;
-    }
-
-    /* access modifiers changed from: package-private */
-    public Collection<V> createValues() {
-        return new Values();
-    }
-
-    /* access modifiers changed from: package-private */
-    public Iterator<V> valuesIterator() {
-        return new TransformedIterator<Table.Cell<R, C, V>, V>(this, cellSet().iterator()) {
-            /* access modifiers changed from: package-private */
-            public V transform(Table.Cell<R, C, V> cell) {
-                return cell.getValue();
-            }
-        };
-    }
-
     class Values extends AbstractCollection<V> {
         Values() {
         }
@@ -191,17 +204,5 @@ abstract class AbstractTable<R, C, V> implements Table<R, C, V> {
         public int size() {
             return AbstractTable.this.size();
         }
-    }
-
-    public boolean equals(@NullableDecl Object obj) {
-        return Tables.equalsImpl(this, obj);
-    }
-
-    public int hashCode() {
-        return cellSet().hashCode();
-    }
-
-    public String toString() {
-        return rowMap().toString();
     }
 }

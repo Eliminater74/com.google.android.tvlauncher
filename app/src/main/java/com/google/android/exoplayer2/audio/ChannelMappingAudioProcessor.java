@@ -1,8 +1,9 @@
 package com.google.android.exoplayer2.audio;
 
 import android.support.annotation.Nullable;
-import com.google.android.exoplayer2.audio.AudioProcessor;
+
 import com.google.android.exoplayer2.util.Assertions;
+
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 

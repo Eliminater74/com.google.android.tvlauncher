@@ -1,8 +1,9 @@
 package com.google.android.gms.internal;
 
+import org.apache.http.HttpResponse;
+
 import java.io.IOException;
 import java.util.Map;
-import org.apache.http.HttpResponse;
 
 @Deprecated
 /* compiled from: HttpStack */

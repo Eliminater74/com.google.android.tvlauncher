@@ -1,7 +1,6 @@
 package com.google.common.collect;
 
 import com.google.common.annotations.GwtIncompatible;
-import com.google.common.collect.ImmutableSortedMap;
 
 @GwtIncompatible
 abstract class ImmutableSortedMapFauxverideShim<K, V> extends ImmutableMap<K, V> {

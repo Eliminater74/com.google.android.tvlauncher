@@ -1,11 +1,16 @@
 package com.bumptech.glide.load.engine;
 
 import android.support.annotation.Nullable;
+
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.Key;
 import com.bumptech.glide.load.data.DataFetcher;
 
 interface DataFetcherGenerator {
+
+    void cancel();
+
+    boolean startNext();
 
     public interface FetcherReadyCallback {
         void onDataFetcherFailed(Key key, Exception exc, DataFetcher<?> dataFetcher, DataSource dataSource);
@@ -14,8 +19,4 @@ interface DataFetcherGenerator {
 
         void reschedule();
     }
-
-    void cancel();
-
-    boolean startNext();
 }

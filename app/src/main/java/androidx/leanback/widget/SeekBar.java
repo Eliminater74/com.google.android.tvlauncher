@@ -10,32 +10,26 @@ import android.support.annotation.RestrictTo;
 import android.support.p001v4.internal.view.SupportMenu;
 import android.util.AttributeSet;
 import android.view.View;
+
 import androidx.leanback.C0364R;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
 public final class SeekBar extends View {
+    private final Paint mBackgroundPaint = new Paint(1);
+    private final RectF mBackgroundRect = new RectF();
+    private final Paint mKnobPaint = new Paint(1);
+    private final Paint mProgressPaint = new Paint(1);
+    private final RectF mProgressRect = new RectF();
+    private final Paint mSecondProgressPaint = new Paint(1);
+    private final RectF mSecondProgressRect = new RectF();
     private AccessibilitySeekListener mAccessibilitySeekListener;
     private int mActiveBarHeight;
     private int mActiveRadius;
-    private final Paint mBackgroundPaint = new Paint(1);
-    private final RectF mBackgroundRect = new RectF();
     private int mBarHeight;
-    private final Paint mKnobPaint = new Paint(1);
     private int mKnobx;
     private int mMax;
     private int mProgress;
-    private final Paint mProgressPaint = new Paint(1);
-    private final RectF mProgressRect = new RectF();
     private int mSecondProgress;
-    private final Paint mSecondProgressPaint = new Paint(1);
-    private final RectF mSecondProgressRect = new RectF();
-
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    public static abstract class AccessibilitySeekListener {
-        public abstract boolean onAccessibilitySeekBackward();
-
-        public abstract boolean onAccessibilitySeekForward();
-    }
 
     public SeekBar(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -88,16 +82,6 @@ public final class SeekBar extends View {
         canvas.drawCircle((float) this.mKnobx, (float) (getHeight() / 2), (float) radius, this.mKnobPaint);
     }
 
-    public void setProgress(int progress) {
-        if (progress > this.mMax) {
-            progress = this.mMax;
-        } else if (progress < 0) {
-            progress = 0;
-        }
-        this.mProgress = progress;
-        calculate();
-    }
-
     public void setSecondaryProgress(int progress) {
         if (progress > this.mMax) {
             progress = this.mMax;
@@ -110,6 +94,16 @@ public final class SeekBar extends View {
 
     public int getProgress() {
         return this.mProgress;
+    }
+
+    public void setProgress(int progress) {
+        if (progress > this.mMax) {
+            progress = this.mMax;
+        } else if (progress < 0) {
+            progress = 0;
+        }
+        this.mProgress = progress;
+        calculate();
     }
 
     public int getSecondProgress() {
@@ -129,12 +123,12 @@ public final class SeekBar extends View {
         this.mProgressPaint.setColor(color);
     }
 
-    public void setSecondaryProgressColor(int color) {
-        this.mSecondProgressPaint.setColor(color);
-    }
-
     public int getSecondaryProgressColor() {
         return this.mSecondProgressPaint.getColor();
+    }
+
+    public void setSecondaryProgressColor(int color) {
+        this.mSecondProgressPaint.setColor(color);
     }
 
     private void calculate() {
@@ -175,5 +169,12 @@ public final class SeekBar extends View {
             }
         }
         return super.performAccessibilityAction(action, arguments);
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    public static abstract class AccessibilitySeekListener {
+        public abstract boolean onAccessibilitySeekBackward();
+
+        public abstract boolean onAccessibilitySeekForward();
     }
 }

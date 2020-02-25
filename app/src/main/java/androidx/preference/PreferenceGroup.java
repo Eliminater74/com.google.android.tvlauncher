@@ -14,33 +14,22 @@ import android.support.p001v4.util.SimpleArrayMap;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
-import androidx.preference.Preference;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public abstract class PreferenceGroup extends Preference {
     private static final String TAG = "PreferenceGroup";
-    private boolean mAttachedToHierarchy;
-    private final Runnable mClearRecycleCacheRunnable;
-    private int mCurrentPreferenceOrder;
-    private final Handler mHandler;
     final SimpleArrayMap<String, Long> mIdRecycleCache;
+    private final Runnable mClearRecycleCacheRunnable;
+    private final Handler mHandler;
+    private boolean mAttachedToHierarchy;
+    private int mCurrentPreferenceOrder;
     private int mInitialExpandedChildrenCount;
     private OnExpandButtonClickListener mOnExpandButtonClickListener;
     private boolean mOrderingAsAdded;
     private List<Preference> mPreferences;
-
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    public interface OnExpandButtonClickListener {
-        void onExpandButtonClick();
-    }
-
-    public interface PreferencePositionCallback {
-        int getPreferenceAdapterPosition(Preference preference);
-
-        int getPreferenceAdapterPosition(String str);
-    }
 
     public PreferenceGroup(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
@@ -75,12 +64,16 @@ public abstract class PreferenceGroup extends Preference {
         this(context, attrs, 0);
     }
 
+    public boolean isOrderingAsAdded() {
+        return this.mOrderingAsAdded;
+    }
+
     public void setOrderingAsAdded(boolean orderingAsAdded) {
         this.mOrderingAsAdded = orderingAsAdded;
     }
 
-    public boolean isOrderingAsAdded() {
-        return this.mOrderingAsAdded;
+    public int getInitialExpandedChildrenCount() {
+        return this.mInitialExpandedChildrenCount;
     }
 
     public void setInitialExpandedChildrenCount(int expandedCount) {
@@ -88,10 +81,6 @@ public abstract class PreferenceGroup extends Preference {
             Log.e(TAG, getClass().getSimpleName() + " should have a key defined if it contains an expandable preference");
         }
         this.mInitialExpandedChildrenCount = expandedCount;
-    }
-
-    public int getInitialExpandedChildrenCount() {
-        return this.mInitialExpandedChildrenCount;
     }
 
     public void addItemFromInflater(Preference preference) {
@@ -243,15 +232,15 @@ public abstract class PreferenceGroup extends Preference {
         return this.mAttachedToHierarchy;
     }
 
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    public void setOnExpandButtonClickListener(@Nullable OnExpandButtonClickListener onExpandButtonClickListener) {
-        this.mOnExpandButtonClickListener = onExpandButtonClickListener;
-    }
-
     @Nullable
     @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
     public OnExpandButtonClickListener getOnExpandButtonClickListener() {
         return this.mOnExpandButtonClickListener;
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    public void setOnExpandButtonClickListener(@Nullable OnExpandButtonClickListener onExpandButtonClickListener) {
+        this.mOnExpandButtonClickListener = onExpandButtonClickListener;
     }
 
     public void onAttached() {
@@ -319,6 +308,17 @@ public abstract class PreferenceGroup extends Preference {
         SavedState groupState = (SavedState) state;
         this.mInitialExpandedChildrenCount = groupState.mInitialExpandedChildrenCount;
         super.onRestoreInstanceState(groupState.getSuperState());
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    public interface OnExpandButtonClickListener {
+        void onExpandButtonClick();
+    }
+
+    public interface PreferencePositionCallback {
+        int getPreferenceAdapterPosition(Preference preference);
+
+        int getPreferenceAdapterPosition(String str);
     }
 
     static class SavedState extends Preference.BaseSavedState {

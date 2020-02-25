@@ -2,7 +2,7 @@ package androidx.leanback.widget;
 
 import android.support.p001v4.util.CircularArray;
 import android.support.p001v4.util.CircularIntArray;
-import androidx.leanback.widget.Grid;
+
 import java.io.PrintWriter;
 
 abstract class StaggeredGrid extends Grid {
@@ -11,25 +11,14 @@ abstract class StaggeredGrid extends Grid {
     protected Object mPendingItem;
     protected int mPendingItemSize;
 
+    StaggeredGrid() {
+    }
+
     /* access modifiers changed from: protected */
     public abstract boolean appendVisibleItemsWithoutCache(int i, boolean z);
 
     /* access modifiers changed from: protected */
     public abstract boolean prependVisibleItemsWithoutCache(int i, boolean z);
-
-    StaggeredGrid() {
-    }
-
-    public static class Location extends Grid.Location {
-        public int offset;
-        public int size;
-
-        public Location(int row, int offset2, int size2) {
-            super(row);
-            this.offset = offset2;
-            this.size = size2;
-        }
-    }
 
     public final int getFirstIndex() {
         return this.mFirstIndex;
@@ -332,6 +321,17 @@ abstract class StaggeredGrid extends Grid {
         this.mLocations.removeFromEnd((getLastIndex() - index) + 1);
         if (this.mLocations.size() == 0) {
             this.mFirstIndex = -1;
+        }
+    }
+
+    public static class Location extends Grid.Location {
+        public int offset;
+        public int size;
+
+        public Location(int row, int offset2, int size2) {
+            super(row);
+            this.offset = offset2;
+            this.size = size2;
         }
     }
 }

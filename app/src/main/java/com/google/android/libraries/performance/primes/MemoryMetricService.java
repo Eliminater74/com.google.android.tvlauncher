@@ -6,17 +6,18 @@ import android.os.Build;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
-import com.google.android.libraries.performance.primes.MemoryMetricMonitor;
-import com.google.android.libraries.performance.primes.MetricRecorder;
+
 import com.google.android.libraries.performance.primes.metriccapture.MemoryUsageCapture;
 import com.google.android.libraries.performance.primes.metriccapture.ProcessStats;
 import com.google.android.libraries.performance.primes.transmitter.MetricTransmitter;
+
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicReference;
+
 import logs.proto.wireless.performance.mobile.ExtensionMetric;
 import logs.proto.wireless.performance.mobile.MemoryMetric;
 import logs.proto.wireless.performance.mobile.SystemHealthProto;
@@ -26,31 +27,19 @@ final class MemoryMetricService extends AbstractMetricService {
     static final int MAX_CONCURRENT_MEASUREMENTS = 10;
     private static final long MAX_SNAPSHOT_AGE = 1000;
     private static final String TAG = "MemoryMetricService";
-    private final boolean forceGcBeforeRecordMemory;
-    @VisibleForTesting
-    final AtomicReference<MemoryEvent> lastSnapshot = new AtomicReference<>(null);
     /* access modifiers changed from: private */
     public final boolean memorySummaryDisabled;
     /* access modifiers changed from: private */
     public final MemoryMetricExtensionProvider metricExtensionProvider;
-    private MemoryMetricMonitor metricMonitor;
     /* access modifiers changed from: private */
     public final boolean recordMemoryPerProcess;
     @VisibleForTesting
+    final AtomicReference<MemoryEvent> lastSnapshot = new AtomicReference<>(null);
+    @VisibleForTesting
     final ConcurrentHashMap<String, MemoryEvent> startSnapshots = new ConcurrentHashMap<>();
+    private final boolean forceGcBeforeRecordMemory;
     private final TimeCapture timeCapture;
-
-    public interface TimeCapture {
-        long getTime();
-    }
-
-    static MemoryMetricService createService(MetricTransmitter transmitter, Application application, Supplier<MetricStamper> metricStamperSupplier, Supplier<ScheduledExecutorService> executorServiceSupplier, PrimesMemoryConfigurations configs, boolean memorySummaryDisabled2) {
-        return new MemoryMetricService(new TimeCapture() {
-            public long getTime() {
-                return SystemClock.elapsedRealtime();
-            }
-        }, transmitter, application, metricStamperSupplier, executorServiceSupplier, configs.getSampleRatePerSecond(), configs.recordMetricPerProcess(), configs.getMetricExtensionProvider().orNull(), configs.getForceGcBeforeRecordMemory(), memorySummaryDisabled2);
-    }
+    private MemoryMetricMonitor metricMonitor;
 
     @VisibleForTesting
     MemoryMetricService(TimeCapture timeCapture2, MetricTransmitter transmitter, Application application, Supplier<MetricStamper> metricStamperSupplier, Supplier<ScheduledExecutorService> executorServiceSupplier, int sampleRate, boolean recordMemoryPerProcess2, MemoryMetricExtensionProvider metricExtensionProvider2, boolean forceGcBeforeRecordMemory2, boolean memorySummaryDisabled2) {
@@ -60,6 +49,14 @@ final class MemoryMetricService extends AbstractMetricService {
         this.metricExtensionProvider = metricExtensionProvider2;
         this.forceGcBeforeRecordMemory = forceGcBeforeRecordMemory2;
         this.memorySummaryDisabled = memorySummaryDisabled2;
+    }
+
+    static MemoryMetricService createService(MetricTransmitter transmitter, Application application, Supplier<MetricStamper> metricStamperSupplier, Supplier<ScheduledExecutorService> executorServiceSupplier, PrimesMemoryConfigurations configs, boolean memorySummaryDisabled2) {
+        return new MemoryMetricService(new TimeCapture() {
+            public long getTime() {
+                return SystemClock.elapsedRealtime();
+            }
+        }, transmitter, application, metricStamperSupplier, executorServiceSupplier, configs.getSampleRatePerSecond(), configs.recordMetricPerProcess(), configs.getMetricExtensionProvider().orNull(), configs.getForceGcBeforeRecordMemory(), memorySummaryDisabled2);
     }
 
     /* access modifiers changed from: package-private */
@@ -231,5 +228,9 @@ final class MemoryMetricService extends AbstractMetricService {
                 }
             }
         }
+    }
+
+    public interface TimeCapture {
+        long getTime();
     }
 }

@@ -1,8 +1,8 @@
 package com.google.android.gms.common.server.response;
 
 import android.os.Parcelable;
+
 import com.google.android.gms.common.internal.Hide;
-import com.google.android.gms.common.server.response.FastJsonResponse;
 
 @Hide
 public class FieldCreator implements Parcelable.Creator<FastJsonResponse.Field> {

@@ -1,9 +1,11 @@
 package com.google.android.exoplayer2.audio;
 
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
@@ -11,12 +13,6 @@ import java.nio.ByteOrder;
 
 public final class TeeAudioProcessor extends BaseAudioProcessor {
     private final AudioBufferSink audioBufferSink;
-
-    public interface AudioBufferSink {
-        void flush(int i, int i2, int i3);
-
-        void handleBuffer(ByteBuffer byteBuffer);
-    }
 
     public TeeAudioProcessor(AudioBufferSink audioBufferSink2) {
         this.audioBufferSink = (AudioBufferSink) Assertions.checkNotNull(audioBufferSink2);
@@ -41,21 +37,27 @@ public final class TeeAudioProcessor extends BaseAudioProcessor {
         }
     }
 
+    public interface AudioBufferSink {
+        void flush(int i, int i2, int i3);
+
+        void handleBuffer(ByteBuffer byteBuffer);
+    }
+
     public static final class WavFileAudioBufferSink implements AudioBufferSink {
         private static final int FILE_SIZE_MINUS_44_OFFSET = 40;
         private static final int FILE_SIZE_MINUS_8_OFFSET = 4;
         private static final int HEADER_LENGTH = 44;
         private static final String TAG = "WaveFileAudioBufferSink";
+        private final String outputFileNamePrefix;
+        private final byte[] scratchBuffer = new byte[1024];
+        private final ByteBuffer scratchByteBuffer = ByteBuffer.wrap(this.scratchBuffer).order(ByteOrder.LITTLE_ENDIAN);
         private int bytesWritten;
         private int channelCount;
         private int counter;
         private int encoding;
-        private final String outputFileNamePrefix;
         @Nullable
         private RandomAccessFile randomAccessFile;
         private int sampleRateHz;
-        private final byte[] scratchBuffer = new byte[1024];
-        private final ByteBuffer scratchByteBuffer = ByteBuffer.wrap(this.scratchBuffer).order(ByteOrder.LITTLE_ENDIAN);
 
         public WavFileAudioBufferSink(String outputFileNamePrefix2) {
             this.outputFileNamePrefix = outputFileNamePrefix2;

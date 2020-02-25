@@ -4,10 +4,11 @@ import com.google.common.annotations.Beta;
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Multiset;
-import com.google.common.collect.Serialization;
 import com.google.common.primitives.Ints;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -20,7 +21,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtIncompatible
 public final class ConcurrentHashMultiset<E> extends AbstractMultiset<E> implements Serializable {
@@ -28,23 +28,10 @@ public final class ConcurrentHashMultiset<E> extends AbstractMultiset<E> impleme
     /* access modifiers changed from: private */
     public final transient ConcurrentMap<E, AtomicInteger> countMap;
 
-    public /* bridge */ /* synthetic */ boolean contains(@NullableDecl Object obj) {
-        return super.contains(obj);
-    }
-
-    public /* bridge */ /* synthetic */ Set elementSet() {
-        return super.elementSet();
-    }
-
-    public /* bridge */ /* synthetic */ Set entrySet() {
-        return super.entrySet();
-    }
-
-    private static class FieldSettersHolder {
-        static final Serialization.FieldSetter<ConcurrentHashMultiset> COUNT_MAP_FIELD_SETTER = Serialization.getFieldSetter(ConcurrentHashMultiset.class, "countMap");
-
-        private FieldSettersHolder() {
-        }
+    @VisibleForTesting
+    ConcurrentHashMultiset(ConcurrentMap<E, AtomicInteger> countMap2) {
+        Preconditions.checkArgument(countMap2.isEmpty(), "the backing map (%s) must be empty", countMap2);
+        this.countMap = countMap2;
     }
 
     public static <E> ConcurrentHashMultiset<E> create() {
@@ -62,10 +49,16 @@ public final class ConcurrentHashMultiset<E> extends AbstractMultiset<E> impleme
         return new ConcurrentHashMultiset<>(countMap2);
     }
 
-    @VisibleForTesting
-    ConcurrentHashMultiset(ConcurrentMap<E, AtomicInteger> countMap2) {
-        Preconditions.checkArgument(countMap2.isEmpty(), "the backing map (%s) must be empty", countMap2);
-        this.countMap = countMap2;
+    public /* bridge */ /* synthetic */ boolean contains(@NullableDecl Object obj) {
+        return super.contains(obj);
+    }
+
+    public /* bridge */ /* synthetic */ Set elementSet() {
+        return super.elementSet();
+    }
+
+    public /* bridge */ /* synthetic */ Set entrySet() {
+        return super.entrySet();
     }
 
     public int count(@NullableDecl Object element) {
@@ -427,6 +420,23 @@ public final class ConcurrentHashMultiset<E> extends AbstractMultiset<E> impleme
         this.countMap.clear();
     }
 
+    private void writeObject(ObjectOutputStream stream) throws IOException {
+        stream.defaultWriteObject();
+        stream.writeObject(this.countMap);
+    }
+
+    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        stream.defaultReadObject();
+        FieldSettersHolder.COUNT_MAP_FIELD_SETTER.set(this, (ConcurrentMap) stream.readObject());
+    }
+
+    private static class FieldSettersHolder {
+        static final Serialization.FieldSetter<ConcurrentHashMultiset> COUNT_MAP_FIELD_SETTER = Serialization.getFieldSetter(ConcurrentHashMultiset.class, "countMap");
+
+        private FieldSettersHolder() {
+        }
+    }
+
     private class EntrySet extends AbstractMultiset<E>.EntrySet {
         private EntrySet() {
             super();
@@ -450,15 +460,5 @@ public final class ConcurrentHashMultiset<E> extends AbstractMultiset<E> impleme
             Iterators.addAll(list, iterator());
             return list;
         }
-    }
-
-    private void writeObject(ObjectOutputStream stream) throws IOException {
-        stream.defaultWriteObject();
-        stream.writeObject(this.countMap);
-    }
-
-    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
-        stream.defaultReadObject();
-        FieldSettersHolder.COUNT_MAP_FIELD_SETTER.set(this, (ConcurrentMap) stream.readObject());
     }
 }

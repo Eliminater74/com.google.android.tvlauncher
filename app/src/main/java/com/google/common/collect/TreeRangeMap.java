@@ -6,8 +6,9 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import com.google.common.collect.Maps;
-import java.lang.Comparable;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.Collections;
@@ -17,7 +18,6 @@ import java.util.Map;
 import java.util.NavigableMap;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtIncompatible
 @Beta
@@ -86,47 +86,18 @@ public final class TreeRangeMap<K extends Comparable, V> implements RangeMap<K, 
     /* access modifiers changed from: private */
     public final NavigableMap<Cut<K>, RangeMapEntry<K, V>> entriesByLowerBound = Maps.newTreeMap();
 
+    private TreeRangeMap() {
+    }
+
     public static <K extends Comparable, V> TreeRangeMap<K, V> create() {
         return new TreeRangeMap<>();
     }
 
-    private TreeRangeMap() {
-    }
-
-    private static final class RangeMapEntry<K extends Comparable, V> extends AbstractMapEntry<Range<K>, V> {
-        private final Range<K> range;
-        private final V value;
-
-        RangeMapEntry(Cut<K> lowerBound, Cut<K> upperBound, V value2) {
-            this(Range.create(lowerBound, upperBound), value2);
+    private static <K extends Comparable, V> Range<K> coalesce(Range<K> range, V value, @NullableDecl Map.Entry<Cut<K>, RangeMapEntry<K, V>> entry) {
+        if (entry == null || !entry.getValue().getKey().isConnected(range) || !entry.getValue().getValue().equals(value)) {
+            return range;
         }
-
-        RangeMapEntry(Range<K> range2, V value2) {
-            this.range = range2;
-            this.value = value2;
-        }
-
-        public Range<K> getKey() {
-            return this.range;
-        }
-
-        public V getValue() {
-            return this.value;
-        }
-
-        public boolean contains(K value2) {
-            return this.range.contains(value2);
-        }
-
-        /* access modifiers changed from: package-private */
-        public Cut<K> getLowerBound() {
-            return this.range.lowerBound;
-        }
-
-        /* access modifiers changed from: package-private */
-        public Cut<K> getUpperBound() {
-            return this.range.upperBound;
-        }
+        return range.span(entry.getValue().getKey());
     }
 
     @NullableDecl
@@ -166,13 +137,6 @@ public final class TreeRangeMap<K extends Comparable, V> implements RangeMap<K, 
     /* access modifiers changed from: private */
     public Range<K> coalescedRange(Range<K> range, V value) {
         return coalesce(coalesce(range, value, this.entriesByLowerBound.lowerEntry(range.lowerBound)), value, this.entriesByLowerBound.floorEntry(range.upperBound));
-    }
-
-    private static <K extends Comparable, V> Range<K> coalesce(Range<K> range, V value, @NullableDecl Map.Entry<Cut<K>, RangeMapEntry<K, V>> entry) {
-        if (entry == null || !entry.getValue().getKey().isConnected(range) || !entry.getValue().getValue().equals(value)) {
-            return range;
-        }
-        return range.span(entry.getValue().getKey());
     }
 
     public void putAll(RangeMap<K, V> rangeMap) {
@@ -229,6 +193,69 @@ public final class TreeRangeMap<K extends Comparable, V> implements RangeMap<K, 
         return new AsMapOfRanges(this.entriesByLowerBound.descendingMap().values());
     }
 
+    public RangeMap<K, V> subRangeMap(Range<K> subRange) {
+        if (subRange.equals(Range.all())) {
+            return this;
+        }
+        return new SubRangeMap(subRange);
+    }
+
+    /* access modifiers changed from: private */
+    public RangeMap<K, V> emptySubRangeMap() {
+        return EMPTY_SUB_RANGE_MAP;
+    }
+
+    public boolean equals(@NullableDecl Object o) {
+        if (o instanceof RangeMap) {
+            return asMapOfRanges().equals(((RangeMap) o).asMapOfRanges());
+        }
+        return false;
+    }
+
+    public int hashCode() {
+        return asMapOfRanges().hashCode();
+    }
+
+    public String toString() {
+        return this.entriesByLowerBound.values().toString();
+    }
+
+    private static final class RangeMapEntry<K extends Comparable, V> extends AbstractMapEntry<Range<K>, V> {
+        private final Range<K> range;
+        private final V value;
+
+        RangeMapEntry(Cut<K> lowerBound, Cut<K> upperBound, V value2) {
+            this(Range.create(lowerBound, upperBound), value2);
+        }
+
+        RangeMapEntry(Range<K> range2, V value2) {
+            this.range = range2;
+            this.value = value2;
+        }
+
+        public Range<K> getKey() {
+            return this.range;
+        }
+
+        public V getValue() {
+            return this.value;
+        }
+
+        public boolean contains(K value2) {
+            return this.range.contains(value2);
+        }
+
+        /* access modifiers changed from: package-private */
+        public Cut<K> getLowerBound() {
+            return this.range.lowerBound;
+        }
+
+        /* access modifiers changed from: package-private */
+        public Cut<K> getUpperBound() {
+            return this.range.upperBound;
+        }
+    }
+
     private final class AsMapOfRanges extends Maps.IteratorBasedAbstractMap<Range<K>, V> {
         final Iterable<Map.Entry<Range<K>, V>> entryIterable;
 
@@ -260,18 +287,6 @@ public final class TreeRangeMap<K extends Comparable, V> implements RangeMap<K, 
         public Iterator<Map.Entry<Range<K>, V>> entryIterator() {
             return this.entryIterable.iterator();
         }
-    }
-
-    public RangeMap<K, V> subRangeMap(Range<K> subRange) {
-        if (subRange.equals(Range.all())) {
-            return this;
-        }
-        return new SubRangeMap(subRange);
-    }
-
-    /* access modifiers changed from: private */
-    public RangeMap<K, V> emptySubRangeMap() {
-        return EMPTY_SUB_RANGE_MAP;
     }
 
     private class SubRangeMap implements RangeMap<K, V> {
@@ -541,20 +556,5 @@ public final class TreeRangeMap<K extends Comparable, V> implements RangeMap<K, 
                 };
             }
         }
-    }
-
-    public boolean equals(@NullableDecl Object o) {
-        if (o instanceof RangeMap) {
-            return asMapOfRanges().equals(((RangeMap) o).asMapOfRanges());
-        }
-        return false;
-    }
-
-    public int hashCode() {
-        return asMapOfRanges().hashCode();
-    }
-
-    public String toString() {
-        return this.entriesByLowerBound.values().toString();
     }
 }

@@ -9,9 +9,71 @@ import java.util.List;
 import java.util.RandomAccess;
 
 public class LazyStringArrayList extends AbstractProtobufList<String> implements LazyStringList, RandomAccess {
-    public static final LazyStringList EMPTY = EMPTY_LIST;
     private static final LazyStringArrayList EMPTY_LIST = new LazyStringArrayList();
+    public static final LazyStringList EMPTY = EMPTY_LIST;
+
+    static {
+        EMPTY_LIST.makeImmutable();
+    }
+
     private final List<Object> list;
+
+    public LazyStringArrayList() {
+        this(10);
+    }
+
+    public LazyStringArrayList(int initialCapacity) {
+        this((ArrayList<Object>) new ArrayList(initialCapacity));
+    }
+
+    public LazyStringArrayList(LazyStringList from) {
+        this.list = new ArrayList(from.size());
+        addAll(from);
+    }
+
+    public LazyStringArrayList(List<String> from) {
+        this((ArrayList<Object>) new ArrayList(from));
+    }
+
+    private LazyStringArrayList(ArrayList<Object> list2) {
+        this.list = list2;
+    }
+
+    static LazyStringArrayList emptyList() {
+        return EMPTY_LIST;
+    }
+
+    private static String asString(Object o) {
+        if (o instanceof String) {
+            return (String) o;
+        }
+        if (o instanceof ByteString) {
+            return ((ByteString) o).toStringUtf8();
+        }
+        return Internal.toStringUtf8((byte[]) o);
+    }
+
+    /* access modifiers changed from: private */
+    public static ByteString asByteString(Object o) {
+        if (o instanceof ByteString) {
+            return (ByteString) o;
+        }
+        if (o instanceof String) {
+            return ByteString.copyFromUtf8((String) o);
+        }
+        return ByteString.copyFrom((byte[]) o);
+    }
+
+    /* access modifiers changed from: private */
+    public static byte[] asByteArray(Object o) {
+        if (o instanceof byte[]) {
+            return (byte[]) o;
+        }
+        if (o instanceof String) {
+            return Internal.toByteArray((String) o);
+        }
+        return ((ByteString) o).toByteArray();
+    }
 
     public /* bridge */ /* synthetic */ boolean equals(Object obj) {
         return super.equals(obj);
@@ -35,35 +97,6 @@ public class LazyStringArrayList extends AbstractProtobufList<String> implements
 
     public /* bridge */ /* synthetic */ boolean retainAll(Collection collection) {
         return super.retainAll(collection);
-    }
-
-    static {
-        EMPTY_LIST.makeImmutable();
-    }
-
-    static LazyStringArrayList emptyList() {
-        return EMPTY_LIST;
-    }
-
-    public LazyStringArrayList() {
-        this(10);
-    }
-
-    public LazyStringArrayList(int initialCapacity) {
-        this((ArrayList<Object>) new ArrayList(initialCapacity));
-    }
-
-    public LazyStringArrayList(LazyStringList from) {
-        this.list = new ArrayList(from.size());
-        addAll(from);
-    }
-
-    public LazyStringArrayList(List<String> from) {
-        this((ArrayList<Object>) new ArrayList(from));
-    }
-
-    private LazyStringArrayList(ArrayList<Object> list2) {
-        this.list = list2;
     }
 
     public LazyStringArrayList mutableCopyWithCapacity(int capacity) {
@@ -227,38 +260,6 @@ public class LazyStringArrayList extends AbstractProtobufList<String> implements
         return this.list.set(index, s);
     }
 
-    private static String asString(Object o) {
-        if (o instanceof String) {
-            return (String) o;
-        }
-        if (o instanceof ByteString) {
-            return ((ByteString) o).toStringUtf8();
-        }
-        return Internal.toStringUtf8((byte[]) o);
-    }
-
-    /* access modifiers changed from: private */
-    public static ByteString asByteString(Object o) {
-        if (o instanceof ByteString) {
-            return (ByteString) o;
-        }
-        if (o instanceof String) {
-            return ByteString.copyFromUtf8((String) o);
-        }
-        return ByteString.copyFrom((byte[]) o);
-    }
-
-    /* access modifiers changed from: private */
-    public static byte[] asByteArray(Object o) {
-        if (o instanceof byte[]) {
-            return (byte[]) o;
-        }
-        if (o instanceof String) {
-            return Internal.toByteArray((String) o);
-        }
-        return ((ByteString) o).toByteArray();
-    }
-
     public List<?> getUnderlyingElements() {
         return Collections.unmodifiableList(this.list);
     }
@@ -273,6 +274,21 @@ public class LazyStringArrayList extends AbstractProtobufList<String> implements
                 this.list.add(next);
             }
         }
+    }
+
+    public List<byte[]> asByteArrayList() {
+        return new ByteArrayListView(this);
+    }
+
+    public List<ByteString> asByteStringList() {
+        return new ByteStringListView(this);
+    }
+
+    public LazyStringList getUnmodifiableView() {
+        if (isModifiable()) {
+            return new UnmodifiableLazyStringList(this);
+        }
+        return this;
     }
 
     private static class ByteArrayListView extends AbstractList<byte[]> implements RandomAccess {
@@ -308,10 +324,6 @@ public class LazyStringArrayList extends AbstractProtobufList<String> implements
         }
     }
 
-    public List<byte[]> asByteArrayList() {
-        return new ByteArrayListView(this);
-    }
-
     private static class ByteStringListView extends AbstractList<ByteString> implements RandomAccess {
         private final LazyStringArrayList list;
 
@@ -343,16 +355,5 @@ public class LazyStringArrayList extends AbstractProtobufList<String> implements
             this.modCount++;
             return LazyStringArrayList.asByteString(o);
         }
-    }
-
-    public List<ByteString> asByteStringList() {
-        return new ByteStringListView(this);
-    }
-
-    public LazyStringList getUnmodifiableView() {
-        if (isModifiable()) {
-            return new UnmodifiableLazyStringList(this);
-        }
-        return this;
     }
 }

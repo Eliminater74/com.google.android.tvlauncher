@@ -7,6 +7,7 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RestrictTo;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
@@ -17,6 +18,18 @@ public class TintContextWrapper extends ContextWrapper {
     private static ArrayList<WeakReference<TintContextWrapper>> sCache;
     private final Resources mResources;
     private final Resources.Theme mTheme;
+
+    private TintContextWrapper(@NonNull Context base) {
+        super(base);
+        if (VectorEnabledTintResources.shouldBeUsed()) {
+            this.mResources = new VectorEnabledTintResources(this, base.getResources());
+            this.mTheme = this.mResources.newTheme();
+            this.mTheme.setTo(base.getTheme());
+            return;
+        }
+        this.mResources = new TintResources(this, base.getResources());
+        this.mTheme = null;
+    }
 
     public static Context wrap(@NonNull Context context) {
         if (!shouldWrap(context)) {
@@ -54,18 +67,6 @@ public class TintContextWrapper extends ContextWrapper {
             return true;
         }
         return false;
-    }
-
-    private TintContextWrapper(@NonNull Context base) {
-        super(base);
-        if (VectorEnabledTintResources.shouldBeUsed()) {
-            this.mResources = new VectorEnabledTintResources(this, base.getResources());
-            this.mTheme = this.mResources.newTheme();
-            this.mTheme.setTo(base.getTheme());
-            return;
-        }
-        this.mResources = new TintResources(this, base.getResources());
-        this.mTheme = null;
     }
 
     public Resources.Theme getTheme() {

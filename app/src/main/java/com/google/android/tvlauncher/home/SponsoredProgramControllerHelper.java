@@ -5,6 +5,7 @@ import android.support.annotation.VisibleForTesting;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+
 import com.google.android.tvlauncher.C1188R;
 import com.google.android.tvlauncher.application.TvLauncherApplication;
 import com.google.android.tvlauncher.doubleclick.AdVideoTracker;
@@ -28,35 +29,35 @@ class SponsoredProgramControllerHelper {
     private static final boolean DEBUG = false;
     private static final long START_TIME_UNINITIALIZED = -1;
     private static final String TAG = "SponsoredProgramControllerHelper";
-    private String mAdId;
-    private AdVideoTracker mAdVideoTracker;
+    /* access modifiers changed from: private */
+    public final ProgramView mView;
+    private final InstantVideoView mPreviewVideo;
     /* access modifiers changed from: private */
     public AdsManager mAdsManager;
     /* access modifiers changed from: private */
     public AdsUtil mAdsUtil;
     /* access modifiers changed from: private */
     public Clock mClock;
-    private DirectAdConfigSerializer mDirectAdConfigSerializer;
-    private DoubleClickAdConfigSerializer mDoubleClickAdConfigSerializer;
-    @VisibleForTesting
-    Runnable mDoubleClickAdRefreshRunnable;
-    @VisibleForTesting
-    Runnable mDoubleClickAdVisibilityCheckRunnable;
-    private IntentLaunchDispatcher mIntentLauncher;
-    private boolean mIsAdFresh;
     /* access modifiers changed from: private */
     public String mLastRequestedImpressionUrl;
     /* access modifiers changed from: private */
     public OutstreamVideoAd mOutstreamVideoAd;
+    /* access modifiers changed from: private */
+    public long mVisibleCheckStartTime;
+    @VisibleForTesting
+    Runnable mDoubleClickAdRefreshRunnable;
+    @VisibleForTesting
+    Runnable mDoubleClickAdVisibilityCheckRunnable;
+    private String mAdId;
+    private AdVideoTracker mAdVideoTracker;
+    private DirectAdConfigSerializer mDirectAdConfigSerializer;
+    private DoubleClickAdConfigSerializer mDoubleClickAdConfigSerializer;
+    private IntentLaunchDispatcher mIntentLauncher;
+    private boolean mIsAdFresh;
     private OutstreamVideoAdFactory mOutstreamVideoAdFactory;
-    private final InstantVideoView mPreviewVideo;
     private long mProgramId;
     private int mProgramType;
     private VideoProgressPoller mVideoProgressPoller;
-    /* access modifiers changed from: private */
-    public final ProgramView mView;
-    /* access modifiers changed from: private */
-    public long mVisibleCheckStartTime;
 
     SponsoredProgramControllerHelper(ProgramView v) {
         this(v, ((TvLauncherApplication) v.getContext().getApplicationContext()).getAdsManager(), ((TvLauncherApplication) v.getContext().getApplicationContext()).getOutstreamVideoAdFactory(), ((TvLauncherApplication) v.getContext().getApplicationContext()).getDoubleClickAdConfigSerializer(), ((TvLauncherApplication) v.getContext().getApplicationContext()).getDirectAdConfigSerializer(), new Clock(), ((TvLauncherApplication) v.getContext().getApplicationContext()).getIntentLauncher(), ((TvLauncherApplication) v.getContext().getApplicationContext()).getAdsUtil(), null, null);

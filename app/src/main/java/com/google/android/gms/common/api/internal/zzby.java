@@ -7,8 +7,8 @@ import android.net.Uri;
 
 /* compiled from: GooglePlayServicesUpdatedReceiver */
 public final class zzby extends BroadcastReceiver {
-    private Context zza;
     private final zzbz zzb;
+    private Context zza;
 
     public zzby(zzbz zzbz) {
         this.zzb = zzbz;

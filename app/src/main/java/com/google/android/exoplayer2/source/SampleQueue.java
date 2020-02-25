@@ -1,18 +1,19 @@
 package com.google.android.exoplayer2.source;
 
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.FormatHolder;
 import com.google.android.exoplayer2.decoder.CryptoInfo;
 import com.google.android.exoplayer2.decoder.DecoderInputBuffer;
 import com.google.android.exoplayer2.extractor.ExtractorInput;
 import com.google.android.exoplayer2.extractor.TrackOutput;
-import com.google.android.exoplayer2.source.SampleMetadataQueue;
 import com.google.android.exoplayer2.upstream.Allocation;
 import com.google.android.exoplayer2.upstream.Allocator;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.common.primitives.UnsignedBytes;
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.io.EOFException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -22,23 +23,19 @@ public class SampleQueue implements TrackOutput {
     private static final int INITIAL_SCRATCH_SIZE = 32;
     private final int allocationLength;
     private final Allocator allocator;
-    private Format downstreamFormat;
     private final SampleMetadataQueue.SampleExtrasHolder extrasHolder = new SampleMetadataQueue.SampleExtrasHolder();
+    private final SampleMetadataQueue metadataQueue = new SampleMetadataQueue();
+    private final ParsableByteArray scratch = new ParsableByteArray(32);
+    private Format downstreamFormat;
     private AllocationNode firstAllocationNode = new AllocationNode(0, this.allocationLength);
     private Format lastUnadjustedFormat;
-    private final SampleMetadataQueue metadataQueue = new SampleMetadataQueue();
     private boolean pendingFormatAdjustment;
     private boolean pendingSplice;
     private AllocationNode readAllocationNode;
     private long sampleOffsetUs;
-    private final ParsableByteArray scratch = new ParsableByteArray(32);
     private long totalBytesWritten;
     private UpstreamFormatChangedListener upstreamFormatChangeListener;
     private AllocationNode writeAllocationNode;
-
-    public interface UpstreamFormatChangedListener {
-        void onUpstreamFormatChanged(Format format);
-    }
 
     public SampleQueue(Allocator allocator2) {
         this.allocator = allocator2;
@@ -46,6 +43,16 @@ public class SampleQueue implements TrackOutput {
         AllocationNode allocationNode = this.firstAllocationNode;
         this.readAllocationNode = allocationNode;
         this.writeAllocationNode = allocationNode;
+    }
+
+    private static Format getAdjustedSampleFormat(Format format, long sampleOffsetUs2) {
+        if (format == null) {
+            return null;
+        }
+        if (sampleOffsetUs2 == 0 || format.subsampleOffsetUs == Long.MAX_VALUE) {
+            return format;
+        }
+        return format.copyWithSubsampleOffsetUs(format.subsampleOffsetUs + sampleOffsetUs2);
     }
 
     public void reset() {
@@ -389,23 +396,17 @@ public class SampleQueue implements TrackOutput {
         }
     }
 
-    private static Format getAdjustedSampleFormat(Format format, long sampleOffsetUs2) {
-        if (format == null) {
-            return null;
-        }
-        if (sampleOffsetUs2 == 0 || format.subsampleOffsetUs == Long.MAX_VALUE) {
-            return format;
-        }
-        return format.copyWithSubsampleOffsetUs(format.subsampleOffsetUs + sampleOffsetUs2);
+    public interface UpstreamFormatChangedListener {
+        void onUpstreamFormatChanged(Format format);
     }
 
     private static final class AllocationNode {
+        public final long endPosition;
+        public final long startPosition;
         @Nullable
         public Allocation allocation;
-        public final long endPosition;
         @Nullable
         public AllocationNode next;
-        public final long startPosition;
         public boolean wasInitialized;
 
         public AllocationNode(long startPosition2, int allocationLength) {

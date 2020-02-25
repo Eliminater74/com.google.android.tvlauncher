@@ -2,13 +2,15 @@ package com.google.android.libraries.performance.primes.battery;
 
 import android.os.health.HealthStats;
 import android.support.annotation.Nullable;
+
 import com.google.android.libraries.performance.primes.BatteryMetricExtensionProvider;
 import com.google.android.libraries.performance.primes.MetricStamper;
 import com.google.android.libraries.performance.primes.PrimesLog;
 import com.google.android.libraries.performance.primes.Supplier;
-import com.google.android.libraries.performance.primes.battery.StatsStorage;
 import com.google.android.libraries.stitch.util.Preconditions;
+
 import java.util.Objects;
+
 import logs.proto.wireless.performance.mobile.BatteryMetric;
 import logs.proto.wireless.performance.mobile.ExtensionMetric;
 import logs.proto.wireless.performance.mobile.SystemHealthProto;
@@ -17,15 +19,50 @@ public final class BatteryCapture {
     private static final int DURATION_EPS = 25;
     private static final double MAX_REL_TOL = 3.472222222222222E-5d;
     private static final String TAG = "BatteryCapture";
+    /* access modifiers changed from: private */
+    public final SystemHealthCapture systemHealthCapture;
     private final BatteryMetricExtensionProvider metricExtensionProvider;
     private final Supplier<MetricStamper> metricStamperSupplier;
     private final TimeCapture systemClockElapsedRealtimeCapture;
     private final TimeCapture systemCurrentTimeCapture;
-    /* access modifiers changed from: private */
-    public final SystemHealthCapture systemHealthCapture;
 
-    public interface TimeCapture {
-        long getTime();
+    public BatteryCapture(Supplier<MetricStamper> metricStamperSupplier2, SystemHealthCapture systemHealthCapture2, TimeCapture systemCurrentTimeCapture2, TimeCapture systemClockElapsedRealtimeCapture2, BatteryMetricExtensionProvider metricExtensionProvider2) {
+        this.systemHealthCapture = systemHealthCapture2;
+        this.systemCurrentTimeCapture = systemCurrentTimeCapture2;
+        this.systemClockElapsedRealtimeCapture = systemClockElapsedRealtimeCapture2;
+        this.metricExtensionProvider = metricExtensionProvider2;
+        this.metricStamperSupplier = metricStamperSupplier2;
+    }
+
+    private static boolean consistentRecords(@Nullable StatsStorage.StatsRecord stats, @Nullable StatsStorage.StatsRecord otherStats) {
+        return stats != null && otherStats != null && matchesVersion(stats, otherStats) && similarDuration(stats, otherStats);
+    }
+
+    private static boolean matchesVersion(StatsStorage.StatsRecord stats, StatsStorage.StatsRecord otherStats) {
+        return Objects.equals(stats.getPrimesVersion(), otherStats.getPrimesVersion()) && Objects.equals(stats.getVersionNameHash(), otherStats.getVersionNameHash());
+    }
+
+    private static boolean similarDuration(StatsStorage.StatsRecord stats, StatsStorage.StatsRecord otherStats) {
+        if (stats.getElapsedTime() == null || stats.getCurrentTime() == null || otherStats.getElapsedTime() == null || otherStats.getCurrentTime() == null) {
+            return false;
+        }
+        long elapsedDuration = ((Long) Preconditions.checkNotNull(otherStats.getElapsedTime())).longValue() - ((Long) Preconditions.checkNotNull(stats.getElapsedTime())).longValue();
+        long currentDuration = ((Long) Preconditions.checkNotNull(otherStats.getCurrentTime())).longValue() - ((Long) Preconditions.checkNotNull(stats.getCurrentTime())).longValue();
+        if (currentDuration <= 0) {
+            return false;
+        }
+        long durationDiff = Math.abs(elapsedDuration - currentDuration);
+        if (durationDiff >= 25) {
+            double d = (double) durationDiff;
+            double d2 = (double) currentDuration;
+            Double.isNaN(d);
+            Double.isNaN(d2);
+            if (d / d2 <= MAX_REL_TOL) {
+                return true;
+            }
+            return false;
+        }
+        return true;
     }
 
     /* access modifiers changed from: private */
@@ -40,42 +77,6 @@ public final class BatteryCapture {
     /* access modifiers changed from: private */
     public final Long primesVersion() {
         return this.metricStamperSupplier.get().getPrimesVersion();
-    }
-
-    public BatteryCapture(Supplier<MetricStamper> metricStamperSupplier2, SystemHealthCapture systemHealthCapture2, TimeCapture systemCurrentTimeCapture2, TimeCapture systemClockElapsedRealtimeCapture2, BatteryMetricExtensionProvider metricExtensionProvider2) {
-        this.systemHealthCapture = systemHealthCapture2;
-        this.systemCurrentTimeCapture = systemCurrentTimeCapture2;
-        this.systemClockElapsedRealtimeCapture = systemClockElapsedRealtimeCapture2;
-        this.metricExtensionProvider = metricExtensionProvider2;
-        this.metricStamperSupplier = metricStamperSupplier2;
-    }
-
-    public final class Snapshot {
-        final Long currentTime;
-        @Nullable
-        final String customEventName;
-        final Long elapsedTime;
-        @Nullable
-        final HealthStats healthStats;
-        final Boolean isEventNameConstant;
-        @Nullable
-        final ExtensionMetric.MetricExtension metricExtension;
-        @Nullable
-        final BatteryMetric.BatteryStatsDiff.SampleInfo sampleInfo;
-
-        private Snapshot(Long elapsedTime2, Long currentTime2, @Nullable HealthStats healthStats2, @Nullable BatteryMetric.BatteryStatsDiff.SampleInfo sampleInfo2, @Nullable String customEventName2, Boolean isEventNameConstant2, @Nullable ExtensionMetric.MetricExtension metricExtension2) {
-            this.elapsedTime = elapsedTime2;
-            this.currentTime = currentTime2;
-            this.healthStats = healthStats2;
-            this.sampleInfo = sampleInfo2;
-            this.customEventName = customEventName2;
-            this.isEventNameConstant = isEventNameConstant2;
-            this.metricExtension = metricExtension2;
-        }
-
-        public StatsStorage.StatsRecord toStatsRecord() {
-            return new StatsStorage.StatsRecord(BatteryCapture.this.systemHealthCapture.convertStats(this.healthStats), this.elapsedTime, this.currentTime, BatteryCapture.this.primesVersion(), Long.valueOf(BatteryCapture.this.versionNameHash()), this.sampleInfo, this.customEventName, this.isEventNameConstant, this.metricExtension);
-        }
     }
 
     public Snapshot takeSnapshot(BatteryMetric.BatteryStatsDiff.SampleInfo sampleInfo, @Nullable String customEventName, boolean isEventNameConstant) {
@@ -121,34 +122,35 @@ public final class BatteryCapture {
         }
     }
 
-    private static boolean consistentRecords(@Nullable StatsStorage.StatsRecord stats, @Nullable StatsStorage.StatsRecord otherStats) {
-        return stats != null && otherStats != null && matchesVersion(stats, otherStats) && similarDuration(stats, otherStats);
+    public interface TimeCapture {
+        long getTime();
     }
 
-    private static boolean matchesVersion(StatsStorage.StatsRecord stats, StatsStorage.StatsRecord otherStats) {
-        return Objects.equals(stats.getPrimesVersion(), otherStats.getPrimesVersion()) && Objects.equals(stats.getVersionNameHash(), otherStats.getVersionNameHash());
-    }
+    public final class Snapshot {
+        final Long currentTime;
+        @Nullable
+        final String customEventName;
+        final Long elapsedTime;
+        @Nullable
+        final HealthStats healthStats;
+        final Boolean isEventNameConstant;
+        @Nullable
+        final ExtensionMetric.MetricExtension metricExtension;
+        @Nullable
+        final BatteryMetric.BatteryStatsDiff.SampleInfo sampleInfo;
 
-    private static boolean similarDuration(StatsStorage.StatsRecord stats, StatsStorage.StatsRecord otherStats) {
-        if (stats.getElapsedTime() == null || stats.getCurrentTime() == null || otherStats.getElapsedTime() == null || otherStats.getCurrentTime() == null) {
-            return false;
+        private Snapshot(Long elapsedTime2, Long currentTime2, @Nullable HealthStats healthStats2, @Nullable BatteryMetric.BatteryStatsDiff.SampleInfo sampleInfo2, @Nullable String customEventName2, Boolean isEventNameConstant2, @Nullable ExtensionMetric.MetricExtension metricExtension2) {
+            this.elapsedTime = elapsedTime2;
+            this.currentTime = currentTime2;
+            this.healthStats = healthStats2;
+            this.sampleInfo = sampleInfo2;
+            this.customEventName = customEventName2;
+            this.isEventNameConstant = isEventNameConstant2;
+            this.metricExtension = metricExtension2;
         }
-        long elapsedDuration = ((Long) Preconditions.checkNotNull(otherStats.getElapsedTime())).longValue() - ((Long) Preconditions.checkNotNull(stats.getElapsedTime())).longValue();
-        long currentDuration = ((Long) Preconditions.checkNotNull(otherStats.getCurrentTime())).longValue() - ((Long) Preconditions.checkNotNull(stats.getCurrentTime())).longValue();
-        if (currentDuration <= 0) {
-            return false;
+
+        public StatsStorage.StatsRecord toStatsRecord() {
+            return new StatsStorage.StatsRecord(BatteryCapture.this.systemHealthCapture.convertStats(this.healthStats), this.elapsedTime, this.currentTime, BatteryCapture.this.primesVersion(), Long.valueOf(BatteryCapture.this.versionNameHash()), this.sampleInfo, this.customEventName, this.isEventNameConstant, this.metricExtension);
         }
-        long durationDiff = Math.abs(elapsedDuration - currentDuration);
-        if (durationDiff >= 25) {
-            double d = (double) durationDiff;
-            double d2 = (double) currentDuration;
-            Double.isNaN(d);
-            Double.isNaN(d2);
-            if (d / d2 <= MAX_REL_TOL) {
-                return true;
-            }
-            return false;
-        }
-        return true;
     }
 }

@@ -3,12 +3,12 @@ package com.bumptech.glide.request.transition;
 import android.content.Context;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+
 import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.request.transition.ViewTransition;
 
 public class ViewAnimationFactory<R> implements TransitionFactory<R> {
-    private Transition<R> transition;
     private final ViewTransition.ViewTransitionAnimationFactory viewTransitionAnimationFactory;
+    private Transition<R> transition;
 
     public ViewAnimationFactory(Animation animation) {
         this(new ConcreteViewTransitionAnimationFactory(animation));

@@ -7,8 +7,9 @@ import android.media.tv.TvContentRatingSystemInfo;
 import android.media.tv.TvInputManager;
 import android.os.AsyncTask;
 import android.util.Log;
+
 import com.google.android.tvlauncher.C1188R;
-import com.google.android.tvlauncher.home.contentrating.ContentRatingSystem;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;

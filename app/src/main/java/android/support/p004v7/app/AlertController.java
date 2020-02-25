@@ -36,12 +36,24 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
+
 import java.lang.ref.WeakReference;
 
 /* renamed from: android.support.v7.app.AlertController */
 class AlertController {
+    final AppCompatDialog mDialog;
+    private final int mButtonIconDimen;
+    private final Context mContext;
+    private final Window mWindow;
     ListAdapter mAdapter;
-    private int mAlertDialogLayout;
+    Button mButtonNegative;
+    Message mButtonNegativeMessage;
+    Button mButtonNeutral;
+    Message mButtonNeutralMessage;
+    Button mButtonPositive;
+    Message mButtonPositiveMessage;
+    int mCheckedItem = -1;
+    Handler mHandler;
     private final View.OnClickListener mButtonHandler = new View.OnClickListener() {
         public void onClick(View v) {
             Message m;
@@ -60,38 +72,28 @@ class AlertController {
             AlertController.this.mHandler.obtainMessage(1, AlertController.this.mDialog).sendToTarget();
         }
     };
-    private final int mButtonIconDimen;
-    Button mButtonNegative;
-    private Drawable mButtonNegativeIcon;
-    Message mButtonNegativeMessage;
-    private CharSequence mButtonNegativeText;
-    Button mButtonNeutral;
-    private Drawable mButtonNeutralIcon;
-    Message mButtonNeutralMessage;
-    private CharSequence mButtonNeutralText;
-    private int mButtonPanelLayoutHint = 0;
-    private int mButtonPanelSideLayout;
-    Button mButtonPositive;
-    private Drawable mButtonPositiveIcon;
-    Message mButtonPositiveMessage;
-    private CharSequence mButtonPositiveText;
-    int mCheckedItem = -1;
-    private final Context mContext;
-    private View mCustomTitleView;
-    final AppCompatDialog mDialog;
-    Handler mHandler;
-    private Drawable mIcon;
-    private int mIconId = 0;
-    private ImageView mIconView;
     int mListItemLayout;
     int mListLayout;
     ListView mListView;
-    private CharSequence mMessage;
-    private TextView mMessageView;
     int mMultiChoiceItemLayout;
     NestedScrollView mScrollView;
-    private boolean mShowTitle;
     int mSingleChoiceItemLayout;
+    private int mAlertDialogLayout;
+    private Drawable mButtonNegativeIcon;
+    private CharSequence mButtonNegativeText;
+    private Drawable mButtonNeutralIcon;
+    private CharSequence mButtonNeutralText;
+    private int mButtonPanelLayoutHint = 0;
+    private int mButtonPanelSideLayout;
+    private Drawable mButtonPositiveIcon;
+    private CharSequence mButtonPositiveText;
+    private View mCustomTitleView;
+    private Drawable mIcon;
+    private int mIconId = 0;
+    private ImageView mIconView;
+    private CharSequence mMessage;
+    private TextView mMessageView;
+    private boolean mShowTitle;
     private CharSequence mTitle;
     private TextView mTitleView;
     private View mView;
@@ -101,35 +103,6 @@ class AlertController {
     private int mViewSpacingRight;
     private boolean mViewSpacingSpecified = false;
     private int mViewSpacingTop;
-    private final Window mWindow;
-
-    /* renamed from: android.support.v7.app.AlertController$ButtonHandler */
-    private static final class ButtonHandler extends Handler {
-        private static final int MSG_DISMISS_DIALOG = 1;
-        private WeakReference<DialogInterface> mDialog;
-
-        public ButtonHandler(DialogInterface dialog) {
-            this.mDialog = new WeakReference<>(dialog);
-        }
-
-        public void handleMessage(Message msg) {
-            int i = msg.what;
-            if (i == -3 || i == -2 || i == -1) {
-                ((DialogInterface.OnClickListener) msg.obj).onClick(this.mDialog.get(), msg.what);
-            } else if (i == 1) {
-                ((DialogInterface) msg.obj).dismiss();
-            }
-        }
-    }
-
-    private static boolean shouldCenterSingleButton(Context context) {
-        TypedValue outValue = new TypedValue();
-        context.getTheme().resolveAttribute(C0233R.attr.alertDialogCenterButtons, outValue, true);
-        if (outValue.data != 0) {
-            return true;
-        }
-        return false;
-    }
 
     public AlertController(Context context, AppCompatDialog di, Window window) {
         this.mContext = context;
@@ -149,6 +122,15 @@ class AlertController {
         di.supportRequestWindowFeature(1);
     }
 
+    private static boolean shouldCenterSingleButton(Context context) {
+        TypedValue outValue = new TypedValue();
+        context.getTheme().resolveAttribute(C0233R.attr.alertDialogCenterButtons, outValue, true);
+        if (outValue.data != 0) {
+            return true;
+        }
+        return false;
+    }
+
     static boolean canTextInput(View v) {
         if (v.onCheckIsTextEditor()) {
             return true;
@@ -165,6 +147,19 @@ class AlertController {
             }
         }
         return false;
+    }
+
+    static void manageScrollIndicators(View v, View upIndicator, View downIndicator) {
+        int i = 0;
+        if (upIndicator != null) {
+            upIndicator.setVisibility(v.canScrollVertically(-1) ? 0 : 4);
+        }
+        if (downIndicator != null) {
+            if (!v.canScrollVertically(1)) {
+                i = 4;
+            }
+            downIndicator.setVisibility(i);
+        }
     }
 
     public void installContent() {
@@ -558,19 +553,6 @@ class AlertController {
         }
     }
 
-    static void manageScrollIndicators(View v, View upIndicator, View downIndicator) {
-        int i = 0;
-        if (upIndicator != null) {
-            upIndicator.setVisibility(v.canScrollVertically(-1) ? 0 : 4);
-        }
-        if (downIndicator != null) {
-            if (!v.canScrollVertically(1)) {
-                i = 4;
-            }
-            downIndicator.setVisibility(i);
-        }
-    }
-
     private void setupButtons(ViewGroup buttonPanel) {
         int whichButtons = 0;
         this.mButtonPositive = (Button) buttonPanel.findViewById(16908313);
@@ -643,6 +625,25 @@ class AlertController {
         button.setLayoutParams(params);
     }
 
+    /* renamed from: android.support.v7.app.AlertController$ButtonHandler */
+    private static final class ButtonHandler extends Handler {
+        private static final int MSG_DISMISS_DIALOG = 1;
+        private WeakReference<DialogInterface> mDialog;
+
+        public ButtonHandler(DialogInterface dialog) {
+            this.mDialog = new WeakReference<>(dialog);
+        }
+
+        public void handleMessage(Message msg) {
+            int i = msg.what;
+            if (i == -3 || i == -2 || i == -1) {
+                ((DialogInterface.OnClickListener) msg.obj).onClick(this.mDialog.get(), msg.what);
+            } else if (i == 1) {
+                ((DialogInterface) msg.obj).dismiss();
+            }
+        }
+    }
+
     /* renamed from: android.support.v7.app.AlertController$RecycleListView */
     public static class RecycleListView extends ListView {
         private final int mPaddingBottomNoButtons;
@@ -668,18 +669,18 @@ class AlertController {
 
     /* renamed from: android.support.v7.app.AlertController$AlertParams */
     public static class AlertParams {
+        public final Context mContext;
+        public final LayoutInflater mInflater;
         public ListAdapter mAdapter;
         public boolean mCancelable;
         public int mCheckedItem = -1;
         public boolean[] mCheckedItems;
-        public final Context mContext;
         public Cursor mCursor;
         public View mCustomTitleView;
         public boolean mForceInverseBackground;
         public Drawable mIcon;
         public int mIconAttrId = 0;
         public int mIconId = 0;
-        public final LayoutInflater mInflater;
         public String mIsCheckedColumn;
         public boolean mIsMultiChoice;
         public boolean mIsSingleChoice;
@@ -711,11 +712,6 @@ class AlertController {
         public int mViewSpacingRight;
         public boolean mViewSpacingSpecified = false;
         public int mViewSpacingTop;
-
-        /* renamed from: android.support.v7.app.AlertController$AlertParams$OnPrepareListViewListener */
-        public interface OnPrepareListViewListener {
-            void onPrepareListView(ListView listView);
-        }
 
         public AlertParams(Context context) {
             this.mContext = context;
@@ -876,6 +872,11 @@ class AlertController {
                 listView.setChoiceMode(2);
             }
             dialog.mListView = listView;
+        }
+
+        /* renamed from: android.support.v7.app.AlertController$AlertParams$OnPrepareListViewListener */
+        public interface OnPrepareListViewListener {
+            void onPrepareListView(ListView listView);
         }
     }
 

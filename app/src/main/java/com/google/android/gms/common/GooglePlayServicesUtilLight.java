@@ -15,16 +15,17 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.UserManager;
 import android.util.Log;
+
 import com.google.android.gms.common.internal.Hide;
 import com.google.android.gms.common.internal.zzaj;
 import com.google.android.gms.common.internal.zzau;
-import com.google.android.gms.common.util.zzd;
 import com.google.android.gms.common.util.zzi;
 import com.google.android.gms.common.util.zzk;
 import com.google.android.gms.common.util.zzp;
 import com.google.android.gms.common.util.zzu;
 import com.google.android.gms.internal.zzbmk;
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.io.InputStream;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -38,20 +39,20 @@ public class GooglePlayServicesUtilLight {
     public static final int GOOGLE_PLAY_SERVICES_VERSION_CODE = 12525000;
     public static final String GOOGLE_PLAY_STORE_PACKAGE = "com.android.vending";
     static final AtomicBoolean zza = new AtomicBoolean();
+    private static final AtomicBoolean zzf = new AtomicBoolean();
     @Hide
     private static boolean zzb = false;
     @Hide
     private static boolean zzc = false;
     private static boolean zzd = false;
     private static boolean zze = false;
-    private static final AtomicBoolean zzf = new AtomicBoolean();
+
+    GooglePlayServicesUtilLight() {
+    }
 
     @Hide
     public static void enableUsingApkIndependentContext() {
         zzf.set(true);
-    }
-
-    GooglePlayServicesUtilLight() {
     }
 
     @Deprecated

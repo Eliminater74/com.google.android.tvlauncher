@@ -1,9 +1,11 @@
 package com.google.android.exoplayer2;
 
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.source.SampleStream;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.MediaClock;
+
 import java.io.IOException;
 
 public abstract class NoSampleRenderer implements Renderer, RendererCapabilities {
@@ -23,10 +25,6 @@ public abstract class NoSampleRenderer implements Renderer, RendererCapabilities
 
     public final RendererCapabilities getCapabilities() {
         return this;
-    }
-
-    public final void setIndex(int index2) {
-        this.index = index2;
     }
 
     public MediaClock getMediaClock() {
@@ -168,5 +166,9 @@ public abstract class NoSampleRenderer implements Renderer, RendererCapabilities
     /* access modifiers changed from: protected */
     public final int getIndex() {
         return this.index;
+    }
+
+    public final void setIndex(int index2) {
+        this.index = index2;
     }
 }

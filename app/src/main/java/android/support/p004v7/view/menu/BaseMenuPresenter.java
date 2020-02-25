@@ -2,28 +2,25 @@ package android.support.p004v7.view.menu;
 
 import android.content.Context;
 import android.support.annotation.RestrictTo;
-import android.support.p004v7.view.menu.MenuPresenter;
-import android.support.p004v7.view.menu.MenuView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import java.util.ArrayList;
 
 @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
 /* renamed from: android.support.v7.view.menu.BaseMenuPresenter */
 public abstract class BaseMenuPresenter implements MenuPresenter {
-    private MenuPresenter.Callback mCallback;
     protected Context mContext;
-    private int mId;
     protected LayoutInflater mInflater;
-    private int mItemLayoutRes;
     protected MenuBuilder mMenu;
-    private int mMenuLayoutRes;
     protected MenuView mMenuView;
     protected Context mSystemContext;
     protected LayoutInflater mSystemInflater;
-
-    public abstract void bindItemView(MenuItemImpl menuItemImpl, MenuView.ItemView itemView);
+    private MenuPresenter.Callback mCallback;
+    private int mId;
+    private int mItemLayoutRes;
+    private int mMenuLayoutRes;
 
     public BaseMenuPresenter(Context context, int menuLayoutRes, int itemLayoutRes) {
         this.mSystemContext = context;
@@ -31,6 +28,8 @@ public abstract class BaseMenuPresenter implements MenuPresenter {
         this.mMenuLayoutRes = menuLayoutRes;
         this.mItemLayoutRes = itemLayoutRes;
     }
+
+    public abstract void bindItemView(MenuItemImpl menuItemImpl, MenuView.ItemView itemView);
 
     public void initForMenu(Context context, MenuBuilder menu) {
         this.mContext = context;
@@ -102,12 +101,12 @@ public abstract class BaseMenuPresenter implements MenuPresenter {
         return true;
     }
 
-    public void setCallback(MenuPresenter.Callback cb) {
-        this.mCallback = cb;
-    }
-
     public MenuPresenter.Callback getCallback() {
         return this.mCallback;
+    }
+
+    public void setCallback(MenuPresenter.Callback cb) {
+        this.mCallback = cb;
     }
 
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead

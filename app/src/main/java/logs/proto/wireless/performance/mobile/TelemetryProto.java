@@ -14,11 +14,89 @@ import com.google.protobuf.ProtoMessage;
 import com.google.protobuf.ProtoPresenceBits;
 import com.google.protobuf.ProtoPresenceCheckedField;
 import com.google.protobuf.ProtoSyntax;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 public final class TelemetryProto {
+
+    private TelemetryProto() {
+    }
+
+    public static void registerAllExtensions(ExtensionRegistryLite registry) {
+    }
+
+    public enum Metric implements Internal.EnumLite {
+        UNKNOWN_METRIC(0),
+        FRAME_DURATION_MILLIS(1),
+        FRAME_JANK_COUNT(2),
+        FRAME_DAVEY_JUNIOR_COUNT(3),
+        FRAME_DAVEY_COUNT(4),
+        CUSTOM(5);
+
+        public static final int CUSTOM_VALUE = 5;
+        public static final int FRAME_DAVEY_COUNT_VALUE = 4;
+        public static final int FRAME_DAVEY_JUNIOR_COUNT_VALUE = 3;
+        public static final int FRAME_DURATION_MILLIS_VALUE = 1;
+        public static final int FRAME_JANK_COUNT_VALUE = 2;
+        public static final int UNKNOWN_METRIC_VALUE = 0;
+        private static final Internal.EnumLiteMap<Metric> internalValueMap = new Internal.EnumLiteMap<Metric>() {
+            public Metric findValueByNumber(int number) {
+                return Metric.forNumber(number);
+            }
+        };
+        private final int value;
+
+        private Metric(int value2) {
+            this.value = value2;
+        }
+
+        public static Metric forNumber(int value2) {
+            if (value2 == 0) {
+                return UNKNOWN_METRIC;
+            }
+            if (value2 == 1) {
+                return FRAME_DURATION_MILLIS;
+            }
+            if (value2 == 2) {
+                return FRAME_JANK_COUNT;
+            }
+            if (value2 == 3) {
+                return FRAME_DAVEY_JUNIOR_COUNT;
+            }
+            if (value2 == 4) {
+                return FRAME_DAVEY_COUNT;
+            }
+            if (value2 != 5) {
+                return null;
+            }
+            return CUSTOM;
+        }
+
+        public static Internal.EnumLiteMap<Metric> internalGetValueMap() {
+            return internalValueMap;
+        }
+
+        public static Internal.EnumVerifier internalGetVerifier() {
+            return MetricVerifier.INSTANCE;
+        }
+
+        public final int getNumber() {
+            return this.value;
+        }
+
+        private static final class MetricVerifier implements Internal.EnumVerifier {
+            static final Internal.EnumVerifier INSTANCE = new MetricVerifier();
+
+            private MetricVerifier() {
+            }
+
+            public boolean isInRange(int number) {
+                return Metric.forNumber(number) != null;
+            }
+        }
+    }
 
     @Deprecated
     public interface TelemetryIdentifierOrBuilder extends MessageLiteOrBuilder {
@@ -68,83 +146,6 @@ public final class TelemetryProto {
         boolean hasSum();
     }
 
-    private TelemetryProto() {
-    }
-
-    public static void registerAllExtensions(ExtensionRegistryLite registry) {
-    }
-
-    public enum Metric implements Internal.EnumLite {
-        UNKNOWN_METRIC(0),
-        FRAME_DURATION_MILLIS(1),
-        FRAME_JANK_COUNT(2),
-        FRAME_DAVEY_JUNIOR_COUNT(3),
-        FRAME_DAVEY_COUNT(4),
-        CUSTOM(5);
-        
-        public static final int CUSTOM_VALUE = 5;
-        public static final int FRAME_DAVEY_COUNT_VALUE = 4;
-        public static final int FRAME_DAVEY_JUNIOR_COUNT_VALUE = 3;
-        public static final int FRAME_DURATION_MILLIS_VALUE = 1;
-        public static final int FRAME_JANK_COUNT_VALUE = 2;
-        public static final int UNKNOWN_METRIC_VALUE = 0;
-        private static final Internal.EnumLiteMap<Metric> internalValueMap = new Internal.EnumLiteMap<Metric>() {
-            public Metric findValueByNumber(int number) {
-                return Metric.forNumber(number);
-            }
-        };
-        private final int value;
-
-        public final int getNumber() {
-            return this.value;
-        }
-
-        public static Metric forNumber(int value2) {
-            if (value2 == 0) {
-                return UNKNOWN_METRIC;
-            }
-            if (value2 == 1) {
-                return FRAME_DURATION_MILLIS;
-            }
-            if (value2 == 2) {
-                return FRAME_JANK_COUNT;
-            }
-            if (value2 == 3) {
-                return FRAME_DAVEY_JUNIOR_COUNT;
-            }
-            if (value2 == 4) {
-                return FRAME_DAVEY_COUNT;
-            }
-            if (value2 != 5) {
-                return null;
-            }
-            return CUSTOM;
-        }
-
-        public static Internal.EnumLiteMap<Metric> internalGetValueMap() {
-            return internalValueMap;
-        }
-
-        public static Internal.EnumVerifier internalGetVerifier() {
-            return MetricVerifier.INSTANCE;
-        }
-
-        private static final class MetricVerifier implements Internal.EnumVerifier {
-            static final Internal.EnumVerifier INSTANCE = new MetricVerifier();
-
-            private MetricVerifier() {
-            }
-
-            public boolean isInRange(int number) {
-                return Metric.forNumber(number) != null;
-            }
-        }
-
-        private Metric(int value2) {
-            this.value = value2;
-        }
-    }
-
     @Deprecated
     @ProtoMessage(checkInitialized = {}, messageSetWireFormat = false, protoSyntax = ProtoSyntax.PROTO2)
     public static final class TelemetryMetric extends GeneratedMessageLite<TelemetryMetric, Builder> implements TelemetryMetricOrBuilder {
@@ -152,8 +153,13 @@ public final class TelemetryProto {
         /* access modifiers changed from: private */
         public static final TelemetryMetric DEFAULT_INSTANCE = new TelemetryMetric();
         public static final int IDENTIFIER_FIELD_NUMBER = 1;
-        private static volatile Parser<TelemetryMetric> PARSER = null;
         public static final int SUM_FIELD_NUMBER = 3;
+        private static volatile Parser<TelemetryMetric> PARSER = null;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(TelemetryMetric.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 2, isRequired = false, type = FieldType.INT32)
@@ -167,6 +173,70 @@ public final class TelemetryProto {
         private long sum_;
 
         private TelemetryMetric() {
+        }
+
+        public static TelemetryMetric parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
+            return (TelemetryMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static TelemetryMetric parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (TelemetryMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static TelemetryMetric parseFrom(ByteString data) throws InvalidProtocolBufferException {
+            return (TelemetryMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static TelemetryMetric parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (TelemetryMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static TelemetryMetric parseFrom(byte[] data) throws InvalidProtocolBufferException {
+            return (TelemetryMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
+        }
+
+        public static TelemetryMetric parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
+            return (TelemetryMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static TelemetryMetric parseFrom(InputStream input) throws IOException {
+            return (TelemetryMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static TelemetryMetric parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (TelemetryMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static TelemetryMetric parseDelimitedFrom(InputStream input) throws IOException {
+            return (TelemetryMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static TelemetryMetric parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (TelemetryMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static TelemetryMetric parseFrom(CodedInputStream input) throws IOException {
+            return (TelemetryMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static TelemetryMetric parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
+            return (TelemetryMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(TelemetryMetric prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        public static TelemetryMetric getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<TelemetryMetric> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
         }
 
         @Deprecated
@@ -261,60 +331,36 @@ public final class TelemetryProto {
             this.sum_ = 0;
         }
 
-        public static TelemetryMetric parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
-            return (TelemetryMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static TelemetryMetric parseFrom(ByteBuffer data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (TelemetryMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static TelemetryMetric parseFrom(ByteString data) throws InvalidProtocolBufferException {
-            return (TelemetryMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static TelemetryMetric parseFrom(ByteString data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (TelemetryMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static TelemetryMetric parseFrom(byte[] data) throws InvalidProtocolBufferException {
-            return (TelemetryMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data);
-        }
-
-        public static TelemetryMetric parseFrom(byte[] data, ExtensionRegistryLite extensionRegistry) throws InvalidProtocolBufferException {
-            return (TelemetryMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, data, extensionRegistry);
-        }
-
-        public static TelemetryMetric parseFrom(InputStream input) throws IOException {
-            return (TelemetryMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static TelemetryMetric parseFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (TelemetryMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static TelemetryMetric parseDelimitedFrom(InputStream input) throws IOException {
-            return (TelemetryMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static TelemetryMetric parseDelimitedFrom(InputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (TelemetryMetric) parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static TelemetryMetric parseFrom(CodedInputStream input) throws IOException {
-            return (TelemetryMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input);
-        }
-
-        public static TelemetryMetric parseFrom(CodedInputStream input, ExtensionRegistryLite extensionRegistry) throws IOException {
-            return (TelemetryMetric) GeneratedMessageLite.parseFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-        }
-
-        public static Builder newBuilder() {
-            return (Builder) DEFAULT_INSTANCE.createBuilder();
-        }
-
-        public static Builder newBuilder(TelemetryMetric prototype) {
-            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new TelemetryMetric();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0003\u0000\u0001\u0001\u0003\u0003\u0000\u0000\u0000\u0001\t\u0000\u0002\u0004\u0001\u0003\u0002\u0002", new Object[]{"bitField0_", "identifier_", "count_", "sum_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<TelemetryMetric> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (TelemetryMetric.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
 
         public static final class Builder extends GeneratedMessageLite.Builder<TelemetryMetric, Builder> implements TelemetryMetricOrBuilder {
@@ -408,50 +454,6 @@ public final class TelemetryProto {
                 return this;
             }
         }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new TelemetryMetric();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0003\u0000\u0001\u0001\u0003\u0003\u0000\u0000\u0000\u0001\t\u0000\u0002\u0004\u0001\u0003\u0002\u0002", new Object[]{"bitField0_", "identifier_", "count_", "sum_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<TelemetryMetric> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (TelemetryMetric.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(TelemetryMetric.class, DEFAULT_INSTANCE);
-        }
-
-        public static TelemetryMetric getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<TelemetryMetric> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
-        }
     }
 
     @Deprecated
@@ -463,6 +465,11 @@ public final class TelemetryProto {
         public static final TelemetryIdentifier DEFAULT_INSTANCE = new TelemetryIdentifier();
         public static final int METRIC_FIELD_NUMBER = 2;
         private static volatile Parser<TelemetryIdentifier> PARSER;
+
+        static {
+            GeneratedMessageLite.registerDefaultInstance(TelemetryIdentifier.class, DEFAULT_INSTANCE);
+        }
+
         @ProtoPresenceBits(mo28548id = 0)
         private int bitField0_;
         @ProtoField(fieldNumber = 1, isEnforceUtf8 = false, isRequired = false, type = FieldType.STRING)
@@ -476,115 +483,6 @@ public final class TelemetryProto {
         private int metric_;
 
         private TelemetryIdentifier() {
-        }
-
-        @Deprecated
-        public boolean hasComponentName() {
-            return (this.bitField0_ & 1) != 0;
-        }
-
-        @Deprecated
-        public String getComponentName() {
-            return this.componentName_;
-        }
-
-        @Deprecated
-        public ByteString getComponentNameBytes() {
-            return ByteString.copyFromUtf8(this.componentName_);
-        }
-
-        /* access modifiers changed from: private */
-        public void setComponentName(String value) {
-            if (value != null) {
-                this.bitField0_ |= 1;
-                this.componentName_ = value;
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        /* access modifiers changed from: private */
-        public void clearComponentName() {
-            this.bitField0_ &= -2;
-            this.componentName_ = getDefaultInstance().getComponentName();
-        }
-
-        /* access modifiers changed from: private */
-        public void setComponentNameBytes(ByteString value) {
-            if (value != null) {
-                this.bitField0_ |= 1;
-                this.componentName_ = value.toStringUtf8();
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        @Deprecated
-        public boolean hasMetric() {
-            return (this.bitField0_ & 2) != 0;
-        }
-
-        @Deprecated
-        public Metric getMetric() {
-            Metric result = Metric.forNumber(this.metric_);
-            return result == null ? Metric.UNKNOWN_METRIC : result;
-        }
-
-        /* access modifiers changed from: private */
-        public void setMetric(Metric value) {
-            if (value != null) {
-                this.bitField0_ |= 2;
-                this.metric_ = value.getNumber();
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        /* access modifiers changed from: private */
-        public void clearMetric() {
-            this.bitField0_ &= -3;
-            this.metric_ = 0;
-        }
-
-        @Deprecated
-        public boolean hasCustomMetricName() {
-            return (this.bitField0_ & 4) != 0;
-        }
-
-        @Deprecated
-        public String getCustomMetricName() {
-            return this.customMetricName_;
-        }
-
-        @Deprecated
-        public ByteString getCustomMetricNameBytes() {
-            return ByteString.copyFromUtf8(this.customMetricName_);
-        }
-
-        /* access modifiers changed from: private */
-        public void setCustomMetricName(String value) {
-            if (value != null) {
-                this.bitField0_ |= 4;
-                this.customMetricName_ = value;
-                return;
-            }
-            throw new NullPointerException();
-        }
-
-        /* access modifiers changed from: private */
-        public void clearCustomMetricName() {
-            this.bitField0_ &= -5;
-            this.customMetricName_ = getDefaultInstance().getCustomMetricName();
-        }
-
-        /* access modifiers changed from: private */
-        public void setCustomMetricNameBytes(ByteString value) {
-            if (value != null) {
-                this.bitField0_ |= 4;
-                this.customMetricName_ = value.toStringUtf8();
-                return;
-            }
-            throw new NullPointerException();
         }
 
         public static TelemetryIdentifier parseFrom(ByteBuffer data) throws InvalidProtocolBufferException {
@@ -643,6 +541,155 @@ public final class TelemetryProto {
             return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
         }
 
+        public static TelemetryIdentifier getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static Parser<TelemetryIdentifier> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
+        }
+
+        @Deprecated
+        public boolean hasComponentName() {
+            return (this.bitField0_ & 1) != 0;
+        }
+
+        @Deprecated
+        public String getComponentName() {
+            return this.componentName_;
+        }
+
+        /* access modifiers changed from: private */
+        public void setComponentName(String value) {
+            if (value != null) {
+                this.bitField0_ |= 1;
+                this.componentName_ = value;
+                return;
+            }
+            throw new NullPointerException();
+        }
+
+        @Deprecated
+        public ByteString getComponentNameBytes() {
+            return ByteString.copyFromUtf8(this.componentName_);
+        }
+
+        /* access modifiers changed from: private */
+        public void setComponentNameBytes(ByteString value) {
+            if (value != null) {
+                this.bitField0_ |= 1;
+                this.componentName_ = value.toStringUtf8();
+                return;
+            }
+            throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearComponentName() {
+            this.bitField0_ &= -2;
+            this.componentName_ = getDefaultInstance().getComponentName();
+        }
+
+        @Deprecated
+        public boolean hasMetric() {
+            return (this.bitField0_ & 2) != 0;
+        }
+
+        @Deprecated
+        public Metric getMetric() {
+            Metric result = Metric.forNumber(this.metric_);
+            return result == null ? Metric.UNKNOWN_METRIC : result;
+        }
+
+        /* access modifiers changed from: private */
+        public void setMetric(Metric value) {
+            if (value != null) {
+                this.bitField0_ |= 2;
+                this.metric_ = value.getNumber();
+                return;
+            }
+            throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearMetric() {
+            this.bitField0_ &= -3;
+            this.metric_ = 0;
+        }
+
+        @Deprecated
+        public boolean hasCustomMetricName() {
+            return (this.bitField0_ & 4) != 0;
+        }
+
+        @Deprecated
+        public String getCustomMetricName() {
+            return this.customMetricName_;
+        }
+
+        /* access modifiers changed from: private */
+        public void setCustomMetricName(String value) {
+            if (value != null) {
+                this.bitField0_ |= 4;
+                this.customMetricName_ = value;
+                return;
+            }
+            throw new NullPointerException();
+        }
+
+        @Deprecated
+        public ByteString getCustomMetricNameBytes() {
+            return ByteString.copyFromUtf8(this.customMetricName_);
+        }
+
+        /* access modifiers changed from: private */
+        public void setCustomMetricNameBytes(ByteString value) {
+            if (value != null) {
+                this.bitField0_ |= 4;
+                this.customMetricName_ = value.toStringUtf8();
+                return;
+            }
+            throw new NullPointerException();
+        }
+
+        /* access modifiers changed from: private */
+        public void clearCustomMetricName() {
+            this.bitField0_ &= -5;
+            this.customMetricName_ = getDefaultInstance().getCustomMetricName();
+        }
+
+        /* access modifiers changed from: protected */
+        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE:
+                    return new TelemetryIdentifier();
+                case NEW_BUILDER:
+                    return new Builder();
+                case BUILD_MESSAGE_INFO:
+                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0003\u0000\u0001\u0001\u0003\u0003\u0000\u0000\u0000\u0001\b\u0000\u0002\f\u0001\u0003\b\u0002", new Object[]{"bitField0_", "componentName_", "metric_", Metric.internalGetVerifier(), "customMetricName_"});
+                case GET_DEFAULT_INSTANCE:
+                    return DEFAULT_INSTANCE;
+                case GET_PARSER:
+                    Parser<TelemetryIdentifier> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (TelemetryIdentifier.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                case GET_MEMOIZED_IS_INITIALIZED:
+                    return (byte) 1;
+                case SET_MEMOIZED_IS_INITIALIZED:
+                    return null;
+                default:
+                    throw new UnsupportedOperationException();
+            }
+        }
+
         public static final class Builder extends GeneratedMessageLite.Builder<TelemetryIdentifier, Builder> implements TelemetryIdentifierOrBuilder {
             private Builder() {
                 super(TelemetryIdentifier.DEFAULT_INSTANCE);
@@ -659,11 +706,6 @@ public final class TelemetryProto {
             }
 
             @Deprecated
-            public ByteString getComponentNameBytes() {
-                return ((TelemetryIdentifier) this.instance).getComponentNameBytes();
-            }
-
-            @Deprecated
             public Builder setComponentName(String value) {
                 copyOnWrite();
                 ((TelemetryIdentifier) this.instance).setComponentName(value);
@@ -671,16 +713,21 @@ public final class TelemetryProto {
             }
 
             @Deprecated
-            public Builder clearComponentName() {
-                copyOnWrite();
-                ((TelemetryIdentifier) this.instance).clearComponentName();
-                return this;
+            public ByteString getComponentNameBytes() {
+                return ((TelemetryIdentifier) this.instance).getComponentNameBytes();
             }
 
             @Deprecated
             public Builder setComponentNameBytes(ByteString value) {
                 copyOnWrite();
                 ((TelemetryIdentifier) this.instance).setComponentNameBytes(value);
+                return this;
+            }
+
+            @Deprecated
+            public Builder clearComponentName() {
+                copyOnWrite();
+                ((TelemetryIdentifier) this.instance).clearComponentName();
                 return this;
             }
 
@@ -719,14 +766,21 @@ public final class TelemetryProto {
             }
 
             @Deprecated
+            public Builder setCustomMetricName(String value) {
+                copyOnWrite();
+                ((TelemetryIdentifier) this.instance).setCustomMetricName(value);
+                return this;
+            }
+
+            @Deprecated
             public ByteString getCustomMetricNameBytes() {
                 return ((TelemetryIdentifier) this.instance).getCustomMetricNameBytes();
             }
 
             @Deprecated
-            public Builder setCustomMetricName(String value) {
+            public Builder setCustomMetricNameBytes(ByteString value) {
                 copyOnWrite();
-                ((TelemetryIdentifier) this.instance).setCustomMetricName(value);
+                ((TelemetryIdentifier) this.instance).setCustomMetricNameBytes(value);
                 return this;
             }
 
@@ -736,57 +790,6 @@ public final class TelemetryProto {
                 ((TelemetryIdentifier) this.instance).clearCustomMetricName();
                 return this;
             }
-
-            @Deprecated
-            public Builder setCustomMetricNameBytes(ByteString value) {
-                copyOnWrite();
-                ((TelemetryIdentifier) this.instance).setCustomMetricNameBytes(value);
-                return this;
-            }
-        }
-
-        /* access modifiers changed from: protected */
-        public final Object dynamicMethod(GeneratedMessageLite.MethodToInvoke method, Object arg0, Object arg1) {
-            switch (method) {
-                case NEW_MUTABLE_INSTANCE:
-                    return new TelemetryIdentifier();
-                case NEW_BUILDER:
-                    return new Builder();
-                case BUILD_MESSAGE_INFO:
-                    return newMessageInfo(DEFAULT_INSTANCE, "\u0001\u0003\u0000\u0001\u0001\u0003\u0003\u0000\u0000\u0000\u0001\b\u0000\u0002\f\u0001\u0003\b\u0002", new Object[]{"bitField0_", "componentName_", "metric_", Metric.internalGetVerifier(), "customMetricName_"});
-                case GET_DEFAULT_INSTANCE:
-                    return DEFAULT_INSTANCE;
-                case GET_PARSER:
-                    Parser<TelemetryIdentifier> parser = PARSER;
-                    if (parser == null) {
-                        synchronized (TelemetryIdentifier.class) {
-                            parser = PARSER;
-                            if (parser == null) {
-                                parser = new GeneratedMessageLite.DefaultInstanceBasedParser<>(DEFAULT_INSTANCE);
-                                PARSER = parser;
-                            }
-                        }
-                    }
-                    return parser;
-                case GET_MEMOIZED_IS_INITIALIZED:
-                    return (byte) 1;
-                case SET_MEMOIZED_IS_INITIALIZED:
-                    return null;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        }
-
-        static {
-            GeneratedMessageLite.registerDefaultInstance(TelemetryIdentifier.class, DEFAULT_INSTANCE);
-        }
-
-        public static TelemetryIdentifier getDefaultInstance() {
-            return DEFAULT_INSTANCE;
-        }
-
-        public static Parser<TelemetryIdentifier> parser() {
-            return DEFAULT_INSTANCE.getParserForType();
         }
     }
 }

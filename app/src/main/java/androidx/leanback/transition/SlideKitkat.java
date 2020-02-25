@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
+
 import androidx.leanback.C0364R;
 
 @RequiresApi(19)
@@ -62,40 +63,6 @@ class SlideKitkat extends Visibility {
     private CalculateSlide mSlideCalculator;
     private int mSlideEdge;
 
-    private interface CalculateSlide {
-        float getGone(View view);
-
-        float getHere(View view);
-
-        Property<View, Float> getProperty();
-    }
-
-    private static abstract class CalculateSlideHorizontal implements CalculateSlide {
-        CalculateSlideHorizontal() {
-        }
-
-        public float getHere(View view) {
-            return view.getTranslationX();
-        }
-
-        public Property<View, Float> getProperty() {
-            return View.TRANSLATION_X;
-        }
-    }
-
-    private static abstract class CalculateSlideVertical implements CalculateSlide {
-        CalculateSlideVertical() {
-        }
-
-        public float getHere(View view) {
-            return view.getTranslationY();
-        }
-
-        public Property<View, Float> getProperty() {
-            return View.TRANSLATION_Y;
-        }
-    }
-
     public SlideKitkat() {
         setSlideEdge(80);
     }
@@ -118,6 +85,10 @@ class SlideKitkat extends Visibility {
         a.recycle();
     }
 
+    public int getSlideEdge() {
+        return this.mSlideEdge;
+    }
+
     public void setSlideEdge(int slideEdge) {
         if (slideEdge == 3) {
             this.mSlideCalculator = sCalculateLeft;
@@ -135,10 +106,6 @@ class SlideKitkat extends Visibility {
             throw new IllegalArgumentException("Invalid slide direction");
         }
         this.mSlideEdge = slideEdge;
-    }
-
-    public int getSlideEdge() {
-        return this.mSlideEdge;
     }
 
     private Animator createAnimation(View view, Property<View, Float> property, float start, float end, float terminalValue, TimeInterpolator interpolator, int finalVisibility) {
@@ -180,14 +147,48 @@ class SlideKitkat extends Visibility {
         return createAnimation(view, this.mSlideCalculator.getProperty(), start, this.mSlideCalculator.getGone(view), start, sAccelerate, 4);
     }
 
+    private interface CalculateSlide {
+        float getGone(View view);
+
+        float getHere(View view);
+
+        Property<View, Float> getProperty();
+    }
+
+    private static abstract class CalculateSlideHorizontal implements CalculateSlide {
+        CalculateSlideHorizontal() {
+        }
+
+        public float getHere(View view) {
+            return view.getTranslationX();
+        }
+
+        public Property<View, Float> getProperty() {
+            return View.TRANSLATION_X;
+        }
+    }
+
+    private static abstract class CalculateSlideVertical implements CalculateSlide {
+        CalculateSlideVertical() {
+        }
+
+        public float getHere(View view) {
+            return view.getTranslationY();
+        }
+
+        public Property<View, Float> getProperty() {
+            return View.TRANSLATION_Y;
+        }
+    }
+
     private static class SlideAnimatorListener extends AnimatorListenerAdapter {
-        private boolean mCanceled = false;
         private final float mEndValue;
         private final int mFinalVisibility;
-        private float mPausedValue;
         private final Property<View, Float> mProp;
         private final float mTerminalValue;
         private final View mView;
+        private boolean mCanceled = false;
+        private float mPausedValue;
 
         public SlideAnimatorListener(View view, Property<View, Float> prop, float terminalValue, float endValue, int finalVisibility) {
             this.mProp = prop;

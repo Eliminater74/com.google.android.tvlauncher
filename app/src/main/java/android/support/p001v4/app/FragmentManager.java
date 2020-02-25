@@ -7,41 +7,20 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RestrictTo;
 import android.support.annotation.StringRes;
-import android.support.p001v4.app.Fragment;
 import android.view.View;
+
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.List;
 
 /* renamed from: android.support.v4.app.FragmentManager */
 public abstract class FragmentManager {
-    static final FragmentFactory DEFAULT_FACTORY = new FragmentFactory();
     public static final int POP_BACK_STACK_INCLUSIVE = 1;
+    static final FragmentFactory DEFAULT_FACTORY = new FragmentFactory();
     private FragmentFactory mFragmentFactory = null;
 
-    /* renamed from: android.support.v4.app.FragmentManager$BackStackEntry */
-    public interface BackStackEntry {
-        @Nullable
-        CharSequence getBreadCrumbShortTitle();
-
-        @StringRes
-        int getBreadCrumbShortTitleRes();
-
-        @Nullable
-        CharSequence getBreadCrumbTitle();
-
-        @StringRes
-        int getBreadCrumbTitleRes();
-
-        int getId();
-
-        @Nullable
-        String getName();
-    }
-
-    /* renamed from: android.support.v4.app.FragmentManager$OnBackStackChangedListener */
-    public interface OnBackStackChangedListener {
-        void onBackStackChanged();
+    public static void enableDebugLogging(boolean enabled) {
+        FragmentManagerImpl.DEBUG = enabled;
     }
 
     public abstract void addOnBackStackChangedListener(@NonNull OnBackStackChangedListener onBackStackChangedListener);
@@ -107,10 +86,6 @@ public abstract class FragmentManager {
         return beginTransaction();
     }
 
-    public void setFragmentFactory(@NonNull FragmentFactory fragmentFactory) {
-        this.mFragmentFactory = fragmentFactory;
-    }
-
     @NonNull
     public FragmentFactory getFragmentFactory() {
         if (this.mFragmentFactory == null) {
@@ -119,8 +94,33 @@ public abstract class FragmentManager {
         return this.mFragmentFactory;
     }
 
-    public static void enableDebugLogging(boolean enabled) {
-        FragmentManagerImpl.DEBUG = enabled;
+    public void setFragmentFactory(@NonNull FragmentFactory fragmentFactory) {
+        this.mFragmentFactory = fragmentFactory;
+    }
+
+    /* renamed from: android.support.v4.app.FragmentManager$BackStackEntry */
+    public interface BackStackEntry {
+        @Nullable
+        CharSequence getBreadCrumbShortTitle();
+
+        @StringRes
+        int getBreadCrumbShortTitleRes();
+
+        @Nullable
+        CharSequence getBreadCrumbTitle();
+
+        @StringRes
+        int getBreadCrumbTitleRes();
+
+        int getId();
+
+        @Nullable
+        String getName();
+    }
+
+    /* renamed from: android.support.v4.app.FragmentManager$OnBackStackChangedListener */
+    public interface OnBackStackChangedListener {
+        void onBackStackChanged();
     }
 
     /* renamed from: android.support.v4.app.FragmentManager$FragmentLifecycleCallbacks */

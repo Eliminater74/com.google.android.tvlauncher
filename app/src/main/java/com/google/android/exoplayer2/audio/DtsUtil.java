@@ -6,6 +6,7 @@ import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.ParsableBitArray;
 import com.google.common.base.Ascii;
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
@@ -21,6 +22,9 @@ public final class DtsUtil {
     private static final int SYNC_VALUE_BE = 2147385345;
     private static final int SYNC_VALUE_LE = -25230976;
     private static final int[] TWICE_BITRATE_KBPS_BY_RATE = {64, 112, 128, 192, 224, 256, ClientAnalytics.LogRequest.LogSource.TOOLKIT_QUICKSTART_VALUE, ClientAnalytics.LogRequest.LogSource.ANDROID_CREATIVE_PREVIEW_PRIMES_VALUE, 512, ClientAnalytics.LogRequest.LogSource.GMSCORE_BACKEND_COUNTERS_VALUE, ClientAnalytics.LogRequest.LogSource.JELLY_IOS_PRIMES_VALUE, ClientAnalytics.LogRequest.LogSource.EASTWORLD_STATS_VALUE, 1024, 1152, 1280, 1536, 1920, 2048, 2304, 2560, 2688, 2816, 2823, 2944, 3072, 3840, 4096, 6144, 7680};
+
+    private DtsUtil() {
+    }
 
     public static boolean isSyncWord(int word) {
         return word == SYNC_VALUE_BE || word == SYNC_VALUE_LE || word == SYNC_VALUE_14B_BE || word == SYNC_VALUE_14B_LE;
@@ -118,8 +122,5 @@ public final class DtsUtil {
 
     private static boolean isLittleEndianFrameHeader(byte[] frameHeader) {
         return frameHeader[0] == -2 || frameHeader[0] == -1;
-    }
-
-    private DtsUtil() {
     }
 }

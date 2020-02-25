@@ -1,12 +1,16 @@
 package com.google.android.tvlauncher.appsview;
 
 import android.util.Pair;
+
 import java.util.ArrayList;
 import java.util.List;
 
 class LaunchItemsHolder {
     private static final String TAG = "LaunchItemsHolder";
     private final ArrayList<LaunchItem> mData = new ArrayList<>();
+
+    LaunchItemsHolder() {
+    }
 
     static Pair<Integer, Integer> getRowColIndexFromListIndex(int listIndex) {
         if (listIndex == -1) {
@@ -17,14 +21,6 @@ class LaunchItemsHolder {
 
     static int getRowCount(int numItems) {
         return ((numItems + 4) - 1) / 4;
-    }
-
-    LaunchItemsHolder() {
-    }
-
-    public void setData(ArrayList<LaunchItem> items) {
-        this.mData.clear();
-        this.mData.addAll(items);
     }
 
     public void addData(ArrayList<LaunchItem> items) {
@@ -125,6 +121,11 @@ class LaunchItemsHolder {
 
     public List<LaunchItem> getData() {
         return this.mData;
+    }
+
+    public void setData(ArrayList<LaunchItem> items) {
+        this.mData.clear();
+        this.mData.addAll(items);
     }
 
     private int getListIndexFromRowColIndex(int rowIndex, int colIndex) {

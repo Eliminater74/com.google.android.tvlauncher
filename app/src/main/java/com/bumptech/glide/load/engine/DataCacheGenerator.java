@@ -1,21 +1,21 @@
 package com.bumptech.glide.load.engine;
 
 import android.support.annotation.NonNull;
+
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.Key;
 import com.bumptech.glide.load.data.DataFetcher;
-import com.bumptech.glide.load.engine.DataFetcherGenerator;
 import com.bumptech.glide.load.model.ModelLoader;
+
 import java.io.File;
 import java.util.List;
 
 class DataCacheGenerator implements DataFetcherGenerator, DataFetcher.DataCallback<Object> {
-    private File cacheFile;
     private final List<Key> cacheKeys;
-
     /* renamed from: cb */
     private final DataFetcherGenerator.FetcherReadyCallback f50cb;
     private final DecodeHelper<?> helper;
+    private File cacheFile;
     private volatile ModelLoader.LoadData<?> loadData;
     private int modelLoaderIndex;
     private List<ModelLoader<File, ?>> modelLoaders;

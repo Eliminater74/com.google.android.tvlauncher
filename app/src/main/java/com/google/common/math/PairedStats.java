@@ -5,10 +5,12 @@ import com.google.common.annotations.GwtIncompatible;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
+
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 @GwtIncompatible
 @Beta
@@ -23,6 +25,30 @@ public final class PairedStats implements Serializable {
         this.xStats = xStats2;
         this.yStats = yStats2;
         this.sumOfProductsOfDeltas = sumOfProductsOfDeltas2;
+    }
+
+    private static double ensurePositive(double value) {
+        if (value > 0.0d) {
+            return value;
+        }
+        return Double.MIN_VALUE;
+    }
+
+    private static double ensureInUnitRange(double value) {
+        if (value >= 1.0d) {
+            return 1.0d;
+        }
+        if (value <= -1.0d) {
+            return -1.0d;
+        }
+        return value;
+    }
+
+    public static PairedStats fromByteArray(byte[] byteArray) {
+        Preconditions.checkNotNull(byteArray);
+        Preconditions.checkArgument(byteArray.length == 88, "Expected PairedStats.BYTES = %s, got %s", 88, byteArray.length);
+        ByteBuffer buffer = ByteBuffer.wrap(byteArray).order(ByteOrder.LITTLE_ENDIAN);
+        return new PairedStats(Stats.readFrom(buffer), Stats.readFrom(buffer), buffer.getDouble());
     }
 
     public long count() {
@@ -116,35 +142,11 @@ public final class PairedStats implements Serializable {
         return this.sumOfProductsOfDeltas;
     }
 
-    private static double ensurePositive(double value) {
-        if (value > 0.0d) {
-            return value;
-        }
-        return Double.MIN_VALUE;
-    }
-
-    private static double ensureInUnitRange(double value) {
-        if (value >= 1.0d) {
-            return 1.0d;
-        }
-        if (value <= -1.0d) {
-            return -1.0d;
-        }
-        return value;
-    }
-
     public byte[] toByteArray() {
         ByteBuffer buffer = ByteBuffer.allocate(88).order(ByteOrder.LITTLE_ENDIAN);
         this.xStats.writeTo(buffer);
         this.yStats.writeTo(buffer);
         buffer.putDouble(this.sumOfProductsOfDeltas);
         return buffer.array();
-    }
-
-    public static PairedStats fromByteArray(byte[] byteArray) {
-        Preconditions.checkNotNull(byteArray);
-        Preconditions.checkArgument(byteArray.length == 88, "Expected PairedStats.BYTES = %s, got %s", 88, byteArray.length);
-        ByteBuffer buffer = ByteBuffer.wrap(byteArray).order(ByteOrder.LITTLE_ENDIAN);
-        return new PairedStats(Stats.readFrom(buffer), Stats.readFrom(buffer), buffer.getDouble());
     }
 }

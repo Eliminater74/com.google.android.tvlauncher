@@ -15,7 +15,7 @@ public final class PrimesMetricExtensionEnums {
         IS_TABLET(1),
         IS_NATIVE_SAPI(3),
         EXPERIMENT_START_ADS_BEFORE_CRITICAL_STARTUP(2);
-        
+
         public static final int EXPERIMENT_START_ADS_BEFORE_CRITICAL_STARTUP_VALUE = 2;
         public static final int IS_NATIVE_SAPI_VALUE = 3;
         public static final int IS_TABLET_VALUE = 1;
@@ -27,8 +27,8 @@ public final class PrimesMetricExtensionEnums {
         };
         private final int value;
 
-        public final int getNumber() {
-            return this.value;
+        private Annotation(int value2) {
+            this.value = value2;
         }
 
         public static Annotation forNumber(int value2) {
@@ -55,6 +55,10 @@ public final class PrimesMetricExtensionEnums {
             return AnnotationVerifier.INSTANCE;
         }
 
+        public final int getNumber() {
+            return this.value;
+        }
+
         private static final class AnnotationVerifier implements Internal.EnumVerifier {
             static final Internal.EnumVerifier INSTANCE = new AnnotationVerifier();
 
@@ -64,10 +68,6 @@ public final class PrimesMetricExtensionEnums {
             public boolean isInRange(int number) {
                 return Annotation.forNumber(number) != null;
             }
-        }
-
-        private Annotation(int value2) {
-            this.value = value2;
         }
     }
 
@@ -79,7 +79,7 @@ public final class PrimesMetricExtensionEnums {
         STARTUP_MAIL_ACTIVITY_PAUSED(4),
         STARTUP_RESTORED_STATE(6),
         STARTUP_WAIT(5);
-        
+
         public static final int DESTRUCTIVE_ACTION_DIALOG_VALUE = 1;
         public static final int NONE_VALUE = 0;
         public static final int STARTUP_ENTRY_POINT_VALUE = 2;
@@ -94,8 +94,8 @@ public final class PrimesMetricExtensionEnums {
         };
         private final int value;
 
-        public final int getNumber() {
-            return this.value;
+        private CancellationReason(int value2) {
+            this.value = value2;
         }
 
         public static CancellationReason forNumber(int value2) {
@@ -127,6 +127,10 @@ public final class PrimesMetricExtensionEnums {
             return CancellationReasonVerifier.INSTANCE;
         }
 
+        public final int getNumber() {
+            return this.value;
+        }
+
         private static final class CancellationReasonVerifier implements Internal.EnumVerifier {
             static final Internal.EnumVerifier INSTANCE = new CancellationReasonVerifier();
 
@@ -136,10 +140,6 @@ public final class PrimesMetricExtensionEnums {
             public boolean isInRange(int number) {
                 return CancellationReason.forNumber(number) != null;
             }
-        }
-
-        private CancellationReason(int value2) {
-            this.value = value2;
         }
     }
 
@@ -157,7 +157,7 @@ public final class PrimesMetricExtensionEnums {
         SENT(8),
         SPAM(9),
         STARRED(10);
-        
+
         public static final int COMBINED_INBOX_VALUE = 4;
         public static final int DRAFT_VALUE = 6;
         public static final int FLAGGED_VALUE = 11;
@@ -178,8 +178,8 @@ public final class PrimesMetricExtensionEnums {
         };
         private final int value;
 
-        public final int getNumber() {
-            return this.value;
+        private FolderType(int value2) {
+            this.value = value2;
         }
 
         public static FolderType forNumber(int value2) {
@@ -223,6 +223,10 @@ public final class PrimesMetricExtensionEnums {
             return FolderTypeVerifier.INSTANCE;
         }
 
+        public final int getNumber() {
+            return this.value;
+        }
+
         private static final class FolderTypeVerifier implements Internal.EnumVerifier {
             static final Internal.EnumVerifier INSTANCE = new FolderTypeVerifier();
 
@@ -233,10 +237,6 @@ public final class PrimesMetricExtensionEnums {
                 return FolderType.forNumber(number) != null;
             }
         }
-
-        private FolderType(int value2) {
-            this.value = value2;
-        }
     }
 
     public enum AccountType implements Internal.EnumLite {
@@ -245,7 +245,7 @@ public final class PrimesMetricExtensionEnums {
         IMAP(2),
         POP3(3),
         EXCHANGE(4);
-        
+
         public static final int EXCHANGE_VALUE = 4;
         public static final int GOOGLE_VALUE = 1;
         public static final int IMAP_VALUE = 2;
@@ -258,8 +258,8 @@ public final class PrimesMetricExtensionEnums {
         };
         private final int value;
 
-        public final int getNumber() {
-            return this.value;
+        private AccountType(int value2) {
+            this.value = value2;
         }
 
         public static AccountType forNumber(int value2) {
@@ -289,6 +289,10 @@ public final class PrimesMetricExtensionEnums {
             return AccountTypeVerifier.INSTANCE;
         }
 
+        public final int getNumber() {
+            return this.value;
+        }
+
         private static final class AccountTypeVerifier implements Internal.EnumVerifier {
             static final Internal.EnumVerifier INSTANCE = new AccountTypeVerifier();
 
@@ -299,10 +303,6 @@ public final class PrimesMetricExtensionEnums {
                 return AccountType.forNumber(number) != null;
             }
         }
-
-        private AccountType(int value2) {
-            this.value = value2;
-        }
     }
 
     public enum DataLayer implements Internal.EnumLite {
@@ -310,7 +310,7 @@ public final class PrimesMetricExtensionEnums {
         LEGACY(1),
         BTD(2),
         BTD_CONTROL(3);
-        
+
         public static final int BTD_CONTROL_VALUE = 3;
         public static final int BTD_VALUE = 2;
         public static final int LEGACY_VALUE = 1;
@@ -322,8 +322,8 @@ public final class PrimesMetricExtensionEnums {
         };
         private final int value;
 
-        public final int getNumber() {
-            return this.value;
+        private DataLayer(int value2) {
+            this.value = value2;
         }
 
         public static DataLayer forNumber(int value2) {
@@ -350,6 +350,10 @@ public final class PrimesMetricExtensionEnums {
             return DataLayerVerifier.INSTANCE;
         }
 
+        public final int getNumber() {
+            return this.value;
+        }
+
         private static final class DataLayerVerifier implements Internal.EnumVerifier {
             static final Internal.EnumVerifier INSTANCE = new DataLayerVerifier();
 
@@ -360,17 +364,13 @@ public final class PrimesMetricExtensionEnums {
                 return DataLayer.forNumber(number) != null;
             }
         }
-
-        private DataLayer(int value2) {
-            this.value = value2;
-        }
     }
 
     public enum ContentSource implements Internal.EnumLite {
         UNKNOWN_CONTENT_SOURCE(0),
         LOCAL(1),
         REMOTE(2);
-        
+
         public static final int LOCAL_VALUE = 1;
         public static final int REMOTE_VALUE = 2;
         public static final int UNKNOWN_CONTENT_SOURCE_VALUE = 0;
@@ -381,8 +381,8 @@ public final class PrimesMetricExtensionEnums {
         };
         private final int value;
 
-        public final int getNumber() {
-            return this.value;
+        private ContentSource(int value2) {
+            this.value = value2;
         }
 
         public static ContentSource forNumber(int value2) {
@@ -406,6 +406,10 @@ public final class PrimesMetricExtensionEnums {
             return ContentSourceVerifier.INSTANCE;
         }
 
+        public final int getNumber() {
+            return this.value;
+        }
+
         private static final class ContentSourceVerifier implements Internal.EnumVerifier {
             static final Internal.EnumVerifier INSTANCE = new ContentSourceVerifier();
 
@@ -415,10 +419,6 @@ public final class PrimesMetricExtensionEnums {
             public boolean isInRange(int number) {
                 return ContentSource.forNumber(number) != null;
             }
-        }
-
-        private ContentSource(int value2) {
-            this.value = value2;
         }
     }
 }

@@ -12,7 +12,6 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RestrictTo;
 import android.support.annotation.StyleRes;
 import android.support.p001v4.util.ArraySet;
-import android.support.p004v7.app.ActionBarDrawerToggle;
 import android.support.p004v7.view.ActionMode;
 import android.support.p004v7.widget.Toolbar;
 import android.support.p004v7.widget.VectorEnabledTintResources;
@@ -22,6 +21,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.ref.WeakReference;
@@ -46,71 +46,8 @@ public abstract class AppCompatDelegate {
     private static final Object sActiveDelegatesLock = new Object();
     private static int sDefaultNightMode = -100;
 
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    @Retention(RetentionPolicy.SOURCE)
-    /* renamed from: android.support.v7.app.AppCompatDelegate$NightMode */
-    public @interface NightMode {
+    AppCompatDelegate() {
     }
-
-    public abstract void addContentView(View view, ViewGroup.LayoutParams layoutParams);
-
-    public abstract boolean applyDayNight();
-
-    public abstract View createView(@Nullable View view, String str, @NonNull Context context, @NonNull AttributeSet attributeSet);
-
-    @Nullable
-    public abstract <T extends View> T findViewById(@IdRes int i);
-
-    @Nullable
-    public abstract ActionBarDrawerToggle.Delegate getDrawerToggleDelegate();
-
-    public abstract MenuInflater getMenuInflater();
-
-    @Nullable
-    public abstract ActionBar getSupportActionBar();
-
-    public abstract boolean hasWindowFeature(int i);
-
-    public abstract void installViewFactory();
-
-    public abstract void invalidateOptionsMenu();
-
-    public abstract boolean isHandleNativeActionModesEnabled();
-
-    public abstract void onConfigurationChanged(Configuration configuration);
-
-    public abstract void onCreate(Bundle bundle);
-
-    public abstract void onDestroy();
-
-    public abstract void onPostCreate(Bundle bundle);
-
-    public abstract void onPostResume();
-
-    public abstract void onSaveInstanceState(Bundle bundle);
-
-    public abstract void onStart();
-
-    public abstract void onStop();
-
-    public abstract boolean requestWindowFeature(int i);
-
-    public abstract void setContentView(@LayoutRes int i);
-
-    public abstract void setContentView(View view);
-
-    public abstract void setContentView(View view, ViewGroup.LayoutParams layoutParams);
-
-    public abstract void setHandleNativeActionModesEnabled(boolean z);
-
-    public abstract void setLocalNightMode(int i);
-
-    public abstract void setSupportActionBar(@Nullable Toolbar toolbar);
-
-    public abstract void setTitle(@Nullable CharSequence charSequence);
-
-    @Nullable
-    public abstract ActionMode startSupportActionMode(@NonNull ActionMode.Callback callback);
 
     @NonNull
     public static AppCompatDelegate create(@NonNull Activity activity, @Nullable AppCompatCallback callback) {
@@ -132,17 +69,8 @@ public abstract class AppCompatDelegate {
         return new AppCompatDelegateImpl(context, activity, callback);
     }
 
-    AppCompatDelegate() {
-    }
-
-    public void setTheme(@StyleRes int themeResId) {
-    }
-
-    public void attachBaseContext(Context context) {
-    }
-
-    public int getLocalNightMode() {
-        return -100;
+    public static int getDefaultNightMode() {
+        return sDefaultNightMode;
     }
 
     public static void setDefaultNightMode(int mode) {
@@ -154,16 +82,12 @@ public abstract class AppCompatDelegate {
         }
     }
 
-    public static int getDefaultNightMode() {
-        return sDefaultNightMode;
+    public static boolean isCompatVectorFromResourcesEnabled() {
+        return VectorEnabledTintResources.isCompatVectorFromResourcesEnabled();
     }
 
     public static void setCompatVectorFromResourcesEnabled(boolean enabled) {
         VectorEnabledTintResources.setCompatVectorFromResourcesEnabled(enabled);
-    }
-
-    public static boolean isCompatVectorFromResourcesEnabled() {
-        return VectorEnabledTintResources.isCompatVectorFromResourcesEnabled();
     }
 
     static void markStarted(@NonNull AppCompatDelegate delegate) {
@@ -201,5 +125,81 @@ public abstract class AppCompatDelegate {
                 }
             }
         }
+    }
+
+    public abstract void addContentView(View view, ViewGroup.LayoutParams layoutParams);
+
+    public abstract boolean applyDayNight();
+
+    public abstract View createView(@Nullable View view, String str, @NonNull Context context, @NonNull AttributeSet attributeSet);
+
+    @Nullable
+    public abstract <T extends View> T findViewById(@IdRes int i);
+
+    @Nullable
+    public abstract ActionBarDrawerToggle.Delegate getDrawerToggleDelegate();
+
+    public abstract MenuInflater getMenuInflater();
+
+    @Nullable
+    public abstract ActionBar getSupportActionBar();
+
+    public abstract void setSupportActionBar(@Nullable Toolbar toolbar);
+
+    public abstract boolean hasWindowFeature(int i);
+
+    public abstract void installViewFactory();
+
+    public abstract void invalidateOptionsMenu();
+
+    public abstract boolean isHandleNativeActionModesEnabled();
+
+    public abstract void setHandleNativeActionModesEnabled(boolean z);
+
+    public abstract void onConfigurationChanged(Configuration configuration);
+
+    public abstract void onCreate(Bundle bundle);
+
+    public abstract void onDestroy();
+
+    public abstract void onPostCreate(Bundle bundle);
+
+    public abstract void onPostResume();
+
+    public abstract void onSaveInstanceState(Bundle bundle);
+
+    public abstract void onStart();
+
+    public abstract void onStop();
+
+    public abstract boolean requestWindowFeature(int i);
+
+    public abstract void setContentView(@LayoutRes int i);
+
+    public abstract void setContentView(View view);
+
+    public abstract void setContentView(View view, ViewGroup.LayoutParams layoutParams);
+
+    public abstract void setTitle(@Nullable CharSequence charSequence);
+
+    @Nullable
+    public abstract ActionMode startSupportActionMode(@NonNull ActionMode.Callback callback);
+
+    public void setTheme(@StyleRes int themeResId) {
+    }
+
+    public void attachBaseContext(Context context) {
+    }
+
+    public int getLocalNightMode() {
+        return -100;
+    }
+
+    public abstract void setLocalNightMode(int i);
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    @Retention(RetentionPolicy.SOURCE)
+    /* renamed from: android.support.v7.app.AppCompatDelegate$NightMode */
+    public @interface NightMode {
     }
 }

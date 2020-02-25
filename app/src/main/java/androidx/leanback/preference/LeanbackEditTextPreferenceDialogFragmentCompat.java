@@ -12,14 +12,15 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
+
 import androidx.preference.DialogPreference;
 import androidx.preference.EditTextPreference;
 
 public class LeanbackEditTextPreferenceDialogFragmentCompat extends LeanbackPreferenceDialogFragmentCompat {
-    private static final int DEFAULT_IME_OPTIONS = 2;
-    private static final int DEFAULT_INPUT_TYPE = 1;
     public static final String EXTRA_IME_OPTIONS = "ime_option";
     public static final String EXTRA_INPUT_TYPE = "input_type";
+    private static final int DEFAULT_IME_OPTIONS = 2;
+    private static final int DEFAULT_INPUT_TYPE = 1;
     private static final String SAVE_STATE_IME_OPTIONS = "LeanbackEditPreferenceDialog.imeOptions";
     private static final String SAVE_STATE_INPUT_TYPE = "LeanbackEditPreferenceDialog.inputType";
     private static final String SAVE_STATE_MESSAGE = "LeanbackEditPreferenceDialog.message";

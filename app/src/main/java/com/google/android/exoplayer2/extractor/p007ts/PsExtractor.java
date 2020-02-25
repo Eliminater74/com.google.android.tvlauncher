@@ -2,6 +2,7 @@ package com.google.android.exoplayer2.extractor.p007ts;
 
 import android.support.p001v4.view.InputDeviceCompat;
 import android.util.SparseArray;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.extractor.Extractor;
@@ -10,12 +11,12 @@ import com.google.android.exoplayer2.extractor.ExtractorOutput;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
 import com.google.android.exoplayer2.extractor.PositionHolder;
 import com.google.android.exoplayer2.extractor.SeekMap;
-import com.google.android.exoplayer2.extractor.p007ts.TsPayloadReader;
 import com.google.android.exoplayer2.util.ParsableBitArray;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.TimestampAdjuster;
 import com.google.common.base.Ascii;
 import com.google.common.primitives.UnsignedBytes;
+
 import java.io.IOException;
 
 /* renamed from: com.google.android.exoplayer2.extractor.ts.PsExtractor */
@@ -23,17 +24,20 @@ public final class PsExtractor implements Extractor {
     public static final int AUDIO_STREAM = 192;
     public static final int AUDIO_STREAM_MASK = 224;
     public static final ExtractorsFactory FACTORY = PsExtractor$$Lambda$0.$instance;
-    private static final long MAX_SEARCH_LENGTH = 1048576;
-    private static final long MAX_SEARCH_LENGTH_AFTER_AUDIO_AND_VIDEO_FOUND = 8192;
-    private static final int MAX_STREAM_ID_PLUS_ONE = 256;
+    public static final int PRIVATE_STREAM_1 = 189;
+    public static final int VIDEO_STREAM = 224;
+    public static final int VIDEO_STREAM_MASK = 240;
     static final int MPEG_PROGRAM_END_CODE = 441;
     static final int PACKET_START_CODE_PREFIX = 1;
     static final int PACK_START_CODE = 442;
-    public static final int PRIVATE_STREAM_1 = 189;
     static final int SYSTEM_HEADER_START_CODE = 443;
-    public static final int VIDEO_STREAM = 224;
-    public static final int VIDEO_STREAM_MASK = 240;
+    private static final long MAX_SEARCH_LENGTH = 1048576;
+    private static final long MAX_SEARCH_LENGTH_AFTER_AUDIO_AND_VIDEO_FOUND = 8192;
+    private static final int MAX_STREAM_ID_PLUS_ONE = 256;
     private final PsDurationReader durationReader;
+    private final ParsableByteArray psPacketBuffer;
+    private final SparseArray<PesReader> psPayloadReaders;
+    private final TimestampAdjuster timestampAdjuster;
     private boolean foundAllTracks;
     private boolean foundAudioTrack;
     private boolean foundVideoTrack;
@@ -41,13 +45,6 @@ public final class PsExtractor implements Extractor {
     private long lastTrackPosition;
     private ExtractorOutput output;
     private PsBinarySearchSeeker psBinarySearchSeeker;
-    private final ParsableByteArray psPacketBuffer;
-    private final SparseArray<PesReader> psPayloadReaders;
-    private final TimestampAdjuster timestampAdjuster;
-
-    static final /* synthetic */ Extractor[] lambda$static$0$PsExtractor() {
-        return new Extractor[]{new PsExtractor()};
-    }
 
     public PsExtractor() {
         this(new TimestampAdjuster(0));
@@ -58,6 +55,10 @@ public final class PsExtractor implements Extractor {
         this.psPacketBuffer = new ParsableByteArray(4096);
         this.psPayloadReaders = new SparseArray<>();
         this.durationReader = new PsDurationReader();
+    }
+
+    static final /* synthetic */ Extractor[] lambda$static$0$PsExtractor() {
+        return new Extractor[]{new PsExtractor()};
     }
 
     public boolean sniff(ExtractorInput input) throws IOException, InterruptedException {
@@ -199,14 +200,14 @@ public final class PsExtractor implements Extractor {
     /* renamed from: com.google.android.exoplayer2.extractor.ts.PsExtractor$PesReader */
     private static final class PesReader {
         private static final int PES_SCRATCH_SIZE = 64;
-        private boolean dtsFlag;
-        private int extendedHeaderLength;
         private final ElementaryStreamReader pesPayloadReader;
         private final ParsableBitArray pesScratch = new ParsableBitArray(new byte[64]);
+        private final TimestampAdjuster timestampAdjuster;
+        private boolean dtsFlag;
+        private int extendedHeaderLength;
         private boolean ptsFlag;
         private boolean seenFirstDts;
         private long timeUs;
-        private final TimestampAdjuster timestampAdjuster;
 
         public PesReader(ElementaryStreamReader pesPayloadReader2, TimestampAdjuster timestampAdjuster2) {
             this.pesPayloadReader = pesPayloadReader2;

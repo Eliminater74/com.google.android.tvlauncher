@@ -4,6 +4,7 @@ import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
 import android.util.Pair;
 import android.util.SparseArray;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.audio.Ac3Util;
@@ -24,6 +25,7 @@ import com.google.android.exoplayer2.util.NalUnitUtil;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.Util;
 import com.google.common.primitives.UnsignedBytes;
+
 import java.io.IOException;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -37,6 +39,12 @@ import java.util.Locale;
 import java.util.UUID;
 
 public class MatroskaExtractor implements Extractor {
+    public static final ExtractorsFactory FACTORY = MatroskaExtractor$$Lambda$0.$instance;
+    public static final int FLAG_DISABLE_SEEK_FOR_CUES = 1;
+    /* access modifiers changed from: private */
+    public static final byte[] SSA_DIALOGUE_FORMAT = Util.getUtf8Bytes("Format: Start, End, ReadOrder, Layer, Style, Name, MarginL, MarginR, MarginV, Effect, Text");
+    /* access modifiers changed from: private */
+    public static final UUID WAVE_SUBFORMAT_PCM = new UUID(72057594037932032L, -9223371306706625679L);
     private static final int BLOCK_STATE_DATA = 2;
     private static final int BLOCK_STATE_HEADER = 1;
     private static final int BLOCK_STATE_START = 0;
@@ -73,8 +81,6 @@ public class MatroskaExtractor implements Extractor {
     private static final String DOC_TYPE_MATROSKA = "matroska";
     private static final String DOC_TYPE_WEBM = "webm";
     private static final int ENCRYPTION_IV_SIZE = 8;
-    public static final ExtractorsFactory FACTORY = MatroskaExtractor$$Lambda$0.$instance;
-    public static final int FLAG_DISABLE_SEEK_FOR_CUES = 1;
     private static final int FOURCC_COMPRESSION_DIVX = 1482049860;
     private static final int FOURCC_COMPRESSION_H263 = 859189832;
     private static final int FOURCC_COMPRESSION_VC1 = 826496599;
@@ -167,8 +173,6 @@ public class MatroskaExtractor implements Extractor {
     private static final int LACING_NONE = 0;
     private static final int LACING_XIPH = 1;
     private static final int OPUS_MAX_INPUT_SIZE = 5760;
-    /* access modifiers changed from: private */
-    public static final byte[] SSA_DIALOGUE_FORMAT = Util.getUtf8Bytes("Format: Start, End, ReadOrder, Layer, Style, Name, MarginL, MarginR, MarginV, Effect, Text");
     private static final byte[] SSA_PREFIX = {68, 105, 97, 108, 111, 103, 117, 101, 58, 32, 48, 58, 48, 48, 58, 48, 48, 58, 48, 48, 44, 48, 58, 48, 48, 58, 48, 48, 58, 48, 48, 44};
     private static final int SSA_PREFIX_END_TIMECODE_OFFSET = 21;
     private static final byte[] SSA_TIMECODE_EMPTY = {32, 32, 32, 32, 32, 32, 32, 32, 32, 32};
@@ -186,8 +190,19 @@ public class MatroskaExtractor implements Extractor {
     private static final int WAVE_FORMAT_EXTENSIBLE = 65534;
     private static final int WAVE_FORMAT_PCM = 1;
     private static final int WAVE_FORMAT_SIZE = 18;
-    /* access modifiers changed from: private */
-    public static final UUID WAVE_SUBFORMAT_PCM = new UUID(72057594037932032L, -9223371306706625679L);
+    private final ParsableByteArray encryptionInitializationVector;
+    private final ParsableByteArray encryptionSubsampleData;
+    private final ParsableByteArray nalLength;
+    private final ParsableByteArray nalStartCode;
+    private final EbmlReader reader;
+    private final ParsableByteArray sampleStrippedBytes;
+    private final ParsableByteArray scratch;
+    private final ParsableByteArray seekEntryIdBytes;
+    private final boolean seekForCuesEnabled;
+    private final ParsableByteArray subtitleSample;
+    private final SparseArray<Track> tracks;
+    private final VarintReader varintReader;
+    private final ParsableByteArray vorbisNumPageSamples;
     private long blockDurationUs;
     private int blockFlags;
     private int blockLacingSampleCount;
@@ -204,13 +219,8 @@ public class MatroskaExtractor implements Extractor {
     private Track currentTrack;
     private long durationTimecode;
     private long durationUs;
-    private final ParsableByteArray encryptionInitializationVector;
-    private final ParsableByteArray encryptionSubsampleData;
     private ByteBuffer encryptionSubsampleDataBuffer;
     private ExtractorOutput extractorOutput;
-    private final ParsableByteArray nalLength;
-    private final ParsableByteArray nalStartCode;
-    private final EbmlReader reader;
     private int sampleBytesRead;
     private int sampleBytesWritten;
     private int sampleCurrentNalBytesRemaining;
@@ -222,32 +232,15 @@ public class MatroskaExtractor implements Extractor {
     private boolean sampleSeenReferenceBlock;
     private byte sampleSignalByte;
     private boolean sampleSignalByteRead;
-    private final ParsableByteArray sampleStrippedBytes;
-    private final ParsableByteArray scratch;
     private int seekEntryId;
-    private final ParsableByteArray seekEntryIdBytes;
     private long seekEntryPosition;
     private boolean seekForCues;
-    private final boolean seekForCuesEnabled;
     private long seekPositionAfterBuildingCues;
     private boolean seenClusterPositionForCurrentCuePoint;
     private long segmentContentPosition;
     private long segmentContentSize;
     private boolean sentSeekMap;
-    private final ParsableByteArray subtitleSample;
     private long timecodeScale;
-    private final SparseArray<Track> tracks;
-    private final VarintReader varintReader;
-    private final ParsableByteArray vorbisNumPageSamples;
-
-    @Documented
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface Flags {
-    }
-
-    static final /* synthetic */ Extractor[] lambda$static$0$MatroskaExtractor() {
-        return new Extractor[]{new MatroskaExtractor()};
-    }
 
     public MatroskaExtractor() {
         this(0);
@@ -279,6 +272,39 @@ public class MatroskaExtractor implements Extractor {
         this.subtitleSample = new ParsableByteArray();
         this.encryptionInitializationVector = new ParsableByteArray(8);
         this.encryptionSubsampleData = new ParsableByteArray();
+    }
+
+    static final /* synthetic */ Extractor[] lambda$static$0$MatroskaExtractor() {
+        return new Extractor[]{new MatroskaExtractor()};
+    }
+
+    private static void setSampleDuration(byte[] subripSampleData, long durationUs2, String timecodeFormat, int endTimecodeOffset, long lastTimecodeValueScalingFactor, byte[] emptyTimecode) {
+        byte[] timeCodeData;
+        if (durationUs2 == C0841C.TIME_UNSET) {
+            timeCodeData = emptyTimecode;
+        } else {
+            int hours = (int) (durationUs2 / 3600000000L);
+            long durationUs3 = durationUs2 - (((long) (hours * 3600)) * 1000000);
+            int minutes = (int) (durationUs3 / 60000000);
+            long durationUs4 = durationUs3 - (((long) (minutes * 60)) * 1000000);
+            int seconds = (int) (durationUs4 / 1000000);
+            timeCodeData = Util.getUtf8Bytes(String.format(Locale.US, timecodeFormat, Integer.valueOf(hours), Integer.valueOf(minutes), Integer.valueOf(seconds), Integer.valueOf((int) ((durationUs4 - (((long) seconds) * 1000000)) / lastTimecodeValueScalingFactor))));
+        }
+        System.arraycopy(timeCodeData, 0, subripSampleData, endTimecodeOffset, emptyTimecode.length);
+    }
+
+    private static boolean isCodecSupported(String codecId) {
+        return CODEC_ID_VP8.equals(codecId) || CODEC_ID_VP9.equals(codecId) || CODEC_ID_AV1.equals(codecId) || CODEC_ID_MPEG2.equals(codecId) || CODEC_ID_MPEG4_SP.equals(codecId) || CODEC_ID_MPEG4_ASP.equals(codecId) || CODEC_ID_MPEG4_AP.equals(codecId) || CODEC_ID_H264.equals(codecId) || CODEC_ID_H265.equals(codecId) || CODEC_ID_FOURCC.equals(codecId) || CODEC_ID_THEORA.equals(codecId) || CODEC_ID_OPUS.equals(codecId) || CODEC_ID_VORBIS.equals(codecId) || CODEC_ID_AAC.equals(codecId) || CODEC_ID_MP2.equals(codecId) || CODEC_ID_MP3.equals(codecId) || CODEC_ID_AC3.equals(codecId) || CODEC_ID_E_AC3.equals(codecId) || CODEC_ID_TRUEHD.equals(codecId) || CODEC_ID_DTS.equals(codecId) || CODEC_ID_DTS_EXPRESS.equals(codecId) || CODEC_ID_DTS_LOSSLESS.equals(codecId) || CODEC_ID_FLAC.equals(codecId) || CODEC_ID_ACM.equals(codecId) || CODEC_ID_PCM_INT_LIT.equals(codecId) || CODEC_ID_SUBRIP.equals(codecId) || CODEC_ID_ASS.equals(codecId) || CODEC_ID_VOBSUB.equals(codecId) || CODEC_ID_PGS.equals(codecId) || CODEC_ID_DVBSUB.equals(codecId);
+    }
+
+    private static int[] ensureArrayCapacity(int[] array, int length) {
+        if (array == null) {
+            return new int[length];
+        }
+        if (array.length >= length) {
+            return array;
+        }
+        return new int[Math.max(array.length * 2, length)];
     }
 
     public final boolean sniff(ExtractorInput input) throws IOException, InterruptedException {
@@ -1463,21 +1489,6 @@ public class MatroskaExtractor implements Extractor {
         this.sampleBytesWritten += this.subtitleSample.limit();
     }
 
-    private static void setSampleDuration(byte[] subripSampleData, long durationUs2, String timecodeFormat, int endTimecodeOffset, long lastTimecodeValueScalingFactor, byte[] emptyTimecode) {
-        byte[] timeCodeData;
-        if (durationUs2 == C0841C.TIME_UNSET) {
-            timeCodeData = emptyTimecode;
-        } else {
-            int hours = (int) (durationUs2 / 3600000000L);
-            long durationUs3 = durationUs2 - (((long) (hours * 3600)) * 1000000);
-            int minutes = (int) (durationUs3 / 60000000);
-            long durationUs4 = durationUs3 - (((long) (minutes * 60)) * 1000000);
-            int seconds = (int) (durationUs4 / 1000000);
-            timeCodeData = Util.getUtf8Bytes(String.format(Locale.US, timecodeFormat, Integer.valueOf(hours), Integer.valueOf(minutes), Integer.valueOf(seconds), Integer.valueOf((int) ((durationUs4 - (((long) seconds) * 1000000)) / lastTimecodeValueScalingFactor))));
-        }
-        System.arraycopy(timeCodeData, 0, subripSampleData, endTimecodeOffset, emptyTimecode.length);
-    }
-
     private void readToTarget(ExtractorInput input, byte[] target, int offset, int length) throws IOException, InterruptedException {
         int pendingStrippedBytes = Math.min(length, this.sampleStrippedBytes.bytesLeft());
         input.readFully(target, offset + pendingStrippedBytes, length - pendingStrippedBytes);
@@ -1555,63 +1566,17 @@ public class MatroskaExtractor implements Extractor {
         throw new ParserException("Can't scale timecode prior to timecodeScale being set.");
     }
 
-    private static boolean isCodecSupported(String codecId) {
-        return CODEC_ID_VP8.equals(codecId) || CODEC_ID_VP9.equals(codecId) || CODEC_ID_AV1.equals(codecId) || CODEC_ID_MPEG2.equals(codecId) || CODEC_ID_MPEG4_SP.equals(codecId) || CODEC_ID_MPEG4_ASP.equals(codecId) || CODEC_ID_MPEG4_AP.equals(codecId) || CODEC_ID_H264.equals(codecId) || CODEC_ID_H265.equals(codecId) || CODEC_ID_FOURCC.equals(codecId) || CODEC_ID_THEORA.equals(codecId) || CODEC_ID_OPUS.equals(codecId) || CODEC_ID_VORBIS.equals(codecId) || CODEC_ID_AAC.equals(codecId) || CODEC_ID_MP2.equals(codecId) || CODEC_ID_MP3.equals(codecId) || CODEC_ID_AC3.equals(codecId) || CODEC_ID_E_AC3.equals(codecId) || CODEC_ID_TRUEHD.equals(codecId) || CODEC_ID_DTS.equals(codecId) || CODEC_ID_DTS_EXPRESS.equals(codecId) || CODEC_ID_DTS_LOSSLESS.equals(codecId) || CODEC_ID_FLAC.equals(codecId) || CODEC_ID_ACM.equals(codecId) || CODEC_ID_PCM_INT_LIT.equals(codecId) || CODEC_ID_SUBRIP.equals(codecId) || CODEC_ID_ASS.equals(codecId) || CODEC_ID_VOBSUB.equals(codecId) || CODEC_ID_PGS.equals(codecId) || CODEC_ID_DVBSUB.equals(codecId);
-    }
-
-    private static int[] ensureArrayCapacity(int[] array, int length) {
-        if (array == null) {
-            return new int[length];
-        }
-        if (array.length >= length) {
-            return array;
-        }
-        return new int[Math.max(array.length * 2, length)];
-    }
-
-    private final class InnerEbmlProcessor implements EbmlProcessor {
-        private InnerEbmlProcessor() {
-        }
-
-        public int getElementType(int id) {
-            return MatroskaExtractor.this.getElementType(id);
-        }
-
-        public boolean isLevel1Element(int id) {
-            return MatroskaExtractor.this.isLevel1Element(id);
-        }
-
-        public void startMasterElement(int id, long contentPosition, long contentSize) throws ParserException {
-            MatroskaExtractor.this.startMasterElement(id, contentPosition, contentSize);
-        }
-
-        public void endMasterElement(int id) throws ParserException {
-            MatroskaExtractor.this.endMasterElement(id);
-        }
-
-        public void integerElement(int id, long value) throws ParserException {
-            MatroskaExtractor.this.integerElement(id, value);
-        }
-
-        public void floatElement(int id, double value) throws ParserException {
-            MatroskaExtractor.this.floatElement(id, value);
-        }
-
-        public void stringElement(int id, String value) throws ParserException {
-            MatroskaExtractor.this.stringElement(id, value);
-        }
-
-        public void binaryElement(int id, int contentsSize, ExtractorInput input) throws IOException, InterruptedException {
-            MatroskaExtractor.this.binaryElement(id, contentsSize, input);
-        }
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface Flags {
     }
 
     private static final class TrueHdSampleRechunker {
+        private final byte[] syncframePrefix = new byte[10];
         private int blockFlags;
         private int chunkSize;
         private boolean foundSyncframe;
         private int sampleCount;
-        private final byte[] syncframePrefix = new byte[10];
         private long timeUs;
 
         public void reset() {
@@ -1749,6 +1714,95 @@ public class MatroskaExtractor implements Extractor {
             this.seekPreRollNs = 0;
             this.flagDefault = true;
             this.language = "eng";
+        }
+
+        private static Pair<String, List<byte[]>> parseFourCcPrivate(ParsableByteArray buffer) throws ParserException {
+            try {
+                buffer.skipBytes(16);
+                long compression = buffer.readLittleEndianUnsignedInt();
+                if (compression == 1482049860) {
+                    return new Pair<>(MimeTypes.VIDEO_DIVX, null);
+                }
+                if (compression == 859189832) {
+                    return new Pair<>(MimeTypes.VIDEO_H263, null);
+                }
+                if (compression == 826496599) {
+                    byte[] bufferData = buffer.data;
+                    for (int offset = buffer.getPosition() + 20; offset < bufferData.length - 4; offset++) {
+                        if (bufferData[offset] == 0 && bufferData[offset + 1] == 0 && bufferData[offset + 2] == 1 && bufferData[offset + 3] == 15) {
+                            return new Pair<>(MimeTypes.VIDEO_VC1, Collections.singletonList(Arrays.copyOfRange(bufferData, offset, bufferData.length)));
+                        }
+                    }
+                    throw new ParserException("Failed to find FourCC VC1 initialization data");
+                }
+                Log.m30w(MatroskaExtractor.TAG, "Unknown FourCC. Setting mimeType to video/x-unknown");
+                return new Pair<>(MimeTypes.VIDEO_UNKNOWN, null);
+            } catch (ArrayIndexOutOfBoundsException e) {
+                throw new ParserException("Error parsing FourCC private data");
+            }
+        }
+
+        private static List<byte[]> parseVorbisCodecPrivate(byte[] codecPrivate2) throws ParserException {
+            try {
+                if (codecPrivate2[0] == 2) {
+                    int offset = 1;
+                    int vorbisInfoLength = 0;
+                    while (codecPrivate2[offset] == -1) {
+                        vorbisInfoLength += 255;
+                        offset++;
+                    }
+                    int offset2 = offset + 1;
+                    int vorbisInfoLength2 = vorbisInfoLength + codecPrivate2[offset];
+                    int vorbisSkipLength = 0;
+                    while (codecPrivate2[offset2] == -1) {
+                        vorbisSkipLength += 255;
+                        offset2++;
+                    }
+                    int offset3 = offset2 + 1;
+                    int vorbisSkipLength2 = vorbisSkipLength + codecPrivate2[offset2];
+                    if (codecPrivate2[offset3] == 1) {
+                        byte[] vorbisInfo = new byte[vorbisInfoLength2];
+                        System.arraycopy(codecPrivate2, offset3, vorbisInfo, 0, vorbisInfoLength2);
+                        int offset4 = offset3 + vorbisInfoLength2;
+                        if (codecPrivate2[offset4] == 3) {
+                            int offset5 = offset4 + vorbisSkipLength2;
+                            if (codecPrivate2[offset5] == 5) {
+                                byte[] vorbisBooks = new byte[(codecPrivate2.length - offset5)];
+                                System.arraycopy(codecPrivate2, offset5, vorbisBooks, 0, codecPrivate2.length - offset5);
+                                List<byte[]> initializationData = new ArrayList<>(2);
+                                initializationData.add(vorbisInfo);
+                                initializationData.add(vorbisBooks);
+                                return initializationData;
+                            }
+                            throw new ParserException("Error parsing vorbis codec private");
+                        }
+                        throw new ParserException("Error parsing vorbis codec private");
+                    }
+                    throw new ParserException("Error parsing vorbis codec private");
+                }
+                throw new ParserException("Error parsing vorbis codec private");
+            } catch (ArrayIndexOutOfBoundsException e) {
+                throw new ParserException("Error parsing vorbis codec private");
+            }
+        }
+
+        private static boolean parseMsAcmCodecPrivate(ParsableByteArray buffer) throws ParserException {
+            try {
+                int formatTag = buffer.readLittleEndianUnsignedShort();
+                if (formatTag == 1) {
+                    return true;
+                }
+                if (formatTag != MatroskaExtractor.WAVE_FORMAT_EXTENSIBLE) {
+                    return false;
+                }
+                buffer.setPosition(24);
+                if (buffer.readLong() == MatroskaExtractor.WAVE_SUBFORMAT_PCM.getMostSignificantBits() && buffer.readLong() == MatroskaExtractor.WAVE_SUBFORMAT_PCM.getLeastSignificantBits()) {
+                    return true;
+                }
+                return false;
+            } catch (ArrayIndexOutOfBoundsException e) {
+                throw new ParserException("Error parsing MS/ACM codec private");
+            }
         }
 
         /* JADX DEBUG: Multi-variable search result rejected for TypeSearchVarInfo{r6v26, resolved type: java.lang.Object} */
@@ -2517,94 +2571,42 @@ public class MatroskaExtractor implements Extractor {
             hdrStaticInfo.putShort((short) this.maxFrameAverageLuminance);
             return hdrStaticInfoData;
         }
+    }
 
-        private static Pair<String, List<byte[]>> parseFourCcPrivate(ParsableByteArray buffer) throws ParserException {
-            try {
-                buffer.skipBytes(16);
-                long compression = buffer.readLittleEndianUnsignedInt();
-                if (compression == 1482049860) {
-                    return new Pair<>(MimeTypes.VIDEO_DIVX, null);
-                }
-                if (compression == 859189832) {
-                    return new Pair<>(MimeTypes.VIDEO_H263, null);
-                }
-                if (compression == 826496599) {
-                    byte[] bufferData = buffer.data;
-                    for (int offset = buffer.getPosition() + 20; offset < bufferData.length - 4; offset++) {
-                        if (bufferData[offset] == 0 && bufferData[offset + 1] == 0 && bufferData[offset + 2] == 1 && bufferData[offset + 3] == 15) {
-                            return new Pair<>(MimeTypes.VIDEO_VC1, Collections.singletonList(Arrays.copyOfRange(bufferData, offset, bufferData.length)));
-                        }
-                    }
-                    throw new ParserException("Failed to find FourCC VC1 initialization data");
-                }
-                Log.m30w(MatroskaExtractor.TAG, "Unknown FourCC. Setting mimeType to video/x-unknown");
-                return new Pair<>(MimeTypes.VIDEO_UNKNOWN, null);
-            } catch (ArrayIndexOutOfBoundsException e) {
-                throw new ParserException("Error parsing FourCC private data");
-            }
+    private final class InnerEbmlProcessor implements EbmlProcessor {
+        private InnerEbmlProcessor() {
         }
 
-        private static List<byte[]> parseVorbisCodecPrivate(byte[] codecPrivate2) throws ParserException {
-            try {
-                if (codecPrivate2[0] == 2) {
-                    int offset = 1;
-                    int vorbisInfoLength = 0;
-                    while (codecPrivate2[offset] == -1) {
-                        vorbisInfoLength += 255;
-                        offset++;
-                    }
-                    int offset2 = offset + 1;
-                    int vorbisInfoLength2 = vorbisInfoLength + codecPrivate2[offset];
-                    int vorbisSkipLength = 0;
-                    while (codecPrivate2[offset2] == -1) {
-                        vorbisSkipLength += 255;
-                        offset2++;
-                    }
-                    int offset3 = offset2 + 1;
-                    int vorbisSkipLength2 = vorbisSkipLength + codecPrivate2[offset2];
-                    if (codecPrivate2[offset3] == 1) {
-                        byte[] vorbisInfo = new byte[vorbisInfoLength2];
-                        System.arraycopy(codecPrivate2, offset3, vorbisInfo, 0, vorbisInfoLength2);
-                        int offset4 = offset3 + vorbisInfoLength2;
-                        if (codecPrivate2[offset4] == 3) {
-                            int offset5 = offset4 + vorbisSkipLength2;
-                            if (codecPrivate2[offset5] == 5) {
-                                byte[] vorbisBooks = new byte[(codecPrivate2.length - offset5)];
-                                System.arraycopy(codecPrivate2, offset5, vorbisBooks, 0, codecPrivate2.length - offset5);
-                                List<byte[]> initializationData = new ArrayList<>(2);
-                                initializationData.add(vorbisInfo);
-                                initializationData.add(vorbisBooks);
-                                return initializationData;
-                            }
-                            throw new ParserException("Error parsing vorbis codec private");
-                        }
-                        throw new ParserException("Error parsing vorbis codec private");
-                    }
-                    throw new ParserException("Error parsing vorbis codec private");
-                }
-                throw new ParserException("Error parsing vorbis codec private");
-            } catch (ArrayIndexOutOfBoundsException e) {
-                throw new ParserException("Error parsing vorbis codec private");
-            }
+        public int getElementType(int id) {
+            return MatroskaExtractor.this.getElementType(id);
         }
 
-        private static boolean parseMsAcmCodecPrivate(ParsableByteArray buffer) throws ParserException {
-            try {
-                int formatTag = buffer.readLittleEndianUnsignedShort();
-                if (formatTag == 1) {
-                    return true;
-                }
-                if (formatTag != MatroskaExtractor.WAVE_FORMAT_EXTENSIBLE) {
-                    return false;
-                }
-                buffer.setPosition(24);
-                if (buffer.readLong() == MatroskaExtractor.WAVE_SUBFORMAT_PCM.getMostSignificantBits() && buffer.readLong() == MatroskaExtractor.WAVE_SUBFORMAT_PCM.getLeastSignificantBits()) {
-                    return true;
-                }
-                return false;
-            } catch (ArrayIndexOutOfBoundsException e) {
-                throw new ParserException("Error parsing MS/ACM codec private");
-            }
+        public boolean isLevel1Element(int id) {
+            return MatroskaExtractor.this.isLevel1Element(id);
+        }
+
+        public void startMasterElement(int id, long contentPosition, long contentSize) throws ParserException {
+            MatroskaExtractor.this.startMasterElement(id, contentPosition, contentSize);
+        }
+
+        public void endMasterElement(int id) throws ParserException {
+            MatroskaExtractor.this.endMasterElement(id);
+        }
+
+        public void integerElement(int id, long value) throws ParserException {
+            MatroskaExtractor.this.integerElement(id, value);
+        }
+
+        public void floatElement(int id, double value) throws ParserException {
+            MatroskaExtractor.this.floatElement(id, value);
+        }
+
+        public void stringElement(int id, String value) throws ParserException {
+            MatroskaExtractor.this.stringElement(id, value);
+        }
+
+        public void binaryElement(int id, int contentsSize, ExtractorInput input) throws IOException, InterruptedException {
+            MatroskaExtractor.this.binaryElement(id, contentsSize, input);
         }
     }
 }

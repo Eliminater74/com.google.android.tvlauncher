@@ -4,7 +4,9 @@ import android.annotation.TargetApi;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
+
 import androidx.tvprovider.media.p005tv.TvContractCompat;
+
 import com.google.android.tvrecommendations.shared.util.Constants;
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
 

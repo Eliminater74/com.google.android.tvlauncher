@@ -1,15 +1,18 @@
 package com.google.android.libraries.performance.primes.flags;
 
 import android.content.Context;
+
 import com.google.android.libraries.performance.primes.PrimesFlags;
 import com.google.android.libraries.performance.primes.PrimesLog;
 import com.google.android.libraries.performance.primes.Supplier;
 import com.google.android.libraries.performance.primes.trace.PrimesTrace;
 import com.google.android.libraries.phenotype.client.PhenotypeFlag;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class ServiceFlags {
+    public static final String SHARED_PREFS_FILE = "primes-ph";
     private static final String DISABLE_MEMORY_SUMMARY = "disable_memory_summary_metrics";
     private static final String ENABLE_PER_APP_ENABLE_PERSIST_CRASH_STATS = "enable_persist_crash_stats";
     private static final String ENABLE_PER_APP_ENABLE_STARTUP_TRACE = "enable_startup_trace";
@@ -18,19 +21,9 @@ public class ServiceFlags {
     private static final String ENABLE_PER_APP_LEAK_DETECTION_V2 = "enable_leak_detection_v2";
     private static final String ENABLE_PER_APP_MAGIC_EYE_LOG = "enable_magic_eye_log";
     private static final String ENABLE_PER_APP_PRIMES_FOR_PRIMES = "enable_primes_for_primes";
-    public static final String SHARED_PREFS_FILE = "primes-ph";
     private static final String TAG = "PrimesServerFlags";
 
-    private static final class FlagWithDefault {
-        /* access modifiers changed from: private */
-        public final boolean defaultValue;
-        /* access modifiers changed from: private */
-        public final String flagName;
-
-        FlagWithDefault(String flagName2, boolean defaultValue2) {
-            this.flagName = flagName2;
-            this.defaultValue = defaultValue2;
-        }
+    private ServiceFlags() {
     }
 
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
@@ -56,6 +49,32 @@ public class ServiceFlags {
         return phenotypeFlags;
     }
 
+    public static PrimesFlags readPrimesFlags(Context context) {
+        return readPrimesFlags(context, PrimesFlags.newBuilder().build());
+    }
+
+    static PrimesFlags readPrimesFlags(Context context, PrimesFlags defaults) {
+        try {
+            PrimesTrace.beginSection("ServiceFlags-updateFlags");
+            Map<String, PhenotypeFlag<Boolean>> flags = initFlags(context, defaults);
+            return PrimesFlags.newBuilder().enableLeakDetection(((Boolean) flags.get(ENABLE_PER_APP_LEAK_DETECTION).get()).booleanValue()).enableLeakDetectionV2(((Boolean) flags.get(ENABLE_PER_APP_LEAK_DETECTION_V2).get()).booleanValue()).disableMemorySummary(((Boolean) flags.get(DISABLE_MEMORY_SUMMARY).get()).booleanValue()).enableMagicEyeLog(((Boolean) flags.get(ENABLE_PER_APP_MAGIC_EYE_LOG).get()).booleanValue()).enablePersistCrashStats(((Boolean) flags.get(ENABLE_PER_APP_ENABLE_PERSIST_CRASH_STATS).get()).booleanValue()).enableStartupTrace(((Boolean) flags.get(ENABLE_PER_APP_ENABLE_STARTUP_TRACE).get()).booleanValue()).enableUrlAutoSanitization(((Boolean) flags.get(ENABLE_PER_APP_ENABLE_URL_AUTO_SANITIZATION).get()).booleanValue()).enablePrimesForPrimes(((Boolean) flags.get(ENABLE_PER_APP_PRIMES_FOR_PRIMES).get()).booleanValue()).build();
+        } finally {
+            PrimesTrace.endSection();
+        }
+    }
+
+    private static final class FlagWithDefault {
+        /* access modifiers changed from: private */
+        public final boolean defaultValue;
+        /* access modifiers changed from: private */
+        public final String flagName;
+
+        FlagWithDefault(String flagName2, boolean defaultValue2) {
+            this.flagName = flagName2;
+            this.defaultValue = defaultValue2;
+        }
+    }
+
     public static class GserviceFlagsSupplier implements Supplier<PrimesFlags> {
         private final Context context;
 
@@ -74,22 +93,5 @@ public class ServiceFlags {
             PrimesLog.m50i("PrimesTesting", "DefaultFlagsSupplier.get()", new Object[0]);
             return PrimesFlags.newBuilder().build();
         }
-    }
-
-    public static PrimesFlags readPrimesFlags(Context context) {
-        return readPrimesFlags(context, PrimesFlags.newBuilder().build());
-    }
-
-    static PrimesFlags readPrimesFlags(Context context, PrimesFlags defaults) {
-        try {
-            PrimesTrace.beginSection("ServiceFlags-updateFlags");
-            Map<String, PhenotypeFlag<Boolean>> flags = initFlags(context, defaults);
-            return PrimesFlags.newBuilder().enableLeakDetection(((Boolean) flags.get(ENABLE_PER_APP_LEAK_DETECTION).get()).booleanValue()).enableLeakDetectionV2(((Boolean) flags.get(ENABLE_PER_APP_LEAK_DETECTION_V2).get()).booleanValue()).disableMemorySummary(((Boolean) flags.get(DISABLE_MEMORY_SUMMARY).get()).booleanValue()).enableMagicEyeLog(((Boolean) flags.get(ENABLE_PER_APP_MAGIC_EYE_LOG).get()).booleanValue()).enablePersistCrashStats(((Boolean) flags.get(ENABLE_PER_APP_ENABLE_PERSIST_CRASH_STATS).get()).booleanValue()).enableStartupTrace(((Boolean) flags.get(ENABLE_PER_APP_ENABLE_STARTUP_TRACE).get()).booleanValue()).enableUrlAutoSanitization(((Boolean) flags.get(ENABLE_PER_APP_ENABLE_URL_AUTO_SANITIZATION).get()).booleanValue()).enablePrimesForPrimes(((Boolean) flags.get(ENABLE_PER_APP_PRIMES_FOR_PRIMES).get()).booleanValue()).build();
-        } finally {
-            PrimesTrace.endSection();
-        }
-    }
-
-    private ServiceFlags() {
     }
 }

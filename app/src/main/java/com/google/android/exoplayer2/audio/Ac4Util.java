@@ -10,29 +10,17 @@ import com.google.common.primitives.SignedBytes;
 import com.google.common.primitives.UnsignedBytes;
 import com.google.protos.datapol.SemanticAnnotations;
 import com.google.wireless.android.play.playlog.proto.ClientAnalytics;
+
 import java.nio.ByteBuffer;
 
 public final class Ac4Util {
     public static final int AC40_SYNCWORD = 44096;
     public static final int AC41_SYNCWORD = 44097;
-    private static final int CHANNEL_COUNT_2 = 2;
     public static final int HEADER_SIZE_FOR_PARSER = 16;
+    private static final int CHANNEL_COUNT_2 = 2;
     private static final int[] SAMPLE_COUNT = {2002, 2000, 1920, SemanticAnnotations.SemanticType.ST_DEMOGRAPHIC_INFO_VALUE, SemanticAnnotations.SemanticType.ST_ANONYMOUS_DATA_VALUE, 1001, 1000, ClientAnalytics.LogRequest.LogSource.NBU_GCONNECT_KIMCHI_VALUE, ClientAnalytics.LogRequest.LogSource.BETTERBUG_ANDROID_VALUE, ClientAnalytics.LogRequest.LogSource.BETTERBUG_ANDROID_VALUE, ClientAnalytics.LogRequest.LogSource.PIGEON_EXPERIMENTAL_VALUE, 400, 400, 2048};
 
-    public static final class SyncFrameInfo {
-        public final int bitstreamVersion;
-        public final int channelCount;
-        public final int frameSize;
-        public final int sampleCount;
-        public final int sampleRate;
-
-        private SyncFrameInfo(int bitstreamVersion2, int channelCount2, int sampleRate2, int frameSize2, int sampleCount2) {
-            this.bitstreamVersion = bitstreamVersion2;
-            this.channelCount = channelCount2;
-            this.sampleRate = sampleRate2;
-            this.frameSize = frameSize2;
-            this.sampleCount = sampleCount2;
-        }
+    private Ac4Util() {
     }
 
     public static Format parseAc4AnnexEFormat(ParsableByteArray data, String trackId, String language, DrmInitData drmInitData) {
@@ -145,6 +133,19 @@ public final class Ac4Util {
         }
     }
 
-    private Ac4Util() {
+    public static final class SyncFrameInfo {
+        public final int bitstreamVersion;
+        public final int channelCount;
+        public final int frameSize;
+        public final int sampleCount;
+        public final int sampleRate;
+
+        private SyncFrameInfo(int bitstreamVersion2, int channelCount2, int sampleRate2, int frameSize2, int sampleCount2) {
+            this.bitstreamVersion = bitstreamVersion2;
+            this.channelCount = channelCount2;
+            this.sampleRate = sampleRate2;
+            this.frameSize = frameSize2;
+            this.sampleCount = sampleCount2;
+        }
     }
 }

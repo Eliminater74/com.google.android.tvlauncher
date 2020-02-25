@@ -12,19 +12,20 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 import androidx.leanback.C0364R;
 
 public class ImageCardView extends BaseCardView {
-    private static final String ALPHA = "alpha";
     public static final int CARD_TYPE_FLAG_CONTENT = 2;
     public static final int CARD_TYPE_FLAG_ICON_LEFT = 8;
     public static final int CARD_TYPE_FLAG_ICON_RIGHT = 4;
     public static final int CARD_TYPE_FLAG_IMAGE_ONLY = 0;
     public static final int CARD_TYPE_FLAG_TITLE = 1;
+    private static final String ALPHA = "alpha";
+    ObjectAnimator mFadeInAnimator;
     private boolean mAttachedToWindow;
     private ImageView mBadgeImage;
     private TextView mContentView;
-    ObjectAnimator mFadeInAnimator;
     private ImageView mImageView;
     private ViewGroup mInfoArea;
     private TextView mTitleView;
@@ -37,6 +38,14 @@ public class ImageCardView extends BaseCardView {
     public ImageCardView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         buildImageCardView(attrs, defStyleAttr, C0364R.style.Widget_Leanback_ImageCardView);
+    }
+
+    public ImageCardView(Context context) {
+        this(context, (AttributeSet) null);
+    }
+
+    public ImageCardView(Context context, AttributeSet attrs) {
+        this(context, attrs, C0364R.attr.imageCardViewStyle);
     }
 
     /* JADX DEBUG: Failed to find minimal casts for resolve overloaded methods, cast all args instead
@@ -127,14 +136,6 @@ public class ImageCardView extends BaseCardView {
         cardAttrs.recycle();
     }
 
-    public ImageCardView(Context context) {
-        this(context, (AttributeSet) null);
-    }
-
-    public ImageCardView(Context context, AttributeSet attrs) {
-        this(context, attrs, C0364R.attr.imageCardViewStyle);
-    }
-
     public final ImageView getMainImageView() {
         return this.mImageView;
     }
@@ -151,10 +152,6 @@ public class ImageCardView extends BaseCardView {
         if (imageView != null) {
             imageView.setScaleType(scaleType);
         }
-    }
-
-    public void setMainImage(Drawable drawable) {
-        setMainImage(drawable, true);
     }
 
     public void setMainImage(Drawable drawable, boolean fade) {
@@ -192,6 +189,10 @@ public class ImageCardView extends BaseCardView {
         return imageView.getDrawable();
     }
 
+    public void setMainImage(Drawable drawable) {
+        setMainImage(drawable, true);
+    }
+
     public Drawable getInfoAreaBackground() {
         ViewGroup viewGroup = this.mInfoArea;
         if (viewGroup != null) {
@@ -214,13 +215,6 @@ public class ImageCardView extends BaseCardView {
         }
     }
 
-    public void setTitleText(CharSequence text) {
-        TextView textView = this.mTitleView;
-        if (textView != null) {
-            textView.setText(text);
-        }
-    }
-
     public CharSequence getTitleText() {
         TextView textView = this.mTitleView;
         if (textView == null) {
@@ -229,8 +223,8 @@ public class ImageCardView extends BaseCardView {
         return textView.getText();
     }
 
-    public void setContentText(CharSequence text) {
-        TextView textView = this.mContentView;
+    public void setTitleText(CharSequence text) {
+        TextView textView = this.mTitleView;
         if (textView != null) {
             textView.setText(text);
         }
@@ -244,6 +238,21 @@ public class ImageCardView extends BaseCardView {
         return textView.getText();
     }
 
+    public void setContentText(CharSequence text) {
+        TextView textView = this.mContentView;
+        if (textView != null) {
+            textView.setText(text);
+        }
+    }
+
+    public Drawable getBadgeImage() {
+        ImageView imageView = this.mBadgeImage;
+        if (imageView == null) {
+            return null;
+        }
+        return imageView.getDrawable();
+    }
+
     public void setBadgeImage(Drawable drawable) {
         ImageView imageView = this.mBadgeImage;
         if (imageView != null) {
@@ -254,14 +263,6 @@ public class ImageCardView extends BaseCardView {
                 this.mBadgeImage.setVisibility(8);
             }
         }
-    }
-
-    public Drawable getBadgeImage() {
-        ImageView imageView = this.mBadgeImage;
-        if (imageView == null) {
-            return null;
-        }
-        return imageView.getDrawable();
     }
 
     private void fadeIn() {

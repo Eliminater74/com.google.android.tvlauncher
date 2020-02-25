@@ -9,11 +9,11 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.RestrictTo;
-import android.support.p001v4.media.MediaDescriptionCompat;
 import android.support.p001v4.media.session.MediaSessionCompat;
 import android.support.p001v4.util.ArrayMap;
 import android.text.TextUtils;
 import android.util.Log;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.Set;
@@ -30,7 +30,6 @@ public final class MediaMetadataCompat implements Parcelable {
             return new MediaMetadataCompat[size];
         }
     };
-    static final ArrayMap<String, Integer> METADATA_KEYS_TYPE = new ArrayMap<>();
     public static final String METADATA_KEY_ADVERTISEMENT = "android.media.metadata.ADVERTISEMENT";
     public static final String METADATA_KEY_ALBUM = "android.media.metadata.ALBUM";
     public static final String METADATA_KEY_ALBUM_ART = "android.media.metadata.ALBUM_ART";
@@ -62,6 +61,7 @@ public final class MediaMetadataCompat implements Parcelable {
     public static final String METADATA_KEY_USER_RATING = "android.media.metadata.USER_RATING";
     public static final String METADATA_KEY_WRITER = "android.media.metadata.WRITER";
     public static final String METADATA_KEY_YEAR = "android.media.metadata.YEAR";
+    static final ArrayMap<String, Integer> METADATA_KEYS_TYPE = new ArrayMap<>();
     static final int METADATA_TYPE_BITMAP = 2;
     static final int METADATA_TYPE_LONG = 0;
     static final int METADATA_TYPE_RATING = 3;
@@ -70,33 +70,6 @@ public final class MediaMetadataCompat implements Parcelable {
     private static final String[] PREFERRED_DESCRIPTION_ORDER = {METADATA_KEY_TITLE, METADATA_KEY_ARTIST, METADATA_KEY_ALBUM, METADATA_KEY_ALBUM_ARTIST, METADATA_KEY_WRITER, METADATA_KEY_AUTHOR, METADATA_KEY_COMPOSER};
     private static final String[] PREFERRED_URI_ORDER;
     private static final String TAG = "MediaMetadata";
-    final Bundle mBundle;
-    private MediaDescriptionCompat mDescription;
-    private MediaMetadata mMetadataFwk;
-
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    @Retention(RetentionPolicy.SOURCE)
-    /* renamed from: android.support.v4.media.MediaMetadataCompat$BitmapKey */
-    public @interface BitmapKey {
-    }
-
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    @Retention(RetentionPolicy.SOURCE)
-    /* renamed from: android.support.v4.media.MediaMetadataCompat$LongKey */
-    public @interface LongKey {
-    }
-
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    @Retention(RetentionPolicy.SOURCE)
-    /* renamed from: android.support.v4.media.MediaMetadataCompat$RatingKey */
-    public @interface RatingKey {
-    }
-
-    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-    @Retention(RetentionPolicy.SOURCE)
-    /* renamed from: android.support.v4.media.MediaMetadataCompat$TextKey */
-    public @interface TextKey {
-    }
 
     static {
         METADATA_KEYS_TYPE.put(METADATA_KEY_TITLE, 1);
@@ -135,6 +108,10 @@ public final class MediaMetadataCompat implements Parcelable {
         PREFERRED_URI_ORDER = new String[]{METADATA_KEY_DISPLAY_ICON_URI, METADATA_KEY_ART_URI, str};
     }
 
+    final Bundle mBundle;
+    private MediaDescriptionCompat mDescription;
+    private MediaMetadata mMetadataFwk;
+
     MediaMetadataCompat(Bundle bundle) {
         this.mBundle = new Bundle(bundle);
         MediaSessionCompat.ensureClassLoader(this.mBundle);
@@ -142,6 +119,19 @@ public final class MediaMetadataCompat implements Parcelable {
 
     MediaMetadataCompat(Parcel in) {
         this.mBundle = in.readBundle(MediaSessionCompat.class.getClassLoader());
+    }
+
+    public static MediaMetadataCompat fromMediaMetadata(Object metadataObj) {
+        if (metadataObj == null || Build.VERSION.SDK_INT < 21) {
+            return null;
+        }
+        Parcel p = Parcel.obtain();
+        ((MediaMetadata) metadataObj).writeToParcel(p, 0);
+        p.setDataPosition(0);
+        MediaMetadataCompat metadata = CREATOR.createFromParcel(p);
+        p.recycle();
+        metadata.mMetadataFwk = (MediaMetadata) metadataObj;
+        return metadata;
     }
 
     public boolean containsKey(String key) {
@@ -289,19 +279,6 @@ public final class MediaMetadataCompat implements Parcelable {
         return new Bundle(this.mBundle);
     }
 
-    public static MediaMetadataCompat fromMediaMetadata(Object metadataObj) {
-        if (metadataObj == null || Build.VERSION.SDK_INT < 21) {
-            return null;
-        }
-        Parcel p = Parcel.obtain();
-        ((MediaMetadata) metadataObj).writeToParcel(p, 0);
-        p.setDataPosition(0);
-        MediaMetadataCompat metadata = CREATOR.createFromParcel(p);
-        p.recycle();
-        metadata.mMetadataFwk = (MediaMetadata) metadataObj;
-        return metadata;
-    }
-
     public Object getMediaMetadata() {
         if (this.mMetadataFwk == null && Build.VERSION.SDK_INT >= 21) {
             Parcel p = Parcel.obtain();
@@ -311,6 +288,30 @@ public final class MediaMetadataCompat implements Parcelable {
             p.recycle();
         }
         return this.mMetadataFwk;
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    @Retention(RetentionPolicy.SOURCE)
+    /* renamed from: android.support.v4.media.MediaMetadataCompat$BitmapKey */
+    public @interface BitmapKey {
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    @Retention(RetentionPolicy.SOURCE)
+    /* renamed from: android.support.v4.media.MediaMetadataCompat$LongKey */
+    public @interface LongKey {
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    @Retention(RetentionPolicy.SOURCE)
+    /* renamed from: android.support.v4.media.MediaMetadataCompat$RatingKey */
+    public @interface RatingKey {
+    }
+
+    @RestrictTo({RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+    @Retention(RetentionPolicy.SOURCE)
+    /* renamed from: android.support.v4.media.MediaMetadataCompat$TextKey */
+    public @interface TextKey {
     }
 
     /* renamed from: android.support.v4.media.MediaMetadataCompat$Builder */

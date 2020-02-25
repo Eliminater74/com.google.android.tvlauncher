@@ -1,7 +1,5 @@
 package com.google.protobuf;
 
-import com.google.protobuf.FieldSet;
-import com.google.protobuf.Internal;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Iterator;

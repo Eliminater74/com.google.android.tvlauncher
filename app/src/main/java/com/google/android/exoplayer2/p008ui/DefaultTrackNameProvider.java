@@ -2,11 +2,13 @@ package com.google.android.exoplayer2.p008ui;
 
 import android.content.res.Resources;
 import android.text.TextUtils;
+
 import com.google.android.exoplayer2.C0841C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.Util;
+
 import java.util.Locale;
 
 /* renamed from: com.google.android.exoplayer2.ui.DefaultTrackNameProvider */
@@ -15,6 +17,26 @@ public class DefaultTrackNameProvider implements TrackNameProvider {
 
     public DefaultTrackNameProvider(Resources resources2) {
         this.resources = (Resources) Assertions.checkNotNull(resources2);
+    }
+
+    private static int inferPrimaryTrackType(Format format) {
+        int trackType = MimeTypes.getTrackType(format.sampleMimeType);
+        if (trackType != -1) {
+            return trackType;
+        }
+        if (MimeTypes.getVideoMediaMimeType(format.codecs) != null) {
+            return 2;
+        }
+        if (MimeTypes.getAudioMediaMimeType(format.codecs) != null) {
+            return 1;
+        }
+        if (format.width != -1 || format.height != -1) {
+            return 2;
+        }
+        if (format.channelCount == -1 && format.sampleRate == -1) {
+            return -1;
+        }
+        return 1;
     }
 
     public String getTrackName(Format format) {
@@ -113,25 +135,5 @@ public class DefaultTrackNameProvider implements TrackNameProvider {
             }
         }
         return itemList;
-    }
-
-    private static int inferPrimaryTrackType(Format format) {
-        int trackType = MimeTypes.getTrackType(format.sampleMimeType);
-        if (trackType != -1) {
-            return trackType;
-        }
-        if (MimeTypes.getVideoMediaMimeType(format.codecs) != null) {
-            return 2;
-        }
-        if (MimeTypes.getAudioMediaMimeType(format.codecs) != null) {
-            return 1;
-        }
-        if (format.width != -1 || format.height != -1) {
-            return 2;
-        }
-        if (format.channelCount == -1 && format.sampleRate == -1) {
-            return -1;
-        }
-        return 1;
     }
 }

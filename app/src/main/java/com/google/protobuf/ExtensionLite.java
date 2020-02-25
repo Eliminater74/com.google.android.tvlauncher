@@ -1,8 +1,5 @@
 package com.google.protobuf;
 
-import com.google.protobuf.MessageLite;
-import com.google.protobuf.WireFormat;
-
 public abstract class ExtensionLite<ContainingType extends MessageLite, Type> {
     public abstract Type getDefaultValue();
 

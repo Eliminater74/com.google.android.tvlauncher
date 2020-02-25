@@ -3,6 +3,7 @@ package com.google.android.gms.ads.identifier;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
+
 import com.google.android.gms.common.GooglePlayServicesUtilLight;
 import com.google.android.gms.common.internal.Hide;
 
