@@ -1,50 +1,336 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.tvlauncher.home.view.ChannelView xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:layout_width="match_parent" android:layout_height="wrap_content" android:importantForAccessibility="no">
-    <LinearLayout android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content">
-        <TextView android:id="@+id/items_title" android:visibility="invisible" android:layout_width="@dimen/program_meta_container_width" android:layout_height="@dimen/channel_items_title_height" android:layout_marginBottom="@dimen/channel_items_title_default_margin_bottom" android:layout_marginStart="@dimen/channel_items_title_default_margin_start" style="@style/Channel.ItemsTitle"/>
-        <com.google.android.tvlauncher.home.view.ChannelViewMainContent android:id="@+id/main_content" android:layout_width="match_parent" android:layout_height="wrap_content">
-            <View android:id="@+id/sponsored_channel_background" android:background="@color/sponsored_channel_background_default_color" android:visibility="gone" android:layout_width="match_parent" android:layout_height="@dimen/sponsored_channel_background_height"/>
-            <View android:id="@+id/moving_channel_background" android:background="@color/channel_moving_background_color" android:visibility="gone" android:layout_width="match_parent" android:layout_height="match_parent" android:layout_marginStart="@dimen/channel_moving_background_margin_start"/>
-            <ImageView android:id="@+id/actions_hint" android:visibility="invisible" android:layout_width="@dimen/channel_actions_hint_width" android:layout_height="wrap_content" android:src="@drawable/ic_channel_actions_hint_black" android:scaleType="center" android:tint="@color/channel_actions_hint" android:layout_marginStart="@dimen/channel_margin_start" android:layout_marginEnd="@dimen/channel_actions_hint_margin_end"/>
-            <com.google.android.tvlauncher.home.view.ChannelViewMainLinearLayout android:orientation="horizontal" android:id="@+id/main_linear_layout" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginStart="@dimen/channel_margin_start">
-                <Space android:id="@+id/no_move_action_padding" android:visibility="gone" android:layout_width="@dimen/channel_no_move_additional_margin_start" android:layout_height="0dp"/>
-                <com.google.android.tvlauncher.home.CircularActionButtonView android:layout_gravity="center_vertical" android:id="@+id/remove" android:visibility="gone" android:nextFocusLeft="@+id/remove" android:nextFocusUp="@+id/remove" android:nextFocusDown="@+id/remove" android:layout_width="@dimen/channel_action_button_size" android:layout_height="@dimen/channel_action_button_size" android:src="@drawable/ic_action_remove_black" android:layout_marginStart="@dimen/channel_remove_button_margin_start" style="@style/ChannelActionButton"/>
-                <com.google.android.tvlauncher.home.CircularActionButtonView android:layout_gravity="center_vertical" android:id="@+id/move" android:visibility="gone" android:nextFocusUp="@+id/move" android:nextFocusDown="@+id/move" android:layout_width="@dimen/channel_action_button_size" android:layout_height="@dimen/channel_action_button_size" android:src="@drawable/ic_action_move_up_down_black" android:layout_marginStart="@dimen/channel_move_button_margin_start" style="@style/ChannelActionButton"/>
-                <Space android:id="@+id/zoomed_out_padding" android:visibility="gone" android:layout_width="@dimen/channel_zoomed_out_additional_margin_start" android:layout_height="0dp"/>
-                <Space android:id="@+id/channel_actions_padding" android:visibility="gone" android:layout_width="@dimen/channel_actions_additional_margin_start" android:layout_height="0dp"/>
-                <Space android:id="@+id/move_channel_padding" android:visibility="gone" android:layout_width="@dimen/channel_moving_additional_margin_start" android:layout_height="0dp"/>
-                <ImageView android:layout_gravity="top" android:id="@+id/channel_logo" android:focusable="true" android:clickable="true" android:layout_width="@dimen/channel_logo_size" android:layout_height="@dimen/channel_logo_size" android:layout_marginTop="@dimen/channel_logo_alignment_origin_margin" android:layout_marginStart="@dimen/channel_logo_margin_start" android:layout_marginEnd="@dimen/channel_logo_margin_end"/>
-                <TextView android:layout_gravity="center_vertical" android:id="@+id/logo_title_zoomed_out" android:visibility="invisible" android:layout_width="@dimen/channel_logo_title_width" android:layout_height="wrap_content" android:importantForAccessibility="no" android:textAlignment="viewStart" android:layout_marginStart="@dimen/channel_zoomed_out_logo_title_zoomed_out_margin_start" style="@style/Channel.LogoTitle"/>
-                <com.google.android.tvlauncher.home.view.FadingEdgeContainer android:layout_gravity="bottom" android:id="@+id/items_list_container" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginStart="@dimen/channel_items_list_margin_start">
-                    <com.google.android.tvlauncher.home.view.ChannelItemsListView android:id="@+id/items_list" android:focusable="true" android:clipToPadding="false" android:descendantFocusability="afterDescendants" android:layout_width="match_parent" android:layout_height="@dimen/channel_items_list_default_height" android:paddingStart="@dimen/channel_items_list_padding_start" android:paddingEnd="@dimen/overscan_horizontal" app:focusOutFront="true"/>
+<com.google.android.tvlauncher.home.view.ChannelView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:importantForAccessibility="no">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/items_title"
+            style="@style/Channel.ItemsTitle"
+            android:layout_width="@dimen/program_meta_container_width"
+            android:layout_height="@dimen/channel_items_title_height"
+            android:layout_marginStart="@dimen/channel_items_title_default_margin_start"
+            android:layout_marginBottom="@dimen/channel_items_title_default_margin_bottom"
+            android:visibility="invisible" />
+
+        <com.google.android.tvlauncher.home.view.ChannelViewMainContent
+            android:id="@+id/main_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <View
+                android:id="@+id/sponsored_channel_background"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/sponsored_channel_background_height"
+                android:background="@color/sponsored_channel_background_default_color"
+                android:visibility="gone" />
+
+            <View
+                android:id="@+id/moving_channel_background"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/channel_moving_background_margin_start"
+                android:background="@color/channel_moving_background_color"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/actions_hint"
+                android:layout_width="@dimen/channel_actions_hint_width"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/channel_margin_start"
+                android:layout_marginEnd="@dimen/channel_actions_hint_margin_end"
+                android:scaleType="center"
+                android:src="@drawable/ic_channel_actions_hint_black"
+                android:tint="@color/channel_actions_hint"
+                android:visibility="invisible" />
+
+            <com.google.android.tvlauncher.home.view.ChannelViewMainLinearLayout
+                android:id="@+id/main_linear_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/channel_margin_start"
+                android:orientation="horizontal">
+
+                <Space
+                    android:id="@+id/no_move_action_padding"
+                    android:layout_width="@dimen/channel_no_move_additional_margin_start"
+                    android:layout_height="0dp"
+                    android:visibility="gone" />
+
+                <com.google.android.tvlauncher.home.CircularActionButtonView
+                    android:id="@+id/remove"
+                    style="@style/ChannelActionButton"
+                    android:layout_width="@dimen/channel_action_button_size"
+                    android:layout_height="@dimen/channel_action_button_size"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/channel_remove_button_margin_start"
+                    android:nextFocusLeft="@+id/remove"
+                    android:nextFocusUp="@+id/remove"
+                    android:nextFocusDown="@+id/remove"
+                    android:src="@drawable/ic_action_remove_black"
+                    android:visibility="gone" />
+
+                <com.google.android.tvlauncher.home.CircularActionButtonView
+                    android:id="@+id/move"
+                    style="@style/ChannelActionButton"
+                    android:layout_width="@dimen/channel_action_button_size"
+                    android:layout_height="@dimen/channel_action_button_size"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/channel_move_button_margin_start"
+                    android:nextFocusUp="@+id/move"
+                    android:nextFocusDown="@+id/move"
+                    android:src="@drawable/ic_action_move_up_down_black"
+                    android:visibility="gone" />
+
+                <Space
+                    android:id="@+id/zoomed_out_padding"
+                    android:layout_width="@dimen/channel_zoomed_out_additional_margin_start"
+                    android:layout_height="0dp"
+                    android:visibility="gone" />
+
+                <Space
+                    android:id="@+id/channel_actions_padding"
+                    android:layout_width="@dimen/channel_actions_additional_margin_start"
+                    android:layout_height="0dp"
+                    android:visibility="gone" />
+
+                <Space
+                    android:id="@+id/move_channel_padding"
+                    android:layout_width="@dimen/channel_moving_additional_margin_start"
+                    android:layout_height="0dp"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/channel_logo"
+                    android:layout_width="@dimen/channel_logo_size"
+                    android:layout_height="@dimen/channel_logo_size"
+                    android:layout_gravity="top"
+                    android:layout_marginStart="@dimen/channel_logo_margin_start"
+                    android:layout_marginTop="@dimen/channel_logo_alignment_origin_margin"
+                    android:layout_marginEnd="@dimen/channel_logo_margin_end"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView
+                    android:id="@+id/logo_title_zoomed_out"
+                    style="@style/Channel.LogoTitle"
+                    android:layout_width="@dimen/channel_logo_title_width"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/channel_zoomed_out_logo_title_zoomed_out_margin_start"
+                    android:importantForAccessibility="no"
+                    android:textAlignment="viewStart"
+                    android:visibility="invisible" />
+
+                <com.google.android.tvlauncher.home.view.FadingEdgeContainer
+                    android:id="@+id/items_list_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginStart="@dimen/channel_items_list_margin_start">
+
+                    <com.google.android.tvlauncher.home.view.ChannelItemsListView
+                        android:id="@+id/items_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/channel_items_list_default_height"
+                        android:clipToPadding="false"
+                        android:descendantFocusability="afterDescendants"
+                        android:focusable="true"
+                        android:paddingStart="@dimen/channel_items_list_padding_start"
+                        android:paddingEnd="@dimen/overscan_horizontal"
+                        app:focusOutFront="true" />
                 </com.google.android.tvlauncher.home.view.FadingEdgeContainer>
             </com.google.android.tvlauncher.home.view.ChannelViewMainLinearLayout>
-            <TextView android:gravity="center_vertical" android:layout_gravity="top|left|center_vertical|center_horizontal|center|start" android:id="@+id/channel_empty_message" android:focusable="true" android:visibility="invisible" android:layout_width="@dimen/empty_channel_message_width" android:layout_height="@dimen/empty_channel_message_height" android:layout_marginTop="@dimen/empty_channel_message_default_margin_top" android:layout_marginBottom="0dp" android:text="@string/channel_temporarily_hidden_message" android:layout_marginStart="@dimen/empty_channel_message_default_margin_start"/>
-            <TextView android:id="@+id/logo_title" android:visibility="visible" android:layout_width="@dimen/channel_logo_title_width" android:layout_height="wrap_content" android:layout_marginTop="@dimen/channel_logo_title_margin_top" android:importantForAccessibility="no" android:layout_marginStart="@dimen/channel_margin_start" style="@style/Channel.LogoTitle"/>
+
+            <TextView
+                android:id="@+id/channel_empty_message"
+                android:layout_width="@dimen/empty_channel_message_width"
+                android:layout_height="@dimen/empty_channel_message_height"
+                android:layout_gravity="top|left|center_vertical|center_horizontal|center|start"
+                android:layout_marginStart="@dimen/empty_channel_message_default_margin_start"
+                android:layout_marginTop="@dimen/empty_channel_message_default_margin_top"
+                android:layout_marginBottom="0dp"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:text="@string/channel_temporarily_hidden_message"
+                android:visibility="invisible" />
+
+            <TextView
+                android:id="@+id/logo_title"
+                style="@style/Channel.LogoTitle"
+                android:layout_width="@dimen/channel_logo_title_width"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/channel_margin_start"
+                android:layout_marginTop="@dimen/channel_logo_title_margin_top"
+                android:importantForAccessibility="no"
+                android:visibility="visible" />
         </com.google.android.tvlauncher.home.view.ChannelViewMainContent>
-        <LinearLayout android:orientation="vertical" android:id="@+id/item_meta_container" android:visibility="invisible" android:layout_width="@dimen/program_meta_container_width" android:layout_height="@dimen/program_meta_container_height" android:layout_marginTop="@dimen/program_meta_container_default_margin_top" android:layout_marginBottom="@dimen/program_meta_container_invisible_margin_bottom" android:layout_marginStart="@dimen/program_meta_container_default_margin_start">
-            <LinearLayout android:orientation="horizontal" android:id="@+id/meta_container_without_description" android:layout_width="match_parent" android:layout_height="wrap_content" android:importantForAccessibility="yes">
-                <ImageView android:layout_gravity="center_vertical" android:id="@+id/program_logo" android:visibility="gone" android:layout_width="@dimen/program_meta_logo_size" android:layout_height="@dimen/program_meta_logo_size" android:contentDescription="@null" android:layout_marginEnd="@dimen/program_meta_component_spacing_medium"/>
-                <LinearLayout android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content">
-                    <TextView android:id="@+id/first" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/ChannelItemMetadata.First"/>
-                    <LinearLayout android:orientation="horizontal" android:id="@+id/second_row_container" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/program_meta_second_row_margin_top">
-                        <TextView android:id="@+id/content_rating" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/ChannelItemMetadata.ContentRating"/>
-                        <TextView android:id="@+id/second" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/ChannelItemMetadata.Second"/>
-                        <ImageView android:id="@+id/thumbUp" android:visibility="gone" android:layout_width="@dimen/program_meta_rating_size" android:layout_height="@dimen/program_meta_rating_size" android:layout_marginTop="@dimen/program_meta_rating_icon_vertical_margin" android:layout_marginBottom="@dimen/program_meta_rating_icon_vertical_margin" android:src="@drawable/ic_channel_view_thumb_up_black" android:tint="@color/program_meta_rating_active_color" android:contentDescription="@null"/>
-                        <TextView android:id="@+id/thumbCountUp" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="@dimen/program_meta_thumb_up_down_start_margin" style="@style/ChannelItemMetadata.Second"/>
-                        <ImageView android:id="@+id/thumbDown" android:visibility="gone" android:layout_width="@dimen/program_meta_rating_size" android:layout_height="@dimen/program_meta_rating_size" android:layout_marginTop="@dimen/program_meta_rating_icon_vertical_margin" android:layout_marginBottom="@dimen/program_meta_rating_icon_vertical_margin" android:src="@drawable/ic_channel_view_thumb_down_black" android:tint="@color/program_meta_rating_active_color" android:contentDescription="@null"/>
-                        <TextView android:id="@+id/thumbCountDown" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="@dimen/program_meta_thumb_up_down_start_margin" style="@style/ChannelItemMetadata.Second"/>
-                        <com.google.android.tvlauncher.widget.BarRatingView android:id="@+id/star_rating" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="@dimen/program_meta_rating_icon_vertical_margin" android:layout_marginBottom="@dimen/program_meta_rating_icon_vertical_margin" android:layout_marginEnd="@dimen/program_meta_component_spacing_large"/>
-                        <TextView android:id="@+id/rating_percentage" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/ChannelItemMetadata.Second"/>
-                        <LinearLayout android:orientation="horizontal" android:id="@+id/price_container" android:layout_width="wrap_content" android:layout_height="wrap_content">
-                            <TextView android:id="@+id/old_price" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/ChannelItemMetadata.OldPrice"/>
-                            <TextView android:id="@+id/price" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:drawablePadding="@dimen/program_meta_component_spacing_small" android:drawableTint="@color/program_meta_availability_purchased_color" style="@style/ChannelItemMetadata.Price"/>
+
+        <LinearLayout
+            android:id="@+id/item_meta_container"
+            android:layout_width="@dimen/program_meta_container_width"
+            android:layout_height="@dimen/program_meta_container_height"
+            android:layout_marginStart="@dimen/program_meta_container_default_margin_start"
+            android:layout_marginTop="@dimen/program_meta_container_default_margin_top"
+            android:layout_marginBottom="@dimen/program_meta_container_invisible_margin_bottom"
+            android:orientation="vertical"
+            android:visibility="invisible">
+
+            <LinearLayout
+                android:id="@+id/meta_container_without_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:importantForAccessibility="yes"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/program_logo"
+                    android:layout_width="@dimen/program_meta_logo_size"
+                    android:layout_height="@dimen/program_meta_logo_size"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="@dimen/program_meta_component_spacing_medium"
+                    android:contentDescription="@null"
+                    android:visibility="gone" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/first"
+                        style="@style/ChannelItemMetadata.First"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <LinearLayout
+                        android:id="@+id/second_row_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/program_meta_second_row_margin_top"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/content_rating"
+                            style="@style/ChannelItemMetadata.ContentRating"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:visibility="gone" />
+
+                        <TextView
+                            android:id="@+id/second"
+                            style="@style/ChannelItemMetadata.Second"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                        <ImageView
+                            android:id="@+id/thumbUp"
+                            android:layout_width="@dimen/program_meta_rating_size"
+                            android:layout_height="@dimen/program_meta_rating_size"
+                            android:layout_marginTop="@dimen/program_meta_rating_icon_vertical_margin"
+                            android:layout_marginBottom="@dimen/program_meta_rating_icon_vertical_margin"
+                            android:contentDescription="@null"
+                            android:src="@drawable/ic_channel_view_thumb_up_black"
+                            android:tint="@color/program_meta_rating_active_color"
+                            android:visibility="gone" />
+
+                        <TextView
+                            android:id="@+id/thumbCountUp"
+                            style="@style/ChannelItemMetadata.Second"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/program_meta_thumb_up_down_start_margin"
+                            android:visibility="gone" />
+
+                        <ImageView
+                            android:id="@+id/thumbDown"
+                            android:layout_width="@dimen/program_meta_rating_size"
+                            android:layout_height="@dimen/program_meta_rating_size"
+                            android:layout_marginTop="@dimen/program_meta_rating_icon_vertical_margin"
+                            android:layout_marginBottom="@dimen/program_meta_rating_icon_vertical_margin"
+                            android:contentDescription="@null"
+                            android:src="@drawable/ic_channel_view_thumb_down_black"
+                            android:tint="@color/program_meta_rating_active_color"
+                            android:visibility="gone" />
+
+                        <TextView
+                            android:id="@+id/thumbCountDown"
+                            style="@style/ChannelItemMetadata.Second"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/program_meta_thumb_up_down_start_margin"
+                            android:visibility="gone" />
+
+                        <com.google.android.tvlauncher.widget.BarRatingView
+                            android:id="@+id/star_rating"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/program_meta_rating_icon_vertical_margin"
+                            android:layout_marginEnd="@dimen/program_meta_component_spacing_large"
+                            android:layout_marginBottom="@dimen/program_meta_rating_icon_vertical_margin"
+                            android:visibility="gone" />
+
+                        <TextView
+                            android:id="@+id/rating_percentage"
+                            style="@style/ChannelItemMetadata.Second"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:visibility="gone" />
+
+                        <LinearLayout
+                            android:id="@+id/price_container"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/old_price"
+                                style="@style/ChannelItemMetadata.OldPrice"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:visibility="gone" />
+
+                            <TextView
+                                android:id="@+id/price"
+                                style="@style/ChannelItemMetadata.Price"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:drawablePadding="@dimen/program_meta_component_spacing_small"
+                                android:drawableTint="@color/program_meta_availability_purchased_color"
+                                android:visibility="gone" />
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
-            <TextView android:id="@+id/third" android:layout_width="match_parent" android:layout_height="match_parent" android:importantForAccessibility="yes" style="@style/ChannelItemMetadata.Third"/>
+
+            <TextView
+                android:id="@+id/third"
+                style="@style/ChannelItemMetadata.Third"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:importantForAccessibility="yes" />
         </LinearLayout>
     </LinearLayout>
-    <TextView android:textSize="@dimen/watch_next_info_acknowledged_button_text_size" android:textColor="@color/watch_next_info_acknowledged_button_text_color" android:gravity="center_vertical" android:id="@+id/watch_next_info_acknowledged_button" android:background="@color/watch_next_info_acknowledged_button_background_color" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="@dimen/watch_next_info_acknowledged_button_height" android:layout_marginTop="@dimen/watch_next_info_acknowledged_button_margin_top" android:text="@string/watch_next_row_acknowledgment" android:importantForAccessibility="no" android:fontFamily="@font/google_sans_medium" android:paddingStart="@dimen/watch_next_info_acknowledged_button_padding" android:paddingEnd="@dimen/watch_next_info_acknowledged_button_padding"/>
+
+    <TextView
+        android:id="@+id/watch_next_info_acknowledged_button"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/watch_next_info_acknowledged_button_height"
+        android:layout_marginTop="@dimen/watch_next_info_acknowledged_button_margin_top"
+        android:background="@color/watch_next_info_acknowledged_button_background_color"
+        android:fontFamily="@font/google_sans_medium"
+        android:gravity="center_vertical"
+        android:importantForAccessibility="no"
+        android:paddingStart="@dimen/watch_next_info_acknowledged_button_padding"
+        android:paddingEnd="@dimen/watch_next_info_acknowledged_button_padding"
+        android:text="@string/watch_next_row_acknowledgment"
+        android:textColor="@color/watch_next_info_acknowledged_button_text_color"
+        android:textSize="@dimen/watch_next_info_acknowledged_button_text_size"
+        android:visibility="gone" />
 </com.google.android.tvlauncher.home.view.ChannelView>

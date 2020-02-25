@@ -1,6 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="wrap_content">
-    <androidx.leanback.widget.ResizingTextView android:id="@+id/lb_details_description_title" android:layout_width="wrap_content" android:layout_height="wrap_content" style="?attr/detailsDescriptionTitleStyle"/>
-    <TextView android:id="@+id/lb_details_description_subtitle" android:layout_width="wrap_content" android:layout_height="wrap_content" style="?attr/detailsDescriptionSubtitleStyle"/>
-    <TextView android:id="@+id/lb_details_description_body" android:layout_width="wrap_content" android:layout_height="wrap_content" style="?attr/detailsDescriptionBodyStyle"/>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <androidx.leanback.widget.ResizingTextView
+        android:id="@+id/lb_details_description_title"
+        style="?attr/detailsDescriptionTitleStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/lb_details_description_subtitle"
+        style="?attr/detailsDescriptionSubtitleStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/lb_details_description_body"
+        style="?attr/detailsDescriptionBodyStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 </LinearLayout>

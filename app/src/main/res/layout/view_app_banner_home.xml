@@ -1,8 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.tvlauncher.appsview.BannerView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_gravity="center" android:orientation="vertical" android:focusable="true" android:layout_width="@dimen/home_app_banner_width" android:layout_height="@dimen/home_app_banner_height">
-    <FrameLayout android:id="@+id/banner_container" android:layout_width="match_parent" android:layout_height="@dimen/home_app_banner_image_height">
-        <ImageView android:id="@+id/banner_image" android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="fitCenter"/>
-        <ImageView android:id="@+id/edit_focused_frame" android:visibility="gone" android:layout_width="match_parent" android:layout_height="match_parent" android:src="@drawable/edit_mode_frame" android:contentDescription="@null"/>
+<com.google.android.tvlauncher.appsview.BannerView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/home_app_banner_width"
+    android:layout_height="@dimen/home_app_banner_height"
+    android:layout_gravity="center"
+    android:focusable="true"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@+id/banner_container"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/home_app_banner_image_height">
+
+        <ImageView
+            android:id="@+id/banner_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitCenter" />
+
+        <ImageView
+            android:id="@+id/edit_focused_frame"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@null"
+            android:src="@drawable/edit_mode_frame"
+            android:visibility="gone" />
     </FrameLayout>
-    <TextView android:id="@+id/app_title" android:visibility="invisible" android:layout_width="match_parent" android:layout_height="@dimen/app_banner_title_height" style="@style/AppBannerTitle"/>
+
+    <TextView
+        android:id="@+id/app_title"
+        style="@style/AppBannerTitle"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/app_banner_title_height"
+        android:visibility="invisible" />
 </com.google.android.tvlauncher.appsview.BannerView>

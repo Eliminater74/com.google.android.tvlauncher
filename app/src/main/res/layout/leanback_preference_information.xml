@@ -1,10 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="horizontal" android:id="@+id/container" android:background="?android:attr/selectableItemBackground" android:focusable="false" android:clickable="false" android:descendantFocusability="blocksDescendants" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingStart="?android:attr/listPreferredItemPaddingStart" android:paddingEnd="?android:attr/listPreferredItemPaddingEnd">
-    <LinearLayout android:orientation="vertical" android:duplicateParentState="true" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1">
-        <Space android:layout_width="0dp" android:layout_height="@dimen/lb_preference_item_text_space_top"/>
-        <TextView android:textAppearance="?android:attr/textAppearanceListItem" android:id="@android:id/title" android:duplicateParentState="true" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="@dimen/lb_preference_item_primary_text_margin_bottom"/>
-        <TextView android:textAppearance="?android:attr/textAppearanceListItemSecondary" android:id="@android:id/summary" android:duplicateParentState="true" android:layout_width="wrap_content" android:layout_height="wrap_content" android:maxLines="4"/>
-        <Space android:layout_width="0dp" android:layout_height="@dimen/lb_preference_item_text_space_bottom"/>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?android:attr/selectableItemBackground"
+    android:clickable="false"
+    android:descendantFocusability="blocksDescendants"
+    android:focusable="false"
+    android:orientation="horizontal"
+    android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+    android:paddingEnd="?android:attr/listPreferredItemPaddingEnd">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:duplicateParentState="true"
+        android:orientation="vertical">
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="@dimen/lb_preference_item_text_space_top" />
+
+        <TextView
+            android:id="@android:id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/lb_preference_item_primary_text_margin_bottom"
+            android:duplicateParentState="true"
+            android:textAppearance="?android:attr/textAppearanceListItem" />
+
+        <TextView
+            android:id="@android:id/summary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:duplicateParentState="true"
+            android:maxLines="4"
+            android:textAppearance="?android:attr/textAppearanceListItemSecondary" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="@dimen/lb_preference_item_text_space_bottom" />
     </LinearLayout>
-    <LinearLayout android:gravity="center_vertical" android:orientation="vertical" android:id="@android:id/widget_frame" android:duplicateParentState="true" android:layout_width="wrap_content" android:layout_height="match_parent"/>
+
+    <LinearLayout
+        android:id="@android:id/widget_frame"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:duplicateParentState="true"
+        android:gravity="center_vertical"
+        android:orientation="vertical" />
 </LinearLayout>

@@ -1,16 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/onboarding_fragment_root" android:clipChildren="false" android:clipToPadding="false" android:layout_width="match_parent" android:layout_height="match_parent">
-    <FrameLayout android:id="@+id/background_container" android:visibility="gone" android:layout_width="match_parent" android:layout_height="match_parent"/>
-    <ImageView android:id="@+id/main_icon" style="?attr/onboardingMainIconStyle"/>
-    <LinearLayout android:id="@+id/page_container" android:visibility="gone" style="?attr/onboardingHeaderStyle">
-        <TextView android:id="@+id/title" style="?attr/onboardingTitleStyle"/>
-        <TextView android:id="@+id/description" style="?attr/onboardingDescriptionStyle"/>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/onboarding_fragment_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipChildren="false"
+    android:clipToPadding="false">
+
+    <FrameLayout
+        android:id="@+id/background_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/main_icon"
+        style="?attr/onboardingMainIconStyle" />
+
+    <LinearLayout
+        android:id="@+id/page_container"
+        style="?attr/onboardingHeaderStyle"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/title"
+            style="?attr/onboardingTitleStyle" />
+
+        <TextView
+            android:id="@+id/description"
+            style="?attr/onboardingDescriptionStyle" />
     </LinearLayout>
-    <FrameLayout android:id="@+id/content_container" android:visibility="gone" android:layout_width="match_parent" android:layout_height="match_parent" android:layout_above="@+id/navigator_container" android:layout_below="@+id/page_container" android:layout_centerHorizontal="true"/>
-    <FrameLayout android:id="@+id/navigator_container" style="?attr/onboardingNavigatorContainerStyle">
-        <androidx.leanback.widget.PagingIndicator android:id="@+id/page_indicator" android:visibility="gone" style="?attr/onboardingPageIndicatorStyle"/>
-        <Button android:id="@+id/button_start" android:visibility="gone" style="?attr/onboardingStartButtonStyle"/>
+
+    <FrameLayout
+        android:id="@+id/content_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/navigator_container"
+        android:layout_below="@+id/page_container"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone" />
+
+    <FrameLayout
+        android:id="@+id/navigator_container"
+        style="?attr/onboardingNavigatorContainerStyle">
+
+        <androidx.leanback.widget.PagingIndicator
+            android:id="@+id/page_indicator"
+            style="?attr/onboardingPageIndicatorStyle"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/button_start"
+            style="?attr/onboardingStartButtonStyle"
+            android:visibility="gone" />
     </FrameLayout>
-    <FrameLayout android:id="@+id/foreground_container" android:visibility="gone" android:layout_width="match_parent" android:layout_height="match_parent"/>
-    <ImageView android:id="@+id/logo" style="?attr/onboardingLogoStyle"/>
+
+    <FrameLayout
+        android:id="@+id/foreground_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/logo"
+        style="?attr/onboardingLogoStyle" />
 </RelativeLayout>

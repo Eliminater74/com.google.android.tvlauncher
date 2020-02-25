@@ -1,22 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <transitionSet xmlns:android="http://schemas.android.com/apk/res/android">
-    <transition android:interpolator="@android:interpolator/linear_out_slow_in" android:duration="500" android:slideEdge="bottom" class="androidx.leanback.transition.SlideNoPropagation">
+    <transition
+        class="androidx.leanback.transition.SlideNoPropagation"
+        android:duration="500"
+        android:interpolator="@android:interpolator/linear_out_slow_in"
+        android:slideEdge="bottom">
         <targets>
-            <target android:excludeId="@+id/title_badge"/>
-            <target android:excludeId="@+id/title_text"/>
-            <target android:excludeId="@+id/title_orb"/>
-            <target android:excludeId="@+id/details_background_view"/>
-            <target android:excludeId="@+id/video_surface"/>
+            <target android:excludeId="@+id/title_badge" />
+            <target android:excludeId="@+id/title_text" />
+            <target android:excludeId="@+id/title_orb" />
+            <target android:excludeId="@+id/details_background_view" />
+            <target android:excludeId="@+id/video_surface" />
         </targets>
     </transition>
-    <transition android:duration="500" class="androidx.leanback.transition.ParallaxTransition">
+    <transition
+        class="androidx.leanback.transition.ParallaxTransition"
+        android:duration="500">
         <targets>
-            <target android:targetId="@+id/details_frame"/>
+            <target android:targetId="@+id/details_frame" />
         </targets>
     </transition>
     <fade android:duration="350">
         <targets>
-            <target android:excludeId="@+id/video_surface"/>
+            <target android:excludeId="@+id/video_surface" />
         </targets>
     </fade>
 </transitionSet>

@@ -2,12 +2,16 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <shape android:shape="rectangle">
-            <stroke android:width="@dimen/edit_mode_frame_inner_stroke_width" android:color="@color/edit_mode_frame_inner_color"/>
+            <stroke
+                android:width="@dimen/edit_mode_frame_inner_stroke_width"
+                android:color="@color/edit_mode_frame_inner_color" />
         </shape>
     </item>
     <item>
         <shape android:shape="rectangle">
-            <stroke android:width="@dimen/edit_mode_frame_outer_stroke_width" android:color="@color/edit_mode_frame_outer_color"/>
+            <stroke
+                android:width="@dimen/edit_mode_frame_outer_stroke_width"
+                android:color="@color/edit_mode_frame_outer_color" />
         </shape>
     </item>
 </layer-list>

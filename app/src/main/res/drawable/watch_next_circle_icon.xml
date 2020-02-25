@@ -2,9 +2,13 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <shape android:shape="oval">
-            <size android:height="32dp" android:width="32dp"/>
-            <solid android:color="@color/watch_next_logo_background"/>
+            <size
+                android:width="32dp"
+                android:height="32dp" />
+            <solid android:color="@color/watch_next_logo_background" />
         </shape>
     </item>
-    <item android:gravity="center" android:drawable="@drawable/ic_watch_next"/>
+    <item
+        android:drawable="@drawable/ic_watch_next"
+        android:gravity="center" />
 </layer-list>
